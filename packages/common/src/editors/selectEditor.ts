@@ -19,7 +19,7 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index';
-import { buildMsSelectCollectionList, CollectionService, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { SlickEventData, type SlickGrid } from '../core/index';
 
@@ -120,7 +120,7 @@ export class SelectEditor implements Editor {
       single: true,
       singleRadio: true,
       renderOptionLabelAsHtml: this.columnEditor?.enableRenderHtml ?? false,
-      sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
+      sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
       onClick: () => this._isValueTouched = true,
       onCheckAll: () => this._isValueTouched = true,
       onUncheckAll: () => this._isValueTouched = true,

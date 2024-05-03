@@ -34,6 +34,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 const gridId = 'grid1';

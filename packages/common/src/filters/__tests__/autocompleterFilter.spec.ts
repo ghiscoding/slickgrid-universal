@@ -28,6 +28,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('AutocompleterFilter', () => {
@@ -309,7 +310,7 @@ describe('AutocompleterFilter', () => {
 
     jest.runAllTimers(); // fast-forward timer
 
-    expect(filter.filterDomElement.classList.contains('slick-autocomplete-loading')).toBeTrue();
+    expect(filter.filterDomElement.classList.contains('slick-autocomplete-loading')).toBe(true);
     expect(callbackMock).toHaveBeenCalledWith('female');
     expect(renderSpy).toHaveBeenCalledTimes(1);
   });

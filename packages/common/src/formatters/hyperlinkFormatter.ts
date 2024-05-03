@@ -1,7 +1,6 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import { type Formatter } from './../interfaces/index';
-import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 
 /**
  * Takes an hyperlink cell value and transforms it into a real hyperlink, given that the value starts with 1 of these (http|ftp|https).
@@ -15,13 +14,11 @@ import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
  */
 export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const columnParams = columnDef && columnDef.params || {};
-  const gridOptions = grid?.getOptions() ?? {};
-
   let displayedText = columnParams.hyperlinkText ? columnParams.hyperlinkText : value;
-  displayedText = sanitizeTextByAvailableSanitizer(gridOptions, displayedText);
+  displayedText = grid.sanitizeHtmlString(displayedText);
 
   let outputLink = columnParams.hyperlinkUrl ? columnParams.hyperlinkUrl : value;
-  outputLink = sanitizeTextByAvailableSanitizer(gridOptions, outputLink);
+  outputLink = grid.sanitizeHtmlString(outputLink);
 
   const matchUrl = outputLink.match(/^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&amp;:/~+#]*[\w\-@?^=%&amp;/~+#])?/i);
 

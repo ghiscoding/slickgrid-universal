@@ -27,7 +27,6 @@ import type {
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
-import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { getDescendantProperty, unsubscribeAll } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
@@ -586,7 +585,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
     // sanitize any unauthorized html tags like script and others
     // for the remaining allowed tags we'll permit all attributes
-    const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, finalText) || '';
+    const sanitizedText = this.grid.sanitizeHtmlString<string>(finalText) || '';
 
     const div = document.createElement('div');
     div[isRenderHtmlEnabled ? 'innerHTML' : 'textContent'] = sanitizedText;

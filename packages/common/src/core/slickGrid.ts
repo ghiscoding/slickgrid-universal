@@ -1,5 +1,4 @@
 import Sortable, { type SortableEvent } from 'sortablejs';
-import DOMPurify from 'isomorphic-dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
@@ -588,22 +587,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return; // same result, just skip it
         }
 
-        let sanitizedText = val;
-        if (typeof sanitizedText === 'number' || typeof sanitizedText === 'boolean') {
-          target.textContent = String(sanitizedText);
+        if (typeof val === 'number' || typeof val === 'boolean') {
+          target.textContent = String(val);
         } else {
-          if (typeof this._options?.sanitizer === 'function') {
-            sanitizedText = this._options.sanitizer(val as string);
-          } else if (typeof DOMPurify?.sanitize === 'function') {
-            const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizerOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify.Config;
-            sanitizedText = DOMPurify.sanitize(val as string, purifyOptions) as unknown as string;
-          }
+          const sanitizedText = this.sanitizeHtmlString(val);
 
-          // apply HTML when enableHtmlRendering is enabled but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
+          // apply HTML when enableHtmlRendering is enabled
+          // but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
           if (this._options.enableHtmlRendering && sanitizedText) {
-            target.innerHTML = sanitizedText;
+            target.innerHTML = sanitizedText as unknown as string;
           } else {
-            target.textContent = sanitizedText;
+            target.textContent = sanitizedText as unknown as string;
           }
         }
       }
@@ -6301,12 +6295,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  /** html sanitizer to avoid scripting attack */
-  sanitizeHtmlString(dirtyHtml: string) {
-    if (!this._options.sanitizer || typeof dirtyHtml !== 'string') {
-      return dirtyHtml;
+  /**
+   * Sanitize possible dirty html string (remove any potential XSS code like scripts and others) when provided as grid option
+   * @param dirtyHtml: dirty html string
+   */
+  sanitizeHtmlString<T extends string | TrustedHTML>(dirtyHtml: string): T {
+    if (typeof this._options?.sanitizer === 'function') {
+      return this._options.sanitizer(dirtyHtml) as T;
     }
-
-    return this._options.sanitizer(dirtyHtml);
+    return dirtyHtml as T;
   }
 }

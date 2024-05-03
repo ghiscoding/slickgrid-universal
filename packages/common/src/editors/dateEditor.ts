@@ -20,7 +20,6 @@ import { formatDateByFieldType, getDescendantProperty, mapMomentDateFormatWithFi
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
-import { sanitizeTextByAvailableSanitizer } from '../services';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Picker
@@ -124,7 +123,7 @@ export class DateEditor implements Editor {
       const pickerOptions: IOptions = {
         input: true,
         jumpToSelectedDate: true,
-        sanitizer: (dirtyHtml) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
+        sanitizer: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
         toggleSelected: false,
         actions: {
           clickDay: () => {

@@ -711,17 +711,11 @@ export interface GridOption<C extends Column = Column> {
   rowSelectionOptions?: RowSelectionModelOption;
 
   /**
-   * Optionally pass some options to the 3rd party lib "cure53/DOMPurify" used in some Filters.
-   * For this to work, "enableRenderHtml" as to be enabled.
-   */
-  sanitizerOptions?: unknown;
-
-  /**
    * By default the lib will use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`,
    * however you could optionally provide your own sanitizer callback instead of using DOMPurify.
    * e.g.: DOMPurify doesn't work in Salesforce, so a custom sanitizer is required
    */
-  sanitizer?: (dirtyHtml: string) => string;
+  sanitizer?: (dirtyHtml: string) => string | TrustedHTML;
 
   /** Defaults to 50, render throttling when scrolling large dataset */
   scrollRenderThrottling?: number;

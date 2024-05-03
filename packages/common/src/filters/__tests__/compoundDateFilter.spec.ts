@@ -28,6 +28,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 jest.useFakeTimers();

@@ -23,7 +23,6 @@ import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToS
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
-import { sanitizeTextByAvailableSanitizer } from '../services';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -279,7 +278,7 @@ export class DateFilter implements Filter {
       input: true,
       jumpToSelectedDate: true,
       type: this.inputFilterType === 'range' ? 'multiple' : 'default',
-      sanitizer: (dirtyHtml) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
+      sanitizer: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
       toggleSelected: false,
       actions: {
         clickDay: (_e) => {

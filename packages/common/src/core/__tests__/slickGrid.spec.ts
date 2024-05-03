@@ -811,16 +811,6 @@ describe('SlickGrid core file', () => {
       expect(divElm.outerHTML).toBe('<div><span>only text kept</span></div>');
     });
 
-    it('should be able to supply differnt sanitizer options to use with DOMPurify before applying html code', () => {
-      const divElm = document.createElement('div');
-      const htmlStr = '<span aria-label="some aria label">only text kept</span>';
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
-      grid.applyHtmlCode(divElm, htmlStr, { sanitizerOptions: { ALLOW_ARIA_ATTR: false } });
-
-      expect(divElm.outerHTML).toBe('<div><span>only text kept</span></div>');
-    });
-
     it('should expect HTML string to be kept as a string and not be converted (but html escaped) when "enableHtmlRendering" grid option is disabled', () => {
       const divElm = document.createElement('div');
       const htmlStr = '<span aria-label="some aria label">only text kept</span>';

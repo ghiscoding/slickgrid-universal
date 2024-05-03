@@ -35,6 +35,7 @@ const gridStub = {
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('SingleSelectEditor', () => {
@@ -253,37 +254,6 @@ describe('SingleSelectEditor', () => {
         expect(editor.getValue()).toEqual('');
         expect(editorListElm.length).toBe(2);
         expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
-      });
-
-      it('should create the multi-select editor with a default value and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
-        mockColumn.field = 'isEffort';
-        mockColumn.editor = {
-          enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
-          collectionOptions: {
-            separatorBetweenTextLabels: ': ',
-            includePrefixSuffixToSelectedValues: true,
-          },
-          customStructure: {
-            value: 'isEffort',
-            label: 'label',
-            labelPrefix: 'labelPrefix',
-          },
-        };
-        mockItemData = { id: 1, gender: 'male', isEffort: true };
-
-        editor = new SingleSelectEditor(editorArguments, 0);
-        editor.loadValue(mockItemData);
-        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
-
-        editorBtnElm.click();
-        editorListElm[0].click();
-
-        expect(editorBtnElm).toBeTruthy();
-        expect(editor.getValue()).toEqual(`<script>alert('test')></script><i class="mdi mdi-check"></i> : true`);
-        expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> : True');
       });
     });
   });
