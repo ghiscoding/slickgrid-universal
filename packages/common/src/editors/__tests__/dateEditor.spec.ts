@@ -360,7 +360,7 @@ describe('DateEditor', () => {
       it('should apply the value to the startDate property with "outputType" format with a field having dot notation (complex object) that passes validation', () => {
         mockColumn.editor!.validator = null as any;
         mockColumn.type = FieldType.date;
-        mockColumn.outputType = FieldType.dateTimeIsoAmPm;
+        mockColumn.outputType = FieldType.dateTimeShortEuro;
         mockColumn.field = 'employee.startDate';
         mockItemData = { id: 1, employee: { startDate: '2001-04-05T11:33:42.000Z' }, isActive: true };
 
@@ -370,7 +370,7 @@ describe('DateEditor', () => {
         editor.applyValue(mockItemData, newDate);
 
         // @ts-ignore:2349
-        expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a') }, isActive: true });
+        expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate).format('DD/MM/YYYY HH:mm') }, isActive: true });
       });
 
       it('should apply the value to the startDate property with output format defined by "saveOutputType" when it passes validation', () => {

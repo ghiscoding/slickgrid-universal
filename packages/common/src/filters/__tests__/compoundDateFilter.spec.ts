@@ -437,7 +437,7 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should have a value with date & time in the picker when "enableTime" option is set and we trigger a change', () => {
-    mockColumn.outputType = FieldType.dateTimeIsoAmPm;
+    mockColumn.outputType = FieldType.dateTimeShortEuro;
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
@@ -450,7 +450,7 @@ describe('CompoundDateFilter', () => {
 
     expect(filterFilledElms.length).toBe(1);
     // expect(filter.currentDateOrDates.toISOString()).toBe('2001-01-02T21:02');
-    expect(filterInputElm.value).toBe('2001-01-02 04:02:00 pm');
+    expect(filterInputElm.value).toBe('02/01/2001 16:02');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true
     });
