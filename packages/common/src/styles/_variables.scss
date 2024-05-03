@@ -2,7 +2,7 @@
 @import 'vanilla-calendar-picker/build/vanilla-calendar.min';
 
 // SASS utils to generate SVGs
-@import './sass-utilities';
+@import './svg-utilities';
 
 /*
  * SlickGrid-Universal theming variables, used by all Themes
@@ -485,6 +485,7 @@ $slick-large-editor-text-color:                             #333 !default;
 $slick-text-editor-border:                                  1px solid #e2e2e2 !default;
 $slick-text-editor-border-radius:                           $slick-editor-input-border-radius !default;
 $slick-text-editor-background:                              #ffffff !default;
+$slick-text-editor-color:                                   #333 !default;
 $slick-text-editor-margin-bottom:                           0 !default;
 $slick-text-editor-margin-left:                             -2px !default; /* negative number to cancel inside padding */
 $slick-text-editor-right-input-margin-left:                 calc(#{$slick-text-editor-margin-left} + 9px) !default;
@@ -1080,6 +1081,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-large-editor-background-color:                  var(--slick-base-dark-menu-bg-color);
   --slick-large-editor-border:                            2px solid #565656;
   --slick-large-editor-text-color:                        var(--slick-base-dark-text-color);
+  --slick-text-editor-color:                              var(--slick-base-dark-text-color);
   --slick-header-menu-button-icon-color:                  var(--slick-menu-color);
   --slick-text-editor-background:                         var(--slick-base-dark-menu-bg-color);
   --slick-pagination-button-border:                       1px solid #696969;
