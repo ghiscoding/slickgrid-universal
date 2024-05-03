@@ -1,6 +1,6 @@
 @import './variables';
 @import './slick.layout';
-@import './sass-utilities';
+@import './svg-utilities';
 
 .slick-cell  {
   input.dual-editor-text,
@@ -8,6 +8,7 @@
     border: var(--slick-text-editor-border, $slick-text-editor-border);
     border-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius);
     background: var(--slick-text-editor-background, $slick-text-editor-background);
+    color: var(--slick-text-editor-color, $slick-text-editor-color);
     padding-bottom: var(--slick-text-editor-padding-bottom, $slick-text-editor-padding-bottom);
     padding-left: var(--slick-text-editor-padding-left, $slick-text-editor-padding-left);
     padding-right: var(--slick-text-editor-padding-right, $slick-text-editor-padding-right);

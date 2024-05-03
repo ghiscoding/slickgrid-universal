@@ -36,7 +36,7 @@ The goal of this new release was mainly to improve UI/UX (mostly for Dark Mode) 
 
 > **NOTE:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
-For most breaking changes, a quick Search & Replace in your code editor should suffice. 
+For most breaking changes, a quick Search & Replace in your code editor should suffice.
 
 ## Changes
 
@@ -64,7 +64,7 @@ or move the class to the parent container and have both the icon & the text inhe
 ```
 
 #### SASS variables
-A lot of SASS variables were changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with yours SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted. Also a lot of the icon related variables got updated (icons now have the suffix `-icon-svg-path` for the SVG vector path). If you want create your own SVGs in pure CSS, you can use the `generateSvgStyle()` function from our [`sass-utilities.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/sass-utilities.scss) (take a look at the [`slickgrid-icons.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss) on its usage)
+A lot of SASS variables were changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with yours SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted. Also a lot of the icon related variables got updated (icons now have the suffix `-icon-svg-path` for the SVG vector path). If you want create your own SVGs in pure CSS, you can use the `generateSvgStyle()` function from our [`svg-utilities.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/svg-utilities.scss) (take a look at the [`slickgrid-icons.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss) on its usage)
 
 #### SASS (dart-sass) `math` polyfills are removed
 When SASS (dart-sass) released their version 1.33 (~3 years ago), it caused a ton of console warnings (and a lot of unhappy users) in projects that were using `/` in their SASS files (for math division) instead of their new `math.div()` function. To avoid seeing all these warnings, I added a temporary polyfill at the time (that piece of code was actually copied from the Bootstrap project). That polyfill patch was put in place about 3 years ago, so I'm assuming that most users have already upgraded their SASS version and already fixed all of these warnings. So, I think it's time to remove this polyfill because it was really meant to be a temp patch. If you see these warnings coming back, then a suggestion would be to use the SASS option `--quiet-upstream`.
@@ -187,7 +187,7 @@ The biggest change that you will have to do is the min/max date setting when usi
 
 prepareGrid() {
   this.columnDefinitions = [{
-    id: 'finish', field: 'finish', name: 'Finish', 
+    id: 'finish', field: 'finish', name: 'Finish',
     editor: {
       model: Editors.date,
 -      editorOptions: { minDate: 'today' } as FlatpickrOption,
@@ -204,17 +204,17 @@ The work on this subject started over a month ago in version [v4.6.0](https://gi
 
 An example of the previous `internalColumnEditor` usage was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you could not simply push directly to `collection.editor.collection`, you really had to use the mapping of `collection.internalColumnEditor.collection`... this is thankfully gone, you can now use the same and original `collection.editor.collection` 🎉
 
-For example, previously, to add an item to the editor/filter collection 
+For example, previously, to add an item to the editor/filter collection
 ```diff
 this.columnDefinitions = [{ id: 'complexity', editor: { model: Editors.singleSelect, collection: [{ value: 1, label: 'Simple' }, /*...*/ ] } }];
 
-// then adding an item would previously require to use `internalColumnEditor` 
+// then adding an item would previously require to use `internalColumnEditor`
 // after grid init, our `editor` became `internalColumnEditor
-- const complexityEditor = this.columnDefinitions[0].internalColumnEditor; 
+- const complexityEditor = this.columnDefinitions[0].internalColumnEditor;
 complexityEditor.collection.push({ value: 9, label: 'Hard' });
 
 // NOW with this new release, adding a new item to the collection is as simple as referencing the original object
-+ const complexityEditor = this.columnDefinitions[0].editor; 
++ const complexityEditor = this.columnDefinitions[0].editor;
 complexityEditor.collection.push({ value: 9, label: 'Hard' });
 ```
 

@@ -6,7 +6,7 @@
 
 /**
  * SlickGrid Material Theme (lite)
- * sames as `slickgrid-theme-material.scss` but without: 
+ * sames as `slickgrid-theme-material.scss` but without:
  *   `slick-without-bootstrap-min-styling.scss`, colors, extra-styling, slickgrid-icons and slickgrid-icons-svg-utils
  */
 
@@ -18,5 +18,4 @@
 @import './slick-plugins';
 @import './slick-component';
 @import './slickgrid-examples';
-@import './slick-bootstrap';
 @import './slick-autocomplete';

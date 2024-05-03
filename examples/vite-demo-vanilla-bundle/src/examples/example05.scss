@@ -1,9 +1,8 @@
 // @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 
 .grid5 {
+  --slick-cell-display: inline-flex;
   .slick-cell {
-    display: inline-flex;
-    align-items: center;
     column-gap: 4px;
   }
 }

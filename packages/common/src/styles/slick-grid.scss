@@ -1,16 +1,17 @@
 @import './variables';
 
 // ----------------------------------------------
-// default theme
+// Slick Grid default theme
 // ----------------------------------------------
 
+@keyframes fade {
+  0%, 100% { background: none }
+  50% { background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color) }
+}
+
 @keyframes slickgrid-invalid-highlight {
-  from {
-    box-shadow: 0 0 6px red;
-  }
-  to {
-    box-shadow: none;
-  }
+  from { box-shadow: 0 0 6px red; }
+  to { box-shadow: none; }
 }
 
 .full-height {
@@ -19,76 +20,119 @@
 .grid-pane {
   width: 100%;
 }
+.pointer {
+  cursor: pointer;
+}
 
- .pointer {
-   cursor: pointer;
- }
- .slickgrid-container {
-   .slick-header-columns,
-   .slick-header-column {
-     box-sizing: content-box !important; /* this here only for Firefox! */
-   }
-   .slick-header-column:hover {
-     background: $slick-header-column-background-hover
-   }
+.slickgrid-container {
+  overflow: hidden;
+  outline: 0;
+  position: relative;
+  box-sizing: content-box;
+  width: 100%;
+  border-top: var(--slick-container-border-top, $slick-container-border-top);
+  border-bottom: var(--slick-container-border-bottom, $slick-container-border-bottom);
+  border-left: var(--slick-container-border-left, $slick-container-border-left);
+  border-right: var(--slick-container-border-right, $slick-container-border-right);
+  font-family: var(--slick-font-family, $slick-font-family);
 
-   .slick-header-column-active {
-     background-color: var(--slick-header-column-background-active, $slick-header-column-background-active) !important;
-   }
+  // Reset the margin of the checkboxes. The grid
+  // needs a selection checbox column. Bootstrap gives
+  // these elements a 4px top margin, which we have to reset
+  // by aligning to baseline.
+  input[type="checkbox"] {
+    vertical-align: baseline;
+    margin: 0;
+  }
 
-   .slick-headerrow {
-     background: var(--slick-grid-header-background, $slick-grid-header-background);
-   }
-   .grid-canvas {
-     background: var(--slick-canvas-bg-color, $slick-canvas-bg-color);
-   }
+  .slick-group-header-column,
+  .slick-header-columns,
+  .slick-header-column {
+    box-sizing: content-box !important; /* this here only for Firefox! */
+  }
+  .slick-header-column:hover {
+    background: var(--slick-header-column-background-hover, $slick-header-column-background-hover);
+  }
 
-   .slick-row {
-     background: inherit;
-     border: 0;
-     line-height: 20px;
+  .slick-header-column-active {
+    background-color: var(--slick-header-column-background-active, $slick-header-column-background-active) !important;
+  }
 
-     .slick-cell {
-       background: inherit;
-       border: 1px transparent;
-       box-sizing: border-box;
+  .slick-headerrow {
+    background: var(--slick-grid-header-background, $slick-grid-header-background);
+  }
+  .grid-canvas {
+    background: var(--slick-canvas-bg-color, $slick-canvas-bg-color);
+  }
 
-       &.invalid {
-         border-color: red;
-         animation-duration: 0.2s;
-         animation-name: slickgrid-invalid-highlight;
-       }
+  .slick-group {
+    border-bottom: var(--slick-group-border-bottom, $slick-group-border-bottom);
+  }
 
-       &.active {
-         box-shadow: var(--slick-cell-active-box-shadow, $slick-cell-active-box-shadow);
-         border: var(--slick-cell-active-border, $slick-cell-active-border);
-         z-index: var(--slick-cell-active-z-index, $slick-cell-active-z-index);
+  .slick-sortable-placeholder {
+    background: var(--slick-header-column-sortable-background-hover, $slick-header-column-sortable-background-hover);
+  }
 
-         // We compensate for the all-around border (now 1px at top and left too!)
-         padding: var(--slick-cell-padding, $slick-cell-padding);
+  .slick-row {
+    position: absolute;
+    width: 100%;
+    border: 0;
+    line-height: 20px;
+    color: var(--slick-cell-text-color, $slick-cell-text-color);
+    font-family: var(--slick-cell-font-family, $slick-cell-font-family);
+    font-weight: var(--slick-cell-font-weight, $slick-cell-font-weight);
 
-         input.dual-editor-text {
-           width: calc(50% + 1px - 5px); // 1px (is 2px / 2) and 5px (is space between the 2 inputs)
-           height: 100%;
-           outline: 0;
-           transform: translate(0, -2px);
-         }
-       }
-
-       &.slick-rbe-unsaved-cell {
-        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
+    &:hover {
+      background-color: var(--slick-row-mouse-hover-color, $slick-row-mouse-hover-color);
+      box-shadow: var(--slick-row-mouse-hover-box-shadow, $slick-row-mouse-hover-box-shadow);
+      z-index: var(--slick-row-mouse-hover-z-index, $slick-row-mouse-hover-z-index);
+    }
+    &.active {
+      padding: var(--slick-cell-padding, $slick-cell-padding);
+    }
+    &.highlighter {
+      background: orange !important;
+      transition-property: background;
+      transition-duration: 3s;
+      transition-timing-function: ease-in;
+    }
+    &.copied {
+      background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
+      transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
+    }
+    &.odd {
+      background-color: var(--slick-cell-odd-background-color, $slick-cell-odd-background-color);
+      &:hover {
+        background-color: var(--slick-row-mouse-hover-color, $slick-row-mouse-hover-color);
       }
-     }
+    }
+    &.odd .slick-cell {
+      &.selected {
+        background-color: var(--slick-row-selected-color, $slick-row-selected-color);
+      }
+      &.copied {
+        background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
+        transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
+      }
+      background: inherit;
+    }
+    &.highlight {
+      background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
+    }
+    &.highlight-animate {
+      background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color) !important;
+      animation: fade var(--slick-row-highlight-fade-animation, $slick-row-highlight-fade-animation);
+    }
+    &.slick-group-totals {
+      color: var(--slick-group-totals-formatter-color, $slick-group-totals-formatter-color);
+      background: var(--slick-group-totals-formatter-bgcolor, $slick-group-totals-formatter-bgcolor);
+      .slick-cell {
+        font-size: var(--slick-group-totals-formatter-font-size, $slick-group-totals-formatter-font-size);
+      }
+    }
 
-     &.active-row .slick-cell {
-       background-color: rgb(226, 255, 253);
-     }
-
-     &.active-row.odd .slick-cell {
-       background-color: $slick-cell-odd-active-background-color;
-     }
-
-     &.slick-rbe-editmode .slick-cell {
+    &.slick-rbe-editmode.active .slick-cell,
+    &.slick-rbe-editmode .slick-cell {
       background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
 
       &:hover {
@@ -107,31 +151,63 @@
         }
       }
     }
-   }
 
-   .slick-group {
-     border-bottom: var(--slick-group-border-bottom, $slick-group-border-bottom);
-   }
+    .slick-cell {
+      &.invalid {
+        border-color: red;
+        animation-duration: 0.2s;
+        animation-name: slickgrid-invalid-highlight;
+      }
 
-   .slick-group-totals {
-     background: var(--slick-group-totals-text-background, $slick-group-totals-text-background);
-     color: var(--slick-group-totals-text-color, $slick-group-totals-text-color);
-   }
+      &.active {
+        box-shadow: var(--slick-cell-active-box-shadow, $slick-cell-active-box-shadow);
+        border: var(--slick-cell-active-border, $slick-cell-active-border);
+        z-index: var(--slick-cell-active-z-index, $slick-cell-active-z-index);
 
-   .slick-sortable-placeholder {
-     background: var(--slick-header-column-sortable-background-hover, $slick-header-column-sortable-background-hover);
-   }
-}
+        // We compensate for the all-around border (now 1px at top and left too!)
+        padding: var(--slick-cell-padding, $slick-cell-padding);
 
-// ----------------------------------------------
-// Slick Grid theme
-// ----------------------------------------------
+        input.dual-editor-text {
+          width: calc(50% + 1px - 5px); // 1px (is 2px / 2) and 5px (is space between the 2 inputs)
+          height: 100%;
+          outline: 0;
+          transform: translate(0, -2px);
+        }
+      }
 
-.slickgrid-container {
-  overflow: hidden;
-  outline: 0;
-  position: relative;
-  box-sizing: content-box;
+      &.slick-rbe-unsaved-cell {
+        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
+      }
+    }
+
+    &.active-row .slick-cell {
+      background-color: rgb(226, 255, 253);
+    }
+
+    &.active-row.odd .slick-cell {
+      background-color: $slick-cell-odd-active-background-color;
+    }
+
+    &.slick-rbe-editmode .slick-cell {
+      background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
+
+      &:hover {
+        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
+
+        .active {
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor) !important;
+        }
+      }
+
+      .active {
+        background-color: var(--slick-row-based-edit-editmode-active-bgcolor, $slick-row-based-edit-editmode-active-bgcolor);
+
+        &:hover {
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor);
+        }
+      }
+    }
+  }
 
   .slick-group-header-columns {
     position: relative;
@@ -149,7 +225,6 @@
   .slick-group-header-column.slick-state-default {
     position: relative;
     display: inline-block;
-    box-sizing: content-box !important; /* this here only for Firefox! */
     overflow: hidden;
     text-overflow: ellipsis;
     height: 16px;
@@ -198,7 +273,12 @@
   }
 
   .slick-viewport {
+    height: 100%;
     overflow: auto;
+    border-top: var(--slick-viewport-border-top, $slick-viewport-border-top);
+    border-bottom: var(--slick-viewport-border-bottom, $slick-viewport-border-bottom);
+    border-left: var(--slick-viewport-border-left, $slick-viewport-border-left);
+    border-right: var(--slick-viewport-border-right, $slick-viewport-border-right);
     ::-webkit-scrollbar {
       -webkit-appearance: none;
     }
@@ -265,27 +345,17 @@
   .slick-header-column.slick-state-default {
     position: relative;
     display: inline-block;
-    box-sizing: content-box !important;
     overflow: hidden;
     text-overflow: ellipsis;
     height: 16px;
     line-height: 16px;
     margin: 0;
     padding: 4px;
-    border-right: 1px solid $slick-grid-border-color;
+    border-right: 1px solid var(--slick-grid-border-color, $slick-grid-border-color);
     border-left: 0px !important;
     border-top: 0px !important;
     border-bottom: 0px !important;
     float: left;
-  }
-
-
-  .slick-cell {
-    box-sizing: border-box;
-    border-style: var(--slick-grid-border-style, $slick-grid-border-style);
-    display: var(--slick-cell-display, $slick-cell-display);
-    padding: 1px 2px;
-    align-items: center;
   }
 
   .slick-header-column {
@@ -295,12 +365,6 @@
   .grid-canvas {
     position: relative;
     outline: 0;
-  }
-
-  .slick-row {
-    position: absolute;
-    border: 0;
-    width: 100%;
   }
 
   .slick-header.slick-state-default {
@@ -314,23 +378,14 @@
     -webkit-line-clamp: var(--slick-header-row-count, $slick-header-row-count);
   }
 
-  .slick-resizable-handle {
-    position: absolute;
-    font-size: 0.1px;
-    display: block;
-    cursor: col-resize;
-    width: 4px;
-    right: 0;
-    top: 0;
-    height: 100%;
-  }
-
-  .slick-resizable-handle-hover {
-    background-color: #ccc;
-  }
-
-  .slick-sortable-placeholder {
-    background: var(--slick-header-column-sortable-background-hover, $slick-header-column-sortable-background-hover);
+  .slick-cell {
+    background: inherit;
+    border: 1px transparent;
+    box-sizing: border-box;
+    border-style: var(--slick-grid-border-style, $slick-grid-border-style);
+    display: var(--slick-cell-display, $slick-cell-display);
+    padding: 1px 2px;
+    align-items: center;
   }
 
   .slick-cell {
@@ -376,45 +431,357 @@
     z-index: 999999;
     box-shadow: var(--slick-row-move-plugin-shadow-row-box-shadow, $slick-row-move-plugin-shadow-row-box-shadow);
   }
-
-  .slick-reorder-shadow-row {
-    position: absolute;
-    z-index: 999999;
-    box-shadow: rgb(0 0 0 / 20%) 8px 2px 8px 4px, rgb(0 0 0 / 19%) 2px 2px 0px 0px;
-  }
-
-  .slick-selection {
-    z-index: 10;
-    position: absolute;
-    border: 2px dashed black;
-  }
-
-  .slick-pane {
-    position: absolute;
-    outline: 0;
-    overflow: hidden;
-    width: 100%;
-  }
 }
-
-.interact-placeholder {
-  background: red !important;
-  display: inline-block;
-  float: left;
-  transform: translate(0px, -100%);
-}
-
-.interact-drop-active {
-  box-shadow: inset 0 0 8px rgba(7, 67, 128, 0.5);
-}
-
-.interact-can-drop {
-  opacity: .9;
-}
-
 
 .scrollbar-fix {
   &::-webkit-scrollbar {
     -webkit-appearance: none;
+  }
+}
+
+.slickgrid-container {
+  @mixin resetSlickCell() {
+    padding: var(--slick-cell-padding, $slick-cell-padding);
+    font-size: var(--slick-font-size-base, $slick-font-size-base);
+    td {
+      font-size: var(--slick-font-size-base, $slick-font-size-base);
+    }
+    body & {
+      line-height: 20px;
+    }
+  }
+
+  .grid-canvas {
+    .slick-cell, .slick-headerrow-column {
+      border-top: var(--slick-cell-border-top, $slick-cell-border-top);
+      border-bottom: var(--slick-cell-border-bottom, $slick-cell-border-bottom);
+      border-left: var(--slick-cell-border-left, $slick-cell-border-left);
+      border-right: var(--slick-cell-border-right, $slick-cell-border-right);
+      box-shadow: var(--slick-cell-box-shadow, $slick-cell-box-shadow);
+    }
+
+    .slick-cell {
+      @include resetSlickCell();
+
+      &.even {
+        background-color: var(--slick-cell-even-background-color, $slick-cell-even-background-color);
+      }
+      &.slick-rbe-unsaved-cell {
+        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
+      }
+
+      a, a:visited, .slick-widget-content a, .slick-widget-content a:visited {
+        color: var(--slick-link-color, $slick-link-color);
+      }
+      a:hover, .slick-widget-content a:hover {
+        color: var(--slick-link-color-hover, $slick-link-color-hover);
+        border-bottom: none;
+      }
+      table {
+        height: 100%;
+        padding: 0;
+        background: none;
+      }
+      td {
+        padding: 0;
+        vertical-align: middle;
+        text-align: left;
+      }
+      &.selected {
+        background-color: var(--slick-row-selected-color, $slick-row-selected-color);
+      }
+      &.copied {
+        background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
+        transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
+      }
+      select:not([multiple]).form-control {
+        height: 100%;
+        padding: 0;
+      }
+      .slick-group-title {
+        height: var(--slick-draggable-group-title-height, $slick-draggable-group-title-height);
+        line-height: var(--slick-draggable-group-title-line-height, $slick-draggable-group-title-line-height);
+        vertical-align: var(--slick-draggable-group-title-vertical-align, $slick-draggable-group-title-vertical-align);
+      }
+
+      .slick-group-toggle {
+        cursor: pointer;
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: var(--slick-icon-group-color, $slick-icon-group-color);
+        font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
+        margin-right: var(--slick-icon-group-margin-right, $slick-icon-group-margin-right);
+
+        &.expanded {
+          @include generateSvgStyle('slick-icon-group-expanded-svg', $slick-icon-group-expanded-svg-path);
+        }
+        &.collapsed {
+          @include generateSvgStyle('slick-icon-group-collapsed-svg', $slick-icon-group-collapsed-svg-path);
+        }
+        &.expanded,
+        &.collapsed {
+          background-color: currentColor;
+        }
+      }
+      // fix alignment when slick-cell includes slickgrid icons (align bottom will in fact center the icon & text), for example Tree Data/Grouping
+      .slick-group-toggle,
+      .mdi {
+        vertical-align: var(--slick-icon-with-text-valign, $slick-icon-with-text-valign);
+      }
+    }
+  }
+
+  .slick-header {
+    border-top: var(--slick-header-border-top, $slick-header-border-top);
+    border-right: var(--slick-header-border-right, $slick-header-border-right);
+    border-bottom: var(--slick-header-border-bottom, $slick-header-border-bottom);
+    border-left: var(--slick-header-border-left, $slick-header-border-left);
+    width: 100%;
+    box-shadow: none !important;
+  }
+
+  .slick-headerrow {
+    border-bottom: var(--slick-header-filter-row-border-bottom, $slick-header-filter-row-border-bottom);
+    border-top: var(--slick-header-filter-row-border-top, $slick-header-filter-row-border-top);
+    border-left: var(--slick-header-filter-row-border-left, $slick-header-filter-row-border-left);
+    border-right: var(--slick-header-filter-row-border-right, $slick-header-filter-row-border-right);
+
+    .slick-headerrow-columns {
+      .slick-headerrow-column {
+        border: none;
+        padding: var(--slick-header-row-filter-padding, $slick-header-row-filter-padding);
+        background: var(--slick-header-row-background-color, $slick-header-row-background-color);
+      }
+      .slick-headerrow-column input,
+      .slick-headerrow-column select,
+      .slick-headerrow-column textarea {
+        margin-right: 0;
+        padding: var(--slick-header-input-padding, $slick-header-input-padding);
+        height: var(--slick-header-input-height, $slick-header-input-height);
+        box-sizing: border-box;
+      }
+    }
+  }
+
+  .slick-header-columns {
+    background: var(--slick-grid-header-background, $slick-grid-header-background);
+    background-color: var(--slick-header-background-color, $slick-header-background-color);
+    width: calc(100% - #{var(--slick-header-scroll-width-to-remove, $slick-header-scroll-width-to-remove)});
+
+    [id$="checkbox_selector"] {
+      justify-content: center;
+      display: flex;
+    }
+
+    .slick-header-sortable .slick-column-name {
+      margin-left: 0;
+    }
+
+    .slick-header-column {
+      height: var(--slick-header-column-height, $slick-header-column-height);
+      line-height: var(--slick-font-size-base, $slick-font-size-base);
+      margin: 0;
+      border-top: var(--slick-header-column-border-top, $slick-header-column-border-top);
+      border-right: var(--slick-header-column-border-right, $slick-header-column-border-right);
+      border-bottom: var(--slick-header-column-border-bottom, $slick-header-column-border-bottom);
+      border-left: var(--slick-header-column-border-left, $slick-header-column-border-left);
+      white-space: normal;
+      &.slick-state-default {
+        @include resetSlickCell();
+      }
+      .slick-column-name {
+        margin-right: var(--slick-header-column-name-margin-right, $slick-header-column-name-margin-right);
+      }
+
+      @mixin ResetColumns () {
+        /* like TH  */
+        background: var(--slick-header-background-color, $slick-header-background-color);
+        font-family: var(--slick-font-family, $slick-font-family);
+        color: var(--slick-header-text-color, $slick-header-text-color);
+        font-size: var(--slick-header-font-size, $slick-header-font-size);
+        font-weight: var(--slick-header-font-weight, $slick-header-font-weight);
+        a, a:visited {
+          color: var(--slick-text-color, $slick-text-color);
+        }
+        a:hover {
+          color: var(--slick-hover-header-color, $slick-hover-header-color);
+        }
+      }
+
+      @include ResetColumns ();
+      &.slick-state-default {
+        @include ResetColumns ();
+      }
+
+      &.slick-header-column-sorted {
+        font-style: normal;
+        color: var(--slick-sorting-header-color, $slick-sorting-header-color);
+      }
+      &:hover {
+        color: var(--slick-hover-header-color, $slick-hover-header-color);
+      }
+
+      .slick-sort-indicator ,
+      .slick-sort-indicator-numbered {
+        display: inline-block;
+        position: absolute;
+        color: var(--slick-icon-sort-color, $slick-icon-sort-color);
+      }
+
+      .slick-sort-indicator {
+        height: 1em;
+        width: 1em;
+        left: auto;
+        font-size: var(--slick-icon-sort-font-size, $slick-icon-sort-font-size);
+        right: var(--slick-icon-sort-position-right, $slick-icon-sort-position-right);
+        top: var(--slick-icon-sort-position-top, $slick-icon-sort-position-top);
+      }
+      .slick-sort-indicator-numbered {
+        font-family: var(--slick-font-family, $slick-font-family);
+        font-size: var(--slick-sort-indicator-number-font-size, $slick-sort-indicator-number-font-size);
+        width: var(--slick-sort-indicator-number-width, $slick-sort-indicator-number-width);
+        left: var(--slick-sort-indicator-number-left, $slick-sort-indicator-number-left);
+        right: var(--slick-sort-indicator-number-right, $slick-sort-indicator-number-right);
+        top: var(--slick-sort-indicator-number-top, $slick-sort-indicator-number-top);
+      }
+
+      // when sorting is possible and there's not yet a sort applied on the column
+      // we could display the sort ascending icon (with an opacity) as a hint */
+      &.slick-header-sortable.slick-state-hover:not(.slick-header-column-sorted) {
+        .slick-sort-indicator {
+          opacity: var(--slick-sort-indicator-hint-opacity, $slick-sort-indicator-hint-opacity);
+          @include generateSvgStyle('slick-icon-sort-asc-icon-svg', $slick-icon-sort-asc-icon-svg-path);
+        }
+      }
+      .slick-sort-indicator-asc {
+        @include generateSvgStyle('slick-icon-sort-asc-icon-svg', $slick-icon-sort-asc-icon-svg-path);
+      }
+      .slick-sort-indicator-desc {
+        @include generateSvgStyle('slick-icon-sort-desc-icon-svg', $slick-icon-sort-desc-icon-svg-path);
+      }
+      .slick-sort-indicator-asc,
+      .slick-sort-indicator-desc {
+        opacity: 1;
+        background-color: currentColor;
+      }
+
+      .slick-resizable-handle {
+        position: absolute;
+        font-size: 0.1px;
+        display: block;
+        cursor: col-resize;
+        top: 0;
+        height: 100%;
+        width: 7px;
+        right: 0;
+        z-index: 1;
+
+        &:hover {
+          border-bottom: var(--slick-header-resizable-hover-border-bottom, $slick-header-resizable-hover-border-bottom);
+          border-left: var(--slick-header-resizable-hover-border-left, $slick-header-resizable-hover-border-left);
+          border-right: var(--slick-header-resizable-hover-border-right, $slick-header-resizable-hover-border-right);
+          border-top: var(--slick-header-resizable-hover-border-top, $slick-header-resizable-hover-border-top);
+          border-radius: var(--slick-header-resizable-hover-border-radius, $slick-header-resizable-hover-border-radius);
+          width: var(--slick-header-resizable-hover-width, $slick-header-resizable-hover-width);
+          right: var(--slick-header-resizable-hover-right, $slick-header-resizable-hover-right);
+          height: var(--slick-header-resizable-hover-height, $slick-header-resizable-hover-height);
+          top: var(--slick-header-resizable-hover-top, $slick-header-resizable-hover-top);
+          opacity: var(--slick-header-resizable-hover-opacity, $slick-header-resizable-hover-opacity);
+        }
+      }
+      &.unorderable {
+        background-color: var(--slick-grid-header-unorderable-bg-color, $slick-grid-header-unorderable-bg-color);
+      }
+    }
+  }
+
+  /** Header Grouping **/
+  .slick-preheader-panel.slick-state-default  {
+    border-bottom: var(--slick-preheader-border-bottom, $slick-preheader-border-bottom);
+
+    .slick-header-columns {
+      border-top: var(--slick-preheader-border-top, $slick-preheader-border-top);
+
+      .slick-header-column {
+        height: var(--slick-preheader-height, $slick-preheader-height);
+        border-left: var(--slick-preheader-border-left, $slick-preheader-border-left);
+        border-right: var(--slick-preheader-border-right, $slick-preheader-border-right);
+        font-size: var(--slick-preheader-font-size, $slick-preheader-font-size);
+        justify-content: var(--slick-preheader-grouped-title-justify, $slick-preheader-grouped-title-justify);
+        display: var(--slick-preheader-grouped-title-display, $slick-preheader-grouped-title-display);
+      }
+      .slick-header-column:first-child {
+        border-left: var(--slick-preheader-border-left-first-element, $slick-preheader-border-left-first-element);
+      }
+      .slick-header-column:last-child {
+        border-right: var(--slick-preheader-border-right-last-element, $slick-preheader-border-right-last-element);
+      }
+    }
+  }
+
+  /** Frozen/Pinned styling */
+
+  .slick-row .slick-cell.frozen:last-child,
+  .slick-footerrow-column.frozen:last-child {
+    border-right: var(--slick-frozen-border-right, $slick-frozen-border-right);
+  }
+  .slick-header-column.frozen:last-child {
+    border-right: var(--slick-frozen-header-row-border-right, $slick-frozen-header-row-border-right);
+  }
+  .slick-pane-left {
+    .slick-preheader-panel .slick-header-column.frozen:last-child {
+      border-right: var(--slick-frozen-preheader-row-border-right, $slick-frozen-preheader-row-border-right);
+    }
+  }
+  .slick-headerrow-column.frozen:last-child {
+    border-right: var(--slick-frozen-filter-row-border-right, $slick-frozen-filter-row-border-right);
+  }
+
+  .slick-pane-bottom {
+    border-top: var(--slick-frozen-border-bottom, $slick-frozen-border-bottom);
+  }
+  .slick-viewport-bottom.slick-viewport-right {
+    overflow-y: var(--slick-frozen-overflow-right, $slick-frozen-overflow-right) !important;
+  }
+  .input-group {
+    display: flex;
+
+    > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+      margin-left: 0;
+      &.slick-slider-horizontal {
+        margin-left: 10px;
+      }
+    }
+
+    .input-group-append,
+    .input-group-prepend {
+      display: inline-flex;
+      width: auto;
+    }
+
+    .input-group-addon {
+      input {
+        flex: 1 1 auto;
+        width: 1%;
+      }
+      .input-group-text {
+        height: 100%;
+      }
+      &.input-group-append {
+        .input-group-text {
+          margin-left: -1px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+      }
+      &.input-group-prepend {
+        .input-group-text {
+          margin-right: -1px;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+      }
+    }
   }
 }
