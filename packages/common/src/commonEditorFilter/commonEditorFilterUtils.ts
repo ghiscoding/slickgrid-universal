@@ -1,10 +1,10 @@
+import { format } from '@formkit/tempo';
 import type { AutocompleteItem } from 'autocompleter';
 import type { IOptions } from 'vanilla-calendar-picker';
-import moment from 'moment-tiny';
 
 import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
-import { formatDateByFieldType, mapMomentDateFormatWithFieldType } from '../services';
 import { FieldType } from '../enums';
+import { formatTempoDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element
@@ -37,23 +37,26 @@ export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IO
   const currentDateOrDates = dateValues;
   const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || FieldType.dateUtc;
   const inputFieldType = colEditorOrFilter.type || columnDef.type;
-  const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso) as string;
-  const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : '';
+  const isoFormat = mapTempoDateFormatWithFieldType(FieldType.dateIso) as string;
+  const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
   const initialDates = Array.isArray(currentDateOrDates) ? currentDateOrDates : [(currentDateOrDates || '') as string];
   if (initialDates.length && initialDates[0]) {
-    const pickerDates = [];
+    const pickerDates: Date[] = [];
     for (const initialDate of initialDates) {
-      const momentDate = moment(initialDate, inputFormat);
-      pickerDates.push(momentDate);
+      const date = initialDate instanceof Date ? initialDate : tryParseDate(initialDate, inputFormat);
+      if (date) {
+        pickerDates.push(date);
+      }
     }
 
-    const singleinputFormat = Array.isArray(inputFormat) ? inputFormat[0] : inputFormat;
-    pickerOptions.settings!.selected = {
-      dates: [pickerDates.map(p => p.format(isoFormat)).join(':')],
-      month: pickerDates[0].month(),
-      year: pickerDates[0].year(),
-      time: singleinputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : undefined,
-    };
-    dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
+    if (pickerDates.length) {
+      pickerOptions.settings!.selected = {
+        dates: [pickerDates.map(p => format(p, isoFormat)).join(':')],
+        month: pickerDates[0].getMonth(),
+        year: pickerDates[0].getFullYear(),
+        time: (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
+      };
+    }
+    dateInputElm.value = initialDates.length ? pickerDates.map(p => formatTempoDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }
 }

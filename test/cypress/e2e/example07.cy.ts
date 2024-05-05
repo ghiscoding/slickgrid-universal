@@ -554,7 +554,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       });
   });
 
-  it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
+  it('should expect "Clear all Filters" command to be hidden again in the Grid Menu', () => {
     const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
 
     cy.get('.grid7')

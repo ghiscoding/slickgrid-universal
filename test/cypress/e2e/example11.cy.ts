@@ -1,4 +1,3 @@
-import moment from 'moment-tiny';
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {
@@ -7,7 +6,7 @@ describe('Example 11 - Batch Editing', () => {
   const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
   const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
-  const currentYear = moment().year();
+  const currentYear = new Date().getFullYear();
 
   beforeEach(() => {
     // create a console.log spy for later use
@@ -644,7 +643,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/i);
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
 
-    cy.get('.grid-canvas-right > [style="top: 0px;"] > .slick-cell:nth(0)').contains(/\$[0-9\.]*/);
+    cy.get('.grid-canvas-right > [style="top: 0px;"] > .slick-cell:nth(0)').contains(/\$[0-9.]*/);
 
     cy.get('.slick-pane-left')
       .find('.slick-grid-menu-button')
@@ -740,7 +739,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/i);
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
 
-    cy.get('.grid-canvas-right > [style="top: 0px;"] > .slick-cell:nth(0)').contains(/\$?[0-9\.]*/);
+    cy.get('.grid-canvas-right > [style="top: 0px;"] > .slick-cell:nth(0)').contains(/\$?[0-9.]*/);
 
     cy.get('.slick-pane-left')
       .find('.slick-grid-menu-button')

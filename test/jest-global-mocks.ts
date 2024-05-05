@@ -37,9 +37,3 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
-
-// Jest has a hard time with MomentJS because they export as default, to bypass this problem we can mock the require .default
-jest.mock('moment-tiny', () => {
-  const actual = jest.requireActual('moment-tiny');
-  return { __esModule: true, ...actual, default: actual };
-});

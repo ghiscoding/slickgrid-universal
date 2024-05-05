@@ -1,12 +1,12 @@
+import { format } from '@formkit/tempo';
 import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
-import moment from 'moment-tiny';
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
-import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
 import { Constants } from '../constants';
 import { type SlickGrid } from '../core/index';
+import { mapTempoDateFormatWithFieldType, toUtcDate, tryParseDate } from '../services/dateUtils';
 
 export type FormatterType = 'group' | 'cell';
 export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
@@ -96,7 +96,7 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 
 /** From a FieldType, return the associated date Formatter */
 export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
-  let defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
+  let defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, true);
   if (Array.isArray(defaultDateFormat)) {
     defaultDateFormat = defaultDateFormat[0];
   }
@@ -105,13 +105,17 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? FieldType.date;
-    const inputDateFormat = mapMomentDateFormatWithFieldType(inputType);
+    const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, true);
     const isParsingAsUtc = columnDef?.params?.parseDateAsUtc ?? false;
 
-    const isDateValid = moment(value, inputDateFormat, false).isValid();
+    const date = tryParseDate(value, inputDateFormat);
     let outputDate = value;
-    if (value && isDateValid) {
-      outputDate = isParsingAsUtc ? moment.utc(value).format(defaultDateFormat) : moment(value).format(defaultDateFormat);
+    if (date) {
+      let d = value;
+      if (isParsingAsUtc) {
+        d = toUtcDate(date);
+      }
+      outputDate = format(d, defaultDateFormat);
     }
 
     // user can customize the separator through the "formatterOptions"

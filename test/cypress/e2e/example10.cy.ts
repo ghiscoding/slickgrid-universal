@@ -1,11 +1,11 @@
-import moment from 'moment-tiny';
+import { addDay, format } from '@formkit/tempo';
 
 function removeSpaces(textS) {
   return `${textS}`.replace(/\s+/g, '');
 }
 
-const presetLowestDay = moment().add(-2, 'days').format('YYYY-MM-DD');
-const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
+const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
+const presetHighestDay = format(addDay(new Date(), 20), 'YYYY-MM-DD');
 
 describe('Example 10 - GraphQL Grid', () => {
   it('should display Example title', () => {

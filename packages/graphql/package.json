@@ -52,9 +52,6 @@
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~"
   },
-  "devDependencies": {
-    "moment-tiny": "^2.30.4"
-  },
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"

@@ -113,7 +113,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('');
       expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<span class="timestamp"><span><span class="text-last-update">some last update</span>
-        <span class="last-update-timestamp">2019-05-03, 12:00:01am</span>
+        <span class="last-update-timestamp">2019-05-03, 12:00:01a.m.</span>
           <span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
           <span class="text-items">some items</span>`));
@@ -181,7 +181,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('');
       expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<span class="timestamp"><span><span class="text-last-update">Last Update</span>
-        <span class="last-update-timestamp">2019-05-03, 12:00:01am</span>
+        <span class="last-update-timestamp">2019-05-03, 12:00:01a.m.</span>
           <span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">of</span><span class="total-count">99</span>
           <span class="text-items">items</span>`));
@@ -215,7 +215,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('');
       expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<span class="timestamp"><span><span class="text-last-update">Dernière mise à jour</span>
-          <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="last-update-timestamp">2019-05-03, 12:00:01a.m.</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">de</span><span class="total-count">99</span>
           <span class="text-items">éléments</span>`));
     });
@@ -254,7 +254,7 @@ describe('Slick-Footer Component', () => {
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('custom left footer text');
       expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"><span><span class="text-last-update">some last update</span><span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+        `<span class="timestamp"><span><span class="text-last-update">some last update</span><span class="last-update-timestamp">2019-05-03, 12:00:01a.m.</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
           <span class="text-items">some items</span>`));
     });
@@ -277,7 +277,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('1 items selected');
       expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<span class="timestamp"><span><span class="text-last-update">some last update</span>
-          <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="last-update-timestamp">2019-05-03, 12:00:01a.m.</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
           <span class="text-items">some items</span>`));
 
@@ -304,7 +304,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('');
       expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<span class="timestamp"><span><span class="text-last-update">some last update</span>
-          <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="last-update-timestamp">2019-05-03, 12:00:01a.m.</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
           <span class="text-items">some items</span>`));
     });

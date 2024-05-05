@@ -1,6 +1,5 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
-import moment, { type Moment } from 'moment-tiny';
 
 import { Constants } from '../constants';
 import { FieldType, type OperatorString, OperatorType } from '../enums/index';
@@ -399,109 +398,6 @@ export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldT
   }
 }
 
-export function formatDateByFieldType(inputDate: Date | string | Moment, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
-  const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : undefined;
-  const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
-  const momentDate = (inputDate instanceof moment ? inputDate : moment(inputDate, inputFormat)) as Moment;
-
-  if (momentDate.isValid() && inputDate !== undefined) {
-    if (outputFieldType === FieldType.dateUtc) {
-      return momentDate.toISOString();
-    }
-    return momentDate.format(Array.isArray(outputFormat) ? outputFormat[0] : outputFormat);
-  }
-  return '';
-}
-
-/**
- * From a Date FieldType, return it's equivalent moment.js format
- * refer to moment.js for the format standard used: https://momentjs.com/docs/#/parsing/string-format/
- * @param fieldType
- */
-export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): string | string[] {
-  let map: string | string[];
-  switch (fieldType) {
-    case FieldType.dateTime:
-    case FieldType.dateTimeIso:
-      map = 'YYYY-MM-DD HH:mm:ss';
-      break;
-    case FieldType.dateTimeIsoAmPm:
-      map = 'YYYY-MM-DD hh:mm:ss a';
-      break;
-    case FieldType.dateTimeIsoAM_PM:
-      map = 'YYYY-MM-DD hh:mm:ss A';
-      break;
-    case FieldType.dateTimeShortIso:
-      map = 'YYYY-MM-DD HH:mm';
-      break;
-    // all Euro Formats (date/month/year)
-    case FieldType.dateEuro:
-      map = 'DD/MM/YYYY';
-      break;
-    case FieldType.dateEuroShort:
-      map = ['DD/MM/YY', 'D/M/YY'];
-      break;
-    case FieldType.dateTimeEuro:
-      map = 'DD/MM/YYYY HH:mm:ss';
-      break;
-    case FieldType.dateTimeShortEuro:
-      map = ['DD/MM/YYYY HH:mm', 'D/M/YYYY HH:mm'];
-      break;
-    case FieldType.dateTimeEuroAmPm:
-      map = 'DD/MM/YYYY hh:mm:ss a';
-      break;
-    case FieldType.dateTimeEuroAM_PM:
-      map = 'DD/MM/YYYY hh:mm:ss A';
-      break;
-    case FieldType.dateTimeEuroShort:
-      map = ['DD/MM/YY H:m:s', 'D/M/YY H:m:s'];
-      break;
-    case FieldType.dateTimeEuroShortAmPm:
-      map = ['DD/MM/YY h:m:s a', 'D/M/YY h:m:s a'];
-      break;
-    case FieldType.dateTimeEuroShortAM_PM:
-      map = ['DD/MM/YY h:m:s A', 'D/M/YY h:m:s A'];
-      break;
-    // all US Formats (month/date/year)
-    case FieldType.dateUs:
-      map = 'MM/DD/YYYY';
-      break;
-    case FieldType.dateUsShort:
-      map = ['MM/DD/YY', 'M/D/YY'];
-      break;
-    case FieldType.dateTimeUs:
-      map = 'MM/DD/YYYY HH:mm:ss';
-      break;
-    case FieldType.dateTimeUsAmPm:
-      map = 'MM/DD/YYYY hh:mm:ss a';
-      break;
-    case FieldType.dateTimeUsAM_PM:
-      map = 'MM/DD/YYYY hh:mm:ss A';
-      break;
-    case FieldType.dateTimeUsShort:
-      map = ['MM/DD/YY H:m:s', 'M/D/YY H:m:s'];
-      break;
-    case FieldType.dateTimeUsShortAmPm:
-      map = ['MM/DD/YY h:m:s a', 'M/D/YY h:m:s a'];
-      break;
-    case FieldType.dateTimeUsShortAM_PM:
-      map = ['MM/DD/YY h:m:s A', 'M/D/YY h:m:s A'];
-      break;
-    case FieldType.dateTimeShortUs:
-      map = ['MM/DD/YYYY HH:mm', 'M/D/YYYY HH:mm'];
-      break;
-    case FieldType.dateUtc:
-      map = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
-      break;
-    case FieldType.date:
-    case FieldType.dateIso:
-    default:
-      map = 'YYYY-MM-DD';
-      break;
-  }
-  return map;
-}
-
 /**
  * Mapper for query operators (ex.: <= is "le", > is "gt")
  * @param string operator
@@ -664,26 +560,6 @@ export function objectWithoutKey<T = any>(obj: T, omitKey: keyof T): T {
     }
     return result;
   }, {}) as unknown as T;
-}
-
-/**
- * Parse a date passed as a string (Date only, without time) and return a Date object (if valid)
- * @param inputDateString
- * @returns string date formatted
- */
-export function parseUtcDate(inputDateString: any, useUtc?: boolean): string {
-  let date = '';
-
-  if (typeof inputDateString === 'string' && /^[0-9\-/]*$/.test(inputDateString)) {
-    // get the UTC datetime with moment.js but we need to decode the value so that it's valid text
-    const dateString = decodeURIComponent(inputDateString);
-    const dateMoment = moment(new Date(dateString));
-    if (dateMoment.isValid() && dateMoment.year().toString().length === 4) {
-      date = (useUtc) ? dateMoment.utc().format() : dateMoment.format();
-    }
-  }
-
-  return date;
 }
 
 /**

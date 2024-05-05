@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, } from '@slickgrid-universal/utils';
+import { format, parse } from '@formkit/tempo';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
-import moment, { type Moment } from 'moment-tiny';
 
 import {
   FieldType,
@@ -19,7 +19,8 @@ import type {
   OperatorDetail,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { formatTempoDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
+import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
@@ -237,7 +238,7 @@ export class DateFilter implements Filter {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
-    let outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
+    let outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
     if (Array.isArray(outputFormat)) {
       outputFormat = outputFormat[0];
     }
@@ -247,7 +248,7 @@ export class DateFilter implements Filter {
     if (outputFormat && this.inputFilterType !== 'range' && outputFormat.toLowerCase().includes('h')) {
       this.hasTimePicker = true;
     }
-    const pickerFormat = mapMomentDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
+    const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     const currentLocale = ((this.filterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en') as string;
@@ -270,7 +271,7 @@ export class DateFilter implements Filter {
       // if we are preloading searchTerms, we'll keep them for reference
       if (Array.isArray(pickerValues)) {
         this._currentDateOrDates = pickerValues as Date[];
-        this._currentDateStrings = pickerValues.map(date => formatDateByFieldType(date, undefined, inputFieldType));
+        this._currentDateStrings = pickerValues.map(date => formatTempoDateByFieldType(date, undefined, inputFieldType));
       }
     }
 
@@ -286,7 +287,7 @@ export class DateFilter implements Filter {
         },
         changeToInput: (_e, self) => {
           if (self.HTMLInputElement) {
-            let outDates: Array<Moment | string> = [];
+            let outDates: Array<Date | string> = [];
             let firstDate = '';
             let lastDate = ''; // when using date range
 
@@ -294,35 +295,36 @@ export class DateFilter implements Filter {
               self.selectedDates.sort((a, b) => +new Date(a) - +new Date(b));
               firstDate = self.selectedDates[0];
               lastDate = self.selectedDates[self.selectedDates.length - 1];
-              const firstDisplayDate = moment(self.selectedDates[0]).format(outputFormat);
-              const lastDisplayDate = moment(lastDate).format(outputFormat);
+              const firstDisplayDate = format(self.selectedDates[0], outputFormat);
+              const lastDisplayDate = format(lastDate, outputFormat);
               self.HTMLInputElement.value = `${firstDisplayDate} — ${lastDisplayDate}`;
               outDates = [firstDate, lastDate];
             } else if (self.selectedDates[0]) {
               firstDate = self.selectedDates[0];
-              self.HTMLInputElement.value = formatDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
+              self.HTMLInputElement.value = formatTempoDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
               outDates = self.selectedDates;
             } else {
               self.HTMLInputElement.value = '';
             }
 
             if (this.hasTimePicker && firstDate) {
-              const momentDate = moment(firstDate, pickerFormat);
-              momentDate.hours(+(self.selectedHours || 0));
-              momentDate.minute(+(self.selectedMinutes || 0));
-              self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
-              outDates = [momentDate];
+              const tempoDate = parse(firstDate, pickerFormat);
+              tempoDate.setHours(+(self.selectedHours || 0));
+              tempoDate.setMinutes(+(self.selectedMinutes || 0));
+              self.HTMLInputElement.value = formatTempoDateByFieldType(tempoDate, undefined, outputFieldType);
+              outDates = [tempoDate];
             }
 
             if (this.inputFilterType === 'compound') {
-              this._currentValue = formatDateByFieldType(outDates[0], undefined, columnFieldType);
+              this._currentValue = formatTempoDateByFieldType(outDates[0], undefined, columnFieldType);
             } else {
               if (Array.isArray(outDates)) {
-                this._currentDateStrings = outDates.map(date => formatDateByFieldType(date, undefined, columnFieldType));
+                this._currentDateStrings = outDates.map(date => formatTempoDateByFieldType(date, undefined, columnFieldType));
                 this._currentValue = this._currentDateStrings.join('..');
               }
             }
-            this._currentDateOrDates = outDates.map(dateStr => dateStr instanceof moment ? (dateStr as Moment).toDate() : new Date(dateStr as string));
+
+            this._currentDateOrDates = outDates.map(d => d instanceof Date ? d : parse(d, pickerFormat));
 
             // when using the time picker, we can simulate a keyup event to avoid multiple backend request
             // since backend request are only executed after user start typing, changing the time should be treated the same way

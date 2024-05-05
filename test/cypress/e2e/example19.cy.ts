@@ -184,7 +184,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .should('have.text', '{"fromRow":0,"fromCell":0,"toRow":95,"toCell":98}');
     });
 
-    it('should click on cell CR5 then Ctrl+Home keys and expect to scroll back to cell A0 without any selection range', () => {
+    it('should click on cell CR5 again then Ctrl+Home keys and expect to scroll back to cell A0 without any selection range', () => {
       cy.getCell(5, 95, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_CR95')
         .click();

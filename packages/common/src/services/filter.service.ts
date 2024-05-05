@@ -393,7 +393,7 @@ export class FilterService {
 
   /**
    * Loop through each form input search filter and parse their searchTerms,
-   * for example a CompoundDate Filter will be parsed as a Moment object.
+   * for example a CompoundDate Filter will be parsed as a Date object.
    * Also if we are dealing with a text filter input,
    * an operator can optionally be part of the filter itself and we need to extract it from there,
    * for example a filter of "John*" will be analyzed as { operator: StartsWith, searchTerms: ['John'] }
@@ -570,7 +570,7 @@ export class FilterService {
         delete (treeObj as any)[inputItem[primaryDataId]].__used;
       });
 
-      // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
+      // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Date object
       // loop through all column filters once and get parsed filter search value then save a reference in the columnFilter itself
       // it is much more effective to do it outside and prior to Step 2 so that we don't re-parse search filter for no reason while checking every row
       if (typeof columnFilters === 'object') {

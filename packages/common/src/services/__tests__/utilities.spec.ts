@@ -21,11 +21,9 @@ import {
   getDescendantProperty,
   getTranslationPrefix,
   isColumnDateType,
-  mapMomentDateFormatWithFieldType,
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
   mapOperatorType,
-  parseUtcDate,
   thousandSeparatorFormatted,
   unsubscribeAll,
 } from '../utilities';
@@ -708,122 +706,6 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('mapMomentDateFormatWithFieldType method', () => {
-    it('should return a moment.js dateTime/dateTimeIso format', () => {
-      const output1 = mapMomentDateFormatWithFieldType(FieldType.dateTime);
-      const output2 = mapMomentDateFormatWithFieldType(FieldType.dateTimeIso);
-      expect(output1).toBe('YYYY-MM-DD HH:mm:ss');
-      expect(output2).toBe('YYYY-MM-DD HH:mm:ss');
-    });
-
-    it('should return a moment.js dateTimeShortIso format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeShortIso);
-      expect(output).toBe('YYYY-MM-DD HH:mm');
-    });
-
-    it('should return a moment.js dateTimeIsoAmPm format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeIsoAmPm);
-      expect(output).toBe('YYYY-MM-DD hh:mm:ss a');
-    });
-
-    it('should return a moment.js dateTimeIsoAM_PM format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeIsoAM_PM);
-      expect(output).toBe('YYYY-MM-DD hh:mm:ss A');
-    });
-
-    it('should return a moment.js dateEuro format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateEuro);
-      expect(output).toBe('DD/MM/YYYY');
-    });
-
-    it('should return a moment.js dateEuroShort format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateEuroShort);
-      expect(output).toEqual(['DD/MM/YY', 'D/M/YY']);
-    });
-
-    it('should return a moment.js dateTimeEuro format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeEuro);
-      expect(output).toBe('DD/MM/YYYY HH:mm:ss');
-    });
-
-    it('should return a moment.js dateTimeShortEuro format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeShortEuro);
-      expect(output).toEqual(['DD/MM/YYYY HH:mm', 'D/M/YYYY HH:mm']);
-    });
-
-    it('should return a moment.js dateTimeEuroAmPm format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeEuroAmPm);
-      expect(output).toBe('DD/MM/YYYY hh:mm:ss a');
-    });
-
-    it('should return a moment.js dateTimeEuroAM_PM format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeEuroAM_PM);
-      expect(output).toBe('DD/MM/YYYY hh:mm:ss A');
-    });
-
-    it('should return a moment.js dateTimeEuroShort format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeEuroShort);
-      expect(output).toEqual(['DD/MM/YY H:m:s', 'D/M/YY H:m:s']);
-    });
-
-    it('should return a moment.js dateTimeEuroShortAmPm format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeEuroShortAmPm);
-      expect(output).toEqual(['DD/MM/YY h:m:s a', 'D/M/YY h:m:s a']);
-    });
-
-    it('should return a moment.js dateUs format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateUs);
-      expect(output).toBe('MM/DD/YYYY');
-    });
-
-    it('should return a moment.js dateUsShort format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateUsShort);
-      expect(output).toEqual(['MM/DD/YY', 'M/D/YY']);
-    });
-
-    it('should return a moment.js dateTimeUs format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeUs);
-      expect(output).toBe('MM/DD/YYYY HH:mm:ss');
-    });
-
-    it('should return a moment.js dateTimeShortUs format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeShortUs);
-      expect(output).toEqual(['MM/DD/YYYY HH:mm', 'M/D/YYYY HH:mm']);
-    });
-
-    it('should return a moment.js dateTimeUsAmPm format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeUsAmPm);
-      expect(output).toBe('MM/DD/YYYY hh:mm:ss a');
-    });
-
-    it('should return a moment.js dateTimeUsAM_PM format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeUsAM_PM);
-      expect(output).toBe('MM/DD/YYYY hh:mm:ss A');
-    });
-
-    it('should return a moment.js dateTimeUsShort format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeUsShort);
-      expect(output).toEqual(['MM/DD/YY H:m:s', 'M/D/YY H:m:s']);
-    });
-
-    it('should return a moment.js dateTimeUsShortAmPm format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeUsShortAmPm);
-      expect(output).toEqual(['MM/DD/YY h:m:s a', 'M/D/YY h:m:s a']);
-    });
-
-    it('should return a moment.js dateUtc format', () => {
-      const output = mapMomentDateFormatWithFieldType(FieldType.dateUtc);
-      expect(output).toBe('YYYY-MM-DDTHH:mm:ss.SSSZ');
-    });
-
-    it('should return a moment.js date/dateIso format', () => {
-      const output1 = mapMomentDateFormatWithFieldType(FieldType.date);
-      const output2 = mapMomentDateFormatWithFieldType(FieldType.dateIso);
-      expect(output1).toBe('YYYY-MM-DD');
-      expect(output2).toBe('YYYY-MM-DD');
-    });
-  });
-
   describe('mapOperatorType method', () => {
     it('should return OperatoryType associated to "<"', () => {
       const expectation = OperatorType.lessThan;
@@ -1118,25 +1000,6 @@ describe('Service/Utilies', () => {
     it('should return default OperatoryType associated to contains', () => {
       const output = mapOperatorByFieldType('' as any);
       expect(output).toBe(OperatorType.equal);
-    });
-  });
-
-  describe('parseUtcDate method', () => {
-    it('should return null when date provided is not an ISO date (date only accepted)', () => {
-      const input1 = '2012-01-01 02:02:02';
-      const input2 = '2012-01-01T02:02:02Z';
-
-      const output1 = parseUtcDate(input1);
-      const output2 = parseUtcDate(input2);
-
-      expect(output1).toBe('');
-      expect(output2).toBe('');
-    });
-
-    it('should return a date parsed as UTC when input is a date (without time) of ISO format', () => {
-      const input = '2012-01-01';
-      const output = parseUtcDate(input, true);
-      expect(output).toBe('2012-01-01T00:00:00Z');
     });
   });
 

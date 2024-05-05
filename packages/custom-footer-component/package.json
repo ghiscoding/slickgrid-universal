@@ -49,9 +49,9 @@
     "not dead"
   ],
   "dependencies": {
+    "@formkit/tempo": "^0.1.1",
     "@slickgrid-universal/binding": "workspace:~",
-    "@slickgrid-universal/common": "workspace:~",
-    "moment-tiny": "^2.30.4"
+    "@slickgrid-universal/common": "workspace:~"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~"
