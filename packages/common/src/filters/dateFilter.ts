@@ -242,7 +242,7 @@ export class DateFilter implements Filter {
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
     // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
-    if (outputFormat && this.inputFilterType !== 'range' && outputFormat.toLowerCase().includes('h')) {
+    if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
     const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);

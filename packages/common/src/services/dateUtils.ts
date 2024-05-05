@@ -147,11 +147,6 @@ export function toUtcDate(inputDate: Date) {
   return new Date(inputDate.getTime() + localOffset);
 };
 
-export function toUtc(inputDate: Date) {
-  return new Date(Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(),
-    inputDate.getUTCDate(), inputDate.getUTCHours(),
-    inputDate.getUTCMinutes(), inputDate.getUTCSeconds()));
-}
 /**
  * Parse a date passed as a string (Date only, without time) and return a TZ Date (without milliseconds)
  * @param inputDateString

@@ -258,8 +258,8 @@ describe('DateEditor', () => {
         editor.focus();
         const editorInputElm = editor.editorDomElement;
         editorInputElm.value = '2024-04-02T16:02:02.239Z';
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], hide: jest.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2 } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2, hide: jest.fn() } as unknown as VanillaCalendar);
 
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);

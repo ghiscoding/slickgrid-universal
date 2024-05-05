@@ -54,7 +54,7 @@ export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IO
         dates: [pickerDates.map(p => format(p, isoFormat)).join(':')],
         month: pickerDates[0].getMonth(),
         year: pickerDates[0].getFullYear(),
-        time: (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
+        time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
       };
     }
     dateInputElm.value = initialDates.length ? pickerDates.map(p => formatTempoDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';

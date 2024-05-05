@@ -113,7 +113,7 @@ export class DateEditor implements Editor {
       const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
       // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
-      if (outputFormat && (outputFormat === 'Z' || outputFormat.toLowerCase().includes('h'))) {
+      if (outputFormat && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
         this.hasTimePicker = true;
       }
       const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
