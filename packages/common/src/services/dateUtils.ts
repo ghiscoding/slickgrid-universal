@@ -121,7 +121,7 @@ export function formatTempoDateByFieldType(inputDate: Date | string, inputFieldT
     if (outputFieldType === FieldType.dateUtc) {
       return date.toISOString();
     }
-    return format(date, Array.isArray(outputFormat) ? outputFormat[0] : outputFormat);
+    return format(date, outputFormat, 'en-US');
   }
   return '';
 }
@@ -135,7 +135,7 @@ export function tryParseDate(inputDate?: string | Date, inputFormat?: string, st
       date: inputDate,
       format: inputFormat as string,
       dateOverflow: strict ? 'throw' : 'backward',
-      locale: 'en'
+      locale: 'en-US'
     });
   } catch (_e) {
     return false;

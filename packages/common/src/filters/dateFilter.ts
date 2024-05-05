@@ -238,10 +238,7 @@ export class DateFilter implements Filter {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
-    let outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
-    if (Array.isArray(outputFormat)) {
-      outputFormat = outputFormat[0];
-    }
+    const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
     // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
@@ -295,8 +292,8 @@ export class DateFilter implements Filter {
               self.selectedDates.sort((a, b) => +new Date(a) - +new Date(b));
               firstDate = self.selectedDates[0];
               lastDate = self.selectedDates[self.selectedDates.length - 1];
-              const firstDisplayDate = format(self.selectedDates[0], outputFormat);
-              const lastDisplayDate = format(lastDate, outputFormat);
+              const firstDisplayDate = format(self.selectedDates[0], outputFormat, 'en-US');
+              const lastDisplayDate = format(lastDate, outputFormat, 'en-US');
               self.HTMLInputElement.value = `${firstDisplayDate} — ${lastDisplayDate}`;
               outDates = [firstDate, lastDate];
             } else if (self.selectedDates[0]) {

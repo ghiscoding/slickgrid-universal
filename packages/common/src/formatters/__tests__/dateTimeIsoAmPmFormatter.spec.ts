@@ -17,18 +17,18 @@ describe('the DateTimeIsoAmPm Formatter', () => {
   it('should provide a dateIso formatted input and return a formatted date value without time when valid date value is provided', () => {
     const value = '2019-05-01 02:36:07';
     const result = Formatters.dateTimeIsoAmPm(0, 0, value, { type: 'dateIso' } as unknown as Column, {}, {} as any);
-    expect(result).toBe('2019-05-01 02:36:07 a.m.');
+    expect(result).toBe('2019-05-01 02:36:07 am');
   });
 
   it('should return a formatted date value in the morning when valid date value is provided', () => {
     const value = new Date('2019-05-01T02:36:07');
     const result = Formatters.dateTimeIsoAmPm(0, 0, value, {} as Column, {}, {} as any);
-    expect(result).toBe('2019-05-01 02:36:07 a.m.');
+    expect(result).toBe('2019-05-01 02:36:07 am');
   });
 
   it('should return a formatted date value in the afternoon when valid date value is provided', () => {
     const value = new Date('2019-05-01T20:36:07');
     const result = Formatters.dateTimeIsoAmPm(0, 0, value, {} as Column, {}, {} as any);
-    expect(result).toBe('2019-05-01 08:36:07 p.m.');
+    expect(result).toBe('2019-05-01 08:36:07 pm');
   });
 });

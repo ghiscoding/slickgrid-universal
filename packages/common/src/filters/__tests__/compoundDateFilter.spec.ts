@@ -451,7 +451,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filterInputElm.value).toBe('02/01/2001 16:02');
+    expect(filterInputElm.value).toBe('2/1/2001 16:02');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true });
   });
 

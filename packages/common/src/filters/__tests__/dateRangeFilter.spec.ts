@@ -55,6 +55,12 @@ describe('DateRangeFilter', () => {
     };
 
     filter = new DateRangeFilter(translateService);
+
+    // jest.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => ({
+    //   resolvedOptions: () => ({
+    //     timeZone: 'America/New_yorkpp'
+    //   })
+    // }));
   });
 
   afterEach(() => {
@@ -321,7 +327,7 @@ describe('DateRangeFilter', () => {
 
     expect(filterFilledElms.length).toBe(1);
     // expect(filter.currentDateOrDates.map((date) => date.toISOString())).toEqual(['2001-01-01T05:00:00.000Z', '2001-01-31T05:00:00.000Z']);
-    expect(filterInputElm.value).toBe('2001-01-02 12:00:00 a.m. — 2001-01-13 12:00:00 a.m.');
+    expect(filterInputElm.value).toBe('2001-01-02 12:00:00 am — 2001-01-13 12:00:00 am');
     expect(spyCallback).toHaveBeenCalledWith(undefined, {
       columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02', '2001-01-13'], shouldTriggerQuery: true
     });
@@ -344,7 +350,7 @@ describe('DateRangeFilter', () => {
 
     expect(filterFilledElms.length).toBe(1);
     // expect(filter.currentDateOrDates.map((date) => date.toISOString())).toEqual(['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z']);
-    expect(filterInputElm.value).toBe('2001-01-02 12:00:00 a.m. — 2001-01-13 12:00:00 a.m.');
+    expect(filterInputElm.value).toBe('2001-01-02 12:00:00 am — 2001-01-13 12:00:00 am');
     expect(spyCallback).toHaveBeenCalledWith(undefined, {
       columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02', '2001-01-13'], shouldTriggerQuery: true
     });

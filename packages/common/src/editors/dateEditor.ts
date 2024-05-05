@@ -109,10 +109,7 @@ export class DateEditor implements Editor {
       const gridOptions: GridOption = this.args.grid.getOptions() || {};
       this.defaultDate = this.args.item?.[this.columnDef.field];
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
-      let outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
-      if (Array.isArray(outputFormat)) {
-        outputFormat = outputFormat[0];
-      }
+      const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
       const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
       // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)

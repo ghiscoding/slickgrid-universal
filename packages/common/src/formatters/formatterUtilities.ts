@@ -96,10 +96,7 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 
 /** From a FieldType, return the associated date Formatter */
 export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
-  let defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, true);
-  if (Array.isArray(defaultDateFormat)) {
-    defaultDateFormat = defaultDateFormat[0];
-  }
+  const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, true);
 
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
@@ -115,7 +112,7 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
       if (isParsingAsUtc) {
         d = toUtcDate(date);
       }
-      outputDate = format(d, defaultDateFormat);
+      outputDate = format(d, defaultDateFormat, 'en-US');
     }
 
     // user can customize the separator through the "formatterOptions"
