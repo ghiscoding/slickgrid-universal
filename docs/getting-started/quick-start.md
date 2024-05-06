@@ -9,7 +9,7 @@ To get started follow any of these instruction Wikis depending on your choice of
 | Angular    | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) | [Live Demo](https://ghiscoding.github.io/Angular-Slickgrid/)                                          |
 | Aurelia    | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start)  | [Live Demo](https://ghiscoding.github.io/aurelia-slickgrid/)                                          |
 | React      | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/slickgrid-react/getting-started/quick-start)    | [Live Demo](https://ghiscoding.github.io/slickgrid-react/)                                            |
-| Salesforce | Installation                                                                                             | [Print Screen](https://github.com/ghiscoding/slickgrid-universal/wiki#salesforce-demo---print-screen) |
+| Salesforce | [Salesforce Installation](getting-started/installation-salesforce.md)  | [Print Screen](https://github.com/ghiscoding/slickgrid-universal/wiki#salesforce-demo---print-screen) |
 | ----       |                                                                                                          |                                                                                                       |
 
 **General Subjects**

@@ -189,7 +189,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     }
   });
 
-  it('should open the Grid Menu "Clear all Filters" command', () => {
+  it('should open the Grid Menu "Clear all Filters" command a second time', () => {
     cy.get('.grid5')
       .find('button.slick-grid-menu-button')
       .trigger('click')
@@ -261,7 +261,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       .contains(/^((?!Task 500).)*$/);
   });
 
-  it('should open the Grid Menu "Clear all Filters" command', () => {
+  it('should open the Grid Menu "Clear all Filters" command again', () => {
     cy.get('.grid5')
       .find('button.slick-grid-menu-button')
       .trigger('click')

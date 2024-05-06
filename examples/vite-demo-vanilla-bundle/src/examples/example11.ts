@@ -28,7 +28,6 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
-import moment from 'moment-tiny';
 
 import exampleModal from './example11-modal.html?raw';
 import Example11Modal from './example11-modal';
@@ -82,7 +81,7 @@ export default class Example11 {
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   viewSelectElm: HTMLSelectElement;
-  currentYear = moment().year();
+  currentYear = new Date().getFullYear();
   defaultPredefinedPresets = [
     {
       label: 'Tasks Finished in Previous Years (wo/Product,Country)',

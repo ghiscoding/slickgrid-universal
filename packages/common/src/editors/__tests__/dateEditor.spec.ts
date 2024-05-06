@@ -1,4 +1,4 @@
-import moment from 'moment-tiny';
+import { format } from '@formkit/tempo';
 import { VanillaCalendar } from 'vanilla-calendar-picker';
 
 import { Editors } from '../index';
@@ -258,8 +258,8 @@ describe('DateEditor', () => {
         editor.focus();
         const editorInputElm = editor.editorDomElement;
         editorInputElm.value = '2024-04-02T16:02:02.239Z';
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], hide: jest.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2 } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2, hide: jest.fn() } as unknown as VanillaCalendar);
 
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
@@ -354,7 +354,7 @@ describe('DateEditor', () => {
         editor.applyValue(mockItemData, newDate);
 
         // @ts-ignore:2349
-        expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate).format('YYYY-MM-DD'), isActive: true });
+        expect(mockItemData).toEqual({ id: 1, startDate: format(newDate, 'YYYY-MM-DD'), isActive: true });
       });
 
       it('should apply the value to the startDate property with "outputType" format with a field having dot notation (complex object) that passes validation', () => {
@@ -364,13 +364,13 @@ describe('DateEditor', () => {
         mockColumn.field = 'employee.startDate';
         mockItemData = { id: 1, employee: { startDate: '2001-04-05T11:33:42.000Z' }, isActive: true };
 
-        const newDate = new Date(Date.UTC(2001, 0, 2, 16, 2, 2, 0));
+        const newDate = new Date(Date.UTC(2001, 10, 23, 16, 2, 2, 0));
         editor = new DateEditor(editorArguments);
         jest.runAllTimers();
         editor.applyValue(mockItemData, newDate);
 
         // @ts-ignore:2349
-        expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate).format('DD/MM/YYYY HH:mm') }, isActive: true });
+        expect(mockItemData).toEqual({ id: 1, employee: { startDate: format(newDate, 'D/M/YYYY HH:mm') }, isActive: true });
       });
 
       it('should apply the value to the startDate property with output format defined by "saveOutputType" when it passes validation', () => {
@@ -385,7 +385,7 @@ describe('DateEditor', () => {
         editor.applyValue(mockItemData, newDate);
 
         // @ts-ignore:2349
-        expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a'), isActive: true });
+        expect(mockItemData).toEqual({ id: 1, startDate: format(newDate, 'YYYY-MM-DD hh:mm:ss a', 'en-US'), isActive: true });
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {

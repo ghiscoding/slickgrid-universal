@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
+import { parse } from '@formkit/tempo';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
-import moment from 'moment-tiny';
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -16,10 +16,11 @@ import type {
   GridOption,
   VanillaCalendarOption,
 } from './../interfaces/index';
-import { formatDateByFieldType, getDescendantProperty, mapMomentDateFormatWithFieldType, } from './../services/utilities';
+import { getDescendantProperty, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Picker
@@ -105,20 +106,17 @@ export class DateEditor implements Editor {
     if (this.args && this.columnDef) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       const columnId = this.columnDef?.id ?? '';
-      const gridOptions = (this.args.grid.getOptions() || {}) as GridOption;
+      const gridOptions: GridOption = this.args.grid.getOptions() || {};
       this.defaultDate = this.args.item?.[this.columnDef.field];
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
-      let outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
-      if (Array.isArray(outputFormat)) {
-        outputFormat = outputFormat[0];
-      }
+      const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
       const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
-      // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
-      if (outputFormat && (outputFormat === 'Z' || outputFormat.toLowerCase().includes('h'))) {
+      // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
+      if (outputFormat && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
         this.hasTimePicker = true;
       }
-      const pickerFormat = mapMomentDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
+      const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
       const pickerOptions: IOptions = {
         input: true,
@@ -131,19 +129,19 @@ export class DateEditor implements Editor {
           },
           changeToInput: (_e, self) => {
             if (self.HTMLInputElement) {
-              let chosenDate = '';
+              let selectedDate = '';
               if (self.selectedDates[0]) {
-                chosenDate = self.selectedDates[0];
+                selectedDate = self.selectedDates[0];
                 self.HTMLInputElement.value = formatDateByFieldType(self.selectedDates[0], undefined, outputFieldType);
               } else {
                 self.HTMLInputElement.value = '';
               }
 
-              if (this.hasTimePicker) {
-                const momentDate = moment(chosenDate, pickerFormat);
-                momentDate.hours(+(self.selectedHours || 0));
-                momentDate.minute(+(self.selectedMinutes || 0));
-                self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
+              if (selectedDate && this.hasTimePicker) {
+                const tempoDate = parse(selectedDate, pickerFormat);
+                tempoDate.setHours(+(self.selectedHours || 0));
+                tempoDate.setMinutes(+(self.selectedMinutes || 0));
+                self.HTMLInputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
               }
 
               if (this._lastClickIsDate) {
@@ -164,7 +162,7 @@ export class DateEditor implements Editor {
         },
       };
 
-      // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
+      // add the time picker when format includes time (hours/minutes)
       if (this.hasTimePicker) {
         pickerOptions.settings!.selection = {
           time: 24

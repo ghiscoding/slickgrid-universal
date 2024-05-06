@@ -1,4 +1,5 @@
 import 'jest-extended';
+import { format } from '@formkit/tempo';
 import { VanillaCalendar } from 'vanilla-calendar-picker';
 
 import { Filters } from '../filters.index';
@@ -7,6 +8,7 @@ import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CompoundDateFilter } from '../compoundDateFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickGrid } from '../../core/index';
+import { mapTempoDateFormatWithFieldType } from '../../services/dateUtils';
 
 const containerId = 'demo-container';
 
@@ -321,7 +323,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-02T00:00:00.000Z');
+    expect(format(filter.currentDateOrDates![0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -341,7 +343,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-02T00:00:00.000Z');
+    expect(format(filter.currentDateOrDates![0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -449,11 +451,8 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    // expect(filter.currentDateOrDates.toISOString()).toBe('2001-01-02T21:02');
-    expect(filterInputElm.value).toBe('02/01/2001 16:02');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
-      columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true
-    });
+    expect(filterInputElm.value).toBe('2/1/2001 16:02');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true });
   });
 
   it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {

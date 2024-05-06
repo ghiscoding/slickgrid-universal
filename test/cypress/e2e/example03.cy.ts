@@ -63,7 +63,7 @@ describe('Example 03 - Draggable Grouping', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
     });
 
-    it('should collapse all rows and make sure Duration group is sorted in descending order', () => {
+    it('should collapse all rows again and make sure Duration group is sorted in descending order', () => {
       cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');

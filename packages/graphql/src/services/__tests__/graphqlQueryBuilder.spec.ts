@@ -1,4 +1,3 @@
-import moment from 'moment-tiny';
 import GraphqlQueryBuilder from '../graphqlQueryBuilder';
 
 function removeSpaces(textS) {
@@ -81,8 +80,8 @@ describe('GraphqlQueryBuilder', () => {
 
   it('should be able to Query a Date field', () => {
     const now = new Date();
-    const expectation = `FetchLeeAndSam { lee: user(modified: "${moment(now).toISOString()}") { name, modified	},
-                                          sam: user(modified: "${moment(now).toISOString()}") { name, modified	}  }`;
+    const expectation = `FetchLeeAndSam { lee: user(modified: "${now.toISOString()}") { name, modified	},
+                                          sam: user(modified: "${now.toISOString()}") { name, modified	}  }`;
 
     const fetchLeeAndSam = new GraphqlQueryBuilder('FetchLeeAndSam');
 

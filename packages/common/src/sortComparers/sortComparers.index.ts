@@ -12,7 +12,7 @@ export const SortComparers = {
   /** SortComparer method to sort values as regular strings */
   boolean: booleanSortComparer,
 
-  /** SortComparer method to sort values by Date object type (uses Moment.js ISO_8601 standard format, optionally include time) */
+  /** SortComparer method to sort values by Date object type (uses Tempo ISO_8601 standard format, optionally include time) */
   date: getAssociatedDateSortComparer(FieldType.date),
 
   /**

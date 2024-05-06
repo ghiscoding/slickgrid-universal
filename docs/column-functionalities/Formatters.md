@@ -20,7 +20,7 @@ For a [UI sample](#ui-sample), scroll down below.
 ### Provided Formatters
 `Slickgrid-Universal` ships with a few `Formatters` by default which helps with common fields, you can see the [entire list here](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37).
 
-> **Note** you might not need a Formatter when a simple CSS style is needed, think about using `cssClass` column property instead.
+> **Note** you might not need a Formatter when a simple CSS style and class might be enough, think about using `cssClass` column property as much as possible since it has much better perf.
 
 #### List of provided `Formatters`
 - `arrayObjectToCsv`: Takes an array of complex objects converts it to a comma delimited string.
@@ -46,6 +46,7 @@ For a [UI sample](#ui-sample), scroll down below.
 - `dateTimeUs` : Takes a Date object and displays it as an US Date+Time format (MM/DD/YYYY HH:mm:ss)
 - `dateTimeShortUs`: Takes a Date object and displays it as an US Date+Time (without seconds) format (MM/DD/YYYY HH:mm:ss)
 - `dateTimeUsAmPm` : Takes a Date object and displays it as an US Date+Time+(am/pm) format (MM/DD/YYYY hh:mm:ss a)
+- `dateUtc` : Takes a Date object and displays it as a TZ format (YYYY-MM-DDThh:mm:ssZ)
 - `decimal`: Display the value as x decimals formatted, defaults to 2 decimals. You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
 - `dollar`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value.
 - `dollarColored`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value
@@ -70,10 +71,12 @@ For a [UI sample](#ui-sample), scroll down below.
 - `translateBoolean`: Takes a boolean value, cast it to upperCase string and finally translates it (i18n).
 - `tree`: Formatter that must be used when the column is a Tree Data column
 
-**Note:** The list might not always be up to date, you can refer to the [Formatters export](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which ones are available.
+> **Note:** The list is certainly not up to date (especially for Dates), please refer to the [Formatters export](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which formatters are available.
+
+> **Note** all Date formatters are formatted using [Tempo](https://tempo.formkit.com/#format-tokens). There are also many more Date formats not shown above, simply visit the [formatters.index](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/formatters.index.ts#L101) to see all available Date/Time formats.
 
 ### Usage
-To use any of them, you need to import `Formatters` from `Slickgrid-Universal` and add a `formatter: ...` in your column definitions as shown below:
+To use any of them, you simply need to import `Formatters` from `Slickgrid-Universal` and add a `formatter: Formatters.xyz` (where `xyx` is the name of the built-in formatter) in your column definitions as shown below:
 
 #### TypeSript
 ```ts
@@ -97,38 +100,6 @@ export class Example {
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmarkMaterial }
-    ];
-  }
-}
-```
-
-#### SalesForce (ES6)
-For SalesForce the code is nearly the same, the only difference is to add the `Slicker` prefix, so instead of `Formatters.abc` we need to use `Slicker.Formatters.abc`
-
-```ts
-// ... SF_Slickgrid import
-
-
-export class Example {
-  const Slicker = window.Slicker;
-
-  columnDefinitions: Column[];
-  gridOptions: GridOption;
-  dataset: any[];
-
-  constructor() {
-    // define the grid options & columns and then create the grid itself
-    this.defineGrid();
-  }
-
-  defineGrid() {
-    this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title' },
-      { id: 'duration', name: 'Duration (days)', field: 'duration' },
-      { id: '%', name: '% Complete', field: 'percentComplete', formatter: Slicker.Formatters.percentComplete },
-      { id: 'start', name: 'Start', field: 'start', formatter: Slicker.Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Slicker.Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Slicker.Formatters.checkmarkMaterial }
     ];
   }
 }

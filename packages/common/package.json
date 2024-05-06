@@ -66,6 +66,7 @@
     "not dead"
   ],
   "dependencies": {
+    "@formkit/tempo": "^0.1.1",
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
@@ -74,7 +75,6 @@
     "autocompleter": "^9.2.1",
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
-    "moment-tiny": "^2.30.4",
     "multiple-select-vanilla": "^3.1.3",
     "sortablejs": "^1.15.2",
     "un-flatten-tree": "^2.0.12",

@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, } from '@slickgrid-universal/utils';
+import { format, parse } from '@formkit/tempo';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
-import moment, { type Moment } from 'moment-tiny';
 
 import {
   FieldType,
@@ -19,7 +19,8 @@ import type {
   OperatorDetail,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
+import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
@@ -237,17 +238,14 @@ export class DateFilter implements Filter {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
-    let outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
-    if (Array.isArray(outputFormat)) {
-      outputFormat = outputFormat[0];
-    }
+    const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
-    // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
-    if (outputFormat && this.inputFilterType !== 'range' && outputFormat.toLowerCase().includes('h')) {
+    // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
+    if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
-    const pickerFormat = mapMomentDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
+    const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     const currentLocale = ((this.filterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en') as string;
@@ -286,7 +284,7 @@ export class DateFilter implements Filter {
         },
         changeToInput: (_e, self) => {
           if (self.HTMLInputElement) {
-            let outDates: Array<Moment | string> = [];
+            let outDates: Array<Date | string> = [];
             let firstDate = '';
             let lastDate = ''; // when using date range
 
@@ -294,8 +292,8 @@ export class DateFilter implements Filter {
               self.selectedDates.sort((a, b) => +new Date(a) - +new Date(b));
               firstDate = self.selectedDates[0];
               lastDate = self.selectedDates[self.selectedDates.length - 1];
-              const firstDisplayDate = moment(self.selectedDates[0]).format(outputFormat);
-              const lastDisplayDate = moment(lastDate).format(outputFormat);
+              const firstDisplayDate = format(self.selectedDates[0], outputFormat, 'en-US');
+              const lastDisplayDate = format(lastDate, outputFormat, 'en-US');
               self.HTMLInputElement.value = `${firstDisplayDate} — ${lastDisplayDate}`;
               outDates = [firstDate, lastDate];
             } else if (self.selectedDates[0]) {
@@ -307,11 +305,11 @@ export class DateFilter implements Filter {
             }
 
             if (this.hasTimePicker && firstDate) {
-              const momentDate = moment(firstDate, pickerFormat);
-              momentDate.hours(+(self.selectedHours || 0));
-              momentDate.minute(+(self.selectedMinutes || 0));
-              self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
-              outDates = [momentDate];
+              const tempoDate = parse(firstDate, pickerFormat);
+              tempoDate.setHours(+(self.selectedHours || 0));
+              tempoDate.setMinutes(+(self.selectedMinutes || 0));
+              self.HTMLInputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
+              outDates = [tempoDate];
             }
 
             if (this.inputFilterType === 'compound') {
@@ -322,7 +320,8 @@ export class DateFilter implements Filter {
                 this._currentValue = this._currentDateStrings.join('..');
               }
             }
-            this._currentDateOrDates = outDates.map(dateStr => dateStr instanceof moment ? (dateStr as Moment).toDate() : new Date(dateStr as string));
+
+            this._currentDateOrDates = outDates.map(d => d instanceof Date ? d : parse(d, pickerFormat));
 
             // when using the time picker, we can simulate a keyup event to avoid multiple backend request
             // since backend request are only executed after user start typing, changing the time should be treated the same way
@@ -373,7 +372,7 @@ export class DateFilter implements Filter {
       };
     }
 
-    // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
+    // add the time picker when format includes time (hours/minutes)
     if (this.hasTimePicker) {
       pickerOptions.settings!.selection ??= {};
       pickerOptions.settings!.selection.time = 24;
