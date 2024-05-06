@@ -12,7 +12,7 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Documentation
-📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook
+📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook (for version >=4.x or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions)
 
 ### Live Demo
 [Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
@@ -20,7 +20,7 @@
 [![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/ghiscoding/slickgrid-universal)
 
 ### Description
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It originally required SlickGrid as a dependency but that is no longer the case and is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, the goal of the project here is to offer an all assembled product including a set of built-in Editors, Filters, Formatters and some optional packages like OData, GraphQL, ... and SlickGrid simply did not offer that by default. See below for more project details.
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It was originally requiring SlickGrid as an external dependency, but that is no longer the case and is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however the goal of our project here is to offer an all assembled product including a set of built-in Editors, Filters, Formatters and also extra packages that are optionals like OData, GraphQL, Export to Excel ... which SlickGrid simply does not offer by default. See below for more project details.
 
 ### Why create this monorepo?
 Below is a list of reasons why this project was created and why it is a monorepo project:
@@ -55,7 +55,7 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used to run the E2E tests with [Cypress](https://www.cypress.io/) for testing all UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid code duplication.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has close to **100%** Unit Test Coverage, almost 5,000 Jest unit tests and also +550 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 600 tests), the goal is to test everything and offer peace of mind that all the code and PR changes are fully tested and that we have tests to cover them.
+Slickgrid-Universal has close to **100%** Unit Test Coverage, almost 5,000 Jest unit tests and also +550 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 600 tests), the goal is to test everything and offer peace of mind that all the code and PR changes are fully tested and that we have tests to cover everything.
 
 ### Available Public Packages
 
@@ -80,9 +80,9 @@ Slickgrid-Universal has close to **100%** Unit Test Coverage, almost 5,000 Jest 
 | [@slickgrid-universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-force-bundle.svg)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle) | Vanilla TypeScript/ES6 for Salesforce implementation | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/CHANGELOG.md)
 
 ## Installation
-**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to download a quick Slickgrid-Universal demo, then I would suggest to take a look at [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo).
+**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, however if you just want to download a quick Slickgrid-Universal demo, then I would suggest to take a look at either [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo).
 
-To get started and do development with this monorepo, you will need to clone the repo and follow the steps shown below. You must be at the root of the project to run the following commands. This project also requires `pnpm`.
+To get started and do development with this monorepo, you will need to clone the repo and follow the steps shown below. You must be at the root of the project in order to run the following commands. This project also requires `pnpm`.
 
 1. pnpm installation
 
@@ -90,7 +90,7 @@ This project uses [pnpm workspaces](https://pnpm.io/workspaces), you can install
 
 a. following their [installation](https://pnpm.io/installation)
 
-b. or install pnpm via Node corepack
+b. or install pnpm via Node [corepack](https://nodejs.org/api/corepack.html)
 ```sh
 corepack enable
 
@@ -111,17 +111,17 @@ pnpm run dev
 
 3. Build (bundle)
 
-You also need to run a full build if you want to run the Jest unit tests
+You also need to run a full build in order to run the Jest unit tests
 
 ```bash
 pnpm run bundle
 ```
 
 ### Tests
-You must go through Installation Steps 1-2 (or 1,3) prior to running the Jest unit tests OR steps 1-2 when running Cypress E2E tests.
+You must go through Installation Steps 1-3 prior to running the Jest unit tests OR steps 1-2 when running Cypress E2E tests.
 
 #### Jest Unit Tests
-To run all unit tests (with Jest), you can run one of the following commands (make sure that steps 1,3 were executed prior to running this command)
+To run all unit tests (with Jest), you can run one of the following commands (make sure that steps 1-3 were executed prior to running this command)
 ```bash
 pnpm run test
 
@@ -130,7 +130,7 @@ pnpm run test:watch
 ```
 
 #### Cypress E2E Tests
-To run all E2E tests (with Cypress), you can run one of the following commands (make sure that steps 1,2 were executed prior to running this command)
+To run all E2E tests (with Cypress), you can run one of the following commands (make sure that steps 1-2 were executed prior to running this command)
 ```bash
 # will open the Cypress GUI
 pnpm run cypress
