@@ -3,8 +3,8 @@ import { format, parse, tzDate } from '@formkit/tempo';
 import { FieldType } from '../enums/index';
 
 /**
- * From a Date FieldType, return it's equivalent TempoJS format
- * refer to TempoJS for the format standard used: https://tempo.formkit.com/#format
+ * From a Date FieldType, return it's equivalent TempoJS format,
+ * refer to TempoJS docs for the format tokens being used: https://tempo.formkit.com/#format
  * @param fieldType
  * @param withZeroPadding - should we include zero padding in format (e.g.: 03:04:54)
  */
@@ -112,6 +112,13 @@ export function mapTempoDateFormatWithFieldType(fieldType: typeof FieldType[keyo
   return map;
 }
 
+/**
+ * Format a date using Tempo and a defined input/output field types
+ * @param {string|Date} inputDate
+ * @param {FieldType} inputFieldType
+ * @param {FieldType} outputFieldType
+ * @returns
+ */
 export function formatTempoDateByFieldType(inputDate: Date | string, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
   const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
   const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
@@ -126,6 +133,15 @@ export function formatTempoDateByFieldType(inputDate: Date | string, inputFieldT
   return '';
 }
 
+/**
+ * Try to parse date with Tempo or return `false` (instead of throwing) if Date is invalid.
+ * When using strict mode, it will detect if the date is invalid when outside of the calendar (e.g. "2011-11-31").
+ * However in non-strict mode, it will roll the date backward if out of calendar (e.g. "2011-11-31" would return "2011-11-30").
+   * @param {string|Date} [inputDate] - input date (or null)
+ * @param {string} [inputFormat] - optional input format to use when parsing
+ * @param {Boolean} [strict] - are we using strict mode?
+ * @returns
+ */
 export function tryParseDate(inputDate?: string | Date, inputFormat?: string, strict = false): Date | false {
   try {
     if (!inputDate) {
