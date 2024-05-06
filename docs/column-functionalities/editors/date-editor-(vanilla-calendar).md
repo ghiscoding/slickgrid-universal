@@ -4,7 +4,9 @@
 - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Information
-The Date Editor is provided through an external library named [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro)) and all options from that library can be added to your `editorOptions` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/docs/reference/additionally/settings) and then add them into `editorOptions`. Also just so you know, `editorOptions` is use by all other editors as well to expose external library like Autocompleter, Multiple-Select, etc...
+The Date Editor is provided through an external library named [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro)) and all options from that library can be added to your `editorOptions` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/docs/reference/additionally/settings) and then add them into `editorOptions`. We use [Tempo](https://tempo.formkit.com/) to parse and format Dates to the chosen format (when `type`, `outputType` and/or `saveType` are provided in your column definition)
+
+> **Note** Also just so you know, `editorOptions` is used by all other editors as well to expose external library like Autocompleter, Multiple-Select, etc...
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)

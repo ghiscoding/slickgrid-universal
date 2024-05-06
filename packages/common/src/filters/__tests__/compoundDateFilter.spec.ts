@@ -305,7 +305,7 @@ describe('CompoundDateFilter', () => {
     expect(filterFilledElms.length).toBe(1);
     expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
-    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });
 
   it('should create the input filter with a default input dates when passed as a filter options', () => {
@@ -403,7 +403,7 @@ describe('CompoundDateFilter', () => {
     expect(filterFilledElms.length).toBe(1);
     expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
-    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
     expect(calendarElm).toBeTruthy();
     expect(monthElm).toBeTruthy();
     // expect(monthElm.textContent).toBe('janvier');
@@ -473,7 +473,7 @@ describe('CompoundDateFilter', () => {
     expect(filterFilledElms.length).toBe(1);
     expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
-    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });
 
   it('should have default English text with operator dropdown options related to dates', () => {

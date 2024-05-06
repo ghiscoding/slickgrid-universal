@@ -31,6 +31,7 @@ The goal of this new release was mainly to improve UI/UX (mostly for Dark Mode) 
   - Bootstrap >=v5.x (or any other UI framework)
   - SASS >=v1.35 (`dart-sass`)
   - migrated from Flatpickr to Vanilla-Calendar (visit [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) for demos and docs)
+  - migrated from MomentJS to [Tempo](https://tempo.formkit.com/)
 
 > **Note** for the entire list of tasks & code changes applied in this release, you may want to take a look at the [Roadmap to 5.0](https://github.com/ghiscoding/slickgrid-universal/discussions/1482) Discussion.
 
@@ -228,6 +229,7 @@ if you want to read the Editor class (e.g. `Editors.longText`), you can now refe
 
 ## Grid Functionalities
 
+### Sanitizer (DOMPurify)
 `DOMPurify` is now completely optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional was because most users would use `dompurify` but some users who require SSR support would want to use `isomorphic-dompurify`. You could also skip the `sanitizer` configuration, but that is not recommended.
 
 > **Note** even if the `sanitizer` is optional, we **strongly suggest** that you configure it as a global grid option to avoid possible XSS attacks from your data and also to be CSP compliant. Note that for Salesforce users, you do not have to configure it since Salesforce already use DOMPurify internally.
@@ -240,3 +242,8 @@ this.gridOptions = {
 ```
 
 > **Note** If you're wondering about the `ADD_ATTR: ['level']`, well the "level" is a custom attribute used by SlickGrid Grouping/Draggable Grouping to track the grouping level depth and it must be kept.
+
+### From MomentJS to Tempo
+I wanted to replace MomentJS for a long time now (it's been deprecated for years and is CJS only), but it was really hard to find a good replacement (I tried DayJS, Luxon, date-fns and they all had problems)... and here comes [Tempo](https://tempo.formkit.com/)! With Tempo, I was finally able to migrate with the 2 most important functions for our usage in a datagrid are the `parse()` and `format()` functions. The library also has plenty of extra optional functions like `addDay()`, `diffDays()`, ... Another great thing about Tempo is that they use the same format tokens as MomentJS, so the conversion on that side was easy. 
+
+This migration should be transparent to the user, however if you were using MomentJS then please consider trying [Tempo](https://tempo.formkit.com/) in your project as well to modernize your project and also lower your dependencies count. 
