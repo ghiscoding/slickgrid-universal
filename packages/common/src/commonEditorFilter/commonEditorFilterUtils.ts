@@ -4,7 +4,7 @@ import type { IOptions } from 'vanilla-calendar-picker';
 
 import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
 import { FieldType } from '../enums';
-import { formatTempoDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element
@@ -57,6 +57,6 @@ export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IO
         time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
       };
     }
-    dateInputElm.value = initialDates.length ? pickerDates.map(p => formatTempoDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
+    dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }
 }

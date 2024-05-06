@@ -19,7 +19,7 @@ import type {
   OperatorDetail,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-import { formatTempoDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
@@ -268,7 +268,7 @@ export class DateFilter implements Filter {
       // if we are preloading searchTerms, we'll keep them for reference
       if (Array.isArray(pickerValues)) {
         this._currentDateOrDates = pickerValues as Date[];
-        this._currentDateStrings = pickerValues.map(date => formatTempoDateByFieldType(date, undefined, inputFieldType));
+        this._currentDateStrings = pickerValues.map(date => formatDateByFieldType(date, undefined, inputFieldType));
       }
     }
 
@@ -298,7 +298,7 @@ export class DateFilter implements Filter {
               outDates = [firstDate, lastDate];
             } else if (self.selectedDates[0]) {
               firstDate = self.selectedDates[0];
-              self.HTMLInputElement.value = formatTempoDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
+              self.HTMLInputElement.value = formatDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
               outDates = self.selectedDates;
             } else {
               self.HTMLInputElement.value = '';
@@ -308,15 +308,15 @@ export class DateFilter implements Filter {
               const tempoDate = parse(firstDate, pickerFormat);
               tempoDate.setHours(+(self.selectedHours || 0));
               tempoDate.setMinutes(+(self.selectedMinutes || 0));
-              self.HTMLInputElement.value = formatTempoDateByFieldType(tempoDate, undefined, outputFieldType);
+              self.HTMLInputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
               outDates = [tempoDate];
             }
 
             if (this.inputFilterType === 'compound') {
-              this._currentValue = formatTempoDateByFieldType(outDates[0], undefined, columnFieldType);
+              this._currentValue = formatDateByFieldType(outDates[0], undefined, columnFieldType);
             } else {
               if (Array.isArray(outDates)) {
-                this._currentDateStrings = outDates.map(date => formatTempoDateByFieldType(date, undefined, columnFieldType));
+                this._currentDateStrings = outDates.map(date => formatDateByFieldType(date, undefined, columnFieldType));
                 this._currentValue = this._currentDateStrings.join('..');
               }
             }

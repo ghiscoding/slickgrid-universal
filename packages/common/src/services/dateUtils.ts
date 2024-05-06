@@ -119,7 +119,7 @@ export function mapTempoDateFormatWithFieldType(fieldType: typeof FieldType[keyo
  * @param {FieldType} outputFieldType
  * @returns
  */
-export function formatTempoDateByFieldType(inputDate: Date | string, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
+export function formatDateByFieldType(inputDate: Date | string, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
   const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
   const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
   const date = inputDate instanceof Date ? inputDate : tryParseDate(inputDate, inputFormat as string);

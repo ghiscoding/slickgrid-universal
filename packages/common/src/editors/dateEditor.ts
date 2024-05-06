@@ -20,7 +20,7 @@ import { getDescendantProperty, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
-import { formatTempoDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Picker
@@ -132,7 +132,7 @@ export class DateEditor implements Editor {
               let selectedDate = '';
               if (self.selectedDates[0]) {
                 selectedDate = self.selectedDates[0];
-                self.HTMLInputElement.value = formatTempoDateByFieldType(self.selectedDates[0], undefined, outputFieldType);
+                self.HTMLInputElement.value = formatDateByFieldType(self.selectedDates[0], undefined, outputFieldType);
               } else {
                 self.HTMLInputElement.value = '';
               }
@@ -141,7 +141,7 @@ export class DateEditor implements Editor {
                 const tempoDate = parse(selectedDate, pickerFormat);
                 tempoDate.setHours(+(self.selectedHours || 0));
                 tempoDate.setMinutes(+(self.selectedMinutes || 0));
-                self.HTMLInputElement.value = formatTempoDateByFieldType(tempoDate, undefined, outputFieldType);
+                self.HTMLInputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
               }
 
               if (this._lastClickIsDate) {
@@ -326,7 +326,7 @@ export class DateEditor implements Editor {
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(null, state);
-      const newValue = (state && validation?.valid) ? formatTempoDateByFieldType(state, outputFieldType, saveFieldType) : '';
+      const newValue = (state && validation?.valid) ? formatDateByFieldType(state, outputFieldType, saveFieldType) : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -365,7 +365,7 @@ export class DateEditor implements Editor {
       const inputFieldType = this.columnEditor.type || this.columnDef?.type || FieldType.dateIso;
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateIso;
 
-      this._originalDate = formatTempoDateByFieldType(value, inputFieldType, outputFieldType);
+      this._originalDate = formatDateByFieldType(value, inputFieldType, outputFieldType);
       this._inputElm.value = this._originalDate;
     }
   }

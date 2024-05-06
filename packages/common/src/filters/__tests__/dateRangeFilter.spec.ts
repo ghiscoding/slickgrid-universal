@@ -55,12 +55,6 @@ describe('DateRangeFilter', () => {
     };
 
     filter = new DateRangeFilter(translateService);
-
-    // jest.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => ({
-    //   resolvedOptions: () => ({
-    //     timeZone: 'America/New_yorkpp'
-    //   })
-    // }));
   });
 
   afterEach(() => {
