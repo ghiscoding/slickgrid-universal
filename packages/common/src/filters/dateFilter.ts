@@ -241,7 +241,7 @@ export class DateFilter implements Filter {
     const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
-    // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
+    // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
     if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
@@ -372,7 +372,7 @@ export class DateFilter implements Filter {
       };
     }
 
-    // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
+    // add the time picker when format includes time (hours/minutes)
     if (this.hasTimePicker) {
       pickerOptions.settings!.selection ??= {};
       pickerOptions.settings!.selection.time = 24;

@@ -112,7 +112,7 @@ export class DateEditor implements Editor {
       const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
       const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
-      // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
+      // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
       if (outputFormat && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
         this.hasTimePicker = true;
       }
@@ -162,7 +162,7 @@ export class DateEditor implements Editor {
         },
       };
 
-      // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
+      // add the time picker when format includes time (hours/minutes)
       if (this.hasTimePicker) {
         pickerOptions.settings!.selection = {
           time: 24
