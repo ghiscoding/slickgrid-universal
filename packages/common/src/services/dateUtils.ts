@@ -1,4 +1,4 @@
-import { format, parse, tzDate } from '@formkit/tempo';
+import { format, offset, parse, removeOffset, tzDate } from '@formkit/tempo';
 
 import { FieldType } from '../enums/index';
 
@@ -158,9 +158,14 @@ export function tryParseDate(inputDate?: string | Date, inputFormat?: string, st
   }
 }
 
-export function toUtcDate(inputDate: Date) {
-  const localOffset = new Date().getTimezoneOffset() * 60 * 1000;
-  return new Date(inputDate.getTime() + localOffset);
+/**
+ * Parse a Date as a UTC date (without local TZ offset)
+ * @param inputDate
+ * @returns
+ */
+export function toUtcDate(inputDate: string | Date) {
+  // to parse as UTC in Tempo, we need to remove the offset (which is a simple inversed offset to cancel itself)
+  return removeOffset(inputDate, offset(inputDate, 'utc'));
 };
 
 /**
