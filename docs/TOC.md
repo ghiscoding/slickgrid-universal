@@ -6,6 +6,7 @@
 
 * [Quick start](getting-started/quick-start.md)
 * [Salesforce (LWC)](getting-started/installation-salesforce.md)
+* [Vanilla Installation](getting-started/installation-vanilla.md)
 
 ## Styling
 

@@ -1,29 +1,29 @@
 ## Version 5 - Better UI and Dark Mode with Pure CSS SVG icons ✨
-This new release brings a lot of changes oriented towards better UI/UX, our SVG icons are now pure CSS and can be colorized like any other text via the native CSS `color` property (which helps a lot improving the Dark Mode Theme).
+This new release brings a lot of changes oriented towards better UI/UX, our SVG icons are now pure CSS and can be colorized like any other text via the native CSS `color` property (which helps a lot to improve the Dark Mode Theme).
 
-Another noticeable UI change is the migration from [Flatpickr](https://flatpickr.js.org/) to [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (which is a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) and we'll hopefully drop the fork in the near future if possible), there are multiple reasons to migrate our date picker to another library:
+Another noticeable UI change is the migration from [Flatpickr](https://flatpickr.js.org/) to [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (which is a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) and we'll hopefully drop the fork in the near future if possible), there are multiple reasons to migrate our date picker to another library as shown below. Another change that is mostly internal but is also indirectly connected to the date picker is the migration from MomentJS to [Tempo](https://tempo.formkit.com/) which is modern and is packaged as ESM which is great for Tree Shaking.
 
-- Flatpickr cons:
+##### Flatpickr cons:
   - barely supported (lots of opened PR but nothing merged for the past 2 years)
-  - not fully ESM ready (it's only partially ESM, for example it is detected as CJS in Angular-Slickgrid and requires to be added to `allowedCommonJsDependencies`)
+  - not fully ESM ready (it's only partially ESM, for example it is detected as CJS in Angular-Slickgrid and requires an exception in `allowedCommonJsDependencies`)
   - styling could be a bit more modern (the use of native select/input to change year/month/time is a bit outdated and rudimentary)
   - date range selection is not very user friendly (UX)
 
-- Vanilla-Calendar (VC)
+##### Vanilla-Calendar (VC)
   - pros:
     - ESM ready
     - modern styling and also includes Dark Mode theme
     - date range becomes a lot more easy by displaying a picker with 2 months
   - cons:
-    - build size is slightly larger but its UI/UX is awesome
+    - build size is slightly larger but its UI/UX is awesome (especially when chaning month/year)
     - settings are named differently and are not using flat config (complex object settings) and requires code change
       - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }` in VC
     - some settings were missing, like the `'today'` shortcut which is why I forked the VC project
       - I did open a few PRs on the main project, so the hope is to drop the fork in the future while being a totally transparent change to you when it happens.
 
-With this release, and after 7 years of development with a 1 man show (myself @ghiscoding), I believe that I have achieved all goals and even more than I originally planned to accomplish. I am not expecting to roll that many major releases for the foreseable future, because like I just said, most goals of this project have been accomplished. I think the biggest challenge and transition was the removal of jQuery/jQueryUI which took couple of years to accomplish of which that I am very proud to have achieved.
+With this release, and after 7 years of development as a 1 man show (myself @ghiscoding), I believe that I have achieved all goals and even more than I originally planned to accomplish and with that being said, I am not expecting to roll any new major releases for the foreseable future. As a recap, I think that the biggest challenge was the removal of jQuery/jQueryUI and transition to native code, that took 2-3 years to accomplish, and I am of course very proud to have achieved.
 
-The goal of this new release was mainly to improve UI/UX (mostly for Dark Mode) and also to make it fully ESM ready. Also noteworthy, the project now has a similar or slightly smaller size in comparison to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer requiring the install of jQuery/jQueryUI, and also considering that these 2 dependencies have a total of well over 200kb. So, we can safely assume that our project build size is in fact a lot smaller than it was 2 years ago, that is really nice to know considering that we kept adding features (like Dark Mode and others) while still maintainging, or slightly decreasing, its size :)
+To summarize, the goal of this new release was mainly to improve UI/UX (mostly for Dark Mode) and also to make it fully ESM ready. Also noteworthy, the project now has a similar or slightly smaller size in comparison to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer requiring the install of jQuery/jQueryUI, and also considering that these 2 dependencies had a total of well over 200kb. We can safely assume that our project build size is in fact a lot smaller than it was just 2 years ago, that is really nice to know considering that we kept adding features (like Dark Mode and other features) while still maintaining, or slightly decreasing, its size :)
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -36,9 +36,9 @@ team)
 
 > **Note** for the entire list of tasks & code changes applied in this release, you may want to take a look at the [Roadmap to 5.0](https://github.com/ghiscoding/slickgrid-universal/discussions/1482) Discussion.
 
-> **NOTE:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
-
 For most breaking changes, a quick Search & Replace in your code editor should suffice.
+
+> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
 ## Changes
 
@@ -47,7 +47,7 @@ For most breaking changes, a quick Search & Replace in your code editor should s
 #### CSS classes `.color-xx` are all removed (use `.text-color-xx` or native `color` instead)
 > **Note** these extra colors are only available in the Material & Salesforce Themes (it is not included in the Bootstrap Theme since Bootstrap have their own coloring utils).
 
-Since the SVG icons are now pure CSS, we can now colorize any of them the same way that we would do for any other text via the `color` CSS property 🌈. For that reason, we no longer need any of the `.color-xx` CSS classes (which were created via CSS [filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)). They were useful to override the SVG icon colors (by using CSS `filter`), but since we can now use the regular CSS `color` property, the `color-xx` are no longer necessary and were all removed (just use `text-color-xx` instead or simply plain `color`s).
+Since the SVG icons are now pure CSS, we can now colorize any of them the same way that we would do for any other text via the `color` CSS property 🌈. For that reason, we no longer need any of the `.color-xx` CSS classes (which were created via CSS [filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)). They were useful to override the SVG icon colors (by using CSS `filter`), but since we can now use the regular CSS `color` property, the `color-xx` are no longer necessary and were all removed (just use `text-color-xx` instead or plain CSS `color`s).
 
 ```diff
 <button class="button is-small">
@@ -66,14 +66,14 @@ or move the class to the parent container and have both the icon & the text `inh
 ```
 
 #### SASS variables
-A lot of SASS variables were changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with yours SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted (note that Vanilla-Calendar doesn't have any variales). Also a lot of the icon related variables got updated (icons now have the suffix `-icon-svg-path` for the SVG vector path). 
+A lot of SASS variables were changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with your SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted (note that Vanilla-Calendar doesn't actually have any variables). Also a lot of the icon related variables were renamed and updated (icons now all have the suffix `-icon-svg-path` for the SVG vector path, you can easily change them with SASS). 
 
-> **Note** if you want create your own SVGs in pure CSS, you can use the `generateSvgStyle()` function from our [`svg-utilities.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/svg-utilities.scss) (take a look at the [`slickgrid-icons.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss) for usage)
+> **Note** if you want create your own SVGs icons in pure CSS, you could use the `generateSvgStyle()` SASS function from Slickgrid-Universal [`svg-utilities.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/svg-utilities.scss) (take a look at the [`slickgrid-icons.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss) for some usage)
 
 #### SASS (dart-sass) `math` polyfills are removed
-When SASS (dart-sass) released their version 1.33 (~3 years ago), it caused a ton of console warnings (and a lot of unhappy users) in projects that were using `/` in their SASS files (for math division) instead of their new `math.div()` function. To avoid seeing all these warnings, I added a temporary polyfill at the time (that piece of code was actually copied from the Bootstrap project). That polyfill patch was put in place about 3 years ago, so I'm assuming that most users have already upgraded their SASS version and already fixed all of these warnings... So, I think it's time to remove this polyfill because it was really meant to be a temp patch. If you see some warnings coming back, then a suggestion would be to use the SASS option `--quiet-upstream` via the CLI.
+When SASS (dart-sass) released their version 1.33 (~3 years ago), it caused a ton of console warnings (and a lot of unhappy users) in projects that were using `/` in their SASS files (for math division) instead of their new `math.div()` function. To avoid seeing all these warnings, I added a temporary polyfill at the time (that piece of code was actually copied from the Bootstrap project). That polyfill patch was put in place about 3 years ago, so I'm assuming that most users have already upgraded their SASS version and already fixed all of these warnings... So, I think it's now safe to remove this polyfill, because like I said earlier, it was really meant to be a temp patch. If you see any warnings coming back, then a suggestion would be to use the SASS CLI `--quiet-upstream` option.
 
-For reference, below is an example of these old Math warnings when we used to compile it with SASS CLI
+For reference, below is an example of these old Math warnings which were coming up when using the SASS CLI
 
 ```sh
 Recommendation: math.div($m, $columns)
@@ -84,7 +84,7 @@ More info and automated migrator: https://sass-lang.com/d/slash-div
 ```
 
 #### Font-Awesome references are all removed
-Since this release introduces pure CSS SVG icons, I went ahead and deleted all Font-Awesome references (mostly in the Bootstrap Theme), that is because all the built-in icons are now all SVG icons (sort, grouping, row detail, row move, row selection). You can also change these icons via SASS (or CSS variables with a bit more work). However, there are a few plugins that use external icons via CSS classes (mostly all menu plugins like Header Menu, Grid Menu, Content Menu, ...) and for that reason **all Styling Themes** now include the Slickgrid-Universal Material icons subset by default (not just Material & Salesforce but now also the Bootstrap Theme as well). In short, the grid now uses SVG icons by default and Font-Awesome icons will no longer be used internally (you can still use them in your project but it won't be used by the grid unless you set them in your grid options).
+Since this release introduces pure CSS SVG icons, I went ahead and deleted all Font-Awesome references (which were mostly in the Bootstrap Theme). The reason is simple, the built-in icons are now all pure CSS SVG icons (sort, grouping, row detail, row move, row selection). You can also change these icons via SASS (or CSS variables with a bit more work). However, please note that there are a few plugins which use external icons via CSS classes (mostly all menu plugins like Header Menu, Grid Menu, Content Menu, ...) and for that reason **all Styling Themes** now include the Slickgrid-Universal Material icons subset (~200 icons) by default (not just Material & Salesforce but now also the Bootstrap Theme as well). In short, the grid is now using SVG icons by default and Font-Awesome icons will no longer be used internally (you can still use it in your project but it won't be used by the grid itself unless you set them in your grid options).
 
 If you no longer need Font-Awesome, then consider removing it completely
 
@@ -97,7 +97,7 @@ If you no longer need Font-Awesome, then consider removing it completely
 }
 ```
 
-What if you don't want to use the [Slickgrid-Universal icons](https://ghiscoding.github.io/slickgrid-universal/#/icons) (`.mdi`) subset and would rather use a different font/SVG library? In that case, it's suggested to use the "lite" Themes (which do not include the colors & icons subset) and then make sure to update all the menu plugins with the correct CSS classes. For example the global grid options of the Grid Menu is now configured with the following icon classes (notice that we no longer provide any Font-Awesome "fa" icon references in our global grid options). Also note that what is shown below is just 1 of the multiple menu plugins to configure, make sure to review them all (you can review the [global-grid-options.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts) file).
+What if you don't want to use the [Slickgrid-Universal icons](https://ghiscoding.github.io/slickgrid-universal/#/icons) (`.mdi`) subset and would rather use a different font/SVG library? In that case, I would suggest that you use the "lite" Themes (which do not include the colors & icons subset) and then make sure to update all the menu plugins with the correct CSS classes. For example the global grid options of the Grid Menu is now configured with the following icon classes (notice that we no longer provide any Font-Awesome "fa" icon references in our global grid options). Also note that what is shown below is just 1 of the multiple menu plugins to configure, make sure to review them all (you can review the [global-grid-options.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts) file).
 
 ```ts
 // default global grid options
@@ -121,7 +121,7 @@ export const GlobalGridOptions = {
 }
 ```
 
-and below is a quick snapshot of the file size diff with the "lite" themes (without icons) vs the default themes (with colors & icons subset). However note that the built-in icons are of course always included.
+and below is a quick snapshot of the file size diff with the "lite" themes (without icons) vs the default themes (with colors & icons subset). However note that the built-in icons are of course always included even in the "lite" themes.
 
 ![image](https://github.com/ghiscoding/Angular-Slickgrid/assets/643976/ea7542b9-3c7e-4a6f-ae4d-355138f74188)
 
@@ -130,7 +130,7 @@ and below is a quick snapshot of the file size diff with the "lite" themes (with
 The util `getHTMLFromFragment()` function was removed in favor of `getHtmlStringOutput()`, the new function will auto-detect if it's a DocumentFragment, an HTMLElement or an HTML string and will execute the appropriate action.
 
 ##### jQueryUI CSS classes leftovers
-There were a few traces of jQueryUI with `.ui-state-default`, and other similar classes in the core lib and they were all removed in this release. If you were querying any of them for styling purposes, you can simply rename them to `.slick-state-*`
+There were a few remaining traces of jQueryUI CSS classes like `.ui-state-default` and other similar classes in the core lib, they were all removed in this release. If you were querying any of them in CSS for styling purposes, you can simply rename them to `.slick-state-*`
 
 ```diff
 - .ui-state-default, .ui-state-hover {
@@ -140,7 +140,7 @@ There were a few traces of jQueryUI with `.ui-state-default`, and other similar 
 
 #### Formatters Cleanup & Removals
 
-Since we now use SVGs everywhere and we got rid of any Font usage (no more Font-Awesome code anywhere), the `checkmark` Formatter no longer has any reason to exist and was removed. If you were using it and also still use Font-Awesome in your project, you'll have to either recreate the Formatter yourself or use alternatives. You could use the `Formatters.icon` or `Formatters.iconBoolean` which require the CSS classes to be provided via `params`. Or as a last alternative, and if you are importing the optional SVG icons `.mdi`, then we recommend you simply switch to the `checkmarkMaterial` Formatter.
+Since we now use SVGs everywhere and we got rid of any Font usage (no more Font-Awesome code anywhere), the `checkmark` Formatter no longer has any reason to exist and was removed. If you were using it and still plan to use Font-Awesome in your project, then you'll have to either recreate the Formatter yourself or use alternatives. You could use the `Formatters.icon` or `Formatters.iconBoolean` which require the CSS classes to be provided via `params`. Or as a last alternative, and if you are importing the optional SVG icons `.mdi` subset, then we recommend you simply switch to the `checkmarkMaterial` Formatter.
 
 ```diff
 this.columnDefinitions = [
@@ -151,6 +151,7 @@ this.columnDefinitions = [
   },
 ];
 ```
+
 or create a Custom Formatter
 
 ```ts
@@ -169,7 +170,7 @@ const myCheckmarkFormatter: Formatter = (row: number, cell: number, value: any, 
 ## Column Functionalities
 
 ### Native Select Filter (removed)
-I would be very surprised if anyone would ever use the `Filters.select` and so it was removed in this release. You should simply use the `Filters.singleSelect` or `Filters.multipleSelect`
+I would be very surprised if anyone had ever used the `Filters.select`, which was a native `<select>`, and so it was removed in this release. You should simply use the `Filters.singleSelect` or `Filters.multipleSelect`
 
 ```diff
 prepareGrid() {
@@ -185,9 +186,9 @@ prepareGrid() {
 ```
 
 ### Date Editor/Filter
-We migrated from Flatpicker to Vanilla-Calendar and this require some changes since the setting option names are different. Same changes will be required for both the Filter and the Editor.
+Since we migrated from Flatpicker to Vanilla-Calendar, this requires some changes on your side because the setting option names are different. Same changes will be required for both the Filter and the Editor.
 
-The biggest change that you will have to do is the min/max date setting when using the `'today'` shortcut as shown below:
+The biggest change that you will most probably have to update is the min/max date setting when using the `'today'` shortcut as shown below:
 
 ```diff
 - import { type FlatpickrOption } from '@slickgrid-universal/common';
@@ -205,19 +206,19 @@ prepareGrid() {
 }
 ```
 
-> **Note** the `'today'` shortcut currently only exist in `Vanilla-Calendar-Picker` fork, however the rest of the settings should be similar, visit `Vanilla-Calendar-Pro` [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) website for all other options. The hope is to hopefully drop the fork whenever the original project receives all missing features.
+> **Note** the `'today'` shortcut currently only exist in `Vanilla-Calendar-Picker` fork (a PR has also been opened on the original lib), however the rest of the settings should be the same, visit `Vanilla-Calendar-Pro` [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) website for all other options. The hope is to hopefully drop the fork whenever the original project receives all missing features.
 
 ### `internalColumnEditor` is completely removed
-The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and with this new release, it is now completely removed. This mean that the column `editor` property will remain untouch (in previous version the `editor` was moved to `internalColumnEditor` and then overriden with the `editor.model` for SlickGrid to work but that was confusing to the user)... in short, the `internalColumnEditor` is removed and the associated confusion is also gone with it.
+The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and with this new release, it is now completely removed. This mean that the column `editor` property will remain untouched (in previous releases, the `editor` was moved to an `internalColumnEditor` prop and `editor` was then overriden with the `editor.model` and that was for SlickGrid to work properly... but that was extremely confusing to the user). So in short, the `internalColumnEditor` is now completely removed and the associated confusion is also gone with it.
 
-An example of the previous `internalColumnEditor` usage was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you could not simply push directly to `collection.editor.collection`, you really had to use the mapped `collection.internalColumnEditor.collection` 😵... this is now thankfully gone, you can now use the same and original `collection.editor.collection` 👍
+A good example of the previous `internalColumnEditor` usage, was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you could not simply push to the `collection.editor.collection` because the property was swapped internally. What you really had to do was to use the mapped `collection.internalColumnEditor.collection` 😵... and this is now thankfully gone, you can now use the same and original `collection.editor.collection` 👍
 
 For example, previously, to add an item to the editor/filter collection
 ```diff
-this.columnDefinitions = [{ id: 'complexity', editor: { model: Editors.singleSelect, collection: [{ value: 1, label: 'Simple' }, /*...*/ ] } }];
+this.columnDefinitions = [{ id: 'complexity', editor: { model: Editors.singleSelect, collection: [{ value: 1, label: 'Simple' }, { value: 2, label: 'Hard' }] } }];
 
-// then adding an item would previously require to use `internalColumnEditor`
-// after grid init, our `editor` became `internalColumnEditor
+// then adding an item was previously requiring to use the `internalColumnEditor`
+// that is, after the grid init our `editor` became `internalColumnEditor
 - const complexityEditor = this.columnDefinitions[0].internalColumnEditor;
 complexityEditor.collection.push({ value: 9, label: 'Hard' });
 
@@ -231,9 +232,9 @@ if you want to read the Editor class (e.g. `Editors.longText`), you can now refe
 ## Grid Functionalities
 
 ### Sanitizer (DOMPurify)
-`DOMPurify` is now completely optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional was because most users would use `dompurify` but some users who require SSR support would want to use `isomorphic-dompurify`. You could also skip the `sanitizer` configuration, but that is not recommended.
+`DOMPurify` is now completely optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional is because even though most users would prefer to use `dompurify`, some might prefer to use `isomorphic-dompurify` for SSR support. Consider that it is now optional, you could also technically speaking skip the `sanitizer` configuration completely, but that is not at all recommended.
 
-> **Note** even if the `sanitizer` is optional, we **strongly suggest** that you configure it as a global grid option to avoid possible XSS attacks from your data and also to be CSP compliant. Note that for Salesforce users, you do not have to configure it since Salesforce already use DOMPurify internally.
+> **Note** even if the `sanitizer` is now optional, we **strongly suggest** that you configure it as a global grid option to avoid possible XSS attacks from your data and also to remain CSP compliant. Note that for Salesforce users, you do not have to configure it since Salesforce already use DOMPurify internally.
 
 ```diff
 // prefer the global grid options if possible
@@ -242,9 +243,9 @@ this.gridOptions = {
 };
 ```
 
-> **Note** If you're wondering about the `ADD_ATTR: ['level']`, well the "level" is a custom attribute used by SlickGrid Grouping/Draggable Grouping to track the grouping level depth and it must be kept.
+> **Note** If you're wondering about the `ADD_ATTR: ['level']`, the "level" is a custom attribute used by SlickGrid Grouping/Draggable Grouping to track the grouping level depth and it must be kept for the group indentation to work properly.
 
-### From MomentJS to Tempo
-I wanted to replace MomentJS for a long time now (it's been deprecated for years and is CJS only), but it was really hard to find a good replacement (I tried DayJS, Luxon, date-fns and they all had problems)... and here comes [Tempo](https://tempo.formkit.com/)! With Tempo, I was finally able to migrate by taking advantage of `parse()` and `format()` Tempo functions which are the most important for our use case. The library also has plenty of extra optional functions as well, like `addDay()`, `diffDays()`, ... Another great thing about Tempo is that they use the same format [tokens](https://tempo.formkit.com/#format-tokens) as MomentJS, so the conversion on that side was super easy.
+### From MomentJS to [Tempo](https://tempo.formkit.com/)
+I wanted to replace MomentJS for a long time now (it's been deprecated for years and is CJS only), but it was really hard to find a good replacement (I tried DayJS, Luxon, date-fns and they all had problems)... and here comes [Tempo](https://tempo.formkit.com/)! With Tempo, I was finally able to migrate by taking advantage of their `parse()` and `format()` functions, which are the most important for our datagrid use case. The library also has plenty of extra optional functions as well, like `addDay()`, `diffDays()`, ... Another great thing about Tempo is that they use the same format [tokens](https://tempo.formkit.com/#format-tokens) as MomentJS, so the conversion on that side was super easy.
 
-This migration should be transparent to most users like you, however if you were using MomentJS then I would suggest to consider trying [Tempo](https://tempo.formkit.com/) in your project in order to modernize your project and also lower your dependencies count. The other great advantage of Tempo is that it's ESM and it helps a lot in decreasing our build size footprint because of ESM Tree Shacking feature.
+This migration should be transparent to most users like you. **However** if you are currently using MomentJS in your project, then I would suggest you to consider trying [Tempo](https://tempo.formkit.com/) in order to modernize your project and also lower your dependencies count. The other great advantage of Tempo is that it's ESM and that helps a lot in decreasing our build size footprint because ESM also means that it is Tree Shakable (only import and build what you use).
