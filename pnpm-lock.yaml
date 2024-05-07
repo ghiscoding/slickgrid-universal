@@ -41,6 +41,9 @@ importers:
       '@types/node':
         specifier: ^20.12.8
         version: 20.12.8
+      conventional-changelog-conventionalcommits:
+        specifier: ^7.0.2
+        version: 7.0.2
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
