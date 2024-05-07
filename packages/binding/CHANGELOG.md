@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0-beta.2](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0-beta.2) (2024-05-07)
+
+### ⚠ BREAKING CHANGES
+
+* **common:** migrate from Flatpickr to Vanilla-Calendar (#1466)
+
+### Features
+
+* **common:** migrate from Flatpickr to Vanilla-Calendar ([#1466](https://github.com/ghiscoding/slickgrid-universal/issues/1466)) ([fb6e950](https://github.com/ghiscoding/slickgrid-universal/commit/fb6e950f429b4abd868fca86d9c304580a745b1c)) - by @ghiscoding
+
 # [4.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.3...v4.7.0) (2024-04-20)
 
 **Note:** Version bump only for package @slickgrid-universal/binding
@@ -141,6 +151,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **build:** package exports prop had invalid ESM import link ([#892](https://github.com/ghiscoding/slickgrid-universal/issues/892)) ([7f95f69](https://github.com/ghiscoding/slickgrid-universal/commit/7f95f698447f8178cb7ceec416c35f4957fddbe9)) - by @ghiscoding
+
 * **deps:** update dependency dompurify to v3 ([#907](https://github.com/ghiscoding/slickgrid-universal/issues/907)) ([66c8b4d](https://github.com/ghiscoding/slickgrid-universal/commit/66c8b4d602d88d733070b2189468bf1b6508d7eb)) - by @renovate-bot
 
 # [2.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.3.0...v2.4.0) (2023-02-04)
