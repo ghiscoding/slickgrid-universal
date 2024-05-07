@@ -754,7 +754,7 @@ export class SelectEditor implements Editor {
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();
     if (!this.isCompositeEditor) {
-      this.delayOpening >= 0 ? setTimeout(() => this.show()) : this.show();
+      this.show(this.delayOpening);
     }
   }
 

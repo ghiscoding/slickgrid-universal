@@ -89,11 +89,11 @@ describe('MultipleSelectEditor', () => {
       gridOptionMock.translater = translateService;
       editor = new MultipleSelectEditor(editorArguments, 0);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
-      const spy = jest.spyOn(editor, 'show');
+
       jest.runAllTimers(); // fast-forward timer
 
-      expect(spy).toHaveBeenCalled();
       expect(editorCount).toBe(1);
+      expect(editor.msInstance?.getOptions().isOpen).toBeTruthy();
     });
 
     it('should call "setValue" with a single string and expect the string to be returned as an array when calling "getValue"', () => {
