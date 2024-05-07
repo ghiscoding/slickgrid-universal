@@ -428,7 +428,7 @@ export class SlickCustomTooltip {
     }
 
     // when do have text to show, then append the new tooltip to the html body & reposition the tooltip
-    if (finalOutputText) {
+    if (finalOutputText.toString()) {
       document.body.appendChild(this._tooltipElm);
 
       // reposition the tooltip on top of the cell that triggered the mouse over event
