@@ -52,14 +52,14 @@ export class LongTextEditor implements Editor {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
-    this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
+    this.gridOptions = args.grid?.getOptions() as GridOption;
     const options = this.gridOptions || this.args.column.params || {};
     if (options?.translater) {
       this._translater = options.translater;
     }
 
     // get locales provided by user in forRoot or else use default English locales via the Constants
-    this._locales = this.gridOptions && this.gridOptions.locales || Constants.locales;
+    this._locales = this.gridOptions?.locales || Constants.locales;
 
     this._bindEventService = new BindingEventService();
     this.init();
@@ -258,7 +258,7 @@ export class LongTextEditor implements Editor {
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(undefined, state);
-      const newValue = (validation && validation.valid) ? state : '';
+      const newValue = validation?.valid ? state : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -409,24 +409,24 @@ export class LongTextEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleKeyDown(event: KeyboardEvent) {
-    const key = event.key;
+  protected handleKeyDown(e: KeyboardEvent) {
+    const key = e.key;
     this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
-      if ((key === 'Enter' && event.ctrlKey) || (event.ctrlKey && event.key.toUpperCase() === 'S')) {
-        event.preventDefault();
+      if ((key === 'Enter' && e.ctrlKey) || (e.ctrlKey && e.key.toUpperCase() === 'S')) {
+        e.preventDefault();
         this.save();
       } else if (key === 'Escape') {
-        event.preventDefault();
+        e.preventDefault();
         this.cancel();
-      } else if (key === 'Tab' && event.shiftKey) {
-        event.preventDefault();
+      } else if (key === 'Tab' && e.shiftKey) {
+        e.preventDefault();
         if (this.args && this.grid) {
           this.grid.navigatePrev();
         }
       } else if (key === 'Tab') {
-        event.preventDefault();
+        e.preventDefault();
         if (this.args && this.grid) {
           this.grid.navigateNext();
         }
