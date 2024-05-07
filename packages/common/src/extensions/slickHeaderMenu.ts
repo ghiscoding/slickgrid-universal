@@ -395,7 +395,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             }
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-desc')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-flip-v mdi-sort-descending',
+                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-sort-descending',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: 'sort-desc',
                 positionOrder: 51

@@ -965,7 +965,7 @@ describe('HeaderMenu Plugin', () => {
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
           { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
@@ -976,7 +976,7 @@ describe('HeaderMenu Plugin', () => {
         plugin.translateHeaderMenu();
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Trier par ordre croissant', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Trier par ordre décroissant', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-descending', title: 'Trier par ordre décroissant', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
           { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Supprimer le tri', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
@@ -1094,7 +1094,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="sort-asc"]') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
           { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
@@ -1126,7 +1126,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="sort-desc"]') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
           { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
