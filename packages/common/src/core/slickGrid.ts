@@ -6296,13 +6296,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Sanitize possible dirty html string (remove any potential XSS code like scripts and others) when provided as grid option
-   * @param dirtyHtml: dirty html string
+   * Sanitize possible dirty html string (remove any potential XSS code like scripts and others) when provided via `sanitizer` grid option.
+   * The logic will only call the sanitizer if it exists and is a defined string, anything else will be skipped (number, boolean, TrustedHTML will all be skipped)
+   * @param {*} dirtyHtml: dirty html string
    */
-  sanitizeHtmlString<T extends string | TrustedHTML>(dirtyHtml: string): T {
-    if (typeof this._options?.sanitizer === 'function') {
-      return this._options.sanitizer(dirtyHtml) as T;
+  sanitizeHtmlString<T extends string | TrustedHTML>(dirtyHtml: unknown): T {
+    if (typeof this._options?.sanitizer !== 'function' || !dirtyHtml || typeof dirtyHtml !== 'string') {
+      return dirtyHtml as T;
     }
-    return dirtyHtml as T;
+    return this._options.sanitizer(dirtyHtml) as T;
   }
 }
