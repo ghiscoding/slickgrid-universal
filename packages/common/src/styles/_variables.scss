@@ -321,7 +321,7 @@ $slick-column-picker-icon-border-radius:                    none !default;
 $slick-column-picker-icon-container-bg-color:               transparent !default;
 $slick-column-picker-icon-font-size:                        14px !default;
 $slick-column-picker-icon-container-line-height:            12px !default;
-$slick-column-picker-icon-container-size:                   1.2rem !default;
+$slick-column-picker-icon-container-size:                   1rem !default;
 $slick-column-picker-icon-checked-svg-path:                 "M8.8 19.6L1.2 12c-.3-.3-.3-.8 0-1.1l1-1c.3-.3.8-.3 1 0L9 15.7c.1.2.5.2.6 0L20.9 4.4c.2-.3.7-.3 1 0l1 1c.3.3.3.7 0 1L9.8 19.6c-.2.3-.7.3-1 0z" !default;
 $slick-column-picker-icon-unchecked-svg-path:               $slick-column-picker-icon-checked-svg-path !default;
 $slick-column-picker-icon-unchecked-color-visibility:       visible !default; // make this "hidden" when uncheck icon is not provided (e.g. Salesforce Theme)
@@ -449,7 +449,7 @@ $slick-checkbox-icon-border-radius:                         none !default;
 $slick-checkbox-icon-container-bg-color:                    transparent !default;
 $slick-checkbox-icon-font-size:                             16px !default;
 $slick-checkbox-icon-container-line-height:                 12px !default;
-$slick-checkbox-icon-container-size:                        1.2rem !default;
+$slick-checkbox-icon-container-size:                        1rem !default;
 $slick-checkbox-icon-checked-svg-path:                      "M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" !default;
 $slick-checkbox-icon-unchecked-svg-path:                    $slick-checkbox-icon-checked-svg-path !default;
 $slick-checkbox-icon-unchecked-color-visibility:            visible !default; // make this "hidden" when uncheck icon is not provided (e.g. Salesforce Theme)
@@ -759,7 +759,7 @@ $slick-multiselect-item-height:                             26px !default;
 $slick-multiselect-item-border:                             1px solid transparent !default;
 $slick-multiselect-item-hover-bg-color:                     #fafafa !default;
 $slick-multiselect-item-hover-border:                       1px solid #d5d5d5 !default;
-$slick-multiselect-item-line-height:                        calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
+$slick-multiselect-item-line-height:                        20px !default;
 $slick-multiselect-item-padding:                            2px 4px !default;
 $slick-multiselect-placeholder-bg-color:                    transparent !default;
 $slick-multiselect-placeholder-color:                       $slick-placeholder-color !default;
@@ -946,14 +946,14 @@ $slick-empty-data-warning-z-index:                          10 !default;
   // Bootstrap --bs-body-bg: #212529
   // local common CSS vars for dark mode
   --slick-primary-color:                                  #{lighten($primary-color, 15%)};
-  --slick-base-dark-text-color:                           #cccccc;
+  --slick-base-dark-text-color:                           #d4d4d4;
   --slick-base-dark-menu-bg-color:                        #252525;
   --slick-base-dark-menu-border:                          1px solid #505050;
   --slick-base-dark-menu-item-border:                     1px solid #5a5a5a;
   --slick-base-dark-menu-item-hover-color:                #363b40;
   --slick-base-dark-invalid-color:                        #ea868f;
   --slick-highlight-color:                                var(--slick-primary-color);
-  --slick-text-color:                                     #cccccc;
+  --slick-text-color:                                     #d4d4d4;
 
   --slick-autocomplete-bg-color:                          var(--slick-base-dark-menu-bg-color);
   --slick-autocomplete-hover-bg-color:                    #2c3034;
@@ -994,7 +994,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-grid-menu-icon-btn-color:                       #ededed;
   --slick-row-mouse-hover-color:                          #2c3034;
   --slick-header-background-color:                        #1c1c1c;
-  --slick-header-text-color:                              var(--slick-base-dark-text-color);
+  --slick-header-text-color:                              #e4e4e4;
   --slick-hover-header-color:                             var(--slick-base-dark-text-color);
   --slick-header-row-background-color:                    #2d2d2d;
   --slick-preheader-border-right:                         1px solid #3e3e3e;
