@@ -1781,7 +1781,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               previousSortColumns,
               sortCols: this.sortColumns.map((col) => {
                 const tempCol = this.columns[this.getColumnIndex(col.columnId)];
-                return !tempCol ? null : { columnId: tempCol.id, sortCol: tempCol, sortAsc: col.sortAsc };
+                return (!tempCol || tempCol.hidden) ? null : { columnId: tempCol.id, sortCol: tempCol, sortAsc: col.sortAsc };
               }).filter((el) => el)
             };
           }
