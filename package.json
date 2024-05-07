@@ -33,6 +33,7 @@
     "preview:publish": "lerna publish from-package --dry-run --yes",
     "preview:version": "lerna version --dry-run --yes",
     "preview:roll-new-release": "pnpm bundle && pnpm new-version --dry-run && pnpm new-publish --dry-run",
+    "beta-release": "lerna publish 5.0.0-beta.2 --dist-tag beta",
     "new-version": "lerna version",
     "new-publish": "lerna publish from-package",
     "roll-new-release": "pnpm bundle && pnpm new-version && pnpm new-publish",
