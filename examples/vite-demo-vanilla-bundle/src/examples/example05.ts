@@ -252,7 +252,7 @@ export default class Example05 {
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
           let titleResult = '';
           if (dataContext.treeLevel > 0) {
-            titleResult = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub text-color-se-secondary"></span>`;
+            titleResult = `<span class="mdi mdi-subdirectory-arrow-right text-color-se-secondary"></span>`;
           }
           titleResult += `<span class="bold">${value}</span>`;
           if (dataContext.parentId) {
