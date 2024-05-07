@@ -55,8 +55,5 @@ export class MyExample {
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
 
-### External Dependencies
-- [DOM Purify](https://github.com/cure53/DOMPurify) to sanitize HTML text
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

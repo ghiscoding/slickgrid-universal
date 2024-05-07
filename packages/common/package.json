@@ -70,7 +70,6 @@
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "@types/dompurify": "^3.0.5",
     "@types/sortablejs": "^1.15.8",
     "autocompleter": "^9.2.1",
     "dequal": "^2.0.3",

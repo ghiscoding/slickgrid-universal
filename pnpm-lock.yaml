@@ -237,9 +237,6 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:~
         version: link:../utils
-      '@types/dompurify':
-        specifier: ^3.0.5
-        version: 3.0.5
       '@types/sortablejs':
         specifier: ^1.15.8
         version: 1.15.8
@@ -326,10 +323,6 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:~
         version: link:../utils
-    devDependencies:
-      '@types/dompurify':
-        specifier: ^3.0.5
-        version: 3.0.5
 
   packages/empty-warning-component:
     dependencies:
@@ -2408,6 +2401,7 @@ packages:
     resolution: {integrity: sha512-1Wg0g3BtQF7sSb27fJQAKck1HECM6zV1EB66j8JH9i3LCjYabJa0FSdiSgsD5K/RbrsR0SiraKacLB+T8ZVYAg==}
     dependencies:
       '@types/trusted-types': 2.0.7
+    dev: true
 
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
