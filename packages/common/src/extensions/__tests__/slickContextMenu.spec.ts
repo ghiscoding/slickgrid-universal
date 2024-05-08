@@ -1,12 +1,11 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
+import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 import { DelimiterType, FileType } from '../../enums/index';
 import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index';
 import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { Formatters } from '../../formatters';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickContextMenu } from '../slickContextMenu';
 
@@ -281,6 +280,12 @@ describe('ContextMenu Plugin', () => {
 
       expect(contextMenuElm).toBeTruthy();
       expect(contextMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
+
+      // cell click should close it
+      gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
+      contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
+
+      expect(contextMenuElm).toBeNull();
     });
 
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {

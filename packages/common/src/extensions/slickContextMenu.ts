@@ -75,6 +75,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     this.sortMenuItems();
 
     this._eventHandler.subscribe(this.grid.onContextMenu, this.handleOnContextMenu.bind(this));
+    this._eventHandler.subscribe(this.grid.onClick, this.hideMenu.bind(this));
 
     if (this._addonOptions.hideMenuOnScroll) {
       this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this));
