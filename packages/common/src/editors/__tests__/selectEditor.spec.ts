@@ -631,6 +631,38 @@ describe('SelectEditor', () => {
         expect(saveSpy).toHaveBeenCalledWith(false);
       });
 
+      it('should cancel changes when Escape key is pressed and should not call "save()"', () => {
+        mockItemData = { id: 1, gender: 'male', isActive: true };
+        gridOptionMock.autoCommitEdit = false;
+
+        editor = new SelectEditor(editorArguments, true);
+        const cancelSpy = jest.spyOn(editor, 'cancel');
+        const saveSpy = jest.spyOn(editor, 'save');
+
+        editor.loadValue(mockItemData);
+        editor.msInstance?.close('key.escape');
+        editor.destroy();
+
+        expect(cancelSpy).toHaveBeenCalled();
+        expect(saveSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not "save()" when clicking ouside the select on body', () => {
+        mockItemData = { id: 1, gender: 'male', isActive: true };
+        gridOptionMock.autoCommitEdit = false;
+
+        editor = new SelectEditor(editorArguments, true);
+        const cancelSpy = jest.spyOn(editor, 'cancel');
+        const saveSpy = jest.spyOn(editor, 'save');
+
+        editor.loadValue(mockItemData);
+        editor.msInstance?.close('body.click');
+        editor.destroy();
+
+        expect(cancelSpy).not.toHaveBeenCalled();
+        expect(saveSpy).not.toHaveBeenCalled();
+      });
+
       it('should not call "commitCurrentEdit" when "hasAutoCommitEdit" is disabled', () => {
         mockItemData = { id: 1, gender: 'male', isActive: true };
         gridOptionMock.autoCommitEdit = false;

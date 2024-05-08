@@ -124,7 +124,14 @@ export class SelectEditor implements Editor {
       onClick: () => this._isValueTouched = true,
       onCheckAll: () => this._isValueTouched = true,
       onUncheckAll: () => this._isValueTouched = true,
-      onClose: () => {
+      onClose: (reason) => {
+        if (reason === 'key.escape' || reason === 'body.click' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
+          if (reason === 'key.escape') {
+            this.cancel();
+          }
+          return;
+        }
+
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(compositeEditorOptions);
         } else {
@@ -361,6 +368,12 @@ export class SelectEditor implements Editor {
       if (compositeEditorOptions && triggerOnCompositeEditorChange) {
         this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
       }
+    }
+  }
+
+  cancel() {
+    if (this.args?.cancelChanges) {
+      this.args.cancelChanges();
     }
   }
 
