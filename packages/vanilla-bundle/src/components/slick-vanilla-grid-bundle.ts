@@ -43,18 +43,17 @@ import {
   TreeDataService,
 
   // utilities
-  deepCopy,
   emptyElement,
   unsubscribeAll,
   SlickEventHandler,
   SlickDataView,
   SlickGrid
 } from '@slickgrid-universal/common';
+import { extend } from '@slickgrid-universal/utils';
 import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { extend } from '@slickgrid-universal/utils';
 
 import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
@@ -147,7 +146,7 @@ export class SlickVanillaGridBundle<TData = any> {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
-    let data = isDeepCopyDataOnPageLoadEnabled ? deepCopy(newDataset || []) : newDataset;
+    let data = isDeepCopyDataOnPageLoadEnabled ? extend(true, [], newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (this.slickGrid && this.gridOptions?.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)) {
@@ -373,7 +372,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this._eventPubSubService);
 
     if (hierarchicalDataset) {
-      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? deepCopy(hierarchicalDataset || []) : hierarchicalDataset) || [];
+      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
     const eventHandler = new SlickEventHandler();
 

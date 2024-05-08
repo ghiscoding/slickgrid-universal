@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { deepCopy, deepMerge, emptyObject, setDeepValue, classNameToList, getHtmlStringOutput } from '@slickgrid-universal/utils';
+import { deepMerge, emptyObject, setDeepValue, classNameToList, getHtmlStringOutput, extend } from '@slickgrid-universal/utils';
 import type {
   Column,
   CompositeEditorLabel,
@@ -312,7 +312,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       } else {
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const dataContext = !isWithMassChange ? this.grid.getDataItem(activeRow) : {};
-        this._originalDataContext = deepCopy(dataContext);
+        this._originalDataContext = extend(true, {}, dataContext);
         this._columnDefinitions = this.grid.getColumns();
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
         const fullDatasetLength = this.dataView?.getItemCount() ?? 0;
@@ -567,7 +567,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   /** Apply Mass Update Changes (form values) to the entire dataset */
   protected applySaveMassUpdateChanges(formValues: any, _selection: DataSelection, applyToDataview = true): any[] {
     // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
-    const data = applyToDataview ? this.dataView.getItems() : deepCopy(this.dataView.getItems());
+    const data = applyToDataview ? this.dataView.getItems() : extend(true, [], this.dataView.getItems());
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
@@ -595,7 +595,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     const selectedTmpItems = selectedItemIds.map(itemId => this.dataView.getItemById(itemId));
 
     // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
-    const selectedItems = applyToDataview ? selectedTmpItems : deepCopy(selectedTmpItems);
+    const selectedItems = applyToDataview ? selectedTmpItems : extend(true, [], selectedTmpItems);
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes

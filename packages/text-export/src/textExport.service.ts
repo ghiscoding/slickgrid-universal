@@ -22,7 +22,7 @@ import {
   getTranslationPrefix,
   htmlEntityDecode,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, deepCopy, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: DelimiterType.comma,
@@ -110,7 +110,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     return new Promise(resolve => {
       this._pubSubService?.publish(`onBeforeExportToTextFile`, true);
-      this._exportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.textExportOptions, ...options });
+      this._exportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
 
