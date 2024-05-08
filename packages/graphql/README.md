@@ -3,6 +3,7 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/graphql.svg)](https://www.npmjs.com/package/@slickgrid-universal/graphql)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/graphql)](https://www.npmjs.com/package/@slickgrid-universal/graphql)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/graphql?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/graphql)
 
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
