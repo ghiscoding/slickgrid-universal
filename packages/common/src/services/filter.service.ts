@@ -1,5 +1,5 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { deepCopy, extend, stripTags } from '@slickgrid-universal/utils';
+import { extend, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 
 import { Constants } from '../constants';
@@ -402,7 +402,7 @@ export class FilterService {
    * @returns FilterConditionOption
    */
   parseFormInputFilterConditions(inputSearchTerms: SearchTerm[] | undefined, columnFilter: Omit<SearchColumnFilter, 'searchTerms'>): Omit<FilterConditionOption, 'cellValue'> {
-    const searchValues: SearchTerm[] = deepCopy(inputSearchTerms) || [];
+    const searchValues: SearchTerm[] = extend(true, [], inputSearchTerms) || [];
     let fieldSearchValue = (Array.isArray(searchValues) && searchValues.length === 1) ? searchValues[0] : '';
     const columnDef = columnFilter.columnDef;
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
@@ -576,7 +576,7 @@ export class FilterService {
       if (typeof columnFilters === 'object') {
         Object.keys(columnFilters).forEach(columnId => {
           const columnFilter = columnFilters[columnId] as SearchColumnFilter;
-          const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
+          const searchValues: SearchTerm[] = columnFilter?.searchTerms ? extend(true, [], columnFilter.searchTerms) : [];
           const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
 
           const columnDef = columnFilter.columnDef;

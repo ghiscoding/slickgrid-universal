@@ -33,7 +33,7 @@ import {
   getTranslationPrefix,
   isColumnDateType,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, deepCopy, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 import {
   type ExcelFormatter,
@@ -136,7 +136,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
     }
     this._pubSubService?.publish(`onBeforeExportToExcel`, true);
-    this._excelExportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
+    this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
     this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
 
     // reset references of detected Excel formats
