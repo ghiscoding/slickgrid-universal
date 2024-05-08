@@ -1,4 +1,4 @@
-$slick-icon-width-min-size: 10;
+$slick-icon-width-min-size: 5;
 $slick-icon-width-max-size: 50;
 
 @-webkit-keyframes sg-spin {
@@ -46,10 +46,13 @@ $slick-icon-width-max-size: 50;
   &.mdi-rotate-225 { transform: rotate(225deg); }
   &.mdi-rotate-270 { transform: rotate(270deg); }
   &.mdi-rotate-315 { transform: rotate(315deg); }
+}
 
-  @for $i from $slick-icon-width-min-size through $slick-icon-width-max-size {
-    &.mdi-#{$i}px {
-      font-size: #{$i}px;
-    }
+// font-5px up to 50px / mdi-5px to 50px
+// since SVG icons are now pure CSS, we can merge font-x with mdi-x
+@for $i from $slick-icon-width-min-size through $slick-icon-width-max-size {
+  .mdi.mdi-#{$i}px,
+  .font-#{$i}px {
+    font-size: #{$i}px !important;
   }
 }

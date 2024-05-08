@@ -53,11 +53,6 @@ $slick-padding-max-count: 30;
   .padding-#{$i}px { padding: #{$i}px; }
 }
 
-// font-5px up to font-50px
-@for $i from 5 through $slick-font-size-count {
-  .font-#{$i}px { font-size: #{$i}px; }
-}
-
 .margin-auto {
   margin: auto;
 }
