@@ -99,10 +99,15 @@ input.is-narrow {
 .d-inline-flex {
   display: inline-flex;
 }
+.align-items-center {
+  align-items: center;
+}
 .columns:not(:last-child) {
   margin-bottom: calc(1.5rem - 0.9rem);
 }
-
+.gap-5px {
+  gap: 5px;
+}
 .text-green {
   color: #009e00;
 }
