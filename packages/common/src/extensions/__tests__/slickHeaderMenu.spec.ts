@@ -59,6 +59,7 @@ const gridStub = {
   updateColumnHeader: jest.fn(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
+  onClick: new SlickEvent(),
   onHeaderCellRendered: new SlickEvent(),
   onHeaderMouseEnter: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
@@ -735,6 +736,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should create a Grid Menu item with commands sub-menu commandItems and expect sub-menu to be positioned on top (dropup)', () => {
+        const hideMenuSpy = jest.spyOn(plugin, 'hideMenu');
         const onCommandMock = jest.fn();
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
         jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
@@ -775,6 +777,11 @@ describe('HeaderMenu Plugin', () => {
 
         expect(headerMenu2Elm2.classList.contains('dropup')).toBeTruthy();
         expect(headerMenu2Elm2.classList.contains('dropdown')).toBeFalsy();
+
+        // cell click should close it
+        gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
+
+        expect(hideMenuSpy).toHaveBeenCalled();
       });
     });
 

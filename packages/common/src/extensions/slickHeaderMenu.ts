@@ -79,6 +79,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     });
     this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
     this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
+    this._eventHandler.subscribe(this.grid.onClick, this.hideMenu.bind(this));
 
     // force the grid to re-render the header after the events are hooked up.
     this.grid.setColumns(this.grid.getColumns());

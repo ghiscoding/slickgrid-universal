@@ -114,6 +114,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   initEventHandlers() {
     // when grid columns are reordered then we also need to update/resync our picker column in the same order
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this));
+    this._eventHandler.subscribe(this.grid.onClick, (e) => this.hideMenu(e as any));
 
     // subscribe to the grid, when it's destroyed, we should also destroy the Grid Menu
     this._eventHandler.subscribe(this.grid.onBeforeDestroy, this.dispose.bind(this));
