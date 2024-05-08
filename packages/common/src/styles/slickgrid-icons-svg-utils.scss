@@ -1,4 +1,4 @@
-$slick-icon-width-min-size: 8;
+$slick-icon-width-min-size: 10;
 $slick-icon-width-max-size: 50;
 
 @-webkit-keyframes sg-spin {
@@ -8,9 +8,6 @@ $slick-icon-width-max-size: 50;
 @keyframes sg-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-@mixin sg-icon-rotate($degrees, $rotation) {
-  transform: rotate($degrees);
 }
 
 .mdi {
@@ -24,36 +21,35 @@ $slick-icon-width-max-size: 50;
     animation: sg-spin 1s infinite steps(8);
   }
   /* use mdi-spin or mdi-spin-1s to change the speed */
-  &.mdi-spin {
+  &.mdi-spin,
+  &.mdi-spin-1s,
+  &.mdi-spin-2s,
+  &.mdi-spin-3s,
+  &.mdi-spin-4s,
+  &.mdi-spin-5s {
     align-items: center;
     display: inline-flex;
     justify-content: center;
+  }
+  &.mdi-spin {
     animation: sg-spin 2s infinite linear;
   }
   @for $i from 1 through 5 {
     &.mdi-spin-#{$i}s {
-      align-items: center;
-      display: inline-flex;
-      justify-content: center;
       animation: sg-spin #{$i}s infinite linear;
     }
   }
-  &.mdi-rotate-45  { @include sg-icon-rotate(45deg, 1);  }
-  &.mdi-rotate-90  { @include sg-icon-rotate(90deg, 1);  }
-  &.mdi-rotate-135 { @include sg-icon-rotate(135deg, 2); }
-  &.mdi-rotate-180 { @include sg-icon-rotate(180deg, 2); }
-  &.mdi-rotate-220 { @include sg-icon-rotate(220deg, 3); }
-  &.mdi-rotate-270 { @include sg-icon-rotate(270deg, 3); }
-  &.mdi-rotate-315 { @include sg-icon-rotate(315deg, 3); }
-  &.mdi-rotate-45, .mdi-rotate-90, .mdi-rotate-135, .mdi-rotate-180, .mdi-rotate-220 .mdi-rotate-270, .mdi-rotate-315 {
-    filter: none;
-  }
+  &.mdi-rotate-45  { transform: rotate(45deg);  }
+  &.mdi-rotate-90  { transform: rotate(90deg);  }
+  &.mdi-rotate-135 { transform: rotate(135deg); }
+  &.mdi-rotate-180 { transform: rotate(180deg); }
+  &.mdi-rotate-225 { transform: rotate(225deg); }
+  &.mdi-rotate-270 { transform: rotate(270deg); }
+  &.mdi-rotate-315 { transform: rotate(315deg); }
 
   @for $i from $slick-icon-width-min-size through $slick-icon-width-max-size {
     &.mdi-#{$i}px {
       font-size: #{$i}px;
-      height: #{$i}px;
-        width: #{$i}px;
     }
   }
 }

@@ -1,18 +1,19 @@
 @import './variables';
 
 /* Individual cell styles */
-.percent-complete-bar {
+.percent-complete-bar,
+.percent-complete-bar-with-text {
   display: inline-block;
-  height: 6px;
   border-radius: 3px;
   background-color: transparent;
 }
 
+.percent-complete-bar {
+  height: 6px;
+}
+
 .percent-complete-bar-with-text {
-  display: inline-block;
   height: 20px;
-  border-radius: 3px;
-  background-color: transparent;
   line-height: 20px;
   min-width: 25px;
   text-align: center;
