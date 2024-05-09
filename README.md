@@ -12,7 +12,7 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Documentation
-📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4+ (__or use [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions__)
+📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
 
 ### Live Demo
 [Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
@@ -20,12 +20,12 @@
 [![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/ghiscoding/slickgrid-universal)
 
 ### Description
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It was originally requiring SlickGrid as an external dependency, but that is no longer the case and is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however the goal of our project here is to offer an all assembled product including a set of built-in Editors, Filters, Formatters and also extra packages that are optionals like OData, GraphQL, Export to Excel ... which SlickGrid simply does not offer by default. See below for more project details.
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. It was originally requiring SlickGrid as an external dependency, but that is no longer the case since v4.0 and it is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however the goal of the project here is to offer an all assembled product including a set of built-in Editors, Filters, Formatters and also extra and optional packages like OData, GraphQL, Export to Excel ... which SlickGrid simply does not offer by default. The project also offers multiple Themes including Dark Mode. See below for more project details.
 
 ### Why create this monorepo?
 Below is a list of reasons why this project was created and why it is a monorepo project:
-1. it removed a lot of duplicate code that were common in both
-[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) libraries
+1. originally it was to remove a lot of duplicate code from these 2 repos
+[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
    - prior to creating this monorepo, these 2 libs had ~90% of TypeScript code in common which was not very DRY, it is also a lot easier to maintain by pushing fixes in 1 common lib (this one here).
 2. decoupled a few Services that are not required by every project (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
 3. framework agnostic, it could be implemented in many different frameworks (if you are interested in adding a different framework port that is not listed in the [table](#available-framework-ports) below, please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
@@ -46,16 +46,16 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 
 | Project Repo | Live Demo | UI used | Description |
 | ----| --------- | ------ | ----------- |
-| [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)  | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | Bootstrap | for Angular framework |
-| [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | Bootstrap | for Aurelia framework |
-| [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react/) | [demo](https://ghiscoding.github.io/slickgrid-react/) | Bootstrap | for React framework |
+| [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)  | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | Bootstrap | for [Angular](https://angular.io/) framework |
+| [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | Bootstrap | for [Aurelia](https://aurelia.io/) framework |
+| [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react/) | [demo](https://ghiscoding.github.io/slickgrid-react/) | Bootstrap | for [React](https://react.dev/) framework |
 | [Slickgrid-Universal-WebPack-Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-webpack-demo) | Bulma | Slickgrid-Universal demo with WebPack & TypeScript (**demo purposes only**) |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | Bulma | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used to run the E2E tests with [Cypress](https://www.cypress.io/) for testing all UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid code duplication.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also being used to run E2E tests with [Cypress](https://www.cypress.io/) for testing all UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid code duplication. Dark Mode is also shown in some examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more infos.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has close to **100%** Unit Test Coverage, almost 5,000 Jest unit tests and also +550 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 600 tests), the goal is to test everything and offer peace of mind that all the code and PR changes are fully tested and that we have tests to cover everything.
+Slickgrid-Universal has close to **100%** Unit Test Coverage, almost 5,000 Jest unit tests and also +550 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 600 tests), the goal is to test everything and offer peace of mind that all the code and PR changes are fully tested and that we have tests to as much as possible.
 
 ### Available Public Packages
 
