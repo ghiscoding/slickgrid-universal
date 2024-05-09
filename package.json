@@ -94,7 +94,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.8.0",
-    "vanilla-calendar-picker": "^2.11.4",
     "whatwg-fetch": "^3.6.20"
   },
   "funding": {
