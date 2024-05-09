@@ -58,7 +58,7 @@ this.columnDefinitions = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'usDateShort', name: 'US Date Short', field: 'usDateShort',
-    type: 'dateUsShort',
+    type: 'dateUsShort', // if your type has hours/minutes, then the date picker will include date+time
     filterable: true,
     filter: {
       model: Filters.compoundDate,

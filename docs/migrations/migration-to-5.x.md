@@ -208,6 +208,8 @@ prepareGrid() {
 
 > **Note** the `'today'` shortcut currently only exist in `Vanilla-Calendar-Picker` fork (a PR has also been opened on the original lib), however the rest of the settings should be the same, visit `Vanilla-Calendar-Pro` [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) website for all other options. The hope is to hopefully drop the fork whenever the original project receives all missing features.
 
+> **Note** to keep docs available for older as well as newer versions, I renamed the old one doc as [Date-Picker (flatpickr)](https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/editors/date-editor-flatpickr) and created a new one named [Date-Picker (vanilla-calendar)](https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/editors/date-editor-vanilla-calendar).
+
 ### `internalColumnEditor` is completely removed
 The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and with this new release, it is now completely removed. This mean that the column `editor` property will remain untouched (in previous releases, the `editor` was moved to an `internalColumnEditor` prop and `editor` was then overriden with the `editor.model` and that was for SlickGrid to work properly... but that was extremely confusing to the user). So in short, the `internalColumnEditor` is now completely removed and the associated confusion is also gone with it.
 
