@@ -27,7 +27,7 @@ To summarize, the goal of this new release was mainly to improve UI/UX (mostly f
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
-  - Node >=v18.x 
+  - Node >=v18.x
   - Bootstrap >=v5.x (or any other UI framework)
   - SASS >=v1.35 (`dart-sass`)
   - migrated from Flatpickr to Vanilla-Calendar (visit [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) for demos and docs)
@@ -66,7 +66,7 @@ or move the class to the parent container and have both the icon & the text `inh
 ```
 
 #### SASS variables
-A lot of SASS variables were changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with your SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted (note that Vanilla-Calendar doesn't actually have any variables). Also a lot of the icon related variables were renamed and updated (icons now all have the suffix `-icon-svg-path` for the SVG vector path, you can easily change them with SASS). 
+A lot of SASS variables were changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with your SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted (note that Vanilla-Calendar doesn't actually have any variables). Also a lot of the icon related variables were renamed and updated (icons now all have the suffix `-icon-svg-path` for the SVG vector path, you can easily change them with SASS).
 
 > **Note** if you want create your own SVGs icons in pure CSS, you could use the `generateSvgStyle()` SASS function from Slickgrid-Universal [`svg-utilities.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/svg-utilities.scss) (take a look at the [`slickgrid-icons.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss) for some usage)
 
@@ -249,3 +249,7 @@ this.gridOptions = {
 I wanted to replace MomentJS for a long time now (it's been deprecated for years and is CJS only), but it was really hard to find a good replacement (I tried DayJS, Luxon, date-fns and they all had problems)... and here comes [Tempo](https://tempo.formkit.com/)! With Tempo, I was finally able to migrate by taking advantage of their `parse()` and `format()` functions, which are the most important for our datagrid use case. The library also has plenty of extra optional functions as well, like `addDay()`, `diffDays()`, ... Another great thing about Tempo is that they use the same format [tokens](https://tempo.formkit.com/#format-tokens) as MomentJS, so the conversion on that side was super easy.
 
 This migration should be transparent to most users like you. **However** if you are currently using MomentJS in your project, then I would suggest you to consider trying [Tempo](https://tempo.formkit.com/) in order to modernize your project and also lower your dependencies count. The other great advantage of Tempo is that it's ESM and that helps a lot in decreasing our build size footprint because ESM also means that it is Tree Shakable (only import and build what you use).
+
+### Smaller Size - Full ESM
+
+To compare size, you can take a look at BundlePhobia for previous [v1.4.0](https://bundlephobia.com/package/@slickgrid-universal/common@1.4.0) and [v5.0.0](https://bundlephobia.com/package/@slickgrid-universal/common@1.4.0) and you'll see that the gzip version went down by 17Kb (or 8.9%) and that's just for 1 dependency of the Slickgrid-Universal (there's a few more installed behind the scene). From that website you can also see that removing MomentJS & Flatpickr had a large impact.
