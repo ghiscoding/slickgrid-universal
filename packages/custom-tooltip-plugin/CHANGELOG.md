@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0-beta.2...v5.0.1-beta.0) (2024-05-09)
+
+### Bug Fixes
+
+* make some more cleanup with now optional DOMPurify ([#1508](https://github.com/ghiscoding/slickgrid-universal/issues/1508)) ([7fafbcc](https://github.com/ghiscoding/slickgrid-universal/commit/7fafbcc21fccfcd83d3ab103f313398c9d4b82e2)) - by @ghiscoding
+* **tooltip:** only show tooltip that has value ([#1511](https://github.com/ghiscoding/slickgrid-universal/issues/1511)) ([2ff15da](https://github.com/ghiscoding/slickgrid-universal/commit/2ff15da4a21cd98b63f251b9b248454658dac698)) - by @ghiscoding
+
 ## [5.0.0-beta.2](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0-beta.2) (2024-05-07)
 
 ### ⚠ BREAKING CHANGES
