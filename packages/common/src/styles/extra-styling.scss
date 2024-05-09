@@ -23,7 +23,7 @@ $slick-padding-max-count: 30;
   justify-content: center;
   text-align: center;
   &:hover {
-    border-color: darken($slick-button-border-color, 15%);
+    border-color: var(--slick-button-hover-border-color, $slick-button-hover-border-color);
   }
 }
 
