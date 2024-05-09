@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0-beta.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0-beta.2...v5.0.0-beta.3) (2024-05-09)
+
+### Bug Fixes
+
+* **common:** consider target size when auto-position picker/modal ([#1517](https://github.com/ghiscoding/slickgrid-universal/issues/1517)) ([e3a70b8](https://github.com/ghiscoding/slickgrid-universal/commit/e3a70b810d04c963f48454b78053c1bd45f96ebf)) - by @ghiscoding
+* **common:** Select Editor should always close with Escape key ([#1512](https://github.com/ghiscoding/slickgrid-universal/issues/1512)) ([e37bb28](https://github.com/ghiscoding/slickgrid-universal/commit/e37bb281ee83c25e9c4e15930e06bf9a044c65e9)) - by @ghiscoding
+* **editors:** body click or Escape key should cancel Select Editor ([#1513](https://github.com/ghiscoding/slickgrid-universal/issues/1513)) ([3d765a9](https://github.com/ghiscoding/slickgrid-universal/commit/3d765a9d282b684c38c550a1e5736cb1b2132f8e)) - by @ghiscoding
+* **styling:** improve UI & fix small issues found after testing upstream ([#1510](https://github.com/ghiscoding/slickgrid-universal/issues/1510)) ([a4ef70f](https://github.com/ghiscoding/slickgrid-universal/commit/a4ef70f70953c13f7abb0075586439931f18af74)) - by @ghiscoding
+
 ## [5.0.0-beta.2](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0-beta.2) (2024-05-07)
 
 ### ⚠ BREAKING CHANGES
