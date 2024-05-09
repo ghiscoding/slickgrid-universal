@@ -29,29 +29,28 @@ $slick-padding-max-count: 30;
 
 .delete-icon {
   &:hover {
-      color: #b14c4a;
+    color: #b14c4a;
   }
 }
 .edit-icon,
 .info-icon {
   &:hover {
-      color: rgb(0, 153, 255);
+    color: rgb(0, 153, 255);
   }
 }
 
+@for $percent from 1 through 10 {
+  .height-#{$percent * 10} { height: #{$percent * 10%} !important; }
+}
+
 // margin-0px up to margin-30px
-@for $slick-i from 0 through $slick-margin-max-count {
-  .margin-#{$slick-i}px { margin: #{$slick-i}px; }
+@for $i from 0 through $slick-margin-max-count {
+  .margin-#{$i}px { margin: #{$i}px; }
 }
 
 // padding-0px up to padding-30px
-@for $slick-i from 0 through $slick-padding-max-count {
-  .padding-#{$slick-i}px { padding: #{$slick-i}px; }
-}
-
-// font-5px up to font-50px
-@for $slick-i from 5 through $slick-font-size-count {
-  .font-#{$slick-i}px { font-size: #{$slick-i}px; }
+@for $i from 0 through $slick-padding-max-count {
+  .padding-#{$i}px { padding: #{$i}px; }
 }
 
 .margin-auto {
@@ -68,15 +67,17 @@ $slick-padding-max-count: 30;
 .text-uppercase { text-transform: uppercase !important; }
 .text-underline { text-decoration: underline !important; }
 
-.vertical-align-bottom {
+.vertical-align-bottom,
+.vertical-align-middle,
+.vertical-align-top {
   display: inline-block;
+}
+.vertical-align-bottom {
   vertical-align: bottom;
 }
 .vertical-align-middle {
-  display: inline-block;
   vertical-align: middle;
 }
 .vertical-align-top {
-  display: inline-block;
   vertical-align: top;
 }

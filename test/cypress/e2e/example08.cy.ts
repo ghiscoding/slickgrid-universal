@@ -36,7 +36,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get('.grid2').find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]> .slick-cell:nth(1)`).should('contain', '01/05/2009');
   });
 
-  it('should have exact Column Pre-Header & Column Header Titles in the grid', () => {
+  it('should have exact Column Pre-Header & Column Header Titles in the grid again', () => {
     cy.get('.grid2')
       .find('.slick-header-columns:nth(0)')
       .children()
@@ -62,7 +62,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get('.grid2').find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '01/05/2009');
   });
 
-  it('should have exact Column Pre-Header & Column Header Titles in the grid', () => {
+  it('should have exact Column Pre-Header & Column Header Titles in the grid once again', () => {
     cy.get('.grid2')
       .find('.slick-header-columns:nth(0)')
       .children()
@@ -90,7 +90,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get('.grid2').find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', '01/05/2009');
   });
 
-  it('should have exact Column Pre-Header & Column Header Titles in the grid', () => {
+  it('should have still exact Column Pre-Header & Column Header Titles in the grid', () => {
     cy.get('.grid2')
       .find('.slick-header-columns:nth(0)')
       .children()

@@ -19,7 +19,7 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index';
-import { buildMsSelectCollectionList, CollectionService, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { SlickEventData, type SlickGrid } from '../core/index';
 
@@ -120,11 +120,18 @@ export class SelectEditor implements Editor {
       single: true,
       singleRadio: true,
       renderOptionLabelAsHtml: this.columnEditor?.enableRenderHtml ?? false,
-      sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
+      sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
       onClick: () => this._isValueTouched = true,
       onCheckAll: () => this._isValueTouched = true,
       onUncheckAll: () => this._isValueTouched = true,
-      onClose: () => {
+      onClose: (reason) => {
+        if (reason === 'key.escape' || reason === 'body.click' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
+          if (reason === 'key.escape') {
+            this.cancel();
+          }
+          return;
+        }
+
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(compositeEditorOptions);
         } else {
@@ -361,6 +368,12 @@ export class SelectEditor implements Editor {
       if (compositeEditorOptions && triggerOnCompositeEditorChange) {
         this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
       }
+    }
+  }
+
+  cancel() {
+    if (this.args?.cancelChanges) {
+      this.args.cancelChanges();
     }
   }
 
@@ -754,7 +767,7 @@ export class SelectEditor implements Editor {
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();
     if (!this.isCompositeEditor) {
-      this.delayOpening >= 0 ? setTimeout(() => this.show()) : this.show();
+      this.show(this.delayOpening);
     }
   }
 

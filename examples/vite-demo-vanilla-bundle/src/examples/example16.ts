@@ -10,6 +10,7 @@ import {
   OperatorType,
   type SliderOption,
   type SliderRangeOption,
+  type VanillaCalendarOption,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
@@ -197,7 +198,7 @@ export default class Example16 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
+        editor: { model: Editors.date, editorOptions: { range: { min: 'today' } } as VanillaCalendarOption },
         // formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         formatter: Formatters.dateIso,
@@ -279,8 +280,9 @@ export default class Example16 {
         },
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        id: 'action', name: 'Action', field: 'action', width: 55, minWidth: 55, maxWidth: 55,
+        cssClass: 'justify-center flex',
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         excludeFromExport: true,
         // customTooltip: {
         //   formatter: () => `Click to open Cell Menu`, // return empty so it won't show any pre-tooltip
@@ -354,6 +356,7 @@ export default class Example16 {
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
       externalResources: [new SlickCustomTooltip(), new ExcelExportService(), new TextExportService()],
       customTooltip: {
+        className: 'grid16-tooltip',
         formatter: this.tooltipFormatter.bind(this),
         headerFormatter: this.headerFormatter,
         headerRowFormatter: this.headerRowFormatter,
@@ -481,7 +484,7 @@ export default class Example16 {
     // use a 2nd Formatter to get the percent completion
     // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
     const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid) as HTMLElement;
-    const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
+    const out = `<div class="text-color-primary header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>
       <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>
       <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>
@@ -504,7 +507,7 @@ export default class Example16 {
       iconCount = 5;
     }
     for (let i = 0; i < iconCount; i++) {
-      const iconColor = iconCount === 5 ? 'color-success' : iconCount >= 3 ? 'color-alt-warning' : 'color-se-secondary-light';
+      const iconColor = iconCount === 5 ? 'text-color-success' : iconCount >= 3 ? 'text-color-alt-warning' : 'text-color-se-secondary-light';
       output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;

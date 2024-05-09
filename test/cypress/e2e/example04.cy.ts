@@ -173,7 +173,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(4)').should('contain', '2009-05-05');
   });
 
-  it('should have exact Column Header Titles in the grid', () => {
+  it('should expect to have exact Column Header Titles in the grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns:nth(0)')
       .children()
@@ -195,7 +195,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid-canvas-right > [style="top: 0px;"] > .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should have exact Column Header Titles in the grid', () => {
+  it('should recheck again and still have exact Column Header Titles in the grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns:nth(0)')
       .children()

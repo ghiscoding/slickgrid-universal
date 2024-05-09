@@ -323,7 +323,7 @@ export class GridOdataService implements BackendService {
           fieldName = stripTags(fieldName.innerHTML);
         }
         const fieldType = columnDef.type || FieldType.string;
-        let searchTerms = (columnFilter && columnFilter.searchTerms ? [...columnFilter.searchTerms] : null) || [];
+        let searchTerms = (columnFilter?.searchTerms ? [...columnFilter.searchTerms] : null) || [];
         let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';
         if (typeof fieldSearchValue === 'undefined') {
           fieldSearchValue = '';
@@ -643,7 +643,7 @@ export class GridOdataService implements BackendService {
   protected normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any, version: number) {
     switch (fieldType) {
       case FieldType.date:
-        searchValue = parseUtcDate(searchValue as string, true);
+        searchValue = parseUtcDate(searchValue as string);
         searchValue = version >= 4 ? searchValue : `DateTime'${searchValue}'`;
         break;
       case FieldType.string:

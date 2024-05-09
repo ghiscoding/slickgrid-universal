@@ -1,5 +1,5 @@
 describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)', () => {
-  const GRID_ROW_HEIGHT = 40;
+  const GRID_ROW_HEIGHT = 35;
   const titles = ['Files', 'Date Modified', 'Description', 'Size'];
   // const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'warranties.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf', 'txt', 'todo.txt', 'unclassified.csv', 'unresolved.csv', 'xls', 'compilation.xls', 'music', 'mp3', 'other', 'pop', 'song.mp3', 'theme.mp3', 'rock', 'soft.mp3', 'something.txt'];
   // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'other', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt', 'unclassified.csv', 'unresolved.csv', 'pdf', 'phone-bill.pdf', 'map2.pdf', 'map.pdf', 'internet-bill.pdf', 'misc', 'todo.txt', 'bucket-list.txt'];
@@ -348,7 +348,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
         .click();
     });
 
-    it('should have pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
+    it('should have again the pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left')
         .scrollTo('center', { force: true } as any);
 
@@ -415,7 +415,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
       cy.get('.right-footer .total-count').contains('31');
     });
 
-    it('should enable auto-recalc Tree Totals', () => {
+    it('should re-enable auto-recalc Tree Totals', () => {
       cy.get('[data-test="clear-filters-btn"]')
         .click();
     });
@@ -440,7 +440,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
       cy.get('.right-footer .total-count').contains('31');
     });
 
-    it('should type filter "b" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
+    it('should type filter "b" again and still expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file')
         .type('i'); // will become "bi"
 

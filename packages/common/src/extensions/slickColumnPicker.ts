@@ -101,6 +101,7 @@ export class SlickColumnPicker {
 
     this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this));
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this));
+    this._eventHandler.subscribe(this.grid.onClick, this.disposeMenu.bind(this));
 
     // Hide the menu on outside click.
     this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, undefined, 'body');

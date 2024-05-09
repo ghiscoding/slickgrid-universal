@@ -22,10 +22,9 @@ import {
   createDomElement,
   findFirstAttribute,
   getOffset,
-  sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
 } from '@slickgrid-universal/common';
-import { isPrimitiveOrHTML } from '@slickgrid-universal/utils';
+import { classNameToList, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
 type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
 
@@ -56,6 +55,10 @@ const SELECTOR_CLOSEST_TOOLTIP_ATTR = '[title], [data-slick-tooltip]';
  *    },
  *  };
  */
+
+// add a default CSS class name that is used and required by SlickGrid Theme
+const DEFAULT_CLASS_NAME = 'slick-custom-tooltip';
+
 export class SlickCustomTooltip {
   name: 'CustomTooltip' = 'CustomTooltip' as const;
 
@@ -74,7 +77,7 @@ export class SlickCustomTooltip {
   protected _hasMultipleTooltips = false;
   protected _defaultOptions = {
     bodyClassName: 'tooltip-body',
-    className: 'slick-custom-tooltip',
+    className: '',
     offsetArrow: 3, // same as `$slick-tooltip-arrow-side-margin` CSS/SASS variable
     offsetLeft: 0,
     offsetRight: 0,
@@ -106,7 +109,13 @@ export class SlickCustomTooltip {
     return this._cellAddonOptions?.bodyClassName ?? 'tooltip-body';
   }
   get className(): string {
-    return this._cellAddonOptions?.className ?? 'slick-custom-tooltip';
+    // we'll always add our default class name for the CSS style to display as intended
+    // and then append any custom CSS class to default when provided
+    let className = DEFAULT_CLASS_NAME;
+    if (this._addonOptions?.className) {
+      className += ` ${this._addonOptions.className}`;
+    }
+    return className;
   }
   get dataView(): CustomDataView {
     return this._grid.getData<CustomDataView>() || {};
@@ -161,7 +170,8 @@ export class SlickCustomTooltip {
   hideTooltip() {
     this._cancellablePromise?.cancel();
     this._observable$?.unsubscribe();
-    const prevTooltip = document.body.querySelector(`.${this.className}${this.gridUidSelector}`);
+    const cssClasses = classNameToList(this.className).join('.');
+    const prevTooltip = document.body.querySelector(`.${cssClasses}${this.gridUidSelector}`);
     prevTooltip?.remove();
   }
 
@@ -319,9 +329,9 @@ export class SlickCustomTooltip {
     if (typeof formatterOrText === 'function') {
       const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
       const formatterText = isPrimitiveOrHTML(tooltipResult) ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text;
-      return sanitizeTextByAvailableSanitizer(this.gridOptions, (formatterText instanceof HTMLElement ? formatterText.textContent : formatterText as string) || '');
+      return this._grid.sanitizeHtmlString((formatterText instanceof HTMLElement ? formatterText.textContent : formatterText as string) || '');
     } else if (typeof formatterOrText === 'string') {
-      return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterOrText);
+      return this._grid.sanitizeHtmlString(formatterOrText);
     }
     return '';
   }
@@ -400,7 +410,7 @@ export class SlickCustomTooltip {
 
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
-      finalOutputText = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
+      finalOutputText = this._grid.sanitizeHtmlString(outputText);
       this._grid.applyHtmlCode(this._tooltipBodyElm, finalOutputText);
       this._tooltipBodyElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
     } else {
@@ -418,7 +428,7 @@ export class SlickCustomTooltip {
     }
 
     // when do have text to show, then append the new tooltip to the html body & reposition the tooltip
-    if (finalOutputText) {
+    if (finalOutputText.toString()) {
       document.body.appendChild(this._tooltipElm);
 
       // reposition the tooltip on top of the cell that triggered the mouse over event

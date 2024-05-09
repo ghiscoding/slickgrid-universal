@@ -3,6 +3,7 @@
  * The reason for the reimplementation was mostly because the original project is not ESM compatible
  * and written with old ES6 IIFE syntax, the goal was to reimplement and fix these old syntax and build problems.
  * e.g. it used `var` everywhere, it used `arguments` to get function arguments, ...
+ * See `jQuery.extend()` for multiple usage demos: https://api.jquery.com/jquery.extend/
  *
  * The previous lib can be found here at this Github link:
  *     https://github.com/justmoon/node-extend

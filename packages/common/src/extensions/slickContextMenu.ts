@@ -75,6 +75,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     this.sortMenuItems();
 
     this._eventHandler.subscribe(this.grid.onContextMenu, this.handleOnContextMenu.bind(this));
+    this._eventHandler.subscribe(this.grid.onClick, this.hideMenu.bind(this));
 
     if (this._addonOptions.hideMenuOnScroll) {
       this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this));
@@ -169,7 +170,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconCopyCellValueCommand || 'fa fa-clone',
+            iconCssClass: contextMenu.iconCopyCellValueCommand || 'mdi mdi-content-copy',
             titleKey: `${translationPrefix}COPY`,
             disabled: false,
             command: commandName,
@@ -202,7 +203,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconExportCsvCommand || 'fa fa-download',
+            iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-download',
             titleKey: `${translationPrefix}EXPORT_TO_CSV`,
             disabled: false,
             command: commandName,
@@ -230,7 +231,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
+            iconCssClass: contextMenu.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
             titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
             disabled: false,
             command: commandName,
@@ -255,7 +256,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'fa fa-download',
+            iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-download',
             titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
             disabled: false,
             command: commandName,
@@ -290,7 +291,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push(
             {
-              iconCssClass: contextMenu.iconClearGroupingCommand || 'fa fa-times',
+              iconCssClass: contextMenu.iconClearGroupingCommand || 'mdi mdi-close',
               titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
               disabled: false,
               command: commandName,
@@ -315,7 +316,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push(
             {
-              iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'fa fa-compress',
+              iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'mdi mdi-arrow-collapse',
               titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
               disabled: false,
               command: commandName,
@@ -347,7 +348,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push(
             {
-              iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'fa fa-expand',
+              iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'mdi mdi-arrow-expand',
               titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
               disabled: false,
               command: commandName,

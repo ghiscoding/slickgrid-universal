@@ -17,7 +17,7 @@ import type {
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
-import { buildMsSelectCollectionList, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import type { SlickGrid } from '../core/index';
 
@@ -430,7 +430,7 @@ export class SelectFilter implements Filter {
       singleRadio: true,
       showSearchClear: true,
       renderOptionLabelAsHtml: this.columnFilter?.enableRenderHtml ?? false,
-      sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
+      sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes
       onClose: () => this.onTriggerEvent(),

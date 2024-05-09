@@ -1,4 +1,5 @@
-import moment from 'moment-mini';
+import { format } from '@formkit/tempo';
+
 import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 02 - Grouping & Aggregators', () => {
@@ -37,7 +38,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should($span => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 500 of 500 items`);
+        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 500 of 500 items`);
       });
   });
 
@@ -51,7 +52,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should($span => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 176 of 500 items`);
+        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 176 of 500 items`);
       });
   });
 
@@ -63,7 +64,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('span:nth(1)')
       .click();
 
-    const currentDateTime = moment().format('YYYY-MM-DD, hh:mm a');
+    const currentDateTime = format(new Date(), 'YYYY-MM-DD, hh:mm a');
     cy.get('.grid2')
       .find('.slick-custom-footer')
       .find('.right-footer')
@@ -86,7 +87,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should($span => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 148 of 500 items`);
+        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 148 of 500 items`);
       });
   });
 
@@ -103,7 +104,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should($span => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 176 of 500 items`);
+        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 176 of 500 items`);
       });
 
     cy.get('.ms-drop').should('contain', '');
@@ -181,7 +182,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-2 .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-2 .slick-group-title`).contains(/^% Complete: [0-9]/);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`).contains(/^Avg: [0-9]\%$/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`).contains(/^Avg: [0-9]%$/);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2`)
         .find('.slick-cell:nth(3)').contains('Avg: ');
     });

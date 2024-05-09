@@ -3,7 +3,7 @@ import 'jest-extended';
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
 import { FieldType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
@@ -38,6 +38,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('AutocompleterEditor', () => {
@@ -745,7 +746,7 @@ describe('AutocompleterEditor', () => {
       editor = new AutocompleterEditor(editorArguments);
       const clearSpy = jest.spyOn(editor, 'clear');
 
-      const clearBtnElm = divContainer.querySelector('.btn.icon-clear') as HTMLButtonElement;
+      const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLButtonElement;
       clearBtnElm.dispatchEvent(new Event('click'));
 
       expect(clearSpy).toHaveBeenCalled();

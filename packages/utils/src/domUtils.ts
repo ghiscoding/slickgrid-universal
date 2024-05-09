@@ -18,9 +18,9 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
     const elementOffsetTop = elmOffset.top ?? 0;
     const elementOffsetLeft = elmOffset.left ?? 0;
     top = elementOffsetTop - pageScrollTop;
-    bottom = windowHeight - (elementOffsetTop - pageScrollTop);
     left = elementOffsetLeft - pageScrollLeft;
-    right = windowWidth - (elementOffsetLeft - pageScrollLeft);
+    bottom = windowHeight - (elementOffsetTop - pageScrollTop + element.clientHeight);
+    right = windowWidth - (elementOffsetLeft - pageScrollLeft + element.clientWidth);
   }
 
   return { top, bottom, left, right };
@@ -101,14 +101,6 @@ export function emptyElement<T extends Element = Element>(element?: T | null): T
     element.removeChild(element.firstChild);
   }
   return element;
-}
-
-/**
- * @deprecated @see `getHtmlStringOutput()`
- * This function is now deprecated and is an alias to the new `getHtmlStringOutput()`, so please use this new function instead which works with various type of inputs.
- */
-export function getHTMLFromFragment(input: DocumentFragment | HTMLElement | string | number, type: 'innerHTML' | 'outerHTML' = 'innerHTML'): string {
-  return getHtmlStringOutput(input, type);
 }
 
 /**

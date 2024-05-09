@@ -1,11 +1,17 @@
 <h3 class="title is-3">
   Example 18 - Real-Time Trading Platform
   <span class="subtitle">(with Material Theme)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5" target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example18.ts">
-      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+      <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
@@ -26,13 +32,13 @@
       </div>
       <span>
         <button class="button is-small" data-test="start-btn" onclick.delegate="startSimulation()">
-          <span class="icon mdi mdi-play-circle-outline"></span>
+          <span class="mdi mdi-play-circle-outline"></span>
           <span>Start Simulation</span>
         </button>
       </span>
       <span>
         <button class="button is-small" data-test="stop-btn" onclick.delegate="stopSimulation()">
-          <span class="icon mdi mdi-stop-circle-outline"></span>
+          <span class="mdi mdi-stop-circle-outline"></span>
           <span>Stop Simulation</span>
         </button>
       </span>

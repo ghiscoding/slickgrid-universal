@@ -36,14 +36,21 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `editorOptions` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as `editorOptions` to your column definitions via the `MultipleSelectOption` interface of the external library and so you should cast your `editorOptions` to that interface to make sure that you use only valid options of the `Multiple-Select-Vanilla` library.
 
 ```ts
-editor: {
-  model: Editors.SingleSelect,
-  editorOptions: {
-    maxHeight: 400
-  } as MultipleSelectOption
+import { MultipleSelectOption } from 'multiple-select-vanilla';
+
+prepareGrid() {
+  this.columnDefinitions = [{
+    id: 'isActive', name: 'Active', field: 'isActive',
+    editor: {
+      model: Editors.singleSelect,
+      editorOptions: {
+        maxHeight: 400
+      } as MultipleSelectOption
+    }
+  }];
 }
 ```
 
@@ -52,7 +59,7 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 this.gridOptions = {
-  defaultEditorOptions: { 
+  defaultEditorOptions: {
     // Note: that `select` combines both multipleSelect & singleSelect
     select: { minHeight: 350 }, // typed as MultipleSelectOption
   }
@@ -163,7 +170,7 @@ this.columnDefinitions = [
     editor: {
       // display checkmark icon when True
       enableRenderHtml: true,
-      collection: [{ value: '', label: '' }, { value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: '', label: '' }, { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       model: Editors.singleSelect
     }
   }
@@ -224,6 +231,3 @@ this.columnDefinitions = [
   }
 ];
 ```
-
-### Change Default DOMPurify Options (sanitize html)
-If you find that the HTML that you passed is being sanitized and you wish to change it, then you can change the default `sanitizeHtmlOptions` property defined in the Global Grid Options, for more info on how to change these global options, see the `Global Grid Options` and also take a look at the [GitHub - DOMPurify](https://github.com/cure53/DOMPurify#can-i-configure-it) configurations.

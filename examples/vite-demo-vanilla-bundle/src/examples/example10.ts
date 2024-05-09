@@ -7,14 +7,15 @@ import {
   type GridOption,
   type GridStateChange,
   type Metrics,
-  type MultipleSelectOption,
   OperatorType,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, type GraphqlServiceOption, } from '@slickgrid-universal/graphql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import moment from 'moment-mini';
+import { addDay, format } from '@formkit/tempo';
+import { type MultipleSelectOption } from 'multiple-select-vanilla';
+
 import { ExampleGridOptions } from './example-grid-options';
 import type { TranslateService } from '../translate.service';
 import './example10.scss';
@@ -26,6 +27,7 @@ const FAKE_SERVER_DELAY = 250;
 
 export default class Example10 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset = [];
@@ -68,6 +70,8 @@ export default class Example10 {
     this._bindingEventService.unbindAll();
     //   this.saveCurrentGridState();
     document.body.classList.remove('material-theme');
+    document.body.setAttribute('data-theme', 'light');
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
   }
 
   initializeGrid() {
@@ -126,8 +130,8 @@ export default class Example10 {
       },
     ];
 
-    const presetLowestDay = moment().add(-2, 'days').format('YYYY-MM-DD');
-    const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
+    const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
+    const presetHighestDay = format(addDay(new Date(), 20), 'YYYY-MM-DD');
 
     this.gridOptions = {
       enableAutoTooltip: true,
@@ -299,8 +303,8 @@ export default class Example10 {
   }
 
   setFiltersDynamically() {
-    const presetLowestDay = moment().add(-2, 'days').format('YYYY-MM-DD');
-    const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
+    const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
+    const presetHighestDay = format(addDay(new Date(), 20), 'YYYY-MM-DD');
 
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.sgb.filterService.updateFilters([
@@ -321,8 +325,8 @@ export default class Example10 {
   }
 
   resetToOriginalPresets() {
-    const presetLowestDay = moment().add(-2, 'days').format('YYYY-MM-DD');
-    const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
+    const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
+    const presetHighestDay = format(addDay(new Date(), 20), 'YYYY-MM-DD');
 
     this.sgb?.filterService.updateFilters([
       // you can use OperatorType or type them as string, e.g.: operator: 'EQ'
@@ -354,6 +358,23 @@ export default class Example10 {
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    this.toggleBodyBackground();
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
+  }
+
+  toggleBodyBackground() {
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
   }
 
   private resetOptions(options: Partial<GraphqlServiceOption>) {

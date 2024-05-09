@@ -40,14 +40,14 @@ describe('dateUsShortFilterCondition method', () => {
   });
 
   it('should return False when cell value is not the same value as the searchTerm', () => {
-    const searchTerms = ['03/03/2003'];
+    const searchTerms = ['3/3/2003'];
     const options = { dataKey: '', operator: 'EQ', fieldType: FieldType.dateUsShort, cellValue: '12/25/93', searchTerms } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUsShort));
     expect(output).toBe(false);
   });
 
   it('should return False even when the cell value is found in the searchTerms since it only compares first term', () => {
-    const searchTerms = ['03/14/03', '12/25/93'];
+    const searchTerms = ['3/14/03', '12/25/93'];
     const options = { dataKey: '', operator: 'EQ', fieldType: FieldType.dateUsShort, cellValue: '12/25/93', searchTerms } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUsShort));
     expect(output).toBe(false);
@@ -82,36 +82,36 @@ describe('dateUsShortFilterCondition method', () => {
   });
 
   it('should return True when input value is in the range of search terms', () => {
-    const searchTerms = ['12/01/93..12/31/93'];
+    const searchTerms = ['12/1/93..12/31/93'];
     const options = { dataKey: '', operator: 'EQ', cellValue: '12/25/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUsShort));
     expect(output).toBe(true);
   });
 
   it('should return False when input value is not in the range of search terms', () => {
-    const searchTerms = ['12/01/93..12/31/93'];
+    const searchTerms = ['12/1/93..12/31/93'];
     const options = { dataKey: '', operator: 'EQ', cellValue: '11/25/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUsShort));
     expect(output).toBe(false);
   });
 
   it('should return True when input value equals the search terms min inclusive value and operator is set to "rangeInclusive"', () => {
-    const searchTerms = ['12/01/93..12/31/93'];
-    const options = { dataKey: '', operator: 'RangeInclusive', cellValue: '12/01/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
+    const searchTerms = ['12/1/93..12/31/93'];
+    const options = { dataKey: '', operator: 'RangeInclusive', cellValue: '12/1/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUsShort));
     expect(output).toBe(true);
   });
 
   it('should return False when input value equals the search terms min inclusive value and operator is set to "RangeExclusive"', () => {
-    const searchTerms = ['12/01/93..12/31/93'];
-    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '12/01/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
+    const searchTerms = ['12/1/93..12/31/93'];
+    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '12/1/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUsShort));
     expect(output).toBe(false);
   });
 
   it('should return False when any of the 2 search term value is not a valid date', () => {
-    const searchTerms = ['12/01/93..12/60/93'];
-    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '12/05/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
+    const searchTerms = ['12/1/93..12/60/93'];
+    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '12/5/93', fieldType: FieldType.dateUsShort, searchTerms } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUsShort));
     expect(output).toBe(false);
   });

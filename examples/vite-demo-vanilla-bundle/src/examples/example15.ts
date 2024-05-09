@@ -279,7 +279,7 @@ export default class Example15 {
         if (param.includes('$filter=')) {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
           if (filterBy.includes('contains')) {
-            const filterMatch = filterBy.match(/contains\(([a-zA-Z\/]+),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/);
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[2].trim() };
           }
@@ -324,7 +324,7 @@ export default class Example15 {
           ? 'DESC'
           : '';
 
-      let data = Data as unknown as { name: string; gender: string; company: string; id: string, category: { id: string; name: string } }[];
+      let data = Data as unknown as { name: string; gender: string; company: string; id: string, category: { id: string; name: string; }; }[];
       switch (sort) {
         case 'ASC':
           data = data.sort((a, b) => a.name.localeCompare(b.name));
@@ -424,7 +424,7 @@ export default class Example15 {
 
     // display random address and zip code to simulate company address
     const randomStreet = dataContext.id % 3 ? 'Belleville' : 'Hollywood';
-    return `<div class="color-se-danger text-bold">${tooltipTitle}</div>
+    return `<div class="text-color-se-danger text-bold">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Address:</div> <div>${dataContext.__params.doorNumber.toFixed(0)} ${randomStreet} blvd</div></div>
       <div class="tooltip-2cols-row"><div>Zip:</div> <div>${dataContext.__params.zip.toFixed(0)}</div></div>`;
   }

@@ -1,5 +1,6 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import { of, Subject } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
@@ -11,7 +12,6 @@ import { SlickGrid } from '../../core/index';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 jest.useFakeTimers();
 
@@ -30,6 +30,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('SelectFilter', () => {
@@ -502,7 +503,7 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
     mockColumn.filter = {
       enableRenderHtml: true,
-      collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       customStructure: {
         value: 'isEffort',
         label: 'label',
@@ -519,27 +520,7 @@ describe('SelectFilter', () => {
     expect(filter.selectOptions.renderOptionLabelAsHtml).toBeTruthy();
     expect(filter.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
     expect(filterListElm.length).toBe(2);
-    expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
-  });
-
-  it('should create the multi-select filter with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
-    mockColumn.filter = {
-      enableRenderHtml: true,
-      collection: [{ value: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
-      customStructure: {
-        value: 'isEffort',
-        label: 'label',
-        labelPrefix: 'labelPrefix',
-      },
-    };
-
-    filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
-    filterBtnElm.click();
-
-    expect(filterListElm.length).toBe(2);
-    expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+    expect(filterListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
   });
 
   it('should create the multi-select filter with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {

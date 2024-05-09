@@ -1,5 +1,5 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { deepCopy, extend, stripTags } from '@slickgrid-universal/utils';
+import { extend, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 
 import { Constants } from '../constants';
@@ -393,7 +393,7 @@ export class FilterService {
 
   /**
    * Loop through each form input search filter and parse their searchTerms,
-   * for example a CompoundDate Filter will be parsed as a Moment object.
+   * for example a CompoundDate Filter will be parsed as a Date object.
    * Also if we are dealing with a text filter input,
    * an operator can optionally be part of the filter itself and we need to extract it from there,
    * for example a filter of "John*" will be analyzed as { operator: StartsWith, searchTerms: ['John'] }
@@ -402,7 +402,7 @@ export class FilterService {
    * @returns FilterConditionOption
    */
   parseFormInputFilterConditions(inputSearchTerms: SearchTerm[] | undefined, columnFilter: Omit<SearchColumnFilter, 'searchTerms'>): Omit<FilterConditionOption, 'cellValue'> {
-    const searchValues: SearchTerm[] = deepCopy(inputSearchTerms) || [];
+    const searchValues: SearchTerm[] = extend(true, [], inputSearchTerms) || [];
     let fieldSearchValue = (Array.isArray(searchValues) && searchValues.length === 1) ? searchValues[0] : '';
     const columnDef = columnFilter.columnDef;
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
@@ -570,13 +570,13 @@ export class FilterService {
         delete (treeObj as any)[inputItem[primaryDataId]].__used;
       });
 
-      // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
+      // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Date object
       // loop through all column filters once and get parsed filter search value then save a reference in the columnFilter itself
       // it is much more effective to do it outside and prior to Step 2 so that we don't re-parse search filter for no reason while checking every row
       if (typeof columnFilters === 'object') {
         Object.keys(columnFilters).forEach(columnId => {
           const columnFilter = columnFilters[columnId] as SearchColumnFilter;
-          const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
+          const searchValues: SearchTerm[] = columnFilter?.searchTerms ? extend(true, [], columnFilter.searchTerms) : [];
           const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
 
           const columnDef = columnFilter.columnDef;

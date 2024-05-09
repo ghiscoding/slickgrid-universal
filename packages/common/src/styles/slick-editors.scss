@@ -1,5 +1,6 @@
 @import './variables';
 @import './slick.layout';
+@import './svg-utilities';
 
 .slick-cell  {
   input.dual-editor-text,
@@ -7,6 +8,7 @@
     border: var(--slick-text-editor-border, $slick-text-editor-border);
     border-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius);
     background: var(--slick-text-editor-background, $slick-text-editor-background);
+    color: var(--slick-text-editor-color, $slick-text-editor-color);
     padding-bottom: var(--slick-text-editor-padding-bottom, $slick-text-editor-padding-bottom);
     padding-left: var(--slick-text-editor-padding-left, $slick-text-editor-padding-left);
     padding-right: var(--slick-text-editor-padding-right, $slick-text-editor-padding-right);
@@ -32,8 +34,11 @@
       margin-left: var(--slick-text-editor-right-input-margin-left, $slick-text-editor-right-input-margin-left);
     }
 
-    &[readonly] {
+    &[readonly]:not(.date-picker) {
       background-color: var(--slick-text-editor-readonly-color, $slick-text-editor-readonly-color);
+    }
+    &.date-picker {
+      cursor: pointer;
     }
   }
 
@@ -65,11 +70,20 @@
   }
 
   .autocomplete-container.input-group,
-  .flatpickr.input-group {
+  .vanilla-picker.input-group {
+    display: flex;
+    align-items: center;
+    flex: 1;
     height: var(--slick-date-editor-height, $slick-date-editor-height);
     .input-group-btn {
       &.input-group-append {
+        display: inline-flex;
+        align-items: center;
+        height: 100%;
+
         .btn {
+          display: inline-flex;
+          align-items: center;
           border-top-left-radius: 0px;
           border-bottom-left-radius: 0px;
           margin-left: -1px;
@@ -86,36 +100,15 @@
         &:hover:not([disabled]) {
           background-color: var(--slick-input-group-btn-hover-bg-color, $slick-input-group-btn-hover-bg-color); // 1px solid #6c757d;
         }
-        &.icon-clear {
+        .icon-clear {
           display: flex;
           align-items: center;
-        }
-        &.icon-clear:before {
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-editor-input-group-clear-btn-icon-size, $slick-editor-input-group-clear-btn-icon-size);
-          content: var(--slick-editor-input-group-clear-btn-icon, $slick-editor-input-group-clear-btn-icon);
-          display: inline-block;
-          height: var(--slick-editor-input-group-clear-btn-icon-height, $slick-editor-input-group-clear-btn-icon-height);
-          width: var(--slick-editor-input-group-clear-btn-icon-width, $slick-editor-input-group-clear-btn-icon-width);
-        }
-      }
-    }
-  }
-  .flatpickr-alt-input {
-    cursor: pointer;
-    height: var(--slick-date-editor-height, $slick-date-editor-height);
-    border-top-left-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius) !important;
-    border-bottom-left-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius) !important;
-    padding: var(--slick-date-editor-input-padding, $slick-date-editor-input-padding);
+          background-color: currentColor;
+          height: 1em;
+          width: 1em;
 
-    &.editor-text {
-      cursor: pointer;
-      background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
-
-      &:focus {
-        outline: 0;
-        border-color: var(--slick-date-editor-focus-border-color, $slick-date-editor-focus-border-color);
-        box-shadow: var(--slick-date-editor-focus-box-shadow, $slick-date-editor-focus-box-shadow);
+          @include generateSvgStyle('slick-editor-input-group-clear-btn-icon-svg', $slick-editor-input-group-clear-btn-icon-svg-path);
+        }
       }
     }
   }
@@ -218,12 +211,16 @@
         color: var(--slick-editor-modal-reset-btn-color, $slick-editor-modal-reset-btn-color);
         background-color: var(--slick-editor-modal-reset-btn-bg-color, $slick-editor-modal-reset-btn-bg-color);
         float: right;
+        span.mdi {
+          margin-right: 5px;
+        }
       }
     }
 
     .btn-editor-reset,
     .reset-form.btn,
     .footer-buttons .btn {
+      display: inline-flex;
       margin: var(--slick-editor-modal-footer-btn-margin, $slick-editor-modal-footer-btn-margin);
       height: var(--slick-editor-modal-footer-btn-height, $slick-editor-modal-footer-btn-height);
       border: var(--slick-editor-modal-footer-btn-border, $slick-editor-modal-footer-btn-border);
@@ -462,9 +459,12 @@
       }
 
       .autocomplete-container.input-group,
-      .flatpickr.input-group {
-        height: var(--slick-date-editor-height, $slick-date-editor-height);
+      .vanilla-picker.input-group {
+        display: flex;
+        align-items: center;
+        height: 100%;
         .input-group-btn {
+          height: 100%;
           min-width: 28px;
           .btn {
             min-width: 28px;
@@ -474,8 +474,9 @@
           }
         }
       }
-      .flatpickr-input.form-control, .flatpickr-alt-input[readonly] {
-        background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+      .vanilla-picker.form-control {
+        cursor: pointer;
+        background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
         &:disabled {
           background-color: var(--slick-editor-input-disabled-color, $slick-editor-input-disabled-color);
           cursor: initial;

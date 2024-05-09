@@ -10,11 +10,6 @@ export default defineConfig(() => {
       chunkSizeWarningLimit: 6000,
       emptyOutDir: true,
       outDir: '../../website',
-      rollupOptions: {
-        external: [
-          './node_modules/flatpickr/dist/l10n/fr',
-        ],
-      },
     },
     preview: {
       port: 8888

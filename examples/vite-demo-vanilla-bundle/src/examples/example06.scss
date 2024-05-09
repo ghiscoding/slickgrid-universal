@@ -1,7 +1,12 @@
 // @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
-@import '@slickgrid-universal/common/dist/styles/sass/sass-utilities.scss';
 
 .grid6 {
+  .slick-cell {
+    display: inline-flex;
+    align-items: center;
+    column-gap: 4px;
+  }
+
   .avg-total {
     color: #ac76ff;
   }
@@ -16,32 +21,33 @@
   }
 
   .mdi-file-pdf-outline {
-    /** 1. use `filter` color */
-    // filter: invert(62%) sepia(93%) saturate(5654%) hue-rotate(325deg) brightness(100%) contrast(90%);
-
-    /** 2. or use the SASS @mixin that will produce the `filter` color */
-    @include recolor(#f14668, 0.9);
+    color: #f14668;
+    opacity: 0.9;
   }
 
   .mdi-folder, .mdi-folder-open {
-    @include recolor(#ffa500, 0.9);
+    color: #ffa500;
+    opacity: 0.9;
   }
   .mdi-file-music-outline {
-    @include recolor(#3298dc, 0.9);
+    color: #3298dc;
+    opacity: 0.9;
   }
   .mdi-file-excel-outline {
-    @include recolor(#1E9F75, 0.9);
+    color: #1E9F75;
+    opacity: 0.9;
   }
   .mdi-file-document-outline,
   .mdi-file-question-outline {
-    @include recolor(#686868, 0.9);
+    color: #686868;
+    opacity: 0.9;
   }
 }
 .display-inline-block {
   display: inline-block;
 }
 
-// font-5px up to font-50px
+// create a few 15px indentation multiplied by level number
 @for $i from 1 through 6 {
   .width-#{$i*15}px { width: #{$i * 15}px; }
 }

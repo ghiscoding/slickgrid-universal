@@ -1,12 +1,11 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
+import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 import { DelimiterType, FileType } from '../../enums/index';
 import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index';
 import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { Formatters } from '../../formatters';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickContextMenu } from '../slickContextMenu';
 
@@ -26,7 +25,7 @@ const commandItemsMock = [
       { command: 'command3', title: 'Command 3', positionOrder: 70, },
       { command: 'command4', title: 'Command 4', positionOrder: 71, },
       {
-        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
           { command: 'command5', title: 'Command 5', positionOrder: 72, },
         ]
       }
@@ -281,6 +280,12 @@ describe('ContextMenu Plugin', () => {
 
       expect(contextMenuElm).toBeTruthy();
       expect(contextMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
+
+      // cell click should close it
+      gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
+      contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
+
+      expect(contextMenuElm).toBeNull();
     });
 
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {
@@ -703,7 +708,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
@@ -832,7 +837,7 @@ describe('ContextMenu Plugin', () => {
         expect(closeBtnElm).toBeTruthy();
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(1);
         expect(commandItemElm1.classList.contains('slick-menu-item-disabled')).toBeFalsy();
-        expect(commandIconElm1.classList.contains('fa-clone')).toBeTruthy();
+        expect(commandIconElm1.classList.contains('mdi-content-copy')).toBeTruthy();
         expect(commandLabelElm1.textContent).toBe('Copy');
 
         commandItemElm1.dispatchEvent(new CustomEvent('click'));

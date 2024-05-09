@@ -44,5 +44,6 @@ const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...S
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';
 
-// re-export MultipleSelectOption to avoid breaking previous code implementation
-export type { MultipleSelectOption } from 'multiple-select-vanilla';
+// re-export MultipleSelectOption type for convenience
+// and also to avoid asking the user to install it on their side without hoisting deps
+export { type MultipleSelectOption } from 'multiple-select-vanilla';

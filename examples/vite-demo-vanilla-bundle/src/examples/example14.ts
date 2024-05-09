@@ -6,7 +6,6 @@ import {
   EventNamingStyle,
   FieldType,
   Filters,
-  type FlatpickrOption,
   type Formatter,
   Formatters,
   type GridOption,
@@ -15,6 +14,7 @@ import {
   SlickGlobalEditorLock,
   type SliderRangeOption,
   SortComparers,
+  type VanillaCalendarOption,
 
   // utilities
   formatNumber,
@@ -93,7 +93,7 @@ export default class Example14 {
   isGridEditable = true;
   classDefaultResizeButton = 'button is-small';
   classNewResizeButton = 'button is-small is-selected is-primary';
-  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand }> = [];
+  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand; }> = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -220,7 +220,7 @@ export default class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, editorOptions: { hideClearButton: false } as FlatpickrOption },
+        editor: { model: Editors.date, editorOptions: { hideClearButton: false } as VanillaCalendarOption },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
@@ -242,7 +242,7 @@ export default class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: { minDate: 'today' },
+          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
           validator: (value, args) => {
             const dataContext = args && args.item;
             if (dataContext && (dataContext.completed && !value)) {
@@ -326,7 +326,8 @@ export default class Example14 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        cssClass: 'justify-center flex',
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -334,14 +335,14 @@ export default class Example14 {
             {
               command: 'help',
               title: 'Help!',
-              iconCssClass: 'mdi mdi-circle-question',
+              iconCssClass: 'mdi mdi-help-circle',
               positionOrder: 66,
               action: () => alert('Please Help!'),
             },
             'divider',
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
+              iconCssClass: 'mdi mdi-close text-color-danger', cssClass: 'red', textCssClass: 'text-italic text-color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -507,7 +508,7 @@ export default class Example14 {
   }
 
   showSpinner() {
-    this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+    this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px text-color-alt-success';
   }
 
   loadData(count: number) {
@@ -578,7 +579,7 @@ export default class Example14 {
   }
 
   handleOnBeforeEditCell(event) {
-    const args = event && event.detail && event.detail.args;
+    const args = event?.detail?.args;
     const { column, item, grid } = args;
 
     if (column && item) {
@@ -591,7 +592,7 @@ export default class Example14 {
   }
 
   handleOnCellChange(event) {
-    const args = event && event.detail && event.detail.args;
+    const args = event?.detail?.args;
     const dataContext = args && args.item;
 
     // when the field "completed" changes to false, we also need to blank out the "finish" date

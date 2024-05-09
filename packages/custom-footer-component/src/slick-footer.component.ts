@@ -1,4 +1,4 @@
-import moment from 'moment-mini';
+import { format } from '@formkit/tempo';
 import type {
   CustomFooterOption,
   GridOption,
@@ -110,7 +110,7 @@ export class SlickFooterComponent {
   /** Render element attribute values */
   renderMetrics(metrics: Metrics) {
     // get translated text & last timestamp
-    const lastUpdateTimestamp = moment(metrics.endTime).format(this.customFooterOptions.dateFormat);
+    const lastUpdateTimestamp = metrics?.endTime ? format(metrics.endTime, this.customFooterOptions.dateFormat, 'en-US') : '';
     this._bindingHelper.setElementAttributeValue('span.last-update-timestamp', 'textContent', lastUpdateTimestamp);
     this._bindingHelper.setElementAttributeValue('span.item-count', 'textContent', metrics.itemCount);
     this._bindingHelper.setElementAttributeValue('span.total-count', 'textContent', metrics.totalItemCount);
@@ -233,7 +233,7 @@ export class SlickFooterComponent {
   protected createFooterLastUpdate(): HTMLSpanElement {
     // get translated text & last timestamp
     const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? 'Last Update';
-    const lastUpdateTimestamp = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
+    const lastUpdateTimestamp = this.metrics?.endTime ? format(this.metrics?.endTime, this.customFooterOptions.dateFormat, 'en-US') : '';
     const lastUpdateContainerElm = createDomElement('span');
 
     lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'text-last-update', textContent: lastUpdateText }));

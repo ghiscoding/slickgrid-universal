@@ -22,7 +22,6 @@ import type {
 } from '../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
-import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
@@ -516,7 +515,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     // sanitize any unauthorized html tags like script and others
     // for the remaining allowed tags we'll permit all attributes
-    const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, finalText) || '';
+    const sanitizedText = this.grid.sanitizeHtmlString<string>(finalText) || '';
 
     const div = document.createElement('div');
     div[isRenderHtmlEnabled ? 'innerHTML' : 'textContent'] = sanitizedText;
@@ -530,7 +529,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     this._editorInputGroupElm = createDomElement('div', { className: 'autocomplete-container input-group' });
     const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
-    this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
+    this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default btn-clear' });
+    this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
     this._inputElm = createDomElement(
       'input',
       {
@@ -553,7 +553,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
 
     this._bindEventService.bind(this._inputElm, 'focus', () => this._inputElm?.select());
-    this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
+    this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent & { target: HTMLInputElement; }) => {
       this._lastInputKeyEvent = event;
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.stopImmediatePropagation();
@@ -561,10 +561,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
       // in case the user wants to save even an empty value,
       // we need to subscribe to the onKeyDown event for that use case and clear the current value
-      if (this.columnEditor.alwaysSaveOnEnterKey) {
-        if (event.key === 'Enter') {
-          this._currentValue = null;
-        }
+      if (event.key === 'Enter' && event.target.value === '' && this.columnEditor.alwaysSaveOnEnterKey) {
+        this._currentValue = null;
       }
     }) as EventListener);
 

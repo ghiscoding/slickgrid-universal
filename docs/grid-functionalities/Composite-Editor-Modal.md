@@ -467,6 +467,7 @@ export class GridExample {
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', formValues.completed);
       this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' });
     }
   }
 }
@@ -496,9 +497,9 @@ export class GridExample {
     // you can also change some editor options
     // not all Editors supports this functionality, so far only these Editors are supported: AutoComplete, Date, Single/Multiple Select
     if (columnDef.id === 'completed') {
-      this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
-      this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
-      this.compositeEditorInstance.changeFormEditorOption('finish', 'minDate', 'today');      // flatpickr date picker, change minDate to today
+      this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true);   // multiple-select.js, show filter in dropdown
+      this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);           // autocomplete, change minLength char to type
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' }); // vanilla calendar date picker, change minDate to today
     }
   }
 }
@@ -619,7 +620,7 @@ Disabling field(s) is done through the exact same way that you would do it in th
 ```ts
 handleOnBeforeEditCell(event) {
   const eventData = event.detail.eventData;
-  const args = event && event.detail && event.detail.args;
+  const args = event?.detail?.args;
   const { column, item, grid } = args;
 
   if (column && item) {
@@ -649,13 +650,14 @@ checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
   return isEditable;
 }
 ```
+
 #### Disabling Form Inputs but only in Composite Editor
 What if you want to disable certain form inputs but only in the Composite Editor, or use different logic in the grid. For that we added an extra `target` (`target` will return either "grid" or "composite") in the returned `args`, so you could apply different logic based on the target being the grid or the composite editor. For example:
 
 ```ts
 handleOnBeforeEditCell(event) {
   const eventData = event.detail.eventData;
-  const args = event && event.detail && event.detail.args;
+  const args = event?.detail?.args;
   const { column, item, grid, target } = args;
 
   if (column && item) {

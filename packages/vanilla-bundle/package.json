@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "4.7.0",
+  "version": "5.0.0-beta.3",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use Vite to bundle everything into a single JS file.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -59,7 +59,6 @@
     "@slickgrid-universal/pagination-component": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
-    "flatpickr": "^4.6.13",
     "sortablejs": "^1.15.2",
     "whatwg-fetch": "^3.6.20"
   },

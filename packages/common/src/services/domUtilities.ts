@@ -1,9 +1,8 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 import type { OptionRowData } from 'multiple-select-vanilla';
-import DOMPurify from 'isomorphic-dompurify';
 
 import type { SearchTerm } from '../enums/index';
-import type { Column, GridOption, SelectOption } from '../interfaces/index';
+import type { Column, SelectOption } from '../interfaces/index';
 import type { SlickGrid } from '../core/index';
 import type { TranslaterService } from './translater.service';
 
@@ -27,7 +26,6 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
   const enableTranslateLabel = columnFilterOrEditor?.enableTranslateLabel ?? false;
   const isTranslateEnabled = gridOptions?.enableTranslate ?? false;
   const isRenderHtmlEnabled = columnFilterOrEditor?.enableRenderHtml ?? false;
-  const sanitizedOptions = gridOptions?.sanitizerOptions ?? {};
   const labelName = columnFilterOrEditor?.customStructure?.label ?? 'label';
   const labelPrefixName = columnFilterOrEditor?.customStructure?.labelPrefix ?? 'labelPrefix';
   const labelSuffixName = columnFilterOrEditor?.customStructure?.labelSuffix ?? 'labelSuffix';
@@ -89,7 +87,7 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
         if (isRenderHtmlEnabled) {
           // sanitize any unauthorized html tags like script and others
           // for the remaining allowed tags we'll permit all attributes
-          optionText = sanitizeTextByAvailableSanitizer(gridOptions, optionText, sanitizedOptions);
+          optionText = grid.sanitizeHtmlString<string>(optionText);
         }
         selectOption.text = optionText;
 
@@ -115,23 +113,4 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
   }
 
   return { selectElement, dataCollection, hasFoundSearchTerm };
-}
-
-/**
- * Sanitize possible dirty html string (remove any potential XSS code like scripts and others), we will use 2 possible sanitizer
- * 1. optional sanitizer method defined in the grid options
- * 2. DOMPurify sanitizer (defaults)
- * @param gridOptions: grid options
- * @param dirtyHtml: dirty html string
- * @param sanitizerOptions: optional DOMPurify options when using that sanitizer
- */
-export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, sanitizerOptions?: DOMPurify.Config): string {
-  let sanitizedText = dirtyHtml;
-  if (typeof gridOptions?.sanitizer === 'function') {
-    sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
-  } else if (typeof DOMPurify?.sanitize === 'function') {
-    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', sanitizerOptions || { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) || '').toString();
-  }
-
-  return sanitizedText;
 }

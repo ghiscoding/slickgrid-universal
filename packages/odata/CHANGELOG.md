@@ -4,11 +4,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0-beta.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0-beta.2...v5.0.0-beta.3) (2024-05-09)
+
+**Note:** Version bump only for package @slickgrid-universal/odata
+
+## [5.0.0-beta.2](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0-beta.2) (2024-05-07)
+
+### ⚠ BREAKING CHANGES
+
+* migrate from Moment to Tempo (#1507)
+
+### Features
+
+* migrate from Moment to Tempo ([#1507](https://github.com/ghiscoding/slickgrid-universal/issues/1507)) ([adef47f](https://github.com/ghiscoding/slickgrid-universal/commit/adef47f21a0e32bd32ec4efce931770dc252d3b5)) - by @ghiscoding
+
 # [4.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.3...v4.7.0) (2024-04-20)
 
 ### Bug Fixes
 
 * **OData:** sorting columns via `id` instead of field property name, fixes [#1467](https://github.com/ghiscoding/slickgrid-universal/issues/1467) ([#1469](https://github.com/ghiscoding/slickgrid-universal/issues/1469)) ([0a4d402](https://github.com/ghiscoding/slickgrid-universal/commit/0a4d40255e240bddf752a2e7bf39a99ae234cc6e)) - by @zewa666
+
 * wrong operator comparison ([#1461](https://github.com/ghiscoding/slickgrid-universal/issues/1461)) ([abe772b](https://github.com/ghiscoding/slickgrid-universal/commit/abe772b9ad9480688ef000dddfa86d2cdc6b7e52)) - by @zewa666
 
 ## [4.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.0...v4.6.1) (2024-03-31)
@@ -366,6 +381,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **backend:** able to preset filters on hidden columns & all queried ([f1d92cd](https://github.com/ghiscoding/slickgrid-universal/commit/f1d92cda4cb3fabee00bb10dae36d68cd1d861e5))
+
 * **backend:** able to preset filters on hidden columns & all queried ([c610979](https://github.com/ghiscoding/slickgrid-universal/commit/c610979c54170c069b97a71864d95d0363d75e80))
 
 ### Features
@@ -409,6 +425,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **core:** fix types index.d.ts url ([a76b3a3](https://github.com/ghiscoding/slickgrid-universal/commit/a76b3a3d97a6d211ec2e7e8d9060fd8dd0719f58))
+
 * **tsc:** running dev watch was overriding commonjs folder ([#249](https://github.com/ghiscoding/slickgrid-universal/issues/249)) ([e466f62](https://github.com/ghiscoding/slickgrid-universal/commit/e466f6214d9450b593daecfdee6682f1f7c9ed19))
 
 # [0.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.8.0...v0.9.0) (2021-01-06)
@@ -554,6 +571,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * **autocomplete:** add much more functionalities to the AutoComplete ([#69](https://github.com/ghiscoding/slickgrid-universal/issues/69)) ([93c3d0a](https://github.com/ghiscoding/slickgrid-universal/commit/93c3d0a9b8d5a30c7a933f95a4333937c95305a3))
+
 * **core:** add ESLint npm script and add to prebuild script ([#151](https://github.com/ghiscoding/slickgrid-universal/issues/151)) ([4064876](https://github.com/ghiscoding/slickgrid-universal/commit/40648760a33628f0ba85653f5fc99d8250b9a7a2))
 
 # 0.1.0 (2020-07-28)
@@ -561,5 +579,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * **backend:** add OData & GraphQL packages ([#2](https://github.com/ghiscoding/slickgrid-universal/issues/2)) ([53cf08b](https://github.com/ghiscoding/slickgrid-universal/commit/53cf08bff2eea18e677770f70eedef1bda9aefcc))
+
 * **core:** expose all Extensions in new getter prop & fix draggable ([#29](https://github.com/ghiscoding/slickgrid-universal/issues/29)) ([07257b2](https://github.com/ghiscoding/slickgrid-universal/commit/07257b2564d86cbfad4f69bb4e910e04d7df5688))
+
 * **footer:** add Custom Footer component ([#5](https://github.com/ghiscoding/slickgrid-universal/issues/5)) ([59d0ba8](https://github.com/ghiscoding/slickgrid-universal/commit/59d0ba8921c2e0886b0c34705ac5a74f35ab4e43))

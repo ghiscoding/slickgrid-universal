@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/excel-export",
-  "version": "4.7.0",
+  "version": "5.0.0-beta.3",
   "description": "Excel Export (xls/xlsx) Service.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -51,8 +51,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "excel-builder-vanilla": "^3.0.1",
-    "moment-mini": "^2.29.4"
+    "excel-builder-vanilla": "^3.0.1"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~"

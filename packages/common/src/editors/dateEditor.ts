@@ -1,10 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, destroyAllElementProps, emptyElement, setDeepValue } from '@slickgrid-universal/utils';
-import flatpickr from 'flatpickr';
-import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_;
+import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
+import { parse } from '@formkit/tempo';
+import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -16,30 +13,31 @@ import type {
   EditorArguments,
   EditorValidator,
   EditorValidationResult,
-  FlatpickrOption,
   GridOption,
+  VanillaCalendarOption,
 } from './../interfaces/index';
-import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
+import { getDescendantProperty, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
+import { setPickerDates } from '../commonEditorFilter';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
 
 /*
- * An example of a date picker editor using Flatpickr
- * https://chmln.github.io/flatpickr
+ * An example of a date picker editor using Vanilla-Calendar-Picker
  */
 export class DateEditor implements Editor {
   protected _bindEventService: BindingEventService;
   protected _clearButtonElm!: HTMLButtonElement;
   protected _editorInputGroupElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
-  protected _inputWithDataElm!: HTMLInputElement | null;
   protected _isValueTouched = false;
+  protected _lastClickIsDate = false;
   protected _lastTriggeredByClearDate = false;
   protected _originalDate?: string;
-  protected _pickerMergedOptions!: FlatpickrOption;
-
-  flatInstance!: FlatpickrInstance;
+  protected _pickerMergedOptions!: IOptions;
+  calendarInstance?: VanillaCalendar;
   defaultDate?: string;
+  hasTimePicker = false;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -86,8 +84,8 @@ export class DateEditor implements Editor {
     return this._inputElm;
   }
 
-  /** Get Flatpickr options passed to the editor by the user */
-  get editorOptions(): FlatpickrOption {
+  /** Get options passed to the editor by the user */
+  get editorOptions(): IOptions {
     return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions };
   }
 
@@ -95,7 +93,7 @@ export class DateEditor implements Editor {
     return this.gridOptions.autoCommitEdit ?? false;
   }
 
-  get pickerOptions(): FlatpickrOption {
+  get pickerOptions(): IOptions {
     return this._pickerMergedOptions;
   }
 
@@ -104,112 +102,151 @@ export class DateEditor implements Editor {
     return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
-  init(): void {
+  async init() {
     if (this.args && this.columnDef) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       const columnId = this.columnDef?.id ?? '';
-      const gridOptions = (this.args.grid.getOptions() || {}) as GridOption;
-      this.defaultDate = (this.args.item) ? this.args.item[this.columnDef.field] : null;
-      const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnEditor.type || this.columnDef.type || FieldType.dateUtc);
-      const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc);
-      let currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
-      if (currentLocale.length > 2) {
-        currentLocale = currentLocale.substring(0, 2);
-      }
+      const gridOptions: GridOption = this.args.grid.getOptions() || {};
+      this.defaultDate = this.args.item?.[this.columnDef.field];
+      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
+      const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
+      const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
-      const pickerOptions: FlatpickrOption = {
-        defaultDate: this.defaultDate as string,
-        altInput: true,
-        altFormat: outputFormat,
-        dateFormat: inputFormat,
-        closeOnSelect: true,
-        wrap: true,
-        locale: currentLocale,
-        onChange: () => this.handleOnDateChange(),
-        errorHandler: (error: Error) => {
-          if (error.toString().includes('invalid locale')) {
-            console.warn(`[Slickgrid-Universal] Flatpickr missing locale imports (${currentLocale}), will revert to English as the default locale.
-          See Flatpickr Localization for more info, for example if we want to use French, then we can import it with:  import 'flatpickr/dist/l10n/fr';`);
+      // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
+      if (outputFormat && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
+        this.hasTimePicker = true;
+      }
+      const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
+
+      const pickerOptions: IOptions = {
+        input: true,
+        jumpToSelectedDate: true,
+        sanitizer: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
+        toggleSelected: false,
+        actions: {
+          clickDay: () => {
+            this._lastClickIsDate = true;
+          },
+          changeToInput: (_e, self) => {
+            if (self.HTMLInputElement) {
+              let selectedDate = '';
+              if (self.selectedDates[0]) {
+                selectedDate = self.selectedDates[0];
+                self.HTMLInputElement.value = formatDateByFieldType(self.selectedDates[0], undefined, outputFieldType);
+              } else {
+                self.HTMLInputElement.value = '';
+              }
+
+              if (selectedDate && this.hasTimePicker) {
+                const tempoDate = parse(selectedDate, pickerFormat);
+                tempoDate.setHours(+(self.selectedHours || 0));
+                tempoDate.setMinutes(+(self.selectedMinutes || 0));
+                self.HTMLInputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
+              }
+
+              if (this._lastClickIsDate) {
+                this.handleOnDateChange();
+                self.hide();
+              }
+            }
           }
-          // for any other error do nothing
-          // Flatpickr is a little too sensitive and will throw an error when provided date is lower than minDate so just disregard the error completely
-        }
+        },
+        settings: {
+          lang: currentLocale,
+          iso8601: false,
+          visibility: {
+            theme: this.gridOptions?.darkMode ? 'dark' : 'light',
+            positionToInput: 'auto',
+            weekend: false,
+          },
+        },
       };
 
-      // merge options with optional user's custom options
-      this._pickerMergedOptions = { ...pickerOptions, ...(this.editorOptions as FlatpickrOption) };
-      const inputCssClasses = `.editor-text.editor-${columnId}.form-control`;
-      if (this._pickerMergedOptions.altInput) {
-        this._pickerMergedOptions.altInputClass = 'flatpickr-alt-input form-control';
+      // add the time picker when format includes time (hours/minutes)
+      if (this.hasTimePicker) {
+        pickerOptions.settings!.selection = {
+          time: 24
+        };
       }
 
-      this._editorInputGroupElm = createDomElement('div', { className: 'flatpickr input-group' });
+      // merge options with optional user's custom options
+      this._pickerMergedOptions = extend(true, {}, pickerOptions, { settings: this.editorOptions, type: 'default' });
+
+      const inputCssClasses = `.editor-text.date-picker.editor-${columnId}.form-control.input-group-editor`;
+      this._editorInputGroupElm = createDomElement('div', { className: 'vanilla-picker input-group' });
       const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
-      this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
+      this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default btn-clear' });
+      this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
       this._inputElm = createDomElement(
         'input',
         {
           placeholder: this.columnEditor?.placeholder ?? '',
           title: this.columnEditor && this.columnEditor.title || '',
           className: inputCssClasses.replace(/\./g, ' '),
-          dataset: { input: '', defaultdate: this.defaultDate }
+          dataset: { input: '', defaultdate: this.defaultDate },
+          readOnly: true,
         },
         this._editorInputGroupElm
       );
 
+      this.args.container.appendChild(this._editorInputGroupElm);
+
       // show clear date button (unless user specifically doesn't want it)
-      if (!(this.editorOptions as FlatpickrOption)?.hideClearButton) {
+      if (!(this.columnEditor.editorOptions as any)?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
-        this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
+        this._bindEventService.bind(this._clearButtonElm, 'click', () => {
+          this.clear();
+          this.handleOnDateChange();
+        });
       }
 
-      this.args.container.appendChild(this._editorInputGroupElm);
-      this.flatInstance = flatpickr(this._editorInputGroupElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
-
-      // add dark mode CSS class when enabled
-      if (this.gridOptions?.darkMode) {
-        this.flatInstance.calendarContainer.classList.add('slick-dark-mode');
-      }
-
-      // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
-      // else just use the top one
-      this._inputWithDataElm = (this._pickerMergedOptions?.altInput) ? document.querySelector<HTMLInputElement>(`${inputCssClasses}.flatpickr-alt-input`) : this._inputElm;
-
-      if (!compositeEditorOptions) {
-        setTimeout(() => {
+      setTimeout(() => {
+        this.calendarInstance = new VanillaCalendar(this._inputElm, this._pickerMergedOptions);
+        this.calendarInstance.init();
+        if (!compositeEditorOptions) {
           this.show();
           this.focus();
-        }, 50);
-      }
+        }
+        if (this.calendarInstance) {
+          setPickerDates(this._inputElm, this.calendarInstance, this.defaultDate, this.columnDef, this.columnEditor);
+          this.calendarInstance.update({
+            dates: true,
+            month: true,
+            year: true,
+            time: true,
+          });
+        }
+      });
     }
   }
 
   destroy() {
     this.hide();
     this._bindEventService.unbindAll();
+    this.calendarInstance?.destroy();
 
-    if (typeof this.flatInstance?.destroy === 'function') {
-      this.flatInstance.destroy();
-      if (this.flatInstance?.element) {
-        setTimeout(() => destroyAllElementProps(this.flatInstance));
-      }
-    }
     emptyElement(this._editorInputGroupElm);
-    emptyElement(this._inputWithDataElm);
     emptyElement(this._inputElm);
-    this._editorInputGroupElm?.remove?.();
-    this._inputWithDataElm?.remove?.();
-    this._inputElm?.remove?.();
+    this._editorInputGroupElm?.remove();
+    this._inputElm?.remove();
+  }
+
+  clear() {
+    this._lastTriggeredByClearDate = true;
+    if (this.calendarInstance) {
+      this.calendarInstance.settings.selected.dates = [];
+      this._inputElm.value = '';
+    }
   }
 
   disable(isDisabled = true) {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
-    if (this.flatInstance?._input) {
+    if (this._inputElm) {
       if (isDisabled) {
-        this.flatInstance._input.setAttribute('disabled', 'disabled');
+        this._inputElm.setAttribute('disabled', 'disabled');
         this._clearButtonElm.disabled = true;
 
         // clear picker when it's newly disabled and not empty
@@ -218,7 +255,7 @@ export class DateEditor implements Editor {
           this.reset('', true, true);
         }
       } else {
-        this.flatInstance._input.removeAttribute('disabled');
+        this._inputElm.removeAttribute('disabled');
         this._clearButtonElm.disabled = false;
       }
     }
@@ -227,16 +264,15 @@ export class DateEditor implements Editor {
   /**
    * Dynamically change an Editor option, this is especially useful with Composite Editor
    * since this is the only way to change option after the Editor is created (for example dynamically change "minDate" or another Editor)
-   * @param {string} optionName - Flatpickr option name
-   * @param {newValue} newValue - Flatpickr new option value
+   * @param {string} optionName
+   * @param {newValue} newValue
    */
-  changeEditorOption(optionName: keyof FlatpickrBaseOptions, newValue: any) {
+  changeEditorOption<T extends keyof VanillaCalendarOption, K extends Partial<VanillaCalendarOption[T]>>(optionName: T, newValue: K) {
     if (!this.columnEditor.editorOptions) {
       this.columnEditor.editorOptions = {};
     }
     this.columnEditor.editorOptions[optionName] = newValue;
-    this._pickerMergedOptions = { ...this._pickerMergedOptions, [optionName]: newValue };
-    this.flatInstance.set(optionName, newValue);
+    this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { settings: { [optionName]: newValue } });
   }
 
   focus() {
@@ -245,22 +281,16 @@ export class DateEditor implements Editor {
 
     this.show();
     this._inputElm?.focus();
-    if (this._inputWithDataElm?.focus) {
-      this._inputWithDataElm.focus();
-      this._inputWithDataElm.select();
-    }
   }
 
   hide() {
-    if (this.flatInstance && typeof this.flatInstance.close === 'function') {
-      this.flatInstance.close();
-    }
+    this.calendarInstance?.hide();
   }
 
   show() {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (!isCompositeEditor && this.flatInstance && typeof this.flatInstance.open === 'function' && this.flatInstance._input) {
-      this.flatInstance.open();
+    if (!isCompositeEditor && this.calendarInstance) {
+      this.calendarInstance.show();
     } else if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
@@ -272,7 +302,9 @@ export class DateEditor implements Editor {
   }
 
   setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
-    this.flatInstance.setDate(val);
+    if (this.calendarInstance) {
+      setPickerDates(this._inputElm, this.calendarInstance, val, this.columnDef, this.columnEditor);
+    }
 
     if (isApplyingValue) {
       this.applyValue(this.args.item, this.serializeValue());
@@ -286,21 +318,21 @@ export class DateEditor implements Editor {
   }
 
   applyValue(item: any, state: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
-    if (fieldName !== undefined) {
-      const outputTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.outputType || this.columnEditor.type || this.columnDef.type)) || FieldType.dateUtc);
-      const saveTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.saveOutputType || this.columnDef.outputType || this.columnEditor.type || this.columnDef.type)) || FieldType.dateUtc);
-      const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
+    const fieldName = this.columnDef?.field;
+    if (this.columnDef && fieldName !== undefined) {
+      const saveFieldType = this.columnDef.saveOutputType || this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
+      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
+      const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(null, state);
-      const newValue = (state && validation && validation.valid) ? moment(state, outputTypeFormat).format(saveTypeFormat) : '';
+      const newValue = (state && validation?.valid) ? formatDateByFieldType(state, outputFieldType, saveFieldType) : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
         // when it's a complex object, user could override the object path (where the editable object is located)
         // else we use the path provided in the Field Column Definition
-        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
+        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName;
         setDeepValue(item, objectPath, newValue);
       } else {
         item[fieldName] = newValue;
@@ -309,15 +341,12 @@ export class DateEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    const elmValue = this._inputElm.value;
-    const inputFormat = mapMomentDateFormatWithFieldType(this.columnEditor.type || this.columnDef?.type || FieldType.dateIso);
-    const outputTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.outputType || this.columnEditor.type || this.columnDef.type)) || FieldType.dateUtc);
-    const elmDateStr = elmValue ? moment(elmValue, inputFormat, false).format(outputTypeFormat) : '';
-    const orgDateStr = this._originalDate ? moment(this._originalDate, inputFormat, false).format(outputTypeFormat) : '';
-    if (elmDateStr === 'Invalid date' || orgDateStr === 'Invalid date') {
-      return false;
+    let isChanged = false;
+    const elmDateStr = this.getValue();
+
+    if (this.columnDef) {
+      isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && this._originalDate === '')) && (elmDateStr !== this._originalDate);
     }
-    const isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
 
     return isChanged;
   }
@@ -327,15 +356,17 @@ export class DateEditor implements Editor {
   }
 
   loadValue(item: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
 
-    if (item && fieldName !== undefined) {
+    if (item && this.columnDef && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
-      const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
+      const value = isComplexObject ? getDescendantProperty(item, fieldName) : item[fieldName];
+      const inputFieldType = this.columnEditor.type || this.columnDef?.type || FieldType.dateIso;
+      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateIso;
 
-      this._originalDate = value;
-      this.flatInstance.setDate(value);
+      this._originalDate = formatDateByFieldType(value, inputFieldType, outputFieldType);
+      this._inputElm.value = this._originalDate;
     }
   }
 
@@ -345,11 +376,12 @@ export class DateEditor implements Editor {
    */
   reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
     const inputValue = value ?? this._originalDate ?? '';
-    if (this.flatInstance) {
+    if (this.calendarInstance) {
       this._originalDate = inputValue;
-      this.flatInstance.setDate(inputValue);
+      this.calendarInstance.settings.selected.dates = [inputValue];
       if (!inputValue) {
-        this.flatInstance.clear();
+        this.calendarInstance.settings.selected.dates = [];
+        this._inputElm.value = '';
       }
     }
     this._isValueTouched = false;
@@ -363,7 +395,7 @@ export class DateEditor implements Editor {
 
   save() {
     const validation = this.validate();
-    const isValid = (validation && validation.valid) || false;
+    const isValid = validation?.valid ?? false;
 
     if (this.hasAutoCommitEdit && isValid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
@@ -375,22 +407,17 @@ export class DateEditor implements Editor {
   }
 
   serializeValue() {
-    const domValue: string = this._inputElm.value;
-
+    const domValue = this.getValue();
     if (!domValue) {
       return '';
     }
 
-    const inputFormat = mapMomentDateFormatWithFieldType(this.columnEditor.type || this.columnDef?.type || FieldType.dateIso);
-    const outputTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.outputType || this.columnEditor.type || this.columnDef.type)) || FieldType.dateIso);
-    const value = moment(domValue, inputFormat, false).format(outputTypeFormat);
-
-    return value;
+    return domValue;
   }
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
-    const elmValue = (inputValue !== undefined) ? inputValue : this._inputElm?.value;
+    const elmValue = inputValue ?? this._inputElm?.value;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
@@ -430,9 +457,8 @@ export class DateEditor implements Editor {
 
   protected handleOnDateChange() {
     this._isValueTouched = true;
-    const currentFlatpickrOptions = this.flatInstance?.config ?? this._pickerMergedOptions;
 
-    if (this.args && currentFlatpickrOptions?.closeOnSelect) {
+    if (this.args) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
         this.handleChangeOnCompositeEditor(compositeEditorOptions);

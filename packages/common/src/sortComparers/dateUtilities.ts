@@ -1,29 +1,26 @@
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_;
-
 import { FieldType } from '../enums/fieldType.enum';
 import type { SortComparer } from '../interfaces/index';
-import { mapMomentDateFormatWithFieldType } from '../services/utilities';
+import { mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils';
 
-export function compareDates(value1: any, value2: any, sortDirection: number, format: string | moment_.MomentBuiltinFormat, strict?: boolean) {
+export function compareDates(value1: any, value2: any, sortDirection: number, format?: string, strict?: boolean) {
   let diff = 0;
 
   if (value1 === value2) {
     diff = 0;
   } else {
-    // use moment to validate the date
-    let date1: moment_.Moment | Date = moment(value1, format, strict);
-    let date2: moment_.Moment | Date = moment(value2, format, strict);
+    // try to parse the Date and validate it
+    let date1: Date | boolean = tryParseDate(value1, format, strict);
+    let date2: Date | boolean = tryParseDate(value2, format, strict);
 
-    // when moment date is invalid, we'll create a temporary old Date
-    if (!(date1 as moment_.Moment).isValid()) {
+    // when date is invalid (false), we'll create a temporary old Date
+    if (!date1) {
       date1 = new Date(1001, 1, 1);
     }
-    if (!(date2 as moment_.Moment).isValid()) {
+    if (!date2) {
       date2 = new Date(1001, 1, 1);
     }
 
-    // we can use valueOf on both moment & Date to sort
+    // we can use Date valueOf to sort
     diff = date1.valueOf() - date2.valueOf();
   }
 
@@ -32,10 +29,10 @@ export function compareDates(value1: any, value2: any, sortDirection: number, fo
 
 /** From a FieldType, return the associated Date SortComparer */
 export function getAssociatedDateSortComparer(fieldType: typeof FieldType[keyof typeof FieldType]): SortComparer {
-  const FORMAT = (fieldType === FieldType.date) ? moment.ISO_8601 : mapMomentDateFormatWithFieldType(fieldType);
+  const FORMAT = (fieldType === FieldType.date) ? undefined : mapTempoDateFormatWithFieldType(fieldType);
 
   return ((value1: any, value2: any, sortDirection: number) => {
-    if (FORMAT === moment.ISO_8601) {
+    if (FORMAT === undefined) {
       return compareDates(value1, value2, sortDirection, FORMAT, false) as number;
     }
     return compareDates(value1, value2, sortDirection, FORMAT, true) as number;

@@ -1,5 +1,3 @@
-import { createDomElement, toSentenceCase } from '@slickgrid-universal/utils';
-
 import type { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { InputEditor } from './inputEditor';
@@ -8,49 +6,6 @@ import { getDescendantProperty } from '../services/utilities';
 export class IntegerEditor extends InputEditor {
   constructor(protected readonly args: EditorArguments) {
     super(args, 'number');
-  }
-
-  /** Initialize the Editor */
-  init() {
-    if (this.columnDef && this.columnEditor && this.args) {
-      const columnId = this.columnDef?.id ?? '';
-      const compositeEditorOptions = this.args.compositeEditorOptions;
-
-      this._input = createDomElement('input', {
-        type: 'number', autocomplete: 'off', ariaAutoComplete: 'none',
-        ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
-        placeholder: this.columnEditor?.placeholder ?? '',
-        title: this.columnEditor?.title ?? '',
-        step: `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : '1'}`,
-        className: `editor-text editor-${columnId}`,
-      });
-      const cellContainer = this.args.container;
-      if (cellContainer && typeof cellContainer.appendChild === 'function') {
-        cellContainer.appendChild(this._input);
-      }
-
-      this._bindEventService.bind(this._input, 'focus', () => this._input?.select());
-      this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
-        this._lastInputKeyEvent = event;
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-          event.stopImmediatePropagation();
-        }
-      }) as EventListener);
-
-      // the lib does not get the focus out event for some reason
-      // so register it here
-      if (this.hasAutoCommitEdit && !compositeEditorOptions) {
-        this._bindEventService.bind(this._input, 'focusout', () => {
-          this._isValueTouched = true;
-          this.save();
-        });
-      }
-
-      if (compositeEditorOptions) {
-        this._bindEventService.bind(this._input, ['input', 'paste'], this.handleOnInputChange.bind(this) as EventListener);
-        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this) as EventListener, { passive: true });
-      }
-    }
   }
 
   loadValue(item: any) {

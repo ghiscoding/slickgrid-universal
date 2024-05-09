@@ -179,21 +179,19 @@ To "Clear all Grouping", "Collapse all Groups" and "Expand all Groups", we can s
 ```
 
 ### Styling (change icons)
-The current icons are Font Awesome chevron (right/down), however if you wish to use +/- icons. You can simply update the SASS variables to use whichever icons (or even Font Family icon) you desire. The SASS variables you can change are
+The current icons are chevron (right/down), however if you wish to use +/- icons. You can simply update the SASS variables to use whichever SVG icon paths. The SASS variables you can change are
 ```css
-$icon-group-color:                      $primary-color;
-$icon-group-expanded:                   "\f107";
-$icon-group-collapsed:                  "\f105";
-$icon-group-font-size:                  ($icon-font-size + 2px);
-$icon-group-font-weight:                bold;
-$icon-group-margin-right:               2px;
-$icon-group-height:                     20px;
-$icon-group-width:                      14px;
+$slick-icon-group-color:                    $primary-color;
+$slick-icon-group-expanded-svg-path:        "M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5C3,3.89 3.9,3 5,3H19M11,7H13V11H17V13H13V17H11V13H7V11H11V7Z";
+$slick-icon-group-collapsed-svg-path:       "M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5C3,3.89 3.9,3 5,3H19M17,11V13H7V11H17Z";
+$slick-icon-group-font-size:                20px;
+$slick-icon-group-font-weight:              bold;
+$slick-icon-group-margin-right:             2px;
 
 /* Grouping Totals Formatter */
-$group-totals-formatter-color:          gray;
-$group-totals-formatter-bgcolor:        white;
-$group-totals-formatter-font-size:      14px;
+$slick-group-totals-formatter-color:        gray;
+$slick-group-totals-formatter-bgcolor:      white;
+$slick-group-totals-formatter-font-size:    14px;
 ```
 
 For more info on SASS styling and variables, please read the [Wiki - SASS Styling](../styling/styling.md),

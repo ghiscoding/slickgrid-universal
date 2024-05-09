@@ -320,7 +320,7 @@ export class SlickDraggableGrouping {
             draggablePlaceholderElm.style.display = 'none';
           }
           if (groupTogglerElm) {
-            groupTogglerElm.style.display = 'inline-block';
+            groupTogglerElm.style.display = 'inline-flex';
           }
         }
 
@@ -488,7 +488,7 @@ export class SlickDraggableGrouping {
 
       // show the "Toggle All" when feature is enabled
       if (this._groupToggler && this.columnsGroupBy.length > 0) {
-        this._groupToggler.style.display = 'inline-block';
+        this._groupToggler.style.display = 'inline-flex';
       }
     }
   }

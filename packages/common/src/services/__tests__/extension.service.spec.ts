@@ -25,7 +25,6 @@ import {
   SlickRowSelectionModel,
 } from '../../extensions/index';
 
-jest.mock('flatpickr', () => { });
 const GRID_UID = 'slickgrid_12345';
 
 const mockCellSelectionModel = {

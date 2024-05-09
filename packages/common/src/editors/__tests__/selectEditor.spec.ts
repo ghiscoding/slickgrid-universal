@@ -41,6 +41,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('SelectEditor', () => {
@@ -630,6 +631,38 @@ describe('SelectEditor', () => {
         expect(saveSpy).toHaveBeenCalledWith(false);
       });
 
+      it('should cancel changes when Escape key is pressed and should not call "save()"', () => {
+        mockItemData = { id: 1, gender: 'male', isActive: true };
+        gridOptionMock.autoCommitEdit = false;
+
+        editor = new SelectEditor(editorArguments, true);
+        const cancelSpy = jest.spyOn(editor, 'cancel');
+        const saveSpy = jest.spyOn(editor, 'save');
+
+        editor.loadValue(mockItemData);
+        editor.msInstance?.close('key.escape');
+        editor.destroy();
+
+        expect(cancelSpy).toHaveBeenCalled();
+        expect(saveSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not "save()" when clicking ouside the select on body', () => {
+        mockItemData = { id: 1, gender: 'male', isActive: true };
+        gridOptionMock.autoCommitEdit = false;
+
+        editor = new SelectEditor(editorArguments, true);
+        const cancelSpy = jest.spyOn(editor, 'cancel');
+        const saveSpy = jest.spyOn(editor, 'save');
+
+        editor.loadValue(mockItemData);
+        editor.msInstance?.close('body.click');
+        editor.destroy();
+
+        expect(cancelSpy).not.toHaveBeenCalled();
+        expect(saveSpy).not.toHaveBeenCalled();
+      });
+
       it('should not call "commitCurrentEdit" when "hasAutoCommitEdit" is disabled', () => {
         mockItemData = { id: 1, gender: 'male', isActive: true };
         gridOptionMock.autoCommitEdit = false;
@@ -840,7 +873,7 @@ describe('SelectEditor', () => {
       it('should create the multi-select editor with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+          collection: [{ value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
           customStructure: {
             value: 'isEffort',
             label: 'label',
@@ -854,13 +887,13 @@ describe('SelectEditor', () => {
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+        expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
       });
 
-      it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
+      it('should create the multi-select editor with a default search term and have the HTML rendered when "enableRenderHtml" is set and has <script> tag', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
+          collection: [{ isEffort: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
             separatorBetweenTextLabels: ': ',
             includePrefixSuffixToSelectedValues: true,
@@ -882,36 +915,7 @@ describe('SelectEditor', () => {
 
         expect(editor.getValue()).toEqual(['']);
         expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> : True');
-      });
-
-      it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when using a custom "sanitizer" and "enableRenderHtml" flag is set and has <script> tag', () => {
-        mockColumn.editor = {
-          enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
-          collectionOptions: {
-            separatorBetweenTextLabels: ': ',
-            includePrefixSuffixToSelectedValues: true,
-          },
-          customStructure: {
-            value: 'isEffort',
-            label: 'label',
-            labelPrefix: 'labelPrefix',
-          },
-        };
-        mockItemData = { id: 1, gender: 'male', isEffort: false };
-        gridOptionMock.sanitizer = (dirtyHtml) => dirtyHtml.replace(/(<script>.*?<\/script>)/gi, '');
-
-        editor = new SelectEditor(editorArguments, true, 0);
-        editor.loadValue(mockItemData);
-        editor.setValue([false]);
-        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
-        editorBtnElm.click();
-
-        expect(editor.getValue()).toEqual(['']);
-        expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> : True');
+        expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> : True');
       });
     });
   });

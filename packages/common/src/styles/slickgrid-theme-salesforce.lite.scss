@@ -5,24 +5,15 @@
  */
 
 /**
- * SlickGrid Salesforce Theme
- * (sames as `slickgrid-theme-salesforce.scss` but without Flatpickr & Multiple-Select styling)
- * We also removed `slick-without-bootstrap-min-styling.scss` since that is causing issues with Bootstrap 4
+ * SlickGrid Salesforce Theme (lite)
+ * sames as `slickgrid-theme-salesforce.scss` but without:
+ *   `slick-without-bootstrap-min-styling.scss`, colors, extra-styling, slick-filters, slickgrid-icons and slickgrid-icons-svg-utils
  */
 
-@import './flatpickr-dark';
-@import './sass-utilities';
 @import './variables-theme-salesforce';
 @import './slick-grid';
 @import './slick-editors';
 @import './slick-plugins';
 @import './slick-component';
 @import './slickgrid-examples';
-@import './slick-bootstrap';
 @import './slick-autocomplete';
-@import './material-svg-icons';
-@import './material-svg-utilities';
-
-$link-color: var(--slick-primary-color, $slick-primary-color) !default;
-@import './colors.scss';
-@import './extra-styling';

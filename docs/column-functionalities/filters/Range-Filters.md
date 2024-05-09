@@ -4,11 +4,10 @@
 - [Using a Slider Range](#using-a-slider-range-filter)
   - [Filter Options](#filter-options)
 - [Using a Date Range](#using-a-date-range-filter)
-   - [Filter Options (`FlatpickrOption` interface)](#filter-options-flatpickroption-interface)
 - [Update Filters Dynamically](Input-Filter.md#update-filters-dynamically)
 
 ### Introduction
-Range filters allows you to search for a value between 2 min/max values, the 2 most common use case would be to filter between 2 numbers or dates, you can do that with the new Slider & Date Range Filters. The range can also be defined as inclusive (`>= 0 and <= 10`) or exclusive (`> 0 and < 10`), the default is exclusive but you can change that, see below for more info.
+Range filters allows you to search for a value between 2 min/max values, the 2 most common use case would be to filter between 2 numbers or dates, you can do that with the Slider & Date Range Filters. The range can also be defined as inclusive (`>= 0 and <= 10`) or exclusive (`> 0 and < 10`), the default is exclusive but you can change that, see below for more info.
 
 ### Using an Inclusive Range (default is Exclusive)
 By default all the range filters are with exclusive range, which mean between value `x` and `y` but without including them. If you wish to include the `x` and `y` values, you can change that through the `operator` property.
@@ -123,9 +122,9 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 this.gridOptions = {
-  defaultFilterOptions: { 
+  defaultFilterOptions: {
     // Note: that `date`, `select` and `slider` are combining both compound & range filters together
-    date: { minDate: 'today' },
+    date: { range: { min: 'today' } },
     select: { minHeight: 350 }, // typed as MultipleSelectOption
     slider: { sliderStartValue: 10 }
   }
@@ -133,10 +132,12 @@ this.gridOptions = {
 ```
 
 ### Using a Date Range Filter
-The date range filter allows you to search data between 2 dates (it uses [Flatpickr Range](https://flatpickr.js.org/examples/#range-calendar) feature).
+The date range filter allows you to search data between 2 dates (it uses [Vanilla-Calendar Range](https://vanilla-calendar.pro/) feature).
+
+> **Note**  we use [Tempo](https://tempo.formkit.com/) to parse and format Dates to the chosen format via the `type` option when provided in your column definition.
 
 ##### Component
-import { Filters, FlatpickrOption, Formatters, GridOption, OperatorType } from '@slickgrid-universal/common';
+import { Filters, Formatters, GridOption, OperatorType, VanillaCalendarOption } from '@slickgrid-universal/common';
 
 ```typescript
 export class GridBasicComponent {
@@ -148,14 +149,16 @@ export class GridBasicComponent {
     // your columns definition
     this.columnDefinitions = [
       {
-        id: 'finish', name: 'Finish', field: 'finish', headerKey: 'FINISH', formatter: Formatters.dateIso, sortable: true, minWidth: 75, width: 120, exportWithFormatter: true,
+        id: 'finish', name: 'Finish', field: 'finish', headerKey: 'FINISH',
+        minWidth: 75, width: 120, exportWithFormatter: true,
+        formatter: Formatters.dateIso, sortable: true,
         type: FieldType.date,
         filterable: true,
         filter: {
           model: Filters.dateRange,
 
-          // override any of the Flatpickr options through "filterOptions"
-          editorOptions: { minDate: 'today' } as FlatpickrOption
+          // override any of the Vanilla-Calendar options through "filterOptions"
+          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption
         }
       },
     ];
@@ -167,14 +170,14 @@ export class GridBasicComponent {
 }
 ```
 
-##### Filter Options (`FlatpickrOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [FlatpickrOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/flatpickrOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the [Flatpickr](https://flatpickr.js.org/) library.
+#### Filter Options (`VanillaCalendarOption` interface)
+All the available options that can be provided as `filterOptions` to your column definitions can be found under this [VanillaCalendarOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/vanillaCalendarOption.interface.ts) and you should cast your `filterOptions` with the expected interface to make sure that you use only valid settings of the [Vanilla-Calendar](https://vanilla-calendar.pro/docs/reference/additionally/settings) library.
 
 ```ts
 filter: {
-  model: Filters.dateRange,
+  model: Filters.compoundDate,
   filterOptions: {
-    minDate: 'today'
-  } as FlatpickrOption
+    range: { min: 'today' }
+  } as VanillaCalendarOption
 }
 ```

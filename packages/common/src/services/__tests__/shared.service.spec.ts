@@ -6,8 +6,6 @@ import { ExcelExportService } from '../excelExport.service';
 import type { SlickDataView, SlickGrid } from '../../core';
 import { SlickGroupItemMetadataProvider } from '../../extensions';
 
-jest.mock('flatpickr', () => { });
-
 const dataviewStub = {
   onRowCountChanged: jest.fn(),
   onRowsChanged: jest.fn(),

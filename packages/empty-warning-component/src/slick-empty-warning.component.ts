@@ -110,9 +110,9 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     // when using a frozen/pinned grid, we also have extra options to hide left/right message
     if (this._warningLeftElement) {
       // display/hide right/left messages
-      let leftDisplay = isShowing ? 'block' : 'none';
+      let leftDisplay = isShowing ? 'flex' : 'none';
       if (isFrozenGrid && isShowing) {
-        leftDisplay = (mergedOptions.hideFrozenLeftWarning) ? 'none' : 'block';
+        leftDisplay = (mergedOptions.hideFrozenLeftWarning) ? 'none' : 'flex';
       }
       this._warningLeftElement.style.display = leftDisplay;
 
@@ -123,9 +123,9 @@ export class SlickEmptyWarningComponent implements ExternalResource {
 
     if (this._warningRightElement) {
       // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
-      let rightDisplay = isShowing ? 'block' : 'none';
+      let rightDisplay = isShowing ? 'flex' : 'none';
       if (isFrozenGrid && isShowing) {
-        rightDisplay = (mergedOptions.hideFrozenRightWarning) ? 'none' : 'block';
+        rightDisplay = (mergedOptions.hideFrozenRightWarning) ? 'none' : 'flex';
       }
       this._warningRightElement.style.display = rightDisplay;
 

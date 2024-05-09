@@ -74,38 +74,77 @@ describe('dateEuroShortFilterCondition method', () => {
     expect(output).toBe(false);
   });
 
-  it('should return True when input value is in the range of search terms', () => {
-    const searchTerms = ['01/12/93..31/12/93'];
-    const options = { dataKey: '', operator: 'EQ', cellValue: '25/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
-    const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
-    expect(output).toBe(true);
+  describe('without zero padding dates', () => {
+    it('should return True when input value is in the range of search terms with short US dates and without zero padding', () => {
+      const searchTerms = ['1/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'EQ', cellValue: '25/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(true);
+    });
+
+    it('should return False when input value is not in the range of search terms with short US dates and without zero padding', () => {
+      const searchTerms = ['1/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'EQ', cellValue: '25/11/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(false);
+    });
+
+    it('should return True when input value equals the search terms min inclusive value and operator is set to "rangeInclusive"', () => {
+      const searchTerms = ['1/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'RangeInclusive', cellValue: '1/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(true);
+    });
+
+    it('should return False when input value equals the search terms min inclusive value and operator is set to "RangeExclusive"', () => {
+      const searchTerms = ['1/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '1/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(false);
+    });
+
+    it('should return False when any of the 2 search term value is not a valid date', () => {
+      const searchTerms = ['1/12/93..60/12/93'];
+      const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '05/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(false);
+    });
   });
 
-  it('should return False when input value is not in the range of search terms', () => {
-    const searchTerms = ['01/12/93..31/12/93'];
-    const options = { dataKey: '', operator: 'EQ', cellValue: '25/11/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
-    const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
-    expect(output).toBe(false);
-  });
+  describe('zero padding dates', () => {
+    it('should return True when input value is in the range of search terms', () => {
+      const searchTerms = ['01/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'EQ', cellValue: '25/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(true);
+    });
 
-  it('should return True when input value equals the search terms min inclusive value and operator is set to "rangeInclusive"', () => {
-    const searchTerms = ['01/12/93..31/12/93'];
-    const options = { dataKey: '', operator: 'RangeInclusive', cellValue: '01/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
-    const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
-    expect(output).toBe(true);
-  });
+    it('should return False when input value is not in the range of search terms', () => {
+      const searchTerms = ['01/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'EQ', cellValue: '25/11/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(false);
+    });
 
-  it('should return False when input value equals the search terms min inclusive value and operator is set to "RangeExclusive"', () => {
-    const searchTerms = ['01/12/93..31/12/93'];
-    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '01/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
-    const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
-    expect(output).toBe(false);
-  });
+    it('should return True when input value equals the search terms min inclusive value and operator is set to "rangeInclusive"', () => {
+      const searchTerms = ['01/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'RangeInclusive', cellValue: '1/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(true);
+    });
 
-  it('should return False when any of the 2 search term value is not a valid date', () => {
-    const searchTerms = ['01/12/93..60/12/93'];
-    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '05/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
-    const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
-    expect(output).toBe(false);
+    it('should return False when input value equals the search terms min inclusive value and operator is set to "RangeExclusive"', () => {
+      const searchTerms = ['01/12/93..31/12/93'];
+      const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '1/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(false);
+    });
+
+    it('should return False when any of the 2 search term value is not a valid date', () => {
+      const searchTerms = ['01/12/93..60/12/93'];
+      const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '05/12/93', fieldType: FieldType.dateEuroShort, searchTerms } as FilterConditionOption;
+      const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateEuroShort));
+      expect(output).toBe(false);
+    });
   });
 });

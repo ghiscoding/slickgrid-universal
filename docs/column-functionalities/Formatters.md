@@ -13,19 +13,18 @@
 ### Definition
 `Formatters` are functions that can be used to change and format certain column(s) in the grid. Please note that it does not alter the input data, it simply changes the styling by formatting the data differently to the screen (what the user visually see).
 
-A good example of a `Formatter` could be a column name `isActive` which is a `boolean` field with input data as `True` or `False`. User would prefer to simply see a checkbox as a visual indication representing the `True` flag, for this behavior you can use `Formatters.checkmark` which will use [Font-Awesome](http://fontawesome.io/icons/) icon of `fa-check` when `True` or an empty string when `False`.
+A good example of a `Formatter` could be a column name `isActive` which is a `boolean` field with input data as `True` or `False`. User would prefer to simply see a checkbox as a visual indication representing the `True` flag, for this behavior you can use `Formatters.checkmarkMaterial` which will use optional SVG icons of `mdi-check` when `True` or an empty string when `False`.
 
 For a [UI sample](#ui-sample), scroll down below.
 
 ### Provided Formatters
 `Slickgrid-Universal` ships with a few `Formatters` by default which helps with common fields, you can see the [entire list here](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37).
 
-> **Note** you might not need a Formatter when a simple CSS style is needed, think about using `cssClass` column property instead.
+> **Note** you might not need a Formatter when a simple CSS style and class might be enough, think about using `cssClass` column property as much as possible since it has much better perf.
 
 #### List of provided `Formatters`
 - `arrayObjectToCsv`: Takes an array of complex objects converts it to a comma delimited string.
 - `arrayToCsv` : takes an array of text and returns it as CSV string
-- `checkmark` : uses Font-Awesome [(fa-check)](http://fontawesome.io/icon/check/)
 - `checkmarkMaterial` use Material Design to display a checkmark icon
 - `collection`: Looks up values from the columnDefinition.params.collection property and displays the label in CSV or string format
 - `complexObject`: takes a complex object (with a `field` that has a `.` notation) and pull correct value, there are multiple ways to use it
@@ -47,6 +46,7 @@ For a [UI sample](#ui-sample), scroll down below.
 - `dateTimeUs` : Takes a Date object and displays it as an US Date+Time format (MM/DD/YYYY HH:mm:ss)
 - `dateTimeShortUs`: Takes a Date object and displays it as an US Date+Time (without seconds) format (MM/DD/YYYY HH:mm:ss)
 - `dateTimeUsAmPm` : Takes a Date object and displays it as an US Date+Time+(am/pm) format (MM/DD/YYYY hh:mm:ss a)
+- `dateUtc` : Takes a Date object and displays it as a TZ format (YYYY-MM-DDThh:mm:ssZ)
 - `decimal`: Display the value as x decimals formatted, defaults to 2 decimals. You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
 - `dollar`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value.
 - `dollarColored`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value
@@ -71,10 +71,12 @@ For a [UI sample](#ui-sample), scroll down below.
 - `translateBoolean`: Takes a boolean value, cast it to upperCase string and finally translates it (i18n).
 - `tree`: Formatter that must be used when the column is a Tree Data column
 
-**Note:** The list might not always be up to date, you can refer to the [Formatters export](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which ones are available.
+> **Note:** The list is certainly not up to date (especially for Dates), please refer to the [Formatters export](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which formatters are available.
+
+> **Note** all Date formatters are formatted using [Tempo](https://tempo.formkit.com/#format-tokens). There are also many more Date formats not shown above, simply visit the [formatters.index](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/formatters.index.ts#L101) to see all available Date/Time formats.
 
 ### Usage
-To use any of them, you need to import `Formatters` from `Slickgrid-Universal` and add a `formatter: ...` in your column definitions as shown below:
+To use any of them, you simply need to import `Formatters` from `Slickgrid-Universal` and add a `formatter: Formatters.xyz` (where `xyx` is the name of the built-in formatter) in your column definitions as shown below:
 
 #### TypeSript
 ```ts
@@ -97,39 +99,7 @@ export class Example {
       { id: '%', name: '% Complete', field: 'percentComplete', formatter: Formatters.percentComplete },
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmark }
-    ];
-  }
-}
-```
-
-#### SalesForce (ES6)
-For SalesForce the code is nearly the same, the only difference is to add the `Slicker` prefix, so instead of `Formatters.abc` we need to use `Slicker.Formatters.abc`
-
-```ts
-// ... SF_Slickgrid import
-
-
-export class Example {
-  const Slicker = window.Slicker;
-
-  columnDefinitions: Column[];
-  gridOptions: GridOption;
-  dataset: any[];
-
-  constructor() {
-    // define the grid options & columns and then create the grid itself
-    this.defineGrid();
-  }
-
-  defineGrid() {
-    this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title' },
-      { id: 'duration', name: 'Duration (days)', field: 'duration' },
-      { id: '%', name: '% Complete', field: 'percentComplete', formatter: Slicker.Formatters.percentComplete },
-      { id: 'start', name: 'Start', field: 'start', formatter: Slicker.Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Slicker.Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Slicker.Formatters.checkmark }
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmarkMaterial }
     ];
   }
 }
@@ -191,11 +161,13 @@ export interface FormatterResultObject {
 ```
 
 ### Example of a Custom Formatter with HTML string
-For example, we will use `Font-Awesome` with a `boolean` as input data, and display a (fire) icon when `True` or a (snowflake) when `False`. This custom formatter is actually display in the [UI sample](#ui-sample) shown below.
+
+For example, we will use our optional SVG icons `.mdi` with a `boolean` as input data, and display a (fire) icon when `True` or a (snowflake) when `False`. This custom formatter is actually display in the [UI sample](#ui-sample) shown below.
+
 ```ts
 // create a custom Formatter with the Formatter type
 const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) =>
-  value ? `<i class="fa fa-fire" aria-hidden="true"></i>` : '<i class="fa fa-snowflake-o" aria-hidden="true"></i>';
+  value ? `<i class="mdi mdi-fire" aria-hidden="true"></i>` : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 
 #### Example with `FormatterResultObject` instead of a string
@@ -203,7 +175,7 @@ Using this object return type will provide the user the same look and feel, it w
 ```ts
 // create a custom Formatter and returning a string and/or an object of type FormatterResultObject
 const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) =>
-  value ? { addClasses: 'fa fa-fire', text: '', tooltip: 'burning fire' } : '<i class="fa fa-snowflake-o" aria-hidden="true"></i>';
+  value ? { addClasses: 'mdi mdi-fire', text: '', tooltip: 'burning fire' } : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 
 ### Example of Custom Formatter with Native DOM Element
@@ -212,7 +184,7 @@ Since version 4.x, you can now also return native DOM element instead of an HTML
 2. Performance (the reasons are similar to point 1.)
    - since it's native it can be appended directly to the grid cell
    - when it's an HTML string, it has to do 2 extra steps (which is an overhead process)
-      i. sanitize the string (we use [DOMPurify](https://github.com/cure53/DOMPurify) by default)
+      i. sanitize the string (when a sanitizer, for example [DOMPurify](https://github.com/cure53/DOMPurify))
       ii. SlickGrid then has to convert it to native element by using `innerHTML` on the grid cell
 
 Demo

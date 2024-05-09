@@ -1,29 +1,31 @@
-import moment from 'moment-mini';
+import { dayStart } from '@formkit/tempo';
 
 import { FieldType, OperatorType, type SearchTerm } from '../enums/index';
 import type { FilterConditionOption } from '../interfaces/index';
-import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { testFilterCondition } from './filterUtilities';
+import { mapTempoDateFormatWithFieldType, tryParseDate } from '../services';
 
 /**
  * Execute Date filter condition check on each cell and use correct date format depending on it's field type (or filterSearchType when that is provided)
  */
-export function executeDateFilterCondition(options: FilterConditionOption, parsedSearchDates: any[]): boolean {
+export function executeDateFilterCondition(options: FilterConditionOption, parsedSearchDates: Array<string | Date>): boolean {
   const filterSearchType = options && (options.filterSearchType || options.fieldType) || FieldType.dateIso;
-  const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
+  const FORMAT = mapTempoDateFormatWithFieldType(filterSearchType);
   const [searchDate1, searchDate2] = parsedSearchDates;
 
-  // cell value in moment format
-  const dateCell = moment(options.cellValue, FORMAT, true);
+  // cell value in Date format
+  const dateCell = tryParseDate(options.cellValue, FORMAT, true);
 
   // return when cell value is not a valid date
-  if ((!searchDate1 && !searchDate2) || !dateCell.isValid()) {
+  if ((!searchDate1 && !searchDate2) || !dateCell) {
     return false;
   }
 
   // when comparing with Dates only (without time), we need to disregard the time portion, we can do so by setting our time to start at midnight
   // ref, see https://stackoverflow.com/a/19699447/1212166
-  const dateCellTimestamp = FORMAT.toLowerCase().includes('h') ? dateCell.valueOf() : dateCell.clone().startOf('day').valueOf();
+  const dateCellTimestamp = FORMAT === 'ISO8601' || FORMAT.toLowerCase().includes('h')
+    ? dateCell.valueOf()
+    : dayStart(new Date(dateCell)).valueOf();
 
   // having 2 search dates, we assume that it's a date range filtering and we'll compare against both dates
   if (searchDate1 && searchDate2) {
@@ -38,18 +40,20 @@ export function executeDateFilterCondition(options: FilterConditionOption, parse
   }
 
   // comparing against a single search date
-  const dateSearchTimestamp1 = FORMAT.toLowerCase().includes('h') ? searchDate1.valueOf() : searchDate1.clone().startOf('day').valueOf();
+  const dateSearchTimestamp1 = FORMAT === 'ISO8601' || FORMAT.toLowerCase().includes('h')
+    ? searchDate1.valueOf()
+    : dayStart(new Date(searchDate1)).valueOf();
   return testFilterCondition(options.operator || '==', dateCellTimestamp, dateSearchTimestamp1);
 }
 
 /**
- * From our search filter value(s), get the parsed value(s), they are parsed as Moment object(s).
+ * From our search filter value(s), get the parsed value(s), they are parsed as Date objects.
  * This is called only once per filter before running the actual filter condition check on each cell
  */
 export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm[] {
   const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [];
   const filterSearchType = inputFilterSearchType || FieldType.dateIso;
-  const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
+  const FORMAT = mapTempoDateFormatWithFieldType(filterSearchType);
 
   const parsedSearchValues: any[] = [];
 
@@ -57,18 +61,18 @@ export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined,
     const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
     const searchValue1 = (Array.isArray(searchValues) && searchValues[0] || '') as Date | string;
     const searchValue2 = (Array.isArray(searchValues) && searchValues[1] || '') as Date | string;
-    const searchDate1 = moment(searchValue1, FORMAT, true);
-    const searchDate2 = moment(searchValue2, FORMAT, true);
+    const searchDate1 = tryParseDate(searchValue1, FORMAT, true);
+    const searchDate2 = tryParseDate(searchValue2, FORMAT, true);
 
     // return if any of the 2 values are invalid dates
-    if (!searchDate1.isValid() || !searchDate2.isValid()) {
+    if (!searchDate1 || !searchDate2) {
       return [];
     }
     parsedSearchValues.push(searchDate1, searchDate2);
   } else {
     // return if the search term is an invalid date
-    const searchDate1 = moment(searchTerms[0] as Date | string, FORMAT, true);
-    if (!searchDate1.isValid()) {
+    const searchDate1 = tryParseDate(searchTerms[0] as Date | string, FORMAT, true);
+    if (!searchDate1) {
       return [];
     }
     parsedSearchValues.push(searchDate1);
