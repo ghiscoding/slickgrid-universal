@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0) (2024-05-10)
+
+### ⚠ BREAKING CHANGES
+
+* pure SVG icons, Moment to Tempo, Flatpickr to Vanilla-Calendar (#1518)
+
+### Features
+
+* pure SVG icons, Moment to Tempo, Flatpickr to Vanilla-Calendar ([#1518](https://github.com/ghiscoding/slickgrid-universal/issues/1518)) ([21e50db](https://github.com/ghiscoding/slickgrid-universal/commit/21e50db5ecdc6a0b2f8250f115562ab4fd6e3f4d)) - by @ghiscoding
+
 ## [5.0.0-beta.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0-beta.2...v5.0.0-beta.3) (2024-05-09)
 
 **Note:** Version bump only for package @slickgrid-universal/odata

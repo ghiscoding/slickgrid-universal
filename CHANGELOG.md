@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0) (2024-05-10)
+
+### ⚠ BREAKING CHANGES
+
+* pure SVG icons, Moment to Tempo, Flatpickr to Vanilla-Calendar (#1518)
+
+### Features
+
+* pure SVG icons, Moment to Tempo, Flatpickr to Vanilla-Calendar ([#1518](https://github.com/ghiscoding/slickgrid-universal/issues/1518)) ([21e50db](https://github.com/ghiscoding/slickgrid-universal/commit/21e50db5ecdc6a0b2f8250f115562ab4fd6e3f4d)) - by @ghiscoding
+
+### Bug Fixes
+
+* **core:** col name from HTML shouldn't disappear in picker, fixes [#1475](https://github.com/ghiscoding/slickgrid-universal/issues/1475) ([#1476](https://github.com/ghiscoding/slickgrid-universal/issues/1476)) ([15a590b](https://github.com/ghiscoding/slickgrid-universal/commit/15a590b2e52f8864aeccc38f9a708c0453b6e4a6)), closes [/github.com/ghiscoding/slickgrid-universal/blob/185b6f9e44400bec2f1d79568905ca79e4b338a5/packages/common/src/core/slickGrid.ts#L1615-L1616](https://github.com/ghiscoding//github.com/ghiscoding/slickgrid-universal/blob/185b6f9e44400bec2f1d79568905ca79e4b338a5/packages/common/src/core/slickGrid.ts/issues/L1615-L1616) - by @ghiscoding
+* **styling:** small UI fixes for Salesforce Theme ([f9bfb3d](https://github.com/ghiscoding/slickgrid-universal/commit/f9bfb3dbbf6a217fdf3928abde634c8ff8243ba0)) - by @ghiscoding-SE
+* tweak setupColumnSort() to fix exception when col no longer exists ([#1477](https://github.com/ghiscoding/slickgrid-universal/issues/1477)) ([094d760](https://github.com/ghiscoding/slickgrid-universal/commit/094d7602d7170b2f395985ce5635041bb2b803d2)) - by @ghiscoding
+
 ## [5.0.0-beta.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0-beta.2...v5.0.0-beta.3) (2024-05-09)
 
 ### Bug Fixes
