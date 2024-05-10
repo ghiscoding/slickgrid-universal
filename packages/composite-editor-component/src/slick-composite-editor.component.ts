@@ -868,7 +868,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected handleResetInputValue(event: DOMEvent<HTMLButtonElement>) {
     const columnId = event.target.name;
     const editor = this._editors?.[columnId];
-    if (editor?.reset) {
+    if (typeof editor?.reset === 'function') {
       editor.reset();
     }
     delete this._formValues?.[columnId];
@@ -976,7 +976,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // if the user provided the "onSave" callback, let's execute it with the item data context
         if (isFormValid && typeof this._options?.onSave === 'function') {
           const itemDataContext = (modalType === 'create')
-            ? this._originalDataContext // the inserted item was copied to our ref by the "onAddNewRow" event
+            ? this._originalDataContext // the inserted item was previously assigned to this ref when "onAddNewRow" is triggered
             : this.grid.getDataItem(this._lastActiveRowNumber); // for clone, we can get item data context directly from DataView
           isFormValid = await this._options?.onSave(this.formValues, this.getCurrentRowSelections(), itemDataContext);
         }
@@ -989,7 +989,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Insert an item into the DataView or throw an error when finding duplicate id in the dataset */
   protected insertNewItemInDataView(item: any) {
-    const fullDatasetLength = this.dataView?.getItemCount() ?? 0;
+    const fullDatasetLength = this.dataView?.getItemCount() || 0;
     const newId = this._options.insertNewId ?? fullDatasetLength + 1;
     item[this.gridOptions.datasetIdPropertyName || 'id'] = newId;
 
