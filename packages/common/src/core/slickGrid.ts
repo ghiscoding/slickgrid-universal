@@ -120,8 +120,7 @@ interface RowCaching {
 }
 
 export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O extends BaseGridOption<C> = BaseGridOption<C>> {
-  // Public API
-  slickGridVersion = '5.7.1';
+  // -- Public API
 
   /** optional grid state clientId */
   cid = '';
@@ -1901,11 +1900,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const handles = child.querySelectorAll('.slick-resizable-handle');
       handles.forEach((handle) => handle.remove());
 
-      if (i >= vc.length || !vc[i]) {
-        continue;
-      }
-
-      if (vc[i].resizable) {
+      if (i < vc.length && vc[i]?.resizable) {
         if (firstResizable === undefined) {
           firstResizable = i;
         }
@@ -1946,10 +1941,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             let stretchLeewayOnRight: number | null = null;
             // lock each column's width option to current width
             for (let pw = 0; pw < children.length; pw++) {
-              if (pw >= vc.length || !vc[pw]) {
-                continue;
+              if (pw < vc.length && vc[pw]) {
+                vc[pw].previousWidth = children[pw].offsetWidth;
               }
-              vc[pw].previousWidth = children[pw].offsetWidth;
             }
             if (this._options.forceFitColumns) {
               shrinkLeewayOnRight = 0;
