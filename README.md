@@ -35,7 +35,7 @@ Below is a list of reasons why this project was created and why it is a monorepo
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Version Releases.
 
 ### Like my work?
-You could ⭐ the lib and perhaps support me with cafeine [☕](https://ko-fi.com/ghiscoding). Thanks in advance.
+You could ⭐ the lib and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding). Thanks in advance.
 
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='34' style='border:0px;height:34px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
