@@ -1201,7 +1201,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           Utils.width(this._footerRowR, this.canvasWidthR);
         }
         if (this._options.createPreHeaderPanel) {
-          Utils.width(this._preHeaderPanel, this.canvasWidth);
+          Utils.width(this._preHeaderPanel, this._options.preHeaderPanelWidth ?? this.canvasWidth);
         }
         Utils.width(this._viewportTopL, this.canvasWidthL);
         Utils.width(this._viewportTopR, this.viewportW - this.canvasWidthL);
@@ -1228,7 +1228,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         if (this._options.createPreHeaderPanel) {
-          Utils.width(this._preHeaderPanel, this.canvasWidth);
+          Utils.width(this._preHeaderPanel, this._options.preHeaderPanelWidth ?? this.canvasWidth);
         }
         Utils.width(this._viewportTopL, '100%');
 

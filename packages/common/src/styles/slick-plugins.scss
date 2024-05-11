@@ -903,7 +903,7 @@ input.search-filter {
     border-left: var(--slick-draggable-group-drop-border-left, $slick-draggable-group-drop-border-left);
     border-right: var(--slick-draggable-group-drop-border-right, $slick-draggable-group-drop-border-right);
     border-bottom: var(--slick-draggable-group-drop-border-bottom, $slick-draggable-group-drop-border-bottom);
-    width: var(--slick-draggable-group-drop-width, $slick-draggable-group-drop-width) !important;
+    width: var(--slick-draggable-group-drop-width, $slick-draggable-group-drop-width);
     border-radius: var(--slick-draggable-group-drop-radius, $slick-draggable-group-drop-radius);
     background-color: var(--slick-draggable-group-drop-bgcolor, $slick-draggable-group-drop-bgcolor);
 
