@@ -686,8 +686,28 @@ describe('Example 15 - OData Grid using RxJS', () => {
       cy.get('[data-test="add-gender-btn"]').should('be.disabled');
     });
 
+    it('should open Gender filter and now expect to see 1 more option in its list ([blank], male, female, other)', () => {
+      const expectedOptions = ['', 'male', 'female', 'other'];
+      cy.get('.ms-filter.filter-gender:visible').click();
+
+      cy.get('[data-name="filter-gender"].ms-drop')
+        .find('li:visible')
+        .should('have.length', 4);
+
+      cy.get('[data-name="filter-gender"].ms-drop')
+        .find('li:visible span')
+        .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
+
+      cy.get('[data-name="filter-gender"].ms-drop')
+        .find('li:visible:nth(0)')
+        .click();
+    });
+
     it('should open the "Gender" editor on the first row and expect to find 1 more option the editor list (male, female, other)', () => {
       const expectedOptions = ['male', 'female', 'other'];
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
+        .click();
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
         .should('contain', 'male')
