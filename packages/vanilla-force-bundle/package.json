@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "fflate": "^0.8.2",
-    "glob": "^10.3.12",
+    "glob": "^10.3.14",
     "normalize-path": "^3.0.0",
     "vite": "^5.2.11",
     "yargs": "^17.7.2"
