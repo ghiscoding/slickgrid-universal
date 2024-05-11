@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0...v5.0.1) (2024-05-11)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1519](https://github.com/ghiscoding/slickgrid-universal/issues/1519)) ([90a5e26](https://github.com/ghiscoding/slickgrid-universal/commit/90a5e26f8fa6f51f04eea0e92dff86e7853d88b4)) - by @renovate-bot
+* **editors:** only open ms-select drop when exists ([#1525](https://github.com/ghiscoding/slickgrid-universal/issues/1525)) ([247daba](https://github.com/ghiscoding/slickgrid-universal/commit/247dabaeb81fc894b14b5fcc5eeda36ef28020bb)) - by @ghiscoding
+* **plugin:** Draggable Grouping drop zone should always be 100% wide ([#1524](https://github.com/ghiscoding/slickgrid-universal/issues/1524)) ([a6dbf2c](https://github.com/ghiscoding/slickgrid-universal/commit/a6dbf2cc7cf6502e0aed253ea2d2d19306e567a3)) - by @ghiscoding
+* **plugin:** Grid Menu shouldn't be displayed in preheader by default ([#1523](https://github.com/ghiscoding/slickgrid-universal/issues/1523)) ([7e0cdc9](https://github.com/ghiscoding/slickgrid-universal/commit/7e0cdc9bd253feade7219d341513332dc8d62c84)) - by @ghiscoding
+* **styling:** add missing Dark Mode SASS vars to configure primary color ([dc5d402](https://github.com/ghiscoding/slickgrid-universal/commit/dc5d402db61460a25e8921efeebda37ac1c18791)) - by @ghiscoding
+
 ## [5.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0) (2024-05-10)
 
 ### ⚠ BREAKING CHANGES
