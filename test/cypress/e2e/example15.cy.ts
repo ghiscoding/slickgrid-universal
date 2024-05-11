@@ -734,7 +734,7 @@ describe('Example 15 - OData Grid using RxJS', () => {
         .click();
     });
 
-    it('should open Gender filter and now expect to see 1 more option in its list ([blank], male, female, other)', () => {
+    it('should open again Gender filter and still expect to see 4 option in its list ([blank], male, female, other)', () => {
       const expectedOptions = ['', 'male', 'female', 'other'];
       cy.get('.ms-filter.filter-gender:visible').click();
 
