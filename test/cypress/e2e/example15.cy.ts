@@ -707,7 +707,7 @@ describe('Example 15 - OData Grid using RxJS', () => {
       const expectedOptions = ['male', 'female', 'other'];
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
-        .click();
+        .dblclick();
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
         .should('contain', 'male')
