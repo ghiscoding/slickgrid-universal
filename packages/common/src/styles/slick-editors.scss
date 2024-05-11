@@ -98,7 +98,7 @@
         cursor: pointer;
         height: var(--slick-date-editor-height, $slick-date-editor-height);
         &:hover:not([disabled]) {
-          background-color: var(--slick-input-group-btn-hover-bg-color, $slick-input-group-btn-hover-bg-color); // 1px solid #6c757d;
+          background-color: var(--slick-input-group-btn-hover-bg-color, $slick-input-group-btn-hover-bg-color);
         }
         .icon-clear {
           display: flex;
@@ -226,7 +226,7 @@
       border: var(--slick-editor-modal-footer-btn-border, $slick-editor-modal-footer-btn-border);
       border-radius: var(--slick-editor-modal-footer-btn-radius, $slick-editor-modal-footer-btn-radius);
       &:hover {
-        border-color: var(--slick-editor-modal-footer-btn-border-hover, $slick-editor-modal-footer-btn-border-hover);
+        border-color: var(--slick-editor-modal-footer-btn-border-hover-color, $slick-editor-modal-footer-btn-border-hover-color);
         &.btn-default {
           color: var(--slick-editor-modal-footer-btn-text-color-hover, $slick-editor-modal-footer-btn-text-color-hover);
         }

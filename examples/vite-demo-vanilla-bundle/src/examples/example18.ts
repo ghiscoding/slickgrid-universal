@@ -25,13 +25,15 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
   const fragment = new DocumentFragment();
   const divElm = document.createElement('div');
-  divElm.className = 'd-inline-flex align-items-center';
+  divElm.className = `d-inline-flex align-items-center text-color-${direction === 'up' ? 'success' : 'danger'}`;
   const spanElm = document.createElement('span');
-  spanElm.className = `mdi mdi-arrow-${direction} text-color-${direction === 'up' ? 'success' : 'danger'}`;
+  spanElm.className = `mdi mdi-arrow-${direction}`;
   divElm.appendChild(spanElm);
   fragment.appendChild(divElm);
   if (value instanceof HTMLElement) {
     divElm.appendChild(value);
+  } else {
+    divElm.appendChild(document.createTextNode(value));
   }
   return fragment;
 };
@@ -143,7 +145,7 @@ export default class Example18 {
         filter: { model: Filters.compoundInputNumber }, type: FieldType.number,
         formatter: Formatters.multiple,
         params: {
-          formatters: [Formatters.dollarColored, priceFormatter],
+          formatters: [Formatters.dollar, priceFormatter],
           maxDecimal: 2,
         }
       },

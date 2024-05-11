@@ -52,6 +52,9 @@ $sparkline-color: #00b78d;
 
 .slick-dark-mode,
 .dark-mode {
+  .text-color-success {
+    color: #42b47f !important
+  }
   .changed-gain {
     background-color: #00ff001d !important;
   }
