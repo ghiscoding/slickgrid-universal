@@ -212,7 +212,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         if (this._addonOptions?.iconCssClass) {
           this._gridMenuButtonElm.classList.add(...classNameToList(this._addonOptions.iconCssClass));
         }
-        this._headerElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._headerElm.parentElement!.firstChild);
+        // add the grid menu button in the preheader (when exists) or always in the column header (default)
+        const buttonContainerTarget = this._addonOptions.iconButtonContainer === 'preheader' ? 'firstChild' : 'lastChild';
+        this._headerElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._headerElm.parentElement![buttonContainerTarget]);
 
         // show the Grid Menu when hamburger menu is clicked
         this._bindEventService.bind(this._gridMenuButtonElm, 'click', this.showGridMenu.bind(this) as EventListener);

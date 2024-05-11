@@ -68,6 +68,9 @@ export default class Example08 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      gridMenu: {
+        iconButtonContainer: 'preheader' // we can display the grid menu icon in either the preheader or in the column header (default)
+      },
       externalResources: [new TextExportService(), new ExcelExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,

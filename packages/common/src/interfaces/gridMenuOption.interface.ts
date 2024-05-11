@@ -79,7 +79,10 @@ export interface GridMenuOption {
   /** Defaults to true, which will hide the "Toggle Pre-Header Row" (used by draggable grouping) command in the Grid Menu (Grid Option "showPreHeaderPanel: true" has to be enabled) */
   hideTogglePreHeaderCommand?: boolean;
 
-  /** CSS class for the displaying the Grid menu icon (basically the hamburger menu) */
+  /** Defaults to "header", where should we display the grid menu button? Should it be inside the "preheader" (when exists) or always inside the column "header" (default). */
+  iconButtonContainer?: 'preheader' | 'header';
+
+  /** CSS class for the displaying the Grid menu icon (aka the hamburger menu button) */
   iconCssClass?: string;
 
   /** icon for the "Clear all Filters" command */
