@@ -248,6 +248,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   headerRowHeight: 35,
   rowHeight: 35,
   topPanelHeight: 30,
+  preHeaderPanelWidth: '100%', // mostly useful for Draggable Grouping dropzone to take full width
   translationNamespaceSeparator: ':',
   resetFilterSearchValueAfterOnBeforeCancellation: true,
   resizeByContentOnlyOnFirstLoad: true,

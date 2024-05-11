@@ -291,6 +291,12 @@ export default class Example03 {
       dataView: {
         useCSPSafeFilter: true
       },
+      headerMenu: {
+        hideFreezeColumnsCommand: false,
+      },
+      gridMenu: {
+        hideClearFrozenColumnsCommand: false
+      },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
