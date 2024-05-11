@@ -686,6 +686,17 @@ describe('Example 15 - OData Grid using RxJS', () => {
       cy.get('[data-test="add-gender-btn"]').should('be.disabled');
     });
 
+    it('should select 1st row', () => {
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`)
+        .click();
+
+      cy.get('.grid15')
+        .find('.slick-row')
+        .children()
+        .filter('.slick-cell-checkboxsel.selected')
+        .should('have.length', 1);
+    });
+
     it('should open the "Gender" editor on the first row and expect to find 1 more option the editor list (male, female, other)', () => {
       const expectedOptions = ['male', 'female', 'other'];
 
