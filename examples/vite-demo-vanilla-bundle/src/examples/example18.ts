@@ -101,7 +101,7 @@ export default class Example18 {
         },
         grouping: {
           getter: 'currency',
-          formatter: (g) => `Currency: <span class="text-bluenavy text-bold">${g.value}</span>  <span class="text-violet">(${g.count} items)</span>`,
+          formatter: (g) => `Currency: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('amount')
           ],
@@ -114,7 +114,7 @@ export default class Example18 {
         id: 'market', name: 'Market', field: 'market', filterable: true, sortable: true, minWidth: 75, width: 75,
         grouping: {
           getter: 'market',
-          formatter: (g) => `Market: <span class="text-bluenavy text-bold">${g.value}</span>  <span class="text-violet">(${g.count} items)</span>`,
+          formatter: (g) => `Market: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('amount')
           ],
@@ -132,7 +132,7 @@ export default class Example18 {
         },
         grouping: {
           getter: 'trsnType',
-          formatter: (g) => `Type: <span class="text-bluenavy text-bold">${g.value}</span>  <span class="text-violet">(${g.count} items)</span>`,
+          formatter: (g) => `Type: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('amount')
           ],
