@@ -191,11 +191,11 @@ this.columnDefinitions = [
             const [_, start, end] = likeMatches;
             return dataContext[columnId].startsWith(start) && dataContext[columnId].endsWith(end);
           } else if (likeMatches.length > 2) {
-            // for matches like "%Ta%10%" will return text that starts with "Ta" and contains "10" (e.g. "Task 10", "Task 100", "Task 101")
+            // for matches like "%Ta%10" will return text that starts with "Ta" and contains "10" (e.g. "Task 10", "Task 100", "Task 101")
             const [_, start, contain] = likeMatches;
             return dataContext[columnId].startsWith(start) && dataContext[columnId].includes(contain);
           }
-          // anything else is also a contains
+          // for anything else we'll simply expect a Contains
           return dataContext[columnId].includes(searchVal);
         }
         // if we fall here then the value is not consider to be filtered out
