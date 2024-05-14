@@ -30,9 +30,9 @@ export interface SearchColumnFilter {
   /** Last search input character when it is identified as "*" representing startsWith */
   searchInputLastChar?: string;
 
-  /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
+  /** What is the Field Type that can be used by the Filter (as precedence over the "type" defined in the column definition) */
   type: typeof FieldType[keyof typeof FieldType];
 
-  /** Target element selector from which the filter was triggered from. */
+  /** DOM target element selector from which the filter was triggered from. */
   targetSelector?: string;
 }

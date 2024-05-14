@@ -8,6 +8,7 @@ import type {
   Filter,
   FilterConstructor,
   OperatorDetail,
+  SearchColumnFilter,
 } from './index';
 import type { Observable, Subject } from '../services/rxjsFacade';
 
@@ -57,7 +58,7 @@ export interface ColumnFilter {
   /** Options to change the behavior of the "collection" */
   collectionOptions?: CollectionOption;
 
-  /** We could filter some 1 or more items from the collection */
+  /** We could filter 1 or more items from the collection (e.g. filter out some items from the select filter) */
   collectionFilterBy?: CollectionFilterBy | CollectionFilterBy[];
 
   /** We could sort the collection by 1 or more properties, or by translated value(s) when enableTranslateLabel is True */
@@ -93,6 +94,12 @@ export interface ColumnFilter {
    * for example { filterOptions: {maxHeight: 250} as MultipleSelectOption }
    */
   filterOptions?: any;
+
+  /**
+   * Custom Filter predicate function to use instead of the built-in filters
+   * NOTE: currently only works with local/JSON dataset, meaning no backend service implementation yet.
+   */
+  filterPredicate?: (dataContext: any, searchFilterArgs: SearchColumnFilter) => boolean;
 
   /**
    * Use "params" to pass any type of arguments to your Custom Filter
