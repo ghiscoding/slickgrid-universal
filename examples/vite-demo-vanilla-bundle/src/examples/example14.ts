@@ -11,6 +11,7 @@ import {
   type GridOption,
   type GridStateChange,
   type LongTextEditorOption,
+  type SearchTerm,
   SlickGlobalEditorLock,
   type SliderRangeOption,
   SortComparers,
@@ -149,7 +150,32 @@ export default class Example14 {
         resizeCalcWidthRatio: 1, // default ratio is ~0.9 for string but since our text is all uppercase then a higher ratio is needed
         resizeMaxWidthThreshold: 200,
         filterable: true, columnGroup: 'Common Factor',
-        filter: { model: Filters.compoundInputText },
+        filter: {
+          model: Filters.inputText,
+          // you can use your own custom filter predicate when built-in filters aren't working for you
+          // for example the example below will function similarly to an SQL LIKE to answer this SO: https://stackoverflow.com/questions/78471412/angular-slickgrid-filter
+          filterPredicate: (dataContext, searchFilterArgs) => {
+            const searchVals = (searchFilterArgs.parsedSearchTerms || []) as SearchTerm[];
+            if (searchVals?.length) {
+              const columnId = searchFilterArgs.columnId;
+              const searchVal = searchVals[0] as string;
+              const likeMatches = searchVal.split('%');
+              if (likeMatches.length > 3) {
+                // for matches like "%Ta%10%" will return text that starts with "Ta" and ends with "10" (e.g. "Task 10", "Task 110", "Task 210")
+                const [_, start, end] = likeMatches;
+                return dataContext[columnId].startsWith(start) && dataContext[columnId].endsWith(end);
+              } else if (likeMatches.length > 2) {
+                // for matches like "%Ta%10%" will return text that starts with "Ta" and contains "10" (e.g. "Task 10", "Task 100", "Task 101")
+                const [_, start, contain] = likeMatches;
+                return dataContext[columnId].startsWith(start) && dataContext[columnId].includes(contain);
+              }
+              // anything else is also a contains
+              return dataContext[columnId].includes(searchVal);
+            }
+            // if we fall here then the value is not consider to be filtered out
+            return true;
+          },
+        },
         editor: {
           model: Editors.longText, required: true, alwaysSaveOnEnterKey: true,
           maxLength: 12,
@@ -288,7 +314,7 @@ export default class Example14 {
         },
         filter: {
           model: Filters.inputText,
-          // placeholder: '🔎︎ search city',
+          // placeholder: '🔎︎ search product',
           type: FieldType.string,
           queryField: 'product.itemName',
         }

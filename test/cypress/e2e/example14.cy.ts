@@ -185,6 +185,20 @@ describe('Example 14 - Columns Resize by Content', () => {
       .should('have.length', 0);
   });
 
+  it('should be able to use custom filter predicate on Title column and act similarly to an SQL LIKE matcher', () => {
+    cy.get('.search-filter.filter-title')
+      .clear()
+      .type('%Ta%10%');
+
+    cy.get('.slick-row')
+      .should('have.length', 4);
+
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 10');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 110');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 210');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 310');
+  });
+
   describe('Custom Header Menu & sub-menus tests', () => {
     it('should open Hello sub-menu with 2 options expect it to be aligned to right then trigger alert when command is clicked', () => {
       const subCommands = ['Hello World', 'Hello SlickGrid', `Let's play`];

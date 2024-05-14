@@ -1,8 +1,11 @@
 #### Index
-- [Update Filters Dynamically](Input-Filter.md#update-filters-dynamically)
+- [Update Filters Dynamically](input-filter.md#update-filters-dynamically)
+- [Custom Filter Predicate](input-filter.md#custom-filter-predicate)
 
 ### Description
-Some users might want to have 1 main single search for filtering the grid data instead of using multiple column filters. You can see a demo of that below
+Some users might want to have 1 main single search for filtering the grid data instead of using multiple column filters. You can see a demo of that below.
+
+> **Note** the code below came from a different SlickGrid framework, just change the `.bind` to whatever framework you use with the appropriate code change. It's only meant to show roughly how to do it.
 
 ### Code Sample
 #### View
@@ -33,19 +36,19 @@ Some users might want to have 1 main single search for filtering the grid data i
            value.bind="searchValue">
   </form>
 
-<aurelia-slickgrid grid-id="grid21"
-                   column-definitions.bind="columnDefinitions"
-                   grid-options.bind="gridOptions"
-                   dataset.bind="dataset">
-</aurelia-slickgrid>
+<div grid-id="grid21"
+    column-definitions.bind="columnDefinitions"
+    grid-options.bind="gridOptions"
+    dataset.bind="dataset">
+</div>
 ```
 
 ##### ViewModel
 ```ts
 export class MyExample {
-  @bindable() selectedColumn: Column;
-  @bindable() selectedOperator: string;
-  @bindable() searchValue: string;
+  selectedColumn: Column;
+  selectedOperator: string;
+  searchValue: string;
 
   grid: SlickGrid;
   dataView: SlickDataView;

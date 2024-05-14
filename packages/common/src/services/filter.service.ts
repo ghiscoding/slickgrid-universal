@@ -315,7 +315,7 @@ export class FilterService {
     const isGridWithTreeData = this._gridOptions.enableTreeData ?? false;
     const treeDataOptions = this._gridOptions.treeDataOptions;
 
-    // when the column is a Tree Data structure and the parent is collapsed, we won't go further and just continue with next row
+    // when the column is a Tree Data structure and the parent is collapsed, there's no need to go further and we can just skip this row and continue with the next row
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
     if (isGridWithTreeData && treeDataOptions) {
       const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
@@ -353,7 +353,7 @@ export class FilterService {
             treeItem.__filteredOut = !filtered;
           }
           if (isParentCollapsed) {
-            return false; // now that we are done analyzing "__filteredOut", we can now return false to not show collapsed children
+            return false; // now that we are done analyzing "__filteredOut", we can now return false to hide (not show) collapsed children
           }
         }
         return filtered;
@@ -361,27 +361,35 @@ export class FilterService {
     } else {
       if (typeof columnFilters === 'object') {
         for (const columnId of Object.keys(columnFilters)) {
-          const columnFilter = columnFilters[columnId] as SearchColumnFilter;
-          const conditionOptions = this.preProcessFilterConditionOnDataContext(item, columnFilter, grid);
+          const searchColFilter = columnFilters[columnId] as SearchColumnFilter;
+          const columnFilterDef = searchColFilter.columnDef?.filter;
 
-          if (typeof conditionOptions === 'boolean') {
-            return conditionOptions;
-          }
+          // user could provide a custom filter predicate on the column definition
+          if (typeof columnFilterDef?.filterPredicate === 'function') {
+            return columnFilterDef.filterPredicate(item, searchColFilter);
+          } else {
+            // otherwise execute built-in filter condition checks
+            const conditionOptions = this.preProcessFilterConditionOnDataContext(item, searchColFilter, grid);
 
-          let parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
-
-          // in the rare case that it's empty (it can happen when creating an external grid global search)
-          // then get the parsed terms, once it's filled it typically won't ask for it anymore
-          if (parsedSearchTerms === undefined) {
-            parsedSearchTerms = getParsedSearchTermsByFieldType(columnFilter.searchTerms, columnFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
-            if (parsedSearchTerms !== undefined) {
-              columnFilter.parsedSearchTerms = parsedSearchTerms;
+            if (typeof conditionOptions === 'boolean') {
+              return conditionOptions; // reaching here means that the value is not filtered out
             }
-          }
 
-          // execute the filtering conditions check (all cell values vs search term(s))
-          if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
-            return false;
+            let parsedSearchTerms = searchColFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
+
+            // in the rare case of an empty search term (it can happen when creating an external grid global search)
+            // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
+            if (parsedSearchTerms === undefined) {
+              parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, searchColFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
+              if (parsedSearchTerms !== undefined) {
+                searchColFilter.parsedSearchTerms = parsedSearchTerms;
+              }
+            }
+
+            // execute the filtering conditions check (all cell values vs search term(s))
+            if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
+              return false;
+            }
           }
         }
       }
@@ -449,15 +457,15 @@ export class FilterService {
   }
 
   /**
-   * PreProcess the filter(s) condition(s) on each item data context, the result might be a boolean or FilterConditionOption object.
-   * It will be a boolean when the searchTerms are invalid or the column is not found (it so it will return True and the item won't be filtered out from the grid)
-   * or else a FilterConditionOption object with the necessary info for the test condition needs to be processed in a further stage.
+   * PreProcess the filter(s) condition(s) on each item data context, the result might be a boolean or a FilterConditionOption object.
+   * It will be a boolean when the searchTerms are invalid or the column is not found (if so it will return True and the item won't be filtered out from the grid)
+   * or else return a FilterConditionOption object with the necessary info for the test condition needs to be processed in a further stage.
    * @param item - item data context
    * @param columnFilter - column filter object (the object properties represent each column id and the value is the filter metadata)
    * @param grid - SlickGrid object
    * @returns FilterConditionOption or boolean
    */
-  preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGrid): FilterConditionOption | boolean {
+  preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGrid): FilterConditionOption | true {
     const columnDef = columnFilter.columnDef;
     const columnId = columnFilter.columnId;
     let columnIndex = grid.getColumnIndex(columnId) as number;
