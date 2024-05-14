@@ -169,7 +169,7 @@ this.gridOptions = {
 ```
 
 ### Custom Filter Predicate
-You can provide a custom predicate by using the `filterPredicate` when defining your `filter`, the callback will provide you with 2 arguments (`dataContext` and `searchFilterArgs`). The `searchFilterArgs` will provide you more info about the filter itself (like parsed operator, search terms, column definition, column id and type as well). For example
+You can provide a custom predicate by using the `filterPredicate` when defining your `filter`, the callback will provide you with 2 arguments (`dataContext` and `searchFilterArgs`). The `searchFilterArgs` has a type of `SearchColumnFilter` interface which will provide you more info about the filter itself (like parsed operator, search terms, column definition, column id and type as well). You can see a live demo at [Example 14](https://ghiscoding.github.io/slickgrid-universal/#/example14) and the associated [lines](https://github.com/ghiscoding/slickgrid-universal/blob/1a2c2ff4b72ac3f51b30b1d3d101e84ed9ec9ece/examples/vite-demo-vanilla-bundle/src/examples/example14.ts#L153-L178) of code.
 
 ```ts
 this.columnDefinitions = [
@@ -181,7 +181,7 @@ this.columnDefinitions = [
       // you can use your own custom filter predicate when built-in filters aren't working for you
       // for example the example below will function similarly to an SQL LIKE to answer this SO: https://stackoverflow.com/questions/78471412/angular-slickgrid-filter
       filterPredicate: (dataContext, searchFilterArgs) => {
-        const searchVals = (searchFilterArgs.parsedSearchTerms || []) as SearchTerm[];
+        const searchVals = (searchFilterArgs.searchTerms || []) as SearchTerm[];
         if (searchVals?.length) {
           const columnId = searchFilterArgs.columnId;
           const searchVal = searchVals[0] as string;
