@@ -198,7 +198,7 @@ this.columnDefinitions = [
           // for anything else we'll simply expect a Contains
           return dataContext[columnId].includes(searchVal);
         }
-        // if we fall here then the value is not consider to be filtered out
+        // if we fall here then the value is not filtered out
         return true;
       },
     },
