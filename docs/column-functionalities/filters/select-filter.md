@@ -19,7 +19,8 @@
   - [Filter Options (`MultipleSelectOption` interface)](#filter-options-multipleselectoption-interface)
   - [Display shorter selected label text](#display-shorter-selected-label-text)
 - [Query against a different field](#query-against-another-field-property)
-- [Update Filters Dynamically](Input-Filter.md#update-filters-dynamically)
+- [Update Filters Dynamically](input-filter.md#update-filters-dynamically)
+- [Custom Filter Predicate](input-filter.md#custom-filter-predicate)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example10.ts)
