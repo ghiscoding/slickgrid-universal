@@ -11,6 +11,7 @@ import {
   type GridOption,
   type GridStateChange,
   type LongTextEditorOption,
+  type SearchTerm,
   SlickGlobalEditorLock,
   type SliderRangeOption,
   SortComparers,
@@ -19,14 +20,6 @@ import {
   // utilities
   formatNumber,
   Utilities,
-  type SearchTerm,
-  type ColumnFilters,
-  type SlickDataView,
-  type SlickGrid,
-  type SearchColumnFilter,
-  getParsedSearchTermsByFieldType,
-  FilterConditions,
-  type FilterConditionOption,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -138,59 +131,6 @@ export default class Example14 {
     this._bindingEventService.bind(this.gridContainerElm, 'onafterresizebycontent', this.hideSpinner.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowidschanged', this.handleOnSelectedRowIdsChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
-
-    // patch `FilterService.customLocalFilter()` to answer this SO question: https://stackoverflow.com/questions/78471412/angular-slickgrid-filter
-    // this.patchDataViewFilter();
-  }
-
-  /** below is patched version of `FilterService.customLocalFilter()` to answer this SO question: https://stackoverflow.com/questions/78471412/angular-slickgrid-filter */
-  patchDataViewFilter() {
-    const filterServiceInstance = this.sgb.filterService;
-    const customLocalFilter = (item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGrid; }) => {
-      const grid = args?.grid;
-      const columnFilters = args?.columnFilters ?? {};
-
-      if (typeof columnFilters === 'object') {
-        for (const columnId of Object.keys(columnFilters)) {
-          const searchColFilter = columnFilters[columnId] as SearchColumnFilter;
-          const columnFilterDef = searchColFilter.columnDef?.filter;
-
-          // WE ARE ADDING A NEW "IF" CONDITION (the previous code only had the content of the "else")
-          // user could provide a custom filter predicate on the column definition
-          if (typeof columnFilterDef?.filterPredicate === 'function') {
-            console.log('our filter predicate is reached!!!');
-            return columnFilterDef.filterPredicate(item, searchColFilter);
-          } else {
-            const conditionOptions = filterServiceInstance.preProcessFilterConditionOnDataContext(item, searchColFilter, grid);
-
-            if (typeof conditionOptions === 'boolean') {
-              return conditionOptions;
-            }
-
-            let parsedSearchTerms = searchColFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
-
-            // in the rare case that it's empty (it can happen when creating an external grid global search)
-            // then get the parsed terms, once it's filled it typically won't ask for it anymore
-            if (parsedSearchTerms === undefined) {
-              parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, searchColFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
-              if (parsedSearchTerms !== undefined) {
-                searchColFilter.parsedSearchTerms = parsedSearchTerms;
-              }
-            }
-
-            // execute the filtering conditions check (all cell values vs search term(s))
-            if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
-              return false;
-            }
-          }
-        }
-      }
-
-      // if it reaches here, that means the row is valid and passed all filter
-      return true;
-    };
-
-    this.sgb.dataView?.setFilter(customLocalFilter);
   }
 
   dispose() {
@@ -220,14 +160,14 @@ export default class Example14 {
               const columnId = searchFilterArgs.columnId;
               const searchVal = searchVals[0] as string;
               const likeMatches = searchVal.split('%');
-              if (likeMatches.length >= 3) {
-                // for matches like "%Ta%10%" will return text that starts with "Ta" and ends with "10" (e.g. "Task 10", "Task 110")
+              if (likeMatches.length > 3) {
+                // for matches like "%Ta%10%" will return text that starts with "Ta" and ends with "10" (e.g. "Task 10", "Task 110", "Task 210")
                 const [_, start, end] = likeMatches;
                 return dataContext[columnId].startsWith(start) && dataContext[columnId].endsWith(end);
-              } else if (likeMatches.length >= 2) {
-                // for matches like "%Ta%", we'll consider this a contains (any Task)
-                const [_, contain] = likeMatches;
-                return dataContext[columnId].includes(contain);
+              } else if (likeMatches.length > 2) {
+                // for matches like "%Ta%10%" will return text that starts with "Ta" and contains "10" (e.g. "Task 10", "Task 100", "Task 101")
+                const [_, start, contain] = likeMatches;
+                return dataContext[columnId].startsWith(start) && dataContext[columnId].includes(contain);
               }
               // anything else is also a contains
               return dataContext[columnId].includes(searchVal);
