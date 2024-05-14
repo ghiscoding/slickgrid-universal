@@ -158,19 +158,23 @@ export default class Example14 {
             const searchVals = (searchFilterArgs.parsedSearchTerms || []) as SearchTerm[];
             if (searchVals?.length) {
               const columnId = searchFilterArgs.columnId;
-              const searchVal = searchVals[0] as string;
-              const likeMatches = searchVal.split('%');
-              if (likeMatches.length > 3) {
-                // for matches like "%Ta%10%" will return text that starts with "Ta" and ends with "10" (e.g. "Task 10", "Task 110", "Task 210")
-                const [_, start, end] = likeMatches;
+              const results = (searchVals[0] as string).matchAll(/%(.*)%(.*)%|%(.*)%(.*)|(.*)/gi);
+              const arrayOfMatches = Array.from(results);
+              const matches = arrayOfMatches.length ? arrayOfMatches[0] : [];
+              const [_, start, end, firstContain, containLeftover, others] = matches;
+
+              if (start && end) {
+                // example: "%Ti%001%"
                 return dataContext[columnId].startsWith(start) && dataContext[columnId].endsWith(end);
-              } else if (likeMatches.length > 2) {
-                // for matches like "%Ta%10" will return text that starts with "Ta" and contains "10" (e.g. "Task 10", "Task 100", "Task 101")
-                const [_, start, contain] = likeMatches;
-                return dataContext[columnId].startsWith(start) && dataContext[columnId].includes(contain);
+              } else if (firstContain && containLeftover) {
+                // example: "%Ti%001"
+                return dataContext[columnId].startsWith(firstContain) && dataContext[columnId].includes(containLeftover);
+              } else if (firstContain) {
+                // example: "%Ti%"
+                return dataContext[columnId].includes(firstContain);
               }
-              // for anything else we'll simply expect a Contains
-              return dataContext[columnId].includes(searchVal);
+              // example: "Ti", "%Ti" or anything else
+              return dataContext[columnId].includes(others);
             }
             // if we fall here then the value is not filtered out
             return true;
