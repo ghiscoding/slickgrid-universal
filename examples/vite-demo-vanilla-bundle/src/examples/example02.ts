@@ -63,7 +63,7 @@ export default class Example02 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'sel', name: '#', field: 'num', width: 40,
+        id: 'sel', name: '#', field: 'num', width: 40, type: FieldType.number,
         excludeFromExport: true,
         maxWidth: 70,
         resizable: true,
