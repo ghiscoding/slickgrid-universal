@@ -50,6 +50,9 @@ export enum OperatorType {
   /** String starts with value */
   startsWith = 'StartsWith',
 
+  /** Combo Starts With A + Ends With Z */
+  startsWithEndsWith = 'StartsWithEndsWith',
+
   /** Find an equal match inside a collection */
   in = 'IN',
 

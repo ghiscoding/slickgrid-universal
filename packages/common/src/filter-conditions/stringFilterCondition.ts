@@ -24,7 +24,9 @@ export const executeStringFilterCondition: FilterCondition = ((options: FilterCo
     searchValue2 = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(searchValue2, true) : searchValue2.toLowerCase();
   }
 
-  if (searchValue1 !== undefined && searchValue2 !== undefined) {
+  if (options.operator === OperatorType.startsWithEndsWith && searchValue1 !== undefined && searchValue2 !== undefined) {
+    return testStartsWithEndsWith(cellValue, [searchValue1, searchValue2]);
+  } else if (searchValue1 !== undefined && searchValue2 !== undefined) {
     let operator = options?.operator ?? options.defaultFilterRangeOperator;
     if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
       operator = options.defaultFilterRangeOperator;
@@ -77,4 +79,9 @@ function testStringCondition(operator: OperatorType | OperatorString, cellValue:
     return (cellValue.indexOf(searchValue) === -1);
   }
   return testFilterCondition(operator || '==', cellValue, searchValue);
+}
+
+/** Execute the filter string test condition that starts with A and ends with B */
+function testStartsWithEndsWith(cellValue: string, [startW, endW]: [string, string]): boolean {
+  return cellValue.startsWith(startW) && cellValue.endsWith(endW);
 }

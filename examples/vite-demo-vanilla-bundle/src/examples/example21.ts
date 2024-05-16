@@ -64,7 +64,6 @@ export default class Example21 {
   }
 
   dispose() {
-    console.log('dispose');
     this._eventHandler.unsubscribeAll();
     this._bindingEventService.unbindAll();
     this.sgb?.dispose();

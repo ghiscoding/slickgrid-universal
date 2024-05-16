@@ -859,6 +859,51 @@ describe('FilterService', () => {
       expect(output).toBe(true);
     });
 
+    it('should return True when input value from datacontext is equal to startsWith (1x)char + endsWith (1x)char', () => {
+      const searchTerms = ['J*n'];
+      const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+
+      service.init(gridStub);
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } } as ColumnFilters;
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(output).toBe(true);
+    });
+
+    it('should return True when input value from datacontext is equal to startsWith substring + endsWith substring', () => {
+      const searchTerms = ['Jo*hn'];
+      const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+
+      service.init(gridStub);
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } } as ColumnFilters;
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(output).toBe(true);
+    });
+
+    it('should return False when input value from datacontext does NOT equal both startsWith substring + endsWith substring', () => {
+      const searchTerms = ['J*nee'];
+      const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+
+      service.init(gridStub);
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } } as ColumnFilters;
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(output).toBe(false);
+    });
+
     it('should return True when input value from datacontext is equal to startsWith substring when using Operator startsWith', () => {
       const searchTerms = ['Jo'];
       const operator = 'a*';
