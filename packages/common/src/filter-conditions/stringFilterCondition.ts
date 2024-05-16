@@ -24,10 +24,8 @@ export const executeStringFilterCondition: FilterCondition = ((options: FilterCo
     searchValue2 = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(searchValue2, true) : searchValue2.toLowerCase();
   }
 
-  if (OperatorType.startsWithEndsWith && searchValue1 !== undefined && searchValue2 !== undefined) {
-    if (options.operator === OperatorType.startsWithEndsWith) {
-      return testStartsWithEndsWith(cellValue, [searchValue1, searchValue2]);
-    }
+  if (options.operator === OperatorType.startsWithEndsWith && searchValue1 !== undefined && searchValue2 !== undefined) {
+    return testStartsWithEndsWith(cellValue, [searchValue1, searchValue2]);
   } else if (searchValue1 !== undefined && searchValue2 !== undefined) {
     let operator = options?.operator ?? options.defaultFilterRangeOperator;
     if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
