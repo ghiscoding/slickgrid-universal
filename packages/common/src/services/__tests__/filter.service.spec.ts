@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { of, throwError } from 'rxjs';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
@@ -661,6 +662,50 @@ describe('FilterService', () => {
     beforeEach(() => {
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
       mockItem1 = { firstName: 'John', lastName: 'Doe', fullName: 'John Doe', age: 26, address: { zip: 123456 } };
+    });
+
+    it('should run "filterPredicate" when provided by the user as a custom filter callback and return True when predicate returns true', () => {
+      const columnId = 'firstName';
+      const searchTerms = ['John'];
+      const mockColumn1 = {
+        id: columnId, field: columnId, filterable: true,
+        filter: {
+          model: Filters.inputText,
+          filterPredicate: (dataContext, searchFilterArgs) => {
+            return dataContext[columnId] === searchFilterArgs.parsedSearchTerms![0];
+          }
+        }
+      } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+
+      service.init(gridStub);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(output).toBe(true);
+    });
+
+    it('should run "filterPredicate" when provided by the user as a custom filter callback and return False when predicate returns false', () => {
+      const columnId = 'firstName';
+      const searchTerms = ['JANE'];
+      const mockColumn1 = {
+        id: columnId, field: columnId, filterable: true,
+        filter: {
+          model: Filters.inputText,
+          filterPredicate: (dataContext, searchFilterArgs) => {
+            return dataContext[columnId] === searchFilterArgs.parsedSearchTerms![0];
+          }
+        }
+      } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+
+      service.init(gridStub);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(output).toBe(false);
     });
 
     it('should execute "getParsedSearchTermsByFieldType" once if the first "customLocalFilter" is executed without parsedSearchTerms at the beginning', () => {

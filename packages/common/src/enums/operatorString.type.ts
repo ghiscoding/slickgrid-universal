@@ -12,6 +12,7 @@ export type OperatorString =
   | 'a*'
   | '*z'
   | 'a*z'
+  | 'Custom'
   | 'EQ'
   | 'GE'
   | 'GT'

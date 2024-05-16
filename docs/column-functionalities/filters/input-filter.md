@@ -1,5 +1,3 @@
-##### updated to version `3.x`
-
 #### Index
 - [Usage](#ui-usage)
 - [Filtering with Localization](#filtering-with-localization-i18n)
@@ -9,35 +7,37 @@
 - [Dynamic Query Field](#dynamic-query-field)
 - [Debounce/Throttle Text Search (wait for user to stop typing before filtering)](#debouncethrottle-text-search-wait-for-user-to-stop-typing-before-filtering)
 - [Ignore Locale Accent in Text Filter/Sorting](#ignore-locale-accent-in-text-filtersorting)
+- [Custom Filter Predicate](#custom-filter-predicate)
 
 ### Description
-Input filter is the default filter when enabling filters.
+Input text filter is the default filter that will be used when the user ommits the `filter.model`.
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
 
 ### UI Usage
-All column types support the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`), range filters can also have 1 of these options (`rangeInclusive` or `rangeExclusive`, the inclusive is default)
-Example:
+All column types support the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`) that can be typed directly into the text filter, range filters can also have 1 of these options (`rangeInclusive` (default) or `rangeExclusive`). Also note that `<>` and `!=` are aliases and are equivalent, the same applies to `=` and `==`.
+
+Examples:
 - Number type
   - `>100` => bigger than 100
-  - `<>100` => not include number 100
-  - `15..44` => between 15 and 44 (you can also provide option `rangeInclusive` or `rangeExclusive`, inclusive is default)
+  - `<>100` => anything with the exception of 100
+  - `15..44` => range between 15 and 44 (you can also provide option `rangeInclusive` (default) or `rangeExclusive`)
 - Date types
-  - `>=2001-01-01` => bigger or equal than date `2001-01-01`
-  - `<02/28/17` => smaller than date `02/28/17`
-  - `2001-01-01..2002-02-22` => between 2001-01-01 and 2002-02-22
+  - `>=2001-01-01` => greater or equal than date `2001-01-01`
+  - `<02/28/17` => lower than date `02/28/17`
+  - `2001-01-01..2002-02-22` => range between 2001-01-01 and 2002-02-22
 - String type
-  - `<>John` (not include the sub-string `John`)
+  - `<>John` (anything except the sub-string `John`)
   - `John*` => starts with the sub-string `John`
   - `*Doe` => ends with the sub-string `Doe`
-  - `ab..ef` => anything between "af" and "ef"
-    - refer to ASCII table, it is however case insensitive
+  - `ab..ef` => anything included between "af" and "ef"
+    - refer to ASCII table for each character assigned number
 
-Note that you could do the same functionality with a Compound Filter.
+Note that you could also do the same kind of functionality by using the Compound Filter.
 
 #### Note
-For filters to work properly (default is `string`), make sure to provide a `FieldType` (type is against the dataset, not the Formatter), for example on a Date Filters, we can set the `FieldType` of dateUtc/date (from dataset) can use an extra option of `filterSearchType` to let user filter more easily. For example, with a column having a "UTC Date" coming from the dataset but has a `formatter: Formatters.dateUs`, you can type a date in US format `>02/28/2017`, also when dealing with UTC you have to take the time difference in consideration.
+For filters to work properly (default is `string`), make sure to provide a `FieldType` (type is against the dataset, not the Formatter), for example on a Date Filters, we can set the `FieldType` of dateUtc/date (from dataset) can use an extra option of `filterSearchType` to let user filter more easily. For example, with a column having a "UTC Date" coming from the dataset but has a `formatter: Formatters.dateUs`, you can type a date in US format `>02/28/2017`, also when dealing with UTC you have to take the time difference in consideration. However, a better recommendation would be to use the `Filters.compoundDate` to provide a better user experience by selecting a date from a date picker (nonetheless, an input text filter would also work as long as you use the correct date format).
 
 ### How to use Input Filter
 Simply set the flag `filterable` to True and and enable the filters in the Grid Options. Here is an example with a full column definition:
@@ -55,7 +55,7 @@ this.gridOptions = {
 ```
 
 ### Filtering with Localization (i18n)
-When using a regular grid with a JSON dataset (that is without using Backend Service API), the filter might not working correctly on cell values that are translated (because it will try to filter against the translation key instead of the actual formatted value). So to bypass this problem, a new extra `params` was created to resolve this, you need to set `useFormatterOuputToFilter` to True and the filter will, has the name suggest, use the output of the Formatter to filter against. Example:
+When using a regular grid with a JSON dataset (that is when Backend Service API is not being used), the filter might not work correctly on cell values that are translated (because it will try to filter against the translation key instead of the actual formatted value). So to avoid this problem, a new extra `params` was added to help resolving this problem, you need to set `useFormatterOuputToFilter: true` and the filter will, has the name suggest, use the output of the Formatter to filter against the translated cell value. Example:
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
@@ -85,8 +85,8 @@ You can filter complex objects using the dot (.) notation inside the `field` pro
 For example, let say that we have this dataset
 ```ts
 const dataset = [
- { item: 'HP Desktop', buyer: { id: 1234, address: { street: '123 belleville', zip: 123456 }},
- { item: 'Lenovo Mouse', buyer: { id: 456, address: { street: '456 hollywood blvd', zip: 789123 }}
+ { item: 'HP Desktop', buyer: { id: 1234, address: { street: '123 belleville', zip: 123456 }} },
+ { item: 'Lenovo Mouse', buyer: { id: 456, address: { street: '456 hollywood blvd', zip: 789123 }} },
 ];
 ```
 
@@ -98,6 +98,7 @@ this.columnDefinitions = [
     // it will use the "field" property to explode (from "." notation) and find the child value
     id: 'zip', name: 'ZIP', field: 'buyer.address.zip', filterable: true
    // id: 'street',  ...
+  }
 ];
 ```
 
@@ -106,7 +107,7 @@ You can update/change the Filters dynamically (on the fly) via the `updateFilter
 
 ##### View
 ```html
-<button class="btn btn-default btn-sm" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+<button class="btn btn-default btn-sm" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
     Set Filters Dynamically
 </button>
 
@@ -126,6 +127,7 @@ export class Example {
       { columnId: 'start', operator: '>=', searchTerms: ['2001-02-28'] },
     ]);
   }
+}
 ```
 
 #### Extra Arguments
@@ -157,14 +159,56 @@ queryFieldNameGetterFn: (dataContext) => {
 When having a large dataset, it might be useful to add a debounce delay so that typing multiple character successively won't affect the search time, you can use the `filterTypingDebounce` grid option for that use case. What it will do is simply wait for the user to finish typing before executing the filter condition, you typically don't want to put this number too high and I find that between 250-500 is a good number.
 ```ts
 this.gridOptions = {
-   filterTypingDebounce: 250,
+  filterTypingDebounce: 250,
 };
 ```
 
 ### Ignore Locale Accent in Text Filter/Sorting
-You can ignore latin accent (or any other language accent) in text filter via the Grid Option `ignoreAccentOnStringFilterAndSort` flag (default is false)
+You can ignore latin accent (or any other language accent) in text filter via the Grid Option `ignoreAccentOnStringFilterAndSort` flag (default is false). This flag will normalize (remove accents) the text before comparing it.
 ```ts
 this.gridOptions = {
    ignoreAccentOnStringFilterAndSort: true,
 };
 ```
+
+### Custom Filter Predicate
+You can provide a custom predicate by using the `filterPredicate` when defining your `filter`, the callback will provide you with 2 arguments (`dataContext` and `searchFilterArgs`). The `searchFilterArgs` has a type of `SearchColumnFilter` interface which will provide you more info about the filter itself (like parsed operator, search terms, column definition, column id and type as well). You can see a live demo at [Example 14](https://ghiscoding.github.io/slickgrid-universal/#/example14) and the associated [lines](https://github.com/ghiscoding/slickgrid-universal/blob/1a2c2ff4b72ac3f51b30b1d3d101e84ed9ec9ece/examples/vite-demo-vanilla-bundle/src/examples/example14.ts#L153-L178) of code.
+
+```ts
+this.columnDefinitions = [
+  {
+    id: 'title', name: 'Title', field: 'title', sortable: true,
+    filterable: true, type: FieldType.string,
+    filter: {
+      model: Filters.inputText,
+      // you can use your own custom filter predicate when built-in filters aren't working for you
+      // for example the example below will function similarly to an SQL LIKE to answer this SO: https://stackoverflow.com/questions/78471412/angular-slickgrid-filter
+      filterPredicate: (dataContext, searchFilterArgs) => {
+        const searchVals = (searchFilterArgs.searchTerms || []) as SearchTerm[];
+        if (searchVals?.length) {
+          const columnId = searchFilterArgs.columnId;
+          const searchVal = searchVals[0] as string;
+          const likeMatches = searchVal.split('%');
+          if (likeMatches.length > 3) {
+            // for matches like "%Ta%10%" will return text that starts with "Ta" and ends with "10" (e.g. "Task 10", "Task 110", "Task 210")
+            const [_, start, end] = likeMatches;
+            return dataContext[columnId].startsWith(start) && dataContext[columnId].endsWith(end);
+          } else if (likeMatches.length > 2) {
+            // for matches like "%Ta%10" will return text that starts with "Ta" and contains "10" (e.g. "Task 10", "Task 100", "Task 101")
+            const [_, start, contain] = likeMatches;
+            return dataContext[columnId].startsWith(start) && dataContext[columnId].includes(contain);
+          }
+          // for anything else we'll simply expect a Contains
+          return dataContext[columnId].includes(searchVal);
+        }
+        // if we fall here then the value is not filtered out
+        return true;
+      },
+    },
+  },
+];
+```
+
+The custom filter predicate above was to answer a Stack Overflow question and will work similarly to an SQL LIKE matcher (it's not perfect and probably requires more work but is enough to demo the usage of a custom filter predicate)
+
+![image](https://github.com/ghiscoding/slickgrid-universal/assets/643976/3e77774e-3a9f-4ca4-bca7-50a033a4b48d)

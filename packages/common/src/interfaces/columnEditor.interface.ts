@@ -29,7 +29,7 @@ export interface ColumnEditor {
    */
   collection?: any[];
 
-  /** We could filter some 1 or more items from the collection */
+  /** We could filter 1 or more items from the collection (e.g. filter out some items from the select filter) */
   collectionFilterBy?: CollectionFilterBy | CollectionFilterBy[];
 
   /** Options to change the behavior of the "collection" */

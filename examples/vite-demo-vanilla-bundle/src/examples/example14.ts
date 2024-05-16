@@ -11,6 +11,7 @@ import {
   type GridOption,
   type GridStateChange,
   type LongTextEditorOption,
+  type SearchTerm,
   SlickGlobalEditorLock,
   type SliderRangeOption,
   SortComparers,
@@ -149,7 +150,44 @@ export default class Example14 {
         resizeCalcWidthRatio: 1, // default ratio is ~0.9 for string but since our text is all uppercase then a higher ratio is needed
         resizeMaxWidthThreshold: 200,
         filterable: true, columnGroup: 'Common Factor',
-        filter: { model: Filters.compoundInputText },
+        filter: {
+          model: Filters.inputText,
+          // you can use your own custom filter predicate when built-in filters aren't working for you
+          // for example the example below will function similarly to an SQL LIKE to answer this SO: https://stackoverflow.com/questions/78471412/angular-slickgrid-filter
+          filterPredicate: (dataContext, searchFilterArgs) => {
+            const searchVals = (searchFilterArgs.parsedSearchTerms || []) as SearchTerm[];
+            if (searchVals?.length) {
+              const columnId = searchFilterArgs.columnId;
+              const searchVal = searchVals[0] as string;
+              const results = searchVal.matchAll(/^%([^%\r\n]+)[^%\r\n]*$|%(.+)%(.*)|(.+)%(.+)|([^%\r\n]+)%$/gi);
+              const arrayOfMatches = Array.from(results);
+              const matches = arrayOfMatches.length ? arrayOfMatches[0] : [];
+              const [_, endW, contain, containEndW, comboSW, comboEW, startW] = matches;
+
+              if (endW) {
+                // example: "%001" ends with A
+                return dataContext[columnId].endsWith(endW);
+              } else if (contain && containEndW) {
+                // example: "%Ti%001", contains A + ends with B
+                return dataContext[columnId].includes(contain) && dataContext[columnId].endsWith(containEndW);
+              } else if (contain && !containEndW) {
+                // example: "%Ti%", contains A anywhere
+                return dataContext[columnId].includes(contain);
+              } else if (comboSW && comboEW) {
+                // example: "Ti%001", combo starts with A + ends with B
+                return dataContext[columnId].startsWith(comboSW) && dataContext[columnId].endsWith(comboEW);
+              } else if (startW) {
+                // example: "Ti%", starts with A
+                return dataContext[columnId].startsWith(startW);
+              }
+              // anything else
+              return dataContext[columnId].includes(searchVal);
+            }
+
+            // if we fall here then the value is not filtered out
+            return true;
+          },
+        },
         editor: {
           model: Editors.longText, required: true, alwaysSaveOnEnterKey: true,
           maxLength: 12,
@@ -288,7 +326,7 @@ export default class Example14 {
         },
         filter: {
           model: Filters.inputText,
-          // placeholder: '🔎︎ search city',
+          // placeholder: '🔎︎ search product',
           type: FieldType.string,
           queryField: 'product.itemName',
         }
