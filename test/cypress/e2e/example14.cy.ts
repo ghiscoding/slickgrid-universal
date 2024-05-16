@@ -335,6 +335,22 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 330');
     });
 
+    it('should return 14 rows using "Ta%30%" (starts with "Ta" + ends with 30)', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('Ta%30%');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 4);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 30');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 130');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 230');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 300');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 301');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 302');
+    });
+
     it('should return all 400 rows using "Ta%" (starts with "Ta")', () => {
       cy.get('.search-filter.filter-title')
         .clear()
@@ -372,6 +388,25 @@ describe('Example 14 - Columns Resize by Content', () => {
 
       cy.get('[data-test="total-items"]')
         .should('contain', 0);
+    });
+
+    it('return some rows (not all 400) filtering Title as "%ask%" AND a Duration ">50" to test few filters still working', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('%ask%');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 400);
+
+      cy.get('.search-filter.filter-duration')
+        .clear()
+        .type('>50');
+
+      cy.get('[data-test="total-items"]')
+        .should('not.contain', 0);
+
+      cy.get('[data-test="total-items"]')
+        .should('not.contain', 400);
     });
   });
 });

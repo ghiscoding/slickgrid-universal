@@ -366,7 +366,11 @@ export class FilterService {
 
           // user could provide a custom filter predicate on the column definition
           if (typeof columnFilterDef?.filterPredicate === 'function') {
-            return columnFilterDef.filterPredicate(item, searchColFilter);
+            const fpResult = columnFilterDef.filterPredicate(item, searchColFilter);
+            if (!fpResult) {
+              // only return on false, when row is filtered out and no further filter to be considered
+              return false;
+            }
           } else {
             // otherwise execute built-in filter condition checks
             const conditionOptions = this.preProcessFilterConditionOnDataContext(item, searchColFilter, grid);

@@ -159,14 +159,17 @@ export default class Example14 {
             if (searchVals?.length) {
               const columnId = searchFilterArgs.columnId;
               const searchVal = searchVals[0] as string;
-              const results = searchVal.matchAll(/^%([^%\r\n]+)[^%\r\n]*$|%(.+)%(.*)|(.+)%(.+)|([^%\r\n]+)%$/gi);
+              const results = searchVal.matchAll(/^%([^%\r\n]+)[^%\r\n]*$|(.*)%(.+)%(.*)|(.+)%(.+)|([^%\r\n]+)%$/gi);
               const arrayOfMatches = Array.from(results);
               const matches = arrayOfMatches.length ? arrayOfMatches[0] : [];
-              const [_, endW, contain, containEndW, comboSW, comboEW, startW] = matches;
+              const [_, endW, containSW, contain, containEndW, comboSW, comboEW, startW] = matches;
 
               if (endW) {
                 // example: "%001" ends with A
                 return dataContext[columnId].endsWith(endW);
+              } else if (containSW && contain) {
+                // example: "%Ti%001", contains A + ends with B
+                return dataContext[columnId].startsWith(containSW) && dataContext[columnId].includes(contain);
               } else if (contain && containEndW) {
                 // example: "%Ti%001", contains A + ends with B
                 return dataContext[columnId].includes(contain) && dataContext[columnId].endsWith(containEndW);
