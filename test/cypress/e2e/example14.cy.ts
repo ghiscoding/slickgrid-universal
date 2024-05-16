@@ -373,5 +373,24 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('[data-test="total-items"]')
         .should('contain', 0);
     });
+
+    it('return some rows (not all 400) filtering Title as "%ask%" AND a Duration ">50" to test few filters still working', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('%ask%');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 400);
+
+      cy.get('.search-filter.filter-duration')
+        .clear()
+        .type('>50');
+
+      cy.get('[data-test="total-items"]')
+        .should('not.contain', 0);
+
+      cy.get('[data-test="total-items"]')
+        .should('not.contain', 400);
+    });
   });
 });
