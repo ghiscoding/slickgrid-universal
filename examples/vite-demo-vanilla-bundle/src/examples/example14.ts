@@ -159,19 +159,31 @@ export default class Example14 {
             if (searchVals?.length) {
               const columnId = searchFilterArgs.columnId;
               const searchVal = searchVals[0] as string;
-              const likeMatches = searchVal.split('%');
-              if (likeMatches.length > 3) {
-                // for matches like "%Ta%10%" will return text that starts with "Ta" and ends with "10" (e.g. "Task 10", "Task 110", "Task 210")
-                const [_, start, end] = likeMatches;
-                return dataContext[columnId].startsWith(start) && dataContext[columnId].endsWith(end);
-              } else if (likeMatches.length > 2) {
-                // for matches like "%Ta%10" will return text that starts with "Ta" and contains "10" (e.g. "Task 10", "Task 100", "Task 101")
-                const [_, start, contain] = likeMatches;
-                return dataContext[columnId].startsWith(start) && dataContext[columnId].includes(contain);
+              const results = searchVal.matchAll(/^%([^%\r\n]+)[^%\r\n]*$|%(.+)%(.*)|(.+)%(.+)|([^%\r\n]+)%$/gi);
+              const arrayOfMatches = Array.from(results);
+              const matches = arrayOfMatches.length ? arrayOfMatches[0] : [];
+              const [_, endW, contain, containEndW, comboSW, comboEW, startW] = matches;
+
+              if (endW) {
+                // example: "%001" ends with A
+                return dataContext[columnId].endsWith(endW);
+              } else if (contain && containEndW) {
+                // example: "%Ti%001", contains A + ends with B
+                return dataContext[columnId].includes(contain) && dataContext[columnId].endsWith(containEndW);
+              } else if (contain && !containEndW) {
+                // example: "%Ti%", contains A anywhere
+                return dataContext[columnId].includes(contain);
+              } else if (comboSW && comboEW) {
+                // example: "Ti%001", combo starts with A + ends with B
+                return dataContext[columnId].startsWith(comboSW) && dataContext[columnId].endsWith(comboEW);
+              } else if (startW) {
+                // example: "Ti%", starts with A
+                return dataContext[columnId].startsWith(startW);
               }
-              // for anything else we'll simply expect a Contains
+              // anything else
               return dataContext[columnId].includes(searchVal);
             }
+
             // if we fall here then the value is not filtered out
             return true;
           },

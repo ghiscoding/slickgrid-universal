@@ -185,20 +185,6 @@ describe('Example 14 - Columns Resize by Content', () => {
       .should('have.length', 0);
   });
 
-  it('should be able to use custom filter predicate on Title column and act similarly to an SQL LIKE matcher', () => {
-    cy.get('.search-filter.filter-title')
-      .clear()
-      .type('%Ta%10%');
-
-    cy.get('.slick-row')
-      .should('have.length', 4);
-
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 10');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 110');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 210');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 310');
-  });
-
   describe('Custom Header Menu & sub-menus tests', () => {
     it('should open Hello sub-menu with 2 options expect it to be aligned to right then trigger alert when command is clicked', () => {
       const subCommands = ['Hello World', 'Hello SlickGrid', `Let's play`];
@@ -289,6 +275,103 @@ describe('Example 14 - Columns Resize by Content', () => {
         .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
 
       cy.get('.slick-submenu').should('have.length', 0);
+    });
+  });
+
+  describe('Filter Predicate on "Title" column that act similarly to an SQL LIKE matcher', () => {
+    it('should return 4 rows using "%10" (ends with 10)', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('%10');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 4);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 10');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 110');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 210');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 310');
+    });
+
+    it('should return 4 rows using "%ask%20" (contains "ask" + ends with 20)', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('%ask%20');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 4);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 20');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 120');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 220');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 320');
+    });
+
+    it('should return all 400 rows using "%ask%" (contains "ask")', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('%ask%');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 400);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
+    });
+
+    it('should return 4 rows using "Ta%30" (starts with "Ta" + ends with 30)', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('Ta%30');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 4);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 30');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 130');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 230');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 330');
+    });
+
+    it('should return all 400 rows using "Ta%" (starts with "Ta")', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('Ta%');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 400);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
+    });
+
+    it('should return 14 rows using "25" (contains 25)', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('25');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 14);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 25');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 125');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 225');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 250');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 251');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 252');
+    });
+
+    it('should not return any row when filtering Title with "%%"', () => {
+      cy.get('.search-filter.filter-title')
+        .clear()
+        .type('%%');
+
+      cy.get('[data-test="total-items"]')
+        .should('contain', 0);
     });
   });
 });
