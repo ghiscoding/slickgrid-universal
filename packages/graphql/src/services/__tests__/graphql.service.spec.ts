@@ -916,6 +916,34 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
+    it('should return a query with search having the operator StartsWith & EndsWith when search value has the "*" symbol with chars on both side of it', () => {
+      const expectation = `query{users(first:10, offset:0, filterBy:[{field:name, operator:StartsWith, value:"Ca"},{field:name, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
+      const mockColumn = { id: 'name', field: 'name' } as Column;
+      const mockColumnFilters = {
+        name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
+    it('should return a query with search having the operator StartsWithEndsWith when the operator was provided as "a*z"', () => {
+      const expectation = `query{users(first:10, offset:0, filterBy:[{field:name, operator:StartsWith, value:"Ca"},{field:name, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
+      const mockColumn = { id: 'name', field: 'name' } as Column;
+      const mockColumnFilters = {
+        name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
     it('should return a query with search having the operator Greater of Equal when the search value was provided as ">=10"', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:age, operator:GE, value:"10"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'age', field: 'age' } as Column;
