@@ -11,6 +11,7 @@ import type {
 } from '../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
 import type { SharedService } from './shared.service';
+import { propertyObserver } from './observers';
 import type { Observable, RxJsFacade } from './rxjsFacade';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
@@ -156,6 +157,9 @@ export class PaginationService {
     this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
 
     this._initialized = true;
+
+    // observe for pagination total items change and update our local totalItems ref
+    propertyObserver(paginationOptions, 'totalItems', (newTotal) => this._totalItems = newTotal);
   }
 
   dispose() {
@@ -168,7 +172,7 @@ export class PaginationService {
     this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
-  getCurrentPagination(): CurrentPagination & { pageSizes: number[] } {
+  getCurrentPagination(): CurrentPagination & { pageSizes: number[]; } {
     return {
       pageNumber: this._pageNumber,
       pageSize: this._itemsPerPage,
@@ -382,7 +386,7 @@ export class PaginationService {
       this.recalculateFromToIndexes();
 
       if (this._isLocalGrid && this.dataView) {
-        this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: (pageNumber - 1) }); // dataView page starts at 0 instead of 1
+        this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: pageNumber - 1 }); // dataView page starts at 0 instead of 1
         this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
         this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
         resolve(this.getFullPagination());
@@ -446,6 +450,11 @@ export class PaginationService {
   }
 
   recalculateFromToIndexes() {
+    // when page is out of boundaries, reset it to page 1
+    if (((this._pageNumber - 1) * this._itemsPerPage > this._totalItems)) {
+      this._pageNumber = 1;
+    }
+
     if (this._totalItems === 0) {
       this._dataFrom = 0;
       this._dataTo = 1;
@@ -457,9 +466,11 @@ export class PaginationService {
         this._dataTo = this._totalItems;
       }
     }
-    this._pageNumber = (this._totalItems > 0 && this._pageNumber === 0) ? 1 : this._pageNumber;
+    if (this._totalItems > 0 && this._pageNumber === 0) {
+      this._pageNumber = 1;
+    }
 
-    // do a final check on the From/To and make sure they are not over or below min/max acceptable values
+    // do a final check on the From/To and make sure they are not greater or smaller than min/max acceptable values
     if (this._dataTo > this._totalItems) {
       this._dataTo = this._totalItems;
     } else if (this._totalItems < this._itemsPerPage) {
