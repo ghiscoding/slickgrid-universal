@@ -167,25 +167,25 @@ export default class Example14 {
 
               if (endW) {
                 // example: "%001" ends with A
-                return cellValue.endsWith(endW);
+                return cellValue.endsWith(endW.toLowerCase());
               } else if (containSW && contain) {
                 // example: "%Ti%001", contains A + ends with B
-                return cellValue.startsWith(containSW) && cellValue.includes(contain);
+                return cellValue.startsWith(containSW.toLowerCase()) && cellValue.includes(contain.toLowerCase());
               } else if (contain && containEndW) {
                 // example: "%Ti%001", contains A + ends with B
-                return cellValue.includes(contain) && cellValue.endsWith(containEndW);
+                return cellValue.includes(contain) && cellValue.endsWith(containEndW.toLowerCase());
               } else if (contain && !containEndW) {
                 // example: "%Ti%", contains A anywhere
-                return cellValue.includes(contain);
+                return cellValue.includes(contain.toLowerCase());
               } else if (comboSW && comboEW) {
                 // example: "Ti%001", combo starts with A + ends with B
-                return cellValue.startsWith(comboSW) && cellValue.endsWith(comboEW);
+                return cellValue.startsWith(comboSW.toLowerCase()) && cellValue.endsWith(comboEW.toLowerCase());
               } else if (startW) {
                 // example: "Ti%", starts with A
-                return cellValue.startsWith(startW);
+                return cellValue.startsWith(startW.toLowerCase());
               }
               // anything else
-              return cellValue.includes(searchVal);
+              return cellValue.includes(searchVal.toLowerCase());
             }
 
             // if we fall here then the value is not filtered out
