@@ -956,5 +956,68 @@ describe('Example 15 - OData Grid using RxJS', () => {
 
       cy.get('@task2-cell').trigger('mouseleave');
     });
+
+    it('should return 2 rows using "C*n" (starts with "C" + ends with "n")', () => {
+      cy.get('input.filter-name')
+        .clear()
+        .type('C*n');
+
+      // wait for the query to finish
+      cy.get('[data-test=status]').should('contain', 'finished');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'female' and startswith(Name, 'C') and endswith(Name, 'n'))`);
+        });
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Consuelo Dickson');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Christine Compton');
+
+      // clear filter before next test
+      cy.get('input.filter-name')
+        .clear();
+    });
+
+    it('should change Gender filter back to "male" with descending order', () => {
+      cy.get('.ms-filter.filter-gender:visible').click();
+
+      cy.get('[data-name="filter-gender"].ms-drop')
+        .find('li:visible:nth(1)')
+        .contains('male')
+        .click();
+
+      cy.get('.grid15')
+        .find('.slick-row')
+        .should('have.length', 10);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Woods Key');
+
+      // query should still contain previous sort by + new gender filter
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'male')`);
+        });
+    });
+
+    it('should return 2 rows using different case sensitivity search value "ba*E" (starts with "ba" + ends with "E")', () => {
+      cy.get('input.filter-name')
+        .clear()
+        .type('ba*E');
+
+      // wait for the query to finish
+      cy.get('[data-test=status]').should('contain', 'finished');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'male' and startswith(Name, 'ba') and endswith(Name, 'E'))`);
+        });
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Barr Page');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Barnett Case');
+
+      // clear filter before next test
+      cy.get('input.filter-name')
+        .clear();
+    });
   });
 });

@@ -854,7 +854,7 @@ describe('Example 09 - OData Grid', () => {
         .contains('50');
     });
 
-    it('should return 2 rows using "Ba*e" (starts with "Ba" + ends with "e")', () => {
+    it('should return 2 rows using "C*n" (starts with "C" + ends with "n")', () => {
       cy.get('input.filter-name')
         .clear()
         .type('C*n');

@@ -324,7 +324,6 @@ export default class Example09 {
                 col = filterTerm;
               }
 
-              // Ba*e... Barnett Case... Barr Page
               if (filterTerm) {
                 const [term1, term2] = Array.isArray(searchTerm) ? searchTerm : [searchTerm];
 
