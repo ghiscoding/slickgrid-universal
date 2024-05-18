@@ -451,7 +451,7 @@ export class PaginationService {
 
   recalculateFromToIndexes() {
     // when page is out of boundaries, reset it to page 1
-    if (((this._pageNumber - 1) * this._itemsPerPage > this._totalItems)) {
+    if (((this._pageNumber - 1) * this._itemsPerPage > this._totalItems) || (this._totalItems > 0 && this._pageNumber === 0)) {
       this._pageNumber = 1;
     }
 
@@ -465,9 +465,6 @@ export class PaginationService {
       if (this._dataTo > this._totalItems) {
         this._dataTo = this._totalItems;
       }
-    }
-    if (this._totalItems > 0 && this._pageNumber === 0) {
-      this._pageNumber = 1;
     }
 
     // do a final check on the From/To and make sure they are not greater or smaller than min/max acceptable values
