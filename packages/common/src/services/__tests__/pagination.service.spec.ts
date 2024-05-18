@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { of, throwError } from 'rxjs';
 
 import { PaginationService } from './../pagination.service';
@@ -376,7 +377,7 @@ describe('PaginationService', () => {
       service.goToPreviousPage(null, false);
 
       expect(service.getCurrentPageNumber()).toBe(1);
-      expect(spy).not.toHaveBeenCalled()
+      expect(spy).not.toHaveBeenCalled();
     });
 
     it('should not expect "processOnPageChanged" method to be called when we are already on first page', () => {
