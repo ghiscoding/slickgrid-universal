@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import sparkline from '@fnando/sparkline';
+import { Chart, CategoryScale, Filler, LinearScale, LineController, LineElement, PointElement } from 'chart.js';
 import {
   Aggregators,
   type Column,
@@ -41,14 +41,42 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
 const transactionTypeFormatter: Formatter = (_row, _cell, value: string) =>
   `<div class="d-inline-flex align-items-center gap-5px"><span class="mdi mdi-16px mdi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'text-color-info' : 'text-color-warning'}"></span> ${value}</div>`;
 
-const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col, dataContext) => {
-  const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svgElem.setAttributeNS(null, 'width', '135');
-  svgElem.setAttributeNS(null, 'height', '30');
-  svgElem.setAttributeNS(null, 'stroke-width', '2');
-  svgElem.classList.add('sparkline');
-  sparkline(svgElem, dataContext.historic, { interactive: true });
-  return svgElem.outerHTML;
+const historicSparklineFormatter: Formatter = (_row, _cell, _value, _col, dataContext) => {
+  if (dataContext.historic.length < 2) {
+    return '';
+  }
+  const canvas = document.createElement('canvas');
+  canvas.style.height = '38px';
+  canvas.style.width = '100%';
+
+  Chart.register(LineController, LinearScale, CategoryScale, Filler, LineElement, PointElement);
+  new Chart(canvas.getContext('2d')!, {
+    type: 'line',
+    data: {
+      labels: dataContext.historic.map(h => Math.floor(h)),
+      datasets: [
+        {
+          data: dataContext.historic,
+          fill: {
+            target: 'origin',
+            above: 'rgba(0, 183, 141, 0.2)',
+            below: 'rgba(255, 94, 94, 0.2)'
+          },
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }
+      ],
+    },
+    options: {
+      responsive: false,
+      animation: false,
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      },
+    },
+  });
+  return canvas;
 };
 
 export default class Example18 {
@@ -164,7 +192,7 @@ export default class Example18 {
         formatter: Formatters.dollar, params: { maxDecimal: 2 },
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
       },
-      { id: 'historic', name: 'Price History', field: 'historic', minWidth: 100, width: 150, maxWidth: 150, formatter: historicSparklineFormatter },
+      { id: 'historic', name: 'Price History', field: 'historic', minWidth: 120, width: 160, maxWidth: 170, formatter: historicSparklineFormatter },
       {
         id: 'execution', name: 'Execution Timestamp', field: 'execution', filterable: true, sortable: true, minWidth: 125,
         formatter: Formatters.dateTimeIsoAmPm, exportWithFormatter: true,
