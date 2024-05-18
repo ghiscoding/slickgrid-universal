@@ -271,7 +271,7 @@ export default class Example09 {
         throw new Error('Server could not sort using the field "Company"');
       }
 
-      // read the json and create a fresh copy of the data that we are free to modify
+      // read the JSON and create a fresh copy of the data that we are free to modify
       let data = Data as unknown as { name: string; gender: string; company: string; id: string, category: { id: string; name: string; }; }[];
       data = JSON.parse(JSON.stringify(data));
 
@@ -303,7 +303,7 @@ export default class Example09 {
       }
 
       // Read the result field from the JSON response.
-      const firstRow = skip;
+      let firstRow = skip;
       let filteredData = data;
       if (columnFilters) {
         for (const columnId in columnFilters) {
@@ -345,6 +345,12 @@ export default class Example09 {
           }
         }
         countTotalItems = filteredData.length;
+      }
+
+      // make sure page skip is not out of boundaries, if so reset to first page & remove skip from query
+      if (firstRow > filteredData.length) {
+        query = query.replace(`$skip=${firstRow}`, '');
+        firstRow = 0;
       }
       const updatedData = filteredData.slice(firstRow, firstRow + top);
 
