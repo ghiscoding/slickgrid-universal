@@ -46,14 +46,23 @@ export const executeStringFilterCondition: FilterCondition = ((options: FilterCo
  */
 export function getFilterParsedText(inputSearchTerms: SearchTerm[] | undefined): SearchTerm[] {
   const defaultSearchTerm = ''; // when nothing is provided, we'll default to 0
-  const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [defaultSearchTerm];
+  let searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [defaultSearchTerm];
   const parsedSearchValues: string[] = [];
   let searchValue1;
   let searchValue2;
-  if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
-    const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
-    searchValue1 = `${Array.isArray(searchValues) ? searchValues[0] : ''}`;
-    searchValue2 = `${Array.isArray(searchValues) ? searchValues[1] : ''}`;
+
+  if (searchTerms.length === 1 && typeof searchTerms[0] === 'string') {
+    const st = searchTerms[0] as string;
+    if (st.indexOf('..') > 0) {
+      searchTerms = st.split('..');
+    } else if (st.indexOf('*') > 0 && st.indexOf('*') < st.length - 1) {
+      searchTerms = st.split('*');
+    }
+  }
+
+  if (searchTerms.length === 2) {
+    searchValue1 = `${searchTerms[0]}`;
+    searchValue2 = `${searchTerms[1]}`;
   } else {
     const parsedSearchValue = (Array.isArray(inputSearchTerms) && inputSearchTerms.length > 0) ? inputSearchTerms[0] : '';
     searchValue1 = parsedSearchValue === undefined || parsedSearchValue === null ? '' : `${parsedSearchValue}`; // make sure it's a string

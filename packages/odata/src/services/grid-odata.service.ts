@@ -342,13 +342,17 @@ export class GridOdataService implements BackendService {
 
         // run regex to find possible filter operators unless the user disabled the feature
         const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
-        const matches = autoParseInputFilterOperator !== false
-          ? fieldSearchValue.match(/^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
-          : [fieldSearchValue, '', fieldSearchValue, '']; // when parsing is disabled, we'll only keep the search value in the index 2 to make it easy for code reuse
 
-        let operator = columnFilter.operator || matches?.[1];
-        let searchValue = matches?.[2] || '';
-        const lastValueChar = matches?.[3] || (operator === '*z' || operator === OperatorType.endsWith) ? '*' : '';
+        // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
+        const matches = autoParseInputFilterOperator !== false
+          ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
+          : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
+
+        const comboStartsWith = matches?.[2] || '';
+        const comboEndsWith = matches?.[3] || '';
+        let operator = columnFilter.operator || matches?.[4];
+        let searchValue = matches?.[1] || matches?.[5] || '';
+        const lastValueChar = matches?.[6] || (operator === '*z' || operator === OperatorType.endsWith) ? '*' : '';
         const bypassOdataQuery = columnFilter.bypassBackendQuery || false;
 
         // no need to query if search value is empty
@@ -357,7 +361,12 @@ export class GridOdataService implements BackendService {
           continue;
         }
 
-        if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
+        // StartsWith + EndsWith combo
+        if (comboStartsWith && comboEndsWith) {
+          searchTerms = [comboStartsWith, comboEndsWith];
+          operator = OperatorType.startsWithEndsWith;
+        } else if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
+          // range filter
           if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
             operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
           }
@@ -390,7 +399,7 @@ export class GridOdataService implements BackendService {
           operator = OperatorType.equal;
         }
 
-        // if we still don't have an operator find the proper Operator to use by it's field type
+        // if we still don't have an operator find the proper Operator to use according to field type
         if (!operator) {
           operator = mapOperatorByFieldType(fieldType);
         }
@@ -417,7 +426,16 @@ export class GridOdataService implements BackendService {
             fieldName = titleCase(getHtmlStringOutput(fieldName || ''));
           }
 
-          if (searchTerms && searchTerms.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOTIN' || operator === 'NOT IN' || operator === 'NOT_IN')) {
+          // StartsWith + EndsWith combo
+          if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
+            const tmpSearchTerms: string[] = [];
+            const [sw, ew] = searchTerms;
+
+            // add 2 conditions (StartsWith A + EndsWith B) to the search array
+            tmpSearchTerms.push(`startswith(${fieldName}, ${sw})`);
+            tmpSearchTerms.push(`endswith(${fieldName}, ${ew})`);
+            searchBy = tmpSearchTerms.join(' and ');
+          } else if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOTIN' || operator === 'NOT IN' || operator === 'NOT_IN')) {
             // when having more than 1 search term (then check if we have a "IN" or "NOT IN" filter search)
             const tmpSearchTerms: string[] = [];
             if (operator === 'IN') {

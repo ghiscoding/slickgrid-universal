@@ -244,12 +244,16 @@ export default class Example09 {
               }
             }
           }
-          if (filterBy.includes('startswith')) {
+          if (filterBy.includes('startswith') && filterBy.includes('endswith')) {
+            const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const fieldName = filterStartMatch[1].trim();
+            columnFilters[fieldName] = { type: 'starts+ends', term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()] };
+          } else if (filterBy.includes('startswith')) {
             const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'starts', term: filterMatch[2].trim() };
-          }
-          if (filterBy.includes('endswith')) {
+          } else if (filterBy.includes('endswith')) {
             const filterMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/);
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
@@ -308,7 +312,7 @@ export default class Example09 {
               const filterType = columnFilters[columnId].type;
               const searchTerm = columnFilters[columnId].term;
               let colId = columnId;
-              if (columnId && columnId.indexOf(' ') !== -1) {
+              if (columnId?.indexOf(' ') !== -1) {
                 const splitIds = columnId.split(' ');
                 colId = splitIds[splitIds.length - 1];
               }
@@ -321,16 +325,19 @@ export default class Example09 {
               }
 
               if (filterTerm) {
+                const [term1, term2] = Array.isArray(searchTerm) ? searchTerm : [searchTerm];
+
                 switch (filterType) {
-                  case 'eq': return filterTerm.toLowerCase() === searchTerm;
-                  case 'ne': return filterTerm.toLowerCase() !== searchTerm;
-                  case 'le': return filterTerm.toLowerCase() <= searchTerm;
-                  case 'lt': return filterTerm.toLowerCase() < searchTerm;
-                  case 'gt': return filterTerm.toLowerCase() > searchTerm;
-                  case 'ge': return filterTerm.toLowerCase() >= searchTerm;
-                  case 'ends': return filterTerm.toLowerCase().endsWith(searchTerm);
-                  case 'starts': return filterTerm.toLowerCase().startsWith(searchTerm);
-                  case 'substring': return filterTerm.toLowerCase().includes(searchTerm);
+                  case 'eq': return filterTerm.toLowerCase() === term1;
+                  case 'ne': return filterTerm.toLowerCase() !== term1;
+                  case 'le': return filterTerm.toLowerCase() <= term1;
+                  case 'lt': return filterTerm.toLowerCase() < term1;
+                  case 'gt': return filterTerm.toLowerCase() > term1;
+                  case 'ge': return filterTerm.toLowerCase() >= term1;
+                  case 'ends': return filterTerm.toLowerCase().endsWith(term1);
+                  case 'starts': return filterTerm.toLowerCase().startsWith(term1);
+                  case 'starts+ends': return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
+                  case 'substring': return filterTerm.toLowerCase().includes(term1);
                 }
               }
             });

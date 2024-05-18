@@ -414,7 +414,7 @@ export class FilterService {
    * @returns FilterConditionOption
    */
   parseFormInputFilterConditions(inputSearchTerms: SearchTerm[] | undefined, columnFilter: Omit<SearchColumnFilter, 'searchTerms'>): Omit<FilterConditionOption, 'cellValue'> {
-    let searchValues: SearchTerm[] = extend(true, [], inputSearchTerms) || [];
+    const searchValues: SearchTerm[] = extend(true, [], inputSearchTerms) || [];
     let fieldSearchValue = (Array.isArray(searchValues) && searchValues.length === 1) ? searchValues[0] : '';
     const columnDef = columnFilter.columnDef;
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
@@ -426,22 +426,22 @@ export class FilterService {
       // run regex to find possible filter operators unless the user disabled the feature
       const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
 
-      // group (1): comboStartsWith, (2): comboEndsWith, (3): Operator, (4): searchValue, (5): last char is '*' (meaning starts with, ex.: abc*)
+      // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
       matches = autoParseInputFilterOperator !== false
-        ? fieldSearchValue.match(/^(.*[^\\*\r\n])[*]{1}(.*[^*\r\n])|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
-        : [fieldSearchValue, '', '', '', fieldSearchValue, ''];
+        ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
+        : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
     }
 
-    const comboStartsWith = matches?.[1] || '';
-    const comboEndsWith = matches?.[2] || '';
-    let operator = matches?.[3] || columnFilter.operator;
-    const searchTerm = matches?.[4] || '';
-    const inputLastChar = matches?.[5] || (operator === '*z' ? '*' : '');
+    const comboStartsWith = matches?.[2] || '';
+    const comboEndsWith = matches?.[3] || '';
+    let operator = matches?.[4] || columnFilter.operator;
+    let searchTerm = matches?.[1] || matches?.[5] || '';
+    const inputLastChar = matches?.[6] || (operator === '*z' ? '*' : '');
 
     if (typeof fieldSearchValue === 'string') {
       fieldSearchValue = fieldSearchValue.replace(`'`, `''`); // escape any single quotes by doubling them
       if (comboStartsWith && comboEndsWith) {
-        searchValues = [comboStartsWith, comboEndsWith];
+        searchTerm = fieldSearchValue;
         operator = OperatorType.startsWithEndsWith;
       } else if (operator === '*' || operator === '*z') {
         operator = OperatorType.endsWith;
