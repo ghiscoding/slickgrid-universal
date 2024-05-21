@@ -21,6 +21,9 @@ export default defineConfig(() => {
       hmr: {
         clientPort: 8888,
       },
+      watch: {
+        followSymlinks: false,
+      }
     },
   };
 });
