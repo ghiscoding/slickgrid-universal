@@ -426,8 +426,20 @@ export class GridOdataService implements BackendService {
             fieldName = titleCase(getHtmlStringOutput(fieldName || ''));
           }
 
-          // StartsWith + EndsWith combo
-          if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
+          let predicateResult: string | undefined = undefined;
+          if (typeof this._odataService?.options?.filterPredicate === 'function') {
+            predicateResult = this._odataService.options.filterPredicate({
+              fieldName: getHtmlStringOutput(fieldName),
+              columnDef,
+              operator,
+              columnFilterOperator: columnFilter.operator,
+              searchValue
+            });
+          }
+
+          if (predicateResult !== undefined) {
+            searchBy = predicateResult;
+          } else if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
             const tmpSearchTerms: string[] = [];
             const [sw, ew] = searchTerms;
 

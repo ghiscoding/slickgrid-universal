@@ -79,7 +79,13 @@ export default class Example09 {
         type: FieldType.string,
         filterable: true,
         filter: {
-          model: Filters.compoundInput
+          model: Filters.compoundInput,
+          compoundOperatorList: [
+            { operator: 'Custom', desc: 'SQL Like' },
+            { operator: '=', desc: 'Equal to' },
+            { operator: '<', desc: 'Less than' },
+            { operator: '>', desc: 'Greater than' },
+          ],
         }
       },
       {
@@ -103,6 +109,11 @@ export default class Example09 {
         // you can toggle these 2 properties to show the "select all" checkbox in different location
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true
+      },
+      // TODO: doesn't work in combo with compoundOperatorList
+      compoundOperatorAltTexts: {
+        // where '=' is any of the `OperatorString` type shown above
+        text: { 'Custom': { operatorAlt: '⊂', descAlt: 'SQL Like' } },
       },
       enableCellNavigation: true,
       enableFiltering: true,
@@ -131,6 +142,12 @@ export default class Example09 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
           enableSelect: this.isSelectEnabled,
           enableExpand: this.isExpandEnabled,
+          filterPredicate: (args) => {
+            const { fieldName, columnDef, columnFilterOperator, searchValue } = args;
+            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+              return `matchesPattern(${fieldName}, %5EA${searchValue.replace(/\*/g, '.*')}$)`;
+            }
+          },
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
         onError: (error: Error) => {
