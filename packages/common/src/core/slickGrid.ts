@@ -256,7 +256,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     forceSyncScrolling: false,
     addNewRowCssClass: 'new-row',
     preserveCopiedSelectionOnPaste: false,
-    preventDragFromKeys: ['ctrlKey', 'shiftKey'],
+    preventDragFromKeys: ['ctrlKey'],
     showCellSelection: true,
     viewportClass: undefined,
     minRowBuffer: 3,
