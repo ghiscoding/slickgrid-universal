@@ -282,8 +282,10 @@ export class TreeDataService {
   }
 
   /**
-   * Takes a flat dataset, converts it into a hierarchical dataset, sort it by recursion and finally return back the final and sorted flat array
+   * Takes a flat dataset, converts it into a hierarchical dataset, sort it by recursion and finally return back the final and sorted flat array.
+   * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
    * @param {Array<Object>} flatDataset - parent/child flat dataset
+   * @param {Column[]} columnDefinitions - column definitions
    * @param {Object} gridOptions - grid options
    * @returns {Array<Object>} - tree dataset
    */
@@ -304,6 +306,7 @@ export class TreeDataService {
 
   /**
    * Takes a flat dataset, converts it into a hierarchical dataset
+   * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
    * @param {Array<Object>} flatDataset - parent/child flat dataset
    * @param {Object} gridOptions - grid options
    * @returns {Array<Object>} - tree dataset
@@ -351,7 +354,9 @@ export class TreeDataService {
 
   /**
    * Takes a hierarchical (tree) input array and sort it (if an `initialSort` exist, it will use that to sort)
-   * @param {Array<Object>} hierarchicalDataset - inpu
+   * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
+   * @param {Array<Object>} hierarchicalDataset - input hierarchical tree dataset
+   * @param {ColumnSort | ColumnSort[]} [inputColumnSorts] - column sort(s)
    * @returns {Object} sort result object that includes both the flat & tree data arrays
    */
   sortHierarchicalDataset<T>(hierarchicalDataset: T[], inputColumnSorts?: ColumnSort | ColumnSort[]) {

@@ -430,7 +430,10 @@ export class SortService {
     }
   }
 
-  /** Takes a hierarchical dataset and sort it recursively,  */
+  /**
+   * Takes a hierarchical dataset and sort it recursively by reference and returns both flat & hierarchical sorted datasets.
+   * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
+   */
   sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, emitSortChanged = false) {
     this.sortTreeData(hierarchicalDataset, sortColumns);
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';

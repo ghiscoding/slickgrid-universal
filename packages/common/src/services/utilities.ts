@@ -109,8 +109,9 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], op
 
 /**
  * Convert a hierarchical (tree) array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
+ * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
  * @param {Array<Object>} treeArray - input hierarchical (tree) array
- * @param {Object} options - you can provide "childrenPropName" (defaults to "children")
+ * @param {Object} options - you can provide "childrenPropName" and other options (defaults to "children")
  * @return {Array<Object>} output - Parent/Child array
  */
 export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggregators?: Aggregator[]; parentPropName?: string; childrenPropName?: string; hasChildrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }) {
@@ -149,6 +150,7 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggrega
 
 /**
  * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
+ * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
  * @param flatArray input array (flat dataset)
  * @param options you can provide the following tree data options (which are all prop names, except 1 boolean flag, to use or else use their defaults):: collapsedPropName, childrenPropName, parentPropName, identifierPropName and levelPropName and initiallyCollapsed (boolean)
  * @return roots - hierarchical (tree) data view array
