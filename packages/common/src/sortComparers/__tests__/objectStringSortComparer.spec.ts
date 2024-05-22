@@ -2,7 +2,7 @@ import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum';
 import { objectStringSortComparer } from '../objectStringSortComparer';
 
 describe('the Object w/String SortComparer', () => {
-  let collection = [];
+  let collection: any[] = [];
 
   beforeEach(() => {
     collection = [
@@ -16,7 +16,7 @@ describe('the Object w/String SortComparer', () => {
   });
 
   afterEach(() => {
-    collection = undefined;
+    collection = undefined as any;
   });
 
   it('should throw an error when "dataKey" is missing in the column definition', () => {
@@ -27,8 +27,8 @@ describe('the Object w/String SortComparer', () => {
       .toThrowError('Sorting a "FieldType.object" requires you to provide the "dataKey"');
   });
 
-  it('should return original unsorted array when no direction is provided', () => {
-    const direction = null;
+  it('should return original unsorted array when direction is undefined', () => {
+    const direction = undefined;
     const columnDef = { id: 'users', field: 'users', dataKey: 'firstName' };
 
     collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef));
