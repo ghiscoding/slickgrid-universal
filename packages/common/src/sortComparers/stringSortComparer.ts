@@ -3,10 +3,7 @@ import { removeAccentFromText } from '@slickgrid-universal/utils';
 import type { Column, GridOption, SortComparer } from '../interfaces/index';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
 
-export const stringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column, gridOptions?: GridOption) => {
-  if (sortDirection === undefined || sortDirection === null) {
-    sortDirection = SortDirectionNumber.neutral;
-  }
+export const stringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: SortDirectionNumber = SortDirectionNumber.neutral, sortColumn?: Column, gridOptions?: GridOption) => {
   let position = 0;
   const checkForUndefinedValues = sortColumn?.valueCouldBeUndefined ?? gridOptions?.cellValueCouldBeUndefined ?? false;
 
