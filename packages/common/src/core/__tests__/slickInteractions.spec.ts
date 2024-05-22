@@ -52,7 +52,7 @@ describe('Draggable class', () => {
     dg.destroy();
   });
 
-  it('should NOT trigger dragInit event when user is pressing mousedown with Ctrl key and is considered forbidden', () => {
+  it('should NOT trigger dragInit event when user is pressing mousedown and mousemove + Ctrl key combo that we considered as forbidden via "preventDragFromKeys"', () => {
     const dragInitSpy = jest.fn();
     const dragSpy = jest.fn();
     containerElement.className = 'slick-cell';
@@ -100,7 +100,7 @@ describe('Draggable class', () => {
     expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
   });
 
-  it('should NOT trigger dragInit,dragStart events when user is pressing mousedown with Shift key and is considered forbidden', () => {
+  it('should NOT trigger dragInit,dragStart events when user is pressing mousedown and mousemove + Meta key combo that we considered as forbidden via "preventDragFromKeys"', () => {
     const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
     const dragInitSpy = jest.fn();
     const dragSpy = jest.fn();
@@ -108,15 +108,15 @@ describe('Draggable class', () => {
     const dragEndSpy = jest.fn();
     containerElement.className = 'slick-cell';
 
-    dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', preventDragFromKeys: ['shiftKey'], onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
+    dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', preventDragFromKeys: ['metaKey'], onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
 
-    const mdEvt = new MouseEvent('mousedown', { shiftKey: true });
+    const mdEvt = new MouseEvent('mousedown', { metaKey: true });
     Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
     Object.defineProperty(mdEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     containerElement.dispatchEvent(mdEvt);
 
-    const mmEvt = new MouseEvent('mousemove', { shiftKey: true });
-    const muEvt = new MouseEvent('mouseup', { shiftKey: true });
+    const mmEvt = new MouseEvent('mousemove', { metaKey: true });
+    const muEvt = new MouseEvent('mouseup', { metaKey: true });
     Object.defineProperty(mmEvt, 'clientX', { writable: true, configurable: true, value: 12 });
     Object.defineProperty(mmEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });

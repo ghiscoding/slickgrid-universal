@@ -65,7 +65,7 @@ export function Draggable(options: DraggableOption) {
     }
   }
 
-  /** Do we want to prevent Drag events from happening (for example prevent onDrag when Ctrl key is pressed) */
+  /** Do we want to prevent Drag events from happening (for example prevent onDrag when Ctrl key is pressed while dragging) */
   function preventDrag(event: MouseEvent | TouchEvent | KeyboardEvent) {
     let eventPrevented = false;
     if (preventDragFromKeys) {
