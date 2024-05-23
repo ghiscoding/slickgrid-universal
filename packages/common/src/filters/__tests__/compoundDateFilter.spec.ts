@@ -516,7 +516,6 @@ describe('CompoundDateFilter', () => {
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     gridOptionMock.compoundOperatorAltTexts = {
       numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
-      text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
     };
 
     filter.init(filterArguments);
