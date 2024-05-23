@@ -11,7 +11,7 @@ import type {
   OperatorDetail,
 } from '../interfaces/index';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
-import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
 import { mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
 import { type SlickGrid } from '../core/index';
 
@@ -219,25 +219,31 @@ export class InputFilter implements Filter {
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getCompoundOperatorOptionValues(): OperatorDetail[] {
     const type = (this.columnDef.type && this.columnDef.type) ? this.columnDef.type : FieldType.string;
-    let optionValues = [];
+    let operatorList: OperatorDetail[];
+    let listType: 'text' | 'numeric' = 'text';
 
     if (this.columnFilter?.compoundOperatorList) {
-      return this.columnFilter.compoundOperatorList;
+      operatorList = this.columnFilter.compoundOperatorList;
     } else {
       switch (type) {
         case FieldType.string:
         case FieldType.text:
         case FieldType.readonly:
         case FieldType.password:
-          optionValues = compoundOperatorString(this.gridOptions, this.translaterService);
+          listType = 'text';
+          operatorList = compoundOperatorString(this.gridOptions, this.translaterService);
           break;
         default:
-          optionValues = compoundOperatorNumeric(this.gridOptions, this.translaterService);
+          listType = 'numeric';
+          operatorList = compoundOperatorNumeric(this.gridOptions, this.translaterService);
           break;
       }
     }
 
-    return optionValues;
+    // add alternate texts when provided
+    applyOperatorAltTextWhenExists(this.gridOptions, operatorList, listType);
+
+    return operatorList;
   }
 
   /**
