@@ -18,7 +18,7 @@ import type {
   GridOption,
   OperatorDetail,
 } from '../interfaces/index';
-import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
@@ -407,11 +407,17 @@ export class DateFilter implements Filter {
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getOperatorOptionValues(): OperatorDetail[] {
+    let operatorList: OperatorDetail[];
     if (this.columnFilter?.compoundOperatorList) {
-      return this.columnFilter.compoundOperatorList;
+      operatorList = this.columnFilter.compoundOperatorList;
     } else {
-      return compoundOperatorNumeric(this.gridOptions, this.translaterService);
+      operatorList = compoundOperatorNumeric(this.gridOptions, this.translaterService);
     }
+
+    // add alternate texts when provided
+    applyOperatorAltTextWhenExists(this.gridOptions, operatorList, 'numeric');
+
+    return operatorList;
   }
 
   /**

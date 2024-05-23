@@ -19,7 +19,7 @@ import type {
 } from '../interfaces/index';
 import type { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
-import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 
 const DEFAULT_SLIDER_TRACK_FILLED_COLOR = '#86bff8';
 const GAP_BETWEEN_SLIDER_HANDLES = 0;
@@ -374,10 +374,17 @@ export class SliderFilter implements Filter {
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getOperatorOptionValues(): OperatorDetail[] {
+    let operatorList: OperatorDetail[];
     if (this.columnFilter.compoundOperatorList) {
-      return this.columnFilter.compoundOperatorList;
+      operatorList = this.columnFilter.compoundOperatorList;
+    } else {
+      operatorList = compoundOperatorNumeric(this.gridOptions, this.translaterService);
     }
-    return compoundOperatorNumeric(this.gridOptions, this.translaterService);
+
+    // add alternate texts when provided
+    applyOperatorAltTextWhenExists(this.gridOptions, operatorList, 'numeric');
+
+    return operatorList;
   }
 
   /** handle value change event triggered, trigger filter callback & update "filled" class name */
