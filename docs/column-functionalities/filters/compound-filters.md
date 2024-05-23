@@ -181,7 +181,7 @@ this.columnDefinitions = [
 ### Compound Operator Alternate Texts
 You can change any of the compound operator text or description shown in the select dropdown list by using `compoundOperatorAltTexts` to provide alternate texts.
 
-The texts are separated into 2 groups (`numeric` or `text`) so that the alternate texts can be applied to all assigned filters, so the type will vary depending on which Filter you choose as shown below:
+The texts are separated into 2 groups (`numeric` or `text`) so that the alternate texts can be applied to all assigned filters, hence the type will vary depending on which Filter you choose as shown below:
 - `numeric`
   - `Filters.compoundDate`
   - `Filters.compoundInputNumber`
@@ -191,7 +191,7 @@ The texts are separated into 2 groups (`numeric` or `text`) so that the alternat
   - `Filters.compoundInputPassword`
   - `Filters.compoundInputText`
 
-> **Note** make sure to not use more than 2 or 3 characters for the operator text, exceeding that will require CSS style changes.
+> **Note** avoid using text with more than 2 or 3 characters for the operator text (which is roughly the width of the compound operator select dropdown), exceeding this limit will require CSS style changes.
 
 ```ts
 this.gridOptions = {
