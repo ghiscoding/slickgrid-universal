@@ -156,6 +156,7 @@ export class DateFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this._currentValue = '';
       this.searchTerms = [];
+      this._currentDateStrings = [];
       if (this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
       }
