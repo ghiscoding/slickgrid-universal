@@ -143,16 +143,17 @@ export class DateFilter implements Filter {
     // clear date picker + compound operator when Backspace is pressed
     this._bindEventService.bind(this._dateInputElm, 'keydown', ((e: KeyboardEvent) => {
       if (e.key === 'Backspace') {
-        this.clear(true);
+        this.clear(true, false);
       }
     }) as EventListener);
   }
 
   /** Clear the filter value */
-  clear(shouldTriggerQuery = true) {
+  clear(shouldTriggerQuery = true, shouldTriggerClearEvent = true) {
     if (this.calendarInstance) {
-      this._clearFilterTriggered = true;
+      this._clearFilterTriggered = shouldTriggerClearEvent;
       this._shouldTriggerQuery = shouldTriggerQuery;
+      this._currentValue = '';
       this.searchTerms = [];
       if (this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
@@ -160,6 +161,12 @@ export class DateFilter implements Filter {
       if (this.calendarInstance.input) {
         this.calendarInstance.settings.selected.dates = [];
         this._dateInputElm.value = '';
+        this.calendarInstance.update({
+          dates: true,
+          month: true,
+          year: true,
+          time: true,
+        });
       }
     }
     this.onTriggerEvent(new Event('keyup'));
