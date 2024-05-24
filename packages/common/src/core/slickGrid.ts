@@ -231,6 +231,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     createPreHeaderPanel: false,
     showPreHeaderPanel: false,
     preHeaderPanelHeight: 25,
+    preHeaderPanelWidth: 'auto', // mostly useful for Draggable Grouping dropzone to take full width
     showTopPanel: false,
     topPanelHeight: 25,
     formatterFactory: null,
