@@ -143,7 +143,7 @@ export class DateFilter implements Filter {
     // clear date picker + compound operator when Backspace is pressed
     this._bindEventService.bind(this._dateInputElm, 'keydown', ((e: KeyboardEvent) => {
       if (e.key === 'Backspace') {
-        this.clear(true, false);
+        this.clear(true, false); // clear value but trigger a value change event
       }
     }) as EventListener);
   }
@@ -151,6 +151,7 @@ export class DateFilter implements Filter {
   /** Clear the filter value */
   clear(shouldTriggerQuery = true, shouldTriggerClearEvent = true) {
     if (this.calendarInstance) {
+      // in some cases we don't want to trigger a Clear event, like a Backspace, we want to clear the value but trigger a value change instead
       this._clearFilterTriggered = shouldTriggerClearEvent;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this._currentValue = '';
