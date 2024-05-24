@@ -553,7 +553,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
-        itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet, this._gridOptions);
+        itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet, this._gridOptions, itemObj);
 
         rowOutputStrings.push(itemData);
         idx++;

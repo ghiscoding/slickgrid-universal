@@ -1,4 +1,4 @@
-import type { ExcelColumnMetadata, ExcelStyleInstruction } from 'excel-builder-vanilla';
+import type { ExcelColumnMetadata, ExcelStyleInstruction, StyleSheet } from 'excel-builder-vanilla';
 
 import type { Column } from './column.interface';
 import type { GridOption } from './gridOption.interface';
@@ -32,5 +32,5 @@ export interface GroupTotalExportOption {
   valueParserCallback?: GetGroupTotalValueCallback;
 }
 
-export type GetDataValueCallback = (data: Date | string | number, columnDef: Column, excelFormatterId: number | undefined, excelStylesheet: unknown, gridOptions: GridOption) => Date | string | number | ExcelColumnMetadata;
-export type GetGroupTotalValueCallback = (totals: any, columnDef: Column, groupType: string, excelStylesheet: unknown) => Date | string | number;
+export type GetDataValueCallback = (data: Date | string | number, columnDef: Column, excelFormatterId: number | undefined, excelStylesheet: StyleSheet, gridOptions: GridOption, item: any) => Date | string | number | ExcelColumnMetadata;
+export type GetGroupTotalValueCallback = (totals: any, columnDef: Column, groupType: string, excelStylesheet: StyleSheet) => Date | string | number;
