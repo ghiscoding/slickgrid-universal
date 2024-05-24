@@ -67,7 +67,7 @@ export default class Example19 {
         formatter: Formatters.multiple,
         params: {
           formatters: [
-            (row, cell, value, coldef, dataContext) => dataContext.price * dataContext.qty,
+            (_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty,
             Formatters.dollar
           ]
         },
@@ -83,7 +83,7 @@ export default class Example19 {
       {
         id: 'taxable', name: 'Taxable', field: 'taxable', cssClass: 'text-center', sortable: true, width: 60, filterable: true,
         formatter: Formatters.checkmarkMaterial,
-        exportCustomFormatter: (row, cell, val) => val ? '✓' : '',
+        exportCustomFormatter: (_row, _cell, val) => val ? '✓' : '',
         excelExportOptions: {
           style: {
             alignment: {
@@ -97,7 +97,7 @@ export default class Example19 {
         formatter: Formatters.multiple,
         params: {
           formatters: [
-            (row, cell, value, coldef, dataContext) => {
+            (_row, _cell, _value, _coldef, dataContext) => {
               if (dataContext.taxable) {
                 return dataContext.price * dataContext.qty * (this.taxRate / 100);
               }
@@ -120,7 +120,7 @@ export default class Example19 {
         cssClass: 'text-bold', formatter: Formatters.multiple,
         params: {
           formatters: [
-            (row, cell, value, coldef, dataContext) => {
+            (_row, _cell, _value, _coldef, dataContext) => {
               let subTotal = dataContext.price * dataContext.qty;
               if (dataContext.taxable) {
                 subTotal += subTotal * (this.taxRate / 100);
@@ -194,7 +194,7 @@ export default class Example19 {
   /**
    * We'll use a generic parser to reuse similar logic for all 3 calculable columns (SubTotal, Taxes, Total)
    */
-  excelColumnParser(_data, colDef, excelFormatterId, excelStylesheet, gridOptions, dataContext: GroceryItem) {
+  excelColumnParser(_data, colDef, excelFormatterId, _stylesheet, _gridOptions, dataContext: GroceryItem) {
     // assuming that we want to calculate: (Price * Qty) => Sub-Total
     const colOffset = 1; // 1st column is not exported
     const rowOffset = 3; // 1x Title, 1x Headers and Excel row starts at 1 => 3
