@@ -1,5 +1,7 @@
 # Quick start
 
+> **NOTE** the Documentations shown on this website are meant to be used with Slickgrid-Universal v4.x or higher, refer to the project [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for earlier versions of the project.
+
 #### Welcome to the Slickgrid-Universal lib!
 
 To get started follow any of these instruction Wikis depending on your choice of Framework.
