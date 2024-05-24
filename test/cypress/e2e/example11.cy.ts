@@ -169,7 +169,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('[data-test=undo-last-edit-btn]').click();
 
     cy.get('.vanilla-calendar')
-      .should('not.exist');
+      .should('not.be.visible');
 
     cy.get('.unsaved-editable-field')
       .should('have.length', 11);

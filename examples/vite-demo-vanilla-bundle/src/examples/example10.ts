@@ -60,6 +60,7 @@ export default class Example10 {
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     document.body.classList.add('material-theme');
   }
 
@@ -294,9 +295,11 @@ export default class Example10 {
     this.sgb?.paginationService?.goToLastPage();
   }
 
-  /** Dispatched event of a Grid State Changed event */
-  gridStateChanged(gridStateChanges: GridStateChange) {
-    console.log('GraphQL sample, Grid State changed:: ', gridStateChanges);
+  handleOnGridStateChanged(event) {
+    if (event?.detail) {
+      const gridStateChanges: GridStateChange = event.detail;
+      console.log('Grid State changed:: ', gridStateChanges.change);
+    }
   }
 
   saveCurrentGridState() {

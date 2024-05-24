@@ -196,6 +196,26 @@ describe('DateRangeFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'RangeExclusive', searchTerms: ['2001-01-02', '2001-01-13'], shouldTriggerQuery: true });
   });
 
+  it('should clear picker when pressing Backspace key', () => {
+    filterArguments.searchTerms = ['2001-01-02', '2001-01-13'];
+    mockColumn.filter!.operator = 'RangeInclusive';
+    const clearSpy = jest.spyOn(filter, 'clear');
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.show();
+    const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+
+    expect(calendarElm).toBeTruthy();
+    expect(filterInputElm.value).toBe('2001-01-02 — 2001-01-13');
+
+    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }));
+    expect(clearSpy).toHaveBeenCalled();
+    expect(filterInputElm.value).toBe('');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [], shouldTriggerQuery: true });
+  });
+
   it('should create the input filter with a default search terms when passed as a filter argument', () => {
     const selectedDates = ['2001-01-02', '2001-01-13'];
     filterArguments.searchTerms = ['2001-01-02', '2001-01-13'];

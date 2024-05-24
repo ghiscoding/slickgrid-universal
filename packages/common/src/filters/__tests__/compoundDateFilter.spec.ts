@@ -273,6 +273,7 @@ describe('CompoundDateFilter', () => {
     filterArguments.searchTerms = ['2000-01-01'];
     mockColumn.filter!.operator = '<=';
     const clearSpy = jest.spyOn(filter, 'clear');
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.show();
@@ -285,6 +286,7 @@ describe('CompoundDateFilter', () => {
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }));
     expect(clearSpy).toHaveBeenCalled();
     expect(filterInputElm.value).toBe('');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: null, shouldTriggerQuery: true });
   });
 
   it('should create the input filter with a default search terms when passed as a filter argument', () => {
