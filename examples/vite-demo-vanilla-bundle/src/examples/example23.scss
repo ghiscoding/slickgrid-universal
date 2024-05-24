@@ -1,0 +1,11 @@
+.grid23 {
+  .slick-row:not(.slick-group) >.cell-unselectable {
+    background: #ececec !important;
+    font-weight: bold;
+  }
+
+  .header-centered {
+    display: flex !important;
+    justify-content: center;
+  }
+}
