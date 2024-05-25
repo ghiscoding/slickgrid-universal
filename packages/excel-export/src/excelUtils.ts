@@ -137,7 +137,7 @@ export function getFormatterNumericDataType(formatter?: Formatter) {
 
 export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
   let format = '';
-  let groupType = '';
+  let groupType = columnDef.groupTotalsExcelExportOptions?.groupType || '';
   let stylesheetFormatter: undefined | ExcelFormatter;
   const fieldType = getColumnFieldType(columnDef);
 

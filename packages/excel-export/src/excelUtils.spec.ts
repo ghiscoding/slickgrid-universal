@@ -43,31 +43,31 @@ describe('excelUtils', () => {
 
   describe('getExcelNumberCallback() method', () => {
     it('should return same data when input not a number', () => {
-      const output = getExcelNumberCallback('something else', {} as Column, 3, {}, mockGridOptions);
+      const output = getExcelNumberCallback('something else', {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
       expect(output).toEqual({ metadata: { style: 3 }, value: 'something else' });
     });
 
     it('should return same data when input value is already a number', () => {
-      const output = getExcelNumberCallback(9.33, {} as Column, 3, {}, mockGridOptions);
+      const output = getExcelNumberCallback(9.33, {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
       expect(output).toEqual({ metadata: { style: 3 }, value: 9.33 });
     });
 
     it('should return parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('$1,209.33', {} as Column, 3, {}, mockGridOptions);
+      const output = getExcelNumberCallback('$1,209.33', {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
       expect(output).toEqual({ metadata: { style: 3 }, value: 1209.33 });
     });
 
     it('should return negative parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('-$1,209.33', {} as Column, 3, {}, mockGridOptions);
+      const output = getExcelNumberCallback('-$1,209.33', {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
       expect(output).toEqual({ metadata: { style: 3 }, value: -1209.33 });
     });
 
     it('should be able to provide a number with different decimal separator as formatter options and return parsed number when input value can be parsed to a number', () => {
       const output = getExcelNumberCallback(
-        '1 244 209,33€', {} as Column, 3, {},
+        '1 244 209,33€', {} as Column, 3, stylesheetStub,
         {
           ...mockGridOptions, formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' }
-        });
+        }, 0, {});
       expect(output).toEqual({ metadata: { style: 3 }, value: 1244209.33 });
     });
   });

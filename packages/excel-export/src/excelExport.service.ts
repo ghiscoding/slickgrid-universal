@@ -435,13 +435,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data
-          originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj));
+          originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
           originalDaraArray.push([this.readGroupedRowTitle(itemObj)]);
         } else if (itemObj.__groupTotals) {
           // else if the row is a Group By and we have agreggators, then a property of '__groupTotals' would exist under that object
-          originalDaraArray.push(this.readGroupedTotalRows(columns, itemObj));
+          originalDaraArray.push(this.readGroupedTotalRows(columns, itemObj, rowNumber));
         }
       }
     }
@@ -454,7 +454,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
    */
-  protected readRegularRowData(columns: Column[], row: number, itemObj: any): string[] {
+  protected readRegularRowData(columns: Column[], row: number, itemObj: any, dataRowIdx: number): string[] {
     let idx = 0;
     const rowOutputStrings = [];
     const columnsLn = columns.length;
@@ -553,7 +553,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
-        itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet, this._gridOptions, itemObj);
+        itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet, this._gridOptions, dataRowIdx, itemObj);
 
         rowOutputStrings.push(itemData);
         idx++;
@@ -584,7 +584,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * For example if we grouped by "salesRep" and we have a Sum Aggregator on "sales", then the returned output would be:: ["Sum 123$"]
    * @param itemObj
    */
-  protected readGroupedTotalRows(columns: Column[], itemObj: any): Array<ExcelColumnMetadata | string | number> {
+  protected readGroupedTotalRows(columns: Column[], itemObj: any, dataRowIdx: number): Array<ExcelColumnMetadata | string | number> {
     const groupingAggregatorRowText = this._excelExportOptions.groupingAggregatorRowText || '';
     const outputStrings: Array<ExcelColumnMetadata | string | number> = [groupingAggregatorRowText];
 
@@ -614,10 +614,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         const groupTotalParser = columnDef.groupTotalsExcelExportOptions?.valueParserCallback ?? getGroupTotalValue;
         if (itemObj[groupCellFormat.groupType]?.[columnDef.field] !== undefined) {
-          itemData = {
-            value: groupTotalParser(itemObj, columnDef, groupCellFormat.groupType, this._stylesheet),
-            metadata: { style: groupCellFormat.stylesheetFormatter?.id }
-          };
+          const groupData = groupTotalParser(itemObj, columnDef, groupCellFormat.groupType, groupCellFormat.stylesheetFormatter?.id, this._stylesheet, dataRowIdx);
+          itemData = (typeof groupData === 'object' && groupData.hasOwnProperty('metadata'))
+            ? groupData
+            : itemData = { value: groupData, metadata: { style: groupCellFormat.stylesheetFormatter?.id } };
         }
       } else if (columnDef.groupTotalsFormatter) {
         const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
