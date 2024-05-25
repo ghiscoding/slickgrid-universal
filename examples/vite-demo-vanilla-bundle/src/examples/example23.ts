@@ -1,4 +1,4 @@
-import { type Column, Editors, type GridOption, FileType, Formatters, FieldType, } from '@slickgrid-universal/common';
+import { type Column, Editors, type GridOption, Formatters, FieldType, type Formatter, } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
@@ -15,6 +15,35 @@ interface GroceryItem {
   taxes: number;
   total: number;
 }
+
+/**
+ * Check if the current item (cell) is editable or not
+ * @param {*} dataContext - item data context object
+ * @param {*} columnDef - column definition
+ * @param {*} grid - slickgrid grid object
+ * @returns {boolean} isEditable
+ */
+function checkItemIsEditable(_dataContext, columnDef, grid) {
+  const gridOptions = grid.getOptions();
+  const hasEditor = columnDef.editor;
+  const isGridEditable = gridOptions.editable;
+  const isEditable = (isGridEditable && hasEditor);
+
+  return isEditable;
+}
+
+const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
+  const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
+  value = (value === null || value === undefined) ? '' : value;
+  const divElm = document.createElement('div');
+  divElm.className = 'editing-field';
+  if (value instanceof HTMLElement) {
+    divElm.appendChild(value);
+  } else {
+    divElm.textContent = value;
+  }
+  return isEditableItem ? divElm : value;
+};
 
 export default class Example19 {
   columnDefinitions: Column<GroceryItem>[] = [];
@@ -50,19 +79,25 @@ export default class Example19 {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'sel',
-        name: '#',
-        field: 'id',
+        id: 'sel', name: '#', field: 'id',
         headerCssClass: 'header-centered',
         cssClass: 'cell-unselectable text-center',
         excludeFromExport: true,
         maxWidth: 30,
       },
-      { id: 'name', name: 'Name', field: 'name', sortable: true, width: 140, filterable: true, excelExportOptions: { width: 18 } },
-      { id: 'price', name: 'Price', field: 'price', type: FieldType.number, editor: { model: Editors.float }, sortable: true, width: 70, filterable: true },
+      {
+        id: 'name', name: 'Name', field: 'name', sortable: true, width: 140, filterable: true,
+        excelExportOptions: { width: 18 }
+      },
+      {
+        id: 'price', name: 'Price', field: 'price', type: FieldType.number,
+        editor: { model: Editors.float }, sortable: true, width: 70, filterable: true,
+        formatter: Formatters.dollar
+      },
       { id: 'qty', name: 'Quantity', field: 'qty', type: FieldType.number, editor: { model: Editors.integer }, sortable: true, width: 60, filterable: true },
       {
-        id: 'subTotal', name: 'Sub-Total', field: 'subTotal', cssClass: 'text-italic', type: FieldType.number, sortable: true, width: 70, filterable: true,
+        id: 'subTotal', name: 'Sub-Total', field: 'subTotal', cssClass: 'text-sub-total',
+        type: FieldType.number, sortable: true, width: 70, filterable: true,
         exportWithFormatter: false,
         formatter: Formatters.multiple,
         params: {
@@ -73,7 +108,7 @@ export default class Example19 {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, italic: true },
+            font: { outline: true, italic: true, color: 'FF215073' },
             format: '$0.00', // currency format
           },
           width: 12,
@@ -86,14 +121,13 @@ export default class Example19 {
         exportCustomFormatter: (_row, _cell, val) => val ? '✓' : '',
         excelExportOptions: {
           style: {
-            alignment: {
-              horizontal: 'center',
-            },
-          }
+            alignment: { horizontal: 'center' },
+          },
         }
       },
       {
-        id: 'taxes', name: 'Taxes', field: 'taxes', cssClass: 'text-italic', type: FieldType.number, sortable: true, width: 70, filterable: true,
+        id: 'taxes', name: 'Taxes', field: 'taxes', cssClass: 'text-taxes',
+        type: FieldType.number, sortable: true, width: 70, filterable: true,
         formatter: Formatters.multiple,
         params: {
           formatters: [
@@ -108,7 +142,7 @@ export default class Example19 {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, italic: true },
+            font: { outline: true, italic: true, color: 'FFC65911' },
             format: '$0.00', // currency format
           },
           width: 12,
@@ -117,7 +151,7 @@ export default class Example19 {
       },
       {
         id: 'total', name: 'Total', field: 'total', type: FieldType.number, sortable: true, width: 70, filterable: true,
-        cssClass: 'text-bold', formatter: Formatters.multiple,
+        cssClass: 'text-total', formatter: Formatters.multiple,
         params: {
           formatters: [
             (_row, _cell, _value, _coldef, dataContext) => {
@@ -132,7 +166,7 @@ export default class Example19 {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, bold: true },
+            font: { outline: true, bold: true, color: 'FF005A9E' },
             format: '$0.00', // currency format
           },
           width: 12,
@@ -142,6 +176,7 @@ export default class Example19 {
     ];
 
     this.gridOptions = {
+      autoAddCustomEditorFormatter: customEditableInputFormatter,
       gridHeight: 410,
       gridWidth: 750,
       enableCellNavigation: true,
@@ -155,8 +190,9 @@ export default class Example19 {
       externalResources: [this.excelExportService],
       enableExcelExport: true,
       excelExportOptions: {
-        filename: 'my-export',
+        filename: 'grocery-list',
         sanitizeDataExport: true,
+        sheetName: 'Grocery List',
         columnHeaderStyle: {
           font: { color: 'FFFFFFFF' },
           fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' }
@@ -188,7 +224,7 @@ export default class Example19 {
   }
 
   exportToExcel() {
-    this.excelExportService.exportToExcel({ filename: 'export', format: FileType.xlsx, });
+    this.excelExportService.exportToExcel();
   }
 
   /**

@@ -8,4 +8,16 @@
     display: flex !important;
     justify-content: center;
   }
+  .text-sub-total {
+    font-style: italic;
+    color: #215073;
+  }
+  .text-taxes {
+    font-style: italic;
+    color: #C65911;
+  }
+  .text-total {
+    font-weight: bold;
+    color: #005A9E;
+  }
 }
