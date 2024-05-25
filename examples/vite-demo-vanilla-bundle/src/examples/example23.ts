@@ -397,11 +397,9 @@ export default class Example19 {
         excelVal = `${excelPriceCol}*${excelQtyCol}`; // like "C4*D4"
         break;
       case 'taxes':
-        if (dataContext.taxable) {
-          excelVal = `${excelPriceCol}*${excelQtyCol}*${this.taxRate / 100}`;
-        } else {
-          excelVal = '';
-        }
+        excelVal = (dataContext.taxable)
+          ? `${excelPriceCol}*${excelQtyCol}*${this.taxRate / 100}`
+          : '';
         break;
       case 'total':
         excelVal = `(${excelPriceCol}*${excelQtyCol})+${excelTaxesCol}`;
