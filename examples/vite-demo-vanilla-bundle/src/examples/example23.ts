@@ -336,7 +336,7 @@ export default class Example19 {
     this.excelExportService.exportToExcel();
   }
 
-  excelGroupCellParser(totals: SlickGroupTotals, columnDef: Column, groupType, excelFormatterId: number | undefined, _stylesheet, dataRowIdx: number) {
+  excelGroupCellParser(totals: SlickGroupTotals, columnDef: Column, _groupType, excelFormatterId: number | undefined, _stylesheet, dataRowIdx: number) {
     const colOffset = 0; // col offset of 1x because we skipped 1st column OR 0 offset if we use a Group because the Group column replaces the skip
     const rowOffset = 3; // row offset of 3x because: 1x Title, 1x Headers and Excel row starts at 1 => 3
     const priceIdx = this.sgb.slickGrid?.getColumnIndex('price') || 0;
