@@ -4,20 +4,16 @@
     font-weight: bold;
   }
 
-  .header-centered {
-    display: flex !important;
-    justify-content: center;
-  }
   .text-sub-total {
     font-style: italic;
-    color: #215073;
+    color: rgb(33, 80, 115);
   }
   .text-taxes {
     font-style: italic;
-    color: #C65911;
+    color: rgb(198, 89, 17);
   }
   .text-total {
     font-weight: bold;
-    color: #005A9E;
+    color: rgb(0, 90, 158);
   }
 }

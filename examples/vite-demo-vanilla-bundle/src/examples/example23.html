@@ -13,6 +13,9 @@
 <h5 class="title is-5 mb-3">
   Calculate Totals via Custom Formatters in the UI, but use Excel Formula when exporting via <code>excelExportOptions.valueParserCallback</code>
 </h5>
+<h6 class="is-6 mb-4">
+  When Grouped we will also calculate the Group Totals in the UI via Group Formatter and we again use Excel Formula to calculate the Group Totals (sum) dynamically.
+</h6>
 
 <section class="row mb-2">
   <div class="mb-1">
@@ -20,13 +23,19 @@
       <span class="mdi mdi-file-excel-outline text-color-success"></span>
       <span>Export to Excel</span>
     </button>
-    <span class="ml-5 text-bold">
+    <span>
+      <button class="button is-small" onclick.delegate="groupByTaxable()" data-test="group-by-btn">
+        <span>Group by Taxable</span>
+      </button>
+    </span>
+    <span class="ml-6 text-bold">
       Tax Rate:
-      <input type="number" value.bind="taxRate" class="is-narrow input is-small" step="0.25" />
-      <button class="button is-small" onclick.delegate="changeTaxRate()" data-test="set-count-btn">
+      <input type="number" value.bind="taxRate" class="is-narrow input is-small" step="0.25" data-test="taxrate" />
+      <button class="button is-small" onclick.delegate="updateTaxRate()" data-test="update-btn">
         Update
       </button>
     </span>
+
   </div>
 </section>
 
