@@ -21,7 +21,9 @@ import { stripTags } from '@slickgrid-universal/utils';
 export type ExcelFormatter = object & { id: number; };
 
 // define all type of potential excel data function callbacks
-export const getExcelSameInputDataCallback: GetDataValueCallback = (data) => data;
+export const getExcelSameInputDataCallback: GetDataValueCallback = (data, _column, excelFormatterId) => {
+  return excelFormatterId !== undefined ? { value: data, metadata: { style: excelFormatterId } } : data;
+};
 export const getExcelNumberCallback: GetDataValueCallback = (data, column, excelFormatterId, _excelSheet, gridOptions) => ({
   value: typeof data === 'string' && /\d/g.test(data) ? parseNumberWithFormatterOptions(data, column, gridOptions) : data,
   metadata: { style: excelFormatterId }
