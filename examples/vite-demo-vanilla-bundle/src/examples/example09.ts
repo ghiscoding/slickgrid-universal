@@ -110,10 +110,9 @@ export default class Example09 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true
       },
-      // TODO: doesn't work in combo with compoundOperatorList
       compoundOperatorAltTexts: {
         // where '=' is any of the `OperatorString` type shown above
-        text: { 'Custom': { operatorAlt: '⊂', descAlt: 'SQL Like' } },
+        text: { 'Custom': { operatorAlt: '%%', descAlt: 'SQL Like' } },
       },
       enableCellNavigation: true,
       enableFiltering: true,
@@ -142,10 +141,14 @@ export default class Example09 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
           enableSelect: this.isSelectEnabled,
           enableExpand: this.isExpandEnabled,
-          filterPredicate: (args) => {
+          filterQueryOverride: (args) => {
             const { fieldName, columnDef, columnFilterOperator, searchValue } = args;
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
-              return `matchesPattern(${fieldName}, %5EA${searchValue.replace(/\*/g, '.*')}$)`;
+              let matchesSearch = (searchValue as string).replace(/\*/g, '.*');
+              matchesSearch = matchesSearch.slice(0, 1) + '%5E' + matchesSearch.slice(1);
+              matchesSearch = matchesSearch.slice(0, -1) + '$\'';
+
+              return `matchesPattern(${fieldName}, ${matchesSearch})`;
             }
           },
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
@@ -241,6 +244,11 @@ export default class Example09 {
         }
         if (param.includes('$filter=')) {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
+          if (filterBy.includes('matchespattern')) {
+            const filterMatch = filterBy.match(/matchespattern\(([a-zA-Z]+),\s'%5e(.*?)'\)/i);
+            const fieldName = filterMatch[1].trim();
+            columnFilters[fieldName] = { type: 'matchespattern', term: '^' + filterMatch[2].trim() };
+          }
           if (filterBy.includes('contains')) {
             const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/);
             const fieldName = filterMatch[1].trim();
@@ -355,6 +363,7 @@ export default class Example09 {
                   case 'starts': return filterTerm.toLowerCase().startsWith(term1);
                   case 'starts+ends': return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
                   case 'substring': return filterTerm.toLowerCase().includes(term1);
+                  case 'matchespattern': return new RegExp((term1 as string).replaceAll('%25', '.*'), 'i').test(filterTerm);
                 }
               }
             });
