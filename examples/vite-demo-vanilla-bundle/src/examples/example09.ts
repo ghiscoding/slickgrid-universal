@@ -81,10 +81,12 @@ export default class Example09 {
         filter: {
           model: Filters.compoundInput,
           compoundOperatorList: [
+            { operator: '', desc: 'Contains' },
+            { operator: '<>', desc: 'Not Contains' },
+            { operator: '=', desc: 'Equals' },
+            { operator: '!=', desc: 'Not equal to' },
+            { operator: 'a*', desc: 'Starts With' },
             { operator: 'Custom', desc: 'SQL Like' },
-            { operator: '=', desc: 'Equal to' },
-            { operator: '<', desc: 'Less than' },
-            { operator: '>', desc: 'Greater than' },
           ],
         }
       },
