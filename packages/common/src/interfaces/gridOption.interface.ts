@@ -656,7 +656,7 @@ export interface GridOption<C extends Column = Column> {
   /** Extra pre-header panel height (on top of column header) */
   preHeaderPanelHeight?: number;
 
-  /** Extra pre-header panel (on top of column header) width, it could be a number (pixels) or a string ("100%") */
+  /** Defaults to "auto", extra pre-header panel (on top of column header) width, it could be a number (pixels) or a string ("100%" or "auto") */
   preHeaderPanelWidth?: number | string;
 
   /** Do we want to preserve copied selection on paste? */
@@ -667,6 +667,9 @@ export interface GridOption<C extends Column = Column> {
 
   /** Defaults to false, do we want prevent the usage of DocumentFragment by the library (might not be supported by all environments, e.g. not supported by Salesforce) */
   preventDocumentFragmentUsage?: boolean;
+
+  /** Defaults to `['ctrlKey', 'metaKey']`, list of keys that when pressed will prevent Draggable events from triggering (e.g. prevent onDrag when Ctrl key is pressed while dragging) */
+  preventDragFromKeys?: Array<'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey'>;
 
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];

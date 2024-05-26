@@ -133,9 +133,6 @@ export function compoundOperatorString(gridOptions: GridOption, translaterServic
     { operator: '*z', desc: getOutputText('ENDS_WITH', 'TEXT_ENDS_WITH', 'Ends with', gridOptions, translaterService) },
   ];
 
-  // add alternate texts when provided
-  applyOperatorAltTextWhenExists(gridOptions, operatorList, 'text');
-
   return operatorList;
 }
 
@@ -151,14 +148,11 @@ export function compoundOperatorNumeric(gridOptions: GridOption, translaterServi
     { operator: '<>', desc: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) }
   ];
 
-  // add alternate texts when provided
-  applyOperatorAltTextWhenExists(gridOptions, operatorList, 'numeric');
-
   return operatorList;
 }
 
 // internal function to apply Operator detail alternate texts when they exists
-function applyOperatorAltTextWhenExists(gridOptions: GridOption, operatorDetailList: OperatorDetail[], filterType: 'text' | 'numeric') {
+export function applyOperatorAltTextWhenExists(gridOptions: GridOption, operatorDetailList: OperatorDetail[], filterType: 'text' | 'numeric') {
   if (gridOptions.compoundOperatorAltTexts) {
     for (const opDetail of operatorDetailList) {
       if (gridOptions.compoundOperatorAltTexts.hasOwnProperty(filterType)) {

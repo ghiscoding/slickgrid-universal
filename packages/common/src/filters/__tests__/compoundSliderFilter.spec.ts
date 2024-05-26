@@ -395,6 +395,33 @@ describe('CompoundSliderFilter', () => {
     expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Not equal to');
   });
 
+  it('should have custom compound operator list including alternate texts and show up in the operator select dropdown options list', () => {
+    mockColumn.outputType = null as any;
+    filterArguments.searchTerms = ['9'];
+    mockColumn.filter!.compoundOperatorList = [
+      { operator: '', desc: '' },
+      { operator: '=', desc: 'Equal to' },
+      { operator: '<', desc: 'Less than' },
+      { operator: '>', desc: 'Greater than' },
+      { operator: 'Custom', desc: 'SQL LIKE' },
+    ];
+    gridOptionMock.compoundOperatorAltTexts = {
+      numeric: {
+        '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' },
+        'Custom': { operatorAlt: '%', descAlt: 'alternate SQL LIKE' }
+      }
+    };
+
+    filter.init(filterArguments);
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');
+
+    expect(filterOperatorElm[0][0].title).toBe('');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('eq alternate numeric equal description');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('> Greater than');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('% alternate SQL LIKE');
+  });
+
   describe('with French I18N translations', () => {
     beforeEach(() => {
       gridOptionMock.enableTranslate = true;

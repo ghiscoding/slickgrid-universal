@@ -30,7 +30,7 @@ describe('Draggable class', () => {
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragInitSpy });
 
-    containerElement.dispatchEvent(new Event('mousedown'));
+    containerElement.dispatchEvent(new MouseEvent('mousedown'));
 
     expect(dg).toBeTruthy();
     expect(dragInitSpy).not.toHaveBeenCalled();
@@ -43,10 +43,26 @@ describe('Draggable class', () => {
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragSpy, onDragInit: dragInitSpy });
 
-    containerElement.dispatchEvent(new Event('mousedown'));
+    containerElement.dispatchEvent(new MouseEvent('mousedown'));
 
     expect(dg).toBeTruthy();
     expect(dragInitSpy).toHaveBeenCalled();
+    expect(dragSpy).not.toHaveBeenCalled();
+
+    dg.destroy();
+  });
+
+  it('should NOT trigger dragInit event when user is pressing mousedown and mousemove + Ctrl key combo that we considered as forbidden via "preventDragFromKeys"', () => {
+    const dragInitSpy = jest.fn();
+    const dragSpy = jest.fn();
+    containerElement.className = 'slick-cell';
+
+    dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', preventDragFromKeys: ['ctrlKey'], onDrag: dragSpy, onDragInit: dragInitSpy });
+
+    containerElement.dispatchEvent(new MouseEvent('mousedown', { ctrlKey: true }));
+
+    expect(dg).toBeTruthy();
+    expect(dragInitSpy).not.toHaveBeenCalled();
     expect(dragSpy).not.toHaveBeenCalled();
 
     dg.destroy();
@@ -62,13 +78,13 @@ describe('Draggable class', () => {
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
 
-    const mdEvt = new Event('mousedown');
+    const mdEvt = new MouseEvent('mousedown');
     Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
     Object.defineProperty(mdEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     containerElement.dispatchEvent(mdEvt);
 
-    const mmEvt = new Event('mousemove');
-    const muEvt = new Event('mouseup');
+    const mmEvt = new MouseEvent('mousemove');
+    const muEvt = new MouseEvent('mouseup');
     Object.defineProperty(mmEvt, 'clientX', { writable: true, configurable: true, value: 12 });
     Object.defineProperty(mmEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });
@@ -81,6 +97,38 @@ describe('Draggable class', () => {
     expect(dragStartSpy).toHaveBeenCalled();  // TODO: revisit calledWith X/Y pos, after migrating to TS class
     expect(dragSpy).toHaveBeenCalled();
     expect(dragEndSpy).toHaveBeenCalled();
+    expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
+  });
+
+  it('should NOT trigger dragInit,dragStart events when user is pressing mousedown and mousemove + Meta key combo that we considered as forbidden via "preventDragFromKeys"', () => {
+    const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
+    const dragInitSpy = jest.fn();
+    const dragSpy = jest.fn();
+    const dragStartSpy = jest.fn();
+    const dragEndSpy = jest.fn();
+    containerElement.className = 'slick-cell';
+
+    dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', preventDragFromKeys: ['metaKey'], onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
+
+    const mdEvt = new MouseEvent('mousedown', { metaKey: true });
+    Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
+    Object.defineProperty(mdEvt, 'clientY', { writable: true, configurable: true, value: 10 });
+    containerElement.dispatchEvent(mdEvt);
+
+    const mmEvt = new MouseEvent('mousemove', { metaKey: true });
+    const muEvt = new MouseEvent('mouseup', { metaKey: true });
+    Object.defineProperty(mmEvt, 'clientX', { writable: true, configurable: true, value: 12 });
+    Object.defineProperty(mmEvt, 'clientY', { writable: true, configurable: true, value: 10 });
+    Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });
+    Object.defineProperty(muEvt, 'clientY', { writable: true, configurable: true, value: 10 });
+    document.body.dispatchEvent(mmEvt);
+    document.body.dispatchEvent(muEvt);
+
+    expect(dg).toBeTruthy();
+    expect(dragInitSpy).not.toHaveBeenCalledWith(mdEvt, { startX: 10, startY: 10, deltaX: 2, deltaY: 0, dragHandle: containerElement, dragSource: containerElement, target: document.body });
+    expect(dragStartSpy).not.toHaveBeenCalled();
+    expect(dragSpy).not.toHaveBeenCalled();
+    expect(dragEndSpy).not.toHaveBeenCalled();
     expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
   });
 });
@@ -188,13 +236,13 @@ describe('Resizable class', () => {
 
     rsz = Resizable({ resizeableElement: containerElement, resizeableHandleElement: containerElement, onResize: resizeSpy, onResizeStart: resizeStartSpy, onResizeEnd: resizeEndSpy });
 
-    const mdEvt = new Event('mousedown');
+    const mdEvt = new MouseEvent('mousedown');
     Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
     Object.defineProperty(mdEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     containerElement.dispatchEvent(mdEvt);
 
-    const mmEvt = new Event('mousemove');
-    const muEvt = new Event('mouseup');
+    const mmEvt = new MouseEvent('mousemove');
+    const muEvt = new MouseEvent('mouseup');
     Object.defineProperty(mmEvt, 'clientX', { writable: true, configurable: true, value: 12 });
     Object.defineProperty(mmEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });

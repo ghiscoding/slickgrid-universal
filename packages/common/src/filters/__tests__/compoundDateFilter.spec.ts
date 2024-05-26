@@ -273,6 +273,7 @@ describe('CompoundDateFilter', () => {
     filterArguments.searchTerms = ['2000-01-01'];
     mockColumn.filter!.operator = '<=';
     const clearSpy = jest.spyOn(filter, 'clear');
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.show();
@@ -285,6 +286,7 @@ describe('CompoundDateFilter', () => {
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }));
     expect(clearSpy).toHaveBeenCalled();
     expect(filterInputElm.value).toBe('');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: null, shouldTriggerQuery: true });
   });
 
   it('should create the input filter with a default search terms when passed as a filter argument', () => {
@@ -516,7 +518,6 @@ describe('CompoundDateFilter', () => {
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     gridOptionMock.compoundOperatorAltTexts = {
       numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
-      text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
     };
 
     filter.init(filterArguments);
@@ -529,6 +530,33 @@ describe('CompoundDateFilter', () => {
     expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('> Greater than');
     expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('>= Greater than or equal to');
     expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Not equal to');
+  });
+
+  it('should have custom compound operator list including alternate texts and show up in the operator select dropdown options list', () => {
+    mockColumn.outputType = null as any;
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
+    mockColumn.filter!.compoundOperatorList = [
+      { operator: '', desc: '' },
+      { operator: '=', desc: 'Equal to' },
+      { operator: '<', desc: 'Less than' },
+      { operator: '>', desc: 'Greater than' },
+      { operator: 'Custom', desc: 'SQL LIKE' },
+    ];
+    gridOptionMock.compoundOperatorAltTexts = {
+      numeric: {
+        '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' },
+        'Custom': { operatorAlt: '%', descAlt: 'alternate SQL LIKE' }
+      }
+    };
+
+    filter.init(filterArguments);
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');
+
+    expect(filterOperatorElm[0][0].title).toBe('');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('eq alternate numeric equal description');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('> Greater than');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('% alternate SQL LIKE');
   });
 
   describe('with French I18N translations', () => {

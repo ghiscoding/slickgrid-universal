@@ -8,6 +8,13 @@ const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
 const presetHighestDay = format(addDay(new Date(), 20), 'YYYY-MM-DD');
 
 describe('Example 10 - GraphQL Grid', () => {
+  beforeEach(() => {
+    // create a console.log spy for later use
+    cy.window().then((win) => {
+      cy.spy(win.console, 'log');
+    });
+  });
+
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example10`);
     cy.get('h3').should('contain', 'Example 10 - Grid with GraphQL Backend Service');
@@ -797,6 +804,53 @@ describe('Example 10 - GraphQL Grid', () => {
                 ],locale:"en",userId:123){totalCount,nodes{id,name,gender,company,billing{address{street,zip}},finish},pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}`));
             });
         });
+      });
+    });
+  });
+
+  describe('Grid State Changes', () => {
+    it('should re-initialize grid for offset pagination', () => {
+      cy.get('[data-test=offset]').click();
+      cy.get('[data-test="reset-presets"]').click();
+
+      // the page number input should be back to input
+      cy.get('[data-test=page-number-input]').should('exist')
+        .invoke('val')
+        .then(text => expect(text).to.eq('2'));
+    });
+
+    it('should have GraphQL query back to defined Grid Presets', () => {
+      cy.get('[data-test=status]').should('contain', 'finished');
+
+      cy.get('[data-test=graphql-query-result]')
+        .should(($span) => {
+          const text = removeSpaces($span.text()); // remove all white spaces
+          expect(text).to.eq(removeSpaces(`query{users(first:20,offset:20,
+            orderBy:[{field:"name",direction:ASC},{field:"company",direction:DESC}],
+            filterBy:[
+              {field:"gender",operator:EQ,value:"male"},
+              {field:"name",operator:StartsWith,value:"Joh"},{field:"name",operator:EndsWith,value:"oe"},
+              {field:"company",operator:IN,value:"xyz"},{field:"finish",operator:GE,value:"${presetLowestDay}"},{field:"finish",operator:LE,value:"${presetHighestDay}"}
+            ],locale:"en",userId:123){
+              totalCount,nodes{id,name,gender,company,billing{address{street,zip}},finish}}}`));
+        });
+    });
+
+    it('should expect 1 event change Finish filter to empty and 1 event for the pagination change', () => {
+      cy.get('.search-filter.filter-finish').click();
+      cy.wait(20);
+      cy.get('.search-filter.filter-finish input.date-picker').type('{backspace}', { force: true });
+
+      cy.window().then((win) => {
+        expect(win.console.log).to.have.callCount(2);
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', {
+          newValues: [
+            { columnId: 'gender', operator: 'EQ', searchTerms: ['male'] },
+            { columnId: 'name', operator: 'StartsWithEndsWith', searchTerms: ['Joh*oe'] },
+            { columnId: 'company', operator: 'IN', searchTerms: ['xyz'] },
+          ], type: 'filter'
+        });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 20 }, type: 'pagination' });
       });
     });
   });

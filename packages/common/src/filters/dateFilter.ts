@@ -18,7 +18,7 @@ import type {
   GridOption,
   OperatorDetail,
 } from '../interfaces/index';
-import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
@@ -143,23 +143,32 @@ export class DateFilter implements Filter {
     // clear date picker + compound operator when Backspace is pressed
     this._bindEventService.bind(this._dateInputElm, 'keydown', ((e: KeyboardEvent) => {
       if (e.key === 'Backspace') {
-        this.clear(true);
+        this.clear(true, false); // clear value but trigger a value change event
       }
     }) as EventListener);
   }
 
   /** Clear the filter value */
-  clear(shouldTriggerQuery = true) {
+  clear(shouldTriggerQuery = true, shouldTriggerClearEvent = true) {
     if (this.calendarInstance) {
-      this._clearFilterTriggered = true;
+      // in some cases we don't want to trigger a Clear event, like a Backspace, we want to clear the value but trigger a value change instead
+      this._clearFilterTriggered = shouldTriggerClearEvent;
       this._shouldTriggerQuery = shouldTriggerQuery;
+      this._currentValue = '';
       this.searchTerms = [];
+      this._currentDateStrings = [];
       if (this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
       }
       if (this.calendarInstance.input) {
         this.calendarInstance.settings.selected.dates = [];
         this._dateInputElm.value = '';
+        this.calendarInstance.update({
+          dates: true,
+          month: true,
+          year: true,
+          time: true,
+        });
       }
     }
     this.onTriggerEvent(new Event('keyup'));
@@ -407,11 +416,17 @@ export class DateFilter implements Filter {
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getOperatorOptionValues(): OperatorDetail[] {
+    let operatorList: OperatorDetail[];
     if (this.columnFilter?.compoundOperatorList) {
-      return this.columnFilter.compoundOperatorList;
+      operatorList = this.columnFilter.compoundOperatorList;
     } else {
-      return compoundOperatorNumeric(this.gridOptions, this.translaterService);
+      operatorList = compoundOperatorNumeric(this.gridOptions, this.translaterService);
     }
+
+    // add alternate texts when provided
+    applyOperatorAltTextWhenExists(this.gridOptions, operatorList, 'numeric');
+
+    return operatorList;
   }
 
   /**

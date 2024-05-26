@@ -639,7 +639,7 @@ export default class Example12 {
   }
 
   handleOnGridStateChanged(event) {
-    // console.log('handleOnGridStateChanged', event?.detail ?? '')
+    // console.log('handleOnGridStateChanged', event?.detail ?? '');
     const gridState = event?.detail?.gridState;
     if (Array.isArray(gridState?.rowSelection.dataContextIds)) {
       this.isMassSelectionDisabled = gridState.rowSelection.dataContextIds.length === 0;

@@ -562,8 +562,8 @@ describe('ExcelExportService', () => {
                   { metadata: { style: 1, }, value: 'StartDate', },
                   { metadata: { style: 1, }, value: 'EndDate', },
                 ],
-                ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20T18:19:19.992Z', ''],
-                ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09T18:19:19.992Z', '2024-01-02'],
+                ['1E06', 'John', 'X', { metadata: { style: 4 }, value: 'SALES_REP' }, '2005-12-20T18:19:19.992Z', ''],
+                ['1E09', 'Jane', 'Doe', { metadata: { style: 4 }, value: 'HUMAN_RESOURCES' }, '2010-10-09T18:19:19.992Z', '2024-01-02'],
               ]
             })]
           }),
@@ -898,15 +898,8 @@ describe('ExcelExportService', () => {
           }),
           'export.xlsx', { mimeType: mimeTypeXLSX }
         );
-        expect(service.groupTotalExcelFormats.order).toEqual({
-          groupType: 'sum',
-          stylesheetFormatter: {
-            fontId: 2,
-            id: 5,
-            numFmtId: 103,
-          }
-        });
-        expect(parserCallbackSpy).toHaveBeenCalledWith(22, mockColumns[6], undefined, expect.anything(), mockGridOptions);
+        expect(service.groupTotalExcelFormats.order).toEqual({ groupType: 'sum', stylesheetFormatter: { fontId: 2, id: 5, numFmtId: 103 } });
+        expect(parserCallbackSpy).toHaveBeenNthCalledWith(1, 22, mockColumns[6], undefined, expect.anything(), mockGridOptions, 1, expect.objectContaining({ firstName: 'John' }));
       });
     });
 
@@ -1096,7 +1089,7 @@ describe('ExcelExportService', () => {
           .mockReturnValueOnce(mockCollection[6])
           .mockReturnValueOnce(mockCollection[7]);
         jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
-        groupTotalParserCallbackSpy.mockReturnValue(9999);
+        groupTotalParserCallbackSpy.mockReturnValue({ value: 9999, metadata: { style: 4 } });
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
