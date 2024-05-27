@@ -429,6 +429,10 @@ export default class Example19 {
     return datasetTmp;
   }
 
+  clearGrouping() {
+    this.sgb?.dataView?.setGrouping([]);
+  }
+
   groupByTaxable() {
     const checkIcon = 'mdi-check-box-outline';
     const uncheckIcon = 'mdi-checkbox-blank-outline';

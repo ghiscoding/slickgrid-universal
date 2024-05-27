@@ -26,9 +26,12 @@
       <button class="button is-small" onclick.delegate="groupByTaxable()" data-test="group-by-btn">
         <span>Group by Taxable</span>
       </button>
+      <button class="button is-small" data-test="clear-grouping-btn" onclick.delegate="clearGrouping()">
+        <span>Clear grouping</span>
+      </button>
     </span>
     <span class="ml-6 text-bold">
-      Tax Rate:
+      Tax Rate (%):
       <input type="number" value.bind="taxRate" class="is-narrow input is-small" step="0.25" data-test="taxrate" />
       <button class="button is-small" onclick.delegate="updateTaxRate()" data-test="update-btn">
         Update
