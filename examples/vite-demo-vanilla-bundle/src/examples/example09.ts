@@ -8,6 +8,8 @@ import './example09.scss';
 
 const STORAGE_KEY = 'slickgrid-universal-example09-gridstate';
 const defaultPageSize = 20;
+const CARET_HTML_ESCAPED = '%5E';
+const PERCENT_HTML_ESCAPED = '%25';
 
 export default class Example09 {
   private _bindingEventService: BindingEventService;
@@ -147,7 +149,7 @@ export default class Example09 {
             const { fieldName, columnDef, columnFilterOperator, searchValue } = args;
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               let matchesSearch = (searchValue as string).replace(/\*/g, '.*');
-              matchesSearch = matchesSearch.slice(0, 1) + '%5E' + matchesSearch.slice(1);
+              matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
               matchesSearch = matchesSearch.slice(0, -1) + '$\'';
 
               return `matchesPattern(${fieldName}, ${matchesSearch})`;
@@ -247,7 +249,8 @@ export default class Example09 {
         if (param.includes('$filter=')) {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
           if (filterBy.includes('matchespattern')) {
-            const filterMatch = filterBy.match(/matchespattern\(([a-zA-Z]+),\s'%5e(.*?)'\)/i);
+            const regex = new RegExp(`matchespattern\\(([a-zA-Z]+),\\s'${CARET_HTML_ESCAPED}(.*?)'\\)`, 'i');
+            const filterMatch = filterBy.match(regex);
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'matchespattern', term: '^' + filterMatch[2].trim() };
           }
@@ -365,7 +368,7 @@ export default class Example09 {
                   case 'starts': return filterTerm.toLowerCase().startsWith(term1);
                   case 'starts+ends': return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
                   case 'substring': return filterTerm.toLowerCase().includes(term1);
-                  case 'matchespattern': return new RegExp((term1 as string).replaceAll('%25', '.*'), 'i').test(filterTerm);
+                  case 'matchespattern': return new RegExp((term1 as string).replaceAll(PERCENT_HTML_ESCAPED, '.*'), 'i').test(filterTerm);
                 }
               }
             });
