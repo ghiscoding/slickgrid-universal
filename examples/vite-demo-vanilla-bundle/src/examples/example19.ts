@@ -145,14 +145,6 @@ export default class Example19 {
     return datasetTmp;
   }
 
-  generatePhoneNumber(): string {
-    let phone = '';
-    for (let i = 0; i < 10; i++) {
-      phone += Math.round(Math.random() * 9) + '';
-    }
-    return phone;
-  }
-
   // Toggle the Grid Pagination
   // IMPORTANT, the Pagination MUST BE CREATED on initial page load before you can start toggling it
   // Basically you cannot toggle a Pagination that doesn't exist (must created at the time as the grid)
