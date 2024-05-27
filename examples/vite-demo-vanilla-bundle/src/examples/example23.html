@@ -18,7 +18,7 @@
 
 <section class="row mb-2">
   <div class="mb-1">
-    <button class="button is-small" data-test="export-excel-btn" onclick.delegate="exportToExcel()">
+    <button class="button is-small" onclick.delegate="exportToExcel()" data-test="export-excel-btn">
       <span class="mdi mdi-file-excel-outline text-color-success"></span>
       <span>Export to Excel</span>
     </button>
@@ -26,7 +26,7 @@
       <button class="button is-small" onclick.delegate="groupByTaxable()" data-test="group-by-btn">
         <span>Group by Taxable</span>
       </button>
-      <button class="button is-small" data-test="clear-grouping-btn" onclick.delegate="clearGrouping()">
+      <button class="button is-small" onclick.delegate="clearGrouping()" data-test="clear-grouping-btn">
         <span>Clear grouping</span>
       </button>
     </span>
