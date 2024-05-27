@@ -21,14 +21,14 @@ import { stripTags } from '@slickgrid-universal/utils';
 export type ExcelFormatter = object & { id: number; };
 
 // define all type of potential excel data function callbacks
-export const getExcelSameInputDataCallback: GetDataValueCallback = (data, _column, excelFormatterId) => {
-  return excelFormatterId !== undefined
-    ? { value: data, metadata: { style: excelFormatterId } }
+export const getExcelSameInputDataCallback: GetDataValueCallback = (data, { excelFormatId }) => {
+  return excelFormatId !== undefined
+    ? { value: data, metadata: { style: excelFormatId } }
     : data;
 };
-export const getExcelNumberCallback: GetDataValueCallback = (data, column, excelFormatterId, _excelSheet, gridOptions) => ({
-  value: typeof data === 'string' && /\d/g.test(data) ? parseNumberWithFormatterOptions(data, column, gridOptions) : data,
-  metadata: { style: excelFormatterId }
+export const getExcelNumberCallback: GetDataValueCallback = (data, { columnDef, excelFormatId, gridOptions }) => ({
+  value: typeof data === 'string' && /\d/g.test(data) ? parseNumberWithFormatterOptions(data, columnDef, gridOptions) : data,
+  metadata: { style: excelFormatId }
 });
 
 /** Parse a number which the user might have provided formatter options (for example a user might have provided { decimalSeparator: ',', thousandSeparator: ' '}) */
@@ -45,20 +45,20 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
 }
 
 /** use different Excel Stylesheet Format as per the Field Type */
-export function useCellFormatByFieldType(stylesheet: StyleSheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, autoDetect = true) {
+export function useCellFormatByFieldType(stylesheet: StyleSheet, excelFormats: any, columnDef: Column, grid: SlickGrid, autoDetect = true) {
   const fieldType = getColumnFieldType(columnDef);
-  let stylesheetFormatterId: number | undefined;
+  let excelFormatId: number | undefined;
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
 
   if (fieldType === FieldType.number && autoDetect) {
-    stylesheetFormatterId = getExcelFormatFromGridFormatter(stylesheet, stylesheetFormatters, columnDef, grid, 'cell').stylesheetFormatter.id;
+    excelFormatId = getExcelFormatFromGridFormatter(stylesheet, excelFormats, columnDef, grid, 'cell').excelFormat.id;
     callback = getExcelNumberCallback;
   }
-  return { stylesheetFormatterId, getDataValueParser: callback };
+  return { excelFormatId, getDataValueParser: callback };
 }
 
-export function getGroupTotalValue(totals: any, columnDef: Column, groupType: string) {
-  return totals?.[groupType]?.[columnDef.field] ?? 0;
+export function getGroupTotalValue(totals: any, args: { columnDef: Column, groupType: string; }) {
+  return totals?.[args.groupType]?.[args.columnDef.field] ?? 0;
 }
 
 /** Get numeric formatter options when defined or use default values (minDecimal, maxDecimal, thousandSeparator, decimalSeparator, wrapNegativeNumber) */
@@ -135,10 +135,10 @@ export function getFormatterNumericDataType(formatter?: Formatter) {
   return dataType;
 }
 
-export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
+export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, excelFormats: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
   let format = '';
   let groupType = columnDef.groupTotalsExcelExportOptions?.groupType || '';
-  let stylesheetFormatter: undefined | ExcelFormatter;
+  let excelFormat: undefined | ExcelFormatter;
   const fieldType = getColumnFieldType(columnDef);
 
   if (formatterType === 'group') {
@@ -167,7 +167,7 @@ export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, styleshe
         groupType = 'sum';
         break;
       default:
-        stylesheetFormatter = stylesheetFormatters.numberFormatter;
+        excelFormat = excelFormats.numberFormatter;
         break;
     }
   } else {
@@ -178,15 +178,15 @@ export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, styleshe
             // when formatter is a Formatter.multiple, we need to loop through each of its formatter to find the best possible Excel format
             if (Array.isArray(columnDef.params?.formatters)) {
               for (const formatter of columnDef.params.formatters) {
-                const { stylesheetFormatter: stylesheetFormatterResult } = getExcelFormatFromGridFormatter(stylesheet, stylesheetFormatters, { ...columnDef, formatter } as Column, grid, formatterType);
-                if (stylesheetFormatterResult !== stylesheetFormatters.numberFormatter) {
-                  stylesheetFormatter = stylesheetFormatterResult;
+                const { excelFormat: excelFormatResult } = getExcelFormatFromGridFormatter(stylesheet, excelFormats, { ...columnDef, formatter } as Column, grid, formatterType);
+                if (excelFormatResult !== excelFormats.numberFormatter) {
+                  excelFormat = excelFormatResult;
                   break;
                 }
               }
             }
-            if (!stylesheetFormatter) {
-              stylesheetFormatter = stylesheetFormatters.numberFormatter;
+            if (!excelFormat) {
+              excelFormat = excelFormats.numberFormatter;
             }
             break;
           case Formatters.currency:
@@ -202,21 +202,21 @@ export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, styleshe
             format = createExcelFormatFromGridFormatter(columnDef, grid, 'cell');
             break;
           default:
-            stylesheetFormatter = stylesheetFormatters.numberFormatter;
+            excelFormat = excelFormats.numberFormatter;
             break;
         }
         break;
     }
   }
 
-  if (!stylesheetFormatter && (columnDef.formatter || columnDef.groupTotalsFormatter)) {
+  if (!excelFormat && (columnDef.formatter || columnDef.groupTotalsFormatter)) {
     format = createExcelFormatFromGridFormatter(columnDef, grid, formatterType, groupType);
-    if (!stylesheetFormatters.hasOwnProperty(format)) {
-      stylesheetFormatters[format] = stylesheet.createFormat({ format }); // save new formatter with its format as a prop key
+    if (!excelFormats.hasOwnProperty(format)) {
+      excelFormats[format] = stylesheet.createFormat({ format }); // save new formatter with its format as a prop key
     }
-    stylesheetFormatter = stylesheetFormatters[format] as ExcelFormatter;
+    excelFormat = excelFormats[format] as ExcelFormatter;
   }
-  return { stylesheetFormatter: stylesheetFormatter as ExcelFormatter, groupType };
+  return { excelFormat: excelFormat as ExcelFormatter, groupType };
 }
 
 // --

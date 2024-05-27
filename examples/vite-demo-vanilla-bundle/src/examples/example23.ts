@@ -3,6 +3,8 @@ import {
   Aggregators,
   type Column,
   Editors,
+  type ExcelCellValueParserArgs,
+  type ExcelGroupValueParserArgs,
   FieldType,
   type Formatter,
   Formatters,
@@ -298,7 +300,7 @@ export default class Example19 {
         // a lot of the info can be found on Web Archive of Excel-Builder
         // https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors
         customExcelHeader: (workbook, sheet) => {
-          const formatterId = workbook.getStyleSheet().createFormat({
+          const excelFormat = workbook.getStyleSheet().createFormat({
             // every color is prefixed with FF, then regular HTML color
             font: { size: 18, fontName: 'Calibri', bold: true, color: 'FFFFFFFF' },
             alignment: { wrapText: true, horizontal: 'center' },
@@ -310,7 +312,7 @@ export default class Example19 {
           const customTitle = 'Grocery Shopping List';
           const lastCellMerge = this.isDataGrouped ? 'H1' : 'G1';
           sheet.mergeCells('A1', lastCellMerge);
-          sheet.data.push([{ value: customTitle, metadata: { style: formatterId.id } }]);
+          sheet.data.push([{ value: customTitle, metadata: { style: excelFormat.id } }]);
         },
       },
     };
@@ -336,7 +338,7 @@ export default class Example19 {
     this.excelExportService.exportToExcel();
   }
 
-  excelGroupCellParser(totals: SlickGroupTotals, columnDef: Column, _groupType, excelFormatterId: number | undefined, _stylesheet, dataRowIdx: number) {
+  excelGroupCellParser(totals: SlickGroupTotals, { columnDef, excelFormatId, dataRowIdx }: ExcelGroupValueParserArgs) {
     const colOffset = 0; // col offset of 1x because we skipped 1st column OR 0 offset if we use a Group because the Group column replaces the skip
     const rowOffset = 3; // row offset of 3x because: 1x Title, 1x Headers and Excel row starts at 1 => 3
     const priceIdx = this.sgb.slickGrid?.getColumnIndex('price') || 0;
@@ -371,11 +373,11 @@ export default class Example19 {
         excelCol = excelTotalCol;
         break;
     }
-    return { value: `SUM(${excelCol}${dataRowIdx + rowOffset - groupItemCount}:${excelCol}${dataRowIdx + rowOffset - 1})`, metadata: { type: 'formula', style: excelFormatterId } };
+    return { value: `SUM(${excelCol}${dataRowIdx + rowOffset - groupItemCount}:${excelCol}${dataRowIdx + rowOffset - 1})`, metadata: { type: 'formula', style: excelFormatId } };
   }
 
   /**  We'll use a generic parser to reuse similar logic for all 3 calculable columns (SubTotal, Taxes, Total) */
-  excelRegularCellParser(_data, columnDef: Column, excelFormatterId: number | undefined, _stylesheet, _gridOptions, dataRowIdx: number, dataContext: GroceryItem) {
+  excelRegularCellParser(_data, { columnDef, excelFormatId, dataRowIdx, dataContext }: ExcelCellValueParserArgs<GroceryItem>) {
     // assuming that we want to calculate: (Price * Qty) => Sub-Total
     const colOffset = !this.isDataGrouped ? 1 : 0; // col offset of 1x because we skipped 1st column OR 0 offset if we use a Group because the Group column replaces the skip
     const rowOffset = 3; // row offset of 3x because: 1x Title, 1x Headers and Excel row starts at 1 => 3
@@ -389,7 +391,7 @@ export default class Example19 {
     const excelTaxesCol = `${String.fromCharCode('A'.charCodeAt(0) + taxesIdx - colOffset)}${dataRowIdx + rowOffset}`;
 
     // `value` is our Excel cells to calculat (e.g.: "B4*C4")
-    // metadata `type` has to be set to "formula" and the `style` is what we defined in `excelExportOptions.style` which is `excelFormatterId` in the callback arg
+    // metadata `type` has to be set to "formula" and the `style` is what we defined in `excelExportOptions.style` which is `excelFormatId` in the callback arg
 
     let excelVal = '';
     switch (columnDef.id) {
@@ -405,7 +407,7 @@ export default class Example19 {
         excelVal = `(${excelPriceCol}*${excelQtyCol})+${excelTaxesCol}`;
         break;
     }
-    return { value: excelVal, metadata: { type: 'formula', style: excelFormatterId } };
+    return { value: excelVal, metadata: { type: 'formula', style: excelFormatId } };
   }
 
   getData() {
@@ -425,6 +427,10 @@ export default class Example19 {
     ];
 
     return datasetTmp;
+  }
+
+  clearGrouping() {
+    this.sgb?.dataView?.setGrouping([]);
   }
 
   groupByTaxable() {

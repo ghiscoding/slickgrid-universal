@@ -11,8 +11,8 @@ import type {
   ContainerService,
   ExcelExportService as BaseExcelExportService,
   ExcelExportOption,
+  ExcelGroupValueParserArgs,
   ExternalResource,
-
   GetDataValueCallback,
   GetGroupTotalValueCallback,
   GridOption,
@@ -64,8 +64,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _workbook!: Workbook;
 
   // references of each detected cell and/or group total formats
-  protected _regularCellExcelFormats: { [fieldId: string]: { stylesheetFormatterId?: number; getDataValueParser: GetDataValueCallback; }; } = {};
-  protected _groupTotalExcelFormats: { [fieldId: string]: { groupType: string; stylesheetFormatter?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback; }; } = {};
+  protected _regularCellExcelFormats: { [fieldId: string]: { excelFormatId?: number; getDataValueParser: GetDataValueCallback; }; } = {};
+  protected _groupTotalExcelFormats: { [fieldId: string]: { groupType: string; excelFormat?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback; }; } = {};
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly className = 'ExcelExportService';
@@ -539,7 +539,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           const cellStyleFormat = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, autoDetectCellFormat);
           // user could also override style and/or valueParserCallback
           if (columnDef.excelExportOptions?.style) {
-            cellStyleFormat.stylesheetFormatterId = this._stylesheet.createFormat(columnDef.excelExportOptions.style).id;
+            cellStyleFormat.excelFormatId = this._stylesheet.createFormat(columnDef.excelExportOptions.style).id;
           }
           if (columnDef.excelExportOptions?.valueParserCallback) {
             cellStyleFormat.getDataValueParser = columnDef.excelExportOptions.valueParserCallback;
@@ -552,8 +552,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           itemData = stripTags(itemData as string);
         }
 
-        const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
-        itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet, this._gridOptions, dataRowIdx, itemObj);
+        const { excelFormatId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
+        itemData = getDataValueParser(itemData, { columnDef, excelFormatId, stylesheet: this._stylesheet, gridOptions: this._gridOptions, dataRowIdx, dataContext: itemObj });
 
         rowOutputStrings.push(itemData);
         idx++;
@@ -607,17 +607,17 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if (!groupCellFormat?.groupType) {
           groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');
           if (columnDef.groupTotalsExcelExportOptions?.style) {
-            groupCellFormat.stylesheetFormatter = this._stylesheet.createFormat(columnDef.groupTotalsExcelExportOptions.style);
+            groupCellFormat.excelFormat = this._stylesheet.createFormat(columnDef.groupTotalsExcelExportOptions.style);
           }
           this._groupTotalExcelFormats[columnDef.id] = groupCellFormat;
         }
 
         const groupTotalParser = columnDef.groupTotalsExcelExportOptions?.valueParserCallback ?? getGroupTotalValue;
         if (itemObj[groupCellFormat.groupType]?.[columnDef.field] !== undefined) {
-          const groupData = groupTotalParser(itemObj, columnDef, groupCellFormat.groupType, groupCellFormat.stylesheetFormatter?.id, this._stylesheet, dataRowIdx);
+          const groupData = groupTotalParser(itemObj, { columnDef, groupType: groupCellFormat.groupType, excelFormatId: groupCellFormat.excelFormat?.id, stylesheet: this._stylesheet, dataRowIdx } as ExcelGroupValueParserArgs);
           itemData = (typeof groupData === 'object' && groupData.hasOwnProperty('metadata'))
             ? groupData
-            : itemData = { value: groupData, metadata: { style: groupCellFormat.stylesheetFormatter?.id } };
+            : itemData = { value: groupData, metadata: { style: groupCellFormat.excelFormat?.id } };
         }
       } else if (columnDef.groupTotalsFormatter) {
         const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);

@@ -161,12 +161,10 @@ export class MyExample {
         // https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors
         customExcelHeader: (workbook, sheet) => {
           const customTitle = this.translate.currentLang === 'fr' ? 'Titre qui est suffisament long pour être coupé' : 'My header that is long enough to wrap';
-          const stylesheet = workbook.getStyleSheet();
-          const aFormatDefn = {
-            'font': { 'size': 12, 'fontName': 'Calibri', 'bold': true, color: 'FF0000FF' }, // every color starts with FF, then regular HTML color
-            'alignment': { 'wrapText': true }
-          };
-          const formatterId = stylesheet.createFormat(aFormatDefn);
+          const excelFormat = workbook.getStyleSheet().createFormat({
+            font: { size: 12, fontName: 'Calibri', bold: true, color: 'FF0000FF' }, // every color starts with FF, then regular HTML color
+            alignment: { wrapText: true }
+          });
           sheet.setRowInstructions(0, { height: 30 }); // change height of row 0
 
           // excel cells start with A1 which is upper left corner
@@ -175,12 +173,16 @@ export class MyExample {
           // push empty data on A1
           cols.push({ value: '' });
           // push data in B1 cell with metadata formatter
-          cols.push({ value: customTitle, metadata: { style: formatterId.id } });
+          cols.push({ 
+            value: customTitle, 
+            metadata: { style: excelFormat.id } 
+          });
           sheet.data.push(cols);
         }
       },
     }
   }
+}
 ```
 
 ### Export from a Button Click Event
@@ -337,6 +339,8 @@ this.gridOptions = {
 ### Cell Value Parser
 This is not recommended but if you have no other ways, you can also provide a `valueParserCallback` callback function to override what the system detected. This callback function is available for both `excelExportOptions` (regular cells) and `groupTotalsExcelExportOptions` (grouping total cells)
 
+> **Note** the original implementation of both `valueParserCallback` had separate arguments but that expanded into way too many arguments than original planned and so I decided to merge them into a single `args` which includes base arguments (`columnDef`, `gridOptions`, `excelFormatId`, `stylesheet`, `dataRowIdx`, and depending on the type you will also have `dataContext` for regular cell OR `groupType` for grouping cell)
+
 ```ts
 this.columnDefinitions = [
   {
@@ -346,20 +350,27 @@ this.columnDefinitions = [
     groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
     params: { displayNegativeNumberWithParentheses: true, currencyPrefix: '€', groupFormatterCurrencyPrefix: '€', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' },
     excelExportOptions: {
-      valueParserCallback: (data, col, excelFormatterId, excelStylesheet) => {
+      // for version <=5.1
+      // valueParserCallback: (data, col, excelFormatId, excelStylesheet) => {
+
+      // new args signature requires version >=5.1
+      valueParserCallback: (data, { columnDef, excelFormatId, stylesheet }) => {
         // when returned as string, it will skip Excel style format
         return `Total: ${data}`;
 
-        // to keep Excel style format, you can use detected "excelFormatterId" OR use "excelStylesheet.createFormat()"
+        // to keep Excel style format, you can use detected "excelFormatId" OR use "excelStylesheet.createFormat()"
         return {
           value: isNaN(data as number) ? data : +data,
-          metadata: { style: excelFormatterId } // the excelFormatterId was created internally from the custom format
+          metadata: { style: excelFormatId } // the excelFormatId was created internally from the custom format
         };
       }
     },
     groupTotalsExcelExportOptions: {
-      valueParserCallback: (totals, columnDef) => {
-        const groupType = 'sum';
+      // for version <=5.1
+      // valueParserCallback: (totals, columnDef) => {
+
+      // new args signature requires version >=5.1
+      valueParserCallback: (totals, { columnDef, groupType }) => {
         const fieldName = columnDef.field;
         return totals[groupType][fieldName];
       },
@@ -388,7 +399,7 @@ this.columnDefinitions = [
         format: '$0.00', // currency dollar format
       },
       width: 12,
-      valueParserCallback: (_data, columnDef: Column, excelFormatterId: number | undefined, _stylesheet, _gridOptions, dataRowIdx: number, dataContext: GroceryItem) => {
+      valueParserCallback: (_data, { columnDef, excelFormatId, dataRowIdx, dataContext }) => {
         // assuming that we want to calculate: (Price * Qty) => Sub-Total
         const colOffset = !this.isDataGrouped ? 1 : 0; // col offset of 1x because we skipped 1st column OR 0 offset if we use a Group because the Group column replaces the skip
         const rowOffset = 3; // row offset of 3x because: 1x Title, 1x Headers and Excel row starts at 1 => 3
@@ -403,7 +414,7 @@ this.columnDefinitions = [
         const excelTaxesCol = `${String.fromCharCode('A'.charCodeAt(0) + taxesIdx - colOffset)}${dataRowIdx + rowOffset}`;
 
         // `value` is our Excel cells to calculat (e.g.: "B4*C4")
-        // metadata `type` has to be set to "formula" and the `style` is what we defined in `excelExportOptions.style` which is `excelFormatterId` in the callback arg
+        // metadata `type` has to be set to "formula" and the `style` is what we defined in `excelExportOptions.style` which is `excelFormatId` in the callback arg
 
         let excelVal = '';
         switch (columnDef.id) {
@@ -421,7 +432,7 @@ this.columnDefinitions = [
         }
 
         // use "formula" as "metadata", the "style" is a formatter id that comes from any custom "style" defined outside of our callback
-        return { value: excelVal, metadata: { type: 'formula', style: excelFormatterId } };
+        return { value: excelVal, metadata: { type: 'formula', style: excelFormatId } };
       }
     },
   }
