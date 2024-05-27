@@ -36,5 +36,21 @@ export interface GroupTotalExportOption {
   groupType?: string;
 }
 
-export type GetDataValueCallback = (data: Date | string | number, columnDef: Column, excelFormatterId: number | undefined, excelStylesheet: StyleSheet, gridOptions: GridOption, rowNumber: number, item: any) => Date | string | number | ExcelColumnMetadata;
-export type GetGroupTotalValueCallback = (totals: SlickGroupTotals, columnDef: Column, groupType: string, excelFormatterId: number | undefined, excelStylesheet: StyleSheet, rowNumber: number) => Date | string | number | ExcelColumnMetadata;
+export interface BaseExcelValueParserArgs {
+  columnDef: Column;
+  gridOptions: GridOption;
+  excelFormatId: number | undefined;
+  stylesheet: StyleSheet;
+  dataRowIdx: number;
+}
+
+export interface ExcelCellValueParserArgs<T = any> extends BaseExcelValueParserArgs {
+  dataContext: T;
+}
+
+export interface ExcelGroupValueParserArgs extends BaseExcelValueParserArgs {
+  groupType: string;
+}
+
+export type GetDataValueCallback = (data: Date | string | number, args: ExcelCellValueParserArgs) => Date | string | number | ExcelColumnMetadata;
+export type GetGroupTotalValueCallback = (totals: SlickGroupTotals, args: ExcelGroupValueParserArgs) => Date | string | number | ExcelColumnMetadata;

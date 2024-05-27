@@ -50,9 +50,9 @@ const myUppercaseGroupTotalFormatter: GroupTotalsFormatter = (totals: any, colum
   return '';
 };
 const myCustomObjectFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext) => {
-  let textValue = value && value.hasOwnProperty('text') ? value.text : value;
-  const toolTip = value && value.hasOwnProperty('toolTip') ? value.toolTip : '';
-  const cssClasses = value && value.hasOwnProperty('addClasses') ? [value.addClasses] : [''];
+  let textValue = value?.hasOwnProperty('text') ? value.text : value;
+  const toolTip = value?.hasOwnProperty('toolTip') ? value.toolTip : '';
+  const cssClasses = value?.hasOwnProperty('addClasses') ? [value.addClasses] : [''];
   if (dataContext && !isNaN(dataContext.order) && parseFloat(dataContext.order) > 10) {
     cssClasses.push('red');
     textValue = null;
@@ -466,7 +466,7 @@ describe('ExcelExportService', () => {
               'font': { 'size': 12, 'fontName': 'Calibri', 'bold': true, color: 'FF0000FF' }, // every color starts with FF, then regular HTML color
               'alignment': { 'wrapText': true }
             };
-            const formatterId = stylesheet.createFormat(aFormatDefn);
+            const excelFormat = stylesheet.createFormat(aFormatDefn);
             sheet.setRowInstructions(0, { height: 30 }); // change height of row 0
 
             // excel cells start with A1 which is upper left corner
@@ -475,7 +475,7 @@ describe('ExcelExportService', () => {
             // push empty data on A1
             cols.push({ value: '' });
             // push data in B1 cell with metadata formatter
-            cols.push({ value: 'My header that is long enough to wrap', metadata: { style: formatterId.id } });
+            cols.push({ value: 'My header that is long enough to wrap', metadata: { style: excelFormat.id } });
             sheet.data.push(cols);
           }
         };
@@ -571,7 +571,7 @@ describe('ExcelExportService', () => {
         );
         expect(service.regularCellExcelFormats.position).toEqual({
           getDataValueParser: getExcelSameInputDataCallback,
-          stylesheetFormatterId: 4,
+          excelFormatId: 4,
         });
       });
     });
@@ -898,8 +898,8 @@ describe('ExcelExportService', () => {
           }),
           'export.xlsx', { mimeType: mimeTypeXLSX }
         );
-        expect(service.groupTotalExcelFormats.order).toEqual({ groupType: 'sum', stylesheetFormatter: { fontId: 2, id: 5, numFmtId: 103 } });
-        expect(parserCallbackSpy).toHaveBeenNthCalledWith(1, 22, mockColumns[6], undefined, expect.anything(), mockGridOptions, 1, expect.objectContaining({ firstName: 'John' }));
+        expect(service.groupTotalExcelFormats.order).toEqual({ groupType: 'sum', excelFormat: { fontId: 2, id: 5, numFmtId: 103 } });
+        expect(parserCallbackSpy).toHaveBeenNthCalledWith(1, 22, { columnDef: mockColumns[6], excelFormatId: undefined, stylesheet: expect.anything(), gridOptions: mockGridOptions, dataRowIdx: 1, dataContext: expect.objectContaining({ firstName: 'John' }) });
       });
     });
 
@@ -1185,7 +1185,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
 
-        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
+        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: undefined });
       });
 
       it('should return a number format when using FieldType.number and a number is provided as input', async () => {
@@ -1195,7 +1195,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
 
-        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 3 });
+        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 3 });
       });
 
       it('should NOT return a number format when using FieldType.number but autoDetectCellFormat is disabled', async () => {
@@ -1205,7 +1205,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub, false);
 
-        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
+        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: undefined });
       });
     });
 

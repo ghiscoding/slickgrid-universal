@@ -43,31 +43,34 @@ describe('excelUtils', () => {
 
   describe('getExcelNumberCallback() method', () => {
     it('should return same data when input not a number', () => {
-      const output = getExcelNumberCallback('something else', {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
+      const output = getExcelNumberCallback('something else', { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
       expect(output).toEqual({ metadata: { style: 3 }, value: 'something else' });
     });
 
     it('should return same data when input value is already a number', () => {
-      const output = getExcelNumberCallback(9.33, {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
+      const output = getExcelNumberCallback(9.33, { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
       expect(output).toEqual({ metadata: { style: 3 }, value: 9.33 });
     });
 
     it('should return parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('$1,209.33', {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
+      const output = getExcelNumberCallback('$1,209.33', { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
       expect(output).toEqual({ metadata: { style: 3 }, value: 1209.33 });
     });
 
     it('should return negative parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('-$1,209.33', {} as Column, 3, stylesheetStub, mockGridOptions, 0, {});
+      const output = getExcelNumberCallback('-$1,209.33', { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
       expect(output).toEqual({ metadata: { style: 3 }, value: -1209.33 });
     });
 
     it('should be able to provide a number with different decimal separator as formatter options and return parsed number when input value can be parsed to a number', () => {
       const output = getExcelNumberCallback(
-        '1 244 209,33€', {} as Column, 3, stylesheetStub,
+        '1 244 209,33€',
         {
-          ...mockGridOptions, formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' }
-        }, 0, {});
+          columnDef: {} as Column, excelFormatId: 3, gridOptions: {
+            ...mockGridOptions, formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' }
+          }, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {}
+        }
+      );
       expect(output).toEqual({ metadata: { style: 3 }, value: 1244209.33 });
     });
   });
@@ -82,7 +85,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '0.00;"-"0.00' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "0.0##" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -90,7 +93,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '0.0##;"-"0.0##' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "€0.00" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -98,7 +101,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '"€"0.00;"-€"0.00' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "#,##0.00" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -106,7 +109,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '#,##0.00;"-"#,##0.00' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "# ##0.00 USD" when a number is provided with thousandSeparator & numberSuffix formatter options', () => {
@@ -114,7 +117,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '# ##0.00" USD";"-"# ##0.00" USD"' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "#,##0.00 USD;(#,##0.00 USD)" when a number is provided displayNegativeNumberWithParentheses, thousandSeparator & numberSuffix formatter options', () => {
@@ -122,7 +125,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '#,##0.00" USD";(#,##0.00" USD")' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
     });
   });
 
@@ -554,7 +557,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'avg', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'avg', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotalsCurrency', () => {
@@ -566,7 +569,7 @@ describe('excelUtils', () => {
 
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'avg', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'avg', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotalsDollar', () => {
@@ -578,7 +581,7 @@ describe('excelUtils', () => {
 
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'avg', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'avg', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotals', () => {
@@ -587,7 +590,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'avg', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'avg', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.minTotals', () => {
@@ -596,7 +599,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'min', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'min', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.maxTotals', () => {
@@ -605,7 +608,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'max', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'max', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsColored', () => {
@@ -614,7 +617,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsCurrencyColored', () => {
@@ -623,7 +626,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarColoredBold', () => {
@@ -632,7 +635,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarColored', () => {
@@ -641,7 +644,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarBold', () => {
@@ -650,7 +653,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollar', () => {
@@ -659,7 +662,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotals', () => {
@@ -668,7 +671,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsBold', () => {
@@ -677,7 +680,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: 'sum', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style with regular number format when a custom GroupTotalFormatters is provided', () => {
@@ -687,7 +690,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'group');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 3 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 3 } });
       });
     });
 
@@ -700,7 +703,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.dollar', () => {
@@ -711,7 +714,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.dollarColored', () => {
@@ -722,7 +725,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.dollarColoredBold', () => {
@@ -732,7 +735,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.percent', () => {
@@ -743,7 +746,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.percentComplete', () => {
@@ -754,7 +757,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.percentSymbol', () => {
@@ -765,7 +768,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.decimal', () => {
@@ -776,7 +779,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style with regular number format when a custom Formatter is provided', () => {
@@ -786,7 +789,7 @@ describe('excelUtils', () => {
         } as unknown as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 3 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 3 } });
       });
 
       it('should get excel excel metadata style with regular number format when using Formatters.multiple and a custom Formatter is provided', () => {
@@ -797,7 +800,7 @@ describe('excelUtils', () => {
         } as unknown as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 3 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 3 } });
       });
 
       it('should get excel excel metadata style format for Formatters.currency when using Formatters.multiple and the first multiple formatters is currency formatter', () => {
@@ -808,7 +811,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
 
       it('should get excel excel metadata style format for Formatters.dollar when using Formatters.multiple and the last formatter is dollar formatter', () => {
@@ -819,7 +822,7 @@ describe('excelUtils', () => {
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
-        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+        expect(output).toEqual({ groupType: '', excelFormat: { id: 135 } });
       });
     });
   });

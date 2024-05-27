@@ -204,7 +204,7 @@ export default class Example02 {
         // a lot of the info can be found on Web Archive of Excel-Builder
         // https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors
         customExcelHeader: (workbook, sheet) => {
-          const formatterId = workbook.getStyleSheet().createFormat({
+          const excelFormat = workbook.getStyleSheet().createFormat({
             // every color is prefixed with FF, then regular HTML color
             font: { size: 18, fontName: 'Calibri', bold: true, color: 'FFFFFFFF' },
             alignment: { wrapText: true, horizontal: 'center' },
@@ -215,7 +215,7 @@ export default class Example02 {
           // excel cells start with A1 which is upper left corner
           const customTitle = 'Grouping and Aggregator - My header is too long enough, so it will wrap';
           sheet.mergeCells('A1', 'H1');
-          sheet.data.push([{ value: customTitle, metadata: { style: formatterId.id } }]);
+          sheet.data.push([{ value: customTitle, metadata: { style: excelFormat.id } }]);
         },
       },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
