@@ -1,4 +1,4 @@
-import type { BackendServiceOption, CaseType, Column, OperatorType, SlickGrid } from '@slickgrid-universal/common';
+import type { BackendServiceFilterQueryOverrideArgs, BackendServiceOption, CaseType } from '@slickgrid-universal/common';
 
 export interface OdataOption extends BackendServiceOption {
   /** What is the casing type to use? Typically that would be 1 of the following 2: camelCase or PascalCase */
@@ -38,7 +38,7 @@ export interface OdataOption extends BackendServiceOption {
   filterQueue?: any[];
 
   /** An optional predicate function to overide the built-in filter construction  */
-  filterQueryOverride?: (args: OdataFilterQueryOverrideArgs) => string | undefined;
+  filterQueryOverride?: (args: BackendServiceFilterQueryOverrideArgs) => string | undefined;
 
   /** Sorting string (or array of string) that must be a valid OData string */
   orderBy?: string | string[];
@@ -57,19 +57,4 @@ export interface OdataOption extends BackendServiceOption {
 
   /** A callback which will extract and return the dataset from the data queried. Defaults to 'd.results' for v2, 'results' for v3 and 'value' for v4. */
   datasetExtractor?: (response: any) => number;
-}
-
-export interface OdataFilterQueryOverrideArgs {
-  /** The column to define the filter for */
-  columnDef: Column<any> | undefined;
-  /** The OData fieldName as target of the filter */
-  fieldName: string;
-  /** The operator selected by the user via the compound operator dropdown */
-  columnFilterOperator: OperatorType;
-  /** The inferred operator. See columnDef.autoParseInputFilterOperator */
-  operator: OperatorType;
-  /** The entered search value */
-  searchValue: any;
-  /** A reference to the SlickGrid instance */
-  grid: SlickGrid | undefined
 }

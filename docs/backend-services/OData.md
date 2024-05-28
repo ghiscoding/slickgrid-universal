@@ -223,15 +223,14 @@ For example if the backend responds with `{ value: [{ id: 1, nav1: { field1: 'x'
 
 ### Override the filter query
 
-Column filters may have a `Custom` operator, that acts as a placeholder for you to define your own logic. To do so, the easiest way is to provide the `filterQueryOverride` callback in the OdataOptions. This method will be called with `OdataFilterQueryOverrideArgs` to let you decide dynamically on how the filter should be assembled.
+Column filters may have a `Custom` operator, that acts as a placeholder for you to define your own logic. To do so, the easiest way is to provide the `filterQueryOverride` callback in the OdataOptions. This method will be called with `BackendServiceFilterQueryOverrideArgs` to let you decide dynamically on how the filter should be assembled.
 
 E.g. you could listen for a specific column and the active OperatorType.custom in order to switch the filter to a matchesPattern SQL LIKE search:
 
 ```ts
 backendServiceApi: {
   options: {
-    filterQueryOverride: (args) => {
-      const { fieldName, columnDef, columnFilterOperator, searchValue } = args;
+    filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValue }) => {
       if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
         let matchesSearch = (searchValue as string).replace(/\*/g, '.*');
         matchesSearch = matchesSearch.slice(0, 1) + '%5E' + matchesSearch.slice(1);

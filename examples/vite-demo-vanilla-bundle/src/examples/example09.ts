@@ -145,8 +145,7 @@ export default class Example09 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
           enableSelect: this.isSelectEnabled,
           enableExpand: this.isExpandEnabled,
-          filterQueryOverride: (args) => {
-            const { fieldName, columnDef, columnFilterOperator, searchValue } = args;
+          filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValue }) => {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               let matchesSearch = (searchValue as string).replace(/\*/g, '.*');
               matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
