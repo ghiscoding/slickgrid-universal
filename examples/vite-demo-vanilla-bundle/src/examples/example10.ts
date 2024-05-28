@@ -83,7 +83,15 @@ export default class Example10 {
         sortable: true,
         filterable: true,
         filter: {
-          model: Filters.compoundInput
+          model: Filters.compoundInput,
+          compoundOperatorList: [
+            { operator: '', desc: 'Contains' },
+            { operator: '<>', desc: 'Not Contains' },
+            { operator: '=', desc: 'Equals' },
+            { operator: '!=', desc: 'Not equal to' },
+            { operator: 'a*', desc: 'Starts With' },
+            { operator: 'Custom', desc: 'SQL Like' },
+          ],
         }
       },
       {
@@ -144,6 +152,10 @@ export default class Example10 {
       enableAutoResize: false,
       gridHeight: 275,
       gridWidth: 900,
+      compoundOperatorAltTexts: {
+        // where '=' is any of the `OperatorString` type shown above
+        text: { 'Custom': { operatorAlt: '%%', descAlt: 'SQL Like' } },
+      },
       enableFiltering: true,
       enableCellNavigation: true,
       createPreHeaderPanel: true,
@@ -193,6 +205,16 @@ export default class Example10 {
             field: 'userId',
             value: 123
           }],
+          filterQueryOverride: (args) => {
+            const { fieldName, columnDef, columnFilterOperator, searchValue } = args;
+            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+              // technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
+              // What that means is that GraphQL won't let you write arbitrary queries out of the box.
+              // It will only support the types of queries defined in your GraphQL schema.
+              // see this SO: https://stackoverflow.com/a/37981802/1212166
+              return { field: fieldName, operator: 'Like', value: searchValue };
+            }
+          },
           useCursor: this.isWithCursor, // sets pagination strategy, if true requires a call to setPageInfo() when graphql call returns
           // when dealing with complex objects, we want to keep our field name with double quotes
           // example with gender: query { users (orderBy:[{field:"gender",direction:ASC}]) {}
