@@ -892,10 +892,11 @@ describe('Example 09 - OData Grid', () => {
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Consuelo Dickson');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Christine Compton');
+    });
 
-      // clear filter before next test
-      cy.get('input.filter-name')
-        .clear();
+    it('should clear again the filters before the next tests', () => {
+      cy.get('input.filter-name').clear();
+      cy.get('[data-test=status]').should('contain', 'finished');
     });
   });
 
