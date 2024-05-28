@@ -764,6 +764,50 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
+    it('should bypass default behavior if filterQueryOverride is defined and does not return undefined', () => {
+      const expectation = `$top=10&$filter=(foo eq 'bar')`;
+      const mockColumn = { id: 'name', field: 'name' } as Column;
+      const mockColumnFilters = {
+        name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: FieldType.string },
+      } as ColumnFilters;
+
+      const sOptions = { ...serviceOptions, filterQueryOverride: () => 'foo eq \'bar\'' };
+      service.init(sOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should continue with default behavior if filterQueryOverride returns undefined', () => {
+      const expectation = `$top=10&$filter=(startswith(Name, 'Ca') and endswith(Name, 'le'))`;
+      const mockColumn = { id: 'name', field: 'name' } as Column;
+      const mockColumnFilters = {
+        name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: FieldType.string },
+      } as ColumnFilters;
+
+      const sOptions = { ...serviceOptions, filterQueryOverride: () => undefined };
+      service.init(sOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should continue with default behavior if filterQueryOverride is not provided', () => {
+      const expectation = `$top=10&$filter=(startswith(Name, 'Ca') and endswith(Name, 'le'))`;
+      const mockColumn = { id: 'name', field: 'name' } as Column;
+      const mockColumnFilters = {
+        name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
     it('should return a query with search having the operator Greater of Equal when the search value was provided as ">=10"', () => {
       const expectation = `$top=10&$filter=(Age ge '10')`;
       const mockColumn = { id: 'age', field: 'age' } as Column;
