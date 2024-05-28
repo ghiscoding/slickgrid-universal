@@ -1,4 +1,4 @@
-import { type Column, type GridOption, SlickEventHandler, Editors } from '@slickgrid-universal/common';
+import { type Column, type GridOption, SlickEventHandler, Editors, Formatters } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import './example19.scss';
@@ -83,6 +83,16 @@ export default class Example19 {
       }
     ];
 
+    this.columnDefinitions.push({
+      id: 'approvalDate',
+      name: 'Approval Date',
+      field: 'approvalDate',
+      minWidth: 120,
+      width: 120,
+      editor: { model: Editors.date, type: 'date'},
+      formatter: Formatters.dateIso,
+      exportWithFormatter: true
+    });
     for (let i = 0; i < NB_ITEMS; i++) {
       this.columnDefinitions.push({
         id: i,
@@ -100,7 +110,7 @@ export default class Example19 {
           return `${row + 1}:${cell + 1}`;
         },
         width: 60,
-        editor: { model: Editors.text }
+        editor: { model: Editors.text },
       });
     }
 
@@ -136,10 +146,13 @@ export default class Example19 {
   getData(itemCount: number) {
     // mock a dataset
     const datasetTmp: any[] = [];
+    const start = new Date(2000,0,1);
+    const end = new Date();
     for (let i = 0; i < itemCount; i++) {
       const d: any = (datasetTmp[i] = {});
       d['id'] = i;
       d['num'] = i;
+      d['approvalDate'] = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
     }
 
     return datasetTmp;
