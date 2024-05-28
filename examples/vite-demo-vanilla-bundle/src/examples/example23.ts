@@ -97,7 +97,7 @@ export class CustomSumAggregator implements Aggregator {
 export default class Example19 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column<GroceryItem>[] = [];
-  dataset: any[] = [];
+  dataset: GroceryItem[] = [];
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
   sgb: SlickVanillaGridBundle;
@@ -285,6 +285,7 @@ export default class Example19 {
         maxDecimal: 2,
         minDecimal: 2,
       },
+      enableGrouping: true,
       externalResources: [this.excelExportService],
       enableExcelExport: true,
       excelExportOptions: {
@@ -424,7 +425,7 @@ export default class Example19 {
       { id: i++, name: 'Chicken Wings', qty: 12, taxable: true, price: .53 },
       { id: i++, name: 'Drinkable Yogurt', qty: 6, taxable: true, price: 1.22 },
       { id: i++, name: 'Milk', qty: 3, taxable: true, price: 3.11 },
-    ];
+    ] as GroceryItem[];
 
     return datasetTmp;
   }
