@@ -138,7 +138,8 @@ export default class Example19 {
         onBeforePasteCell: (_e, args) => {
           // deny the whole first row and the cells C-E of the second row
           return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));
-        }
+        },
+        copyActiveEditorCell: true,
       }
     };
   }

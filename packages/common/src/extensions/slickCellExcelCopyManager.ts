@@ -147,8 +147,9 @@ export class SlickCellExcelCopyManager {
         // to decide if we evaluate the Formatter, we will use the same flag from Export which is "exportWithFormatter"
         const activeCell = this._grid.getActiveCell();
         const isActiveEditorCurrentCell = this._grid.getCellEditor() && activeCell?.row === row && activeCell?.cell === cell;
+        const copyActiveEditorCell = this.addonOptions?.copyActiveEditorCell || false;
 
-        if (!this.gridOptions.editable || !columnDef.editor || !isActiveEditorCurrentCell) {
+        if (!this.gridOptions.editable || !columnDef.editor || !isActiveEditorCurrentCell || copyActiveEditorCell) {
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.gridOptions.textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
             const formattedOutput = columnDef.formatter(row, cell, item[columnDef.field], columnDef, item, this._grid);

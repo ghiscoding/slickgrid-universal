@@ -16,6 +16,13 @@ export interface ExcelCopyBufferOption<T = any> {
   /** defaults to "copy-manager", sets the layer key for setting css values of copied cells. */
   copiedCellStyleLayerKey?: string;
 
+  /**
+    * should copy the cells value on copy shortcut even when the editor is opened
+    *
+    * **NOTE**: affects only the default {@link ExcelCopyBufferOption#dataItemColumnValueExtractor}
+    * */
+  copyActiveEditorCell?: boolean;
+
   /** option to specify a custom column value extractor function */
   dataItemColumnValueExtractor?: (item: any, columnDef: Column<T>, row?: number, cell?: number) => string | HTMLElement | DocumentFragment | FormatterResultWithHtml | FormatterResultWithText | null;
 
