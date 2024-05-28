@@ -2,6 +2,7 @@
 - [filterBy](#filterby)
 - [Complex Objects](#complex-objects)
 - [Extra Query Arguments](#extra-query-arguments)
+- [Override the filter query](#override-the-filter-query)
 
 ### Introduction
 The implementation of a GraphQL Service requires a certain structure to follow for `Slickgrid-Universal` to work correctly (it will fail if your GraphQL Schema is any different than what is shown below).
@@ -129,6 +130,29 @@ this.gridOptions = {
         }
       }
     }
+  }
+}
+```
+
+### Override the filter query
+
+Column filters may have a `Custom` Operator, that acts as a placeholder for you to define your own logic. To do so, the easiest way is to provide the `filterQueryOverride` callback in the GraphQL Options. This method will be called with `GraphqlFilterQueryOverrideArgs` to let you decide dynamically on how the filter should be assembled.
+
+E.g. you could listen for a specific column and the active `OperatorType.custom` in order to switch the filter to an SQL LIKE search in GraphQL:
+
+> **Note** technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
+> What that means is that GraphQL won't let you write arbitrary queries out of the box. It will only support the types of queries defined in your GraphQL schema.
+> see this SO: https://stackoverflow.com/a/37981802/1212166
+
+```ts
+backendServiceApi: {
+  options: {
+    filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValue }) => {
+      if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+        // the `operator` is a string, make sure to implement this new operator in your GraphQL Schema
+        return { field: fieldName, operator: 'Like', value: searchValue };
+      }
+    },
   }
 }
 ```

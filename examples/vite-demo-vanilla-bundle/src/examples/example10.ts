@@ -205,8 +205,7 @@ export default class Example10 {
             field: 'userId',
             value: 123
           }],
-          filterQueryOverride: (args) => {
-            const { fieldName, columnDef, columnFilterOperator, searchValue } = args;
+          filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValue }) => {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               // technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
               // What that means is that GraphQL won't let you write arbitrary queries out of the box.
