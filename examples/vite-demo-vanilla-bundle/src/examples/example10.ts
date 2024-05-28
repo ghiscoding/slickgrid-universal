@@ -383,6 +383,7 @@ export default class Example10 {
   }
 
   private resetOptions(options: Partial<GraphqlServiceOption>) {
+    this.displaySpinner(true);
     const graphqlService = this.gridOptions.backendServiceApi!.service as GraphqlService;
     this.sgb?.paginationService!.setCursorBased(options.useCursor!);
     graphqlService.updateOptions(options);
