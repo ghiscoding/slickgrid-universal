@@ -149,7 +149,6 @@ export default class Example19 {
         editor: { model: Editors.float, decimal: 2 }, sortable: true, width: 70, filterable: true,
         formatter: Formatters.dollar, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
             font: { bold: true },
             format: '$0.00', // currency format
@@ -161,7 +160,6 @@ export default class Example19 {
         id: 'qty', name: 'Quantity', field: 'qty', type: FieldType.number,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: { font: { bold: true } },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         },
@@ -188,7 +186,6 @@ export default class Example19 {
           valueParserCallback: this.excelRegularCellParser.bind(this),
         },
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
             font: { bold: true },
             format: '$0.00', // currency format
@@ -230,7 +227,6 @@ export default class Example19 {
           valueParserCallback: this.excelRegularCellParser.bind(this),
         },
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
             font: { bold: true },
             format: '$0.00', // currency format
@@ -262,7 +258,6 @@ export default class Example19 {
           valueParserCallback: this.excelRegularCellParser.bind(this),
         },
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
             font: { bold: true },
             format: '$0.00',
