@@ -410,7 +410,8 @@ describe('Example 09 - OData Grid', () => {
 
       cy.get('#items-per-page-label').select('20');
 
-      cy.get('[data-test=enable-count]').uncheck();
+      cy.get('[data-test=enable-count]').click();
+      cy.get('[data-test=enable-count]').should('not.be.checked');
 
       // wait for the query to finish
       cy.get('[data-test=status]').should('contain', 'finished');
@@ -902,7 +903,8 @@ describe('Example 09 - OData Grid', () => {
 
   describe('Select and Expand Behaviors', () => {
     it('should enable "enableSelect" and "enableExpand" and expect the query to select/expand all fields', () => {
-      cy.get('[data-test=enable-expand]').check();
+      cy.get('[data-test=enable-expand]').click();
+      cy.get('[data-test=enable-expand]').should('be.checked');
       cy.wait(5);
 
       // wait for the query to finish
@@ -913,7 +915,8 @@ describe('Example 09 - OData Grid', () => {
           expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$expand=category`);
         });
 
-      cy.get('[data-test=enable-select]').check();
+      cy.get('[data-test=enable-select]').click();
+      cy.get('[data-test=enable-select]').should('be.checked');
 
       // wait for the query to finish
       cy.get('[data-test=status]').should('contain', 'finished');
