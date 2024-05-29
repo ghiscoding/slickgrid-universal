@@ -136,7 +136,7 @@ this.gridOptions = {
 
 ### Override the filter query
 
-Column filters may have a `Custom` Operator, that acts as a placeholder for you to define your own logic. To do so, the easiest way is to provide the `filterQueryOverride` callback in the GraphQL Options. This method will be called with `GraphqlFilterQueryOverrideArgs` to let you decide dynamically on how the filter should be assembled.
+Column filters may have a `Custom` Operator, that acts as a placeholder for you to define your own logic. To do so, the easiest way is to provide the `filterQueryOverride` callback in the GraphQL Options. This method will be called with `BackendServiceFilterQueryOverrideArgs` to let you decide dynamically on how the filter should be assembled.
 
 E.g. you could listen for a specific column and the active `OperatorType.custom` in order to switch the filter to an SQL LIKE search in GraphQL:
 

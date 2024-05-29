@@ -1,6 +1,6 @@
-import type { BackendServiceOption } from '@slickgrid-universal/common';
+import type { BackendServiceOption, BackendServiceFilterQueryOverrideArgs } from '@slickgrid-universal/common';
 
-import type { GraphqlCustomFilteringOption, GraphqlFilterQueryOverrideArgs, GraphqlFilteringOption } from './graphqlFilteringOption.interface';
+import type { GraphqlCustomFilteringOption, GraphqlFilteringOption } from './graphqlFilteringOption.interface';
 import type { GraphqlSortingOption } from './graphqlSortingOption.interface';
 import type { GraphqlCursorPaginationOption } from './graphqlCursorPaginationOption.interface';
 import type { GraphqlPaginationOption } from './graphqlPaginationOption.interface';
@@ -30,7 +30,7 @@ export interface GraphqlServiceOption extends BackendServiceOption {
   filteringOptions?: GraphqlFilteringOption[];
 
   /** An optional predicate function to overide the built-in filter construction  */
-  filterQueryOverride?: (args: GraphqlFilterQueryOverrideArgs) => GraphqlCustomFilteringOption | undefined;
+  filterQueryOverride?: (args: BackendServiceFilterQueryOverrideArgs) => GraphqlCustomFilteringOption | undefined;
 
   /** What are the pagination options? ex.: (first, last, offset) */
   paginationOptions?: GraphqlPaginationOption | GraphqlCursorPaginationOption;
