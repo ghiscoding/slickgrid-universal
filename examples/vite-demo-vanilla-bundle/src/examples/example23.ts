@@ -150,8 +150,9 @@ export default class Example19 {
         formatter: Formatters.dollar, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         groupTotalsExcelExportOptions: {
           style: {
-            font: { bold: true },
+            font: { bold: true, size: 11.5 },
             format: '$0.00', // currency format
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -160,7 +161,10 @@ export default class Example19 {
         id: 'qty', name: 'Quantity', field: 'qty', type: FieldType.number,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         groupTotalsExcelExportOptions: {
-          style: { font: { bold: true } },
+          style: {
+            font: { bold: true, size: 11.5 },
+            border: { top: { color: 'FF747474', style: 'thick' } },
+          },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         },
         params: { minDecimal: 0, maxDecimal: 0 },
@@ -175,7 +179,7 @@ export default class Example19 {
           formatters: [
             (_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty,
             Formatters.dollar
-          ]
+          ] as Formatter[]
         },
         excelExportOptions: {
           style: {
@@ -187,8 +191,9 @@ export default class Example19 {
         },
         groupTotalsExcelExportOptions: {
           style: {
-            font: { bold: true },
+            font: { bold: true, italic: true, size: 11.5 },
             format: '$0.00', // currency format
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -216,7 +221,7 @@ export default class Example19 {
               return null;
             },
             Formatters.dollar
-          ]
+          ] as Formatter[]
         },
         excelExportOptions: {
           style: {
@@ -228,8 +233,9 @@ export default class Example19 {
         },
         groupTotalsExcelExportOptions: {
           style: {
-            font: { bold: true },
+            font: { bold: true, italic: true, color: 'FFC65911', size: 11.5 },
             format: '$0.00', // currency format
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -247,7 +253,7 @@ export default class Example19 {
               return subTotal;
             },
             Formatters.dollar
-          ]
+          ] as Formatter[]
         },
         excelExportOptions: {
           style: {
@@ -259,8 +265,9 @@ export default class Example19 {
         },
         groupTotalsExcelExportOptions: {
           style: {
-            font: { bold: true },
+            font: { bold: true, color: 'FF005A9E', size: 12 },
             format: '$0.00',
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -426,6 +433,7 @@ export default class Example19 {
   }
 
   clearGrouping() {
+    this.isDataGrouped = false;
     this.sgb?.dataView?.setGrouping([]);
   }
 

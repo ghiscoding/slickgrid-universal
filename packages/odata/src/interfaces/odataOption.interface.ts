@@ -1,4 +1,4 @@
-import type { BackendServiceOption, CaseType } from '@slickgrid-universal/common';
+import type { BackendServiceFilterQueryOverrideArgs, BackendServiceOption, CaseType } from '@slickgrid-universal/common';
 
 export interface OdataOption extends BackendServiceOption {
   /** What is the casing type to use? Typically that would be 1 of the following 2: camelCase or PascalCase */
@@ -36,6 +36,9 @@ export interface OdataOption extends BackendServiceOption {
 
   /** Filter queue */
   filterQueue?: any[];
+
+  /** An optional predicate function to overide the built-in filter construction  */
+  filterQueryOverride?: (args: BackendServiceFilterQueryOverrideArgs) => string | undefined;
 
   /** Sorting string (or array of string) that must be a valid OData string */
   orderBy?: string | string[];

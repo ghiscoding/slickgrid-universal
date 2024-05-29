@@ -1,3 +1,7 @@
+import type { SlickGrid } from '../core';
+import type { OperatorType } from '../enums';
+import type { Column } from './column.interface';
+
 export interface BackendServiceOption {
   /** What are the pagination options? ex.: (first, last, offset) */
   paginationOptions?: any;
@@ -10,4 +14,19 @@ export interface BackendServiceOption {
 
   /** Execute the process callback command on component init (page load) */
   executeProcessCommandOnInit?: boolean;
+}
+
+export interface BackendServiceFilterQueryOverrideArgs {
+  /** The column to define the filter for */
+  columnDef: Column<any> | undefined;
+  /** The OData fieldName as target of the filter */
+  fieldName: string;
+  /** The operator selected by the user via the compound operator dropdown */
+  columnFilterOperator: OperatorType;
+  /** The inferred operator. See columnDef.autoParseInputFilterOperator */
+  operator: OperatorType;
+  /** The entered search value */
+  searchValue: any;
+  /** A reference to the SlickGrid instance */
+  grid: SlickGrid | undefined
 }

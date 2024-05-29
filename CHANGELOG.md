@@ -17,7 +17,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ## [5.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0) (2024-05-10)
 
 > [!NOTE]
-> #### Follow the [Migration to 5.0](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-5.x) for all the changes
+> #### Follow the [Migration to 5.0](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-5.x) for all the changes and take a look at the [v5.0.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) release for the announcement and quick info.
 
 ### ⚠ BREAKING CHANGES
 
