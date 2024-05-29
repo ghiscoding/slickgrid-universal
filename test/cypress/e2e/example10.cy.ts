@@ -859,10 +859,15 @@ describe('Example 10 - GraphQL Grid', () => {
         });
     });
 
-    it('should expect 1 event change Finish filter to empty and 1 event for the pagination change', () => {
+    it('should focus on Finish Date Range filter, then type Backspace and expect Finish filter to no longer exists in the list of Filters in Grid State change', () => {
       cy.get('.search-filter.filter-finish').click();
       cy.wait(20);
       cy.get('.search-filter.filter-finish input.date-picker').type('{backspace}', { force: true });
+
+      cy.get('.search-filter.filter-finish')
+        .find('input')
+        .invoke('val')
+        .then(text => expect(text).to.eq(''));
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(2);
@@ -875,6 +880,24 @@ describe('Example 10 - GraphQL Grid', () => {
         });
         expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 20 }, type: 'pagination' });
       });
+    });
+
+    it('should click on DOM body and reopen Finish filter date picker and still expect it to be empty', () => {
+      cy.get('h3').click(); // just to simulate clicking outside of the date picker
+
+      cy.get('.search-filter.filter-finish')
+        .find('input')
+        .invoke('val')
+        .then(text => expect(text).to.eq(''));
+
+      cy.get('.search-filter.filter-finish')
+        .click();
+
+      cy.get('.vanilla-calendar:visible')
+        .find('.vanilla-calendar-day__btn_selected')
+        .should('not.exist');
+
+      cy.get('h3').click();
     });
   });
 });
