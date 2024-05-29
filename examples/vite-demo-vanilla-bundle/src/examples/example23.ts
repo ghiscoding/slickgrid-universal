@@ -432,6 +432,7 @@ export default class Example19 {
   }
 
   clearGrouping() {
+    this.isDataGrouped = false;
     this.sgb?.dataView?.setGrouping([]);
   }
 

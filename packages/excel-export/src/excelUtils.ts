@@ -167,7 +167,7 @@ export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, excelFor
         groupType = 'sum';
         break;
       default:
-        excelFormat = excelFormats.numberFormatter;
+        excelFormat = excelFormats.numberFormat;
         break;
     }
   } else {
@@ -179,14 +179,14 @@ export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, excelFor
             if (Array.isArray(columnDef.params?.formatters)) {
               for (const formatter of columnDef.params.formatters) {
                 const { excelFormat: excelFormatResult } = getExcelFormatFromGridFormatter(stylesheet, excelFormats, { ...columnDef, formatter } as Column, grid, formatterType);
-                if (excelFormatResult !== excelFormats.numberFormatter) {
+                if (excelFormatResult !== excelFormats.numberFormat) {
                   excelFormat = excelFormatResult;
                   break;
                 }
               }
             }
             if (!excelFormat) {
-              excelFormat = excelFormats.numberFormatter;
+              excelFormat = excelFormats.numberFormat;
             }
             break;
           case Formatters.currency:
@@ -202,7 +202,7 @@ export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, excelFor
             format = createExcelFormatFromGridFormatter(columnDef, grid, 'cell');
             break;
           default:
-            excelFormat = excelFormats.numberFormatter;
+            excelFormat = excelFormats.numberFormat;
             break;
         }
         break;
