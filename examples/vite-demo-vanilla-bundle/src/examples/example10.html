@@ -19,6 +19,8 @@
   <span class="text-red">(*) NO DATA SHOWN</span>
   - just change any of Filters/Sorting/Pages and look at the "GraphQL Query" changing.
   Also note that the column Name has a filter with a custom %% operator that behaves like an SQL LIKE operator supporting % wildcards.
+  Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura [_regex](https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex))
+  or you could add your own implementation (e.g. see this SO: https://stackoverflow.com/a/37981802/1212166).
 </h6>
 
 <div class="row">
