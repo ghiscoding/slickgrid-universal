@@ -155,15 +155,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._stylesheet = this._workbook.getStyleSheet();
 
       // create some common default Excel formatters that will be used
-      const boldFormatter = this._stylesheet.createFormat({ font: { bold: true } });
-      const stringFormatter = this._stylesheet.createFormat({ format: '@' });
-      const numberFormatter = this._stylesheet.createFormat({ format: '0' });
+      const boldFormat = this._stylesheet.createFormat({ font: { bold: true } });
+      const stringFormat = this._stylesheet.createFormat({ format: '@' });
+      const numberFormat = this._stylesheet.createFormat({ format: '0' });
       this._stylesheetFormats = {
-        boldFormatter,
-        numberFormatter,
-        stringFormatter,
+        boldFormat,
+        numberFormat,
+        stringFormat,
       };
-      this._sheet.setColumnFormats([boldFormatter]);
+      this._sheet.setColumnFormats([boldFormat]);
 
       // get the CSV output from the grid data
       const dataOutput = this.getDataOutput();
@@ -238,7 +238,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const outputData: Array<string[] | ExcelColumnMetadata[]> = [];
     const gridExportOptions = this._gridOptions?.excelExportOptions;
     const columnHeaderStyle = gridExportOptions?.columnHeaderStyle;
-    let columnHeaderStyleId = this._stylesheetFormats.boldFormatter.id;
+    let columnHeaderStyleId = this._stylesheetFormats.boldFormat.id;
     if (columnHeaderStyle) {
       columnHeaderStyleId = this._stylesheet.createFormat(columnHeaderStyle).id;
     }
