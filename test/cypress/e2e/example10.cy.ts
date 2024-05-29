@@ -307,6 +307,29 @@ describe('Example 10 - GraphQL Grid', () => {
       });
   });
 
+  it('should perform filterQueryOverride when operator "%%" is selected', () => {
+    cy.get('.search-filter.filter-name select').find('option').last().then((element) => {
+      cy.get('.search-filter.filter-name select').select(element.val());
+    });
+
+    cy.get('.search-filter.filter-name')
+      .find('input')
+      .clear()
+      .type('Jo%yn%er');
+
+    // wait for the query to finish
+    cy.get('[data-test=status]').should('contain', 'finished');
+
+    cy.get('[data-test=graphql-query-result]')
+      .should(($span) => {
+        const text = removeSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(removeSpaces(`query { users (first:30,offset:0,
+          orderBy:[{field:"name",direction:ASC}],
+          filterBy:[{field:"name",operator:Like,value:"Jo%yn%er"}],
+          locale:"en",userId:123) { totalCount, nodes { id,name,gender,company,billing{address{street,zip}},finish } } }`));
+      });
+  });
+
   it('should click on Set Dynamic Filter and expect query and filters to be changed', () => {
     cy.get('[data-test=set-dynamic-filter]')
       .click();

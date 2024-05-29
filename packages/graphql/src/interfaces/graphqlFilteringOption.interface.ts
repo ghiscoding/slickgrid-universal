@@ -10,3 +10,14 @@ export interface GraphqlFilteringOption {
   /** Value to use when filtering */
   value: any | any[];
 }
+
+export interface GraphqlCustomFilteringOption {
+  /** Field name to use when filtering */
+  field: string;
+
+  /** Custom Operator to use when filtering. Please note that any new Custom Operator must be implemented in your GraphQL Schema. */
+  operator: OperatorType | OperatorString;
+
+  /** Value to use when filtering */
+  value: any | any[];
+}

@@ -173,9 +173,9 @@ export class MyExample {
           // push empty data on A1
           cols.push({ value: '' });
           // push data in B1 cell with metadata formatter
-          cols.push({ 
-            value: customTitle, 
-            metadata: { style: excelFormat.id } 
+          cols.push({
+            value: customTitle,
+            metadata: { style: excelFormat.id }
           });
           sheet.data.push(cols);
         }
@@ -314,7 +314,6 @@ this.gridOptions = {
 Below is a preview of the previous customizations shown above
 
 ![image](https://user-images.githubusercontent.com/643976/208590003-b637dcda-5164-42cc-bfad-e921a22c1837.png)
-
 
 ### Cell Format Auto-Detect Disable
 ##### requires `v3.2.0` or higher
