@@ -26,8 +26,8 @@ export interface ExcelCopyBufferOption<T = any> {
   /** option to specify a custom column value extractor function */
   dataItemColumnValueExtractor?: (item: any, columnDef: Column<T>, row?: number, cell?: number) => string | HTMLElement | DocumentFragment | FormatterResultWithHtml | FormatterResultWithText | null;
 
-  /** option to specify a custom column value setter function */
-  dataItemColumnValueSetter?: (item: any, columnDef: Column<T>, value: any) => string | FormatterResultWithHtml | FormatterResultWithText | null;
+  /** option to specify a custom column value setter function. Return true if default logic should continue to evaluate */
+  dataItemColumnValueSetter?: (item: any, columnDef: Column<T>, value: any) => string | FormatterResultWithHtml | FormatterResultWithText | null | true;
 
   /** option to specify a custom handler for paste actions */
   clipboardCommandHandler?: (editCommand: any) => void;

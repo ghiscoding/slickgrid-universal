@@ -157,7 +157,9 @@ export class SlickCellExternalCopyManager {
   setDataItemValueForColumn(item: any, columnDef: Column, value: any): any | void {
     if (!columnDef?.denyPaste) {
       if (this._addonOptions.dataItemColumnValueSetter) {
-        return this._addonOptions.dataItemColumnValueSetter(item, columnDef, value);
+        if (this._addonOptions.dataItemColumnValueSetter(item, columnDef, value) !== true) {
+          return;
+        }
       }
 
       // if a custom setter is not defined, we call applyValue of the editor to unserialize
