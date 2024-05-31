@@ -827,8 +827,8 @@ export class FilterService {
       // in some occasion, we might be dealing with a dataset that is hierarchical from the start (the source dataset is already a tree structure)
       // and we did not have time to convert it to a flat dataset yet (for SlickGrid to use),
       // we would end up calling the pre-filter too early because these pre-filter works only a flat dataset
-      // for that use case (like Example 6), we need to delay for at least a cycle the pre-filtering (so we can simply recall the same method after a delay of 0 which equal to 1 CPU cycle)
-      setTimeout(() => this.refreshTreeDataFilters());
+      // for that use case (like Example 6), we can queue a microtask to be executed at the end of current task
+      queueMicrotask(() => this.refreshTreeDataFilters());
     }
   }
 

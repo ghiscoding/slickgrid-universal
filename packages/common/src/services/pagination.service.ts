@@ -131,7 +131,7 @@ export class PaginationService {
           this._previousPagination = { pageNumber: pagingInfo.pageNum, pageSize: pagingInfo.pageSize, pageSizes: this.availablePageSizes, totalItems: pagingInfo.totalRows };
         }
       });
-      setTimeout(() => {
+      queueMicrotask(() => {
         if (this.dataView) {
           this.dataView.setRefreshHints({ isFilterUnchanged: true });
           this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: (this._pageNumber - 1) }); // dataView page starts at 0 instead of 1
