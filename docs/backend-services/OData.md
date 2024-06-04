@@ -3,6 +3,7 @@
 - [Usage](#grid-definition--call-of-backendserviceapi)
 - [Passing Extra Arguments](#passing-extra-arguments-to-the-query)
 - [OData options](#odata-options)
+- [Override the filter query](#override-the-filter-query)
 
 ### Description
 OData Backend Service (for Pagination purposes) to get data from a backend server with the help of OData.
