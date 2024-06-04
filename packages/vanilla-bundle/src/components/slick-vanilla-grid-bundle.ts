@@ -761,7 +761,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this._eventPubSubService.subscribe('onLanguageChange', (args: { language: string; }) => {
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions(args.language);
-          if (gridOptions.createPreHeaderPanel) {
+          if ((gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) || (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)) {
             this.groupingService.translateGroupingAndColSpan();
           }
         }
@@ -1378,7 +1378,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._registeredResources.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
-    if (this.gridOptions.createPreHeaderPanel) {
+    if ((this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) || (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)) {
       this._registeredResources.push(this.groupingService);
     }
 
