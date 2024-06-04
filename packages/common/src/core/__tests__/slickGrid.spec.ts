@@ -455,8 +455,10 @@ describe('SlickGrid core file', () => {
 
   describe('Top-Header Panel', () => {
     it('should create a topheader panel when enabled', () => {
+      const paneHeight = 25;
+      const topHeaderPanelHeight = 30;
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = { ...defaultOptions, enableCellNavigation: true, topHeaderPanelHeight: 30, showTopHeaderPanel: true, frozenColumn: 0, createTopHeaderPanel: true } as GridOption;
+      const gridOptions = { ...defaultOptions, enableCellNavigation: true, topHeaderPanelHeight, showTopHeaderPanel: true, frozenColumn: 0, createTopHeaderPanel: true } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
       const topheaderElm = container.querySelector('.slick-topheader-panel');
@@ -468,6 +470,17 @@ describe('SlickGrid core file', () => {
       expect(topheaderElms[0].style.display).not.toBe('none');
       expect(grid.getTopHeaderPanel()).toBeTruthy();
       expect(grid.getTopHeaderPanel()).toEqual(grid.getTopHeaderPanel());
+
+      const paneHeaderLeftElms = container.querySelectorAll<HTMLDivElement>('.slick-pane-header');
+      jest.spyOn(paneHeaderLeftElms[0], 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: paneHeight } as DOMRect);
+      jest.spyOn(paneHeaderLeftElms[1], 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: paneHeight } as DOMRect);
+
+      // calling resize should add top offset of pane + topHeader
+      grid.resizeCanvas();
+
+      const paneTopLeftElm = container.querySelector('.slick-pane-top.slick-pane-left') as HTMLDivElement;
+
+      expect(paneTopLeftElm.style.top).toBe(`${paneHeight + topHeaderPanelHeight}px`);
     });
 
     it('should hide column headers div when "showTopHeaderPanel" is disabled', () => {
@@ -3339,6 +3352,39 @@ describe('SlickGrid core file', () => {
 
       expect(renderSpy).toHaveBeenCalledTimes(1);
       expect(viewportElm.scrollLeft).toBe(0);
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and topHeader is enabled', () => {
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, enableMouseWheelScrollHandler: true,
+        createTopHeaderPanel: true,
+      });
+      grid.setOptions({ enableMouseWheelScrollHandler: false });
+      grid.setOptions({ enableMouseWheelScrollHandler: true });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
+      Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
+
+      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      let topHeaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
+      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportLeftElm.dispatchEvent(mouseEvent);
+
+      expect(topHeaderElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollTop).toBe(25);
+      expect(viewportTopLeftElm.scrollTop).toBe(25);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
     });
 
     it('should scroll all elements shown when triggered by mousewheel and preHeader/footer are enabled and without any Frozen rows/columns', () => {
