@@ -1,5 +1,5 @@
 describe('Example 03 - Draggable Grouping', () => {
-  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Effort-Driven', 'Action'];
+  const fullTitles = ['', 'Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven', 'Action'];
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
@@ -10,7 +10,7 @@ describe('Example 03 - Draggable Grouping', () => {
 
   it('should have exact column titles on 1st grid', () => {
     cy.get('.grid3')
-      .find('.slick-header-columns')
+      .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
@@ -51,7 +51,7 @@ describe('Example 03 - Draggable Grouping', () => {
     });
 
     it('should collapse all rows and make sure Duration group is sorted in descending order', () => {
-      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+      cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 100');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 99');
@@ -64,7 +64,7 @@ describe('Example 03 - Draggable Grouping', () => {
     });
 
     it('should collapse all rows again and make sure Duration group is sorted in descending order', () => {
-      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+      cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 1');
@@ -125,8 +125,8 @@ describe('Example 03 - Draggable Grouping', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(2)`).should('contain', '0');
     });
 
-    it('should use the preheader Toggle All button and expect all groups to now be collapsed', () => {
-      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+    it('should use the topheader Toggle All button and expect all groups to now be collapsed', () => {
+      cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
@@ -179,8 +179,8 @@ describe('Example 03 - Draggable Grouping', () => {
         .should('exist');
     });
 
-    it('should use the preheader Toggle All button and expect all groups to now be expanded', () => {
-      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+    it('should use the topheader Toggle All button and expect all groups to now be expanded', () => {
+      cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
@@ -191,8 +191,8 @@ describe('Example 03 - Draggable Grouping', () => {
         .should('have.css', 'marginLeft').and('eq', `15px`);
     });
 
-    it('should use the preheader Toggle All button again and expect all groups to now be collapsed', () => {
-      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+    it('should use the topheader Toggle All button again and expect all groups to now be collapsed', () => {
+      cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');

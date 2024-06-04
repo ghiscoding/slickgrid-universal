@@ -1006,15 +1006,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(spy).toHaveBeenCalledWith(mockGrid, container);
       });
 
-      it('should not initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is also enabled', () => {
-        const spy = jest.spyOn(groupingAndColspanServiceStub, 'init');
-
-        component.gridOptions = { createPreHeaderPanel: true, enableDraggableGrouping: true } as unknown as GridOption;
-        component.initialization(divContainer, slickEventHandler);
-
-        expect(spy).not.toHaveBeenCalled();
-      });
-
       it('should call "translateColumnHeaders" from ExtensionService when "enableTranslate" is set', () => {
         const spy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
 

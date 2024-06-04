@@ -77,7 +77,8 @@ export default class Example03 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
+        id: 'title', name: 'Title', field: 'title', columnGroup: 'Common Factor',
+        sortable: true, type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -95,7 +96,8 @@ export default class Example03 {
         }
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor',
+        sortable: true, filterable: true,
         editor: {
           model: Editors.float,
           // required: true,
@@ -118,7 +120,45 @@ export default class Example03 {
         }
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost',
+        id: 'start', name: 'Start', field: 'start', sortable: true, columnGroup: 'Period',
+        // formatter: Formatters.dateIso,
+        type: FieldType.date, outputType: FieldType.dateIso,
+        filterable: true, filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+        editor: { model: Editors.date },
+        grouping: {
+          getter: 'start',
+          formatter: (g) => `Start: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period',
+        sortable: true,
+        editor: {
+          model: Editors.date,
+          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption
+        },
+        // formatter: Formatters.dateIso,
+        type: FieldType.date, outputType: FieldType.dateIso,
+        formatter: Formatters.dateIso,
+        filterable: true, filter: { model: Filters.dateRange },
+        grouping: {
+          getter: 'finish',
+          formatter: (g) => `Finish: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'cost', name: 'Cost', field: 'cost', columnGroup: 'Analysis',
         width: 90,
         sortable: true,
         filterable: true,
@@ -138,7 +178,8 @@ export default class Example03 {
         }
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', columnGroup: 'Analysis',
+        type: FieldType.number,
         editor: {
           model: Editors.slider,
           minValue: 0,
@@ -160,44 +201,7 @@ export default class Example03 {
         params: { groupFormatterPrefix: '<i>Avg</i>: ' },
       },
       {
-        id: 'start', name: 'Start', field: 'start', sortable: true,
-        // formatter: Formatters.dateIso,
-        type: FieldType.date, outputType: FieldType.dateIso,
-        filterable: true, filter: { model: Filters.compoundDate },
-        formatter: Formatters.dateIso,
-        editor: { model: Editors.date },
-        grouping: {
-          getter: 'start',
-          formatter: (g) => `Start: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: false,
-          collapsed: false
-        }
-      },
-      {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: {
-          model: Editors.date,
-          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption
-        },
-        // formatter: Formatters.dateIso,
-        type: FieldType.date, outputType: FieldType.dateIso,
-        formatter: Formatters.dateIso,
-        filterable: true, filter: { model: Filters.dateRange },
-        grouping: {
-          getter: 'finish',
-          formatter: (g) => `Finish: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: false,
-          collapsed: false
-        }
-      },
-      {
-        id: 'effortDriven', name: 'Effort-Driven', field: 'effortDriven',
+        id: 'effortDriven', name: 'Effort-Driven', field: 'effortDriven', columnGroup: 'Analysis',
         width: 80, minWidth: 20, maxWidth: 100,
         cssClass: 'cell-effort-driven',
         sortable: true,
@@ -314,7 +318,10 @@ export default class Example03 {
       showCustomFooter: true,
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
-      preHeaderPanelHeight: 35,
+      preHeaderPanelHeight: 26,
+      createTopHeaderPanel: true,
+      showTopHeaderPanel: true,
+      topHeaderPanelHeight: 35,
       rowHeight: 33,
       headerRowHeight: 35,
       enableDraggableGrouping: true,
@@ -425,7 +432,7 @@ export default class Example03 {
   groupByDuration() {
     this.clearGrouping();
     if (this.draggableGroupingPlugin?.setDroppedGroups) {
-      this.showPreHeader();
+      this.showTopHeader();
       this.draggableGroupingPlugin.setDroppedGroups('duration');
       this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
     }
@@ -445,14 +452,14 @@ export default class Example03 {
   groupByDurationEffortDriven() {
     this.clearGrouping();
     if (this.draggableGroupingPlugin?.setDroppedGroups) {
-      this.showPreHeader();
+      this.showTopHeader();
       this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
       this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
     }
   }
 
-  showPreHeader() {
-    this.sgb?.slickGrid?.setPreHeaderPanelVisibility(true);
+  showTopHeader() {
+    this.sgb?.slickGrid?.setTopHeaderPanelVisibility(true);
   }
 
   toggleDarkMode() {
@@ -469,7 +476,7 @@ export default class Example03 {
 
   toggleDraggableGroupingRow() {
     this.clearGroupsAndSelects();
-    this.sgb?.slickGrid?.setPreHeaderPanelVisibility(!this.sgb?.slickGrid?.getOptions().showPreHeaderPanel);
+    this.sgb?.slickGrid?.setTopHeaderPanelVisibility(!this.sgb?.slickGrid?.getOptions().showTopHeaderPanel);
   }
 
   onGroupChanged(change: { caller?: string; groupColumns: Grouping[]; }) {

@@ -18,7 +18,6 @@ const pubSubServiceStub = {
 } as BasePubSubService;
 
 const DEFAULT_COLUMN_HEIGHT = 25;
-const DEFAULT_COLUMN_MIN_WIDTH = 30;
 const DEFAULT_COLUMN_WIDTH = 80;
 const DEFAULT_GRID_HEIGHT = 600;
 const DEFAULT_GRID_WIDTH = 800;
@@ -451,6 +450,44 @@ describe('SlickGrid core file', () => {
       preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
       expect(preheaderElms[0].style.display).toBe('none');
       expect(preheaderElms[1].style.display).toBe('none');
+    });
+  });
+
+  describe('Top-Header Panel', () => {
+    it('should create a topheader panel when enabled', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const gridOptions = { ...defaultOptions, enableCellNavigation: true, topHeaderPanelHeight: 30, showTopHeaderPanel: true, frozenColumn: 0, createTopHeaderPanel: true } as GridOption;
+      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
+      grid.init();
+      const topheaderElm = container.querySelector('.slick-topheader-panel');
+      const topheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-topheader-panel');
+
+      expect(grid).toBeTruthy();
+      expect(topheaderElm).toBeTruthy();
+      expect(topheaderElm?.querySelectorAll('div').length).toBe(3);
+      expect(topheaderElms[0].style.display).not.toBe('none');
+      expect(grid.getTopHeaderPanel()).toBeTruthy();
+      expect(grid.getTopHeaderPanel()).toEqual(grid.getTopHeaderPanel());
+    });
+
+    it('should hide column headers div when "showTopHeaderPanel" is disabled', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const gridOptions = { ...defaultOptions, enableCellNavigation: true, topHeaderPanelHeight: 30, showTopHeaderPanel: false, createTopHeaderPanel: true } as GridOption;
+      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
+      grid.init();
+      let topheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-topheader-panel');
+
+      expect(grid).toBeTruthy();
+      expect(topheaderElms).toBeTruthy();
+      expect(topheaderElms[0].style.display).toBe('none');
+
+      grid.setTopHeaderPanelVisibility(true);
+      topheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-topheader-panel');
+      expect(topheaderElms[0].style.display).not.toBe('none');
+
+      grid.setTopHeaderPanelVisibility(false);
+      topheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-topheader-panel');
+      expect(topheaderElms[0].style.display).toBe('none');
     });
   });
 
@@ -5216,10 +5253,26 @@ describe('SlickGrid core file', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createPreHeaderPanel: true, preHeaderPanelHeight: 44, showPreHeaderPanel: true, enableCellNavigation: true });
         const preheaderElm = container.querySelector('.slick-preheader-panel') as HTMLDivElement;
-        const preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
         Object.defineProperty(preheaderElm, 'scrollLeft', { writable: true, value: 25 });
 
         preheaderElm.dispatchEvent(new CustomEvent('scroll'));
+
+        const viewportTopLeft = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        expect(viewportTopLeft.scrollLeft).toBe(25);
+
+        // when enableTextSelectionOnCells isn't enabled and trigger IE related code
+        const selectStartEvent = new CustomEvent('selectstart');
+        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') });
+        viewportTopLeft.dispatchEvent(selectStartEvent);
+      });
+
+      it('should update viewport top/left scrollLeft when scrolling in topHeader DOM element', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createTopHeaderPanel: true, topHeaderPanelHeight: 44, showTopHeaderPanel: true, enableCellNavigation: true });
+        const topheaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
+        Object.defineProperty(topheaderElm, 'scrollLeft', { writable: true, value: 25 });
+
+        topheaderElm.dispatchEvent(new CustomEvent('scroll'));
 
         const viewportTopLeft = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
         expect(viewportTopLeft.scrollLeft).toBe(25);

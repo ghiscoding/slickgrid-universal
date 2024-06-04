@@ -893,7 +893,8 @@ input.search-filter {
 // Draggable Grouping Plugin
 // ----------------------------------------------
 
-.slick-preheader-panel {
+.slick-preheader-panel,
+.slick-topheader-panel {
   .slick-dropzone, .slick-dropzone-hover {
     display: flex;
     align-items: center;
