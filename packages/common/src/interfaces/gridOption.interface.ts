@@ -214,7 +214,7 @@ export interface GridOption<C extends Column = Column> {
   /** Default to false, which leads to creating an extra pre-header panel (on top of column header) for column grouping purposes */
   createPreHeaderPanel?: boolean;
 
-  /** Default to false, which leads to creating an extra pre-header panel (on top of column header & pre-header) for column grouping purposes */
+  /** Default to false, which leads to creating an extra top-header panel (on top of column header & pre-header) for column grouping purposes */
   createTopHeaderPanel?: boolean;
 
   /** Custom Footer Options */
@@ -665,7 +665,7 @@ export interface GridOption<C extends Column = Column> {
   /** Extra top-header panel height (on top of column header & pre-header) */
   topHeaderPanelHeight?: number;
 
-  /** Defaults to "auto", extra pre-header panel (on top of column header & pre-header) width, it could be a number (pixels) or a string ("100%" or "auto") */
+  /** Defaults to "auto", extra top-header panel (on top of column header & pre-header) width, it could be a number (pixels) or a string ("100%" or "auto") */
   topHeaderPanelWidth?: number | string;
 
   /** Do we want to preserve copied selection on paste? */
