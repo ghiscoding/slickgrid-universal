@@ -377,7 +377,7 @@ describe('Draggable Grouping Plugin', () => {
 
       expect(setColumnsSpy).toHaveBeenCalledWith([mockColumns[2], mockColumns[2]]);
       expect(setColumnResizeSpy).toHaveBeenCalled();
-      expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub });
+      expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub, impactedColumns: expect.arrayContaining([mockColumns[2]]) });
     });
 
     it('should drag over dropzone and expect hover css class be added and removed when dragging outside of dropzone', () => {
