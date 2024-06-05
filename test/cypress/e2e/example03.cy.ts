@@ -1,4 +1,5 @@
 describe('Example 03 - Draggable Grouping', () => {
+  const preHeaders = ['', 'Common Factor', 'Period', 'Analysis', ''];
   const fullTitles = ['', 'Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven', 'Action'];
   const GRID_ROW_HEIGHT = 33;
 
@@ -8,11 +9,24 @@ describe('Example 03 - Draggable Grouping', () => {
     cy.get('h3 span.subtitle').should('contain', '(with Salesforce Theme)');
   });
 
-  it('should have exact column titles on 1st grid', () => {
+  it('should have exact column (pre-header) grouping titles in grid', () => {
+    cy.get('.grid3')
+      .find('.slick-preheader-panel .slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(preHeaders[index]));
+  });
+
+  it('should have exact column titles in grid', () => {
     cy.get('.grid3')
       .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should have a draggable dropzone on top of the grid in the top-header section', () => {
+    cy.get('.grid3')
+      .find('.slick-topheader-panel .slick-dropzone:visible')
+      .contains('Drop a column header here to group by the column');
   });
 
   it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark to be enabled', () => {
