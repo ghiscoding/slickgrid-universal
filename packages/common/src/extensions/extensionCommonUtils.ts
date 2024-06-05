@@ -9,8 +9,8 @@ const PICKER_CHECK_ICON = 'mdi-icon-picker-check';
 const PICKER_UNCHECK_ICON = 'mdi-icon-picker-uncheck';
 
 /** Create a Close button element and add it to the Menu element */
-export function addCloseButtomElement(ctx: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
-  const context: any = ctx;
+export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
+  const context: any = this;
   const closePickerButtonElm = createDomElement('button', {
     type: 'button', className: 'close',
     ariaLabel: 'Close',
@@ -21,8 +21,8 @@ export function addCloseButtomElement(ctx: SlickColumnPicker | SlickGridMenu, me
 }
 
 /** When "columnTitle" option is provided, let's create a div element to show "Columns" list title */
-export function addColumnTitleElementWhenDefined(ctx: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
-  const context: any = ctx;
+export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
+  const context: any = this;
   if (context.addonOptions?.columnTitle) {
     context._columnTitleElm = createDomElement(
       'div',
@@ -37,8 +37,8 @@ export function addColumnTitleElementWhenDefined(ctx: SlickColumnPicker | SlickG
  * @param event - input checkbox event
  * @returns
  */
-export function handleColumnPickerItemClick(ctx: SlickColumnPicker | SlickGridMenu, event: DOMEvent<HTMLInputElement>) {
-  const context: any = ctx;
+export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridMenu, event: DOMEvent<HTMLInputElement>) {
+  const context: any = this;
   const controlType = context instanceof SlickColumnPicker ? 'columnPicker' : 'gridMenu';
   const iconContainerElm = event.target?.closest('.icon-checkbox-container') as HTMLDivElement;
   const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.mdi');
@@ -144,8 +144,8 @@ function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inp
   return { inputElm, labelElm, labelSpanElm };
 }
 
-export function populateColumnPicker(ctx: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption) {
-  const context: any = ctx;
+export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption) {
+  const context: any = this;
   const menuPrefix = context instanceof SlickGridMenu ? 'gridmenu-' : '';
 
   for (const column of context.columns) {
@@ -163,7 +163,7 @@ export function populateColumnPicker(ctx: SlickColumnPicker | SlickGridMenu, add
     const headerColumnValueExtractorFn = typeof addonOptions?.headerColumnValueExtractor === 'function' ? addonOptions.headerColumnValueExtractor : context._defaults.headerColumnValueExtractor;
     const columnLabel = headerColumnValueExtractorFn!(column, context.gridOptions);
 
-    ctx.grid.applyHtmlCode(labelSpanElm, columnLabel);
+    this.grid.applyHtmlCode(labelSpanElm, columnLabel);
     columnLiElm.appendChild(labelElm);
     context._listElm.appendChild(columnLiElm);
   }
@@ -194,8 +194,8 @@ export function populateColumnPicker(ctx: SlickColumnPicker | SlickGridMenu, add
  * as it does not include columns currently hidden by the picker. We create a new `columns` structure by leaving currently-hidden
  * columns in their original ordinal position and interleaving the results of the current column sort.
  */
-export function updateColumnPickerOrder(ctx: SlickColumnPicker | SlickGridMenu) {
-  const context: any = ctx;
+export function updateColumnPickerOrder(this: SlickColumnPicker | SlickGridMenu) {
+  const context: any = this;
 
   const current = context.grid.getColumns().slice(0);
   const ordered = new Array(context.columns.length);
