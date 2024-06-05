@@ -36,6 +36,7 @@ const pubSubServiceStub = {
 
 const sortServiceStub = {
   clearSorting: jest.fn(),
+  getCurrentColumnSorts: jest.fn(),
 } as unknown as SortService;
 
 const dataviewStub = {

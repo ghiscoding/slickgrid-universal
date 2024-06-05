@@ -287,15 +287,16 @@ export class TreeDataService {
    * @param {Array<Object>} flatDataset - parent/child flat dataset
    * @param {Column[]} columnDefinitions - column definitions
    * @param {Object} gridOptions - grid options
+   * @param {Array<ColumnSort>} [columnSorts] - optional sort columns
    * @returns {Array<Object>} - tree dataset
    */
-  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[]; }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption) {
+  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[]; }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption, columnSorts?: ColumnSort[]) {
     // 1- convert the flat array into a hierarchical array
     const datasetHierarchical = this.convertFlatParentChildToTreeDataset(flatDataset, gridOptions);
 
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
-    // also note that multi-column is not currently supported with Tree Data
-    const columnSort = this.getInitialSort(columnDefinitions, gridOptions);
+    // also note that multi-column is not currently supported with Tree Data and so we'll take only the first Sort column
+    const columnSort = Array.isArray(columnSorts) && columnSorts.length ? columnSorts[0] : this.getInitialSort(columnDefinitions, gridOptions);
     const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort], true);
 
     // and finally add the sorting icon (this has to be done manually in SlickGrid) to the column we used for the sorting
