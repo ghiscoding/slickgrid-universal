@@ -25,7 +25,7 @@ import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type
  *  github.com/muthukumarse/Slickgrid
  *
  * NOTES:
- *     This plugin provides the Draggable Grouping feature
+ *     This plugin provides the Draggable Grouping feature which could be located in either the Top-Header or the Pre-Header
  *
  * A plugin to add drop-down menus to column headers.
  * To specify a custom button in a column header, extend the column definition like so:
@@ -131,7 +131,7 @@ export class SlickDraggableGrouping {
     if (grid) {
       this._gridUid = grid.getUID();
       this._gridColumns = grid.getColumns();
-      this._dropzoneElm = grid.getPreHeaderPanel();
+      this._dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
       this._dropzoneElm.classList.add('slick-dropzone');
 
       // add PubSub instance to all SlickEvent
@@ -216,7 +216,7 @@ export class SlickDraggableGrouping {
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
     this._bindingEventService.unbindAll();
-    emptyElement(this.gridContainer.querySelector(`.${this.gridUid} .slick-preheader-panel`));
+    emptyElement(this.gridContainer.querySelector(`.${this.gridUid} .slick-preheader-panel,.${this.gridUid} .slick-topheader-panel`));
   }
 
   clearDroppedGroups() {
@@ -277,7 +277,7 @@ export class SlickDraggableGrouping {
    */
   setupColumnReorder(grid: SlickGrid, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, _columns: Column[], getColumnIndex: (columnId: string) => number, _uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
     this.destroySortableInstances();
-    const dropzoneElm = grid.getPreHeaderPanel();
+    const dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');
     const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-group-toggle-all');
 

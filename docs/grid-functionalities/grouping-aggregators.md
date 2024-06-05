@@ -2,6 +2,7 @@
 - [Demo](#demo)
 - [Description](#description)
 - [Setup](#setup)
+- [Draggable Dropzone Location](#draggable-dropzone-location)
 - [Aggregators](#aggregators)
 - [SortComparers](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/sortComparers/sortComparers.index.ts)
 - [GroupTotalsFormatter](#group-totals-formatter)
@@ -27,6 +28,43 @@ The important thing to understand while working with `SlickGrid` is that Groupin
    - Slickgrid-Universal provides the following built-in `Aggregators`: `Avg`, `Min`, `Max`, `Sum`, `Clone`, `Distinct`
 2. You need to add a `groupTotalsFormatter` on the column definition you want it to be calculated
    - this is very similar to a Formatter, except that they are designed to show aggregate results, e.g:: `Total: 142.50$`
+
+### Draggable Dropzone Location
+
+The Draggable Grouping can be located in either the Top-Header or the Pre-Header as described below.
+
+#### Pre-Heaader
+Draggable Grouping can be located in either the Pre-Header of the Top-Header, however when it is located in the Pre-Header then the Header Grouping will not be available (because both of them would conflict with each other). Note that prior to the version 5.1 of Slickgrid-Universal, the Pre-Header was the default and only available option.
+
+```ts
+this.gridOptions = {
+  createPreHeaderPanel: true,
+  showPreHeaderPanel: true,
+  preHeaderPanelHeight: 26,
+  draggableGrouping: {
+    // ... any draggable plugin option
+  },
+}
+```
+
+#### Top-Heaader
+##### requires v5.1 and higher
+This is the preferred section since the Top-Header is on top of all headers (including pre-header) and it will always be the full grid width. Using the Top-Header also frees up the Pre-Header section for the potential use of Header Grouping.
+
+When using Draggable Grouping and Header Grouping together, you need to enable both top-header and pre-header.
+```ts
+this.gridOptions = {
+    // we'll use top-header for the Draggable Grouping
+  createTopHeaderPanel: true,
+  showTopHeaderPanel: true,
+  topHeaderPanelHeight: 35,
+
+  // pre-header will include our Header Grouping (i.e. "Common Factor")
+  createPreHeaderPanel: true,
+  showPreHeaderPanel: true,
+  preHeaderPanelHeight: 26,
+}
+```
 
 ### Aggregators
 The `Aggregators` is basically the accumulator, the logic that will do the sum (or any other aggregate we defined). We simply need to instantiate the `Aggregator` by passing the column definition `field` that will be used to accumulate. For example, if we have a column definition of Cost and we want to calculate it's sum, we can call the `Aggregator` as follow

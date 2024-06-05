@@ -126,7 +126,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     this._registeredResources.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
-    if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
+    if ((this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) || (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)) {
       this._registeredResources.push(this.groupingService);
     }
 

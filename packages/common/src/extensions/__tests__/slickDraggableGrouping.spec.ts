@@ -79,6 +79,7 @@ const gridStub = {
   getHeaderColumn: jest.fn(),
   getOptions: jest.fn(),
   getPreHeaderPanel: jest.fn(),
+  getTopHeaderPanel: jest.fn(),
   getData: () => dataViewStub,
   getEditorLock: () => getEditorLockMock,
   getUID: () => GRID_UID,

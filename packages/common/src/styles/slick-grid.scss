@@ -697,7 +697,8 @@
   }
 
   /** Header Grouping **/
-  .slick-preheader-panel.slick-state-default  {
+  .slick-preheader-panel.slick-state-default,
+  .slick-topheader-panel.slick-state-default {
     border-bottom: var(--slick-preheader-border-bottom, $slick-preheader-border-bottom);
 
     .slick-header-columns {
@@ -730,7 +731,8 @@
     border-right: var(--slick-frozen-header-row-border-right, $slick-frozen-header-row-border-right);
   }
   .slick-pane-left {
-    .slick-preheader-panel .slick-header-column.frozen:last-child {
+    .slick-preheader-panel .slick-header-column.frozen:last-child,
+    .slick-topheader-panel .slick-header-column.frozen:last-child {
       border-right: var(--slick-frozen-preheader-row-border-right, $slick-frozen-preheader-row-border-right);
     }
   }
