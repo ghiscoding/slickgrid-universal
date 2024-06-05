@@ -316,12 +316,18 @@ export default class Example03 {
         selectActiveRow: false
       },
       showCustomFooter: true,
+
+      // pre-header will include our Header Grouping (i.e. "Common Factor")
+      // Draggable Grouping could be located in either the Pre-Header OR the new Top-Header
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 26,
+
+      // when Top-Header is created, it will be used by the Draggable Grouping (otherwise the Pre-Header will be used)
       createTopHeaderPanel: true,
       showTopHeaderPanel: true,
       topHeaderPanelHeight: 35,
+
       rowHeight: 33,
       headerRowHeight: 35,
       enableDraggableGrouping: true,
