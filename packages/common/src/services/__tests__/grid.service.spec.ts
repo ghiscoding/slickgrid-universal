@@ -951,6 +951,7 @@ describe('Grid Service', () => {
 
       jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
       jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
@@ -978,6 +979,7 @@ describe('Grid Service', () => {
 
       jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
       jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
@@ -1005,6 +1007,7 @@ describe('Grid Service', () => {
 
       jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
       jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
@@ -1032,6 +1035,7 @@ describe('Grid Service', () => {
 
       jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
       jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
