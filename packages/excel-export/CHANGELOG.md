@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.1...v5.1.0) (2024-06-07)
+
+### Features
+
+* **export:** add missing `valueParserCallback` dataContext & new demo ([#1543](https://github.com/ghiscoding/slickgrid-universal/issues/1543)) ([884b6e0](https://github.com/ghiscoding/slickgrid-universal/commit/884b6e0c8f9bbff736517b4b8ab131d7141aaff5)) - by @ghiscoding
+
 ## [5.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0...v5.0.1) (2024-05-11)
 
 **Note:** Version bump only for package @slickgrid-universal/excel-export

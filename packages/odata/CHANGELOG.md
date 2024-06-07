@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.1...v5.1.0) (2024-06-07)
+
+### Features
+
+* **filters:** add StartsWith/EndsWith (`a*z`) to OData/GraphQL ([#1532](https://github.com/ghiscoding/slickgrid-universal/issues/1532)) ([237d6a8](https://github.com/ghiscoding/slickgrid-universal/commit/237d6a8afee147b6c1ecd3227824fa94d5da6753)) - by @ghiscoding
+* **OData:** add `filterQueryOverride` to OData Service ([#1536](https://github.com/ghiscoding/slickgrid-universal/issues/1536)) ([e8ffffe](https://github.com/ghiscoding/slickgrid-universal/commit/e8ffffe343ebe84a799ed22ef71f40df51b1a1a4)) - by @zewa666
+
 ## [5.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0...v5.0.1) (2024-05-11)
 
 **Note:** Version bump only for package @slickgrid-universal/odata
