@@ -16,7 +16,7 @@ export interface GraphqlCustomFilteringOption {
   field: string;
 
   /** Custom Operator to use when filtering. Please note that any new Custom Operator must be implemented in your GraphQL Schema. */
-  operator: OperatorType | OperatorString;
+  operator: any;
 
   /** Value to use when filtering */
   value: any | any[];
