@@ -4,6 +4,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.1...v5.1.0) (2024-06-07)
+
+### Features
+
+* **core:** add new `preventDragFromKeys` grid option, fixes [#1537](https://github.com/ghiscoding/slickgrid-universal/issues/1537) ([#1538](https://github.com/ghiscoding/slickgrid-universal/issues/1538)) ([803fbee](https://github.com/ghiscoding/slickgrid-universal/commit/803fbee0e4245a421840b7420e9ea617238ad780)) - by @ghiscoding
+* **core:** add optional Top-Header for Drag Grouping & Header Grouping ([#1556](https://github.com/ghiscoding/slickgrid-universal/issues/1556)) ([7d4a769](https://github.com/ghiscoding/slickgrid-universal/commit/7d4a769943d1f96321686e91634efe443b1eb8b2)) - by @ghiscoding
+* **export:** add missing `valueParserCallback` dataContext & new demo ([#1543](https://github.com/ghiscoding/slickgrid-universal/issues/1543)) ([884b6e0](https://github.com/ghiscoding/slickgrid-universal/commit/884b6e0c8f9bbff736517b4b8ab131d7141aaff5)) - by @ghiscoding
+* **filters:** add `OperatorType.custom` for custom backend service ([#1526](https://github.com/ghiscoding/slickgrid-universal/issues/1526)) ([4284d58](https://github.com/ghiscoding/slickgrid-universal/commit/4284d5834ec9955a327043565169b99ede8988f4)) - by @ghiscoding
+* **filters:** add a `filterPredicate` option for user customization ([#1528](https://github.com/ghiscoding/slickgrid-universal/issues/1528)) ([cbf64d8](https://github.com/ghiscoding/slickgrid-universal/commit/cbf64d88c2077bcca5bcf7973678d6aa90376a65)) - by @ghiscoding
+* **filters:** add StartsWith/EndsWith (`a*z`) filter combo ([#1530](https://github.com/ghiscoding/slickgrid-universal/issues/1530)) ([51560aa](https://github.com/ghiscoding/slickgrid-universal/commit/51560aa5a9761634004409cdc5cc01b91d7f8790)) - by @ghiscoding
+* **filters:** add StartsWith/EndsWith (`a*z`) to OData/GraphQL ([#1532](https://github.com/ghiscoding/slickgrid-universal/issues/1532)) ([237d6a8](https://github.com/ghiscoding/slickgrid-universal/commit/237d6a8afee147b6c1ecd3227824fa94d5da6753)) - by @ghiscoding
+* **OData:** add `filterQueryOverride` to OData Service ([#1536](https://github.com/ghiscoding/slickgrid-universal/issues/1536)) ([e8ffffe](https://github.com/ghiscoding/slickgrid-universal/commit/e8ffffe343ebe84a799ed22ef71f40df51b1a1a4)) - by @zewa666
+
+### Bug Fixes
+
+* **filter:** Date Filter should trigger Grid State change with Backspace ([#1545](https://github.com/ghiscoding/slickgrid-universal/issues/1545)) ([0c10410](https://github.com/ghiscoding/slickgrid-universal/commit/0c1041077e0bac82a2c563cd6b94cb2f45ad0be4)) - by @ghiscoding
+* **filters:** Compound Operator alt texts should work with custom list ([#1541](https://github.com/ghiscoding/slickgrid-universal/issues/1541)) ([02d5d2b](https://github.com/ghiscoding/slickgrid-universal/commit/02d5d2b23dbe30eea26c4658ee396791efd6779f)) - by @ghiscoding
+* **filters:** new `filterPredicate` shouldn't break other column filters ([#1531](https://github.com/ghiscoding/slickgrid-universal/issues/1531)) ([27777ef](https://github.com/ghiscoding/slickgrid-universal/commit/27777eff2d1172a873e0e0b98ef989288ff47554)) - by @ghiscoding
+* **Grouping:** Draggable Grouping cols reorder missing `impactedColumns` ([#1557](https://github.com/ghiscoding/slickgrid-universal/issues/1557)) ([69125c2](https://github.com/ghiscoding/slickgrid-universal/commit/69125c27e43aab03a4bbe3f7f9e1d7ebb80472ca)) - by @ghiscoding
+* **pagination:** out of boundaries page Grid Preset should be unset ([#1534](https://github.com/ghiscoding/slickgrid-universal/issues/1534)) ([b800da3](https://github.com/ghiscoding/slickgrid-universal/commit/b800da3fdb75441eabac4e8ce948e8bef77d9fd1)) - by @ghiscoding
+* **TreeData:** addItem should keep current sorted column ([#1558](https://github.com/ghiscoding/slickgrid-universal/issues/1558)) ([dc2a002](https://github.com/ghiscoding/slickgrid-universal/commit/dc2a002afeeca89d67ad6b4aef2047702075b7b9)) - by @ghiscoding
+
 ## [5.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0...v5.0.1) (2024-05-11)
 
 ### Bug Fixes

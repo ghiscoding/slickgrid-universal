@@ -97,7 +97,7 @@ export class CustomSumAggregator implements Aggregator {
 export default class Example19 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column<GroceryItem>[] = [];
-  dataset: any[] = [];
+  dataset: GroceryItem[] = [];
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
   sgb: SlickVanillaGridBundle;
@@ -149,10 +149,10 @@ export default class Example19 {
         editor: { model: Editors.float, decimal: 2 }, sortable: true, width: 70, filterable: true,
         formatter: Formatters.dollar, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
-            font: { bold: true },
+            font: { bold: true, size: 11.5 },
             format: '$0.00', // currency format
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -161,8 +161,10 @@ export default class Example19 {
         id: 'qty', name: 'Quantity', field: 'qty', type: FieldType.number,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
-          style: { font: { bold: true } },
+          style: {
+            font: { bold: true, size: 11.5 },
+            border: { top: { color: 'FF747474', style: 'thick' } },
+          },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         },
         params: { minDecimal: 0, maxDecimal: 0 },
@@ -177,7 +179,7 @@ export default class Example19 {
           formatters: [
             (_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty,
             Formatters.dollar
-          ]
+          ] as Formatter[]
         },
         excelExportOptions: {
           style: {
@@ -188,10 +190,10 @@ export default class Example19 {
           valueParserCallback: this.excelRegularCellParser.bind(this),
         },
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
-            font: { bold: true },
+            font: { bold: true, italic: true, size: 11.5 },
             format: '$0.00', // currency format
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -219,7 +221,7 @@ export default class Example19 {
               return null;
             },
             Formatters.dollar
-          ]
+          ] as Formatter[]
         },
         excelExportOptions: {
           style: {
@@ -230,10 +232,10 @@ export default class Example19 {
           valueParserCallback: this.excelRegularCellParser.bind(this),
         },
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
-            font: { bold: true },
+            font: { bold: true, italic: true, color: 'FFC65911', size: 11.5 },
             format: '$0.00', // currency format
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -251,7 +253,7 @@ export default class Example19 {
               return subTotal;
             },
             Formatters.dollar
-          ]
+          ] as Formatter[]
         },
         excelExportOptions: {
           style: {
@@ -262,10 +264,10 @@ export default class Example19 {
           valueParserCallback: this.excelRegularCellParser.bind(this),
         },
         groupTotalsExcelExportOptions: {
-          groupType: 'sum',
           style: {
-            font: { bold: true },
+            font: { bold: true, color: 'FF005A9E', size: 12 },
             format: '$0.00',
+            border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
         }
@@ -285,6 +287,7 @@ export default class Example19 {
         maxDecimal: 2,
         minDecimal: 2,
       },
+      enableGrouping: true,
       externalResources: [this.excelExportService],
       enableExcelExport: true,
       excelExportOptions: {
@@ -424,12 +427,13 @@ export default class Example19 {
       { id: i++, name: 'Chicken Wings', qty: 12, taxable: true, price: .53 },
       { id: i++, name: 'Drinkable Yogurt', qty: 6, taxable: true, price: 1.22 },
       { id: i++, name: 'Milk', qty: 3, taxable: true, price: 3.11 },
-    ];
+    ] as GroceryItem[];
 
     return datasetTmp;
   }
 
   clearGrouping() {
+    this.isDataGrouped = false;
     this.sgb?.dataView?.setGrouping([]);
   }
 

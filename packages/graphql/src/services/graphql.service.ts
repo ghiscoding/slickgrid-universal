@@ -31,6 +31,7 @@ import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import type {
   GraphqlCursorPaginationOption,
+  GraphqlCustomFilteringOption,
   GraphqlDatasetFilter,
   GraphqlFilteringOption,
   GraphqlPaginationOption,
@@ -378,7 +379,7 @@ export class GraphqlService implements BackendService {
    * @param columnFilters
    */
   updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically: boolean) {
-    const searchByArray: GraphqlFilteringOption[] = [];
+    const searchByArray: Array<GraphqlCustomFilteringOption | GraphqlFilteringOption> = [];
     let searchValue: string | string[];
 
     // on filter preset load, we need to keep current filters
@@ -442,80 +443,98 @@ export class GraphqlService implements BackendService {
           continue;
         }
 
-        // StartsWith + EndsWith combo
-        if (comboStartsWith && comboEndsWith) {
-          searchTerms = [comboStartsWith, comboEndsWith];
-          operator = OperatorType.startsWithEndsWith;
-        } else if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
-          if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
-            operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
-          }
-          searchTerms = searchTerms[0].split('..', 2);
-          if (searchTerms[0] === '') {
-            operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
-            searchTerms = searchTerms.slice(1);
-            searchValue = searchTerms[0];
-          } else if (searchTerms[1] === '') {
-            operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
-            searchTerms = searchTerms.slice(0, 1);
-            searchValue = searchTerms[0];
-          }
-        }
-
-        if (typeof searchValue === 'string') {
-          if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*') {
-            operator = ((operator === '*' || operator === '*z') ? 'EndsWith' : 'StartsWith') as OperatorString;
-          }
-        }
-
-        // if we didn't find an Operator but we have a Column Operator inside the Filter (DOM Element), we should use its default Operator
-        // multipleSelect is "IN", while singleSelect is "EQ", else don't map any operator
-        if (!operator && columnDef.filter && columnDef.filter.operator) {
-          operator = columnDef.filter.operator;
-        }
-
-        // No operator and 2 search terms should lead to default range operator.
-        if (!operator && Array.isArray(searchTerms) && searchTerms.length === 2 && searchTerms[0] && searchTerms[1]) {
-          operator = this._gridOptions.defaultFilterRangeOperator as OperatorString;
-        }
-
-        // Range with 1 searchterm should lead to equals for a date field.
-        if ((operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
-          operator = OperatorType.equal;
-        }
-
-        // Normalize all search values
-        searchValue = this.normalizeSearchValue(fieldType, searchValue);
-        if (Array.isArray(searchTerms)) {
-          searchTerms.forEach((_part, index) => {
-            searchTerms[index] = this.normalizeSearchValue(fieldType, searchTerms[index]);
+        let filterQueryOverride: GraphqlCustomFilteringOption | undefined = undefined;
+        if (typeof this.options?.filterQueryOverride === 'function') {
+          filterQueryOverride = this.options?.filterQueryOverride({
+            fieldName: getHtmlStringOutput(fieldName),
+            columnDef,
+            operator,
+            columnFilterOperator: columnFilter.operator,
+            searchValue,
+            grid: this._grid
           });
         }
 
-        // StartsWith + EndsWith combo
-        if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
-          // add 2 conditions (StartsWith A + EndsWith B) to the search array
-          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: OperatorType.startsWith, value: comboStartsWith });
-          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: OperatorType.endsWith, value: comboEndsWith });
-          continue;
-        }
+        if (filterQueryOverride !== undefined) {
+          // since this is a Custom Filter, we expect Operator to be a string
+          // and it is assumed that the developer will implement this custom operator in their GraphQL Schema
+          // e.g.: https://stackoverflow.com/a/37981802/1212166
+          searchByArray.push(filterQueryOverride);
+        } else {
+          if (comboStartsWith && comboEndsWith) {
+            searchTerms = [comboStartsWith, comboEndsWith];
+            operator = OperatorType.startsWithEndsWith;
+          } else if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
+            if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
+              operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
+            }
+            searchTerms = searchTerms[0].split('..', 2);
+            if (searchTerms[0] === '') {
+              operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
+              searchTerms = searchTerms.slice(1);
+              searchValue = searchTerms[0];
+            } else if (searchTerms[1] === '') {
+              operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
+              searchTerms = searchTerms.slice(0, 1);
+              searchValue = searchTerms[0];
+            }
+          }
 
-        // when having more than 1 search term (we need to create a CSV string for GraphQL "IN" or "NOT IN" filter search)
-        if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN')) {
-          searchValue = searchTerms.join(',');
-        } else if (searchTerms?.length === 2 && (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)) {
-          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'GE' : 'GT'), value: searchTerms[0] });
-          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'LE' : 'LT'), value: searchTerms[1] });
-          continue;
-        }
+          if (typeof searchValue === 'string') {
+            if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*') {
+              operator = ((operator === '*' || operator === '*z') ? 'EndsWith' : 'StartsWith') as OperatorString;
+            }
+          }
 
-        // if we still don't have an operator find the proper Operator to use according field type
-        if (!operator) {
-          operator = mapOperatorByFieldType(fieldType);
-        }
+          // if we didn't find an Operator but we have a Column Operator inside the Filter (DOM Element), we should use its default Operator
+          // multipleSelect is "IN", while singleSelect is "EQ", else don't map any operator
+          if (!operator && columnDef.filter && columnDef.filter.operator) {
+            operator = columnDef.filter.operator;
+          }
 
-        // build the search array
-        searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: mapOperatorType(operator), value: searchValue });
+          // No operator and 2 search terms should lead to default range operator.
+          if (!operator && Array.isArray(searchTerms) && searchTerms.length === 2 && searchTerms[0] && searchTerms[1]) {
+            operator = this._gridOptions.defaultFilterRangeOperator as OperatorString;
+          }
+
+          // Range with 1 searchterm should lead to equals for a date field.
+          if ((operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
+            operator = OperatorType.equal;
+          }
+
+          // Normalize all search values
+          searchValue = this.normalizeSearchValue(fieldType, searchValue);
+          if (Array.isArray(searchTerms)) {
+            searchTerms.forEach((_part, index) => {
+              searchTerms[index] = this.normalizeSearchValue(fieldType, searchTerms[index]);
+            });
+          }
+
+          // StartsWith + EndsWith combo
+          if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
+            // add 2 conditions (StartsWith A + EndsWith B) to the search array
+            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: OperatorType.startsWith, value: comboStartsWith });
+            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: OperatorType.endsWith, value: comboEndsWith });
+            continue;
+          }
+
+          // when having more than 1 search term (we need to create a CSV string for GraphQL "IN" or "NOT IN" filter search)
+          if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN')) {
+            searchValue = searchTerms.join(',');
+          } else if (searchTerms?.length === 2 && (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)) {
+            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'GE' : 'GT'), value: searchTerms[0] });
+            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'LE' : 'LT'), value: searchTerms[1] });
+            continue;
+          }
+
+          // if we still don't have an operator find the proper Operator to use according field type
+          if (!operator) {
+            operator = mapOperatorByFieldType(fieldType);
+          }
+
+          // build the search array
+          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: mapOperatorType(operator), value: searchValue });
+        }
       }
     }
 

@@ -100,18 +100,19 @@ export class GroupingAndColspanService {
 
   /** Create or Render the Pre-Header Row Grouping Titles */
   renderPreHeaderRowGroupingTitles() {
-    if (this._gridOptions && this._gridOptions.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0) {
+    const colsCount = this._columnDefinitions.length;
+
+    if (this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0) {
+      const frozenCol = this._gridOptions.frozenColumn;
+
       // Add column groups to left panel
-      let preHeaderPanelElm = this._grid.getPreHeaderPanelLeft();
-      this.renderHeaderGroups(preHeaderPanelElm, 0, this._gridOptions.frozenColumn + 1);
+      this.renderHeaderGroups(this._grid.getPreHeaderPanelLeft(), 0, frozenCol + 1);
 
       // Add column groups to right panel
-      preHeaderPanelElm = this._grid.getPreHeaderPanelRight();
-      this.renderHeaderGroups(preHeaderPanelElm, this._gridOptions?.frozenColumn + 1, this._columnDefinitions.length);
+      this.renderHeaderGroups(this._grid.getPreHeaderPanelRight(), frozenCol + 1, colsCount);
     } else {
       // regular grid (not a frozen grid)
-      const preHeaderPanelElm = this._grid.getPreHeaderPanel();
-      this.renderHeaderGroups(preHeaderPanelElm, 0, this._columnDefinitions.length);
+      this.renderHeaderGroups(this._grid.getPreHeaderPanel(), 0, colsCount);
     }
   }
 

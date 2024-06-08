@@ -688,7 +688,7 @@ describe('excelUtils', () => {
           type: FieldType.number, formatter: Formatters.decimal,
           groupTotalsFormatter: (totals: any, _columnDef: Column, _grid: SlickGrid) => `Some Total: ${totals.sum}`,
         } as Column;
-        const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'group');
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormat: { id: 3 } }, columnDef, gridStub, 'group');
 
         expect(output).toEqual({ groupType: '', excelFormat: { id: 3 } });
       });
@@ -787,7 +787,7 @@ describe('excelUtils', () => {
           type: FieldType.number,
           formatter: () => `Something rendered`,
         } as unknown as Column;
-        const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'cell');
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormat: { id: 3 } }, columnDef, gridStub, 'cell');
 
         expect(output).toEqual({ groupType: '', excelFormat: { id: 3 } });
       });
@@ -798,7 +798,7 @@ describe('excelUtils', () => {
           formatter: Formatters.multiple,
           params: { formatters: [() => `Something rendered`, myBoldFormatter], },
         } as unknown as Column;
-        const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'cell');
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormat: { id: 3 } }, columnDef, gridStub, 'cell');
 
         expect(output).toEqual({ groupType: '', excelFormat: { id: 3 } });
       });

@@ -201,7 +201,6 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('.item-count')
         .should('contain', 5000);
 
-
       cy.get('.search-filter.filter-title')
         .clear()
         .type('Ta*33');

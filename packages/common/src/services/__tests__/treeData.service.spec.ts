@@ -375,7 +375,7 @@ describe('TreeData Service', () => {
       expect(beginUpdateSpy).toHaveBeenCalled();
       expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
       expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
-      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('TXT')
+      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('TXT');
       expect(SharedService.prototype.hierarchicalDataset![0].__collapsed).toBeTrue();
       expect(SharedService.prototype.hierarchicalDataset![1].file).toBe('MP3');
       expect(SharedService.prototype.hierarchicalDataset![1].__collapsed).toBeTrue();
@@ -642,6 +642,32 @@ describe('TreeData Service', () => {
       }]);
       expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
     });
+
+    it('should sort Tree by provided Sort Column when provided', () => {
+      gridOptionsMock.treeDataOptions!.initialSort = {
+        columnId: 'size',
+        direction: 'desc'
+      };
+      const mockHierarchical = [{
+        id: 0,
+        file: 'documents',
+        files: [{ id: 1, file: 'vacation.txt', size: 1.2, }, { id: 2, file: 'todo.txt', size: 2.3, }]
+      }];
+      const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
+      jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
+      jest.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+
+      service.init(gridStub);
+      const sortCols = [{ columnId: mockColumns[0].id, sortCol: mockColumns[0], sortAsc: false }];
+      const result = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock, sortCols);
+
+      expect(setSortSpy).toHaveBeenCalledWith([{
+        columnId: mockColumns[0].id,
+        sortAsc: false,
+        sortCol: mockColumns[0]
+      }]);
+      expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+    });
   });
 
   describe('sortHierarchicalDataset method', () => {
@@ -652,7 +678,7 @@ describe('TreeData Service', () => {
         file: 'documents',
         files: [{ id: 2, file: 'todo.txt', size: 2.3, }, { id: 1, file: 'vacation.txt', size: 1.2, }]
       }];
-      const mockColumnSort = { columnId: 'size', sortAsc: true, sortCol: mockColumns[1], }
+      const mockColumnSort = { columnId: 'size', sortAsc: true, sortCol: mockColumns[1], };
       jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const getInitialSpy = jest.spyOn(service, 'getInitialSort').mockReturnValue(mockColumnSort);
       const sortHierarchySpy = jest.spyOn(sortServiceStub, 'sortHierarchicalDataset');

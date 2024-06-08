@@ -452,6 +452,7 @@ export default class Example15 {
   // ---
 
   changeCountEnableFlag() {
+    this.displaySpinner(true);
     this.isCountEnabled = !this.isCountEnabled;
     const odataService = this.gridOptions.backendServiceApi!.service;
     odataService.updateOptions({ enableCount: this.isCountEnabled } as OdataOption);
@@ -461,6 +462,7 @@ export default class Example15 {
   }
 
   setOdataVersion(version: number) {
+    this.displaySpinner(true);
     this.odataVersion = version;
     const odataService = this.gridOptions.backendServiceApi!.service;
     odataService.updateOptions({ version: this.odataVersion } as OdataOption);

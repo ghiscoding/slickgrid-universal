@@ -104,10 +104,10 @@ export class GridOdataService implements BackendService {
   }
 
   postProcess(processResult: any): void {
-    const odataVersion = this._odataService?.options?.version ?? 2;
+    const odataVersion = this._odataService.options.version ?? 2;
 
-    if (this.pagination && this._odataService?.options?.enableCount) {
-      const countExtractor = this._odataService?.options?.countExtractor ??
+    if (this.pagination && this._odataService.options.enableCount) {
+      const countExtractor = this._odataService.options.countExtractor ??
         odataVersion >= 4 ? (r: any) => r?.['@odata.count'] :
         odataVersion === 3 ? (r: any) => r?.['__count'] :
           (r: any) => r?.d?.['__count'];
@@ -117,8 +117,8 @@ export class GridOdataService implements BackendService {
       }
     }
 
-    if (this._odataService?.options?.enableExpand) {
-      const datasetExtractor = this._odataService?.options?.datasetExtractor ??
+    if (this._odataService.options.enableExpand) {
+      const datasetExtractor = this._odataService.options.datasetExtractor ??
         odataVersion >= 4 ? (r: any) => r?.value :
         odataVersion === 3 ? (r: any) => r?.results :
           (r: any) => r?.d?.results;
@@ -295,7 +295,7 @@ export class GridOdataService implements BackendService {
   updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically?: boolean) {
     let searchBy = '';
     const searchByArray: string[] = [];
-    const odataVersion = this._odataService?.options?.version ?? 2;
+    const odataVersion = this._odataService.options.version ?? 2;
 
     // on filter preset load, we need to keep current filters
     if (isUpdatedByPresetOrDynamically) {
@@ -426,8 +426,21 @@ export class GridOdataService implements BackendService {
             fieldName = titleCase(getHtmlStringOutput(fieldName || ''));
           }
 
-          // StartsWith + EndsWith combo
-          if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
+          let filterQueryOverride: string | undefined = undefined;
+          if (typeof this._odataService.options.filterQueryOverride === 'function') {
+            filterQueryOverride = this._odataService.options.filterQueryOverride({
+              fieldName: getHtmlStringOutput(fieldName),
+              columnDef,
+              operator,
+              columnFilterOperator: columnFilter.operator,
+              searchValue,
+              grid: this._grid
+            });
+          }
+
+          if (filterQueryOverride !== undefined) {
+            searchBy = filterQueryOverride;
+          } else if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
             const tmpSearchTerms: string[] = [];
             const [sw, ew] = searchTerms;
 
