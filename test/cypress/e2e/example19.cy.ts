@@ -1,6 +1,6 @@
 describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
   const titles = [
-    '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+    '', 'Approval Date', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
     'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
     'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK'
   ];
@@ -16,7 +16,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => {
-        if (index < titles.length) {
+        if (index > 0 && index < titles.length) {
           expect($child.text()).to.eq(titles[index]);
         }
       });
@@ -28,7 +28,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
 
   describe('with Pagination of size 20', () => {
     it('should click on cell B14 then Ctrl+Shift+End with selection B14-CV19', () => {
-      cy.getCell(14, 2, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+      cy.getCell(14, 3, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_B14')
         .click();
 
@@ -36,7 +36,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .type('{ctrl}{shift}{end}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":14,"fromCell":2,"toRow":19,"toCell":100}');
+        .should('have.text', '{"fromRow":14,"fromCell":3,"toRow":19,"toCell":101}');
     });
 
     it('should click on cell CP3 then Ctrl+Shift+Home with selection A0-CP3', () => {
@@ -149,7 +149,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     });
 
     it('should click on cell E46 then Shift+End key with full row horizontal selection E46-CV46', () => {
-      cy.getCell(46, 5, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_E46')
         .click();
 
@@ -157,11 +157,11 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .type('{shift}{end}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":46,"fromCell":5,"toRow":46,"toCell":100}');
+        .should('have.text', '{"fromRow":46,"fromCell":6,"toRow":46,"toCell":101}');
     });
 
     it('should click on cell CP54 then Ctrl+Shift+End keys with selection E46-CV99', () => {
-      cy.getCell(54, 94, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+      cy.getCell(54, 95, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_CP54')
         .click();
 
@@ -169,11 +169,11 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .type('{ctrl}{shift}{end}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":54,"fromCell":94,"toRow":99,"toCell":100}');
+        .should('have.text', '{"fromRow":54,"fromCell":95,"toRow":99,"toCell":101}');
     });
 
     it('should click on cell CP95 then Ctrl+Shift+Home keys with selection C0-CP95', () => {
-      cy.getCell(95, 98, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+      cy.getCell(95, 99, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_CP95')
         .click();
 
@@ -181,7 +181,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .type('{ctrl}{shift}{home}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":0,"fromCell":0,"toRow":95,"toCell":98}');
+        .should('have.text', '{"fromRow":0,"fromCell":0,"toRow":95,"toCell":99}');
     });
 
     it('should click on cell CR5 again then Ctrl+Home keys and expect to scroll back to cell A0 without any selection range', () => {
@@ -204,7 +204,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     });
 
     it('should click on cell B14 then Shift+End with selection B14-24', () => {
-      cy.getCell(14, 2, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+      cy.getCell(14, 3, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_B14')
         .click();
 
@@ -212,7 +212,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .type('{shift}{end}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":14,"fromCell":2,"toRow":14,"toCell":100}');
+        .should('have.text', '{"fromRow":14,"fromCell":3,"toRow":14,"toCell":101}');
     });
 
     it('should click on cell CS14 then Shift+Home with selection A14-CS14', () => {

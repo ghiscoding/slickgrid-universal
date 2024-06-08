@@ -201,7 +201,7 @@ export class DateEditor implements Editor {
         });
       }
 
-      setTimeout(() => {
+      queueMicrotask(() => {
         this.calendarInstance = new VanillaCalendar(this._inputElm, this._pickerMergedOptions);
         this.calendarInstance.init();
         if (!compositeEditorOptions) {
@@ -222,14 +222,16 @@ export class DateEditor implements Editor {
   }
 
   destroy() {
-    this.hide();
-    this._bindEventService.unbindAll();
-    this.calendarInstance?.destroy();
+    queueMicrotask(() => {
+      this.hide();
+      this.calendarInstance?.destroy();
+      emptyElement(this._editorInputGroupElm);
+      emptyElement(this._inputElm);
+      this._editorInputGroupElm?.remove();
+      this._inputElm?.remove();
+    });
 
-    emptyElement(this._editorInputGroupElm);
-    emptyElement(this._inputElm);
-    this._editorInputGroupElm?.remove();
-    this._inputElm?.remove();
+    this._bindEventService.unbindAll();
   }
 
   clear() {
