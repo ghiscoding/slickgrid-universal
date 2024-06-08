@@ -172,7 +172,9 @@ export class SlickCellExcelCopyManager {
         for (let i = 0; i < count; i++) {
           this._grid.getData<SlickDataView>().addItem({ [this.gridOptions.datasetIdPropertyName || 'id']: `newRow_${newRowIds++}` });
         }
-      }
+      },
+      replaceNewlinesWith: false,
+      removeDoubleQuotesOnPaste: false
     };
   }
 

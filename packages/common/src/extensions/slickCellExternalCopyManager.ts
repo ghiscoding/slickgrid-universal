@@ -224,7 +224,8 @@ export class SlickCellExternalCopyManager {
   protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement) {
     const columns = grid.getColumns();
     const clipText = textAreaElement.value;
-    const clipRows = clipText.split(/[\n\f\r]/);
+    const clipRows = clipText.split(/[\n\f\r](?=(?:[^"]*"[^"]*")*[^"]*$)/);
+
     // trim trailing CR if present
     if (clipRows[clipRows.length - 1] === '') {
       clipRows.pop();
@@ -235,7 +236,16 @@ export class SlickCellExternalCopyManager {
     this._bodyElement.removeChild(textAreaElement);
 
     for (const clipRow of clipRows) {
-      clippedRange[j++] = clipRow !== '' ? clipRow.split('\t') : [''];
+      if (clipRow === '') {
+        clippedRange[j++] = [''];
+      } else if (clipRow.startsWith('"') && clipRow.endsWith('"')) {
+        clippedRange[j++] = [clipRow
+          .replaceAll('\n', this._addonOptions.replaceNewlinesWith || '\n')
+          .replaceAll('\r', '')
+          .replaceAll('"', this._addonOptions.removeDoubleQuotesOnPaste ? '' : '"')];
+      } else {
+        clippedRange[j++] = clipRow.split('\t');
+      }
     }
     const selectedCell = this._grid.getActiveCell();
     const ranges = this._grid.getSelectionModel()?.getSelectedRanges();

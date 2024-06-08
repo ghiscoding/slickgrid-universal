@@ -253,4 +253,12 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .should('have.text', '{"fromRow":0,"fromCell":92,"toRow":15,"toCell":92}');
     });
   });
+
+  describe('pasted content', () => {
+    it('should be split onto multiple rows if newlines are found', () => {
+    });
+
+    it('should keep quoted content on the same cell', () => {
+    });
+  });
 });

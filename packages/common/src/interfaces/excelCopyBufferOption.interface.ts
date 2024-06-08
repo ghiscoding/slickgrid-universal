@@ -1,4 +1,3 @@
-
 import type { Column, FormatterResultWithHtml, FormatterResultWithText, OnEventArgs, } from './index';
 import type { SlickCellExcelCopyManager, } from '../extensions/slickCellExcelCopyManager';
 import type { SlickEventData, SlickRange } from '../core/index';
@@ -53,6 +52,11 @@ export interface ExcelCopyBufferOption<T = any> {
   /** option to specify a custom column header value extractor function */
   headerColumnValueExtractor?: (columnDef: Column<T>) => string | HTMLElement | DocumentFragment;
 
+  /** if the copied text starts and ends with a double-quote (Excel multiline string) replace newlines with the defined character. (default: false) */
+  replaceNewlinesWith?: string | false;
+
+  /** multiline strings copied from Excel are pasted with double quotes. Should those be removed? (default: false) */
+  removeDoubleQuotesOnPaste?: boolean;
   // --
   // Events
   // ------------
