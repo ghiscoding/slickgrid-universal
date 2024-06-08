@@ -157,8 +157,9 @@ export class SlickCellExternalCopyManager {
   setDataItemValueForColumn(item: any, columnDef: Column, value: any): any | void {
     if (!columnDef?.denyPaste) {
       if (this._addonOptions.dataItemColumnValueSetter) {
-        if (this._addonOptions.dataItemColumnValueSetter(item, columnDef, value) !== true) {
-          return;
+        const setterResult = this._addonOptions.dataItemColumnValueSetter(item, columnDef, value);
+        if (setterResult !== true) {
+          return setterResult;
         }
       }
 

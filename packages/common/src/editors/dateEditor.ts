@@ -201,8 +201,7 @@ export class DateEditor implements Editor {
         });
       }
 
-      // INFO: Fixes issue no 2
-      Promise.resolve().then(() => {
+      queueMicrotask(() => {
         this.calendarInstance = new VanillaCalendar(this._inputElm, this._pickerMergedOptions);
         this.calendarInstance.init();
         if (!compositeEditorOptions) {
@@ -223,8 +222,7 @@ export class DateEditor implements Editor {
   }
 
   destroy() {
-    // INFO: Fixes issue no 3
-    Promise.resolve().then(() => {
+    queueMicrotask(() => {
       this.hide();
       this.calendarInstance?.destroy();
       emptyElement(this._editorInputGroupElm);
