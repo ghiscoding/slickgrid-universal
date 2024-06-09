@@ -8,7 +8,7 @@
 
 /** make sure the hidden class exist, it was removed in BS4 */
 li.hidden {
-  display: none;
+  display: none !important;
 }
 
 .slick-column-picker {
