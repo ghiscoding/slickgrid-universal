@@ -24,6 +24,24 @@
   cursor: pointer;
 }
 
+// default buttons used by SlickGrid and also when appended to body (e.g. LongText Editor)
+.btn-default {
+  color: var(--slick-btn-default-text-color, $slick-btn-default-text-color);
+  border: var(--slick-btn-default-border, $slick-btn-default-border);
+  &:hover {
+    border-color: var(--slick-btn-default-border-hover-color, $slick-btn-default-border-hover-color);
+  }
+}
+.slick-dark-mode {
+  .btn-default {
+    color: var(--slick-btn-default-text-color, $slick-btn-default-text-color);
+    border: var(--slick-btn-default-border, $slick-btn-default-border);
+    &:hover {
+      border-color: var(--slick-btn-default-border-hover-color, $slick-btn-default-border-hover-color);
+    }
+  }
+}
+
 .slickgrid-container {
   overflow: hidden;
   outline: 0;
