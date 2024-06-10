@@ -267,7 +267,7 @@ export class SlickRowBasedEdit {
     return this._translations[this._currentLang];
   }
 
-  protected checkOptionsRequirements(options: GridOption) {
+  protected checkOptionsRequirements(options: GridOption): void {
     if (!options?.enableCellNavigation) {
       throw new Error(
         `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`
@@ -333,7 +333,7 @@ export class SlickRowBasedEdit {
     this._grid.removeCellCssStyles(cssStyleKey);
   }
 
-  protected removeUnsavedStylingFromRow(row: number) {
+  protected removeUnsavedStylingFromRow(row: number): void {
     this._grid.getColumns().forEach((column) => {
       this.removeUnsavedStylingFromCell(column, row);
     });
@@ -495,7 +495,7 @@ export class SlickRowBasedEdit {
   }
 
   protected onBeforeEditCellHandler = (_e: SlickEventData, args: OnBeforeEditCellEventArgs) => {
-    return this._editedRows.has(args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']);
+    return this._editedRows.has(args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']) as boolean;
   };
 
   protected toggleEditmode(dataContext: any, editMode: boolean): void {

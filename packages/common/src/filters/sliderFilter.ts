@@ -45,7 +45,7 @@ export class SliderFilter implements Filter {
   protected _sliderTrackElm!: HTMLDivElement;
   protected _sliderLeftInputElm?: HTMLInputElement;
   protected _sliderRightInputElm?: HTMLInputElement;
-  protected _sliderTrackFilledColor = DEFAULT_SLIDER_TRACK_FILLED_COLOR;
+  protected _sliderTrackFilledColor: string = DEFAULT_SLIDER_TRACK_FILLED_COLOR;
   sliderType: SliderType = 'double';
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
@@ -430,7 +430,7 @@ export class SliderFilter implements Filter {
     this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
   }
 
-  protected changeBothSliderFocuses(isAddingFocus: boolean) {
+  protected changeBothSliderFocuses(isAddingFocus: boolean): void {
     const addRemoveCmd = isAddingFocus ? 'add' : 'remove';
     this._sliderLeftInputElm?.classList[addRemoveCmd]('focus');
     this._sliderRightInputElm?.classList[addRemoveCmd]('focus');

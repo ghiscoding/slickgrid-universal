@@ -30,7 +30,7 @@ export class SlickCellRangeDecorator {
     this._options = deepMerge(this._defaults, options);
   }
 
-  get addonOptions() {
+  get addonOptions(): CellRangeDecoratorOption {
     return this._options;
   }
 

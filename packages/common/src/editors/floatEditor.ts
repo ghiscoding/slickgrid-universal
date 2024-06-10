@@ -8,7 +8,7 @@ export class FloatEditor extends InputEditor {
     super(args, 'number');
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     const fieldName = this.columnDef && this.columnDef.field;
 
     if (fieldName !== undefined) {
@@ -29,7 +29,7 @@ export class FloatEditor extends InputEditor {
     }
   }
 
-  serializeValue() {
+  serializeValue(): string | number {
     const elmValue = this._input?.value;
     if (elmValue === undefined || elmValue === '' || isNaN(+elmValue)) {
       return elmValue as string;

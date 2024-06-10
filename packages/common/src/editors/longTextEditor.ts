@@ -173,7 +173,7 @@ export class LongTextEditor implements Editor {
     this._bindEventService.bind(this._textareaElm, 'paste', this.handleOnInputChange.bind(this) as unknown as EventListener);
   }
 
-  cancel() {
+  cancel(): void {
     const value = this._defaultTextValue || '';
     this._textareaElm.value = value;
     this._currentLengthElm.textContent = `${value.length}`;
@@ -182,11 +182,11 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  hide() {
+  hide(): void {
     this._wrapperElm.style.display = 'none';
   }
 
-  show() {
+  show(): void {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (!isCompositeEditor) {
       this._wrapperElm.style.display = 'block';
@@ -196,12 +196,12 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this._wrapperElm?.remove?.();
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -222,7 +222,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  focus() {
+  focus(): void {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
     this.grid.focus();
 
@@ -236,7 +236,7 @@ export class LongTextEditor implements Editor {
     return this._textareaElm.value;
   }
 
-  setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
+  setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     this._textareaElm.value = val;
     this._currentLengthElm.textContent = `${val.length}`;
 
@@ -251,7 +251,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  applyValue(item: any, state: any) {
+  applyValue(item: any, state: any): void {
     const fieldName = this.columnDef?.field;
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
@@ -281,7 +281,7 @@ export class LongTextEditor implements Editor {
     return this._isValueTouched;
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     const fieldName = this.columnDef?.field;
 
     if (item && fieldName !== undefined) {
@@ -305,7 +305,7 @@ export class LongTextEditor implements Editor {
    * Same goes for the top/bottom position, Most of the time positioning the editor to the "bottom" but we are clicking on a cell at the bottom of the grid then we might need to reposition to "top" instead.
    * NOTE: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window.
    */
-  position(parentPosition: Partial<HtmlElementPosition>) {
+  position(parentPosition: Partial<HtmlElementPosition>): void {
     const containerOffset = getOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
@@ -340,7 +340,7 @@ export class LongTextEditor implements Editor {
    * You can reset or clear the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputValue = value ?? this._defaultTextValue ?? '';
     if (this._textareaElm) {
       this._defaultTextValue = inputValue;
@@ -356,7 +356,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  save() {
+  save(): void {
     const validation = this.validate();
     const isValid = validation?.valid ?? false;
 
@@ -369,7 +369,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  serializeValue() {
+  serializeValue(): string {
     return this._textareaElm.value;
   }
 
@@ -401,7 +401,7 @@ export class LongTextEditor implements Editor {
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -409,7 +409,7 @@ export class LongTextEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleKeyDown(e: KeyboardEvent) {
+  protected handleKeyDown(e: KeyboardEvent): void {
     const key = e.key;
     this._isValueTouched = true;
 
@@ -435,7 +435,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer, target: HTMLTextAreaElement; }) {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer, target: HTMLTextAreaElement; }): void {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 
@@ -461,7 +461,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';

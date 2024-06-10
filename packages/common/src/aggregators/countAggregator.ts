@@ -18,7 +18,7 @@ export class CountAggregator implements Aggregator {
     return this._field;
   }
 
-  get isInitialized() {
+  get isInitialized(): boolean {
     return this._isInitialized;
   }
 
@@ -26,7 +26,7 @@ export class CountAggregator implements Aggregator {
     return this._type;
   }
 
-  init(item?: any, isTreeAggregator = false) {
+  init(item?: any, isTreeAggregator = false): void {
     this._count = 0;
     this._isInitialized = true;
     this._isTreeAggregator = isTreeAggregator;
@@ -43,7 +43,7 @@ export class CountAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any, isTreeParent = false) {
+  accumulate(item: any, isTreeParent = false): void {
     const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new sum (without doing any addition)
@@ -62,7 +62,7 @@ export class CountAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

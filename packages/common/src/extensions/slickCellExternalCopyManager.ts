@@ -20,13 +20,14 @@ const noop = () => { };
 */
 export class SlickCellExternalCopyManager {
   pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
-  onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCells');
-  onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCancelled');
-  onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>('onPasteCells');
-  onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>('onBeforePasteCell');
+  onCopyCells: SlickEvent<{ ranges: SlickRange[]; }> = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCells');
+  onCopyCancelled: SlickEvent<{ ranges: SlickRange[]; }> = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCancelled');
+  onPasteCells: SlickEvent<{ ranges: SlickRange[]; }> = new SlickEvent<{ ranges: SlickRange[]; }>('onPasteCells');
+  onBeforePasteCell: SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>
+    = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>('onBeforePasteCell');
 
   protected _addonOptions!: ExcelCopyBufferOption;
-  protected _bodyElement = document.body;
+  protected _bodyElement: HTMLElement = document.body;
   protected _clearCopyTI?: NodeJS.Timeout;
   protected _copiedCellStyle = 'copied';
   protected _copiedCellStyleLayerKey = 'copy-manager';

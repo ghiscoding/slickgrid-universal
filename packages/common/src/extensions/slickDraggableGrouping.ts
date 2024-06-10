@@ -120,7 +120,7 @@ export class SlickDraggableGrouping {
     return this._gridUid || (this.grid?.getUID() ?? '');
   }
 
-  get gridContainer() {
+  get gridContainer(): HTMLElement {
     return this.grid.getContainerNode();
   }
 
@@ -249,7 +249,7 @@ export class SlickDraggableGrouping {
     this._addonOptions = { ...this._addonOptions, ...options };
   }
 
-  setColumns(cols: Column[]) {
+  setColumns(cols: Column[]): void {
     this._gridColumns = cols;
   }
 

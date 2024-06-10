@@ -27,7 +27,7 @@ import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid } fr
  * @constructor
  */
 export class SlickColumnPicker {
-  onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
+  onColumnsChanged: SlickEvent<OnColumnsChangedArgs> = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
 
   protected _areVisibleColumnDifferent = false;
   protected _bindEventService: BindingEventService;
@@ -224,7 +224,7 @@ export class SlickColumnPicker {
   }
 
   /** Update the Titles of each sections (command, commandTitle, ...) */
-  protected translateTitleLabels(pickerOptions: ColumnPickerOption) {
+  protected translateTitleLabels(pickerOptions: ColumnPickerOption): void {
     if (pickerOptions) {
       pickerOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'gridMenu');
     }

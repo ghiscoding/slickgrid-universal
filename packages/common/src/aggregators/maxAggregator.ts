@@ -18,7 +18,7 @@ export class MaxAggregator implements Aggregator {
     return this._field;
   }
 
-  get isInitialized() {
+  get isInitialized(): boolean {
     return this._isInitialized;
   }
 
@@ -26,7 +26,7 @@ export class MaxAggregator implements Aggregator {
     return this._type;
   }
 
-  init(item?: any, isTreeAggregator = false) {
+  init(item?: any, isTreeAggregator = false): void {
     this._max = null;
     this._isInitialized = true;
 
@@ -43,7 +43,7 @@ export class MaxAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any, isTreeParent = false) {
+  accumulate(item: any, isTreeParent = false): void {
     const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new max (without doing any addition)
@@ -66,7 +66,7 @@ export class MaxAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
     let max = this._max;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 
@@ -80,13 +80,13 @@ export class MaxAggregator implements Aggregator {
     groupTotals[this._type][this._field] = max;
   }
 
-  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
+  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
   }
 
-  protected keepMaxValueWhenFound(val: any) {
+  protected keepMaxValueWhenFound(val: any): void {
     if (isNumber(val)) {
       if (this._max === null || val > this._max) {
         this._max = parseFloat(val as any);

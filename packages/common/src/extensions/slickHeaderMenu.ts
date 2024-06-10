@@ -256,7 +256,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Mouse down handler when clicking anywhere in the DOM body */
-  protected handleBodyMouseDown(e: DOMEvent<HTMLElement>) {
+  protected handleBodyMouseDown(e: DOMEvent<HTMLElement>): void {
     if (this.menuElement) {
       let isMenuClicked = false;
       const parentMenuElm = e.target.closest(`.${this.menuCssClass}`);
@@ -638,7 +638,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Sort the current column */
-  protected sortColumn(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs, isSortingAsc = true) {
+  protected sortColumn(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs, isSortingAsc = true): void {
     if (args?.column) {
       // get previously sorted columns
       const columnDef = args.column;

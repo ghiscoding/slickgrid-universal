@@ -19,7 +19,7 @@ export class AvgAggregator implements Aggregator {
     return this._field;
   }
 
-  get isInitialized() {
+  get isInitialized(): boolean {
     return this._isInitialized;
   }
 
@@ -27,7 +27,7 @@ export class AvgAggregator implements Aggregator {
     return this._type;
   }
 
-  init(item?: any, isTreeAggregator = false) {
+  init(item?: any, isTreeAggregator = false): void {
     this._sum = 0;
     this._nonNullCount = 0;
     this._isInitialized = true;
@@ -50,7 +50,7 @@ export class AvgAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any, isTreeParent = false) {
+  accumulate(item: any, isTreeParent = false): void {
     const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new sum (without doing any addition)
@@ -75,7 +75,7 @@ export class AvgAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
     let sum = this._sum;
     let itemCount = this._nonNullCount;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
@@ -94,7 +94,7 @@ export class AvgAggregator implements Aggregator {
     }
   }
 
-  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
+  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

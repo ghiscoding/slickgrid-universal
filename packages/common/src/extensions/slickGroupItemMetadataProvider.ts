@@ -151,7 +151,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
   }
 
   /** Handle a grid cell clicked, it could be a Group that is being collapsed/expanded or do nothing when it's not */
-  protected handleGridClick(e: SlickEventData, args: OnClickEventArgs) {
+  protected handleGridClick(e: SlickEventData, args: OnClickEventArgs): void {
     const target = e.target as HTMLElement;
     const item = this._grid?.getDataItem(args.row);
     if (item instanceof SlickGroup && target.classList.contains(this._options.toggleCssClass || '')) {

@@ -157,7 +157,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   }
 
   /** Add the Command/Options Title when necessary. */
-  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number) {
+  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number): void {
     if (menuOptions) {
       const isSubMenu = level > 0;
 

@@ -18,7 +18,7 @@ export class MinAggregator implements Aggregator {
     return this._field;
   }
 
-  get isInitialized() {
+  get isInitialized(): boolean {
     return this._isInitialized;
   }
 
@@ -26,7 +26,7 @@ export class MinAggregator implements Aggregator {
     return this._type;
   }
 
-  init(item?: any, isTreeAggregator = false) {
+  init(item?: any, isTreeAggregator = false): void {
     this._min = null;
     this._isInitialized = true;
 
@@ -43,7 +43,7 @@ export class MinAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any, isTreeParent = false) {
+  accumulate(item: any, isTreeParent = false): void {
     const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new min (without doing any addition)
@@ -66,7 +66,7 @@ export class MinAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
     let min = this._min;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 
@@ -80,13 +80,13 @@ export class MinAggregator implements Aggregator {
     groupTotals[this._type][this._field] = min;
   }
 
-  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
+  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
   }
 
-  protected keepMinValueWhenFound(val: any) {
+  protected keepMinValueWhenFound(val: any): void {
     if (isNumber(val)) {
       if (this._min === null || val < this._min) {
         this._min = parseFloat(val as any);

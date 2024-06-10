@@ -26,7 +26,9 @@ import type { DragItem, DragPosition, DraggableOption, MouseWheelOption, Resizab
  * @returns - Draggable instance which includes destroy method
  * @class Draggable
  */
-export function Draggable(options: DraggableOption) {
+export function Draggable(options: DraggableOption): {
+  destroy: () => void;
+} {
   let { containerElement } = options;
   const { onDragInit, onDragStart, onDrag, onDragEnd, preventDragFromKeys } = options;
   let element: HTMLElement | null;
@@ -45,20 +47,20 @@ export function Draggable(options: DraggableOption) {
     dragHandle: null,
   };
 
-  function init() {
+  function init(): void {
     if (containerElement) {
       containerElement.addEventListener('mousedown', userPressed as EventListener);
       containerElement.addEventListener('touchstart', userPressed as EventListener);
     }
   }
 
-  function executeDragCallbackWhenDefined(callback?: (e: DragEvent, dd: DragPosition) => boolean | void, evt?: MouseEvent | Touch | TouchEvent | KeyboardEvent, dd?: DragItem) {
+  function executeDragCallbackWhenDefined(callback?: (e: DragEvent, dd: DragPosition) => boolean | void, evt?: MouseEvent | Touch | TouchEvent | KeyboardEvent, dd?: DragItem): boolean | void {
     if (typeof callback === 'function') {
       return callback(evt as DragEvent, dd as DragItem);
     }
   }
 
-  function destroy() {
+  function destroy(): void {
     if (containerElement) {
       containerElement.removeEventListener('mousedown', userPressed as EventListener);
       containerElement.removeEventListener('touchstart', userPressed as EventListener);
@@ -66,7 +68,7 @@ export function Draggable(options: DraggableOption) {
   }
 
   /** Do we want to prevent Drag events from happening (for example prevent onDrag when Ctrl key is pressed while dragging) */
-  function preventDrag(event: MouseEvent | TouchEvent | KeyboardEvent) {
+  function preventDrag(event: MouseEvent | TouchEvent | KeyboardEvent): boolean {
     let eventPrevented = false;
     if (preventDragFromKeys) {
       preventDragFromKeys.forEach(key => {
@@ -78,7 +80,7 @@ export function Draggable(options: DraggableOption) {
     return eventPrevented;
   }
 
-  function userPressed(event: MouseEvent | TouchEvent | KeyboardEvent) {
+  function userPressed(event: MouseEvent | TouchEvent | KeyboardEvent): void {
     element = event.target as HTMLElement;
     if (!preventDrag(event)) {
       const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
@@ -105,7 +107,7 @@ export function Draggable(options: DraggableOption) {
     }
   }
 
-  function userMoved(event: MouseEvent | TouchEvent | KeyboardEvent) {
+  function userMoved(event: MouseEvent | TouchEvent | KeyboardEvent): void {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (!preventDrag(event)) {
       deltaX = targetEvent.clientX - startX;
@@ -123,7 +125,7 @@ export function Draggable(options: DraggableOption) {
     }
   }
 
-  function userReleased(event: MouseEvent | TouchEvent) {
+  function userReleased(event: MouseEvent | TouchEvent): void {
     document.body.removeEventListener('mousemove', userMoved);
     document.body.removeEventListener('touchmove', userMoved);
     document.body.removeEventListener('mouseup', userReleased);
@@ -155,7 +157,9 @@ export function Draggable(options: DraggableOption) {
  * @returns - MouseWheel instance which includes destroy method
  * @class MouseWheel
  */
-export function MouseWheel(options: MouseWheelOption) {
+export function MouseWheel(options: MouseWheelOption): {
+  destroy: () => void;
+} {
   const { element, onMouseWheel } = options;
 
   function destroy() {
@@ -163,13 +167,13 @@ export function MouseWheel(options: MouseWheelOption) {
     element.removeEventListener('mousewheel', wheelHandler as EventListener);
   }
 
-  function init() {
+  function init(): void {
     element.addEventListener('wheel', wheelHandler as EventListener);
     element.addEventListener('mousewheel', wheelHandler as EventListener);
   }
 
   // copy over the same event handler code used in jquery.mousewheel
-  function wheelHandler(event: WheelEvent & { axis: number; wheelDelta: number; wheelDeltaX: number; wheelDeltaY: number; HORIZONTAL_AXIS: number; }) {
+  function wheelHandler(event: WheelEvent & { axis: number; wheelDelta: number; wheelDeltaX: number; wheelDeltaY: number; HORIZONTAL_AXIS: number; }): void {
     const orgEvent = event || window.event;
     let delta = 0;
     let deltaX = 0;
@@ -227,32 +231,34 @@ export function MouseWheel(options: MouseWheelOption) {
  * @returns - Resizable instance which includes destroy method
  * @class Resizable
  */
-export function Resizable(options: ResizableOption) {
+export function Resizable(options: ResizableOption): {
+  destroy: () => void;
+} {
   const { resizeableElement, resizeableHandleElement, onResizeStart, onResize, onResizeEnd } = options;
   if (!resizeableHandleElement || typeof resizeableHandleElement.addEventListener !== 'function') {
     throw new Error('[SlickResizable] You did not provide a valid html element that will be used for the handle to resize.');
   }
 
-  function init() {
+  function init(): void {
     // add event listeners on the draggable element
     resizeableHandleElement.addEventListener('mousedown', resizeStartHandler);
     resizeableHandleElement.addEventListener('touchstart', resizeStartHandler);
   }
 
-  function destroy() {
+  function destroy(): void {
     if (typeof resizeableHandleElement?.removeEventListener === 'function') {
       resizeableHandleElement.removeEventListener('mousedown', resizeStartHandler);
       resizeableHandleElement.removeEventListener('touchstart', resizeStartHandler);
     }
   }
 
-  function executeResizeCallbackWhenDefined(callback?: (e: MouseEvent | TouchEvent, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void, e?: MouseEvent | TouchEvent | Touch) {
+  function executeResizeCallbackWhenDefined(callback?: (e: MouseEvent | TouchEvent, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void, e?: MouseEvent | TouchEvent | Touch): boolean | void {
     if (typeof callback === 'function') {
       return callback(e as any, { resizeableElement, resizeableHandleElement });
     }
   }
 
-  function resizeStartHandler(e: MouseEvent | TouchEvent) {
+  function resizeStartHandler(e: MouseEvent | TouchEvent): void {
     e.preventDefault();
     const event = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
     const result = executeResizeCallbackWhenDefined(onResizeStart, event);
@@ -264,7 +270,7 @@ export function Resizable(options: ResizableOption) {
     }
   }
 
-  function resizingHandler(e: MouseEvent | TouchEvent) {
+  function resizingHandler(e: MouseEvent | TouchEvent): void {
     if (e.preventDefault && e.type !== 'touchmove') {
       e.preventDefault();
     }
@@ -275,7 +281,7 @@ export function Resizable(options: ResizableOption) {
   }
 
   /** Remove all mouse/touch handlers */
-  function resizeEndHandler(e: MouseEvent | TouchEvent) {
+  function resizeEndHandler(e: MouseEvent | TouchEvent): void {
     const event = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
     executeResizeCallbackWhenDefined(onResizeEnd, event);
     document.body.removeEventListener('mousemove', resizingHandler);

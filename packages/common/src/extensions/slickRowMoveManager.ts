@@ -24,8 +24,10 @@ import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, Utils as
  *
  */
 export class SlickRowMoveManager {
-  onBeforeMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onBeforeMoveRows');
-  onMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onMoveRows');
+  onBeforeMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>
+    = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onBeforeMoveRows');
+  onMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>
+    = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onMoveRows');
   pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   protected _addonOptions!: RowMoveManager;

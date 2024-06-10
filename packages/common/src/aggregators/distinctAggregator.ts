@@ -15,7 +15,7 @@ export class DistinctAggregator implements Aggregator {
     return this._field;
   }
 
-  get isInitialized() {
+  get isInitialized(): boolean {
     return this._isInitialized;
   }
 
@@ -31,14 +31,14 @@ export class DistinctAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any) {
+  accumulate(item: any): void {
     const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : undefined;
     if (this._distinctValues.indexOf(val) === -1 && val !== undefined) {
       this._distinctValues.push(val);
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { distinct: Record<number | string, any>; }) {
+  storeResult(groupTotals: SlickGroupTotals & { distinct: Record<number | string, any>; }): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

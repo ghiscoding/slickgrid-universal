@@ -14,9 +14,9 @@ import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid, Sli
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
-  onBeforeCellRangeSelected = new SlickEvent<{ row: number; cell: number; }>('onBeforeCellRangeSelected');
-  onCellRangeSelecting = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelecting');
-  onCellRangeSelected = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelected');
+  onBeforeCellRangeSelected: SlickEvent<{ row: number; cell: number; }> = new SlickEvent<{ row: number; cell: number; }>('onBeforeCellRangeSelected');
+  onCellRangeSelecting: SlickEvent<{ range: SlickRange; }> = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelecting');
+  onCellRangeSelected: SlickEvent<{ range: SlickRange; }> = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelected');
 
   protected _activeCanvas!: HTMLElement;
   protected _options!: CellRangeSelectorOption;

@@ -100,7 +100,7 @@ export class DualInputEditor implements Editor {
     return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
-  init() {
+  init(): void {
     if (!this.editorParams || !this.editorParams.leftInput || !this.editorParams.leftInput.field || !this.editorParams.rightInput || !this.editorParams.rightInput.field) {
       throw new Error(`[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput" (example: { editor: { model: Editors.comboInput, params: { leftInput: { field: 'firstName' }, { rightSide: { field: 'lastName' } }}}`);
     }
@@ -133,7 +133,7 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  handleFocusOut(event: DOMEvent<HTMLInputElement>, position: 'leftInput' | 'rightInput') {
+  handleFocusOut(event: DOMEvent<HTMLInputElement>, position: 'leftInput' | 'rightInput'): void {
     // when clicking outside the editable cell OR when focusing out of it
     const targetClassNames = event.relatedTarget?.className || '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
@@ -152,7 +152,7 @@ export class DualInputEditor implements Editor {
     this._lastEventType = `${event?.type}-${side}`;
   }
 
-  handleKeyDown(event: KeyboardEvent, position: 'leftInput' | 'rightInput') {
+  handleKeyDown(event: KeyboardEvent, position: 'leftInput' | 'rightInput'): void {
     if (position === 'leftInput') {
       this._isLeftValueTouched = true;
     } else {
@@ -164,7 +164,7 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  destroy() {
+  destroy(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
@@ -204,7 +204,7 @@ export class DualInputEditor implements Editor {
     return input;
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -224,12 +224,12 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  focus() {
+  focus(): void {
     // always set focus on grid first, then do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid and/or new
     this.grid.focus();
   }
 
-  show() {
+  show(): void {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
@@ -251,19 +251,19 @@ export class DualInputEditor implements Editor {
     return obj;
   }
 
-  setValues(values: Array<number | string>) {
+  setValues(values: Array<number | string>): void {
     if (Array.isArray(values) && values.length === 2) {
       this._leftInput.value = `${values[0]}`;
       this._rightInput.value = `${values[1]}`;
     }
   }
 
-  applyValue(item: any, state: any) {
+  applyValue(item: any, state: any): void {
     this.applyValueByPosition(item, state, 'leftInput');
     this.applyValueByPosition(item, state, 'rightInput');
   }
 
-  applyValueByPosition(item: any, state: any, position: 'leftInput' | 'rightInput') {
+  applyValueByPosition(item: any, state: any, position: 'leftInput' | 'rightInput'): void {
     const fieldName = position === 'leftInput' ? this._leftFieldName : this._rightFieldName;
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
@@ -310,13 +310,13 @@ export class DualInputEditor implements Editor {
     return this._isLeftValueTouched || this._isRightValueTouched;
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     this.loadValueByPosition(item, 'leftInput');
     this.loadValueByPosition(item, 'rightInput');
     this._leftInput.select();
   }
 
-  loadValueByPosition(item: any, position: 'leftInput' | 'rightInput') {
+  loadValueByPosition(item: any, position: 'leftInput' | 'rightInput'): void {
     // is the field a complex object, "address.streetNumber"
     const fieldName = (position === 'leftInput') ? this._leftFieldName : this._rightFieldName;
     const originalValuePosition = (position === 'leftInput') ? '_originalLeftValue' : '_originalRightValue';
@@ -343,7 +343,7 @@ export class DualInputEditor implements Editor {
    * You can reset or clear the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputLeftValue = value ?? this._originalLeftValue ?? '';
     const inputRightValue = value ?? this._originalRightValue ?? '';
     if (this._leftInput && this._rightInput) {
@@ -362,7 +362,7 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  save() {
+  save(): void {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
 
@@ -387,7 +387,7 @@ export class DualInputEditor implements Editor {
     return obj;
   }
 
-  serializeValueByPosition(position: 'leftInput' | 'rightInput') {
+  serializeValueByPosition(position: 'leftInput' | 'rightInput'): string | number {
     const elmValue = position === 'leftInput' ? this._leftInput.value : this._rightInput.value;
     if (elmValue === '' || isNaN(+elmValue)) {
       return elmValue;
@@ -506,7 +506,7 @@ export class DualInputEditor implements Editor {
   }
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -514,7 +514,7 @@ export class DualInputEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const leftInputId = this.columnEditor.params?.leftInput?.field ?? '';
@@ -544,7 +544,7 @@ export class DualInputEditor implements Editor {
     );
   }
 
-  protected handleChangeOnCompositeEditorDebounce(event: KeyboardEvent) {
+  protected handleChangeOnCompositeEditorDebounce(event: KeyboardEvent): void {
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;

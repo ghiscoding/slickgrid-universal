@@ -5,9 +5,10 @@ import { DistinctAggregator } from './distinctAggregator';
 import { MinAggregator } from './minAggregator';
 import { MaxAggregator } from './maxAggregator';
 import { SumAggregator } from './sumAggregator';
+import type { AggregatorConstructor } from '../interfaces';
 
 /** Provides a list of different Aggregators for the Group Formatter */
-export const Aggregators = {
+export const Aggregators: Record<string, AggregatorConstructor> = {
   /** Average Aggregator which calculate the average of a given group */
   Avg: AvgAggregator,
 

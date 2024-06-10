@@ -194,7 +194,7 @@ export class SelectEditor implements Editor {
   }
 
   /** Getter for the Editor DOM Element */
-  get editorDomElement() {
+  get editorDomElement(): HTMLElement | undefined {
     return this.editorElm;
   }
 
@@ -215,11 +215,11 @@ export class SelectEditor implements Editor {
     return this.gridOptions.autoCommitEdit ?? false;
   }
 
-  get msInstance() {
+  get msInstance(): MultipleSelectInstance | undefined {
     return this._msInstance;
   }
 
-  get selectOptions() {
+  get selectOptions(): Partial<MultipleSelectOption> {
     return this.defaultOptions;
   }
 
@@ -319,7 +319,7 @@ export class SelectEditor implements Editor {
     return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
-  init() {
+  init(): void {
     if (!this.columnDef || !this.columnDef.editor || (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.
       Also each option should include a value/label pair (or value/labelKey when using Locale).
@@ -353,7 +353,7 @@ export class SelectEditor implements Editor {
     return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
   }
 
-  setValue(value: any | any[], isApplyingValue = false, triggerOnCompositeEditorChange = true) {
+  setValue(value: any | any[], isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     if (this.isMultipleSelect && Array.isArray(value)) {
       this.loadMultipleValues(value);
     } else {
@@ -371,19 +371,19 @@ export class SelectEditor implements Editor {
     }
   }
 
-  cancel() {
+  cancel(): void {
     if (this.args?.cancelChanges) {
       this.args.cancelChanges();
     }
   }
 
-  hide() {
+  hide(): void {
     if (this._msInstance) {
       this._msInstance.close();
     }
   }
 
-  show(openDelay?: number | null) {
+  show(openDelay?: number | null): void {
     if (!this.isCompositeEditor && this._msInstance) {
       this._msInstance.open(openDelay);
     } else if (this.isCompositeEditor) {
@@ -428,7 +428,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  destroy() {
+  destroy(): void {
     // when autoCommitEdit is enabled, we might end up leaving an editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
     if (this._msInstance && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposingOrCallingSave && !this.isCompositeEditor) {
@@ -465,7 +465,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  loadMultipleValues(currentValues: any[]) {
+  loadMultipleValues(currentValues: any[]): void {
     // convert to string because that is how the DOM will return these values
     if (Array.isArray(currentValues)) {
       // keep the default values in memory for references
@@ -480,7 +480,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  loadSingleValue(currentValue: any) {
+  loadSingleValue(currentValue: any): void {
     // keep the default value in memory for references
     this.originalValue = (typeof currentValue === 'number' || typeof currentValue === 'boolean') ? `${currentValue}` : currentValue;
     this._msInstance?.setSelects([this.originalValue]);
@@ -496,7 +496,7 @@ export class SelectEditor implements Editor {
    * @param {string} optionName - MultipleSelect option name
    * @param {newValue} newValue - MultipleSelect new option value
    */
-  changeEditorOption(optionName: keyof MultipleSelectOption, newValue: any) {
+  changeEditorOption(optionName: keyof MultipleSelectOption, newValue: any): void {
     if (this.columnEditor) {
       if (!this.columnEditor.editorOptions) {
         this.columnEditor.editorOptions = {};
@@ -507,7 +507,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -527,7 +527,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  focus() {
+  focus(): void {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
     this.grid.focus();
     this._msInstance?.focus();
@@ -551,7 +551,7 @@ export class SelectEditor implements Editor {
    * You can reset or clear the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputValue = value ?? this.originalValue;
     if (this._msInstance) {
       this.originalValue = this.isMultipleSelect ? (inputValue !== undefined ? [inputValue] : []) : inputValue;
@@ -567,7 +567,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  save(forceCommitCurrentEdit = false) {
+  save(forceCommitCurrentEdit = false): void {
     const validation = this.validate();
     const isValid = validation?.valid ?? false;
 
@@ -619,7 +619,7 @@ export class SelectEditor implements Editor {
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -662,7 +662,7 @@ export class SelectEditor implements Editor {
     return outputCollection;
   }
 
-  renderDomElement(inputCollection?: any[]) {
+  renderDomElement(inputCollection?: any[]): void {
     if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       inputCollection = getDescendantProperty(inputCollection, collectionInsideObjectProperty);
@@ -752,7 +752,7 @@ export class SelectEditor implements Editor {
    * From the Select DOM Element created earlier, create a Multiple/Single Select Editor using the multiple-select-vanilla.js lib
    * @param {Object} selectElement
    */
-  protected createDomElement(selectElement: HTMLSelectElement, dataCollection: OptionRowData[]) {
+  protected createDomElement(selectElement: HTMLSelectElement, dataCollection: OptionRowData[]): void {
     const cellContainer = this.args.container;
     if (selectElement && cellContainer && typeof cellContainer.appendChild === 'function') {
       emptyElement(cellContainer);
@@ -771,7 +771,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';

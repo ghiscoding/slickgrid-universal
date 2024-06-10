@@ -38,7 +38,17 @@ export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Col
   }
 }
 
-export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, numberType: NumberType, formatterType: FormatterType) {
+export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, numberType: NumberType, formatterType: FormatterType): {
+  minDecimal: number;
+  maxDecimal: number;
+  decimalSeparator: ',' | '.';
+  thousandSeparator: ',' | '_' | '.' | ' ' | '';
+  wrapNegativeNumber: boolean;
+  currencyPrefix: string;
+  currencySuffix: string;
+  numberPrefix: string;
+  numberSuffix: string;
+} {
   let defaultMinDecimal: number | undefined;
   let defaultMaxDecimal: number | undefined;
   let numberPrefix = '';

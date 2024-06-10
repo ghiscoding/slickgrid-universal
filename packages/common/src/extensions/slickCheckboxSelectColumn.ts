@@ -48,7 +48,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._addonOptions = { ...this._defaults, ...options } as CheckboxSelectorOption;
   }
 
-  get addonOptions() {
+  get addonOptions(): CheckboxSelectorOption {
     return this._addonOptions;
   }
 

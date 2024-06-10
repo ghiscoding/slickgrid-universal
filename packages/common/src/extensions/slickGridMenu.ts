@@ -40,11 +40,11 @@ import { SlickEvent, Utils as SlickUtils } from '../core/index';
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   // public events
-  onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onAfterMenuShow');
-  onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onBeforeMenuShow');
-  onMenuClose = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onMenuClose');
-  onCommand = new SlickEvent<GridMenuCommandItemCallbackArgs>('onCommand');
-  onColumnsChanged = new SlickEvent<onGridMenuColumnsChangedCallbackArgs>('onColumnsChanged');
+  onAfterMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs> = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onAfterMenuShow');
+  onBeforeMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs> = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onBeforeMenuShow');
+  onMenuClose: SlickEvent<GridMenuEventWithElementCallbackArgs> = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onMenuClose');
+  onCommand: SlickEvent<GridMenuCommandItemCallbackArgs> = new SlickEvent<GridMenuCommandItemCallbackArgs>('onCommand');
+  onColumnsChanged: SlickEvent<onGridMenuColumnsChangedCallbackArgs> = new SlickEvent<onGridMenuColumnsChangedCallbackArgs>('onColumnsChanged');
 
   protected _areVisibleColumnDifferent = false;
   protected _columns: Column[] = [];
@@ -439,7 +439,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   /** show Grid Menu from the click event, which in theory will recreate the grid menu in the DOM */
-  showGridMenu(e: MouseEvent | TouchEvent, options?: GridMenuOption) {
+  showGridMenu(e: MouseEvent | TouchEvent, options?: GridMenuOption): void {
     const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
     e.preventDefault();
 
@@ -560,7 +560,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   // ------------------
 
   /** Create Grid Menu with Custom Commands if user has enabled Filters and/or uses a Backend Service (OData, GraphQL) */
-  protected addGridMenuCustomCommands(originalCommandItems: Array<GridMenuItem | 'divider'>) {
+  protected addGridMenuCustomCommands(originalCommandItems: Array<GridMenuItem | 'divider'>): Array<GridMenuItem | 'divider'> {
     const backendApi = this.gridOptions.backendServiceApi || null;
     const gridMenuCommandItems: Array<GridMenuItem | 'divider'> = [];
     const gridOptions = this.gridOptions;

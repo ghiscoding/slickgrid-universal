@@ -59,7 +59,7 @@ export class BackendUtilityService {
    * Execute the backend callback, which are mainly the "process" & "postProcess" methods.
    * Also note that "preProcess" was executed prior to this callback
    */
-  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, extraCallbacks?: BackendCallbacks) {
+  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, extraCallbacks?: BackendCallbacks): void {
     if (backendServiceApi) {
       // emit an onFilterChanged event when it's not called by a clear filter
       if (args && !args.clearFilterTriggered && !args.clearSortTriggered && extraCallbacks?.emitActionChangedCallback) {

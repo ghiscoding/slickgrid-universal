@@ -62,7 +62,7 @@ export class DateFilter implements Filter {
   }
 
   /** Getter for the Current Date(s) selected */
-  get currentDateOrDates() {
+  get currentDateOrDates(): string | Date | string[] | Date[] | undefined {
     return this._currentDateOrDates;
   }
 
