@@ -8,7 +8,7 @@
 
 /** make sure the hidden class exist, it was removed in BS4 */
 li.hidden {
-  display: none;
+  display: none !important;
 }
 
 .slick-column-picker {
@@ -100,6 +100,9 @@ li.hidden {
   }
 
   li {
+    display: flex;
+		align-items: center;
+		width: 100%;
     color: var(--slick-menu-color, $slick-menu-color);
     border: var(--slick-column-picker-item-border, $slick-column-picker-item-border);
     border-radius: var(--slick-column-picker-item-border-radius, $slick-column-picker-item-border-radius);
@@ -115,6 +118,8 @@ li.hidden {
     }
     label {
       cursor: pointer;
+      height: 100%;
+			width: 100%;
       margin-bottom: 0px;
     }
   }
@@ -181,7 +186,7 @@ li.hidden {
     & + span.checkbox-label {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      flex-grow: 1;
       padding-left: var(--slick-column-picker-label-text-padding-left, $slick-column-picker-label-text-padding-left);
     }
   }
