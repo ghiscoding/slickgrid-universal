@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -25,6 +25,7 @@ export class InputFilter implements Filter {
   protected _cellContainerElm!: HTMLDivElement;
   protected _filterContainerElm!: HTMLDivElement;
   protected _filterInputElm!: HTMLInputElement;
+  protected _lastSearchValue?: number | string;
   protected _selectOperatorElm?: HTMLSelectElement;
   inputFilterType: 'single' | 'compound' = 'single';
   grid!: SlickGrid;
@@ -335,8 +336,12 @@ export class InputFilter implements Filter {
       const callbackArgs = { columnDef: this.columnDef, operator: selectedOperator, searchTerms: (value ? [value] : null), shouldTriggerQuery: this._shouldTriggerQuery };
       const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
-      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
-      if (this.inputFilterType === 'single' || !skipCompoundOperatorFilterWithNullInput || (this._currentValue !== undefined && this._currentValue !== '')) {
+      const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      if (
+        this.inputFilterType === 'single'
+        || !skipNullInput
+        || (skipNullInput && isDefined(this._currentValue) || (this._currentValue === '' && isDefined(this._lastSearchValue)))
+      ) {
         if (typingDelay > 0) {
           clearTimeout(this._timer as NodeJS.Timeout);
           this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
@@ -344,6 +349,7 @@ export class InputFilter implements Filter {
           this.callback(event, callbackArgs);
         }
       }
+      this._lastSearchValue = value;
     }
 
     // reset both flags for next use
