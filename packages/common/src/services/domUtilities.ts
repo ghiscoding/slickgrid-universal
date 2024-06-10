@@ -44,7 +44,7 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
   if (Array.isArray(collection)) {
     if (collection.every((x: any) => typeof x === 'number' || typeof x === 'string')) {
       collection.forEach(option => {
-        const selectOption: OptionRowData = { text: option, value: option };
+        const selectOption: OptionRowData = { text: String(option), value: option };
         if (type === 'filter' && Array.isArray(searchTerms)) {
           selectOption.selected = (searchTerms.findIndex(term => term === option) >= 0); // when filter search term is found then select it in dropdown
         }

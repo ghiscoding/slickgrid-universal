@@ -231,7 +231,7 @@ export class SelectEditor implements Editor {
 
     // collection of strings, just return the filtered string that are equals
     if (this.collection.every(x => typeof x === 'number' || typeof x === 'string')) {
-      return this.collection.filter(c => selectedValues?.some(val => `${val}` === c?.toString()));
+      return this.collection.filter((c: SelectOption) => selectedValues?.some(val => `${val}` === c?.toString()));
     }
 
     // collection of label/value pair
