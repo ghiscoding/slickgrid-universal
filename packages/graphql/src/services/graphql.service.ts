@@ -48,7 +48,7 @@ export class GraphqlService implements BackendService {
   protected _currentFilters: ColumnFilters | CurrentFilter[] = [];
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
-  protected _columnDefinitions: Column[] = [];
+  protected _columnDefinitions?: Column[] | undefined;
   protected _grid: SlickGrid | undefined;
   protected _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
@@ -59,7 +59,7 @@ export class GraphqlService implements BackendService {
   };
 
   /** Getter for the Column Definitions */
-  get columnDefinitions(): Column[] {
+  get columnDefinitions(): Column[] | undefined {
     return this._columnDefinitions;
   }
 
@@ -592,7 +592,7 @@ export class GraphqlService implements BackendService {
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
-        const columnDef = this._columnDefinitions.find((column: Column) => column.id === sorter.columnId);
+        const columnDef = this._columnDefinitions?.find((column: Column) => column.id === sorter.columnId);
 
         graphqlSorters.push({
           field: columnDef ? ((columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '') : (sorter.columnId + ''),
