@@ -7,7 +7,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;
 
   /** triggered when selected ranges changes */
-  onSelectedRangesChanged: SlickEvent<SlickRange[]> = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
+  onSelectedRangesChanged: SlickEvent<SlickRange[]>;
 
   protected _options: RowSelectionModelOption;
   protected _eventHandler: SlickEventHandler;
@@ -23,6 +23,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   } as RowSelectionModelOption;
 
   constructor(options?: RowSelectionModelOption) {
+    this.onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
     this._eventHandler = new SlickEventHandler();
     this._options = { ...this._defaults, ...options };
   }

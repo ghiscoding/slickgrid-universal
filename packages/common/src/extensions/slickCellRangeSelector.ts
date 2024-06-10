@@ -14,9 +14,9 @@ import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid, Sli
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
-  onBeforeCellRangeSelected: SlickEvent<{ row: number; cell: number; }> = new SlickEvent<{ row: number; cell: number; }>('onBeforeCellRangeSelected');
-  onCellRangeSelecting: SlickEvent<{ range: SlickRange; }> = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelecting');
-  onCellRangeSelected: SlickEvent<{ range: SlickRange; }> = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelected');
+  onBeforeCellRangeSelected: SlickEvent<{ row: number; cell: number; }>;
+  onCellRangeSelecting: SlickEvent<{ range: SlickRange; }>;
+  onCellRangeSelected: SlickEvent<{ range: SlickRange; }>;
 
   protected _activeCanvas!: HTMLElement;
   protected _options!: CellRangeSelectorOption;
@@ -60,6 +60,9 @@ export class SlickCellRangeSelector {
   } as CellRangeSelectorOption;
 
   constructor(options?: Partial<CellRangeSelectorOption>) {
+    this.onBeforeCellRangeSelected = new SlickEvent<{ row: number; cell: number; }>('onBeforeCellRangeSelected');
+    this.onCellRangeSelecting = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelecting');
+    this.onCellRangeSelected = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelected');
     this._eventHandler = new SlickEventHandler();
     this._options = deepMerge(this._defaults, options);
   }

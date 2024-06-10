@@ -48,7 +48,7 @@ export class GraphqlService implements BackendService {
   protected _currentFilters: ColumnFilters | CurrentFilter[] = [];
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
-  protected _columnDefinitions?: Column[];
+  protected _columnDefinitions: Column[] = [];
   protected _grid: SlickGrid | undefined;
   protected _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
@@ -59,7 +59,7 @@ export class GraphqlService implements BackendService {
   };
 
   /** Getter for the Column Definitions */
-  get columnDefinitions() {
+  get columnDefinitions(): Column[] {
     return this._columnDefinitions;
   }
 
@@ -84,7 +84,7 @@ export class GraphqlService implements BackendService {
    * Build the GraphQL query, since the service include/exclude cursor, the output query will be different.
    * @param serviceOptions GraphqlServiceOption
    */
-  buildQuery() {
+  buildQuery(): string {
     if (!this.options || !this.options.datasetName || !Array.isArray(this._columnDefinitions)) {
       throw new Error('GraphQL Service requires the "datasetName" property to properly build the GraphQL query');
     }
@@ -198,7 +198,7 @@ export class GraphqlService implements BackendService {
    * firstName, lastName, billing{address{street, zip}}
    * @param inputArray
    */
-  buildFilterQuery(inputArray: string[]) {
+  buildFilterQuery(inputArray: string[]): string {
 
     const set = (o: any = {}, a: any) => {
       const k = a.shift();
@@ -214,12 +214,12 @@ export class GraphqlService implements BackendService {
       .replace(/\}$/, '');
   }
 
-  clearFilters() {
+  clearFilters(): void {
     this._currentFilters = [];
     this.updateOptions({ filteringOptions: [] });
   }
 
-  clearSorters() {
+  clearSorters(): void {
     this._currentSorters = [];
     this.updateOptions({ sortingOptions: [] });
   }
@@ -258,7 +258,7 @@ export class GraphqlService implements BackendService {
   /*
    * Reset the pagination options
    */
-  resetPaginationOptions() {
+  resetPaginationOptions(): void {
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption;
 
     if (this.options?.useCursor) {
@@ -281,7 +281,7 @@ export class GraphqlService implements BackendService {
     }
   }
 
-  updateOptions(serviceOptions?: Partial<GraphqlServiceOption>) {
+  updateOptions(serviceOptions?: Partial<GraphqlServiceOption>): void {
     this.options = { ...this.options, ...serviceOptions } as GraphqlServiceOption;
   }
 
@@ -378,7 +378,7 @@ export class GraphqlService implements BackendService {
    * Update column filters by looping through all columns to inspect filters & update backend service filteringOptions
    * @param columnFilters
    */
-  updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically: boolean) {
+  updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically: boolean): void {
     const searchByArray: Array<GraphqlCustomFilteringOption | GraphqlFilteringOption> = [];
     let searchValue: string | string[];
 
@@ -548,7 +548,7 @@ export class GraphqlService implements BackendService {
    * @param {Number} pageSize
    * @param {*} [cursorArgs] these should be supplied when using cursor based pagination
    */
-  updatePagination(newPage: number, pageSize: number, cursorArgs?: PaginationCursorChangedArgs) {
+  updatePagination(newPage: number, pageSize: number, cursorArgs?: PaginationCursorChangedArgs): void {
     this._currentPagination = {
       pageNumber: newPage,
       pageSize
@@ -581,7 +581,7 @@ export class GraphqlService implements BackendService {
   /**
    * Update all Sorting by looping through all columns to inspect sorters & update backend service sortingOptions
    */
-  updateSorters(sortColumns?: ColumnSort[], presetSorters?: CurrentSorter[]) {
+  updateSorters(sortColumns?: ColumnSort[], presetSorters?: CurrentSorter[]): void {
     let currentSorters: CurrentSorter[] = [];
     const graphqlSorters: GraphqlSortingOption[] = [];
 
@@ -592,7 +592,7 @@ export class GraphqlService implements BackendService {
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
-        const columnDef = this._columnDefinitions?.find((column: Column) => column.id === sorter.columnId);
+        const columnDef = this._columnDefinitions.find((column: Column) => column.id === sorter.columnId);
 
         graphqlSorters.push({
           field: columnDef ? ((columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '') : (sorter.columnId + ''),
@@ -661,7 +661,7 @@ export class GraphqlService implements BackendService {
    * @param keepArgumentFieldDoubleQuotes - do we keep field double quotes? (i.e.: field: "user.name")
    * @returns outputStr output string
    */
-  trimDoubleQuotesOnEnumField(inputStr: string, enumSearchWords: string[], keepArgumentFieldDoubleQuotes: boolean) {
+  trimDoubleQuotesOnEnumField(inputStr: string, enumSearchWords: string[], keepArgumentFieldDoubleQuotes: boolean): string {
     // eslint-disable-next-line
     const patternWordInQuotes = `\s?((field:\s*)?".*?")`;
     let patternRegex = enumSearchWords.join(patternWordInQuotes + '|');

@@ -20,11 +20,10 @@ const noop = () => { };
 */
 export class SlickCellExternalCopyManager {
   pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
-  onCopyCells: SlickEvent<{ ranges: SlickRange[]; }> = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCells');
-  onCopyCancelled: SlickEvent<{ ranges: SlickRange[]; }> = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCancelled');
-  onPasteCells: SlickEvent<{ ranges: SlickRange[]; }> = new SlickEvent<{ ranges: SlickRange[]; }>('onPasteCells');
-  onBeforePasteCell: SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>
-    = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>('onBeforePasteCell');
+  onCopyCells: SlickEvent<{ ranges: SlickRange[]; }>;
+  onCopyCancelled: SlickEvent<{ ranges: SlickRange[]; }>;
+  onPasteCells: SlickEvent<{ ranges: SlickRange[]; }>;
+  onBeforePasteCell: SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>;
 
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bodyElement: HTMLElement = document.body;
@@ -38,6 +37,10 @@ export class SlickCellExternalCopyManager {
   protected _onCopySuccess?: (rowCount: number) => void;
 
   constructor() {
+    this.onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCells');
+    this.onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCancelled');
+    this.onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>('onPasteCells');
+    this.onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>('onBeforePasteCell');
     this._eventHandler = new SlickEventHandler();
   }
 

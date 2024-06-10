@@ -43,7 +43,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _delimiter = ',';
   protected _exportQuoteWrapper = '';
   protected _exportOptions!: TextExportOption;
-  protected _fileFormat = FileType.csv;
+  protected _fileFormat: FileType = FileType.csv;
   protected _lineCarriageReturn = '\n';
   protected _grid!: SlickGrid;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
@@ -72,7 +72,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     return this._grid?.getOptions() ?? {} as GridOption;
   }
 
-  dispose() {
+  dispose(): void {
     this._pubSubService?.unsubscribeAll();
   }
 
@@ -336,7 +336,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
    */
-  protected readRegularRowData(columns: Column[], row: number, itemObj: any) {
+  protected readRegularRowData(columns: Column[], row: number, itemObj: any): string {
     let idx = 0;
     const rowOutputStrings = [];
     const exportQuoteWrapper = this._exportQuoteWrapper;
@@ -407,7 +407,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * Get the grouped title(s) and its group title formatter, for example if we grouped by salesRep, the returned result would be:: 'Sales Rep: John Dow (2 items)'
    * @param itemObj
    */
-  protected readGroupedTitleRow(itemObj: any) {
+  protected readGroupedTitleRow(itemObj: any): string {
     let groupName = stripTags(itemObj.title);
     const exportQuoteWrapper = this._exportQuoteWrapper;
 
@@ -426,7 +426,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * For example if we grouped by "salesRep" and we have a Sum Aggregator on "sales", then the returned output would be:: ["Sum 123$"]
    * @param itemObj
    */
-  protected readGroupedTotalRow(columns: Column[], itemObj: any) {
+  protected readGroupedTotalRow(columns: Column[], itemObj: any): string {
     const delimiter = this._exportOptions.delimiter;
     const format = this._exportOptions.format;
     const groupingAggregatorRowText = this._exportOptions.groupingAggregatorRowText || '';

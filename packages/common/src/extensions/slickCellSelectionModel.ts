@@ -11,7 +11,7 @@ export interface CellSelectionModelOption {
 }
 
 export class SlickCellSelectionModel implements SelectionModel {
-  onSelectedRangesChanged: SlickEvent<SlickRange[]> = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
+  onSelectedRangesChanged: SlickEvent<SlickRange[]>;
   pluginName: 'CellSelectionModel' = 'CellSelectionModel' as const;
 
   protected _addonOptions?: CellSelectionModelOption;
@@ -28,12 +28,13 @@ export class SlickCellSelectionModel implements SelectionModel {
   };
 
   constructor(options?: { selectActiveCell: boolean; cellRangeSelector: SlickCellRangeSelector; }) {
+    this.onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
     this._eventHandler = new SlickEventHandler();
-    if (options === undefined || options.cellRangeSelector === undefined) {
-      this._selector = new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration });
-    } else {
-      this._selector = options.cellRangeSelector;
-    }
+
+    this._selector = (options === undefined || options.cellRangeSelector === undefined)
+      ? new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration })
+      : this._selector = options.cellRangeSelector;
+
     this._addonOptions = options;
   }
 

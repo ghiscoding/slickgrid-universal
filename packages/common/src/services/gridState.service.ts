@@ -21,7 +21,7 @@ import type { TreeDataService } from './treeData.service';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class GridStateService {
-  protected _eventHandler: SlickEventHandler = new SlickEventHandler();
+  protected _eventHandler: SlickEventHandler;
   protected _columns: Column[] = [];
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
@@ -36,7 +36,9 @@ export class GridStateService {
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
     protected readonly treeDataService: TreeDataService,
-  ) { }
+  ) {
+    this._eventHandler = new SlickEventHandler();
+  }
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {

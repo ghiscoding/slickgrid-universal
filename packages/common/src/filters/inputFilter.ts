@@ -33,7 +33,7 @@ export class InputFilter implements Filter {
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     this._bindEventService = new BindingEventService();
   }
 

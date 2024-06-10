@@ -73,7 +73,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset, services);
   }
 
-  mergeGridOptions(gridOptions: GridOption) {
+  mergeGridOptions(gridOptions: GridOption): GridOption {
     const extraOptions = (gridOptions.useSalesforceDefaultGridOptions || (this._gridOptions?.useSalesforceDefaultGridOptions)) ? SalesforceGlobalGridOptions : {};
     const options = extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
@@ -107,7 +107,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   // protected functions
   // ------------------
 
-  protected registerResources() {
+  protected registerResources(): void {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableTextExport) {
       this._registeredResources.push(new TextExportService());

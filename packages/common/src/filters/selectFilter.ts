@@ -56,9 +56,9 @@ export class SelectFilter implements Filter {
    * Initialize the Filter
    */
   constructor(
-    protected readonly translaterService?: TranslaterService,
-    protected readonly collectionService?: CollectionService,
-    protected readonly rxjs?: RxJsFacade,
+    protected readonly translaterService?: TranslaterService | undefined,
+    protected readonly collectionService?: CollectionService | undefined,
+    protected readonly rxjs?: RxJsFacade | undefined,
     isMultipleSelect = true) {
     this._isMultipleSelect = isMultipleSelect;
   }

@@ -64,7 +64,7 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService | undefined) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new SlickEventHandler();
@@ -86,7 +86,7 @@ export class SlickFooterComponent {
     }
   }
 
-  dispose() {
+  dispose(): void {
     // also dispose of all Subscriptions
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
@@ -99,7 +99,7 @@ export class SlickFooterComponent {
    * We could optionally display a custom footer below the grid to show some metrics (last update, item count with/without filters)
    * It's an opt-in, user has to enable "showCustomFooter" and it cannot be used when there's already a Pagination since they display the same kind of info
    */
-  renderFooter(gridParentContainerElm: HTMLElement) {
+  renderFooter(gridParentContainerElm: HTMLElement): void {
     // execute translation when enabled or use defined text or locale
     this.translateCustomFooterTexts();
 
@@ -108,7 +108,7 @@ export class SlickFooterComponent {
   }
 
   /** Render element attribute values */
-  renderMetrics(metrics: Metrics) {
+  renderMetrics(metrics: Metrics): void {
     // get translated text & last timestamp
     const lastUpdateTimestamp = metrics?.endTime ? format(metrics.endTime, this.customFooterOptions.dateFormat, 'en-US') : '';
     this._bindingHelper.setElementAttributeValue('span.last-update-timestamp', 'textContent', lastUpdateTimestamp);
@@ -124,17 +124,17 @@ export class SlickFooterComponent {
   }
 
   /** Render the left side footer text */
-  renderLeftFooterText(text: string) {
+  renderLeftFooterText(text: string): void {
     this._bindingHelper.setElementAttributeValue('div.left-footer', 'textContent', text);
   }
 
   /** Render the right side footer text */
-  renderRightFooterText(text: string) {
+  renderRightFooterText(text: string): void {
     this._bindingHelper.setElementAttributeValue('div.right-footer', 'textContent', text);
   }
 
   /** Translate all Custom Footer Texts (footer with metrics) */
-  translateCustomFooterTexts() {
+  translateCustomFooterTexts(): void {
     if (this.gridOptions.enableTranslate && this.translaterService?.translate) {
       this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
       for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
@@ -162,7 +162,7 @@ export class SlickFooterComponent {
   // --------------------
 
   /** Create the Footer Container */
-  protected createFooterContainer(gridParentContainerElm: HTMLElement) {
+  protected createFooterContainer(gridParentContainerElm: HTMLElement): void {
     const footerElm = createDomElement('div', {
       className: `slick-custom-footer ${this.gridUid}`,
       style: {
@@ -249,7 +249,7 @@ export class SlickFooterComponent {
    * we will show the row selection count on the bottom left side of the footer (by subscribing to the SlickGrid `onSelectedRowsChanged` event).
    * @param customFooterOptions
    */
-  protected registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption) {
+  protected registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption): void {
     const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
     if (isRowSelectionEnabled && customFooterOptions && (!customFooterOptions.hideRowSelectionCount && this._isLeftFooterOriginallyEmpty)) {
       this._isLeftFooterDisplayingSelectionRowCount = true;

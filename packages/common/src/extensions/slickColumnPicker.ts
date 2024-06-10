@@ -27,7 +27,7 @@ import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid } fr
  * @constructor
  */
 export class SlickColumnPicker {
-  onColumnsChanged: SlickEvent<OnColumnsChangedArgs> = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
+  onColumnsChanged: SlickEvent<OnColumnsChangedArgs>;
 
   protected _areVisibleColumnDifferent = false;
   protected _bindEventService: BindingEventService;
@@ -52,6 +52,7 @@ export class SlickColumnPicker {
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService) {
     this._bindEventService = new BindingEventService();
+    this.onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
     this._eventHandler = new SlickEventHandler();
     this._columns = this.sharedService.allColumns ?? [];
     this._gridUid = this.grid?.getUID?.() ?? '';

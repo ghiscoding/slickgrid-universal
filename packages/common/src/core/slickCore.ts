@@ -56,7 +56,7 @@ export class SlickEventData<ArgType = any> {
     return this._isDefaultPrevented;
   }
 
-  constructor(protected event?: Event | null, protected args?: ArgType) {
+  constructor(protected event?: Event | null | undefined, protected args?: ArgType | undefined) {
     this.nativeEvent = event;
     this._arguments = args;
 
@@ -165,7 +165,7 @@ export class SlickEvent<ArgType = any> {
    * @param {String} [eventName] - event name that could be used for dispatching CustomEvent (when enabled)
    * @param {BasePubSub} [pubSubService] - event name that could be used for dispatching CustomEvent (when enabled)
    */
-  constructor(protected readonly eventName?: string, protected readonly pubSub?: BasePubSub) {
+  constructor(protected readonly eventName?: string | undefined, protected readonly pubSub?: BasePubSub | undefined) {
     this._pubSubService = pubSub;
   }
 

@@ -8,7 +8,7 @@ export class FilterFactory {
   /** The options from the SlickgridConfig */
   protected _options: any;
 
-  constructor(protected config: SlickgridConfig, protected readonly translaterService?: TranslaterService, protected readonly collectionService?: CollectionService, protected rxjs?: RxJsFacade) {
+  constructor(protected config: SlickgridConfig, protected readonly translaterService?: TranslaterService | undefined, protected readonly collectionService?: CollectionService | undefined, protected rxjs?: RxJsFacade | undefined) {
     this._options = this.config?.options ?? {};
   }
 

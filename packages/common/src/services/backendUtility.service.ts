@@ -10,7 +10,7 @@ export interface BackendCallbacks {
 }
 
 export class BackendUtilityService {
-  constructor(protected rxjs?: RxJsFacade) { }
+  constructor(protected rxjs?: RxJsFacade | undefined) { }
 
   addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;

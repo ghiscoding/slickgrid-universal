@@ -57,7 +57,7 @@ export class FilterService {
   protected _tmpPreFilteredData?: Set<number | string>;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(protected filterFactory: FilterFactory, protected pubSubService: BasePubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
+  constructor(protected filterFactory: FilterFactory, protected pubSubService: BasePubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService | undefined, protected rxjs?: RxJsFacade | undefined) {
     this._onSearchChange = new SlickEvent<OnSearchChangeEventArgs>();
     this._eventHandler = new SlickEventHandler();
     if (this.rxjs) {

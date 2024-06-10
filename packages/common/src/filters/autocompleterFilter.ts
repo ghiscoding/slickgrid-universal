@@ -77,9 +77,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * Initialize the Filter
    */
   constructor(
-    protected readonly translaterService?: TranslaterService,
-    protected readonly collectionService?: CollectionService,
-    protected readonly rxjs?: RxJsFacade
+    protected readonly translaterService?: TranslaterService | undefined,
+    protected readonly collectionService?: CollectionService | undefined,
+    protected readonly rxjs?: RxJsFacade | undefined
   ) {
     this._bindEventService = new BindingEventService();
   }

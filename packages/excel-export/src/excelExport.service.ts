@@ -48,7 +48,7 @@ const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
 };
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
-  protected _fileFormat = FileType.xlsx;
+  protected _fileFormat: FileType = FileType.xlsx;
   protected _grid!: SlickGrid;
   protected _locales!: Locale;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
@@ -84,23 +84,23 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return this._grid?.getOptions() || {} as GridOption;
   }
 
-  get stylesheet() {
+  get stylesheet(): StyleSheet {
     return this._stylesheet;
   }
 
-  get stylesheetFormats() {
+  get stylesheetFormats(): any {
     return this._stylesheetFormats;
   }
 
-  get groupTotalExcelFormats() {
+  get groupTotalExcelFormats(): any {
     return this._groupTotalExcelFormats;
   }
 
-  get regularCellExcelFormats() {
+  get regularCellExcelFormats(): any {
     return this._regularCellExcelFormats;
   }
 
-  dispose() {
+  dispose(): void {
     this._pubSubService?.unsubscribeAll();
   }
 

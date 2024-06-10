@@ -16,7 +16,7 @@ import type { Observable, RxJsFacade } from './rxjsFacade';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class PaginationService {
-  protected _eventHandler: SlickEventHandler = new SlickEventHandler();
+  protected _eventHandler: SlickEventHandler;
   protected _initialized = false;
   protected _isLocalGrid = true;
   protected _backendServiceApi: BackendServiceApi | undefined;
@@ -37,7 +37,9 @@ export class PaginationService {
   grid!: SlickGrid;
 
   /** Constructor */
-  constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
+  constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService | undefined, protected rxjs?: RxJsFacade | undefined) {
+    this._eventHandler = new SlickEventHandler();
+  }
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {

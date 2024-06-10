@@ -8,8 +8,8 @@ import { getTranslationPrefix } from '../services/utilities';
 export class ExtensionUtility {
   constructor(
     private readonly sharedService: SharedService,
-    private readonly backendUtilities?: BackendUtilityService,
-    public readonly translaterService?: TranslaterService
+    private readonly backendUtilities?: BackendUtilityService | undefined,
+    public readonly translaterService?: TranslaterService | undefined
   ) { }
 
   /**

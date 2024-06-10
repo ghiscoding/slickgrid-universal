@@ -52,7 +52,7 @@ export class SliderFilter implements Filter {
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -182,7 +182,7 @@ export class SliderFilter implements Filter {
    * @param leftValue number
    * @param rightValue number
    */
-  renderSliderValues(leftValue?: number | string, rightValue?: number | string): void {
+  renderSliderValues(leftValue?: number | string | undefined, rightValue?: number | string | undefined): void {
     if (this._leftSliderNumberElm?.textContent && leftValue) {
       this._leftSliderNumberElm.textContent = leftValue.toString();
     }

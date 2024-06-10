@@ -40,7 +40,7 @@ export * from './sortComparers/sortComparers.index';
 export * from './services/index';
 export { Enums } from './enums/enums.index';
 
-const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, ...Utils, deepAssign: Utils.deepMerge };
+const Utilities: any = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, ...Utils, deepAssign: Utils.deepMerge };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';
 

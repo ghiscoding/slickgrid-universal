@@ -64,7 +64,7 @@ export class ExtensionService {
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
     protected readonly treeDataService: TreeDataService,
-    protected readonly translaterService?: TranslaterService,
+    protected readonly translaterService?: TranslaterService | undefined,
     protected readonly lazyGridService?: () => GridService
   ) { }
 

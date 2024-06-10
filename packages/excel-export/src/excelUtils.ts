@@ -32,7 +32,7 @@ export const getExcelNumberCallback: GetDataValueCallback = (data, { columnDef, 
 });
 
 /** Parse a number which the user might have provided formatter options (for example a user might have provided { decimalSeparator: ',', thousandSeparator: ' '}) */
-export function parseNumberWithFormatterOptions(value: any, column: Column, gridOptions: GridOption) {
+export function parseNumberWithFormatterOptions(value: any, column: Column, gridOptions: GridOption): any {
   let outValue = value;
   if (typeof value === 'string' && value) {
     const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', column, gridOptions, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
@@ -45,7 +45,10 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
 }
 
 /** use different Excel Stylesheet Format as per the Field Type */
-export function useCellFormatByFieldType(stylesheet: StyleSheet, excelFormats: any, columnDef: Column, grid: SlickGrid, autoDetect = true) {
+export function useCellFormatByFieldType(stylesheet: StyleSheet, excelFormats: any, columnDef: Column, grid: SlickGrid, autoDetect = true): {
+  excelFormatId: number | undefined;
+  getDataValueParser: GetDataValueCallback;
+} {
   const fieldType = getColumnFieldType(columnDef);
   let excelFormatId: number | undefined;
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
@@ -57,12 +60,22 @@ export function useCellFormatByFieldType(stylesheet: StyleSheet, excelFormats: a
   return { excelFormatId, getDataValueParser: callback };
 }
 
-export function getGroupTotalValue(totals: any, args: { columnDef: Column, groupType: string; }) {
+export function getGroupTotalValue(totals: any, args: { columnDef: Column, groupType: string; }): any {
   return totals?.[args.groupType]?.[args.columnDef.field] ?? 0;
 }
 
 /** Get numeric formatter options when defined or use default values (minDecimal, maxDecimal, thousandSeparator, decimalSeparator, wrapNegativeNumber) */
-export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
+export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, formatterType: FormatterType): {
+  minDecimal: number;
+  maxDecimal: number;
+  decimalSeparator: '.' | ',';
+  thousandSeparator: '' | '.' | ',' | '_' | ' ';
+  wrapNegativeNumber: boolean;
+  currencyPrefix: string;
+  currencySuffix: string;
+  numberPrefix: string;
+  numberSuffix: string;
+} {
   let dataType: 'currency' | 'decimal' | 'percent' | 'regular';
 
   if (formatterType === 'group') {
@@ -109,7 +122,7 @@ export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, f
   return retrieveFormatterOptions(columnDef, grid, dataType!, formatterType);
 }
 
-export function getFormatterNumericDataType(formatter?: Formatter) {
+export function getFormatterNumericDataType(formatter?: Formatter): 'currency' | 'decimal' | 'percent' {
   let dataType: 'currency' | 'decimal' | 'percent' | 'regular';
 
   switch (formatter) {
@@ -135,7 +148,10 @@ export function getFormatterNumericDataType(formatter?: Formatter) {
   return dataType;
 }
 
-export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, excelFormats: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
+export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, excelFormats: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType): {
+  excelFormat: ExcelFormatter;
+  groupType: string;
+} {
   let format = '';
   let groupType = columnDef.groupTotalsExcelExportOptions?.groupType || '';
   let excelFormat: undefined | ExcelFormatter;

@@ -40,11 +40,11 @@ import { SlickEvent, Utils as SlickUtils } from '../core/index';
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   // public events
-  onAfterMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs> = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onAfterMenuShow');
-  onBeforeMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs> = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onBeforeMenuShow');
-  onMenuClose: SlickEvent<GridMenuEventWithElementCallbackArgs> = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onMenuClose');
-  onCommand: SlickEvent<GridMenuCommandItemCallbackArgs> = new SlickEvent<GridMenuCommandItemCallbackArgs>('onCommand');
-  onColumnsChanged: SlickEvent<onGridMenuColumnsChangedCallbackArgs> = new SlickEvent<onGridMenuColumnsChangedCallbackArgs>('onColumnsChanged');
+  onAfterMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs>;
+  onBeforeMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs>;
+  onMenuClose: SlickEvent<GridMenuEventWithElementCallbackArgs>;
+  onCommand: SlickEvent<GridMenuCommandItemCallbackArgs>;
+  onColumnsChanged: SlickEvent<onGridMenuColumnsChangedCallbackArgs>;
 
   protected _areVisibleColumnDifferent = false;
   protected _columns: Column[] = [];
@@ -87,6 +87,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this._camelPluginName = 'gridMenu';
     this._columns = this.sharedService.allColumns ?? [];
     this._gridUid = this.grid?.getUID() ?? '';
+    this.onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onAfterMenuShow');
+    this.onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onBeforeMenuShow');
+    this.onMenuClose = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onMenuClose');
+    this.onCommand = new SlickEvent<GridMenuCommandItemCallbackArgs>('onCommand');
+    this.onColumnsChanged = new SlickEvent<onGridMenuColumnsChangedCallbackArgs>('onColumnsChanged');
 
     this.initEventHandlers();
     this.init();

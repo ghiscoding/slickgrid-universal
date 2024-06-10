@@ -128,7 +128,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   onSelectedRowIdsChanged: SlickEvent<OnSelectedRowIdsChangedEventArgs>;
   onSetItemsCalled: SlickEvent<OnSetItemsCalledEventArgs>;
 
-  constructor(options?: Partial<DataViewOption>, protected externalPubSub?: BasePubSub) {
+  constructor(options?: Partial<DataViewOption> | undefined, protected externalPubSub?: BasePubSub | undefined) {
     this.onBeforePagingInfoChanged = new SlickEvent<PagingInfo>('onBeforePagingInfoChanged', externalPubSub);
     this.onGroupExpanded = new SlickEvent<OnGroupExpandedEventArgs>('onGroupExpanded', externalPubSub);
     this.onGroupCollapsed = new SlickEvent<OnGroupCollapsedEventArgs>('onGroupCollapsed', externalPubSub);

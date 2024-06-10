@@ -6,7 +6,7 @@ export class InputMaskFilter extends InputFilter {
   protected _inputMask = '';
 
   /** Initialize the Filter */
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     super(translaterService);
     this.inputType = 'text';
   }

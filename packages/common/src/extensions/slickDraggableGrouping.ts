@@ -74,8 +74,8 @@ export class SlickDraggableGrouping {
     protected readonly sharedService: SharedService,
   ) {
     this._bindingEventService = new BindingEventService();
-    this._eventHandler = new SlickEventHandler();
     this.onGroupChanged = new SlickEvent<{ caller?: string; groupColumns: Grouping[]; }>('onGroupChanged');
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): DraggableGroupingOption {

@@ -37,7 +37,7 @@ export class SlickPaginationComponent {
   textOf = 'of';
   textPage = 'Page';
 
-  constructor(protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly translaterService?: TranslaterService | undefined) {
     this._bindingHelper = new BindingHelper();
     this._bindingEventService = new BindingEventService();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
@@ -119,7 +119,7 @@ export class SlickPaginationComponent {
     return this.gridOptions?.locales ?? Constants.locales;
   }
 
-  get totalItems() {
+  get totalItems(): number {
     return this.paginationService.totalItems;
   }
 
@@ -131,7 +131,7 @@ export class SlickPaginationComponent {
     return this.pageNumber === this.pageCount || this.totalItems === 0;
   }
 
-  dispose() {
+  dispose(): void {
     // also dispose of all Subscriptions
     this.pubSubService.unsubscribeAll(this._subscriptions);
     this._bindingEventService.unbindAll();
@@ -140,7 +140,7 @@ export class SlickPaginationComponent {
     this._paginationElement.remove();
   }
 
-  renderPagination(gridParentContainerElm: HTMLElement) {
+  renderPagination(gridParentContainerElm: HTMLElement): void {
     this._gridParentContainerElm = gridParentContainerElm;
     const paginationElm = this.createPaginationContainer();
     const divNavContainerElm = createDomElement('div', { className: 'slick-pagination-nav' });
@@ -186,7 +186,7 @@ export class SlickPaginationComponent {
   }
 
   /** Render and fill the Page Sizes <select> element */
-  renderPageSizes() {
+  renderPageSizes(): void {
     if (this._itemPerPageElm && Array.isArray(this.availablePageSizes)) {
       for (const option of this.availablePageSizes) {
         this._itemPerPageElm.appendChild(createDomElement('option', { value: `${option}`, text: `${option}` }));
@@ -195,7 +195,7 @@ export class SlickPaginationComponent {
   }
 
   /** Add some DOM Element bindings */
-  addBindings() {
+  addBindings(): void {
     this._bindingHelper.addElementBinding(this, 'firstButtonClasses', 'li.page-item.seek-first', 'className');
     this._bindingHelper.addElementBinding(this, 'prevButtonClasses', 'li.page-item.seek-prev', 'className');
     this._bindingHelper.addElementBinding(this, 'lastButtonClasses', 'li.page-item.seek-end', 'className');
@@ -217,7 +217,7 @@ export class SlickPaginationComponent {
   }
 
   /** Add some DOM Element event listeners */
-  addEventListeners() {
+  addEventListeners(): void {
     this._bindingEventService.bind(this._seekFirstElm, 'click', this.changeToFirstPage.bind(this) as EventListener);
     this._bindingEventService.bind(this._seekEndElm, 'click', this.changeToLastPage.bind(this) as EventListener);
     this._bindingEventService.bind(this._seekNextElm, 'click', this.changeToNextPage.bind(this) as EventListener);
@@ -225,40 +225,40 @@ export class SlickPaginationComponent {
     this._bindingEventService.bind(this._itemPerPageElm, 'change', this.updateItemsPerPage.bind(this));
   }
 
-  changeToFirstPage(event: MouseEvent) {
+  changeToFirstPage(event: MouseEvent): void {
     if (!this.isLeftPaginationDisabled) {
       this.paginationService.goToFirstPage(event);
     }
   }
 
-  changeToLastPage(event: MouseEvent) {
+  changeToLastPage(event: MouseEvent): void {
     if (!this.isRightPaginationDisabled) {
       this.paginationService.goToLastPage(event);
     }
   }
 
-  changeToNextPage(event: MouseEvent) {
+  changeToNextPage(event: MouseEvent): void {
     if (!this.isRightPaginationDisabled) {
       this.paginationService.goToNextPage(event);
     }
   }
 
-  changeToPreviousPage(event: MouseEvent) {
+  changeToPreviousPage(event: MouseEvent): void {
     if (!this.isLeftPaginationDisabled) {
       this.paginationService.goToPreviousPage(event);
     }
   }
 
-  changeToCurrentPage(pageNumber: number) {
+  changeToCurrentPage(pageNumber: number): void {
     this.paginationService.goToPageNumber(+pageNumber);
   }
 
-  updateItemsPerPage(event: & { target: any; }) {
+  updateItemsPerPage(event: & { target: any; }): void {
     this.itemsPerPage = +(event?.target?.value ?? 0);
   }
 
   /** Translate all the texts shown in the UI, use ngx-translate service when available or custom locales when service is null */
-  translatePaginationTexts() {
+  translatePaginationTexts(): void {
     if (this._enableTranslate && this.translaterService?.translate) {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       this.textItemsPerPage = this.translaterService.translate(`${translationPrefix}ITEMS_PER_PAGE`);
@@ -278,7 +278,7 @@ export class SlickPaginationComponent {
   // --------------------
 
   /** Create the Pagination Container */
-  protected createPaginationContainer() {
+  protected createPaginationContainer(): HTMLDivElement {
     const paginationContainerElm = createDomElement('div', {
       id: 'pager', className: `slick-pagination-container ${this.gridUid} pager`,
       style: { width: '100%' },
@@ -291,7 +291,7 @@ export class SlickPaginationComponent {
     return paginationElm;
   }
 
-  protected createPageNumberSection() {
+  protected createPageNumberSection(): HTMLDivElement {
     const divElm = createDomElement('div', { className: 'slick-page-number' });
     createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
     divElm.appendChild(document.createTextNode(' '));
@@ -322,7 +322,7 @@ export class SlickPaginationComponent {
     return divElm;
   }
 
-  protected createPaginationSettingsSection() {
+  protected createPaginationSettingsSection(): HTMLSpanElement {
     const spanContainerElm = createDomElement('span', { className: 'slick-pagination-settings' });
     this._itemPerPageElm = createDomElement('select', { id: 'items-per-page-label', ariaLabel: 'Items per Page', className: 'items-per-page' }, spanContainerElm);
     spanContainerElm.appendChild(document.createTextNode(' '));
@@ -346,7 +346,7 @@ export class SlickPaginationComponent {
     return spanContainerElm;
   }
 
-  protected updatePageButtonsUsability() {
+  protected updatePageButtonsUsability(): void {
     this.firstButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-first disabled' : 'page-item seek-first';
     this.prevButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-prev disabled' : 'page-item seek-prev';
     this.lastButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-end disabled' : 'page-item seek-end';
