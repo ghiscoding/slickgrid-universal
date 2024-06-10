@@ -32,7 +32,7 @@ export class ResizerService {
   protected _gridContainerElm!: HTMLElement;
   protected _pageContainerElm!: HTMLElement;
   protected _intervalId!: NodeJS.Timeout;
-  protected _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
+  protected _intervalRetryDelay: number = DEFAULT_INTERVAL_RETRY_DELAY;
   protected _isStopResizeIntervalRequested = false;
   protected _hasResizedByContentAtLeastOnce = false;
   protected _lastDimensions?: GridSize;
@@ -81,7 +81,7 @@ export class ResizerService {
   }
 
   /** Dispose function when service is destroyed */
-  dispose() {
+  dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
@@ -96,7 +96,7 @@ export class ResizerService {
     this._bindingEventService.unbindAll();
   }
 
-  init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
+  init(grid: SlickGrid, gridParentContainerElm: HTMLElement): void {
     if (!grid || !this.gridOptions || !gridParentContainerElm) {
       throw new Error(`
       [Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.
@@ -186,7 +186,7 @@ export class ResizerService {
     }
   }
 
-  handleResizeGrid(newSizes?: GridSize) {
+  handleResizeGrid(newSizes?: GridSize): void {
     this.pubSubService.publish('onGridBeforeResize');
     if (!this._resizePaused) {
       // for some yet unknown reason, calling the resize twice removes any stuttering/flickering
@@ -283,7 +283,7 @@ export class ResizerService {
    * Provide the possibility to pause the resizer for some time, until user decides to re-enabled it later if he wish to.
    * @param {boolean} isResizePaused are we pausing the resizer?
    */
-  pauseResizer(isResizePaused: boolean) {
+  pauseResizer(isResizePaused: boolean): void {
     this._resizePaused = isResizePaused;
   }
 
@@ -372,7 +372,7 @@ export class ResizerService {
     return this._lastDimensions;
   }
 
-  requestStopOfAutoFixResizeGrid(isStopRequired = true) {
+  requestStopOfAutoFixResizeGrid(isStopRequired = true): void {
     this._isStopResizeIntervalRequested = isStopRequired;
   }
 
@@ -384,7 +384,7 @@ export class ResizerService {
    * however user could override it by using the grid option `resizeMaxItemToInspectCellContentWidth` to increase/decrease how many items to inspect.
    * @param {Boolean} recalculateColumnsTotalWidth - defaults to false, do we want to recalculate the necessary total columns width even if it was already calculated?
    */
-  resizeColumnsByCellContent(recalculateColumnsTotalWidth = false) {
+  resizeColumnsByCellContent(recalculateColumnsTotalWidth = false): void {
     const columnDefinitions = this._grid.getColumns();
     const dataset = this.dataView.getItems() as any[];
     const columnWidths: { [columnId in string | number]: number; } = {};
@@ -464,7 +464,7 @@ export class ResizerService {
    * @param columnIndexOverride - an optional column index, if provided it will override the column index position
    * @returns - count of items that was read
    */
-  protected calculateCellWidthByReadingDataset(columnOrColumns: Column | Column[], columnWidths: { [columnId in string | number]: number; }, maxItemToInspect = 1000, columnIndexOverride?: number) {
+  protected calculateCellWidthByReadingDataset(columnOrColumns: Column | Column[], columnWidths: { [columnId in string | number]: number; }, maxItemToInspect = 1000, columnIndexOverride?: number): number {
     const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
     const dataset = this.dataView.getItems() as any[];
 
@@ -523,7 +523,7 @@ export class ResizerService {
    * @param {Object} column - column definition to apply the width
    * @param {Number} calculatedColumnWidth - new calculated column width to possibly apply
    */
-  protected applyNewCalculatedColumnWidthByReference(column: Column<any>, calculatedColumnWidth: number) {
+  protected applyNewCalculatedColumnWidthByReference(column: Column<any>, calculatedColumnWidth: number): void {
     // read a few optional resize by content grid options
     const resizeCellPaddingWidthInPx = this.resizeByContentOptions.cellPaddingWidthInPx ?? 6;
     const resizeFormatterPaddingWidthInPx = this.resizeByContentOptions.formatterPaddingWidthInPx ?? 6;
@@ -563,7 +563,7 @@ export class ResizerService {
     }
   }
 
-  protected handleSingleColumnResizeByContent(columnId: string) {
+  protected handleSingleColumnResizeByContent(columnId: string): void {
     const columnDefinitions = this._grid.getColumns();
     const columnDefIdx = columnDefinitions.findIndex(col => col.id === columnId);
 
@@ -630,7 +630,7 @@ export class ResizerService {
    *   2- header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown),
    * for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
    */
-  protected resizeGridWhenStylingIsBrokenUntilCorrected() {
+  protected resizeGridWhenStylingIsBrokenUntilCorrected(): void {
     // how many time we want to check before really stopping the resize check?
     // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
     const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (5 * 60 * 60); // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)

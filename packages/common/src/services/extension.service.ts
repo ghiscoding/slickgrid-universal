@@ -49,7 +49,7 @@ export class ExtensionService {
   protected _rowSelectionModel?: SlickRowSelectionModel;
   protected _rowBasedEdit?: SlickRowBasedEdit;
 
-  get extensionList() {
+  get extensionList(): ExtensionList<any> {
     return this._extensionList;
   }
 
@@ -69,7 +69,7 @@ export class ExtensionService {
   ) { }
 
   /** Dispose of all the controls & plugins */
-  dispose() {
+  dispose(): void {
     this.sharedService.visibleColumns = [];
 
     // dispose of each control/plugin & reset the list
@@ -110,7 +110,7 @@ export class ExtensionService {
    * @param {String} name
    * @param {Object} extension
    */
-  addExtensionToList<T = any>(name: ExtensionName, extension: { name: ExtensionName; instance: T; }) {
+  addExtensionToList<T = any>(name: ExtensionName, extension: { name: ExtensionName; instance: T; }): void {
     this._extensionList[name] = extension;
   }
 
@@ -153,12 +153,12 @@ export class ExtensionService {
   }
 
   /** Auto-resize all the column in the grid to fit the grid width */
-  autoResizeColumns() {
+  autoResizeColumns(): void {
     this.sharedService.slickGrid.autosizeColumns();
   }
 
   /** Bind/Create different Controls or Plugins after the Grid is created */
-  bindDifferentExtensions() {
+  bindDifferentExtensions(): void {
     if (this.gridOptions) {
       // make sure all columns are translated before creating ColumnPicker/GridMenu Controls
       // this is to avoid having hidden columns not being translated on first load
@@ -311,7 +311,7 @@ export class ExtensionService {
    * @param columnDefinitions
    * @param gridOptions
    */
-  createExtensionsBeforeGridCreation(columnDefinitions: Column[], gridOptions: GridOption) {
+  createExtensionsBeforeGridCreation(columnDefinitions: Column[], gridOptions: GridOption): void {
     const featureWithColumnIndexPositions: ExtensionWithColumnIndexPosition[] = [];
 
     // the following 3 features might have `columnIndexPosition` that we need to respect their column order, we will execute them by their sort order further down
@@ -350,7 +350,7 @@ export class ExtensionService {
   }
 
   /** Hide a column from the grid */
-  hideColumn(column: Column) {
+  hideColumn(column: Column): void {
     if (typeof this.sharedService?.slickGrid?.getColumns === 'function') {
       const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
       this.sharedService.visibleColumns = this.removeColumnByIndex(this.sharedService.slickGrid.getColumns(), columnIndex);
@@ -359,7 +359,7 @@ export class ExtensionService {
   }
 
   /** Refresh the dataset through the Backend Service */
-  refreshBackendDataset(gridOptions?: GridOption) {
+  refreshBackendDataset(gridOptions?: GridOption): void {
     this.extensionUtility.refreshBackendDataset(gridOptions);
   }
 
@@ -376,7 +376,7 @@ export class ExtensionService {
   }
 
   /** Translate all possible Extensions at once */
-  translateAllExtensions(lang?: string) {
+  translateAllExtensions(lang?: string): void {
     this.translateCellMenu();
     this.translateContextMenu();
     this.translateHeaderMenu();
@@ -388,38 +388,38 @@ export class ExtensionService {
   }
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
-  translateCellMenu() {
+  translateCellMenu(): void {
     this._cellMenuPlugin?.translateCellMenu();
   }
 
   /** Translate the Column Picker and it's last 2 checkboxes */
-  translateColumnPicker() {
+  translateColumnPicker(): void {
     this._columnPickerControl?.translateColumnPicker();
   }
 
   /** Translate the Context Menu titles, we need to loop through all column definition to re-translate them */
-  translateContextMenu() {
+  translateContextMenu(): void {
     this._contextMenuPlugin?.translateContextMenu();
   }
 
   /**
    * Translate the Header Menu titles, we need to loop through all column definition to re-translate them
    */
-  translateGridMenu() {
+  translateGridMenu(): void {
     this._gridMenuControl?.translateGridMenu();
   }
 
   /**
    * Translate the Header Menu titles, we need to loop through all column definition to re-translate them
    */
-  translateHeaderMenu() {
+  translateHeaderMenu(): void {
     this._headerMenuPlugin?.translateHeaderMenu();
   }
 
   /**
    * Translate the action column buttons of the Row Based Edit Plugin
    */
-  translateRowEditPlugin() {
+  translateRowEditPlugin(): void {
     this._rowBasedEdit?.translate();
   }
 
@@ -429,7 +429,7 @@ export class ExtensionService {
    * @param locale to use
    * @param new column definitions (optional)
    */
-  translateColumnHeaders(locale?: string, newColumnDefinitions?: Column[]) {
+  translateColumnHeaders(locale?: string, newColumnDefinitions?: Column[]): void {
     if (this.sharedService && this.gridOptions && this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -456,7 +456,7 @@ export class ExtensionService {
    * Render (or re-render) the column headers from column definitions.
    * calling setColumns() will trigger a grid re-render
    */
-  renderColumnHeaders(newColumnDefinitions?: Column[], forceColumnDefinitionsOverwrite = false) {
+  renderColumnHeaders(newColumnDefinitions?: Column[], forceColumnDefinitionsOverwrite = false): void {
     let collection = newColumnDefinitions;
     if (!collection) {
       collection = this.sharedService.columnDefinitions;
@@ -494,7 +494,7 @@ export class ExtensionService {
    * @param columnDefinitions
    * @param gridOptions
    */
-  protected createExtensionByTheirColumnIndex(featureWithIndexPositions: ExtensionWithColumnIndexPosition[], columnDefinitions: Column[], gridOptions: GridOption) {
+  protected createExtensionByTheirColumnIndex(featureWithIndexPositions: ExtensionWithColumnIndexPosition[], columnDefinitions: Column[], gridOptions: GridOption): void {
     // 1- first step is to sort them by their index position
     featureWithIndexPositions.sort((feat1, feat2) => feat1.columnIndexPosition - feat2.columnIndexPosition);
 
@@ -508,7 +508,7 @@ export class ExtensionService {
   }
 
   /** Translate an array of items from an input key and assign translated value to the output key */
-  protected translateItems(items: any[], inputKey: string, outputKey: string) {
+  protected translateItems(items: any[], inputKey: string, outputKey: string): void {
     if (this.gridOptions?.enableTranslate && !(this.translaterService?.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }

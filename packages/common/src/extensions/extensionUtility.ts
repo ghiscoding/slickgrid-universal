@@ -18,7 +18,7 @@ export class ExtensionUtility {
    * 2- else if user provided a title key, use it to translate the output title
    * 3- else if nothing is provided use text defined as constants
    */
-  getPickerTitleOutputString(propName: string, pickerName: 'gridMenu' | 'columnPicker') {
+  getPickerTitleOutputString(propName: string, pickerName: 'gridMenu' | 'columnPicker'): string {
     if (this.sharedService.gridOptions?.enableTranslate && (!this.translaterService?.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -67,7 +67,7 @@ export class ExtensionUtility {
    * @param {Array<Object>} allColumns - all columns (including hidden ones)
    * @param {Array<Object>} visibleColumns - only visible columns (excluding hidden ones)
    */
-  readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number, allColumns: Column[], visibleColumns: Column[]) {
+  readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number, allColumns: Column[], visibleColumns: Column[]): void {
     if (frozenColumnIndex >= 0) {
       const recalculatedFrozenColumnIndex = visibleColumns.findIndex(col => col.id === this.sharedService.frozenVisibleColumnId);
       if (recalculatedFrozenColumnIndex >= 0 && recalculatedFrozenColumnIndex !== frozenColumnIndex) {
@@ -84,7 +84,7 @@ export class ExtensionUtility {
   }
 
   /** Refresh the dataset through the Backend Service */
-  refreshBackendDataset(inputGridOptions?: GridOption) {
+  refreshBackendDataset(inputGridOptions?: GridOption): void {
     // user can pass new set of grid options which will override current ones
     let gridOptions = this.sharedService.gridOptions;
     if (inputGridOptions) {
@@ -107,7 +107,7 @@ export class ExtensionUtility {
    * @param {Array<Object>} items array
    * @param {String} property name to sort with
    */
-  sortItems(items: any[], propertyName: string) {
+  sortItems(items: any[], propertyName: string): void {
     // sort the command items by their position in the list
     if (Array.isArray(items)) {
       items.sort((itemA: any, itemB: any) => {
@@ -120,7 +120,7 @@ export class ExtensionUtility {
   }
 
   /** Translate the array of items from an input key and assign them to their output key */
-  translateItems<T = any>(items: T[], inputKey: string, outputKey: string) {
+  translateItems<T = any>(items: T[], inputKey: string, outputKey: string): void {
     if (Array.isArray(items)) {
       for (const item of items) {
         if ((item as any).hasOwnProperty(inputKey)) {
@@ -135,7 +135,7 @@ export class ExtensionUtility {
    * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
    * @param {Object} gridOptions - Grid Options
    */
-  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>, subMenuItemsKey = 'commandItems') {
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>, subMenuItemsKey = 'commandItems'): void {
     for (const item of items) {
       // translate `titleKey` and also `subMenuTitleKey` if exists
       if (typeof item === 'object') {

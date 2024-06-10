@@ -95,7 +95,7 @@ export class FilterService {
     return this._grid?.getData<SlickDataView>() ?? {};
   }
 
-  addRxJsResource(rxjs: RxJsFacade) {
+  addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;
   }
 
@@ -111,7 +111,7 @@ export class FilterService {
     }
   }
 
-  dispose() {
+  dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
 
@@ -126,7 +126,7 @@ export class FilterService {
   /**
    * Dispose of the filters, since it's a singleton, we don't want to affect other grids with same columns
    */
-  disposeColumnFilters() {
+  disposeColumnFilters(): void {
     this.removeAllColumnFiltersProperties();
 
     // also destroy each Filter instances
@@ -145,7 +145,7 @@ export class FilterService {
    * Bind a backend filter hook to the grid
    * @param grid SlickGrid Grid object
    */
-  bindBackendOnFilter(grid: SlickGrid) {
+  bindBackendOnFilter(grid: SlickGrid): void {
     this._filtersMetadata = [];
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
@@ -176,7 +176,7 @@ export class FilterService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnFilter(grid: SlickGrid) {
+  bindLocalOnFilter(grid: SlickGrid): void {
     this._filtersMetadata = [];
     this._dataView.setFilterArgs({ columnFilters: this._columnFilters, grid: this._grid, dataView: this._dataView });
     this._dataView.setFilter(this.customLocalFilter.bind(this));
@@ -253,7 +253,7 @@ export class FilterService {
   }
 
   /** Clear the search filters (below the column titles) */
-  async clearFilters(triggerChange = true) {
+  async clearFilters(triggerChange = true): Promise<void> {
     // emit an event before the process start
     if (triggerChange) {
       await this.pubSubService.publish('onBeforeFilterClear', true, 0);
@@ -561,7 +561,7 @@ export class FilterService {
    * This will then be passed to the DataView setFilter(customLocalFilter), which will itself loop through the list of IDs and display/hide the row when found.
    * We do this in 2 steps so that we can still use the DataSet setFilter()
    */
-  preFilterTreeData(inputItems: any[], columnFilters: ColumnFilters) {
+  preFilterTreeData(inputItems: any[], columnFilters: ColumnFilters): Set<string | number> {
     const treeDataOptions = this._gridOptions.treeDataOptions;
     const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
     const parentPropName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
@@ -739,7 +739,7 @@ export class FilterService {
     }
   }
 
-  async onBackendFilterChange(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnSearchChangeEventArgs) {
+  async onBackendFilterChange(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnSearchChangeEventArgs): Promise<void> {
     const isTriggeringQueryEvent = args?.shouldTriggerQuery;
 
     if (isTriggeringQueryEvent) {
@@ -784,7 +784,7 @@ export class FilterService {
    * At the end of the day, when creating the Filter (DOM Element), it will use these searchTerm(s) so we can take advantage of that without recoding each Filter type (DOM element)
    * @param grid
    */
-  populateColumnFilterSearchTermPresets(filters: CurrentFilter[]) {
+  populateColumnFilterSearchTermPresets(filters: CurrentFilter[]): Column[] {
     if (Array.isArray(filters)) {
       this._columnDefinitions.forEach((columnDef: Column) => {
         // clear any columnDef searchTerms before applying Presets
@@ -817,7 +817,7 @@ export class FilterService {
    * we need to do this because Tree Data is the only type of grid that requires a pre-filter (preFilterTreeData) to be executed before the final filtering
    * @param {Array<Object>} [items] - optional flat array of parent/child items to use while redoing the full sort & refresh
    */
-  refreshTreeDataFilters(items?: any[]) {
+  refreshTreeDataFilters(items?: any[]): void {
     const inputItems = items ?? this._dataView?.getItems() ?? [];
 
     if (this._dataView && this._gridOptions.enableTreeData && inputItems.length > 0) {
@@ -837,7 +837,7 @@ export class FilterService {
    * @param {boolean} isFilterDisabled - optionally force a disable/enable of the Sort Functionality? Defaults to True
    * @param {boolean} clearFiltersWhenDisabled - when disabling the Filter, do we also want to clear all the filters as well? Defaults to True
    */
-  disableFilterFunctionality(isFilterDisabled = true, clearFiltersWhenDisabled = true) {
+  disableFilterFunctionality(isFilterDisabled = true, clearFiltersWhenDisabled = true): void {
     const prevShowFilterFlag = this._gridOptions.enableFiltering;
     const newShowFilterFlag = !prevShowFilterFlag;
 
@@ -860,7 +860,7 @@ export class FilterService {
    * Reset (revert) to previous filters, it could be because you prevented `onBeforeSearchChange` OR a Backend Error was thrown.
    * It will reapply the previous filter state in the UI.
    */
-  resetToPreviousSearchFilters() {
+  resetToPreviousSearchFilters(): void {
     this.updateFilters(this._previousFilters, false, false, false);
   }
 
@@ -868,7 +868,7 @@ export class FilterService {
    * Toggle the Filter Functionality (show/hide the header row filter bar as well)
    * @param {boolean} clearFiltersWhenDisabled - when disabling the filters, do we want to clear the filters before hiding the filters? Defaults to True
    */
-  toggleFilterFunctionality(clearFiltersWhenDisabled = true) {
+  toggleFilterFunctionality(clearFiltersWhenDisabled = true): void {
     const prevShowFilterFlag = this._gridOptions.enableFiltering;
     this.disableFilterFunctionality(prevShowFilterFlag, clearFiltersWhenDisabled);
   }
@@ -876,7 +876,7 @@ export class FilterService {
   /**
    * Toggle the Header Row filter bar (this does not disable the Filtering itself, you can use "toggleFilterFunctionality()" instead, however this will reset any column positions)
    */
-  toggleHeaderFilterRow() {
+  toggleHeaderFilterRow(): void {
     let showHeaderRow = this._gridOptions.showHeaderRow ?? false;
     showHeaderRow = !showHeaderRow; // inverse show header flag
     this._grid.setHeaderRowVisibility(showHeaderRow);
@@ -893,7 +893,7 @@ export class FilterService {
    * you can change the sorting icons separately by passing an array of columnId/sortAsc and that will change ONLY the icons
    * @param sortColumns
    */
-  setSortColumnIcons(sortColumns: { columnId: string, sortAsc: boolean; }[]) {
+  setSortColumnIcons(sortColumns: { columnId: string, sortAsc: boolean; }[]): void {
     if (this._grid && Array.isArray(sortColumns)) {
       this._grid.setSortColumns(sortColumns);
     }
@@ -1034,7 +1034,7 @@ export class FilterService {
    * @param column - column id or column object
    * @param filterContainer - id element HTML or DOM element filter
    */
-  drawFilterTemplate(column: Column | string, filterContainer: HTMLDivElement | string) {
+  drawFilterTemplate(column: Column | string, filterContainer: HTMLDivElement | string): Filter | null | undefined {
     let filterContainerElm: HTMLDivElement | null;
     if (typeof filterContainer === 'string') {
       filterContainerElm = document.querySelector(filterContainer);
@@ -1091,7 +1091,7 @@ export class FilterService {
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement; }, isFilterFirstRender = true) {
+  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement; }, isFilterFirstRender = true): void {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
@@ -1144,7 +1144,7 @@ export class FilterService {
    * Callback method that is called and executed by the individual Filter (DOM element),
    * for example when user starts typing chars on a search input (which uses InputFilter), this Filter will execute the callback from an input change event.
    */
-  protected callbackSearchEvent(event: Event | undefined, args: FilterCallbackArg) {
+  protected callbackSearchEvent(event: Event | undefined, args: FilterCallbackArg): void {
     if (args) {
       const searchTerm = ((event?.target) ? (event.target as HTMLInputElement).value : undefined);
       const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
@@ -1276,7 +1276,7 @@ export class FilterService {
     return filters;
   }
 
-  protected getSelectorStringFromElement(elm?: HTMLElement | null) {
+  protected getSelectorStringFromElement(elm?: HTMLElement | null): string {
     if (elm?.localName) {
       return elm?.className ? `${elm.localName}.${Array.from(elm.classList).join('.')}` : elm.localName;
     }
@@ -1287,7 +1287,7 @@ export class FilterService {
    * When clearing or disposing of all filters, we need to loop through all columnFilters and delete them 1 by 1
    * only trying to make columnFilter an empty (without looping) would not trigger a dataset change
    */
-  protected removeAllColumnFiltersProperties() {
+  protected removeAllColumnFiltersProperties(): void {
     if (typeof this._columnFilters === 'object') {
       Object.keys(this._columnFilters).forEach(columnId => {
         if (columnId && this._columnFilters[columnId]) {
@@ -1301,14 +1301,14 @@ export class FilterService {
    * Subscribe to `onBeforeHeaderRowCellDestroy` to destroy Filter(s) to avoid leak and not keep orphan filters
    * @param {Object} grid - Slick Grid object
    */
-  protected subscribeToOnHeaderRowCellRendered(grid: SlickGrid) {
+  protected subscribeToOnHeaderRowCellRendered(grid: SlickGrid): void {
     this._eventHandler.subscribe(grid.onBeforeHeaderRowCellDestroy, (_e, args) => {
       const colFilter: Filter | undefined = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === args.column.id);
       colFilter?.destroy?.();
     });
   }
 
-  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString) {
+  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString): void {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
     const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 

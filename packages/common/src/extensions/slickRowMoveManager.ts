@@ -69,7 +69,7 @@ export class SlickRowMoveManager {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGrid, options?: RowMoveManager) {
+  init(grid: SlickGrid, options?: RowMoveManager): void {
     this._addonOptions = { ...this._defaults, ...options };
     this._grid = grid;
     this._canvas = this._grid.getCanvasNode();
@@ -89,7 +89,7 @@ export class SlickRowMoveManager {
   }
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
-  dispose() {
+  dispose(): void {
     this._eventHandler?.unsubscribeAll();
   }
 
@@ -149,11 +149,11 @@ export class SlickRowMoveManager {
    * In order word, user can choose which rows to be an available as moveable (or not) by providing his own logic show/hide icon and usability.
    * @param overrideFn: override function callback
    */
-  usabilityOverride(overrideFn: UsabilityOverrideFn) {
+  usabilityOverride(overrideFn: UsabilityOverrideFn): void {
     this._usabilityOverride = overrideFn;
   }
 
-  setOptions(newOptions: RowMoveManagerOption) {
+  setOptions(newOptions: RowMoveManagerOption): void {
     this._addonOptions = { ...this._addonOptions, ...newOptions };
   }
 
@@ -161,12 +161,12 @@ export class SlickRowMoveManager {
   // protected functions
   // ------------------
 
-  protected handleDragInit(e: SlickEventData) {
+  protected handleDragInit(e: SlickEventData): void {
     // prevent the grid from cancelling drag'n'drop by default
     e.stopImmediatePropagation();
   }
 
-  protected handleDragEnd(e: SlickEventData, dd: DragRowMove) {
+  protected handleDragEnd(e: SlickEventData, dd: DragRowMove): void {
     if (!this._dragging) {
       return;
     }
@@ -308,7 +308,7 @@ export class SlickRowMoveManager {
     }
   }
 
-  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGrid) {
+  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGrid): boolean {
     if (typeof this._usabilityOverride === 'function') {
       return this._usabilityOverride(row, dataContext, grid);
     }

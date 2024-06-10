@@ -85,7 +85,7 @@ export class SlickRowBasedEdit {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGrid, gridService: GridService) {
+  init(grid: SlickGrid, gridService: GridService): void {
     this._grid = grid;
     this._gridService = gridService;
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
@@ -142,12 +142,12 @@ export class SlickRowBasedEdit {
     this.translate();
   }
 
-  destroy() {
+  destroy(): void {
     this.dispose();
   }
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
-  dispose() {
+  dispose(): void {
     this._eventHandler?.unsubscribeAll();
     this.pubSubService?.unsubscribeAll();
   }
@@ -197,7 +197,7 @@ export class SlickRowBasedEdit {
     } as Column;
   }
 
-  rowBasedEditCommandHandler(item: any, column: Column<any>, editCommand: EditCommand) {
+  rowBasedEditCommandHandler(item: any, column: Column<any>, editCommand: EditCommand): void {
     if (this._existingEditCommandHandler) {
       this._existingEditCommandHandler(item, column, editCommand);
     }
@@ -251,7 +251,7 @@ export class SlickRowBasedEdit {
    * User could optionally force a retranslate even if it was already translated
    * @param {Boolean} [forceRetranslate] - even if it was already translate, force a retranslate
    */
-  translate(forceRetranslate = false) {
+  translate(forceRetranslate = false): ButtonTranslation {
     this._currentLang = this.extensionUtility.translaterService?.getCurrentLanguage() ?? 'en';
 
     // translate only once or reuse what's in memory if it was translated
@@ -279,7 +279,7 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected undoRowEdit(item: any) {
+  protected undoRowEdit(item: any): void {
     const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     const targetRow = this._editedRows.get(item[idProperty]);
     const row = this._grid.getData().getRowByItem(item);
@@ -304,7 +304,7 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected renderUnsavedCellStyling(id: any, column: Column) {
+  protected renderUnsavedCellStyling(id: any, column: Column): void {
     if (column) {
       const row = this._grid.getData()?.getRowById(id);
       if (row !== undefined && row >= 0) {
@@ -316,7 +316,7 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected handleAllRowRerender(_e: SlickEventData, _args: OnRowsOrCountChangedEventArgs) {
+  protected handleAllRowRerender(_e: SlickEventData, _args: OnRowsOrCountChangedEventArgs): void {
     this._editedRows.forEach((editedRow, key) => {
       editedRow.cssStyleKeys.forEach((cssStyleKey) => {
         this._grid.removeCellCssStyles(cssStyleKey);
@@ -328,7 +328,7 @@ export class SlickRowBasedEdit {
     });
   }
 
-  protected removeUnsavedStylingFromCell(column: Column, row: number) {
+  protected removeUnsavedStylingFromCell(column: Column, row: number): void {
     const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
     this._grid.removeCellCssStyles(cssStyleKey);
   }
@@ -339,14 +339,14 @@ export class SlickRowBasedEdit {
     });
   }
 
-  protected optionsUpdatedHandler(_e: SlickEventData, args: OnSetOptionsEventArgs) {
+  protected optionsUpdatedHandler(_e: SlickEventData, args: OnSetOptionsEventArgs): void {
     this._addonOptions = {
       ...this._defaults,
       ...args.optionsAfter.rowBasedEditOptions,
     } as RowBasedEditOptions;
   }
 
-  protected async onCellClickHandler(event: Event, args: any) {
+  protected async onCellClickHandler(event: Event, args: any): Promise<void> {
     const dataContext = args.dataContext;
     const target = event.target as HTMLElement;
     const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
@@ -420,7 +420,7 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected actionColumnFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any) {
+  protected actionColumnFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any): DocumentFragment {
     const options = this.gridOptions;
     const isInEditMode = this._editedRows.has(dataContext?.[options.datasetIdPropertyName ?? 'id']);
     const buttonTitles = this._translations[this._currentLang] ?? this.translate();
@@ -498,7 +498,7 @@ export class SlickRowBasedEdit {
     return this._editedRows.has(args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']);
   };
 
-  protected toggleEditmode(dataContext: any, editMode: boolean) {
+  protected toggleEditmode(dataContext: any, editMode: boolean): void {
     const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     if (editMode) {
       this._editedRows.set(dataContext[idProperty], {
@@ -513,7 +513,7 @@ export class SlickRowBasedEdit {
     this._grid.invalidate();
   }
 
-  protected updateItemMetadata(previousItemMetadata: any) {
+  protected updateItemMetadata(previousItemMetadata: any): (rowNumber: number) => { cssClasses: string; } {
     return (rowNumber: number) => {
       const item = this._grid.getData().getItem(rowNumber);
       let meta = {
@@ -551,7 +551,7 @@ export class SlickRowBasedEdit {
    * @param defaultTitle - fallback title
    * @returns - final tooltip title text
    */
-  protected getTitleOrDefault(key: ActionButtonTitles, defaultTitle: string) {
+  protected getTitleOrDefault(key: ActionButtonTitles, defaultTitle: string): string {
     const actionBtnOptions = this.gridOptions.rowBasedEditOptions?.actionButtons;
     return (
       (actionBtnOptions?.[(key + 'Key') as ActionButtonTitleKeys] &&

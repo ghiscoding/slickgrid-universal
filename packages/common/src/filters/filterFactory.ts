@@ -12,7 +12,7 @@ export class FilterFactory {
     this._options = this.config?.options ?? {};
   }
 
-  addRxJsResource(rxjs: RxJsFacade) {
+  addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;
   }
 

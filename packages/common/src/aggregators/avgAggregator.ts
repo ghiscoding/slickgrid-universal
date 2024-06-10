@@ -58,7 +58,7 @@ export class AvgAggregator implements Aggregator {
       // not a Tree structure, we'll do a regular summation
       if (isNumber(val)) {
         this._nonNullCount++;
-        this._sum += parseFloat(val);
+        this._sum += parseFloat(val as any);
       }
     } else {
       if (isTreeParent) {
@@ -69,7 +69,7 @@ export class AvgAggregator implements Aggregator {
         this._sum = parseFloat(item.__treeTotals['sum'][this._field] ?? 0);
         this._nonNullCount = item.__treeTotals['count'][this._field] ?? 0;
       } else if (isNumber(val)) {
-        this._sum = parseFloat(val);
+        this._sum = parseFloat(val as any);
         this._nonNullCount = 1;
       }
     }

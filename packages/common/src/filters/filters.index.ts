@@ -13,8 +13,9 @@ import { DateRangeFilter } from './dateRangeFilter';
 import { SingleSelectFilter } from './singleSelectFilter';
 import { SingleSliderFilter } from './singleSliderFilter';
 import { SliderRangeFilter } from './sliderRangeFilter';
+import type { FilterConstructor } from '../interfaces/filter.interface';
 
-export const Filters = {
+export const Filters: Record<string, FilterConstructor> = {
   /** AutoComplete Filter (using https://github.com/kraaden/autocomplete) */
   autocompleter: AutocompleterFilter,
 

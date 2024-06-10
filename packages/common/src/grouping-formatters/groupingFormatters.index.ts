@@ -13,9 +13,10 @@ import { sumTotalsDollarBoldFormatter } from './sumTotalsDollarBoldFormatter';
 import { sumTotalsDollarFormatter } from './sumTotalsDollarFormatter';
 import { sumTotalsFormatter } from './sumTotalsFormatter';
 import { sumTotalsBoldFormatter } from './sumTotalsBoldFormatter';
+import type { GroupTotalsFormatter } from '../interfaces/groupTotalsFormatter.interface';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
-export const GroupTotalFormatters = {
+export const GroupTotalFormatters: Record<string, GroupTotalsFormatter> = {
   /**
    * Average all the column totals
    * Extra options available in "params":: "groupFormatterPrefix" and "groupFormatterSuffix", e.g.: params: { groupFormatterPrefix: '<i>Total</i>: ', groupFormatterSuffix: '$' }

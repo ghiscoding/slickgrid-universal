@@ -12,7 +12,7 @@ export interface BackendCallbacks {
 export class BackendUtilityService {
   constructor(protected rxjs?: RxJsFacade) { }
 
-  addRxJsResource(rxjs: RxJsFacade) {
+  addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;
   }
 
@@ -47,7 +47,7 @@ export class BackendUtilityService {
   }
 
   /** On a backend service api error, we will run the "onError" if there is 1 provided or just throw back the error when nothing is provided */
-  onBackendError(e: any, backendApi: BackendServiceApi) {
+  onBackendError(e: any, backendApi: BackendServiceApi): void {
     if (typeof backendApi?.onError === 'function') {
       backendApi.onError(e);
     } else {
@@ -105,7 +105,7 @@ export class BackendUtilityService {
   }
 
   /** Refresh the dataset through the Backend Service */
-  refreshBackendDataset(gridOptions: GridOption) {
+  refreshBackendDataset(gridOptions: GridOption): void {
     let query = '';
     const backendApi = gridOptions?.backendServiceApi;
 

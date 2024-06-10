@@ -40,7 +40,7 @@ export class SlickCellExternalCopyManager {
     this._eventHandler = new SlickEventHandler();
   }
 
-  get addonOptions() {
+  get addonOptions(): ExcelCopyBufferOption {
     return this._addonOptions;
   }
 
@@ -48,7 +48,7 @@ export class SlickCellExternalCopyManager {
     return this._eventHandler;
   }
 
-  init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGrid, options?: ExcelCopyBufferOption): void {
     this._grid = grid;
     this._addonOptions = { ...this._addonOptions, ...options };
     this._copiedCellStyleLayerKey = this._addonOptions.copiedCellStyleLayerKey || 'copy-manager';
@@ -100,11 +100,11 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  dispose() {
+  dispose(): void {
     this._eventHandler.unsubscribeAll();
   }
 
-  clearCopySelection() {
+  clearCopySelection(): void {
     this._grid.removeCellCssStyles(this._copiedCellStyleLayerKey);
   }
 
@@ -118,7 +118,7 @@ export class SlickCellExternalCopyManager {
     return getHtmlStringOutput(columnDef.name || '', 'innerHTML');
   }
 
-  getDataItemValueForColumn(item: any, columnDef: Column, row: number, cell: number, event: SlickEventData) {
+  getDataItemValueForColumn(item: any, columnDef: Column, row: number, cell: number, event: SlickEventData): string {
     if (typeof this._addonOptions.dataItemColumnValueExtractor === 'function') {
       const val = this._addonOptions.dataItemColumnValueExtractor(item, columnDef, row, cell) as string | HTMLElement;
       if (val) {
@@ -200,7 +200,7 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  setIncludeHeaderWhenCopying(includeHeaderWhenCopying: boolean) {
+  setIncludeHeaderWhenCopying(includeHeaderWhenCopying: boolean): void {
     this._addonOptions.includeHeaderWhenCopying = includeHeaderWhenCopying;
   }
 
@@ -208,7 +208,7 @@ export class SlickCellExternalCopyManager {
   // protected functions
   // ---------------------
 
-  protected createTextBox(innerText: string) {
+  protected createTextBox(innerText: string): HTMLTextAreaElement {
     const textAreaElm = createDomElement(
       'textarea',
       {
@@ -221,7 +221,7 @@ export class SlickCellExternalCopyManager {
     return textAreaElm;
   }
 
-  protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement) {
+  protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement): void {
     const columns = grid.getColumns();
     const clipText = textAreaElement.value;
     const clipRows = clipText.split(/[\n\f\r]/);
@@ -504,7 +504,7 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  protected markCopySelection(ranges: SlickRange[]) {
+  protected markCopySelection(ranges: SlickRange[]): void {
     this.clearCopySelection();
 
     const columns = this._grid.getColumns();

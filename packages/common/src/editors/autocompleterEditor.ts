@@ -264,7 +264,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       if (Array.isArray(this.collection) && this.collection.length > 0) {
         newValue = findOrDefault(this.collection, (collectionItem: any) => {
           if (collectionItem && isObject(state) && collectionItem.hasOwnProperty(this.valueName)) {
-            return (collectionItem[this.valueName].toString()) === (state.hasOwnProperty(this.valueName) && state[this.valueName].toString());
+            return (collectionItem[this.valueName].toString()) === (state.hasOwnProperty(this.valueName) && (state as any)[this.valueName].toString());
           } else if (collectionItem && typeof state === 'string' && collectionItem.hasOwnProperty(this.valueName)) {
             return (collectionItem[this.valueName].toString()) === state;
           }

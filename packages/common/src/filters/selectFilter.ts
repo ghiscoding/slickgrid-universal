@@ -97,11 +97,11 @@ export class SelectFilter implements Filter {
     return this._isMultipleSelect;
   }
 
-  get msInstance() {
+  get msInstance(): MultipleSelectInstance | undefined {
     return this._msInstance;
   }
 
-  get selectOptions() {
+  get selectOptions(): Partial<MultipleSelectOption> {
     return this.defaultOptions;
   }
 
@@ -196,7 +196,7 @@ export class SelectFilter implements Filter {
   }
 
   /** Clear the filter values */
-  clear(shouldTriggerQuery = true) {
+  clear(shouldTriggerQuery = true): void {
     if (this._msInstance && this._collectionLength > 0) {
       // reload the filter element by it's id, to make sure it's still a valid element (because of some issue in the GraphQL example)
       this._msInstance.setSelects([]);
@@ -210,7 +210,7 @@ export class SelectFilter implements Filter {
   }
 
   /** destroy the filter */
-  destroy() {
+  destroy(): void {
     if (typeof this._msInstance?.destroy === 'function') {
       this._msInstance.destroy();
     }
@@ -229,7 +229,7 @@ export class SelectFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString): void {
     if (values !== undefined && this._msInstance) {
       values = Array.isArray(values)
         ? values.every(x => isPrimitiveValue(x)) ? values.map(String) : values
@@ -286,7 +286,7 @@ export class SelectFilter implements Filter {
    * They each have their own purpose, the "propertyObserver" will trigger once the collection is replaced entirely
    * while the "collectionObverser" will trigger on collection changes (`push`, `unshift`, `splice`, ...)
    */
-  protected watchCollectionChanges() {
+  protected watchCollectionChanges(): void {
     if (this.columnFilter?.collection) {
       // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
       collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this));
@@ -297,7 +297,7 @@ export class SelectFilter implements Filter {
     }
   }
 
-  protected propertyObserverCallback(newValue: any) {
+  protected propertyObserverCallback(newValue: any): void {
     this.renderDomElement(newValue || []);
 
     // when new assignment arrives, we need to also reassign observer to the new reference
@@ -306,11 +306,11 @@ export class SelectFilter implements Filter {
     }
   }
 
-  protected watchCallback(updatedArray: any[]) {
+  protected watchCallback(updatedArray: any[]): void {
     this.renderDomElement(this.columnFilter.collection || updatedArray || []);
   }
 
-  renderDomElement(inputCollection: any[]) {
+  renderDomElement(inputCollection: any[]): void {
     if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       inputCollection = getDescendantProperty(inputCollection, collectionInsideObjectProperty || '');
@@ -388,7 +388,7 @@ export class SelectFilter implements Filter {
    * From the Select DOM Element created earlier, create a Multiple/Single Select Filter using the multiple-select-vanilla.js lib
    * @param {Object} selectElement
    */
-  protected createFilterElement(selectElement: HTMLSelectElement, dataCollection: OptionRowData[]) {
+  protected createFilterElement(selectElement: HTMLSelectElement, dataCollection: OptionRowData[]): void {
     const columnId = this.columnDef?.id ?? '';
 
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
@@ -412,7 +412,7 @@ export class SelectFilter implements Filter {
     this._msInstance = multipleSelect(selectElement, this.filterElmOptions) as MultipleSelectInstance;
   }
 
-  protected initMultipleSelectTemplate() {
+  protected initMultipleSelectTemplate(): void {
     const isTranslateEnabled = this.gridOptions?.enableTranslate ?? false;
     const columnId = this.columnDef?.id ?? '';
 
@@ -452,7 +452,7 @@ export class SelectFilter implements Filter {
     this.defaultOptions = options;
   }
 
-  protected onTriggerEvent() {
+  protected onTriggerEvent(): void {
     if (this._msInstance) {
       const selectedItems = this.getValues();
       this.updateFilterStyle(Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== ''));
@@ -464,7 +464,7 @@ export class SelectFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  protected updateFilterStyle(isFilled: boolean) {
+  protected updateFilterStyle(isFilled: boolean): void {
     if (isFilled) {
       this.isFilled = true;
       this.filterElm?.classList.add('filled');

@@ -27,9 +27,10 @@ import { treeExportFormatter } from './treeExportFormatter';
 import { treeFormatter } from './treeFormatter';
 import { treeParseTotalsFormatter } from './treeParseTotalsFormatter';
 import { translateBooleanFormatter } from './translateBooleanFormatter';
+import type { Formatter } from '../interfaces/formatter.interface';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
-export const Formatters = {
+export const Formatters: Record<string, Formatter> = {
   /**
    * Takes an array of complex objects converts it to a comma delimited string.
    * Requires to pass an array of "propertyNames" in the column definition the generic "params" property

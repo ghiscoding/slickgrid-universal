@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, emptyElement, hasData, classNameToList } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, emptyElement, isDefined, } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -77,7 +77,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     return this.gridUid ? `.${this.gridUid}` : '';
   }
 
-  get menuCssClass() {
+  get menuCssClass(): string {
     return this._menuPluginCssPrefix || this._menuCssPrefix;
   }
 
@@ -86,7 +86,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   }
 
   /** Dispose (destroy) of the plugin */
-  dispose() {
+  dispose(): void {
     this._eventHandler?.unsubscribeAll();
     this._bindEventService.unbindAll();
     this.pubSubService.unsubscribeAll();
@@ -99,7 +99,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   }
 
   /** Remove/dispose all parent menus and any sub-menu(s) */
-  disposeAllMenus() {
+  disposeAllMenus(): void {
     this.disposeSubMenus();
 
     // remove all parent menu listeners before removing them from the DOM
@@ -112,13 +112,13 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
    * Remove/dispose all previously opened sub-menu(s),
    * it will first remove all sub-menu listeners then remove sub-menus from the DOM
    */
-  disposeSubMenus() {
+  disposeSubMenus(): void {
     this._bindEventService.unbindAll('sub-menu');
     document.querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
       .forEach(subElm => subElm.remove());
   }
 
-  setOptions(newOptions: M) {
+  setOptions(newOptions: M): void {
     this._addonOptions = { ...this._addonOptions, ...newOptions };
   }
 
@@ -126,7 +126,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // protected functions
   // ------------------
 
-  protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement) {
+  protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement): void {
     if (item !== 'divider' && (item as MenuCommandItem | MenuOptionItem | GridMenuItem)?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
       subMenuTitleElm.className = 'slick-menu-title';
@@ -148,7 +148,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     args: unknown,
     itemClickCallback: (e: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void,
     itemMouseoverCallback?: (e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
-  ) {
+  ): void {
     if (args && commandOrOptionItems && menuOptions) {
       for (const item of commandOrOptionItems) {
         this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback, itemMouseoverCallback);
@@ -218,7 +218,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       commandLiElm = createDomElement('li', { className: menuCssPrefix, role: 'menuitem' });
-      if (typeof item === 'object' && hasData((item as never)[itemType])) {
+      if (typeof item === 'object' && isDefined((item as never)[itemType])) {
         commandLiElm.dataset[itemType] = (item as never)?.[itemType];
       }
       if (commandOrOptionMenuElm) {

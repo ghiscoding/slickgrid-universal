@@ -62,17 +62,17 @@ export class TreeDataService {
     return this._grid?.getOptions() ?? {};
   }
 
-  get treeDataOptions() {
+  get treeDataOptions(): TreeDataOption | undefined {
     return this.gridOptions.treeDataOptions;
   }
 
-  dispose() {
+  dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
-  init(grid: SlickGrid) {
+  init(grid: SlickGrid): void {
     this._grid = grid;
     this._isTreeDataEnabled = this.gridOptions?.enableTreeData ?? false;
     this._isLastFullToggleCollapsed = this.treeDataOptions?.initiallyCollapsed ?? false;
@@ -131,7 +131,7 @@ export class TreeDataService {
    * @param {Boolean} shouldPreProcessFullToggle - should we pre-process a full toggle on all items? defaults to True
    * @param {Boolean} shouldTriggerEvent - should we trigger a toggled item event? defaults to False
    */
-  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'> | Extract<ToggleStateChangeTypeString, 'full-collapse' | 'full-expand'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false) {
+  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'> | Extract<ToggleStateChangeTypeString, 'full-collapse' | 'full-expand'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false): void {
     if (Array.isArray(treeToggledItems)) {
       const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
       const hasChildrenPropName = this.getTreeDataOptionPropName('hasChildrenPropName');
@@ -173,7 +173,7 @@ export class TreeDataService {
    * @param {Array<TreeToggledItem>} treeToggledItems - array of parentId which are tagged as changed
    * @param {Boolean} shouldTriggerEvent - should we trigger a toggled item event? defaults to True
    */
-  dynamicallyToggleItemState(treeToggledItems: TreeToggledItem[], shouldTriggerEvent = true) {
+  dynamicallyToggleItemState(treeToggledItems: TreeToggledItem[], shouldTriggerEvent = true): void {
     if (Array.isArray(treeToggledItems)) {
       // for the rows we identified as collapsed, we'll send them to the DataView with the new updated collapsed flag
       // and we'll refresh the DataView to see the collapsing applied in the grid
@@ -233,7 +233,7 @@ export class TreeDataService {
    * @param {Number} [treeLevel] - optional tree level to get item count from
    * @returns
    */
-  getItemCount(treeLevel?: number) {
+  getItemCount(treeLevel?: number): number {
     if (treeLevel !== undefined) {
       const levelPropName = this.getTreeDataOptionPropName('levelPropName');
       return this.dataView.getItems().filter(dataContext => dataContext[levelPropName] === treeLevel).length;
@@ -276,7 +276,7 @@ export class TreeDataService {
   }
 
   /** Clear the sorting and set it back to initial sort */
-  clearSorting() {
+  clearSorting(): void {
     const initialSort = this.getInitialSort(this.sharedService.columnDefinitions, this.sharedService.gridOptions);
     this.sortService.loadGridSorters([{ columnId: initialSort.columnId, direction: initialSort.sortAsc ? 'ASC' : 'DESC' }]);
   }
@@ -290,7 +290,7 @@ export class TreeDataService {
    * @param {Array<ColumnSort>} [columnSorts] - optional sort columns
    * @returns {Array<Object>} - tree dataset
    */
-  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[]; }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption, columnSorts?: ColumnSort[]) {
+  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[]; }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption, columnSorts?: ColumnSort[]): { hierarchical: Array<P & { [childrenPropName: string]: P[]; }>; flat: P[]; } {
     // 1- convert the flat array into a hierarchical array
     const datasetHierarchical = this.convertFlatParentChildToTreeDataset(flatDataset, gridOptions);
 
@@ -327,7 +327,7 @@ export class TreeDataService {
    * Dynamically enable (or disable) Tree Totals auto-recalc feature when Aggregators exists
    * @param {Boolean} [enableFeature=true]
    */
-  enableAutoRecalcTotalsFeature(enableFeature = true) {
+  enableAutoRecalcTotalsFeature(enableFeature = true): void {
     if (enableFeature && this._isTreeDataEnabled) {
       this._treeDataRecalcHandler = this.recalculateTreeTotals.bind(this, this.gridOptions);
     } else {
@@ -340,7 +340,7 @@ export class TreeDataService {
    * NOTE: this does **not** take the current filters in consideration
    * @param gridOptions
    */
-  recalculateTreeTotals(gridOptions: GridOption) {
+  recalculateTreeTotals(gridOptions: GridOption): void {
     const treeDataOptions = gridOptions.treeDataOptions;
     const childrenPropName = (treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP);
     const levelPropName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
@@ -360,7 +360,7 @@ export class TreeDataService {
    * @param {ColumnSort | ColumnSort[]} [inputColumnSorts] - column sort(s)
    * @returns {Object} sort result object that includes both the flat & tree data arrays
    */
-  sortHierarchicalDataset<T>(hierarchicalDataset: T[], inputColumnSorts?: ColumnSort | ColumnSort[]) {
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], inputColumnSorts?: ColumnSort | ColumnSort[]): { hierarchical: T[]; flat: any[]; } {
     const columnSorts = inputColumnSorts ?? this.getInitialSort(this.sharedService.allColumns, this.gridOptions);
     const finalColumnSorts = Array.isArray(columnSorts) ? columnSorts : [columnSorts];
     return this.sortService.sortHierarchicalDataset(hierarchicalDataset, finalColumnSorts);
@@ -414,7 +414,7 @@ export class TreeDataService {
   // protected functions
   // ------------------
 
-  protected handleOnCellClick(event: SlickEventData, args: OnClickEventArgs) {
+  protected handleOnCellClick(event: SlickEventData, args: OnClickEventArgs): void {
     if (event && args) {
       const targetElm: any = event.target || {};
       const idPropName = this.gridOptions.datasetIdPropertyName ?? 'id';
@@ -462,7 +462,7 @@ export class TreeDataService {
     }
   }
 
-  protected updateToggledItem(item: any, isCollapsed: boolean) {
+  protected updateToggledItem(item: any, isCollapsed: boolean): void {
     const dataViewIdIdentifier = this.gridOptions?.datasetIdPropertyName ?? 'id';
     const childrenPropName = this.getTreeDataOptionPropName('childrenPropName');
     const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
@@ -485,7 +485,7 @@ export class TreeDataService {
    * When using Tree Data with Aggregator and auto-recalc flag is enabled, we will define a callback handler
    * @return {Function | undefined} Tree Data totals recalculate callback when enabled
    */
-  protected setAutoRecalcTotalsCallbackWhenFeatEnabled(gridOptions: GridOption) {
+  protected setAutoRecalcTotalsCallbackWhenFeatEnabled(gridOptions: GridOption): (() => void) | null {
     // when using Tree Data with Aggregators, we might need to auto-recalc when necessary flag is enabled
     if (gridOptions?.enableTreeData && gridOptions?.treeDataOptions?.autoRecalcTotalsOnFilterChange && gridOptions?.treeDataOptions?.aggregators) {
       return this.recalculateTreeTotals.bind(this, gridOptions);

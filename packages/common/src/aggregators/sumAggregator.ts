@@ -54,7 +54,7 @@ export class SumAggregator implements Aggregator {
     if (!this._isTreeAggregator) {
       // not a Tree structure, we'll do a regular summation
       if (isNumber(val)) {
-        this._sum += parseFloat(val);
+        this._sum += parseFloat(val as any);
       }
     } else {
       if (isTreeParent) {
@@ -65,7 +65,7 @@ export class SumAggregator implements Aggregator {
         this._sum = parseFloat(item.__treeTotals[this._type][this._field] ?? 0);
         this._itemCount = item.__treeTotals['count'][this._field] ?? 0;
       } else if (isNumber(val)) {
-        this._sum = parseFloat(val);
+        this._sum = parseFloat(val as any);
         this._itemCount = 1;
       }
     }

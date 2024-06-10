@@ -3,6 +3,7 @@ import { createDomElement, extend } from '@slickgrid-universal/utils';
 import { SlickEventHandler, type SlickDataView, SlickGroup, type SlickGrid, type SlickEventData } from '../core/index';
 import type {
   Column,
+  Formatter,
   GridOption,
   GroupingFormatterItem,
   GroupItemMetadataProviderOption,
@@ -59,7 +60,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     return this._grid?.getOptions() || {};
   }
 
-  init(grid: SlickGrid, inputOptions?: GroupItemMetadataProviderOption) {
+  init(grid: SlickGrid, inputOptions?: GroupItemMetadataProviderOption): void {
     this._grid = grid;
     this._options = { ...this._defaults, ...inputOptions };
 
@@ -67,11 +68,11 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     this._eventHandler.subscribe(grid.onKeyDown, this.handleGridKeyDown.bind(this));
   }
 
-  destroy() {
+  destroy(): void {
     this.dispose();
   }
 
-  dispose() {
+  dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
   }
@@ -80,7 +81,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     return this._options;
   }
 
-  setOptions(inputOptions: GroupItemMetadataProviderOption) {
+  setOptions(inputOptions: GroupItemMetadataProviderOption): void {
     this._options = { ...this._options, ...inputOptions };
   }
 
@@ -100,7 +101,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     };
   }
 
-  getTotalsRowMetadata(item: { group: GroupingFormatterItem; }) {
+  getTotalsRowMetadata(item: { group: GroupingFormatterItem; }): { selectable: boolean; focusable: boolean | undefined; cssClasses: string; formatter: Formatter | undefined; editorClass: null; } {
     return {
       selectable: false,
       focusable: this._options.totalsFocusable,
@@ -114,7 +115,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
   // protected functions
   // -------------------
 
-  protected defaultGroupCellFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, item: any) {
+  protected defaultGroupCellFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, item: any): any {
     if (!this._options.enableExpandCollapse) {
       return item.title;
     }
@@ -145,7 +146,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     return containerElm;
   }
 
-  protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGrid) {
+  protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGrid): string | HTMLElement {
     return columnDef?.groupTotalsFormatter?.(item, columnDef, grid) ?? '';
   }
 
@@ -164,7 +165,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
    * Handle a keyboard down event on a grouping cell.
    * TODO:  add -/+ handling
    */
-  protected handleGridKeyDown(e: SlickEventData) {
+  protected handleGridKeyDown(e: SlickEventData): void {
     if (this._options.enableExpandCollapse && (e.key === ' ')) {
       const activeCell = this._grid?.getActiveCell();
       if (activeCell) {
@@ -178,7 +179,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     }
   }
 
-  protected handleDataViewExpandOrCollapse(item: any) {
+  protected handleDataViewExpandOrCollapse(item: any): void {
     const range = this._grid?.getRenderedRange();
     this.dataView.setRefreshHints({
       ignoreDiffsBefore: range.top,

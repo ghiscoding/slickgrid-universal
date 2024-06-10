@@ -21,7 +21,7 @@ import type { TreeDataService } from './treeData.service';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class GridStateService {
-  protected _eventHandler = new SlickEventHandler();
+  protected _eventHandler: SlickEventHandler = new SlickEventHandler();
   protected _columns: Column[] = [];
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
@@ -68,7 +68,7 @@ export class GridStateService {
   }
 
   /** Dispose of all the SlickGrid & PubSub subscriptions */
-  dispose() {
+  dispose(): void {
     this._columns = [];
 
     // unsubscribe all SlickGrid events
@@ -88,7 +88,7 @@ export class GridStateService {
    * @param {Boolean} triggerAutoSizeColumns - True by default, do we also want to call the "autosizeColumns()" method to make the columns fit in the grid?
    * @param {Boolean} triggerColumnsFullResizeByContent - False by default, do we also want to call full columns resize by their content?
    */
-  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false) {
+  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
     if (Array.isArray(definedColumns) && definedColumns.length > 0) {
       const newArrangedColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
 
@@ -335,7 +335,7 @@ export class GridStateService {
     return preservedRowSelection;
   }
 
-  resetColumns(columnDefinitions?: Column[]) {
+  resetColumns(columnDefinitions?: Column[]): void {
     const columns: Column[] = columnDefinitions || this._columns;
     const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
     this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
@@ -345,7 +345,7 @@ export class GridStateService {
    * Reset the grid to its original (all) columns, that is to display the entire set of columns with their original positions & visibilities
    * @param {Boolean} triggerAutoSizeColumns - True by default, do we also want to call the "autosizeColumns()" method to make the columns fit in the grid?
    */
-  resetToOriginalColumns(triggerAutoSizeColumns = true) {
+  resetToOriginalColumns(triggerAutoSizeColumns = true): void {
     this._grid.setColumns(this.sharedService.allColumns);
     this.sharedService.visibleColumns = this.sharedService.allColumns;
 
@@ -356,7 +356,7 @@ export class GridStateService {
   }
 
   /** if we use Row Selection or the Checkbox Selector, we need to reset any selection */
-  resetRowSelectionWhenRequired() {
+  resetRowSelectionWhenRequired(): void {
     if (!this.needToPreserveRowSelection() && (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector)) {
       // this also requires the Row Selection Model to be registered as well
       const rowSelectionExtension = this.extensionService?.getExtensionByName?.(ExtensionName.rowSelection);
@@ -370,7 +370,7 @@ export class GridStateService {
    * Subscribe to all necessary SlickGrid or Service Events that deals with a Grid change,
    * when triggered, we will publish a Grid State Event with current Grid State
    */
-  subscribeToAllGridChanges(grid: SlickGrid) {
+  subscribeToAllGridChanges(grid: SlickGrid): void {
     // Subscribe to Event Emitter of Filter changed
     this._subscriptions.push(
       this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', currentFilters => {
@@ -462,7 +462,7 @@ export class GridStateService {
    * @param {Array<Column>} fullColumnDefinitions - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
    * @param {Array<Column>} newArrangedColumns - output array that will be use to show in the UI (it could have less columns than fullColumnDefinitions array since user might hide some columns)
    */
-  protected addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number; }>, fullColumnDefinitions: Column[], newArrangedColumns: Column[]) {
+  protected addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number; }>, fullColumnDefinitions: Column[], newArrangedColumns: Column[]): void {
     // 1- first step is to sort them by their index position
     dynamicAddonColumnByIndexPositionList.sort((feat1, feat2) => feat1.columnIndexPosition - feat2.columnIndexPosition);
 
@@ -483,7 +483,7 @@ export class GridStateService {
    * @param extension name
    * @param event name
    */
-  protected bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string) {
+  protected bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string): void {
     const extension = this.extensionService?.getExtensionByName?.(extensionName);
     const slickEvent = extension?.instance?.[eventName];
 
@@ -501,7 +501,7 @@ export class GridStateService {
    * @param event - event name
    * @param grid - SlickGrid object
    */
-  protected bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
+  protected bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid): void {
     const slickGridEvent = (grid as any)?.[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
@@ -517,7 +517,7 @@ export class GridStateService {
    * Bind a Grid Event (of grid option changes) to a Grid State change event, if we detect that any of the pinning (frozen) options changes then we'll trigger a Grid State change
    * @param grid - SlickGrid object
    */
-  protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid) {
+  protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid): void {
     const onSetOptionsHandler = grid.onSetOptions;
     this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
       const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
@@ -532,9 +532,9 @@ export class GridStateService {
   }
 
   /** Check wether the grid has the Row Selection enabled */
-  protected hasRowSelectionEnabled() {
+  protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
-    const isRowSelectionEnabled = this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector;
-    return (isRowSelectionEnabled && selectionModel);
+    const isRowSelectionEnabled = !!(this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector);
+    return (isRowSelectionEnabled && !!selectionModel);
   }
 }

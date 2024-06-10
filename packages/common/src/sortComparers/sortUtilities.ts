@@ -3,7 +3,7 @@ import type { Column, GridOption } from '../interfaces/index';
 import { SortComparers } from './index';
 import { getAssociatedDateSortComparer } from './dateUtilities';
 
-export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldType], value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column, gridOptions?: GridOption) {
+export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldType], value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column, gridOptions?: GridOption): number {
   let sortResult = 0;
 
   switch (fieldType) {

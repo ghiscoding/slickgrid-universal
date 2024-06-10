@@ -58,7 +58,7 @@ export class SlickCellExcelCopyManager {
     return this._undoRedoBuffer;
   }
 
-  init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGrid, options?: ExcelCopyBufferOption): void {
     this._grid = grid;
     this.createUndoRedoBuffer();
     this._cellSelectionModel = new SlickCellSelectionModel();
@@ -88,7 +88,7 @@ export class SlickCellExcelCopyManager {
   }
 
   /** Dispose of the 3rd party addon (plugin) */
-  dispose() {
+  dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
     this._bindingEventService.unbindAll();
@@ -101,7 +101,7 @@ export class SlickCellExcelCopyManager {
   // ---------------------
 
   /** Create an undo redo buffer used by the Excel like copy */
-  protected createUndoRedoBuffer() {
+  protected createUndoRedoBuffer(): void {
     let commandCtr = 0;
     this._commandQueue = [];
 
@@ -177,7 +177,7 @@ export class SlickCellExcelCopyManager {
   }
 
   /** Hook an undo shortcut key hook that will redo/undo the copy buffer using Ctrl+(Shift)+Z keyboard events */
-  protected handleBodyKeyDown(e: KeyboardEvent) {
+  protected handleBodyKeyDown(e: KeyboardEvent): void {
     if (e.key === 'Z' && (e.ctrlKey || e.metaKey)) {
       if (e.shiftKey) {
         this._undoRedoBuffer.redo(); // Ctrl + Shift + Z

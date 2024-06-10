@@ -59,7 +59,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   }
 
   /** Initialize plugin. */
-  init(cellMenuOptions?: CellMenu) {
+  init(cellMenuOptions?: CellMenu): void {
     this._addonOptions = { ...this._defaults, ...cellMenuOptions };
 
     // sort all menu items by their position order when defined
@@ -73,7 +73,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   }
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate all list titles & all commands/options */
-  translateCellMenu() {
+  translateCellMenu(): void {
     const gridOptions = this.sharedService?.gridOptions;
     const columnDefinitions = this.sharedService.allColumns;
 
@@ -104,7 +104,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // event handlers
   // ------------------
 
-  protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnClickEventArgs) {
+  protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnClickEventArgs): void {
     this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
 
@@ -152,7 +152,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // protected functions
   // ------------------
 
-  protected sortMenuItems(columnDefinitions: Column[]) {
+  protected sortMenuItems(columnDefinitions: Column[]): void {
     // sort both items list
     columnDefinitions.forEach((columnDef: Column) => {
       if (columnDef?.cellMenu?.commandItems) {

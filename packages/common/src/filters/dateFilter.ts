@@ -100,7 +100,7 @@ export class DateFilter implements Filter {
   }
 
   /** Initialize the Filter */
-  init(args: FilterArguments) {
+  init(args: FilterArguments): void {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
@@ -149,7 +149,7 @@ export class DateFilter implements Filter {
   }
 
   /** Clear the filter value */
-  clear(shouldTriggerQuery = true, shouldTriggerClearEvent = true) {
+  clear(shouldTriggerQuery = true, shouldTriggerClearEvent = true): void {
     if (this.calendarInstance) {
       // in some cases we don't want to trigger a Clear event, like a Backspace, we want to clear the value but trigger a value change instead
       this._clearFilterTriggered = shouldTriggerClearEvent;
@@ -176,7 +176,7 @@ export class DateFilter implements Filter {
   }
 
   /** Destroy the filter */
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this.calendarInstance?.destroy();
 
@@ -186,19 +186,19 @@ export class DateFilter implements Filter {
     this._filterElm?.remove();
   }
 
-  hide() {
+  hide(): void {
     if (typeof this.calendarInstance?.hide === 'function') {
       this.calendarInstance.hide();
     }
   }
 
-  show() {
+  show(): void {
     if (typeof this.calendarInstance?.show === 'function') {
       this.calendarInstance.show();
     }
   }
 
-  getValues() {
+  getValues(): string | Date | string[] | Date[] | undefined {
     return this._currentDateOrDates;
   }
 
@@ -206,7 +206,7 @@ export class DateFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString) {
+  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString): void {
     let pickerValues: any | any[];
 
     if (this.inputFilterType === 'compound') {
@@ -243,7 +243,7 @@ export class DateFilter implements Filter {
   //
   // protected functions
   // ------------------
-  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]) {
+  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): void {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
@@ -482,7 +482,7 @@ export class DateFilter implements Filter {
     }
   }
 
-  protected onTriggerEvent(e: Event | undefined) {
+  protected onTriggerEvent(e: Event | undefined): void {
     if (this._clearFilterTriggered) {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this._filterElm.classList.remove('filled');

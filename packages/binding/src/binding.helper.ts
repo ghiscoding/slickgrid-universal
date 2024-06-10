@@ -11,11 +11,11 @@ export class BindingHelper {
     this._querySelectorPrefix = prefix;
   }
 
-  get observers() {
+  get observers(): BindingService[] {
     return this._observers;
   }
 
-  dispose() {
+  dispose(): void {
     let observer = this._observers.pop();
     while (observer) {
       observer.dispose();
@@ -24,7 +24,7 @@ export class BindingHelper {
     this._observers = [];
   }
 
-  addElementBinding<T extends Element = Element>(variable: any, property: string, selector: string, attribute: string, events?: string | string[], callback?: (val: any) => void) {
+  addElementBinding<T extends Element = Element>(variable: any, property: string, selector: string, attribute: string, events?: string | string[], callback?: (val: any) => void): void {
     const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
 
     // before creating a new observer, first check if the variable already has an associated observer
@@ -46,7 +46,7 @@ export class BindingHelper {
   }
 
   /** From a DOM element selector, which could be zero or multiple elements, add an event listener   */
-  bindEventHandler<T extends Element = Element>(selector: string, eventName: string, callback: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+  bindEventHandler<T extends Element = Element>(selector: string, eventName: string, callback: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void {
     const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
 
     elements.forEach(elm => {
@@ -60,7 +60,7 @@ export class BindingHelper {
    * From a DOM element selector, which could be zero or multiple elements, set the value on a given attribute name
    * For example ('div.hello', 'textContent', 'world') => would set the textContent equal to 'world' on a div element having the class 'hello'
    */
-  setElementAttributeValue<T extends Element = Element>(selector: string, attribute: string, value: any) {
+  setElementAttributeValue<T extends Element = Element>(selector: string, attribute: string, value: any): void {
     const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
 
     elements.forEach(elm => {

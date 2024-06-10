@@ -16,7 +16,7 @@ import type { Observable, RxJsFacade } from './rxjsFacade';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class PaginationService {
-  protected _eventHandler = new SlickEventHandler();
+  protected _eventHandler: SlickEventHandler = new SlickEventHandler();
   protected _initialized = false;
   protected _isLocalGrid = true;
   protected _backendServiceApi: BackendServiceApi | undefined;
@@ -107,11 +107,11 @@ export class PaginationService {
     return this._isCursorBased;
   }
 
-  addRxJsResource(rxjs: RxJsFacade) {
+  addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;
   }
 
-  init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
+  init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi): void {
     this._availablePageSizes = paginationOptions.pageSizes;
     this.grid = grid;
     this._backendServiceApi = backendServiceApi;
@@ -162,7 +162,7 @@ export class PaginationService {
     propertyObserver(paginationOptions, 'totalItems', (newTotal) => this._totalItems = newTotal);
   }
 
-  dispose() {
+  dispose(): void {
     this._initialized = false;
 
     // unsubscribe all SlickGrid events
@@ -277,7 +277,7 @@ export class PaginationService {
     return Promise.resolve(false);
   }
 
-  refreshPagination(isPageNumberReset = false, triggerChangedEvent = true, triggerInitializedEvent = false) {
+  refreshPagination(isPageNumberReset = false, triggerChangedEvent = true, triggerInitializedEvent = false): void {
     const previousPagination = { ...this.getFullPagination() };
 
     if (this._paginationOptions) {
@@ -335,7 +335,7 @@ export class PaginationService {
   }
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
-  resetPagination(triggerChangedEvent = true) {
+  resetPagination(triggerChangedEvent = true): void {
     if (this._isLocalGrid && this.dataView && this.sharedService?.gridOptions?.enablePagination) {
       // on a local grid we also need to reset the DataView paging to 1st page
       this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: 0 });
@@ -351,7 +351,7 @@ export class PaginationService {
    * The Pagination must be created on initial page load, then only after can you toggle it.
    * Basically this method WILL NOT WORK to show the Pagination if it was never created from the start.
    */
-  togglePaginationVisibility(visible?: boolean) {
+  togglePaginationVisibility(visible?: boolean): void {
     if (this.grid && this.sharedService?.gridOptions) {
       const isVisible = visible !== undefined ? visible : !this.sharedService.gridOptions.enablePagination;
 
@@ -449,7 +449,7 @@ export class PaginationService {
     });
   }
 
-  recalculateFromToIndexes() {
+  recalculateFromToIndexes(): void {
     // when page is out of boundaries, reset it to page 1
     if (((this._pageNumber - 1) * this._itemsPerPage > this._totalItems) || (this._totalItems > 0 && this._pageNumber === 0)) {
       this._pageNumber = 1;
@@ -479,7 +479,7 @@ export class PaginationService {
    * Reset (revert) to previous pagination, it could be because you prevented `onBeforePaginationChange`, `onBeforePagingInfoChanged` from DataView OR a Backend Error was thrown.
    * It will reapply the previous filter state in the UI.
    */
-  resetToPreviousPagination() {
+  resetToPreviousPagination(): void {
     const hasPageNumberChange = this._previousPagination?.pageNumber !== this.getFullPagination().pageNumber;
     const hasPageSizeChange = this._previousPagination?.pageSize !== this.getFullPagination().pageSize;
 
@@ -498,7 +498,7 @@ export class PaginationService {
     }
   }
 
-  setCursorBased(isCursorBased: boolean) {
+  setCursorBased(isCursorBased: boolean): void {
     this._isCursorBased = isCursorBased;
     if (isCursorBased) {
       this.setCursorPageInfo({ startCursor: '', endCursor: '', hasNextPage: false, hasPreviousPage: false }); // reset cursor
@@ -507,11 +507,11 @@ export class PaginationService {
     this.pubSubService.publish(`onPaginationSetCursorBased`, { isCursorBased });
   }
 
-  setCursorPageInfo(pageInfo: CursorPageInfo) {
+  setCursorPageInfo(pageInfo: CursorPageInfo): void {
     this._cursorPageInfo = pageInfo;
   }
 
-  updateTotalItems(totalItems: number, triggerChangedEvent = false) {
+  updateTotalItems(totalItems: number, triggerChangedEvent = false): void {
     this._totalItems = totalItems;
     if (this._paginationOptions) {
       this._paginationOptions.totalItems = totalItems;
@@ -530,7 +530,7 @@ export class PaginationService {
    * basically we assume that this offset is fine for the time being,
    * until user does an action which will refresh the data hence the pagination which will then become normal again
    */
-  protected processOnItemAddedOrRemoved(items: any | any[], isItemAdded = true) {
+  protected processOnItemAddedOrRemoved(items: any | any[], isItemAdded = true): void {
     if (items !== null) {
       const previousDataTo = this._dataTo;
       const itemCount = Array.isArray(items) ? items.length : 1;

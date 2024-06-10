@@ -17,7 +17,7 @@ export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
  * It will loop through all column definitions and add an Custom Editor Formatter when necessary,
  * also note that if there's already a Formatter on the column definition it will automatically use the Formatters.multiple and add the custom formatter into the `params: formatters: {}}`
  */
-export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Column[], customEditableFormatter: Formatter) {
+export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Column[], customEditableFormatter: Formatter): void {
   if (Array.isArray(columnDefinitions)) {
     for (const columnDef of columnDefinitions) {
       if (columnDef.editor) {
@@ -39,8 +39,8 @@ export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Col
 }
 
 export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, numberType: NumberType, formatterType: FormatterType) {
-  let defaultMinDecimal;
-  let defaultMaxDecimal;
+  let defaultMinDecimal: number | undefined;
+  let defaultMaxDecimal: number | undefined;
   let numberPrefix = '';
   let numberSuffix = '';
 
@@ -83,7 +83,7 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
  * 2- Grid Options "formatterOptions"
  * 3- nothing found, return default value provided
  */
-export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, gridOptions: GridOption, defaultValue?: any) {
+export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, gridOptions: GridOption, defaultValue?: any): any {
   const params = columnDef && columnDef.params;
 
   if (params && params.hasOwnProperty(optionName)) {
@@ -139,7 +139,7 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
  * @param {Object} exportOptions - Excel or Text Export Options
  * @returns formatted string output or empty string
  */
-export function exportWithFormatterWhenDefined<T = any>(row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption) {
+export function exportWithFormatterWhenDefined<T = any>(row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption): string {
   let isEvaluatingFormatter = false;
 
   // check if "exportWithFormatter" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions

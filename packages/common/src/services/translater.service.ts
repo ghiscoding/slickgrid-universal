@@ -10,7 +10,7 @@ export abstract class TranslaterService {
    * when defined the Translate Service will call the publish method with "onLanguageChanged" event name whenever the "use()" method is called
    * @param {BasePubSubService} pubSub
    */
-  addPubSubMessaging?(_pubSubService: BasePubSubService) {
+  addPubSubMessaging?(_pubSubService: BasePubSubService): void {
     throw new Error('TranslaterService "addPubSubMessaging" method must be implemented');
   }
 

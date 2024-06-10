@@ -4,7 +4,7 @@ import type { Column, OnEventArgs } from './../interfaces/index';
 export class GridEventService {
   protected _eventHandler: SlickEventHandler;
 
-  get eventHandler() {
+  get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
 
@@ -12,12 +12,12 @@ export class GridEventService {
     this._eventHandler = new SlickEventHandler();
   }
 
-  dispose() {
+  dispose(): void {
     this._eventHandler.unsubscribeAll();
   }
 
   /* OnBeforeEditCell Event */
-  bindOnBeforeEditCell(grid: SlickGrid) {
+  bindOnBeforeEditCell(grid: SlickGrid): void {
     const dataView = grid?.getData<SlickDataView>();
 
     // subscribe to this Slickgrid event of onBeforeEditCell
@@ -46,7 +46,7 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnCellChange(grid: SlickGrid) {
+  bindOnCellChange(grid: SlickGrid): void {
     const dataView = grid?.getData<SlickDataView>();
 
     // subscribe to this Slickgrid event of onCellChange
@@ -75,7 +75,7 @@ export class GridEventService {
   }
 
   /* OnClick Event */
-  bindOnClick(grid: SlickGrid) {
+  bindOnClick(grid: SlickGrid): void {
     const dataView = grid?.getData<SlickDataView>();
 
     this._eventHandler.subscribe(grid.onClick, (e, args) => {

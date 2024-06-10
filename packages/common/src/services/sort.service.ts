@@ -47,7 +47,7 @@ export class SortService {
     return this._grid?.getColumns() ?? [];
   }
 
-  dispose() {
+  dispose(): void {
     // unsubscribe all SlickGrid events
     if (this._eventHandler?.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
@@ -58,7 +58,7 @@ export class SortService {
     }
   }
 
-  addRxJsResource(rxjs: RxJsFacade) {
+  addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;
   }
 
@@ -67,7 +67,7 @@ export class SortService {
    * @param grid SlickGrid Grid object
    * @param dataView SlickGrid DataView object
    */
-  bindBackendOnSort(grid: SlickGrid) {
+  bindBackendOnSort(grid: SlickGrid): void {
     this._isBackendGrid = true;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>();
@@ -82,7 +82,7 @@ export class SortService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnSort(grid: SlickGrid) {
+  bindLocalOnSort(grid: SlickGrid): void {
     this._isBackendGrid = false;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>();
@@ -91,7 +91,7 @@ export class SortService {
     this._eventHandler.subscribe(grid.onSort, this.handleLocalOnSort.bind(this));
   }
 
-  handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort) {
+  handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort): void {
     // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
     // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
     const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort)
@@ -119,7 +119,7 @@ export class SortService {
     this.emitSortChanged(EmitterType.local);
   }
 
-  clearSortByColumnId(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, columnId: string | number) {
+  clearSortByColumnId(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, columnId: string | number): void {
     // get previously sorted columns
     const allSortedCols = this.getCurrentColumnSorts() as ColumnSort[];
     const sortedColsWithoutCurrent = this.getCurrentColumnSorts(`${columnId}`) as ColumnSort[];
@@ -161,7 +161,7 @@ export class SortService {
    *   - however for a local grid, we need to pass a sort column and so we will sort by the 1st column
    * @param trigger query event after executing clear filter?
    */
-  clearSorting(triggerQueryEvent = true) {
+  clearSorting(triggerQueryEvent = true): void {
     if (this._grid && this._gridOptions && this._dataView) {
       // remove any sort icons (this setSortColumns function call really does only that)
       this._grid.setSortColumns([]);
@@ -197,7 +197,7 @@ export class SortService {
    * @param {boolean} isSortingDisabled - optionally force a disable/enable of the Sort Functionality? Defaults to True
    * @param {boolean} clearSortingWhenDisabled - when disabling the sorting, do we also want to clear the sorting as well? Defaults to True
    */
-  disableSortFunctionality(isSortingDisabled = true, clearSortingWhenDisabled = true) {
+  disableSortFunctionality(isSortingDisabled = true, clearSortingWhenDisabled = true): void {
     const prevSorting = this._gridOptions.enableSorting;
     const newSorting = !prevSorting;
 
@@ -225,7 +225,7 @@ export class SortService {
    * Toggle the Sorting functionality
    * @param {boolean} clearSortingWhenDisabled - when disabling the sorting, do we also want to clear the sorting as well? Defaults to True
    */
-  toggleSortFunctionality(clearSortingOnDisable = true) {
+  toggleSortFunctionality(clearSortingOnDisable = true): void {
     const previousSorting = this._gridOptions.enableSorting;
     this.disableSortFunctionality(previousSorting, clearSortingOnDisable);
   }
@@ -235,7 +235,7 @@ export class SortService {
    * Other services, like Pagination, can then subscribe to it.
    * @param sender
    */
-  emitSortChanged(sender: EmitterType, currentLocalSorters?: CurrentSorter[]) {
+  emitSortChanged(sender: EmitterType, currentLocalSorters?: CurrentSorter[]): void {
     if (sender === EmitterType.remote && this._gridOptions?.backendServiceApi) {
       let currentSorters: CurrentSorter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
@@ -319,7 +319,7 @@ export class SortService {
   }
 
   /** Process the initial sort, typically it will sort ascending by the column that has the Tree Data unless user specifies a different initialSort */
-  processTreeDataInitialSort() {
+  processTreeDataInitialSort(): void {
     // when a Tree Data view is defined, we must sort the data so that the UI works correctly
     if (this._gridOptions?.enableTreeData && this._gridOptions.treeDataOptions) {
       // first presort it once by tree level
@@ -351,7 +351,7 @@ export class SortService {
    * @param args - sort event arguments
    * @returns - False since we'll apply the sort icon(s) manually only after server responded
    */
-  onBackendSortChanged(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, args: (SingleColumnSort | MultiColumnSort) & { clearSortTriggered?: boolean; }) {
+  onBackendSortChanged(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, args: (SingleColumnSort | MultiColumnSort) & { clearSortTriggered?: boolean; }): void {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
     }
@@ -391,7 +391,7 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
+  async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false): Promise<void> {
     const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
     const dataView = grid.getData<SlickDataView>();
@@ -434,7 +434,7 @@ export class SortService {
    * Takes a hierarchical dataset and sort it recursively by reference and returns both flat & hierarchical sorted datasets.
    * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
    */
-  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, emitSortChanged = false) {
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, emitSortChanged = false): { hierarchical: T[]; flat: any[]; } {
     this.sortTreeData(hierarchicalDataset, sortColumns);
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
@@ -455,7 +455,7 @@ export class SortService {
   }
 
   /** Call a local grid sort by its default sort field id (user can customize default field by configuring "defaultColumnSortFieldId" in the grid options, defaults to "id") */
-  sortLocalGridByDefaultSortFieldId() {
+  sortLocalGridByDefaultSortFieldId(): void {
     const sortColFieldId = this._gridOptions && this._gridOptions.defaultColumnSortFieldId || this._gridOptions.datasetIdPropertyName || 'id';
     const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
     this.onLocalSortChanged(this._grid, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }), false, true);
@@ -514,7 +514,7 @@ export class SortService {
     return undefined;
   }
 
-  sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>) {
+  sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>): void {
     if (Array.isArray(sortColumns)) {
       sortColumns.forEach(sortColumn => {
         this.sortTreeChildren(treeArray, sortColumn, 0);
@@ -523,7 +523,7 @@ export class SortService {
   }
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
-  sortTreeChildren(treeArray: any[], sortColumn: ColumnSort, treeLevel: number) {
+  sortTreeChildren(treeArray: any[], sortColumn: ColumnSort, treeLevel: number): void {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
     const childrenPropName = treeDataOptions?.childrenPropName ?? 'children';
     treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
@@ -552,7 +552,7 @@ export class SortService {
    * @param triggerEvent defaults to True, do we want to emit a sort changed event?
    * @param triggerBackendQuery defaults to True, which will query the backend.
    */
-  updateSorting(sorters: CurrentSorter[], emitChangedEvent = true, triggerBackendQuery = true) {
+  updateSorting(sorters: CurrentSorter[], emitChangedEvent = true, triggerBackendQuery = true): void {
     if (!this._gridOptions || !this._gridOptions.enableSorting) {
       throw new Error('[Slickgrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid and "enableSorting" set in your Grid Options');
     }
