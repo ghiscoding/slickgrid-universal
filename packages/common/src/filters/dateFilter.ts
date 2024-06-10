@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, extend, } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, isDefined, } from '@slickgrid-universal/utils';
 import { format, parse } from '@formkit/tempo';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
 
@@ -495,8 +495,8 @@ export class DateFilter implements Filter {
         this._currentValue ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
-        const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
-        if (!skipCompoundOperatorFilterWithNullInput || this._currentDateOrDates !== undefined) {
+        const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
+        if (!skipNullInput || (skipNullInput && isDefined(this._currentDateOrDates))) {
           this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
         }
       }
