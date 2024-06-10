@@ -496,7 +496,7 @@ export class DateFilter implements Filter {
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
         const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
-        if (!skipCompoundOperatorFilterWithNullInput || this._currentDateOrDates !== undefined) {
+        if (!skipCompoundOperatorFilterWithNullInput || (this._currentDateOrDates !== undefined && this._currentDateOrDates !== '')) {
           this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
         }
       }

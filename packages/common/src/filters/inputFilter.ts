@@ -336,7 +336,7 @@ export class InputFilter implements Filter {
       const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
       const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
-      if (this.inputFilterType === 'single' || !skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined) {
+      if (this.inputFilterType === 'single' || !skipCompoundOperatorFilterWithNullInput || (this._currentValue !== undefined && this._currentValue !== '')) {
         if (typingDelay > 0) {
           clearTimeout(this._timer as NodeJS.Timeout);
           this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);

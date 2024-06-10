@@ -228,6 +228,40 @@ describe('CompoundDateFilter', () => {
     expect(spyCallback).not.toHaveBeenCalled();
   });
 
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is undefined', () => {
+    mockColumn.filter!.operator = '>';
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues(['']);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
+
+    filterInputElm.value = undefined as any;
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is empty string', () => {
+    mockColumn.filter!.operator = '>';
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues(['']);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
+
+    filterInputElm.value = '';
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
   it('should change operator dropdown without a date entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
     mockColumn.filter!.operator = '>';
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
