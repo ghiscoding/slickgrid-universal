@@ -4,7 +4,7 @@
  * @param {any[]} inputArray - array you want to listen to
  * @param {Function} callback function that will be called on any change inside array
  */
-export function collectionObserver(inputArray: any[], callback: (outputArray: any[], newValues: any[]) => void) {
+export function collectionObserver(inputArray: any[], callback: (outputArray: any[], newValues: any[]) => void): void {
   // Add more methods here if you want to listen to them
   const mutationMethods = ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'];
 
@@ -23,7 +23,7 @@ export function collectionObserver(inputArray: any[], callback: (outputArray: an
  * @param {String} prop - object property name
  * @param {Function} callback - function that will be called on any change inside array
  */
-export function propertyObserver(obj: any, prop: string, callback: (newValue: any, o?: any) => void) {
+export function propertyObserver(obj: any, prop: string, callback: (newValue: any, o?: any) => void): void {
   let innerValue = obj[prop];
 
   Object.defineProperty(obj, prop, {

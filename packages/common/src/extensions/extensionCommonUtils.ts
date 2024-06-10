@@ -9,7 +9,7 @@ const PICKER_CHECK_ICON = 'mdi-icon-picker-check';
 const PICKER_UNCHECK_ICON = 'mdi-icon-picker-uncheck';
 
 /** Create a Close button element and add it to the Menu element */
-export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
+export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement): void {
   const context: any = this;
   const closePickerButtonElm = createDomElement('button', {
     type: 'button', className: 'close',
@@ -21,7 +21,7 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
 }
 
 /** When "columnTitle" option is provided, let's create a div element to show "Columns" list title */
-export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
+export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement): void {
   const context: any = this;
   if (context.addonOptions?.columnTitle) {
     context._columnTitleElm = createDomElement(
@@ -37,7 +37,7 @@ export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | Slick
  * @param event - input checkbox event
  * @returns
  */
-export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridMenu, event: DOMEvent<HTMLInputElement>) {
+export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridMenu, event: DOMEvent<HTMLInputElement>): void {
   const context: any = this;
   const controlType = context instanceof SlickColumnPicker ? 'columnPicker' : 'gridMenu';
   const iconContainerElm = event.target?.closest('.icon-checkbox-container') as HTMLDivElement;
@@ -118,13 +118,17 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
   }
 }
 
-function togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false) {
+function togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false): void {
   if (iconElm) {
     iconElm.className = `mdi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}`;
   }
 }
 
-function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inputData: any, checked = false) {
+function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inputData: any, checked = false): {
+  inputElm: HTMLInputElement;
+  labelElm: HTMLLabelElement;
+  labelSpanElm: HTMLSpanElement;
+} {
   const labelElm = createDomElement('label', { className: 'checkbox-picker-label', htmlFor: inputId });
   const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
   const inputElm = createDomElement('input', { id: inputId, type: 'checkbox', dataset: inputData });
@@ -144,7 +148,7 @@ function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inp
   return { inputElm, labelElm, labelSpanElm };
 }
 
-export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption) {
+export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption): void {
   const context: any = this;
   const menuPrefix = context instanceof SlickGridMenu ? 'gridmenu-' : '';
 
@@ -194,7 +198,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
  * as it does not include columns currently hidden by the picker. We create a new `columns` structure by leaving currently-hidden
  * columns in their original ordinal position and interleaving the results of the current column sort.
  */
-export function updateColumnPickerOrder(this: SlickColumnPicker | SlickGridMenu) {
+export function updateColumnPickerOrder(this: SlickColumnPicker | SlickGridMenu): void {
   const context: any = this;
 
   const current = context.grid.getColumns().slice(0);

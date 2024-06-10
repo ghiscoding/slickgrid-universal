@@ -1,3 +1,4 @@
+import type { EditorConstructor } from '../interfaces';
 import { AutocompleterEditor } from './autocompleterEditor';
 import { CheckboxEditor } from './checkboxEditor';
 import { DateEditor } from './dateEditor';
@@ -11,7 +12,7 @@ import { MultipleSelectEditor } from './multipleSelectEditor';
 import { SingleSelectEditor } from './singleSelectEditor';
 import { SliderEditor } from './sliderEditor';
 
-export const Editors = {
+export const Editors: Record<string, EditorConstructor> = {
   /** Autocompleter Editor (using https://github.com/kraaden/autocomplete) */
   autocompleter: AutocompleterEditor,
 

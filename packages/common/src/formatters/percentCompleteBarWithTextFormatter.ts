@@ -9,7 +9,7 @@ export const percentCompleteBarWithTextFormatter: Formatter = (_row, _cell, valu
   }
 
   let color = '';
-  let inputNumber = parseFloat(value);
+  let inputNumber = parseFloat(value as any);
   if (inputNumber > 100) {
     inputNumber = 100;
   }

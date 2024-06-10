@@ -33,7 +33,7 @@ export class InputFilter implements Filter {
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -48,7 +48,7 @@ export class InputFilter implements Filter {
   }
 
   /** Getter of input type (text, number, password) */
-  get inputType() {
+  get inputType(): string {
     return this._inputType;
   }
 
@@ -77,7 +77,7 @@ export class InputFilter implements Filter {
   /**
    * Initialize the Filter
    */
-  init(args: FilterArguments) {
+  init(args: FilterArguments): void {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
@@ -114,7 +114,7 @@ export class InputFilter implements Filter {
   /**
    * Clear the filter value
    */
-  clear(shouldTriggerQuery = true) {
+  clear(shouldTriggerQuery = true): void {
     if (this._filterInputElm) {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
@@ -132,7 +132,7 @@ export class InputFilter implements Filter {
   /**
    * destroy the filter
    */
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this._selectOperatorElm?.remove?.();
     this._filterInputElm?.remove?.();
@@ -143,7 +143,7 @@ export class InputFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString): void {
     const searchValues = Array.isArray(values) ? values : [values];
     let newInputValue: SearchTerm = '';
     for (const value of searchValues) {
@@ -252,7 +252,7 @@ export class InputFilter implements Filter {
    * @param {Object} searchTerm - filter search term
    * @returns {Object} DOM element filter
    */
-  protected createDomFilterElement(searchTerm?: SearchTerm) {
+  protected createDomFilterElement(searchTerm?: SearchTerm): void {
     const columnId = this.columnDef?.id ?? '';
     emptyElement(this._cellContainerElm);
 
@@ -315,7 +315,7 @@ export class InputFilter implements Filter {
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false) {
+  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false): void {
     if (isClearFilterEvent) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
       this._filterContainerElm.classList.remove('filled');

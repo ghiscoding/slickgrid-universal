@@ -13,7 +13,7 @@ import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } 
  * @param inputElm - autocomplete input element
  * @param autocompleterOptions - autocomplete settings
  */
-export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteItem>(inputElm: HTMLInputElement, autocompleterOptions: Partial<AutocompleterOption<T>>) {
+export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteItem>(inputElm: HTMLInputElement, autocompleterOptions: Partial<AutocompleterOption<T>>): void {
   const previousFetch = autocompleterOptions.fetch;
 
   if (previousFetch) {
@@ -33,7 +33,7 @@ export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteIt
   }
 }
 
-export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IOptions, dateValues: Date | Date[] | string | string[] | undefined, columnDef: Column, colEditorOrFilter: ColumnEditor | ColumnFilter) {
+export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IOptions, dateValues: Date | Date[] | string | string[] | undefined, columnDef: Column, colEditorOrFilter: ColumnEditor | ColumnFilter): void {
   const currentDateOrDates = dateValues;
   const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || FieldType.dateUtc;
   const inputFieldType = colEditorOrFilter.type || columnDef.type;

@@ -3,13 +3,12 @@ import { executeFilterConditionTest } from './filterConditionProcesses';
 import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
 import { executeNumberFilterCondition } from './numberFilterCondition';
 import { executeStringFilterCondition } from './stringFilterCondition';
-import { testFilterCondition } from './filterUtilities';
+import type { FilterCondition } from '../interfaces/index';
 
-export const FilterConditions = {
-  executeFilterConditionTest,
+export const FilterConditions: Record<string, FilterCondition> = {
+  executeFilterConditionTest: executeFilterConditionTest as FilterCondition,
   booleanFilter: executeBooleanFilterCondition,
   collectionSearchFilter: executeCollectionSearchFilterCondition,
   numberFilter: executeNumberFilterCondition,
   stringFilter: executeStringFilterCondition,
-  testFilter: testFilterCondition
 };

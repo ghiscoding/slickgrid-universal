@@ -29,7 +29,7 @@ export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickG
  * When user use a CollectionAsync we will use the returned collection to render the filter DOM element
  * and reinitialize filter collection with this new collection
  */
-export function renderDomElementFromCollectionAsync(collection: any[], columnDef: Column, renderDomElementCallback: (collection: any) => void) {
+export function renderDomElementFromCollectionAsync(collection: any[], columnDef: Column, renderDomElementCallback: (collection: any) => void): void {
   const columnFilter = columnDef?.filter ?? {};
   const collectionOptions = columnFilter?.collectionOptions ?? {};
 
@@ -101,7 +101,7 @@ export async function renderCollectionOptionsAsync(collectionAsync: Promise<any 
 }
 
 /** Create or recreate an Observable Subject and reassign it to the "collectionAsync" object so user can call a "collectionAsync.next()" on it */
-export function createCollectionAsyncSubject(columnDef: Column, renderDomElementCallback: (collection: any) => void, rxjs?: RxJsFacade, subscriptions?: Subscription[]) {
+export function createCollectionAsyncSubject(columnDef: Column, renderDomElementCallback: (collection: any) => void, rxjs?: RxJsFacade, subscriptions?: Subscription[]): void {
   const columnFilter = columnDef?.filter ?? {};
   const newCollectionAsync = rxjs?.createSubject<any>();
   columnFilter.collectionAsync = newCollectionAsync;
@@ -152,7 +152,7 @@ export function compoundOperatorNumeric(gridOptions: GridOption, translaterServi
 }
 
 // internal function to apply Operator detail alternate texts when they exists
-export function applyOperatorAltTextWhenExists(gridOptions: GridOption, operatorDetailList: OperatorDetail[], filterType: 'text' | 'numeric') {
+export function applyOperatorAltTextWhenExists(gridOptions: GridOption, operatorDetailList: OperatorDetail[], filterType: 'text' | 'numeric'): void {
   if (gridOptions.compoundOperatorAltTexts) {
     for (const opDetail of operatorDetailList) {
       if (gridOptions.compoundOperatorAltTexts.hasOwnProperty(filterType)) {

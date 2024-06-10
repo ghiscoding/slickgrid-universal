@@ -25,7 +25,7 @@ export const avgTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef:
       if (!wrapNegativeNumber) {
         prefix += '-';
       } else {
-        if (isNaN(minDecimal) && isNaN(maxDecimal)) {
+        if (isNaN(minDecimal as any) && isNaN(maxDecimal as any)) {
           const outputVal = thousandSeparatorFormatted(Math.round(val), thousandSeparator);
           return `${prefix}(${outputVal})${suffix}`;
         }
@@ -33,7 +33,7 @@ export const avgTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef:
       }
     }
 
-    if (isNaN(minDecimal) && isNaN(maxDecimal)) {
+    if (isNaN(minDecimal as any) && isNaN(maxDecimal as any)) {
       const outputVal = thousandSeparatorFormatted(Math.round(val), thousandSeparator);
       return `${prefix}${outputVal}${suffix}`;
     }

@@ -51,12 +51,12 @@ export class GridOdataService implements BackendService {
   };
 
   /** Getter for the Column Definitions */
-  get columnDefinitions() {
+  get columnDefinitions(): Column[] {
     return this._columnDefinitions;
   }
 
   /** Getter for the Odata Service */
-  get odataService() {
+  get odataService(): OdataQueryBuilderService {
     return this._odataService;
   }
 
@@ -158,17 +158,17 @@ export class GridOdataService implements BackendService {
     }
   }
 
-  clearFilters() {
+  clearFilters(): void {
     this._currentFilters = [];
     this.updateFilters([]);
   }
 
-  clearSorters() {
+  clearSorters(): void {
     this._currentSorters = [];
     this.updateSorters([]);
   }
 
-  updateOptions(serviceOptions?: Partial<OdataOption>) {
+  updateOptions(serviceOptions?: Partial<OdataOption>): void {
     this.options = { ...this.options, ...serviceOptions };
     this._odataService.options = this.options;
   }
@@ -197,7 +197,7 @@ export class GridOdataService implements BackendService {
    * @param string operator
    * @returns string map
    */
-  mapOdataOperator(operator: string) {
+  mapOdataOperator(operator: string): string {
     let map = '';
     switch (operator) {
       case '<':
@@ -229,13 +229,13 @@ export class GridOdataService implements BackendService {
   /*
    * Reset the pagination options
    */
-  resetPaginationOptions() {
+  resetPaginationOptions(): void {
     this._odataService.updateOptions({
       skip: 0
     });
   }
 
-  saveColumnFilter(fieldName: string, value: string, terms?: SearchTerm[]) {
+  saveColumnFilter(fieldName: string, value: string, terms?: SearchTerm[]): void {
     this._odataService.saveColumnFilter(fieldName, value, terms);
   }
 
@@ -267,7 +267,7 @@ export class GridOdataService implements BackendService {
   /*
    * PAGINATION
    */
-  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs) {
+  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs): string {
     const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
     this.updatePagination(args.newPage, pageSize);
 
@@ -278,7 +278,7 @@ export class GridOdataService implements BackendService {
   /*
    * SORTING
    */
-  processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort) {
+  processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort): string {
     const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol?.id ?? '', sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
@@ -292,7 +292,7 @@ export class GridOdataService implements BackendService {
    * loop through all columns to inspect filters & update backend service filters
    * @param columnFilters
    */
-  updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically?: boolean) {
+  updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically?: boolean): void {
     let searchBy = '';
     const searchByArray: string[] = [];
     const odataVersion = this._odataService.options.version ?? 2;
@@ -505,7 +505,7 @@ export class GridOdataService implements BackendService {
    * @param newPage
    * @param pageSize
    */
-  updatePagination(newPage: number, pageSize: number) {
+  updatePagination(newPage: number, pageSize: number): void {
     this._currentPagination = {
       pageNumber: newPage,
       pageSize,
@@ -524,7 +524,7 @@ export class GridOdataService implements BackendService {
    * loop through all columns to inspect sorters & update backend service orderBy
    * @param columnFilters
    */
-  updateSorters(sortColumns?: ColumnSort[], presetSorters?: CurrentSorter[]) {
+  updateSorters(sortColumns?: ColumnSort[], presetSorters?: CurrentSorter[]): string {
     let currentSorters: CurrentSorter[] = [];
     const odataSorters: OdataSortingOption[] = [];
 
@@ -646,7 +646,7 @@ export class GridOdataService implements BackendService {
   /**
    * Filter by a range of searchTerms (2 searchTerms OR 1 string separated by 2 dots "value1..value2")
    */
-  protected filterBySearchTermRange(fieldName: string, operator: OperatorType | OperatorString, searchTerms: SearchTerm[]) {
+  protected filterBySearchTermRange(fieldName: string, operator: OperatorType | OperatorString, searchTerms: SearchTerm[]): string {
     let query = '';
     if (Array.isArray(searchTerms) && searchTerms.length === 2) {
       if (operator === OperatorType.rangeInclusive) {
@@ -671,7 +671,7 @@ export class GridOdataService implements BackendService {
   /**
    * Normalizes the search value according to field type and oData version.
    */
-  protected normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any, version: number) {
+  protected normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any, version: number): any {
     switch (fieldType) {
       case FieldType.date:
         searchValue = parseUtcDate(searchValue as string);

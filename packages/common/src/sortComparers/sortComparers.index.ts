@@ -4,13 +4,14 @@ import { objectStringSortComparer } from './objectStringSortComparer';
 import { stringSortComparer } from './stringSortComparer';
 import { getAssociatedDateSortComparer } from './dateUtilities';
 import { FieldType } from '../enums/fieldType.enum';
+import type { SortComparer } from '../interfaces/sorter.interface';
 
 // export the Sort Utilities so they could be used by others
 export * from './sortUtilities';
 
-export const SortComparers = {
+export const SortComparers: Record<string, SortComparer> = {
   /** SortComparer method to sort values as regular strings */
-  boolean: booleanSortComparer,
+  boolean: booleanSortComparer satisfies SortComparer as SortComparer,
 
   /** SortComparer method to sort values by Date object type (uses Tempo ISO_8601 standard format, optionally include time) */
   date: getAssociatedDateSortComparer(FieldType.date),
@@ -94,7 +95,7 @@ export const SortComparers = {
   dateTimeUsShortAM_PM: getAssociatedDateSortComparer(FieldType.dateTimeUsShortAM_PM),
 
   /** SortComparer method to sort values as numeric fields */
-  numeric: numericSortComparer,
+  numeric: numericSortComparer satisfies SortComparer as SortComparer,
 
   /**
    * SortComparer method to sort object values with a "dataKey" provided in your column definition, it's data content must be of type string
@@ -102,8 +103,8 @@ export const SortComparers = {
    * columnDef = { id='user', field: 'user', ..., dataKey: 'firstName', SortComparer: SortComparers.objectString }
    * collection = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Bob', lastName: 'Cash' }]
    */
-  objectString: objectStringSortComparer,
+  objectString: objectStringSortComparer satisfies SortComparer as SortComparer,
 
   /** SortComparer method to sort values as regular strings */
-  string: stringSortComparer
+  string: stringSortComparer satisfies SortComparer as SortComparer,
 };

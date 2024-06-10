@@ -20,12 +20,12 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     return this._grid?.getOptions() ?? {};
   }
 
-  init(grid: SlickGrid, containerService: ContainerService) {
+  init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
     this._translaterService = containerService.get<TranslaterService>('TranslaterService');
   }
 
-  dispose() {
+  dispose(): void {
     this._warningLeftElement?.remove();
     this._warningRightElement?.remove();
     this._warningLeftElement = null;

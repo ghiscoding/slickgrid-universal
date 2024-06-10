@@ -7,7 +7,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;
 
   /** triggered when selected ranges changes */
-  onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
+  onSelectedRangesChanged: SlickEvent<SlickRange[]>;
 
   protected _options: RowSelectionModelOption;
   protected _eventHandler: SlickEventHandler;
@@ -23,11 +23,12 @@ export class SlickRowSelectionModel implements SelectionModel {
   } as RowSelectionModelOption;
 
   constructor(options?: RowSelectionModelOption) {
+    this.onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
     this._eventHandler = new SlickEventHandler();
     this._options = { ...this._defaults, ...options };
   }
 
-  get addonOptions() {
+  get addonOptions(): RowSelectionModelOption {
     return this._options;
   }
 
@@ -39,7 +40,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     return this._grid?.getOptions();
   }
 
-  init(grid: SlickGrid) {
+  init(grid: SlickGrid): void {
     this._grid = grid;
     this._options = { ...this._defaults, ...this._options };
     this._selector = this.addonOptions.cellRangeSelector;
@@ -71,16 +72,16 @@ export class SlickRowSelectionModel implements SelectionModel {
     }
   }
 
-  destroy() {
+  destroy(): void {
     this.dispose();
   }
 
-  dispose() {
+  dispose(): void {
     this._eventHandler.unsubscribeAll();
     this.disposeSelector();
   }
 
-  disposeSelector() {
+  disposeSelector(): void {
     if (this._selector) {
       this._selector.onCellRangeSelecting.unsubscribe(this.handleCellRangeSelected.bind(this));
       this._selector.onCellRangeSelected.unsubscribe(this.handleCellRangeSelected.bind(this));
@@ -91,11 +92,11 @@ export class SlickRowSelectionModel implements SelectionModel {
     }
   }
 
-  getCellRangeSelector() {
+  getCellRangeSelector(): SlickCellRangeSelector | undefined {
     return this._selector;
   }
 
-  getSelectedRanges() {
+  getSelectedRanges(): SlickRange[] {
     return this._ranges;
   }
 
@@ -103,15 +104,15 @@ export class SlickRowSelectionModel implements SelectionModel {
     return this.rangesToRows(this._ranges);
   }
 
-  refreshSelections() {
+  refreshSelections(): void {
     this.setSelectedRows(this.getSelectedRows());
   }
 
-  setSelectedRows(rows: number[]) {
+  setSelectedRows(rows: number[]): void {
     this.setSelectedRanges(this.rowsToRanges(rows), 'SlickRowSelectionModel.setSelectedRows');
   }
 
-  setSelectedRanges(ranges: SlickRange[], caller = 'SlickRowSelectionModel.setSelectedRanges') {
+  setSelectedRanges(ranges: SlickRange[], caller = 'SlickRowSelectionModel.setSelectedRanges'): void {
     // simple check for: empty selection didn't change, prevent firing onSelectedRangesChanged
     if ((!this._ranges || this._ranges.length === 0) && (!ranges || ranges.length === 0)) {
       return;
@@ -128,7 +129,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   // protected functions
   // ---------------------
 
-  protected getRowsRange(from: number, to: number) {
+  protected getRowsRange(from: number, to: number): number[] {
     let i;
     const rows = [];
     for (i = from; i <= to; i++) {
@@ -159,7 +160,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     this.setSelectedRanges([new SlickRange(args.range.fromRow, 0, args.range.toRow, this._grid.getColumns().length - 1)]);
   }
 
-  protected handleActiveCellChange(_e: SlickEventData, args: OnActiveCellChangedEventArgs) {
+  protected handleActiveCellChange(_e: SlickEventData, args: OnActiveCellChangedEventArgs): void {
     if (this._options.selectActiveRow && args.row !== null) {
       this.setSelectedRanges([new SlickRange(args.row, 0, args.row, this._grid.getColumns().length - 1)]);
     }
@@ -206,7 +207,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     return true;
   }
 
-  protected handleKeyDown(e: SlickEventData) {
+  protected handleKeyDown(e: SlickEventData): void {
     const activeRow = this._grid.getActiveCell();
 
     if (this.gridOptions.multiSelect && activeRow &&
@@ -257,7 +258,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     return rows;
   }
 
-  protected rowsToRanges(rows: number[]) {
+  protected rowsToRanges(rows: number[]): SlickRange[] {
     const ranges: SlickRange[] = [];
     const lastCell = this._grid.getColumns().length - 1;
     rows.forEach(row => ranges.push(new SlickRange(row, 0, row, lastCell)));

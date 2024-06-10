@@ -12,7 +12,7 @@ import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { TranslaterService } from './translater.service';
 
 export class CollectionService<T = any> {
-  constructor(protected readonly translaterService?: TranslaterService) { }
+  constructor(protected readonly translaterService?: TranslaterService | undefined) { }
 
   /**
    * Filter 1 or more items from a collection

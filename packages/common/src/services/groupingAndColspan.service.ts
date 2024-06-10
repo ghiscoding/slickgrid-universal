@@ -39,7 +39,7 @@ export class GroupingAndColspanService {
    * @param {object} grid
    * @param {object} resizerPlugin
    */
-  init(grid: SlickGrid) {
+  init(grid: SlickGrid): void {
     this._grid = grid;
 
     if (grid && this._gridOptions) {
@@ -87,19 +87,19 @@ export class GroupingAndColspanService {
     }
   }
 
-  dispose() {
+  dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
-  delayRenderPreHeaderRowGroupingTitles(delay = 0) {
+  delayRenderPreHeaderRowGroupingTitles(delay = 0): void {
     setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
   }
 
   /** Create or Render the Pre-Header Row Grouping Titles */
-  renderPreHeaderRowGroupingTitles() {
+  renderPreHeaderRowGroupingTitles(): void {
     const colsCount = this._columnDefinitions.length;
 
     if (this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0) {
@@ -116,7 +116,7 @@ export class GroupingAndColspanService {
     }
   }
 
-  renderHeaderGroups(preHeaderPanel: HTMLElement, start: number, end: number) {
+  renderHeaderGroups(preHeaderPanel: HTMLElement, start: number, end: number): void {
     emptyElement(preHeaderPanel);
     preHeaderPanel.className = 'slick-header-columns';
     preHeaderPanel.style.left = '-1000px';
@@ -160,7 +160,7 @@ export class GroupingAndColspanService {
   }
 
   /** Translate Column Group texts and re-render them afterward. */
-  translateGroupingAndColSpan() {
+  translateGroupingAndColSpan(): void {
     const currentColumnDefinitions = this._grid.getColumns();
     this.extensionUtility.translateItems(currentColumnDefinitions, 'columnGroupKey', 'columnGroup');
     this._grid.setColumns(currentColumnDefinitions);

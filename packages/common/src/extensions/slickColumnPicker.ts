@@ -27,7 +27,7 @@ import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid } fr
  * @constructor
  */
 export class SlickColumnPicker {
-  onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
+  onColumnsChanged: SlickEvent<OnColumnsChangedArgs>;
 
   protected _areVisibleColumnDifferent = false;
   protected _bindEventService: BindingEventService;
@@ -52,6 +52,7 @@ export class SlickColumnPicker {
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService) {
     this._bindEventService = new BindingEventService();
+    this.onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
     this._eventHandler = new SlickEventHandler();
     this._columns = this.sharedService.allColumns ?? [];
     this._gridUid = this.grid?.getUID?.() ?? '';
@@ -87,7 +88,7 @@ export class SlickColumnPicker {
   }
 
   /** Initialize plugin. */
-  init() {
+  init(): void {
     this._gridUid = this.grid.getUID() ?? '';
     this.gridOptions.columnPicker = { ...this._defaults, ...this.gridOptions.columnPicker };
 
@@ -111,20 +112,20 @@ export class SlickColumnPicker {
   }
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
-  dispose() {
+  dispose(): void {
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
     this.disposeMenu();
   }
 
-  disposeMenu() {
+  disposeMenu(): void {
     this._bindEventService.unbindAll('parent-menu');
     this._listElm?.remove();
     this._menuElm?.remove();
     this._menuElm = null;
   }
 
-  createPickerMenu() {
+  createPickerMenu(): HTMLDivElement {
     const menuElm = createDomElement('div', {
       ariaExpanded: 'true',
       className: `slick-column-picker ${this._gridUid}`,
@@ -148,7 +149,7 @@ export class SlickColumnPicker {
    * Get all columns including hidden columns.
    * @returns {Array<Object>} - all columns array
    */
-  getAllColumns() {
+  getAllColumns(): Column[] {
     return this._columns;
   }
 
@@ -156,12 +157,12 @@ export class SlickColumnPicker {
    * Get only the visible columns.
    * @returns {Array<Object>} - all columns array
    */
-  getVisibleColumns() {
+  getVisibleColumns(): Column[] {
     return this.grid.getColumns();
   }
 
   /** Translate the Column Picker headers and also the last 2 checkboxes */
-  translateColumnPicker() {
+  translateColumnPicker(): void {
     // update the properties by pointers, that is the only way to get Column Picker Control to see the new values
     if (this.addonOptions) {
       this.addonOptions.columnTitle = '';
@@ -184,14 +185,14 @@ export class SlickColumnPicker {
   // ------------------
 
   /** Mouse down handler when clicking anywhere in the DOM body */
-  protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
+  protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>): void {
     if ((this._menuElm !== e.target && !this._menuElm?.contains(e.target)) || (e.target.className === 'close' && e.target.closest('.slick-column-picker'))) {
       this.disposeMenu();
     }
   }
 
   /** Mouse header context handler when doing a right+click on any of the header column title */
-  protected handleHeaderContextMenu(e: SlickEventData) {
+  protected handleHeaderContextMenu(e: SlickEventData): void {
     e.preventDefault();
     emptyElement(this._listElm);
     this._columnCheckboxes = [];
@@ -210,7 +211,7 @@ export class SlickColumnPicker {
     this.repositionMenu(e);
   }
 
-  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData) {
+  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): void {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (this._menuElm) {
       this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
@@ -224,7 +225,7 @@ export class SlickColumnPicker {
   }
 
   /** Update the Titles of each sections (command, commandTitle, ...) */
-  protected translateTitleLabels(pickerOptions: ColumnPickerOption) {
+  protected translateTitleLabels(pickerOptions: ColumnPickerOption): void {
     if (pickerOptions) {
       pickerOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'gridMenu');
     }

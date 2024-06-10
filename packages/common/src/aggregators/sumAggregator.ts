@@ -19,7 +19,7 @@ export class SumAggregator implements Aggregator {
     return this._field;
   }
 
-  get isInitialized() {
+  get isInitialized(): boolean {
     return this._isInitialized;
   }
 
@@ -27,7 +27,7 @@ export class SumAggregator implements Aggregator {
     return this._type;
   }
 
-  init(item?: any, isTreeAggregator = false) {
+  init(item?: any, isTreeAggregator = false): void {
     this._isTreeAggregator = isTreeAggregator;
     this._isInitialized = true;
     this._sum = 0;
@@ -47,14 +47,14 @@ export class SumAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any, isTreeParent = false) {
+  accumulate(item: any, isTreeParent = false): void {
     const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new sum (without doing any addition)
     if (!this._isTreeAggregator) {
       // not a Tree structure, we'll do a regular summation
       if (isNumber(val)) {
-        this._sum += parseFloat(val);
+        this._sum += parseFloat(val as any);
       }
     } else {
       if (isTreeParent) {
@@ -65,13 +65,13 @@ export class SumAggregator implements Aggregator {
         this._sum = parseFloat(item.__treeTotals[this._type][this._field] ?? 0);
         this._itemCount = item.__treeTotals['count'][this._field] ?? 0;
       } else if (isNumber(val)) {
-        this._sum = parseFloat(val);
+        this._sum = parseFloat(val as any);
         this._itemCount = 1;
       }
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
@@ -88,7 +88,7 @@ export class SumAggregator implements Aggregator {
     groupTotals[this._type][this._field] = sum;
   }
 
-  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
+  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

@@ -15,7 +15,7 @@ export class CloneAggregator implements Aggregator {
     return this._field;
   }
 
-  get isInitialized() {
+  get isInitialized(): boolean {
     return this._isInitialized;
   }
 
@@ -31,14 +31,14 @@ export class CloneAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any) {
+  accumulate(item: any): void {
     const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
     if (val !== null && val !== '') {
       this._data = val;
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { clone: Record<number | string, string>; }) {
+  storeResult(groupTotals: SlickGroupTotals & { clone: Record<number | string, string>; }): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

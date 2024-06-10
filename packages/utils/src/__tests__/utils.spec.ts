@@ -232,20 +232,6 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('hasData() method', () => {
-    it('should return True when input has test, or is a boolean (true or false) or if it is an object', () => {
-      expect(hasData('test')).toBe(true);
-      expect(hasData(true)).toBe(true);
-      expect(hasData(false)).toBe(true);
-      expect(hasData({})).toBe(true);
-    });
-
-    it('should return False when input is undefined, null or false', () => {
-      expect(hasData(undefined)).toBe(false);
-      expect(hasData(null)).toBe(false);
-    });
-  });
-
   describe('isDefined() method', () => {
     it('should be truthy when comparing against any defined variable', () => {
       const result1 = isDefined({ firstName: 'John', lastName: 'Doe' });

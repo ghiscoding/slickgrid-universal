@@ -52,11 +52,11 @@ export class SlickEventData<ArgType = any> {
   readonly x?: number;
   readonly y?: number;
 
-  get defaultPrevented() {
+  get defaultPrevented(): boolean {
     return this._isDefaultPrevented;
   }
 
-  constructor(protected event?: Event | null, protected args?: ArgType) {
+  constructor(protected event?: Event | null | undefined, protected args?: ArgType | undefined) {
     this.nativeEvent = event;
     this._arguments = args;
 
@@ -76,7 +76,7 @@ export class SlickEventData<ArgType = any> {
    * Stops event from propagating up the DOM tree.
    * @method stopPropagation
    */
-  stopPropagation() {
+  stopPropagation(): void {
     this._isPropagationStopped = true;
     this.nativeEvent?.stopPropagation();
   }
@@ -86,7 +86,7 @@ export class SlickEventData<ArgType = any> {
    * @method isPropagationStopped
    * @return {Boolean}
    */
-  isPropagationStopped() {
+  isPropagationStopped(): boolean {
     return this._isPropagationStopped;
   }
 
@@ -94,7 +94,7 @@ export class SlickEventData<ArgType = any> {
    * Prevents the rest of the handlers from being executed.
    * @method stopImmediatePropagation
    */
-  stopImmediatePropagation() {
+  stopImmediatePropagation(): void {
     this._isImmediatePropagationStopped = true;
     if (this.nativeEvent) {
       this.nativeEvent.stopImmediatePropagation();
@@ -106,7 +106,7 @@ export class SlickEventData<ArgType = any> {
    * @method isImmediatePropagationStopped
    * @return {Boolean}
    */
-  isImmediatePropagationStopped() {
+  isImmediatePropagationStopped(): boolean {
     return this._isImmediatePropagationStopped;
   }
 
@@ -114,35 +114,35 @@ export class SlickEventData<ArgType = any> {
     return this.nativeEvent as E;
   }
 
-  preventDefault() {
+  preventDefault(): void {
     if (this.nativeEvent) {
       this.nativeEvent.preventDefault();
     }
     this._isDefaultPrevented = true;
   }
 
-  isDefaultPrevented() {
+  isDefaultPrevented(): boolean {
     if (this.nativeEvent) {
       return this.nativeEvent.defaultPrevented;
     }
     return this._isDefaultPrevented;
   }
 
-  addReturnValue(value: any) {
+  addReturnValue(value: any): void {
     if (this.returnValue === undefined && value !== undefined) {
       this.returnValue = value;
     }
   }
 
-  getReturnValue() {
+  getReturnValue(): any {
     return this.returnValue;
   }
 
-  getArguments() {
+  getArguments(): ArgType | undefined {
     return this._arguments;
   }
 
-  resetReturnValue() {
+  resetReturnValue(): void {
     this.returnValue = undefined;
   }
 }
@@ -156,7 +156,7 @@ export class SlickEvent<ArgType = any> {
   protected _handlers: Handler<ArgType>[] = [];
   protected _pubSubService?: BasePubSub;
 
-  get subscriberCount() {
+  get subscriberCount(): number {
     return this._handlers.length;
   }
 
@@ -165,7 +165,7 @@ export class SlickEvent<ArgType = any> {
    * @param {String} [eventName] - event name that could be used for dispatching CustomEvent (when enabled)
    * @param {BasePubSub} [pubSubService] - event name that could be used for dispatching CustomEvent (when enabled)
    */
-  constructor(protected readonly eventName?: string, protected readonly pubSub?: BasePubSub) {
+  constructor(protected readonly eventName?: string | undefined, protected readonly pubSub?: BasePubSub | undefined) {
     this._pubSubService = pubSub;
   }
 
@@ -176,7 +176,7 @@ export class SlickEvent<ArgType = any> {
    * @method subscribe
    * @param {Function} fn - Event handler.
    */
-  subscribe(fn: Handler<ArgType>) {
+  subscribe(fn: Handler<ArgType>): void {
     this._handlers.push(fn);
   }
 
@@ -185,7 +185,7 @@ export class SlickEvent<ArgType = any> {
    * @method unsubscribe
    * @param {Function} [fn] - Event handler to be removed.
    */
-  unsubscribe(fn?: Handler<ArgType>) {
+  unsubscribe(fn?: Handler<ArgType>): void {
     for (let i = this._handlers.length - 1; i >= 0; i--) {
       if (this._handlers[i] === fn) {
         this._handlers.splice(i, 1);
@@ -202,7 +202,7 @@ export class SlickEvent<ArgType = any> {
    * @param {Object} [scope] - The scope ("this") within which the handler will be executed.
    *      If not specified, the scope will be set to the <code>Event</code> instance.
    */
-  notify(args: ArgType, evt?: SlickEventData<ArgType> | Event | MergeTypes<SlickEventData, Event> | null, scope?: any, ignorePrevEventDataValue = false) {
+  notify(args: ArgType, evt?: SlickEventData<ArgType> | Event | MergeTypes<SlickEventData, Event> | null, scope?: any, ignorePrevEventDataValue = false): SlickEventData<ArgType> {
     const sed = evt instanceof SlickEventData ? evt : new SlickEventData<ArgType>(evt, args);
     if (ignorePrevEventDataValue) {
       sed.resetReturnValue();
@@ -229,7 +229,7 @@ export class SlickEvent<ArgType = any> {
     return sed;
   }
 
-  setPubSubService(pubSub: BasePubSub) {
+  setPubSubService(pubSub: BasePubSub): void {
     this._pubSubService = pubSub;
   }
 }
@@ -237,18 +237,18 @@ export class SlickEvent<ArgType = any> {
 export class SlickEventHandler {
   protected handlers: Array<{ event: SlickEvent; handler: Handler<any>; }> = [];
 
-  get subscriberCount() {
+  get subscriberCount(): number {
     return this.handlers.length;
   }
 
-  subscribe<T = any>(event: SlickEvent<T>, handler: Handler<T>) {
+  subscribe<T = any>(event: SlickEvent<T>, handler: Handler<T>): SlickEventHandler {
     this.handlers.push({ event, handler });
     event.subscribe(handler);
 
     return this as SlickEventHandler;  // allow chaining
   }
 
-  unsubscribe<T = any>(event: SlickEvent, handler: Handler<T>) {
+  unsubscribe<T = any>(event: SlickEvent, handler: Handler<T>): SlickEventHandler | void {
     let i = this.handlers.length;
     while (i--) {
       if (this.handlers[i].event === event &&
@@ -262,7 +262,7 @@ export class SlickEventHandler {
     return this as SlickEventHandler;  // allow chaining
   }
 
-  unsubscribeAll() {
+  unsubscribeAll(): SlickEventHandler {
     let i = this.handlers.length;
     while (i--) {
       this.handlers[i].event.unsubscribe(this.handlers[i].handler);
@@ -324,7 +324,7 @@ export class SlickRange {
    * @method isSingleCell
    * @return {Boolean}
    */
-  isSingleCell() {
+  isSingleCell(): boolean {
     return this.fromRow === this.toRow && this.fromCell === this.toCell;
   }
 
@@ -333,7 +333,7 @@ export class SlickRange {
    * @method isSingleRow
    * @return {Boolean}
    */
-  isSingleRow() {
+  isSingleRow(): boolean {
     return this.fromRow === this.toRow;
   }
 
@@ -344,7 +344,7 @@ export class SlickRange {
    * @param cell {Integer}
    * @return {Boolean}
    */
-  contains(row: number, cell: number) {
+  contains(row: number, cell: number): boolean {
     return row >= this.fromRow && row <= this.toRow &&
       cell >= this.fromCell && cell <= this.toCell;
   }
@@ -354,7 +354,7 @@ export class SlickRange {
    * @method toString
    * @return {String}
    */
-  toString() {
+  toString(): string {
     if (this.isSingleCell()) {
       return `(${this.fromRow}:${this.fromCell})`;
     }
@@ -533,7 +533,7 @@ export class SlickEditorLock {
    * @method activate
    * @param editController {EditController} edit controller acquiring the lock
    */
-  activate(editController: EditController) {
+  activate(editController: EditController): void {
     if (editController === this.activeEditController) { // already activated?
       return;
     }
@@ -555,7 +555,7 @@ export class SlickEditorLock {
    * @method deactivate
    * @param editController {EditController} edit controller releasing the lock
    */
-  deactivate(editController: EditController) {
+  deactivate(editController: EditController): void {
     if (!this.activeEditController) {
       return;
     }
@@ -590,30 +590,35 @@ export class SlickEditorLock {
 }
 
 export class Utils {
-  public static storage = {
-    // https://stackoverflow.com/questions/29222027/vanilla-alternative-to-jquery-data-function-any-native-javascript-alternati
-    _storage: new WeakMap(),
-    put: function (element: any, key: string, obj: any) {
-      if (!this._storage.has(element)) {
-        this._storage.set(element, new Map());
+  public static storage: {
+    _storage: WeakMap<object, any>;
+    put: (element: any, key: string, obj: any) => void;
+    get: (element: any, key: string) => any;
+    remove: (element: any, key: string) => any;
+  } = {
+      // https://stackoverflow.com/questions/29222027/vanilla-alternative-to-jquery-data-function-any-native-javascript-alternati
+      _storage: new WeakMap(),
+      put: function (element: any, key: string, obj: any): void {
+        if (!this._storage.has(element)) {
+          this._storage.set(element, new Map());
+        }
+        this._storage.get(element).set(key, obj);
+      },
+      get: function (element: any, key: string): any {
+        const el = this._storage.get(element);
+        if (el) {
+          return el.get(key);
+        }
+        return null;
+      },
+      remove: function (element: any, key: string): any {
+        const ret = this._storage.get(element).delete(key);
+        if (!(this._storage.get(element).size === 0)) {
+          this._storage.delete(element);
+        }
+        return ret;
       }
-      this._storage.get(element).set(key, obj);
-    },
-    get: function (element: any, key: string) {
-      const el = this._storage.get(element);
-      if (el) {
-        return el.get(key);
-      }
-      return null;
-    },
-    remove: function (element: any, key: string) {
-      const ret = this._storage.get(element).delete(key);
-      if (!(this._storage.get(element).size === 0)) {
-        this._storage.delete(element);
-      }
-      return ret;
-    }
-  };
+    };
 
   public static height(el: HTMLElement, value?: number | string): number | void {
     if (!el) {
@@ -635,18 +640,18 @@ export class Utils {
     Utils.setStyleSize(el, 'width', value);
   }
 
-  public static setStyleSize(el: HTMLElement, style: string, val?: number | string | Function) {
+  public static setStyleSize(el: HTMLElement, style: string, val?: number | string | Function): void {
     if (typeof val === 'function') {
       val = val();
     }
     el.style[style as CSSStyleDeclarationWritable] = (typeof val === 'string') ? val : `${val}px`;
   }
 
-  public static isHidden(el: HTMLElement) {
+  public static isHidden(el: HTMLElement): boolean {
     return el.offsetWidth === 0 && el.offsetHeight === 0;
   }
 
-  public static parents(el: HTMLElement | ParentNode, selector?: string) {
+  public static parents(el: HTMLElement | ParentNode, selector?: string): Array<HTMLElement | ParentNode> {
     const parents: Array<HTMLElement | ParentNode> = [];
     const visible = selector === ':visible';
     const hidden = selector === ':hidden';
@@ -670,7 +675,7 @@ export class Utils {
     return parents;
   }
 
-  public static toFloat(value: string | number) {
+  public static toFloat(value: string | number): number {
     const x = parseFloat(value as string);
     if (isNaN(x)) {
       return 0;
@@ -678,7 +683,7 @@ export class Utils {
     return x;
   }
 
-  public static show(el: HTMLElement | HTMLElement[], type = '') {
+  public static show(el: HTMLElement | HTMLElement[], type = ''): void {
     if (Array.isArray(el)) {
       el.forEach((e) => e.style.display = type);
     } else {
@@ -686,7 +691,7 @@ export class Utils {
     }
   }
 
-  public static hide(el: HTMLElement | HTMLElement[]) {
+  public static hide(el: HTMLElement | HTMLElement[]): void {
     if (Array.isArray(el)) {
       el.forEach((e) => e.style.display = 'none');
     } else {
@@ -694,7 +699,7 @@ export class Utils {
     }
   }
 
-  public static applyDefaults(targetObj: any, srcObj: any) {
+  public static applyDefaults(targetObj: any, srcObj: any): void {
     if (typeof srcObj === 'object') {
       Object.keys(srcObj).forEach(key => {
         if (srcObj.hasOwnProperty(key) && !targetObj.hasOwnProperty(key)) {
@@ -710,7 +715,7 @@ export class Utils {
    * @param {BasePubSub} [pubSubService]
    * @param {*} scope
    */
-  public static addSlickEventPubSubWhenDefined<T = any>(pubSub: BasePubSub, scope: T) {
+  public static addSlickEventPubSubWhenDefined<T = any>(pubSub: BasePubSub, scope: T): void {
     if (pubSub) {
       for (const prop in scope) {
         if (scope[prop] instanceof SlickEvent && typeof (scope[prop] as SlickEvent).setPubSubService === 'function') {
@@ -721,6 +726,6 @@ export class Utils {
   }
 }
 
-export const SlickGlobalEditorLock = new SlickEditorLock();
+export const SlickGlobalEditorLock: SlickEditorLock = new SlickEditorLock();
 export const preClickClassName = 'slick-edit-preclick';
 

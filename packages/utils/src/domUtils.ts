@@ -79,7 +79,7 @@ export function classNameToList(className = ''): string[] {
  * if we detect an array then use recursion to go inside it and apply same logic
  * @param obj - object containing 1 or more properties with DOM Elements
  */
-export function destroyAllElementProps(obj: any) {
+export function destroyAllElementProps(obj: any): void {
   if (typeof obj === 'object') {
     Object.keys(obj).forEach(key => {
       if (Array.isArray(obj[key])) {
@@ -122,7 +122,12 @@ export function getHtmlStringOutput(input: DocumentFragment | HTMLElement | stri
 }
 
 /** Get offset of HTML element relative to a parent element */
-export function getOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
+export function getOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null): {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+} | undefined {
   if (!parentElm || !childElm) {
     return undefined;
   }
@@ -158,7 +163,7 @@ export function getOffset(elm?: HTMLElement | null): HtmlElementPosition | undef
   return { top, left, bottom, right };
 }
 
-export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
+export function getInnerSize(elm: HTMLElement, type: 'height' | 'width'): number {
   let size = 0;
 
   if (elm) {
@@ -174,7 +179,7 @@ export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
 }
 
 /** Get a DOM element style property value by calling getComputedStyle() on the element */
-export function getStyleProp(elm: HTMLElement, property: string) {
+export function getStyleProp(elm: HTMLElement, property: string): string | null {
   if (elm) {
     return window.getComputedStyle(elm).getPropertyValue(property);
   }
@@ -251,7 +256,7 @@ export function htmlEncodeWithPadding(inputStr: string, paddingLength: number): 
 }
 
 /** insert an HTML Element after a target Element in the DOM */
-export function insertAfterElement(referenceNode: HTMLElement, newNode: HTMLElement) {
+export function insertAfterElement(referenceNode: HTMLElement, newNode: HTMLElement): void {
   referenceNode.parentNode?.insertBefore(newNode, referenceNode.nextSibling);
 }
 

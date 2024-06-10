@@ -48,7 +48,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._addonOptions = { ...this._defaults, ...options } as CheckboxSelectorOption;
   }
 
-  get addonOptions() {
+  get addonOptions(): CheckboxSelectorOption {
     return this._addonOptions;
   }
 
@@ -61,7 +61,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this._grid?.getOptions() ?? {};
   }
 
-  get selectAllUid() {
+  get selectAllUid(): number {
     return this._selectAll_UID;
   }
 
@@ -69,7 +69,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._selectedRowsLookup = selectedRows;
   }
 
-  init(grid: SlickGrid) {
+  init(grid: SlickGrid): void {
     this._grid = grid;
     this._isUsingDataView = !Array.isArray(grid.getData());
     if (this._isUsingDataView) {
@@ -122,7 +122,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  dispose() {
+  dispose(): void {
     this._bindEventService.unbindAll();
     this._eventHandler.unsubscribeAll();
   }
@@ -154,11 +154,11 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this;
   }
 
-  getOptions() {
+  getOptions(): CheckboxSelectorOption {
     return this._addonOptions;
   }
 
-  setOptions(options: CheckboxSelectorOption) {
+  setOptions(options: CheckboxSelectorOption): void {
     this._addonOptions = { ...this._addonOptions, ...options } as CheckboxSelectorOption;
 
     if (this._addonOptions.hideSelectAllCheckbox) {
@@ -192,7 +192,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  deSelectRows(rowArray: number[]) {
+  deSelectRows(rowArray: number[]): void {
     const removeRows: number[] = [];
     for (const row of rowArray) {
       if (this._selectedRowsLookup[row]) {
@@ -202,7 +202,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._grid.setSelectedRows(this._grid.getSelectedRows().filter((n) => removeRows.indexOf(n) < 0), 'SlickCheckboxSelectColumn.deSelectRows');
   }
 
-  selectRows(rowArray: number[]) {
+  selectRows(rowArray: number[]): void {
     const addRows = [];
     for (const row of rowArray) {
       if (this._selectedRowsLookup[row]) {
@@ -220,7 +220,7 @@ export class SlickCheckboxSelectColumn<T = any> {
    * @param {Boolean} checked - is the input checkbox checked?
    * @returns
    */
-  createCheckboxElement(inputId: string, checked = false) {
+  createCheckboxElement(inputId: string, checked = false): DocumentFragment {
     const fragmentElm = new DocumentFragment();
     const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
     const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
@@ -262,11 +262,11 @@ export class SlickCheckboxSelectColumn<T = any> {
     } as Column;
   }
 
-  hideSelectAllFromColumnHeaderTitleRow() {
+  hideSelectAllFromColumnHeaderTitleRow(): void {
     this._grid.updateColumnHeader(this._addonOptions.columnId || '', this._addonOptions.name || '', '');
   }
 
-  hideSelectAllFromColumnHeaderFilterRow() {
+  hideSelectAllFromColumnHeaderFilterRow(): void {
     const selectAllContainerElm = this.headerRowNode?.querySelector<HTMLSpanElement>('#filter-checkbox-selectall-container');
     if (selectAllContainerElm) {
       selectAllContainerElm.style.display = 'none';
@@ -277,7 +277,7 @@ export class SlickCheckboxSelectColumn<T = any> {
    * Toggle a row selection by providing a row number
    * @param {Number} row - grid row number to toggle
    */
-  toggleRowSelection(row: number) {
+  toggleRowSelection(row: number): void {
     this.toggleRowSelectionWithEvent(null, row);
   }
 
@@ -287,7 +287,7 @@ export class SlickCheckboxSelectColumn<T = any> {
    * @param {Number} row - grid row number to toggle
    * @returns
    */
-  toggleRowSelectionWithEvent(event: SlickEventData | null, row: number) {
+  toggleRowSelectionWithEvent(event: SlickEventData | null, row: number): void {
     const dataContext = this._grid.getDataItem(row);
     if (!this.checkSelectableOverride(row, dataContext, this._grid)) {
       return;
@@ -315,7 +315,7 @@ export class SlickCheckboxSelectColumn<T = any> {
    * In order word, user can choose which rows to be selectable or not by providing his own logic.
    * @param overrideFn: override function callback
    */
-  selectableOverride(overrideFn: SelectableOverrideCallback<T>) {
+  selectableOverride(overrideFn: SelectableOverrideCallback<T>): void {
     this._selectableOverride = overrideFn;
   }
 
@@ -323,7 +323,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   // protected functions
   // ---------------------
 
-  protected addCheckboxToFilterHeaderRow(grid: SlickGrid) {
+  protected addCheckboxToFilterHeaderRow(grid: SlickGrid): void {
     this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (_e, args) => {
       if (args.column.field === (this._addonOptions.field || '_checkbox_selector')) {
         emptyElement(args.node);
@@ -348,7 +348,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     });
   }
 
-  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid) {
+  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid): DocumentFragment | null {
     if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
       const UID = this.createUID() + row;
       return this.createCheckboxElement(`selector${UID}`, !!this._selectedRowsLookup[row]);
@@ -356,7 +356,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     return null;
   }
 
-  protected checkSelectableOverride(row: number, dataContext: any, grid: SlickGrid) {
+  protected checkSelectableOverride(row: number, dataContext: any, grid: SlickGrid): boolean {
     if (typeof this._selectableOverride === 'function') {
       return this._selectableOverride(row, dataContext, grid);
     }
@@ -367,7 +367,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     return Math.round(10000000 * Math.random());
   }
 
-  protected getCheckboxColumnCellIndex() {
+  protected getCheckboxColumnCellIndex(): number {
     if (this._checkboxColumnCellIndex === null) {
       this._checkboxColumnCellIndex = 0;
       const colArr = this._grid.getColumns();
@@ -380,7 +380,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this._checkboxColumnCellIndex;
   }
 
-  protected handleDataViewSelectedIdsChanged() {
+  protected handleDataViewSelectedIdsChanged(): void {
     const selectedIds = this._dataView.getAllSelectedFilteredIds();
     const filteredItems = this._dataView.getFilteredItems();
     let disabledCount = 0;
@@ -415,7 +415,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleClick(e: SlickEventData, args: { row: number; cell: number; grid: SlickGrid; }) {
+  protected handleClick(e: SlickEventData, args: { row: number; cell: number; grid: SlickGrid; }): void {
     // clicking on a row select checkbox
     if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && (e.target as HTMLInputElement).type === 'checkbox') {
       (e.target as HTMLInputElement).ariaChecked = String((e.target as HTMLInputElement).checked);
@@ -433,7 +433,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement> | SlickEventData, args: OnHeaderClickEventArgs) {
+  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement> | SlickEventData, args: OnHeaderClickEventArgs): void {
     if (args.column.id === this._addonOptions.columnId && (e.target as HTMLInputElement).type === 'checkbox') {
       (e.target as HTMLInputElement).ariaChecked = String((e.target as HTMLInputElement).checked);
 
@@ -496,7 +496,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleKeyDown(e: SlickEventData, args: OnKeyDownEventArgs) {
+  protected handleKeyDown(e: SlickEventData, args: OnKeyDownEventArgs): void {
     if (e.key === ' ') {
       if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId) {
         // if editing, try to commit
@@ -509,7 +509,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleSelectedRowsChanged() {
+  protected handleSelectedRowsChanged(): void {
     const selectedRows = this._grid.getSelectedRows();
     const lookup: RowLookup = {};
     let row = 0;
@@ -577,7 +577,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected renderSelectAllCheckbox(isSelectAllChecked: boolean) {
+  protected renderSelectAllCheckbox(isSelectAllChecked: boolean): void {
     const colHeaderElm = this._grid.updateColumnHeader(
       this._addonOptions.columnId || '',
       this.createCheckboxElement(`header-selector${this._selectAll_UID}`, !!isSelectAllChecked),

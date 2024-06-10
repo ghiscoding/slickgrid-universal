@@ -102,7 +102,7 @@ export class DateEditor implements Editor {
     return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
-  async init() {
+  async init(): Promise<void> {
     if (this.args && this.columnDef) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       const columnId = this.columnDef?.id ?? '';
@@ -221,7 +221,7 @@ export class DateEditor implements Editor {
     }
   }
 
-  destroy() {
+  destroy(): void {
     queueMicrotask(() => {
       this.hide();
       this.calendarInstance?.destroy();
@@ -234,7 +234,7 @@ export class DateEditor implements Editor {
     this._bindEventService.unbindAll();
   }
 
-  clear() {
+  clear(): void {
     this._lastTriggeredByClearDate = true;
     if (this.calendarInstance) {
       this.calendarInstance.settings.selected.dates = [];
@@ -242,7 +242,7 @@ export class DateEditor implements Editor {
     }
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -269,7 +269,7 @@ export class DateEditor implements Editor {
    * @param {string} optionName
    * @param {newValue} newValue
    */
-  changeEditorOption<T extends keyof VanillaCalendarOption, K extends Partial<VanillaCalendarOption[T]>>(optionName: T, newValue: K) {
+  changeEditorOption<T extends keyof VanillaCalendarOption, K extends Partial<VanillaCalendarOption[T]>>(optionName: T, newValue: K): void {
     if (!this.columnEditor.editorOptions) {
       this.columnEditor.editorOptions = {};
     }
@@ -277,7 +277,7 @@ export class DateEditor implements Editor {
     this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { settings: { [optionName]: newValue } });
   }
 
-  focus() {
+  focus(): void {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
     this.grid.focus();
 
@@ -285,11 +285,11 @@ export class DateEditor implements Editor {
     this._inputElm?.focus();
   }
 
-  hide() {
+  hide(): void {
     this.calendarInstance?.hide();
   }
 
-  show() {
+  show(): void {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (!isCompositeEditor && this.calendarInstance) {
       this.calendarInstance.show();
@@ -303,7 +303,7 @@ export class DateEditor implements Editor {
     return this._inputElm.value;
   }
 
-  setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
+  setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     if (this.calendarInstance) {
       setPickerDates(this._inputElm, this.calendarInstance, val, this.columnDef, this.columnEditor);
     }
@@ -319,7 +319,7 @@ export class DateEditor implements Editor {
     }
   }
 
-  applyValue(item: any, state: any) {
+  applyValue(item: any, state: any): void {
     const fieldName = this.columnDef?.field;
     if (this.columnDef && fieldName !== undefined) {
       const saveFieldType = this.columnDef.saveOutputType || this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
@@ -357,7 +357,7 @@ export class DateEditor implements Editor {
     return this._isValueTouched;
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     const fieldName = this.columnDef?.field;
 
     if (item && this.columnDef && fieldName !== undefined) {
@@ -376,7 +376,7 @@ export class DateEditor implements Editor {
    * You can reset or clear the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputValue = value ?? this._originalDate ?? '';
     if (this.calendarInstance) {
       this._originalDate = inputValue;
@@ -395,7 +395,7 @@ export class DateEditor implements Editor {
     }
   }
 
-  save() {
+  save(): void {
     const validation = this.validate();
     const isValid = validation?.valid ?? false;
 
@@ -408,7 +408,7 @@ export class DateEditor implements Editor {
     }
   }
 
-  serializeValue() {
+  serializeValue(): string {
     const domValue = this.getValue();
     if (!domValue) {
       return '';
@@ -449,7 +449,7 @@ export class DateEditor implements Editor {
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -457,7 +457,7 @@ export class DateEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleOnDateChange() {
+  protected handleOnDateChange(): void {
     this._isValueTouched = true;
 
     if (this.args) {
@@ -471,7 +471,7 @@ export class DateEditor implements Editor {
     setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
   }
 
-  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';

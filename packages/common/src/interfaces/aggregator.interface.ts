@@ -17,3 +17,7 @@ export interface Aggregator {
   /** Method to store the result into the given group total object provided as argument */
   storeResult: (groupTotals: any | undefined) => void;
 }
+
+export type AggregatorConstructor = {
+  new(field: number | string): Aggregator;
+};

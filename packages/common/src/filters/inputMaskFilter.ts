@@ -6,7 +6,7 @@ export class InputMaskFilter extends InputFilter {
   protected _inputMask = '';
 
   /** Initialize the Filter */
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     super(translaterService);
     this.inputType = 'text';
   }
@@ -19,7 +19,7 @@ export class InputMaskFilter extends InputFilter {
   /**
    * Override the Filter init used by SlickGrid
    */
-  init(args: FilterArguments) {
+  init(args: FilterArguments): void {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
@@ -56,7 +56,7 @@ export class InputMaskFilter extends InputFilter {
    * Event handler to cover the following (keyup, blur, change)
    * We will trigger the Filter Service callback from this handler
    */
-  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false) {
+  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false): void {
     let value = '';
     if ((event?.target as HTMLInputElement)?.value) {
       let targetValue = (event?.target as HTMLInputElement)?.value ?? '';

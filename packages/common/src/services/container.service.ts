@@ -8,7 +8,7 @@ export class ContainerService {
     throw new Error('ContainerService "get" method must be implemented');
   }
 
-  registerInstance(_key: any, _instance: any) {
+  registerInstance(_key: any, _instance: any): void {
     throw new Error('ContainerService "registerInstance" method must be implemented');
   }
 }
