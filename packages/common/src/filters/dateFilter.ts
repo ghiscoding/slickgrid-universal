@@ -32,6 +32,7 @@ export class DateFilter implements Filter {
   protected _currentDateOrDates?: Date | Date[] | string | string[];
   protected _currentDateStrings?: string[];
   protected _lastClickIsDate = false;
+  protected _lastSearchValue?: string;
   protected _pickerOptions!: IOptions;
   protected _filterElm!: HTMLDivElement;
   protected _dateInputElm!: HTMLInputElement;
@@ -496,7 +497,9 @@ export class DateFilter implements Filter {
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
         const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
-        if (!skipNullInput || (skipNullInput && isDefined(this._currentDateOrDates))) {
+        const hasSkipNullValChanged = (skipNullInput && isDefined(this._currentDateOrDates)) || (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
+
+        if (!skipNullInput || !skipNullInput || hasSkipNullValChanged) {
           this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
         }
       }
@@ -505,5 +508,6 @@ export class DateFilter implements Filter {
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
+    this._lastSearchValue = this._currentValue;
   }
 }
