@@ -31,6 +31,7 @@ export class SliderFilter implements Filter {
   protected _clearFilterTriggered = false;
   protected _currentValue?: number;
   protected _currentValues?: number[];
+  protected _lastSearchValue?: number | string;
   protected _shouldTriggerQuery = true;
   protected _sliderOptions!: CurrentSliderOption;
   protected _operator?: OperatorType | OperatorString;
@@ -415,8 +416,10 @@ export class SliderFilter implements Filter {
       value === '' ? this._filterElm.classList.remove('filled') : this._filterElm.classList.add('filled');
 
       // when changing compound operator, we don't want to trigger the filter callback unless the filter input is also provided
-      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
-      if (this.sliderType !== 'compound' || (!skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined)) {
+      const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      const hasSkipNullValChanged = (skipNullInput && isDefined(this._currentValue)) || (!isDefined(this._currentValue) && isDefined(this._lastSearchValue));
+
+      if (this.sliderType !== 'compound' || !skipNullInput || hasSkipNullValChanged) {
         this.callback(e, { columnDef: this.columnDef, operator: selectedOperator || '', searchTerms: searchTerms! as SearchTerm[], shouldTriggerQuery: this._shouldTriggerQuery });
       }
     }
@@ -428,6 +431,7 @@ export class SliderFilter implements Filter {
     // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
     // the minimum requirements for tooltip to work are the columnDef and targetElement
     this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    this._lastSearchValue = value;
   }
 
   protected changeBothSliderFocuses(isAddingFocus: boolean): void {
