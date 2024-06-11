@@ -106,6 +106,9 @@ The last step is really to explore all the pages that are available on the docum
 ### 5. Get Started
 The best way to get started is to clone either the [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo). 
 
+### 6. CSP Compliance
+The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
+
 ##### All Live Demo Examples have links to the actual code
 If you would like to see the code to a particular Example. Just click on the "see code" that is available in every live examples.
 
