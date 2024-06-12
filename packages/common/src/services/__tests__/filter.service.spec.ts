@@ -1006,6 +1006,21 @@ describe('FilterService', () => {
       expect(output).toBe(true);
     });
 
+    it('should return False, since firstname is filled, when input value from datacontext contains an operator "<>" and its value is an empty string', () => {
+      const searchTerms = ['<> '];
+      const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+
+      service.init(gridStub);
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstname: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } } as ColumnFilters;
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(output).toBe(false);
+    });
+
     it('should return False when input value from datacontext contains an operator >= and its value is greater than 10 substring but "autoParseInputFilterOperator" is set to false', () => {
       const searchTerms = ['>=10'];
       const mockColumn1 = { id: 'age', field: 'age', filterable: true, autoParseInputFilterOperator: false } as Column;

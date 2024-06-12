@@ -453,7 +453,11 @@ export class FilterService {
     // if search value has a regex match we will only keep the value without the operator
     // in this case we need to overwrite the returned search values to truncate operator from the string search
     if (Array.isArray(matches) && matches.length >= 1 && (Array.isArray(searchValues) && searchValues.length === 1)) {
-      searchValues[0] = searchTerm;
+      // string starts with a whitespace we'll trim only the first whitespace char
+      // e.g. " " becomes "" and " slick grid " becomes "slick grid " (notice last whitespace is kept)
+      searchValues[0] = (searchTerm.length > 0 && searchTerm.substring(0, 1) === ' ')
+        ? searchTerm.substring(1)
+        : searchTerm;
     }
 
     return {
