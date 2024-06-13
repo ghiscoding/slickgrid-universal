@@ -1,6 +1,6 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem } from '../../interfaces/index';
+import type { Column, ColumnSort, ElementPosition, GridOption, HeaderButtonsOrMenu, HeaderMenuItems, MenuCommandItem } from '../../interfaces/index';
 import { SlickHeaderMenu } from '../slickHeaderMenu';
 import { BackendUtilityService, FilterService, SharedService, SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
@@ -103,10 +103,10 @@ const headerMock = {
         cssClass: 'mdi mdi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
-      },
+      }
     ]
-  }
-};
+  } as HeaderMenuItems
+} as HeaderButtonsOrMenu;
 
 const columnsMock: Column[] = [
   { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: headerMock, },
@@ -372,7 +372,8 @@ describe('HeaderMenu Plugin', () => {
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
-      headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      const clickEvent = new Event('click', { bubbles: true, cancelable: true, composed: false });
+      headerButtonElm.dispatchEvent(clickEvent);
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
@@ -384,7 +385,7 @@ describe('HeaderMenu Plugin', () => {
       ));
 
       gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-      expect(actionMock).toHaveBeenCalled();
+      expect(actionMock).toHaveBeenCalledWith(clickEvent, { command: 'show-negative-numbers', item: columnsMock[0].header!.menu!.commandItems![1], column: columnsMock[0], grid: gridStub });
       expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
 
@@ -613,7 +614,7 @@ describe('HeaderMenu Plugin', () => {
                     ]
                   },
                   {
-                    command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
+                    command: 'sub-commands3', title: 'Sub Commands 3', commandItems: [
                       { command: 'command33', title: 'Command 33', positionOrder: 70, },
                     ]
                   }
@@ -626,12 +627,14 @@ describe('HeaderMenu Plugin', () => {
 
       it('should create Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
         const onCommandMock = jest.fn();
+        const subCommand33ActionMock = jest.fn();
         const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
         jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
 
         plugin.init({ autoAlign: true });
         plugin.addonOptions.onCommand = onCommandMock;
+        ((columnsMock[1].header!.menu!.commandItems![2] as MenuCommandItem).commandItems![0] as MenuCommandItem).action = subCommand33ActionMock;
 
         const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
@@ -670,17 +673,21 @@ describe('HeaderMenu Plugin', () => {
         expect(headerMenu2Elm.classList.contains('dropup')).toBeFalsy();
         expect(headerMenu2Elm.classList.contains('dropdown')).toBeTruthy();
 
-        // return Grid Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        // return Header Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
         subCommands1Elm!.dispatchEvent(new Event('click'));
         expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
-        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
-        subCommands12Elm!.dispatchEvent(new Event('click'));
-        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
-        expect(disposeSubMenuSpy).toHaveBeenCalled();
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands3"]') as HTMLDivElement;
+        subCommands12Elm!.dispatchEvent(new Event('mouseover'));
+        const subCommandList3 = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        const subCommands33Elm = subCommandList3.querySelector('[data-command="command33"]') as HTMLDivElement;
+        const command33ClickEvent = new Event('click');
+        subCommands33Elm!.dispatchEvent(command33ClickEvent);
+        expect(subCommand33ActionMock).toHaveBeenCalledWith(command33ClickEvent, { command: 'command33', item: (columnsMock[1].header!.menu!.commandItems![2] as MenuCommandItem).commandItems![0], column: columnsMock[1], grid: gridStub });
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
 
         // calling another command on parent menu should dispose sub-menus
         helpCommandElm!.dispatchEvent(new Event('mouseover'));
-        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(4);
       });
 
       it('should create a Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
@@ -729,7 +736,7 @@ describe('HeaderMenu Plugin', () => {
         // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
         subCommands1Elm!.dispatchEvent(new Event('click'));
         expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
-        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands3"]') as HTMLDivElement;
         subCommands12Elm!.dispatchEvent(new Event('click'));
         expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
         expect(disposeSubMenuSpy).toHaveBeenCalled();
