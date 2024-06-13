@@ -747,16 +747,14 @@ describe('Service/Utilies', () => {
       expect(output2).toBe(expectation);
     });
 
-    it('should return OperatoryType associated to "<>", "!=", "neq" or "NEQ"', () => {
+    it('should return OperatoryType associated to "!=", "neq" or "NEQ"', () => {
       const expectation = OperatorType.notEqual;
 
-      const output1 = mapOperatorType('<>');
-      const output2 = mapOperatorType('!=');
-      const output3 = mapOperatorType('NE');
+      const output1 = mapOperatorType('!=');
+      const output2 = mapOperatorType('NE');
 
       expect(output1).toBe(expectation);
       expect(output2).toBe(expectation);
-      expect(output3).toBe(expectation);
     });
 
     it('should return OperatoryType associated to "*", "a*", ".*", "startsWith"', () => {
@@ -814,11 +812,13 @@ describe('Service/Utilies', () => {
     it('should return OperatoryType associated to "not_contains", "Not_Contains", "notContains"', () => {
       const expectation = OperatorType.notContains;
 
-      const output1 = mapOperatorType('Not_Contains');
-      const output2 = mapOperatorType('NOT_CONTAINS');
+      const output1 = mapOperatorType('<>');
+      const output2 = mapOperatorType('Not_Contains');
+      const output3 = mapOperatorType('NOT_CONTAINS');
 
       expect(output1).toBe(expectation);
       expect(output2).toBe(expectation);
+      expect(output3).toBe(expectation);
     });
 
     it('should return default OperatoryType associated to contains', () => {
