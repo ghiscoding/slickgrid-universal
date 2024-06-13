@@ -425,7 +425,6 @@ export function mapOperatorType(operator: OperatorType | OperatorString): Operat
     case 'GE':
       map = OperatorType.greaterThanOrEqual;
       break;
-    case '<>':
     case '!=':
     case 'NE':
       map = OperatorType.notEqual;
@@ -451,6 +450,7 @@ export function mapOperatorType(operator: OperatorType | OperatorString): Operat
     case 'NOT_IN':
       map = OperatorType.notIn;
       break;
+    case '<>':
     case 'Not_Contains':
     case 'NOT_CONTAINS':
       map = OperatorType.notContains;
