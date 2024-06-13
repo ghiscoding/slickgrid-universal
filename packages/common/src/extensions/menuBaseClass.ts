@@ -286,7 +286,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         this._bindEventService.bind(
           commandLiElm,
           'mouseover',
-          ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemMouseoverCallback.call(this, e, itemType, item as ExtractMenuType<ExtendableItemTypes, MenuType>, level)) as EventListener,
+          ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemMouseoverCallback.call(this, e, itemType, item as ExtractMenuType<ExtendableItemTypes, MenuType>, level, args?.column)) as EventListener,
           undefined,
           eventGroupName
         );
