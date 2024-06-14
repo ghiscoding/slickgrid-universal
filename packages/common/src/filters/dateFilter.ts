@@ -124,9 +124,7 @@ export class DateFilter implements Filter {
     this._filterElm = this.createDomFilterElement(searchValues);
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (this.searchTerms.length) {
-      this._filterElm.classList.add('filled');
-    }
+    this.updateFilterStyle(this.searchTerms.length > 0);
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -173,7 +171,7 @@ export class DateFilter implements Filter {
       }
     }
     this.onTriggerEvent(new Event('keyup'));
-    this._filterElm.classList.remove('filled');
+    this.updateFilterStyle(false);
   }
 
   /** Destroy the filter */
@@ -489,7 +487,7 @@ export class DateFilter implements Filter {
   protected onTriggerEvent(e: Event | undefined): void {
     if (this._clearFilterTriggered) {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
     } else {
       if (this.inputFilterType === 'range') {
         const searchTerms = (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]);

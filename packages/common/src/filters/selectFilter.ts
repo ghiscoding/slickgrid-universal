@@ -200,8 +200,7 @@ export class SelectFilter implements Filter {
     if (this._msInstance && this._collectionLength > 0) {
       // reload the filter element by it's id, to make sure it's still a valid element (because of some issue in the GraphQL example)
       this._msInstance.setSelects([]);
-      this.filterElm?.classList.remove('filled');
-      this._msInstance?.getParentElement()?.classList.remove('filled');
+      this.updateFilterStyle(false);
       this.searchTerms = [];
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.callback(undefined, { columnDef: this.columnDef, clearFilterTriggered: true, shouldTriggerQuery: this._shouldTriggerQuery });

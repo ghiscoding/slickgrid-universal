@@ -487,9 +487,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     filterDivContainerElm.appendChild(createDomElement('span'));
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (searchTerm) {
-      this._filterElm.classList.add('filled');
-    }
+    this.updateFilterStyle(!!searchTerm);
 
     // append the new DOM element to the header row & an empty span
     this.filterContainerElm.appendChild(filterDivContainerElm);
