@@ -239,6 +239,8 @@ export class SliderFilter implements Filter {
 
     const val = this.getValues();
     const vals = val === undefined ? [] : Array.isArray(val) ? val : [val];
+
+    // set the operator when defined
     this.updateFilterStyle(vals.length > 0);
 
     // set the operator when defined

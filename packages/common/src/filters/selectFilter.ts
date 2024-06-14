@@ -236,6 +236,8 @@ export class SelectFilter implements Filter {
         : [values];
       this._msInstance.setSelects(values);
     }
+
+    // set the operator when defined
     this.updateFilterStyle(this.getValues().length > 0);
 
     // set the operator when defined

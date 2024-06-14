@@ -228,6 +228,8 @@ export class DateFilter implements Filter {
 
     const currentValueOrValues = this.getValues() || [];
     const searchTerms = Array.isArray(currentValueOrValues) ? currentValueOrValues : [currentValueOrValues];
+
+    // set the operator when defined
     this.updateFilterStyle(searchTerms.length > 0);
 
     // set the operator when defined
