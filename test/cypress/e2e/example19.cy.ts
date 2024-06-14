@@ -256,6 +256,23 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
 
   describe('pasted content', () => {
     it('should be split onto multiple rows if newlines are found', () => {
+      cy.reload();
+      cy.getCell(14, 14, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+        .as('cell_N14')
+        .click()
+        .type('this is\na test\nwith newlines');
+
+      cy.getCell(15, 15, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+        .click();
+
+      cy.get('@cell_N14')
+        .should('have.text', 'this is');
+
+      cy.getCell(15, 14, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+        .should('have.text', 'a test');
+
+      cy.getCell(16, 14, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+        .should('have.text', 'with newlines');
     });
 
     it('should keep quoted content on the same cell', () => {
