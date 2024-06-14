@@ -95,6 +95,9 @@ export interface Locale {
   /** Text "Export to Excel" shown in Grid Menu (when enabled) */
   TEXT_EXPORT_TO_EXCEL: string;
 
+  /** Text "Filter Shortcuts" shown in Header Menu (when shortcuts are provided to a column filter) */
+  TEXT_FILTER_SHORTCUTS?: string;
+
   /** Text "Force fit Columns" displayed in the Column Picker & Grid Menu (when enabled) */
   TEXT_FORCE_FIT_COLUMNS: string;
 

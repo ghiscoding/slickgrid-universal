@@ -221,6 +221,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     minWidth: 140,
     iconClearFilterCommand: 'mdi mdi-filter-remove-outline',
     iconClearSortCommand: 'mdi mdi-sort-variant-off',
+    iconFilterShortcutSubMenu: 'mdi mdi-filter-outline',
     iconFreezeColumns: 'mdi mdi-pin-outline',
     iconSortAscCommand: 'mdi mdi-sort-ascending',
     iconSortDescCommand: 'mdi mdi-sort-descending',

@@ -827,8 +827,8 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
-          { divider: true, command: '', positionOrder: 49 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
         ]);
         expect(commandDivElm).toBeFalsy();
       });
@@ -848,7 +848,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
-        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 53 }];
+        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 }];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
@@ -884,9 +884,9 @@ describe('HeaderMenu Plugin', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const headerMenuExpected = [
-          { iconCssClass: 'mdi mdi-arrow-expand-horizontal', title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', command: 'column-resize-by-content', positionOrder: 48 },
-          { divider: true, command: '', positionOrder: 49 },
-          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 55 }
+          { iconCssClass: 'mdi mdi-arrow-expand-horizontal', title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', command: 'column-resize-by-content', positionOrder: 47 },
+          { divider: true, command: '', positionOrder: 48 },
+          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 }
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="column-resize-by-content"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -918,9 +918,9 @@ describe('HeaderMenu Plugin', () => {
         const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
 
         const headerMenuExpected = [
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
-          { divider: true, command: '', positionOrder: 49 },
-          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 55 }
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
+          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 }
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -947,7 +947,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
-        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 53 }];
+        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 }];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
@@ -981,7 +981,7 @@ describe('HeaderMenu Plugin', () => {
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'mdi mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
         ]);
         expect(commandIconElm.classList.contains('mdi-sort-variant-off')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Sort');
@@ -992,7 +992,7 @@ describe('HeaderMenu Plugin', () => {
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Trier par ordre croissant', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'mdi mdi-sort-descending', title: 'Trier par ordre décroissant', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Supprimer le tri', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Supprimer le tri', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
         ]);
 
         const clickEvent = new Event('click');
@@ -1019,8 +1019,8 @@ describe('HeaderMenu Plugin', () => {
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
-          { divider: true, command: '', positionOrder: 49 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Freeze Columns');
@@ -1028,8 +1028,8 @@ describe('HeaderMenu Plugin', () => {
         translateService.use('fr');
         plugin.translateHeaderMenu();
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Geler les colonnes', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
-          { divider: true, command: '', positionOrder: 49 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Geler les colonnes', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1052,8 +1052,8 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
         expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
-          { divider: true, command: '', positionOrder: 49 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1080,8 +1080,8 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
-          { divider: true, command: '', positionOrder: 49 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1110,7 +1110,7 @@ describe('HeaderMenu Plugin', () => {
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'mdi mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
         ]);
 
         const clickEvent = new Event('click');
@@ -1142,7 +1142,7 @@ describe('HeaderMenu Plugin', () => {
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'mdi mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
         ]);
 
         const clickEvent = new Event('click');

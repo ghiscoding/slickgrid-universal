@@ -11,6 +11,9 @@ export interface HeaderMenuOption {
   /** an extra CSS class to add to the menu button */
   buttonCssClass?: string;
 
+  /** position order index of the "Filter Shortcuts" menu */
+  filterShortcutsPositionOrder?: number;
+
   /** Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
   hideColumnResizeByContentCommand?: boolean;
 
@@ -53,6 +56,9 @@ export interface HeaderMenuOption {
   /** icon for the "Hide Column" command */
   iconColumnHideCommand?: string;
 
+  /** icon for the "Filter Shortcuts" menu (the shortcuts will be displayed as sub-menus of this parent menu) */
+  iconFilterShortcutSubMenu?: string;
+
   /** icon for the "Freeze Columns" command */
   iconFreezeColumns?: string;
 
@@ -84,5 +90,5 @@ export interface HeaderMenuOption {
   // Methods
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: { grid: SlickGrid, column: Column, menu: HTMLElement }) => boolean;
+  menuUsabilityOverride?: (args: { grid: SlickGrid, column: Column, menu: HTMLElement; }) => boolean;
 }

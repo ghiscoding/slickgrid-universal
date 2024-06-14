@@ -35,6 +35,7 @@ export class Constants {
     TEXT_EXPORT_TO_EXCEL: 'Export to Excel',
     TEXT_EXPORT_TO_TAB_DELIMITED: 'Export in Text format (Tab delimited)',
     TEXT_FORCE_FIT_COLUMNS: 'Force fit columns',
+    TEXT_FILTER_SHORTCUTS: 'Filter Shortcuts',
     TEXT_FREEZE_COLUMNS: 'Freeze Columns',
     TEXT_GREATER_THAN: 'Greater than',
     TEXT_GREATER_THAN_OR_EQUAL_TO: 'Greater than or equal to',
