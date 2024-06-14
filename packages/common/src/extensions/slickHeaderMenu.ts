@@ -426,6 +426,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 ...fs,
                 command: toKebabCase(fs.title || fs.titleKey || ''), // use the Title name as the command key in kebab case
                 action: (_e, args) => {
+                  // get associated Column Filter instance and use its `setValues()` method to update the filter with provided `searchTerms`
                   const filterRef = this.filterService.getFiltersMetadata().find(f => f.columnDef.id === args.column.id);
                   filterRef?.setValues(fs.searchTerms, fs.operator, true);
                 }
