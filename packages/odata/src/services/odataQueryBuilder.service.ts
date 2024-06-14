@@ -119,13 +119,13 @@ export class OdataQueryBuilderService {
     this._odataOptions = options;
   }
 
-  removeColumnFilter(fieldName: string) {
+  removeColumnFilter(fieldName: string): void {
     if (this._columnFilters && this._columnFilters.hasOwnProperty(fieldName)) {
       delete this._columnFilters[fieldName];
     }
   }
 
-  saveColumnFilter(fieldName: string, value: any, searchTerms?: any[]) {
+  saveColumnFilter(fieldName: string, value: any, searchTerms?: any[]): void {
     this._columnFilters[fieldName] = {
       search: searchTerms,
       value
@@ -136,7 +136,7 @@ export class OdataQueryBuilderService {
    * Change any OData options that will be used to build the query
    * @param object options
    */
-  updateOptions(options: Partial<OdataOption>) {
+  updateOptions(options: Partial<OdataOption>): void {
     for (const property of Object.keys(options)) {
       if (options.hasOwnProperty(property)) {
         this._odataOptions[property as keyof OdataOption] = options[property as keyof OdataOption]; // replace of the property
@@ -167,7 +167,7 @@ export class OdataQueryBuilderService {
   // protected functions
   // -------------------
 
-  protected addToFilterQueueWhenNotExists(filterStr: string) {
+  protected addToFilterQueueWhenNotExists(filterStr: string): void {
     if (this._odataOptions.filterQueue && this._odataOptions.filterQueue.indexOf(filterStr) === -1) {
       this._odataOptions.filterQueue.push(filterStr);
     }
@@ -177,8 +177,8 @@ export class OdataQueryBuilderService {
   // private functions
   // -------------------
 
-  private buildSelectExpand(selectFields: string[]): { selectParts: string[]; expandParts: string[] } {
-    const navigations: { [navigation: string]: string[] } = {};
+  private buildSelectExpand(selectFields: string[]): { selectParts: string[]; expandParts: string[]; } {
+    const navigations: { [navigation: string]: string[]; } = {};
     const selectItems = new Set<string>();
 
     for (const field of selectFields) {
@@ -207,7 +207,7 @@ export class OdataQueryBuilderService {
     };
   }
 
-  private buildExpand(navigations: { [navigation: string]: string[] }): string[] {
+  private buildExpand(navigations: { [navigation: string]: string[]; }): string[] {
     const expandParts = [];
     for (const navigation of Object.keys(navigations)) {
       if (this._odataOptions.enableSelect && this._odataOptions.version && this._odataOptions.version >= 4) {

@@ -168,6 +168,18 @@ describe('CompoundDateFilter', () => {
     expect(filterOperatorElm.value).toBe('>=');
   });
 
+  it('should be able to call "setValues" and call an event trigger', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockDate = '2001-01-02T16:02:02.239Z';
+    filter.init(filterArguments);
+    filter.setValues([mockDate], '>=', true);
+    const filterOperatorElm = divContainer.querySelector('.input-group-prepend.operator select') as HTMLInputElement;
+
+    expect(filter.currentDateOrDates).toEqual(mockDate);
+    expect(filterOperatorElm.value).toBe('>=');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>=', searchTerms: [mockDate], shouldTriggerQuery: true });
+  });
+
   it('should trigger input change event and expect the callback to be called with the date provided in the input', () => {
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
@@ -226,6 +238,40 @@ describe('CompoundDateFilter', () => {
     filterSelectElm.dispatchEvent(new Event('change'));
 
     expect(spyCallback).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is undefined', () => {
+    mockColumn.filter!.operator = '>';
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues(['']);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
+
+    filterInputElm.value = undefined as any;
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is empty string', () => {
+    mockColumn.filter!.operator = '>';
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues(['']);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
+
+    filterInputElm.value = '';
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
   });
 
   it('should change operator dropdown without a date entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {

@@ -11,11 +11,11 @@ export class UniversalContainerService implements ContainerService {
     return null;
   }
 
-  dispose() {
+  dispose(): void {
     this.dependencies = [];
   }
 
-  registerInstance(key: string, instance: any) {
+  registerInstance(key: string, instance: any): void {
     const dependency = this.dependencies.some(dep => dep.key === key);
     if (!dependency) {
       this.dependencies.push({ key, instance });

@@ -726,9 +726,8 @@ export interface GridOption<C extends Column = Column> {
   rowSelectionOptions?: RowSelectionModelOption;
 
   /**
-   * By default the lib will use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`,
-   * however you could optionally provide your own sanitizer callback instead of using DOMPurify.
-   * e.g.: DOMPurify doesn't work in Salesforce, so a custom sanitizer is required
+   * Provide an optional sanitizer, a recommendation is to use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`.
+   * see https://github.com/cure53/DOMPurify
    */
   sanitizer?: (dirtyHtml: string) => string | TrustedHTML;
 

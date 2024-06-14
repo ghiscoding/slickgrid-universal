@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -25,6 +25,7 @@ export class InputFilter implements Filter {
   protected _cellContainerElm!: HTMLDivElement;
   protected _filterContainerElm!: HTMLDivElement;
   protected _filterInputElm!: HTMLInputElement;
+  protected _lastSearchValue?: number | string;
   protected _selectOperatorElm?: HTMLSelectElement;
   inputFilterType: 'single' | 'compound' = 'single';
   grid!: SlickGrid;
@@ -32,7 +33,7 @@ export class InputFilter implements Filter {
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -47,7 +48,7 @@ export class InputFilter implements Filter {
   }
 
   /** Getter of input type (text, number, password) */
-  get inputType() {
+  get inputType(): string {
     return this._inputType;
   }
 
@@ -76,7 +77,7 @@ export class InputFilter implements Filter {
   /**
    * Initialize the Filter
    */
-  init(args: FilterArguments) {
+  init(args: FilterArguments): void {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
@@ -113,17 +114,16 @@ export class InputFilter implements Filter {
   /**
    * Clear the filter value
    */
-  clear(shouldTriggerQuery = true) {
+  clear(shouldTriggerQuery = true): void {
     if (this._filterInputElm) {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._filterInputElm.value = '';
       this._currentValue = undefined;
+      this.updateFilterStyle(false);
       if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
-        this._filterContainerElm.classList.remove('filled');
       }
-      this._filterInputElm.classList.remove('filled');
       this.onTriggerEvent(undefined, true);
     }
   }
@@ -131,7 +131,7 @@ export class InputFilter implements Filter {
   /**
    * destroy the filter
    */
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this._selectOperatorElm?.remove?.();
     this._filterInputElm?.remove?.();
@@ -142,7 +142,7 @@ export class InputFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     const searchValues = Array.isArray(values) ? values : [values];
     let newInputValue: SearchTerm = '';
     for (const value of searchValues) {
@@ -155,19 +155,18 @@ export class InputFilter implements Filter {
       this._currentValue = this._filterInputElm.value;
     }
 
-    if (this.getValues() !== '') {
-      this._filterContainerElm.classList.add('filled');
-      this._filterInputElm.classList.add('filled');
-    } else {
-      this._filterContainerElm.classList.remove('filled');
-      this._filterInputElm.classList.remove('filled');
-    }
+    // update "filled" CSS class
+    this.updateFilterStyle(this.getValues() !== '');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
     if (operator && this._selectOperatorElm) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
       this._selectOperatorElm.value = operatorShorthand;
+    }
+
+    if (triggerChange) {
+      this.onTriggerEvent(undefined, false);
     }
   }
 
@@ -251,7 +250,7 @@ export class InputFilter implements Filter {
    * @param {Object} searchTerm - filter search term
    * @returns {Object} DOM element filter
    */
-  protected createDomFilterElement(searchTerm?: SearchTerm) {
+  protected createDomFilterElement(searchTerm?: SearchTerm): void {
     const columnId = this.columnDef?.id ?? '';
     emptyElement(this._cellContainerElm);
 
@@ -272,9 +271,7 @@ export class InputFilter implements Filter {
     });
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (searchTerm) {
-      this._filterInputElm.classList.add('filled');
-    }
+    this.updateFilterStyle(!!searchTerm);
     if (searchTerm !== undefined) {
       this._currentValue = searchVal;
     }
@@ -314,10 +311,10 @@ export class InputFilter implements Filter {
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false) {
+  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false): void {
     if (isClearFilterEvent) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
-      this._filterContainerElm.classList.remove('filled');
+      this.updateFilterStyle(false);
     } else {
       const eventType = event?.type ?? '';
       const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
@@ -331,12 +328,14 @@ export class InputFilter implements Filter {
         this._currentValue = value;
       }
 
-      value === '' ? this._filterContainerElm.classList.remove('filled') : this._filterContainerElm.classList.add('filled');
+      this.updateFilterStyle(value !== '');
       const callbackArgs = { columnDef: this.columnDef, operator: selectedOperator, searchTerms: (value ? [value] : null), shouldTriggerQuery: this._shouldTriggerQuery };
       const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
-      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
-      if (this.inputFilterType === 'single' || !skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined) {
+      const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      const hasSkipNullValChanged = (skipNullInput && isDefined(this._currentValue)) || (this._currentValue === '' && isDefined(this._lastSearchValue));
+
+      if (this.inputFilterType === 'single' || !skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {
           clearTimeout(this._timer as NodeJS.Timeout);
           this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
@@ -344,9 +343,21 @@ export class InputFilter implements Filter {
           this.callback(event, callbackArgs);
         }
       }
+      this._lastSearchValue = value;
     }
 
     // reset both flags for next use
     this._shouldTriggerQuery = true;
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    if (isFilled) {
+      this._filterContainerElm?.classList.add('filled');
+      this._filterInputElm.classList.add('filled');
+    } else {
+      this._filterContainerElm?.classList.remove('filled');
+      this._filterInputElm.classList.remove('filled');
+    }
   }
 }

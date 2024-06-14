@@ -62,7 +62,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   }
 
   /** Initialize plugin. */
-  init(contextMenuOptions?: ContextMenu) {
+  init(contextMenuOptions?: ContextMenu): void {
     this._addonOptions = { ...this._defaults, ...contextMenuOptions };
 
     // merge the original commands with the built-in internal commands
@@ -83,7 +83,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   }
 
   /** Translate the Context Menu titles, we need to loop through all column definition to re-translate all list titles & all commands/options */
-  translateContextMenu() {
+  translateContextMenu(): void {
     const gridOptions = this.sharedService?.gridOptions ?? {};
     const contextMenu = this.sharedService.gridOptions.contextMenu;
 
@@ -110,7 +110,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   // event handlers
   // ------------------
 
-  protected handleOnContextMenu(event: SlickEventData, args: { grid: SlickGrid; }) {
+  protected handleOnContextMenu(event: SlickEventData, args: { grid: SlickGrid; }): void {
     this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
 
@@ -157,7 +157,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   // ------------------
 
   /** Create Context Menu with Custom Commands (copy cell value, export) */
-  protected addMenuCustomCommands(originalCommandItems: Array<MenuCommandItem | 'divider'>) {
+  protected addMenuCustomCommands(originalCommandItems: Array<MenuCommandItem | 'divider'>): (MenuCommandItem<MenuCommandItemCallbackArgs, MenuCallbackArgs<any>> | 'divider')[] {
     const menuCommandItems: Array<MenuCommandItem | 'divider'> = [];
     const gridOptions = this.sharedService && this.sharedService.gridOptions || {};
     const contextMenu = gridOptions?.contextMenu;
@@ -385,7 +385,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
    * and from there we can call the execCommand 'copy' command and expect the value to be in clipboard
    * @param args
    */
-  protected copyToClipboard(args: MenuCommandItemCallbackArgs) {
+  protected copyToClipboard(args: MenuCommandItemCallbackArgs): void {
     try {
       if (args && args.grid && args.command) {
         // get the value, if "exportWithFormatter" is set then we'll use the formatter output
@@ -430,7 +430,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   }
 
   /** sort all menu items by their position order when defined */
-  protected sortMenuItems() {
+  protected sortMenuItems(): void {
     const contextMenu = this.sharedService?.gridOptions?.contextMenu;
     if (contextMenu) {
       this.extensionUtility.sortItems(contextMenu.commandItems || [], 'positionOrder');

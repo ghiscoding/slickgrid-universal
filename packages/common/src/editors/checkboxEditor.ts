@@ -106,12 +106,12 @@ export class CheckboxEditor implements Editor {
     }
   }
 
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this._input?.remove?.();
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -139,13 +139,13 @@ export class CheckboxEditor implements Editor {
   }
 
   /** pre-click, when enabled, will simply toggle the checkbox without requiring to double-click */
-  preClick() {
+  preClick(): void {
     if (this._input) {
       this._input.checked = !this._input.checked;
     }
   }
 
-  show() {
+  show(): void {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
@@ -153,11 +153,11 @@ export class CheckboxEditor implements Editor {
     }
   }
 
-  getValue() {
+  getValue(): boolean {
     return this._input?.checked ?? false;
   }
 
-  setValue(val: boolean | string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
+  setValue(val: boolean | string, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     const isChecked = val ? true : false;
     if (this._input) {
       this._input.checked = isChecked;
@@ -174,7 +174,7 @@ export class CheckboxEditor implements Editor {
     }
   }
 
-  applyValue(item: any, state: any) {
+  applyValue(item: any, state: any): void {
     const fieldName = this.columnDef && this.columnDef.field;
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
@@ -202,7 +202,7 @@ export class CheckboxEditor implements Editor {
     return this._isValueTouched;
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     const fieldName = this.columnDef && this.columnDef.field;
 
     if (item && fieldName !== undefined && this._input) {
@@ -219,7 +219,7 @@ export class CheckboxEditor implements Editor {
    * You can reset or clear the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: boolean, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: boolean, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputValue = value ?? this._originalValue ?? false;
     if (this._input) {
       this._originalValue = inputValue;
@@ -234,7 +234,7 @@ export class CheckboxEditor implements Editor {
     }
   }
 
-  save() {
+  save(): void {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
 
@@ -289,7 +289,7 @@ export class CheckboxEditor implements Editor {
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -297,7 +297,7 @@ export class CheckboxEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';

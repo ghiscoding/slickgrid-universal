@@ -59,7 +59,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   }
 
   /** Initialize plugin. */
-  init(headerButtonOptions?: HeaderButton) {
+  init(headerButtonOptions?: HeaderButton): void {
     this._addonOptions = { ...this._defaults, ...headerButtonOptions };
 
     this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
@@ -70,7 +70,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   }
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
-  dispose() {
+  dispose(): void {
     super.dispose();
     this._buttonElms.forEach(elm => elm.remove());
   }
@@ -84,7 +84,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
    * @param {Object} event - The event
    * @param {Object} args - object arguments
    */
-  protected handleHeaderCellRendered(_e: SlickEventData, args: OnHeaderCellRenderedEventArgs) {
+  protected handleHeaderCellRendered(_e: SlickEventData, args: OnHeaderCellRenderedEventArgs): void {
     const column = args.column;
 
     if (column.header?.buttons && Array.isArray(column.header.buttons)) {
@@ -112,7 +112,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
    * @param {Object} event - The event
    * @param {Object} args.column - The column definition
    */
-  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement; }) {
+  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement; }): void {
     const column = args.column;
 
     if (column.header?.buttons && this._addonOptions?.buttonCssClass) {
@@ -126,7 +126,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     }
   }
 
-  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, button: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) {
+  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, button: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column): void {
     if ((button as HeaderButtonItem).command && !(button as HeaderButtonItem).disabled) {
       const command = (button as HeaderButtonItem).command || '';
 

@@ -176,7 +176,7 @@ describe('CompoundInputFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['9'], shouldTriggerQuery: true });
   });
 
-  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True', () => {
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is undefined', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
     mockColumn.type = FieldType.number;
     const callbackSpy = jest.spyOn(filterArguments, 'callback');
@@ -188,6 +188,38 @@ describe('CompoundInputFilter', () => {
     filterSelectElm.dispatchEvent(new Event('change'));
 
     expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is empty string', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    mockColumn.type = FieldType.number;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues(['']);
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
+
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a value entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" but value was changed from set to unset', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    mockColumn.type = FieldType.number;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
+    filter.setValues(['abc']);
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    filter.setValues(['']);
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).toHaveBeenCalled();
   });
 
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {

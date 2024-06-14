@@ -50,7 +50,7 @@ export class GridService {
     return this._grid?.getOptions() ?? {};
   }
 
-  dispose() {
+  dispose(): void {
     this._rowSelectionPlugin?.dispose();
   }
 
@@ -59,7 +59,7 @@ export class GridService {
   }
 
   /** Clear all Filters & Sorts */
-  clearAllFiltersAndSorts() {
+  clearAllFiltersAndSorts(): void {
     // call both clear Filters & Sort but only trigger the last one to avoid sending multiple backend queries
     if (this.sortService && this.sortService.clearSorting) {
       this.sortService.clearSorting(false); // skip event trigger on this one
@@ -70,7 +70,7 @@ export class GridService {
   }
 
   /** Clear all the pinning (frozen) options */
-  clearPinning(resetColumns = true) {
+  clearPinning(resetColumns = true): void {
     const visibleColumns = [...this.sharedService.visibleColumns];
     this.sharedService.slickGrid.setOptions({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
 
@@ -88,7 +88,7 @@ export class GridService {
    * @param {Boolean} suppressRender - do we want to supress the grid re-rendering? (defaults to false)
    * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via "setColumns()" method? (defaults to false)
    */
-  setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true, suppressRender = false, suppressColumnSet = true) {
+  setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true, suppressRender = false, suppressColumnSet = true): void {
     if (isObjectEmpty(pinningOptions)) {
       this.clearPinning();
     } else {
@@ -105,7 +105,7 @@ export class GridService {
    * Get all column set in the grid, that is all visible/hidden columns
    * and also include any extra columns used by some plugins (like Row Selection, Row Detail, ...)
    */
-  getAllColumnDefinitions() {
+  getAllColumnDefinitions(): Column[] {
     return this.sharedService.allColumns;
   }
 
@@ -138,7 +138,7 @@ export class GridService {
   }
 
   /** Get data item by it's row index number */
-  getDataItemByRowNumber(rowNumber: number) {
+  getDataItemByRowNumber<T = any>(rowNumber: number): T {
     if (!this._grid || typeof this._grid.getDataItem !== 'function') {
       throw new Error(`[Slickgrid-Universal] We could not find SlickGrid Grid object or it's "getDataItem" method`);
     }
@@ -236,7 +236,7 @@ export class GridService {
    * @param {Array<string | number>} columnIds - column definition ids, can be a single string and an array of strings
    * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
    */
-  hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption) {
+  hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption): void {
     options = { ...HideColumnOptionDefaults, ...options };
     if (Array.isArray(columnIds)) {
       for (const columnId of columnIds) {
@@ -259,7 +259,7 @@ export class GridService {
    * @param {Number} rowNumber - grid row number
    * @param {Number} [duration] - duration in ms
    */
-  highlightRow(rowNumber: number | number[], duration?: number) {
+  highlightRow(rowNumber: number | number[], duration?: number): void {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel()) {
       this._rowSelectionPlugin = new SlickRowSelectionModel(this._gridOptions.rowSelectionOptions);
@@ -275,21 +275,21 @@ export class GridService {
   }
 
   /** Select the selected row by a row index */
-  setSelectedRow(rowIndex: number) {
+  setSelectedRow(rowIndex: number): void {
     if (this._grid?.setSelectedRows) {
       this._grid.setSelectedRows([rowIndex]);
     }
   }
 
   /** Set selected rows with provided array of row indexes */
-  setSelectedRows(rowIndexes: number[]) {
+  setSelectedRows(rowIndexes: number[]): void {
     if (this._grid?.setSelectedRows) {
       this._grid.setSelectedRows(rowIndexes);
     }
   }
 
   /** Re-Render the Grid */
-  renderGrid() {
+  renderGrid(): void {
     if (typeof this._grid?.invalidate === 'function') {
       this._grid.invalidate();
     }
@@ -300,7 +300,7 @@ export class GridService {
    * The column definitions could be passed as argument to reset (this can be used after a Grid State reset)
    * The reset will clear the Filters & Sort, then will reset the Columns to their original state
    */
-  resetGrid(columnDefinitions?: Column[]) {
+  resetGrid(columnDefinitions?: Column[]): void {
     // clear any Pinning/Frozen columns/rows
     // do it prior to setting the Columns back on the next few lines
     this.clearPinning(false);
@@ -838,7 +838,7 @@ export class GridService {
    * However please note that it won't be called when `updateItem`, if the data that gets updated does change the tree data column then you should call this method.
    * @param {Array<Object>} [items] - optional flat array of parent/child items to use while redoing the full sort & refresh
    */
-  invalidateHierarchicalDataset(items?: any[]) {
+  invalidateHierarchicalDataset(items?: any[]): void {
     // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
     if (this._gridOptions?.enableTreeData && this.treeDataService) {
       const inputItems = items ?? this._dataView.getItems();
@@ -856,9 +856,9 @@ export class GridService {
   // -------------------
 
   /** Check wether the grid has the Row Selection enabled */
-  protected hasRowSelectionEnabled() {
+  protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
-    const isRowSelectionEnabled = this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector;
-    return (isRowSelectionEnabled && selectionModel);
+    const isRowSelectionEnabled = !!(this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector);
+    return (isRowSelectionEnabled && !!selectionModel);
   }
 }

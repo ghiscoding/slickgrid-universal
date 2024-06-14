@@ -28,7 +28,7 @@ interface Context {
   in_quote_char: string;
 }
 
-export function stripTags(htmlText: string | number | boolean | HTMLElement, allowableTags?: string | string[], tagReplacement?: string) {
+export function stripTags(htmlText: string | number | boolean | HTMLElement, allowableTags?: string | string[], tagReplacement?: string): string {
 
   /** main init function that will be executed when calling the global function */
   function init(html: string | number | boolean | HTMLElement, allowable_tags?: string | string[], tag_replacement?: string) {

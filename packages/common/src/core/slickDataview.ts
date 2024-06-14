@@ -68,7 +68,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected idProperty = 'id';          // property holding a unique row id
   protected items: TData[] = [];            // data by index
   protected rows: TData[] = [];             // data by row
-  protected idxById = new Map<DataIdType, number>();   // indexes by id
+  protected idxById: Map<DataIdType, number> = new Map<DataIdType, number>();   // indexes by id
   protected rowsById: { [id: DataIdType]: number; } | undefined = undefined;       // rows by id; lazy-calculated
   protected filter: FilterFn<TData> | null = null;         // filter function
   protected filterCSPSafe: FilterFn<TData> | null = null;         // filter function
@@ -77,7 +77,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected isBulkSuspend = false;      // delays protectedious operations like the
   // index update and delete to efficient
   // versions at endUpdate
-  protected bulkDeleteIds = new Map<DataIdType, boolean>();
+  protected bulkDeleteIds: Map<DataIdType, boolean> = new Map<DataIdType, boolean>();
   protected sortAsc: boolean | undefined = true;
   protected sortComparer!: ((a: TData, b: TData) => number);
   protected refreshHints: DataViewHints = {};
@@ -128,7 +128,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   onSelectedRowIdsChanged: SlickEvent<OnSelectedRowIdsChangedEventArgs>;
   onSetItemsCalled: SlickEvent<OnSetItemsCalledEventArgs>;
 
-  constructor(options?: Partial<DataViewOption>, protected externalPubSub?: BasePubSub) {
+  constructor(options?: Partial<DataViewOption> | undefined, protected externalPubSub?: BasePubSub | undefined) {
     this.onBeforePagingInfoChanged = new SlickEvent<PagingInfo>('onBeforePagingInfoChanged', externalPubSub);
     this.onGroupExpanded = new SlickEvent<OnGroupExpandedEventArgs>('onGroupExpanded', externalPubSub);
     this.onGroupCollapsed = new SlickEvent<OnGroupCollapsedEventArgs>('onGroupCollapsed', externalPubSub);
@@ -149,12 +149,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * deliver fully consistent information.
    * @param {Boolean} [bulkUpdate] - if set to true, most data view modifications
    */
-  beginUpdate(bulkUpdate?: boolean) {
+  beginUpdate(bulkUpdate?: boolean): void {
     this.suspend = true;
     this.isBulkSuspend = bulkUpdate === true;
   }
 
-  endUpdate() {
+  endUpdate(): void {
     const wasBulkSuspend = this.isBulkSuspend;
     this.isBulkSuspend = false;
     this.suspend = false;
@@ -165,7 +165,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.refresh();
   }
 
-  destroy() {
+  destroy(): void {
     this.items = [];
     this.idProperty = 'id';
     this.idxById = null as any;
@@ -188,17 +188,17 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** provide some refresh hints as to what to rows needs refresh */
-  setRefreshHints(hints: DataViewHints) {
+  setRefreshHints(hints: DataViewHints): void {
     this.refreshHints = hints;
   }
 
   /** get extra filter arguments of the filter method */
-  getFilterArgs() {
+  getFilterArgs(): any {
     return this.filterArgs;
   }
 
   /** add extra filter arguments to the filter method */
-  setFilterArgs(args: unknown) {
+  setFilterArgs(args: unknown): void {
     this.filterArgs = args;
   }
 
@@ -206,7 +206,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Processes all delete requests placed during bulk update
    * by recomputing the items and idxById members.
    */
-  protected processBulkDelete() {
+  protected processBulkDelete(): void {
     if (!this.idxById) {
       return;
     }
@@ -248,7 +248,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.bulkDeleteIds = new Map();
   }
 
-  protected updateIdxById(startingIndex?: number) {
+  protected updateIdxById(startingIndex?: number): void {
     if (this.isBulkSuspend || !this.idxById) { // during bulk update we do not reorganize
       return;
     }
@@ -263,7 +263,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
-  protected ensureIdUniqueness() {
+  protected ensureIdUniqueness(): void {
     if (this.isBulkSuspend || !this.idxById) { // during bulk update we do not reorganize
       return;
     }
@@ -277,12 +277,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Get all DataView Items */
-  getItems() {
+  getItems(): TData[] {
     return this.items;
   }
 
   /** Get the DataView Id property name to use (defaults to "Id" but could be customized to something else when instantiating the DataView) */
-  getIdPropertyName() {
+  getIdPropertyName(): string {
     return this.idProperty;
   }
 
@@ -291,7 +291,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {Array<*>} data - array of data
    * @param {String} [objectIdProperty] - optional id property to use as primary id
    */
-  setItems(data: TData[], objectIdProperty?: string) {
+  setItems(data: TData[], objectIdProperty?: string): void {
     if (objectIdProperty !== undefined) {
       this.idProperty = objectIdProperty;
     }
@@ -304,7 +304,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Set Paging Options */
-  setPagingOptions(args: Partial<PagingInfo>) {
+  setPagingOptions(args: Partial<PagingInfo>): void {
     if (this.onBeforePagingInfoChanged.notify(this.getPagingInfo(), null, this).getReturnValue() !== false) {
       if (isDefined(args.pageSize)) {
         this.pagesize = args.pageSize;
@@ -328,7 +328,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Sort Method to use by the DataView */
-  sort(comparer: (a: TData, b: TData) => number, ascending?: boolean) {
+  sort(comparer: (a: TData, b: TData) => number, ascending?: boolean): void {
     this.sortAsc = ascending;
     this.sortComparer = comparer;
     if (ascending === false) {
@@ -344,7 +344,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Re-Sort the dataset */
-  reSort() {
+  reSort(): void {
     if (this.sortComparer) {
       this.sort(this.sortComparer, this.sortAsc);
     }
@@ -356,12 +356,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Get the array length (count) of only the DataView filtered items */
-  getFilteredItemCount() {
+  getFilteredItemCount(): number {
     return this.filteredItems.length;
   }
 
   /** Get current Filter used by the DataView */
-  getFilter() {
+  getFilter(): FilterFn<TData> | null {
     return this._options.useCSPSafeFilter ? this.filterCSPSafe : this.filter;
   }
 
@@ -369,7 +369,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Set a Filter that will be used by the DataView
    * @param {Function} fn - filter callback function
    */
-  setFilter(filterFn: FilterFn<TData>) {
+  setFilter(filterFn: FilterFn<TData>): void {
     this.filterCSPSafe = filterFn;
     this.filter = filterFn;
     if (this._options.inlineFilters) {
@@ -387,7 +387,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Set some Grouping */
-  setGrouping(groupingInfo: Grouping | Grouping[]) {
+  setGrouping(groupingInfo: Grouping | Grouping[]): void {
     if (!this._options.groupItemMetadataProvider) {
       this._options.groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
     }
@@ -415,16 +415,16 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Get an item in the DataView by its row index */
-  getItemByIdx<T extends TData>(i: number) {
+  getItemByIdx<T extends TData>(i: number): T {
     return this.items[i] as T;
   }
 
   /** Get row index in the DataView by its Id */
-  getIdxById(id: DataIdType) {
+  getIdxById(id: DataIdType): number | undefined {
     return this.idxById?.get(id);
   }
 
-  protected ensureRowsByIdCache() {
+  protected ensureRowsByIdCache(): void {
     if (!this.rowsById) {
       this.rowsById = {};
       for (let i = 0, l = this.rows.length; i < l; i++) {
@@ -434,13 +434,13 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Get row number in the grid by its item object */
-  getRowByItem(item: TData) {
+  getRowByItem(item: TData): number | undefined {
     this.ensureRowsByIdCache();
     return this.rowsById?.[item[this.idProperty as keyof TData] as DataIdType];
   }
 
   /** Get row number in the grid by its Id */
-  getRowById(id: DataIdType) {
+  getRowById(id: DataIdType): number | undefined {
     this.ensureRowsByIdCache();
     return this.rowsById?.[id];
   }
@@ -451,7 +451,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** From the items array provided, return the mapped rows */
-  mapItemsToRows(itemArray: TData[]) {
+  mapItemsToRows(itemArray: TData[]): number[] {
     const rows: number[] = [];
     this.ensureRowsByIdCache();
     for (let i = 0, l = itemArray.length; i < l; i++) {
@@ -464,7 +464,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** From the Ids array provided, return the mapped rows */
-  mapIdsToRows(idArray: DataIdType[]) {
+  mapIdsToRows(idArray: DataIdType[]): number[] {
     const rows: number[] = [];
     this.ensureRowsByIdCache();
     for (let i = 0, l = idArray.length; i < l; i++) {
@@ -477,7 +477,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** From the rows array provided, return the mapped Ids */
-  mapRowsToIds(rowArray: number[]) {
+  mapRowsToIds(rowArray: number[]): DataIdType[] {
     const ids: DataIdType[] = [];
     for (let i = 0, l = rowArray.length; i < l; i++) {
       if (rowArray[i] < this.rows.length) {
@@ -494,7 +494,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param id The new id of the item.
    * @param item The item which should be the new value for the given id.
    */
-  updateSingleItem(id: DataIdType, item: TData) {
+  updateSingleItem(id: DataIdType, item: TData): void {
     if (!this.idxById) {
       return;
     }
@@ -540,7 +540,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param id The new id of the item.
    * @param item The item which should be the new value for the given id.
    */
-  updateItem<T extends TData>(id: DataIdType, item: T) {
+  updateItem<T extends TData>(id: DataIdType, item: T): void {
     this.updateSingleItem(id, item);
     this.refresh();
   }
@@ -550,7 +550,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param id {Array} The array of new ids which is in the same order as the items.
    * @param newItems {Array} The new items that should be set in the data view for the given ids.
    */
-  updateItems<T extends TData>(ids: DataIdType[], newItems: T[]) {
+  updateItems<T extends TData>(ids: DataIdType[], newItems: T[]): void {
     if (ids.length !== newItems.length) {
       throw new Error('[SlickGrid DataView] Mismatch on the length of ids and items provided to update');
     }
@@ -565,7 +565,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param insertBefore {Number} The 0-based index before which the item should be inserted.
    * @param item The item to insert.
    */
-  insertItem(insertBefore: number, item: TData) {
+  insertItem(insertBefore: number, item: TData): void {
     this.items.splice(insertBefore, 0, item);
     this.updateIdxById(insertBefore);
     this.refresh();
@@ -576,7 +576,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param insertBefore {Number} The 0-based index before which the items should be inserted.
    * @param newItems {Array}  The items to insert.
    */
-  insertItems(insertBefore: number, newItems: TData[]) {
+  insertItems(insertBefore: number, newItems: TData[]): void {
     // @ts-ignore
     Array.prototype.splice.apply(this.items, [insertBefore, 0].concat(newItems));
     this.updateIdxById(insertBefore);
@@ -587,7 +587,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Adds a single item at the end of the data view.
    * @param item The item to add at the end.
    */
-  addItem(item: TData) {
+  addItem(item: TData): void {
     this.items.push(item);
     this.updateIdxById(this.items.length - 1);
     this.refresh();
@@ -597,7 +597,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Adds multiple items at the end of the data view.
    * @param {Array} newItems The items to add at the end.
    */
-  addItems(newItems: TData[]) {
+  addItems(newItems: TData[]): void {
     this.items = this.items.concat(newItems);
     this.updateIdxById(this.items.length - newItems.length);
     this.refresh();
@@ -607,7 +607,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Deletes a single item identified by the given id from the data view.
    * @param {String|Number} id The id identifying the object to delete.
    */
-  deleteItem(id: DataIdType) {
+  deleteItem(id: DataIdType): void {
     if (!this.idxById) {
       return;
     }
@@ -629,7 +629,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Deletes multiple item identified by the given ids from the data view.
    * @param {Array} ids The ids of the items to delete.
    */
-  deleteItems(ids: DataIdType[]) {
+  deleteItems(ids: DataIdType[]): void {
     if (ids.length === 0 || !this.idxById) {
       return;
     }
@@ -669,7 +669,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Add an item in a sorted dataset (a Sort function must be defined) */
-  sortedAddItem(item: TData) {
+  sortedAddItem(item: TData): void {
     if (!this.sortComparer) {
       throw new Error('[SlickGrid DataView] sortedAddItem() requires a sort comparer, use sort()');
     }
@@ -677,7 +677,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Update an item in a sorted dataset (a Sort function must be defined) */
-  sortedUpdateItem(id: string | number, item: TData) {
+  sortedUpdateItem(id: string | number, item: TData): void {
     if (!this.idxById) {
       return;
     }
@@ -697,7 +697,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
-  protected sortedIndex(searchItem: TData) {
+  protected sortedIndex(searchItem: TData): number {
     let low = 0;
     let high = this.items.length;
 
@@ -713,17 +713,17 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** Get item count, that is the full dataset lenght of the DataView */
-  getItemCount() {
+  getItemCount(): number {
     return this.items.length;
   }
 
   /** Get row count (rows displayed in current page) */
-  getLength() {
+  getLength(): number {
     return this.rows.length;
   }
 
   /** Retrieve an item from the DataView at specific index */
-  getItem<T extends TData>(i: number) {
+  getItem<T extends TData>(i: number): T {
     const item = this.rows[i] as T;
 
     // if this is a group row, make sure totals are calculated and update the title
@@ -761,7 +761,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return null;
   }
 
-  protected expandCollapseAllGroups(level?: number, collapse?: boolean) {
+  protected expandCollapseAllGroups(level?: number, collapse?: boolean): void {
     if (!isDefined(level)) {
       for (let i = 0; i < this.groupingInfos.length; i++) {
         this.toggledGroupsByLevel[i] = {};
@@ -789,18 +789,18 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   /**
    * @param {Number} [level] Optional level to collapse.  If not specified, applies to all levels.
    */
-  collapseAllGroups(level?: number) {
+  collapseAllGroups(level?: number): void {
     this.expandCollapseAllGroups(level, true);
   }
 
   /**
    * @param {Number} [level] Optional level to expand.  If not specified, applies to all levels.
    */
-  expandAllGroups(level?: number) {
+  expandAllGroups(level?: number): void {
     this.expandCollapseAllGroups(level, false);
   }
 
-  expandCollapseGroup(level: number, groupingKey: string, collapse?: boolean) {
+  expandCollapseGroup(level: number, groupingKey: string, collapse?: boolean): void {
     if (this.toggledGroupsByLevel[level]) {
       // @ts-ignore
       this.toggledGroupsByLevel[level][groupingKey] = this.groupingInfos[level].collapsed ^ collapse;
@@ -814,7 +814,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    *     example, calling collapseGroup('high', '10%') will collapse the '10%' subgroup of
    *     the 'high' group.
    */
-  collapseGroup(...args: any) {
+  collapseGroup(...args: any): void {
     const calledArgs = Array.prototype.slice.call(args);
     const arg0 = calledArgs[0];
     let groupingKey: string;
@@ -838,7 +838,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    *     example, calling expandGroup('high', '10%') will expand the '10%' subgroup of
    *     the 'high' group.
    */
-  expandGroup(...args: any) {
+  expandGroup(...args: any): void {
     const calledArgs = Array.prototype.slice.call(args);
     const arg0 = calledArgs[0];
     let groupingKey: string;
@@ -856,11 +856,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.onGroupExpanded.notify({ level, groupingKey });
   }
 
-  getGroups() {
+  getGroups(): SlickGroup[] {
     return this.groups;
   }
 
-  protected extractGroups(rows: any[], parentGroup?: SlickGroup) {
+  protected extractGroups(rows: any[], parentGroup?: SlickGroup): SlickGroup[] {
     let group: SlickGroup;
     let val: any;
     const groups: SlickGroup[] = [];
@@ -915,7 +915,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /** claculate Group Totals */
-  protected calculateTotals(totals: SlickGroupTotals) {
+  protected calculateTotals(totals: SlickGroupTotals): void {
     const group = totals.group as SlickGroup;
     const gi = this.groupingInfos[group?.level ?? 0];
     const isLeafLevel = (group.level === this.groupingInfos.length);
@@ -945,7 +945,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     totals.initialized = true;
   }
 
-  protected addGroupTotals(group: SlickGroup) {
+  protected addGroupTotals(group: SlickGroup): void {
     const gi = this.groupingInfos[group.level];
     const totals = new SlickGroupTotals();
     totals.group = group;
@@ -955,7 +955,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
-  protected addTotals(groups: SlickGroup[], level?: number) {
+  protected addTotals(groups: SlickGroup[], level?: number): void {
     level = level || 0;
     const gi = this.groupingInfos[level];
     const groupCollapsed = gi.collapsed;
@@ -984,7 +984,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
-  protected flattenGroupedRows(groups: SlickGroup[], level?: number) {
+  protected flattenGroupedRows(groups: SlickGroup[], level?: number): any[] {
     level = level || 0;
     const gi = this.groupingInfos[level];
     const groupedRows: any[] = [];
@@ -1009,7 +1009,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return groupedRows;
   }
 
-  protected compileAccumulatorLoopCSPSafe(aggregator: Aggregator) {
+  protected compileAccumulatorLoopCSPSafe(aggregator: Aggregator): (items: any[]) => void {
     if (aggregator.accumulate) {
       return function (items: any[]) {
         let result;
@@ -1156,7 +1156,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {*} fn
    * @param {string} fnName
    */
-  protected setFunctionName(fn: any, fnName: string) {
+  protected setFunctionName(fn: any, fnName: string): void {
     try {
       Object.defineProperty(fn, 'name', { writable: true, value: fnName });
     } catch (err) /* istanbul ignore next */ {
@@ -1164,7 +1164,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
-  protected uncompiledFilter(items: TData[], args: any) {
+  protected uncompiledFilter(items: TData[], args: any): any[] {
     const retval: any[] = [];
     let idx = 0;
 
@@ -1177,7 +1177,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return retval;
   }
 
-  protected uncompiledFilterWithCaching(items: TData[], args: any, cache: any) {
+  protected uncompiledFilterWithCaching(items: TData[], args: any, cache: any): any[] {
     const retval: any[] = [];
     let idx = 0;
     let item: TData;
@@ -1195,7 +1195,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return retval;
   }
 
-  protected getFilteredAndPagedItems(items: TData[]) {
+  protected getFilteredAndPagedItems(items: TData[]): { totalRows: number; rows: TData[]; } {
     if (this._options.useCSPSafeFilter ? this.filterCSPSafe : this.filter) {
       let batchFilter: AnyFunction;
       let batchFilterWithCaching: AnyFunction;
@@ -1237,7 +1237,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return { totalRows: this.filteredItems.length, rows: paged };
   }
 
-  protected getRowDiffs(rows: TData[], newRows: TData[]) {
+  protected getRowDiffs(rows: TData[], newRows: TData[]): number[] {
     let item: TData | SlickNonDataItem | SlickDataItem | SlickGroup;
     let r;
     let eitherIsNonData;
@@ -1280,7 +1280,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return diff;
   }
 
-  protected recalc(_items: TData[]) {
+  protected recalc(_items: TData[]): number[] {
     this.rowsById = undefined;
 
     if (this.refreshHints.isFilterNarrowing !== this.prevRefreshHints.isFilterNarrowing ||
@@ -1307,7 +1307,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return diff;
   }
 
-  refresh() {
+  refresh(): void {
     if (this.suspend) {
       return;
     }
@@ -1372,7 +1372,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    *     access to the full list selected row ids, and not just the ones visible to the grid.
    * @method syncGridSelection
    */
-  syncGridSelection(grid: SlickGrid, preserveHidden: boolean, preserveHiddenOnSelectionChange?: boolean) {
+  syncGridSelection(grid: SlickGrid, preserveHidden: boolean, preserveHiddenOnSelectionChange?: boolean): SlickEvent<OnSelectedRowIdsChangedEventArgs> {
     this._grid = grid;
     let inHandler: boolean;
     this.selectedRowIds = this.mapRowsToIds(grid.getSelectedRows());
@@ -1472,7 +1472,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Get all selected IDs
    * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
    */
-  getAllSelectedIds() {
+  getAllSelectedIds(): DataIdType[] {
     return this.selectedRowIds;
   }
 
@@ -1480,7 +1480,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Get all selected filtered IDs (similar to "getAllSelectedIds" but only return filtered data)
    * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
    */
-  getAllSelectedFilteredIds() {
+  getAllSelectedFilteredIds(): TData[keyof TData][] {
     return this.getAllSelectedFilteredItems().map((item) => item[this.idProperty as keyof TData]);
   }
 
@@ -1494,7 +1494,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    *  - `shouldTriggerEvent`: defaults to true, should we trigger `onSelectedRowIdsChanged` event
    *  - `applyRowSelectionToGrid`: defaults to true, should we apply the row selections to the grid in the UI
    */
-  setSelectedIds(selectedIds: Array<number | string>, options?: Partial<{ isRowBeingAdded: boolean; shouldTriggerEvent: boolean; applyRowSelectionToGrid: boolean; }>) {
+  setSelectedIds(selectedIds: Array<number | string>, options?: Partial<{ isRowBeingAdded: boolean; shouldTriggerEvent: boolean; applyRowSelectionToGrid: boolean; }>): void {
     let isRowBeingAdded = options?.isRowBeingAdded;
     const shouldTriggerEvent = options?.shouldTriggerEvent;
     const applyRowSelectionToGrid = options?.applyRowSelectionToGrid;
@@ -1529,7 +1529,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * Get all selected dataContext items
    * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
    */
-  getAllSelectedItems<T extends TData>() {
+  getAllSelectedItems<T extends TData>(): T[] {
     const selectedData: TData[] = [];
     const selectedIds = this.getAllSelectedIds();
     selectedIds!.forEach((id) => {
@@ -1542,7 +1542,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   * Get all selected filtered dataContext items (similar to "getAllSelectedItems" but only return filtered data)
   * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
   */
-  getAllSelectedFilteredItems<T extends TData>() {
+  getAllSelectedFilteredItems<T extends TData>(): T[] {
     /* istanbul ignore if */
     if (!Array.isArray(this.selectedRowIds)) {
       return [];
@@ -1552,7 +1552,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return (intersection || []) as T[];
   }
 
-  syncGridCellCssStyles(grid: SlickGrid, key: string) {
+  syncGridCellCssStyles(grid: SlickGrid, key: string): void {
     let hashById: any;
     let inHandler: boolean;
 

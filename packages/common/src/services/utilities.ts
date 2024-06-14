@@ -64,7 +64,7 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
  * @param {Object} options - options containing info like children & treeLevel property names
  * @param {Number} [treeLevel] - current tree level
  */
-export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; levelPropName: string; }, treeLevel = 0) {
+export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; levelPropName: string; }, treeLevel = 0): void {
   const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T;
 
   if (Array.isArray(treeArray)) {
@@ -81,7 +81,7 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
   }
 }
 
-export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], options: { aggregator: Aggregator; childrenPropName: string; levelPropName: string; }, treeLevel = 0, parent: T = null as any) {
+export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], options: { aggregator: Aggregator; childrenPropName: string; levelPropName: string; }, treeLevel = 0, parent: T = null as any): void {
   const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T;
   const { aggregator } = options;
 
@@ -114,7 +114,7 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], op
  * @param {Object} options - you can provide "childrenPropName" and other options (defaults to "children")
  * @return {Array<Object>} output - Parent/Child array
  */
-export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggregators?: Aggregator[]; parentPropName?: string; childrenPropName?: string; hasChildrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }) {
+export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggregators?: Aggregator[]; parentPropName?: string; childrenPropName?: string; hasChildrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }): any[] {
   const identifierPropName = (options?.identifierPropName ?? 'id') as keyof T & string;
   const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T & string;
   const hasChildrenPropName = (options?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP) as keyof T & string;
@@ -366,7 +366,7 @@ export function getColumnFieldType(columnDef: Column): typeof FieldType[keyof ty
 }
 
 /** Verify if the identified column is of type Date */
-export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldType]) {
+export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldType]): boolean {
   switch (fieldType) {
     case FieldType.date:
     case FieldType.dateTime:
@@ -425,7 +425,6 @@ export function mapOperatorType(operator: OperatorType | OperatorString): Operat
     case 'GE':
       map = OperatorType.greaterThanOrEqual;
       break;
-    case '<>':
     case '!=':
     case 'NE':
       map = OperatorType.notEqual;
@@ -451,6 +450,7 @@ export function mapOperatorType(operator: OperatorType | OperatorString): Operat
     case 'NOT_IN':
       map = OperatorType.notIn;
       break;
+    case '<>':
     case 'Not_Contains':
     case 'NOT_CONTAINS':
       map = OperatorType.notContains;

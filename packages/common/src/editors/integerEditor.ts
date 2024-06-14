@@ -8,8 +8,8 @@ export class IntegerEditor extends InputEditor {
     super(args, 'number');
   }
 
-  loadValue(item: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+  loadValue(item: any): void {
+    const fieldName = this.columnDef?.field;
 
     if (fieldName !== undefined) {
 
@@ -25,7 +25,7 @@ export class IntegerEditor extends InputEditor {
     }
   }
 
-  serializeValue() {
+  serializeValue(): string | number {
     const elmValue = this._input?.value;
     if (elmValue === undefined || elmValue === '' || isNaN(+elmValue)) {
       return elmValue as string;
@@ -62,7 +62,7 @@ export class IntegerEditor extends InputEditor {
   // ------------------
 
   /** When the input value changes (this will cover the input spinner arrows on the right) */
-  protected handleOnMouseWheel(event: KeyboardEvent) {
+  protected handleOnMouseWheel(event: KeyboardEvent): void {
     this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {

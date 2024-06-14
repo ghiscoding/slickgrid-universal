@@ -104,7 +104,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * Note: we aren't using DI in the constructor simply to be as framework agnostic as possible,
    * we are simply using this init() function with a very basic container service to do the job
    */
-  init(grid: SlickGrid, containerService: ContainerService) {
+  init(grid: SlickGrid, containerService: ContainerService): void {
     this.grid = grid;
     this.gridService = containerService.get<GridService>('GridService');
     this.translaterService = containerService.get<TranslaterService>('TranslaterService');
@@ -122,7 +122,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Dispose of the Component & unsubscribe all events */
-  dispose() {
+  dispose(): void {
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
     this._formValues = null;
@@ -130,7 +130,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Dispose of the Component without unsubscribing any events */
-  disposeComponent() {
+  disposeComponent(): void {
     // protected _editorContainers!: Array<HTMLElement | null>;
     this._modalBodyTopValidationElm?.remove();
     this._modalSaveButtonElm?.remove();
@@ -155,7 +155,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {Boolean} skipMissingEditorError - defaults to False, skipping the error when the Composite Editor was not found will allow to still apply the value into the formValues object
    * @param {Boolean} triggerOnCompositeEditorChange - defaults to True, will this change trigger a onCompositeEditorChange event?
    */
-  changeFormInputValue(columnIdOrDef: string | Column, newValue: any, skipMissingEditorError = false, triggerOnCompositeEditorChange = true) {
+  changeFormInputValue(columnIdOrDef: string | Column, newValue: any, skipMissingEditorError = false, triggerOnCompositeEditorChange = true): void {
     const columnDef = this.getColumnByObjectOrId(columnIdOrDef);
     const columnId = typeof columnIdOrDef === 'string' ? columnIdOrDef : columnDef?.id ?? '';
     const editor = this._editors?.[columnId];
@@ -202,7 +202,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {String | Column} columnIdOrDef - column id or column definition
    * @param {*} newValue - the new value
    */
-  changeFormValue(columnIdOrDef: string | Column, newValue: any) {
+  changeFormValue(columnIdOrDef: string | Column, newValue: any): void {
     const columnDef = this.getColumnByObjectOrId(columnIdOrDef);
     const columnId = typeof columnIdOrDef === 'string' ? columnIdOrDef : columnDef?.id ?? '';
 
@@ -227,7 +227,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {String} columnId - column id
    * @param {*} newValue - the new value
    */
-  changeFormEditorOption(columnId: string, optionName: string, newOptionValue: any) {
+  changeFormEditorOption(columnId: string, optionName: string, newOptionValue: any): void {
     const editor = this._editors?.[columnId];
 
     // change an Editor option (not all Editors have that method, so make sure it exists before trying to call it)
@@ -243,7 +243,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {String} columnId - column definition id
    * @param isDisabled - defaults to True, are we disabling the associated form input
    */
-  disableFormInput(columnId: string, isDisabled = true) {
+  disableFormInput(columnId: string, isDisabled = true): void {
     const editor = this._editors?.[columnId];
     if (editor?.disable && Array.isArray(this._editorContainers)) {
       editor.disable(isDisabled);
@@ -526,7 +526,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Cancel the Editing which will also close the modal window */
-  async cancelEditing() {
+  async cancelEditing(): Promise<void> {
     let confirmed = true;
     if (this.formValues && Object.keys(this.formValues).length > 0 && typeof this._options.onClose === 'function') {
       confirmed = await this._options.onClose();
@@ -547,7 +547,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Show a Validation Summary text (as a <div>) when a validation fails or simply hide it when there's no error */
-  showValidationSummaryText(isShowing: boolean, errorMsg = '') {
+  showValidationSummaryText(isShowing: boolean, errorMsg = ''): void {
     if (isShowing && errorMsg !== '') {
       this._modalBodyTopValidationElm.textContent = errorMsg;
       this._modalBodyTopValidationElm.style.display = 'block';
@@ -672,7 +672,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * Execute the onError callback when defined
    * or use the default onError callback which is to simply display the error in the console
    */
-  protected executeOnError(error: OnErrorOption) {
+  protected executeOnError(error: OnErrorOption): void {
     const onError = this._options?.onError ?? DEFAULT_ON_ERROR;
     onError(error);
   }
@@ -685,7 +685,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {Function} beforeClosingCallback - third and last callback to execute after Saving but just before closing the modal window
    * @param {Object} itemDataContext - item data context when modal type is (create/clone/edit)
    */
-  protected async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunc, beforeClosingCallback?: PlainFunc, itemDataContext?: any) {
+  protected async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunc, beforeClosingCallback?: PlainFunc, itemDataContext?: any): Promise<void> {
     try {
       this.showValidationSummaryText(false, '');
       const validationResults = this.validateCompositeEditors();
@@ -847,7 +847,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
 
 
-  protected handleBodyClicked(event: Event) {
+  protected handleBodyClicked(event: Event): void {
     if ((event.target as HTMLElement)?.classList?.contains('slick-editor-modal')) {
       if (this._options?.backdrop !== 'static') {
         this.dispose();
@@ -855,7 +855,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
-  protected handleKeyDown(event: KeyboardEvent) {
+  protected handleKeyDown(event: KeyboardEvent): void {
     if (event.code === 'Escape') {
       this.cancelEditing();
       event.stopPropagation();
@@ -865,7 +865,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
-  protected handleResetInputValue(event: DOMEvent<HTMLButtonElement>) {
+  protected handleResetInputValue(event: DOMEvent<HTMLButtonElement>): void {
     const columnId = event.target.name;
     const editor = this._editors?.[columnId];
     if (typeof editor?.reset === 'function') {
@@ -875,7 +875,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Callback which processes a Mass Update or Mass Selection Changes */
-  protected async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunc) {
+  protected async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunc): Promise<void> {
     if (!this.formValues || Object.keys(this.formValues).length === 0) {
       this.executeOnError({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
     } else {
@@ -885,7 +885,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Anytime an input of the Composite Editor form changes, we'll add/remove a "modified" CSS className for styling purposes */
-  protected handleOnCompositeEditorChange(_e: SlickEventData, args: OnCompositeEditorChangeEventArgs) {
+  protected handleOnCompositeEditorChange(_e: SlickEventData, args: OnCompositeEditorChangeEventArgs): void {
     const columnId = args.column?.id ?? '';
     this._formValues = { ...this._formValues, ...args.formValues };
     const editor = this._editors?.[columnId] as Editor;
@@ -914,7 +914,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Reset Form button handler */
-  protected handleResetFormClicked() {
+  protected handleResetFormClicked(): void {
     for (const columnId of Object.keys(this._editors)) {
       const editor = this._editors[columnId];
       if (editor?.reset) {
@@ -926,7 +926,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** switch case handler to determine which code to execute depending on the modal type */
-  protected async handleSaveClicked() {
+  protected async handleSaveClicked(): Promise<void> {
     const modalType = this._options?.modalType;
     switch (modalType) {
       case 'mass-update':
@@ -988,7 +988,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Insert an item into the DataView or throw an error when finding duplicate id in the dataset */
-  protected insertNewItemInDataView(item: any) {
+  protected insertNewItemInDataView(item: any): void {
     const fullDatasetLength = this.dataView?.getItemCount() || 0;
     const newId = this._options.insertNewId ?? fullDatasetLength + 1;
     item[this.gridOptions.datasetIdPropertyName || 'id'] = newId;
@@ -1008,7 +1008,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Put back the current row to its original item data context using the DataView without triggering a change */
-  protected resetCurrentRowDataContext() {
+  protected resetCurrentRowDataContext(): void {
     const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
     const dataView = this.grid.getData<SlickDataView>();
     dataView.updateItem(this._originalDataContext[idPropName], this._originalDataContext);
@@ -1026,7 +1026,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Validate the current cell editor */
-  protected validateCurrentEditor() {
+  protected validateCurrentEditor(): void {
     const currentEditor = this.grid.getCellEditor();
     if (currentEditor?.validate) {
       currentEditor.validate();

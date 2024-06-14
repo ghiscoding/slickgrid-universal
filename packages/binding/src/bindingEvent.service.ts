@@ -12,13 +12,18 @@ export class BindingEventService {
     return this._boundedEvents;
   }
 
-  dispose() {
+  dispose(): void {
     this.unbindAll();
     this._boundedEvents = [];
   }
 
   /** Bind an event listener to any element */
-  bind(elementOrElements: Document | Element | NodeListOf<Element> | Window, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject, listenerOptions?: boolean | AddEventListenerOptions, groupName = '') {
+  bind(
+    elementOrElements: Document | Element | NodeListOf<Element> | Window,
+    eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject,
+    listenerOptions?: boolean | AddEventListenerOptions,
+    groupName = ''
+  ): void {
     // convert to array for looping in next task
     const eventNames = (Array.isArray(eventNameOrNames)) ? eventNameOrNames : [eventNameOrNames];
 
@@ -40,7 +45,7 @@ export class BindingEventService {
   }
 
   /** Unbind a specific listener that was bounded earlier */
-  unbind(elementOrElements: Element | NodeListOf<Element>, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject) {
+  unbind(elementOrElements: Element | NodeListOf<Element>, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject): void {
     // convert to array for looping in next task
     const elements = (Array.isArray(elementOrElements)) ? elementOrElements : [elementOrElements];
     const eventNames = Array.isArray(eventNameOrNames) ? eventNameOrNames : [eventNameOrNames];
@@ -54,7 +59,7 @@ export class BindingEventService {
     }
   }
 
-  unbindByEventName(element: Element | Window, eventName: string) {
+  unbindByEventName(element: Element | Window, eventName: string): void {
     const boundedEvent = this._boundedEvents.find(e => e.element === element && e.eventName === eventName);
     if (boundedEvent) {
       this.unbind(boundedEvent.element, boundedEvent.eventName, boundedEvent.listener);
@@ -64,7 +69,7 @@ export class BindingEventService {
   /**
    * Unbind all event listeners that were bounded, optionally provide a group name to unbind all listeners assigned to that specific group only.
    */
-  unbindAll(groupName?: string | string[]) {
+  unbindAll(groupName?: string | string[]): void {
     if (groupName) {
       const groupNames = Array.isArray(groupName) ? groupName : [groupName];
 

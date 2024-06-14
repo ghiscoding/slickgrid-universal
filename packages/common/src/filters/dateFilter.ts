@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, extend, } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, isDefined, } from '@slickgrid-universal/utils';
 import { format, parse } from '@formkit/tempo';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
 
@@ -32,6 +32,7 @@ export class DateFilter implements Filter {
   protected _currentDateOrDates?: Date | Date[] | string | string[];
   protected _currentDateStrings?: string[];
   protected _lastClickIsDate = false;
+  protected _lastSearchValue?: string;
   protected _pickerOptions!: IOptions;
   protected _filterElm!: HTMLDivElement;
   protected _dateInputElm!: HTMLInputElement;
@@ -47,7 +48,7 @@ export class DateFilter implements Filter {
   callback!: FilterCallback;
   filterContainerElm!: HTMLDivElement;
 
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -62,7 +63,7 @@ export class DateFilter implements Filter {
   }
 
   /** Getter for the Current Date(s) selected */
-  get currentDateOrDates() {
+  get currentDateOrDates(): string | Date | string[] | Date[] | undefined {
     return this._currentDateOrDates;
   }
 
@@ -100,7 +101,7 @@ export class DateFilter implements Filter {
   }
 
   /** Initialize the Filter */
-  init(args: FilterArguments) {
+  init(args: FilterArguments): void {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
@@ -123,9 +124,7 @@ export class DateFilter implements Filter {
     this._filterElm = this.createDomFilterElement(searchValues);
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (this.searchTerms.length) {
-      this._filterElm.classList.add('filled');
-    }
+    this.updateFilterStyle(this.searchTerms.length > 0);
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -149,7 +148,7 @@ export class DateFilter implements Filter {
   }
 
   /** Clear the filter value */
-  clear(shouldTriggerQuery = true, shouldTriggerClearEvent = true) {
+  clear(shouldTriggerQuery = true, shouldTriggerClearEvent = true): void {
     if (this.calendarInstance) {
       // in some cases we don't want to trigger a Clear event, like a Backspace, we want to clear the value but trigger a value change instead
       this._clearFilterTriggered = shouldTriggerClearEvent;
@@ -172,11 +171,11 @@ export class DateFilter implements Filter {
       }
     }
     this.onTriggerEvent(new Event('keyup'));
-    this._filterElm.classList.remove('filled');
+    this.updateFilterStyle(false);
   }
 
   /** Destroy the filter */
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this.calendarInstance?.destroy();
 
@@ -186,19 +185,19 @@ export class DateFilter implements Filter {
     this._filterElm?.remove();
   }
 
-  hide() {
+  hide(): void {
     if (typeof this.calendarInstance?.hide === 'function') {
       this.calendarInstance.hide();
     }
   }
 
-  show() {
+  show(): void {
     if (typeof this.calendarInstance?.show === 'function') {
       this.calendarInstance.show();
     }
   }
 
-  getValues() {
+  getValues(): string | Date | string[] | Date[] | undefined {
     return this._currentDateOrDates;
   }
 
@@ -206,7 +205,7 @@ export class DateFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString) {
+  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString, triggerChange = false): void {
     let pickerValues: any | any[];
 
     if (this.inputFilterType === 'compound') {
@@ -226,11 +225,10 @@ export class DateFilter implements Filter {
     }
 
     const currentValueOrValues = this.getValues() || [];
-    if (this.getValues() || (Array.isArray(currentValueOrValues) && currentValueOrValues.length > 0 && values)) {
-      this._filterElm.classList.add('filled');
-    } else {
-      this._filterElm.classList.remove('filled');
-    }
+    const searchTerms = Array.isArray(currentValueOrValues) ? currentValueOrValues : [currentValueOrValues];
+
+    // set the operator when defined
+    this.updateFilterStyle(searchTerms.length > 0);
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
@@ -238,12 +236,16 @@ export class DateFilter implements Filter {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
       this._selectOperatorElm.value = operatorShorthand;
     }
+
+    if (triggerChange) {
+      this.callback(undefined, { columnDef: this.columnDef, searchTerms, operator: this.operator, shouldTriggerQuery: true });
+    }
   }
 
   //
   // protected functions
   // ------------------
-  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]) {
+  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): void {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
@@ -482,21 +484,24 @@ export class DateFilter implements Filter {
     }
   }
 
-  protected onTriggerEvent(e: Event | undefined) {
+  protected onTriggerEvent(e: Event | undefined): void {
     if (this._clearFilterTriggered) {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
     } else {
       if (this.inputFilterType === 'range') {
-        (this._currentDateStrings) ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
-        this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]), operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+        const searchTerms = (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]);
+        this.updateFilterStyle(searchTerms.length > 0);
+        this.callback(e, { columnDef: this.columnDef, searchTerms, operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
       } else if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
         const selectedOperator = this._selectOperatorElm.value as OperatorString;
-        this._currentValue ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
+        this.updateFilterStyle(!!this._currentValue);
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
-        const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
-        if (!skipCompoundOperatorFilterWithNullInput || this._currentDateOrDates !== undefined) {
+        const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
+        const hasSkipNullValChanged = (skipNullInput && isDefined(this._currentDateOrDates)) || (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
+
+        if (!skipNullInput || !skipNullInput || hasSkipNullValChanged) {
           this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
         }
       }
@@ -505,5 +510,15 @@ export class DateFilter implements Filter {
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
+    this._lastSearchValue = this._currentValue;
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    if (isFilled) {
+      this._filterElm.classList.add('filled');
+    } else {
+      this._filterElm.classList.remove('filled');
+    }
   }
 }

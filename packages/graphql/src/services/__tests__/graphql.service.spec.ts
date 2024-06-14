@@ -758,7 +758,23 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
-    it('should return a query with multiple filters when the filters object has multiple search and they are passed as a filter trigger by a filter event and is of type ColumnFilters', () => {
+    it('should return a query with multiple filters when the filters object has multiple search with Equal & "<>" and they are passed as a filter trigger by a filter event and is of type ColumnFilters', () => {
+      const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"female"}, {field:company, operator:Not_Contains, value:"abc"}]) { totalCount,nodes{ id,company,gender,name } }}`;
+      const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
+      const mockColumnCompany = { id: 'company', field: 'company' } as Column;
+      const mockColumnFilters = {
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string, },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: '<>', type: FieldType.string, },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
+    it('should return a query with multiple filters when the filters object has multiple search with Equal & Not Contains and they are passed as a filter trigger by a filter event and is of type ColumnFilters', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"female"}, {field:company, operator:Not_Contains, value:"abc"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;

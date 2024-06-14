@@ -277,12 +277,25 @@ describe('SelectFilter', () => {
 
   it('should provide boolean values and expect "getValues" to be converted to string', () => {
     mockColumn.filter!.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
+
     filter.init(filterArguments);
     filter.setValues([false]);
     const values = filter.getValues();
 
     expect(values).toEqual(['false']);
     expect(values.length).toBe(1);
+  });
+
+  it('should be able to call "setValues" and call an event trigger', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    mockColumn.filter!.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
+
+    filter.init(filterArguments);
+    filter.setValues([false], 'NE', true);
+    const values = filter.getValues();
+
+    expect(values).toEqual(['false']);
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'NE', searchTerms: ['false'], shouldTriggerQuery: true });
   });
 
   it('should have empty array returned from "getValues" when nothing is set', () => {

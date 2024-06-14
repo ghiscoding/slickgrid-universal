@@ -7,7 +7,7 @@ import { extend } from './nodeExtend';
  * @param inputItem
  * @param itemIdPropName
  */
-export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, itemIdPropName = 'id') {
+export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, itemIdPropName = 'id'): void {
   let arrayRowIndex = -1;
   if (inputItem && typeof inputItem === 'object' && itemIdPropName in inputItem) {
     arrayRowIndex = inputArray.findIndex((item) => item[itemIdPropName as keyof T] === inputItem[itemIdPropName as keyof T]);
@@ -81,24 +81,24 @@ export function deepMerge(target: any, ...sources: any[]): any {
       if (source.hasOwnProperty(prop)) {
         if (prop in target) {
           // handling merging of two properties with equal names
-          if (typeof target[prop] !== 'object') {
-            target[prop] = source[prop];
+          if (typeof (target as any)[prop] !== 'object') {
+            (target as any)[prop] = (source as any)[prop];
           } else {
-            if (typeof source[prop] !== 'object') {
-              target[prop] = source[prop];
+            if (typeof (source as any)[prop] !== 'object') {
+              (target as any)[prop] = (source as any)[prop];
             } else {
-              if (target[prop].concat && source[prop].concat) {
+              if ((target as any)[prop].concat && (source as any)[prop].concat) {
                 // two arrays get concatenated
-                target[prop] = target[prop].concat(source[prop]);
+                (target as any)[prop] = (target as any)[prop].concat((source as any)[prop]);
               } else {
                 // two objects get merged recursively
-                target[prop] = deepMerge(target[prop], source[prop]);
+                (target as any)[prop] = deepMerge((target as any)[prop], (source as any)[prop]);
               }
             }
           }
         } else {
           // new properties get added to target
-          target[prop] = source[prop];
+          (target as any)[prop] = (source as any)[prop];
         }
       }
     });
@@ -110,7 +110,7 @@ export function deepMerge(target: any, ...sources: any[]): any {
  * Empty an object properties by looping through them all and deleting them
  * @param obj - input object
  */
-export function emptyObject(obj: any) {
+export function emptyObject(obj: any): any {
   if (isObject(obj)) {
     Object.keys(obj).forEach(key => {
       if (obj.hasOwnProperty(key)) {
@@ -131,7 +131,11 @@ export function emptyObject(obj: any) {
  * @param {Boolean} [addReturn] - when using ES6 function as single liner, we could add the missing `return ...`
  * @returns
  */
-export function getFunctionDetails(fn: AnyFunction, addReturn = true) {
+export function getFunctionDetails(fn: AnyFunction, addReturn = true): {
+  params: string[];
+  body: string;
+  isAsync: boolean;
+} {
   let isAsyncFn = false;
 
   const getFunctionBody = (func: AnyFunction) => {
@@ -164,7 +168,7 @@ export function getFunctionDetails(fn: AnyFunction, addReturn = true) {
   return {
     params: getFunctionParams(fn),
     body: getFunctionBody(fn),
-    isAsync: isAsyncFn,
+    isAsync: isAsyncFn satisfies typeof isAsyncFn as boolean,
   };
 }
 
@@ -193,7 +197,7 @@ export function isDefinedNumber<T>(value: T | undefined | null): value is T {
  * @param item
  * @returns {boolean}
  */
-export function isObject(item: any) {
+export function isObject(item: any): item is object {
   return item !== null && typeof item === 'object' && !Array.isArray(item) && !(item instanceof Date);
 }
 
@@ -202,20 +206,12 @@ export function isObject(item: any) {
  * @param val
  * @returns {boolean}
  */
-export function isPrimitiveValue(val: any) {
+export function isPrimitiveValue(val: any): boolean {
   return typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string' || val === null || val === undefined;
 }
 
-export function isPrimitiveOrHTML(val: any) {
+export function isPrimitiveOrHTML(val: any): boolean {
   return val instanceof HTMLElement || val instanceof DocumentFragment || isPrimitiveValue(val);
-}
-
-/**
- * Check if a value has any data (undefined, null or empty string will return False...)
- * NOTE: a `false` boolean is consider as having data so it will return True
- */
-export function hasData(value: any): boolean {
-  return value !== undefined && value !== null && value !== '';
 }
 
 /**
@@ -224,7 +220,7 @@ export function hasData(value: any): boolean {
  * @param value - input value of any type
  * @param strict - when using strict it also check for strict equality, e.g "3" in strict mode would return False but True when non-strict
  */
-export function isNumber(value: any, strict = false) {
+export function isNumber(value: any, strict = false): value is number {
   if (strict) {
     return (value === null || value === undefined || typeof value === 'string') ? false : !isNaN(value);
   }
@@ -232,7 +228,7 @@ export function isNumber(value: any, strict = false) {
 }
 
 /** Check if an object is empty, it will also be considered empty when the input is null, undefined or isn't an object */
-export function isObjectEmpty(obj: unknown) {
+export function isObjectEmpty(obj: unknown): boolean {
   return !obj || (obj && typeof obj === 'object' && Object.keys(obj).length === 0);
 }
 
@@ -247,13 +243,13 @@ export function parseBoolean(input: any): boolean {
  * @param {Boolean} shouldLowerCase - should we also lowercase the string output?
  * @returns
  */
-export function removeAccentFromText(text: string, shouldLowerCase = false) {
+export function removeAccentFromText(text: string, shouldLowerCase = false): string {
   const normalizedText = (typeof text.normalize === 'function') ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : text;
   return shouldLowerCase ? normalizedText.toLowerCase() : normalizedText;
 }
 
 /** Set the object value of deeper node from a given dot (.) notation path (e.g.: "user.firstName") */
-export function setDeepValue<T = unknown>(obj: T, path: string | string[], value: any) {
+export function setDeepValue<T = unknown>(obj: T, path: string | string[], value: any): void {
   if (typeof path === 'string') {
     path = path.split('.');
   }
@@ -262,7 +258,7 @@ export function setDeepValue<T = unknown>(obj: T, path: string | string[], value
     const e = path.shift() as keyof T;
     if (obj && e !== undefined) {
       setDeepValue(
-        (obj)[e] = (hasData(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call((obj)[e]) === '[object Object]'))
+        (obj)[e] = (isDefined(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call((obj)[e]) === '[object Object]'))
           ? (obj)[e]
           : {} as any,
         path,

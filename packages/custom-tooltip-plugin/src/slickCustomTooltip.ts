@@ -97,7 +97,7 @@ export class SlickCustomTooltip {
     return this._addonOptions;
   }
 
-  get cancellablePromise() {
+  get cancellablePromise(): CancellablePromiseWrapper<any> | undefined {
     return this._cancellablePromise;
   }
 
@@ -138,11 +138,11 @@ export class SlickCustomTooltip {
     return this._tooltipElm;
   }
 
-  addRxJsResource(rxjs: RxJsFacade) {
+  addRxJsResource(rxjs: RxJsFacade): void {
     this._rxjs = rxjs;
   }
 
-  init(grid: SlickGrid, containerService: ContainerService) {
+  init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
     this._rxjs = containerService.get<RxJsFacade>('RxJsFacade');
     this._sharedService = containerService.get<SharedService>('SharedService');
@@ -156,7 +156,7 @@ export class SlickCustomTooltip {
       .subscribe(grid.onHeaderRowMouseOut, this.hideTooltip.bind(this));
   }
 
-  dispose() {
+  dispose(): void {
     // hide (remove) any tooltip and unsubscribe from all events
     this.hideTooltip();
     this._cancellablePromise = undefined;
@@ -167,7 +167,7 @@ export class SlickCustomTooltip {
    * hide (remove) tooltip from the DOM, it will also remove it from the DOM and also cancel any pending requests (as mentioned below).
    * When using async process, it will also cancel any opened Promise/Observable that might still be pending.
    */
-  hideTooltip() {
+  hideTooltip(): void {
     this._cancellablePromise?.cancel();
     this._observable$?.unsubscribe();
     const cssClasses = classNameToList(this.className).join('.');
@@ -179,7 +179,7 @@ export class SlickCustomTooltip {
     return this._addonOptions;
   }
 
-  setOptions(newOptions: CustomTooltipOption) {
+  setOptions(newOptions: CustomTooltipOption): void {
     this._addonOptions = { ...this._addonOptions, ...newOptions } as CustomTooltipOption;
   }
 
@@ -191,7 +191,7 @@ export class SlickCustomTooltip {
    * Async process callback will hide any prior tooltip & then merge the new result with the item `dataContext` under a `__params` property
    * (unless a new prop name is provided) to provice as dataContext object to the asyncPostFormatter.
    */
-  protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number; }, value: any, columnDef: Column, dataContext: any) {
+  protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number; }, value: any, columnDef: Column, dataContext: any): void {
     this.hideTooltip();
     const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
     if (this._cellAddonOptions?.useRegularTooltip) {
@@ -202,7 +202,7 @@ export class SlickCustomTooltip {
   }
 
   /** depending on the selector type, execute the necessary handler code */
-  protected handleOnHeaderMouseOverByType(event: SlickEventData, args: any, selector: CellType) {
+  protected handleOnHeaderMouseOverByType(event: SlickEventData, args: any, selector: CellType): void {
     this._cellType = selector;
     this._mousePosition = { x: event.clientX || 0, y: event.clientY || 0 };
     this._mouseTarget = document.elementFromPoint(event.clientX || 0, event.clientY || 0)?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
@@ -245,7 +245,7 @@ export class SlickCustomTooltip {
     }
   }
 
-  protected async handleOnMouseOver(event: SlickEventData) {
+  protected async handleOnMouseOver(event: SlickEventData): Promise<void> {
     this._cellType = 'slick-cell';
     this._mousePosition = { x: event.clientX || 0, y: event.clientY || 0 };
     this._mouseTarget = document.elementFromPoint(event.clientX || 0, event.clientY || 0)?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
@@ -341,7 +341,7 @@ export class SlickCustomTooltip {
    * then create a temporary html element to easily retrieve the first [title=""] attribute text content
    * also clear the "title" attribute from the grid div text content so that it won't show also as a 2nd browser tooltip
    */
-  protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any) {
+  protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any): void {
     const tmpDiv = document.createElement('div');
     this._grid.applyHtmlCode(tmpDiv, this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item));
     this._hasMultipleTooltips = (this._cellNodeElm?.querySelectorAll(SELECTOR_CLOSEST_TOOLTIP_ATTR).length || 0) > 1;
@@ -388,7 +388,7 @@ export class SlickCustomTooltip {
     this.swapAndClearTitleAttribute(tmpTitleElm, tooltipText);
   }
 
-  protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null) {
+  protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null): void {
     // create the tooltip DOM element with the text returned by the Formatter
     this._tooltipElm = createDomElement('div', { className: this.className });
     this._tooltipBodyElm = createDomElement('div', { className: this.bodyClassName });
@@ -451,7 +451,7 @@ export class SlickCustomTooltip {
    * Most of the time positioning of the tooltip will be to the "top-right" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left" align.
    * Same goes for the top/bottom position, Most of the time positioning the tooltip to the "top" but if we are hovering a cell at the top of the grid and there's no room to display it then we might need to reposition to "bottom" instead.
    */
-  protected reposition(cell: { row: number; cell: number; }) {
+  protected reposition(cell: { row: number; cell: number; }): void {
     if (this._tooltipElm) {
       this._cellNodeElm = this._cellNodeElm || this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
       const cellPosition = getOffset(this._cellNodeElm) || { top: 0, left: 0 };
@@ -518,7 +518,7 @@ export class SlickCustomTooltip {
    * swap and copy the "title" attribute into a new custom attribute then clear the "title" attribute
    * from the grid div text content so that it won't show also as a 2nd browser tooltip
    */
-  protected swapAndClearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string) {
+  protected swapAndClearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string): void {
     // the title attribute might be directly on the slick-cell container element (when formatter returns a result object)
     // OR in a child element (most commonly as a custom formatter)
     let cellWithTitleElm: Element | null | undefined;

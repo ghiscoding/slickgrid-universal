@@ -77,9 +77,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * Initialize the Filter
    */
   constructor(
-    protected readonly translaterService?: TranslaterService,
-    protected readonly collectionService?: CollectionService,
-    protected readonly rxjs?: RxJsFacade
+    protected readonly translaterService?: TranslaterService | undefined,
+    protected readonly collectionService?: CollectionService | undefined,
+    protected readonly rxjs?: RxJsFacade | undefined
   ) {
     this._bindEventService = new BindingEventService();
   }
@@ -156,7 +156,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   /**
    * Initialize the filter template
    */
-  init(args: FilterArguments) {
+  init(args: FilterArguments): Promise<any[] | undefined> {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
@@ -218,21 +218,21 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   /**
    * Clear the filter value
    */
-  clear(shouldTriggerQuery = true) {
+  clear(shouldTriggerQuery = true): void {
     if (this._filterElm) {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._filterElm.value = '';
       this._filterElm.dispatchEvent(new CustomEvent('input'));
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
     }
   }
 
   /**
    * destroy the filter
    */
-  destroy() {
+  destroy(): void {
     if (typeof this._instance?.destroy === 'function') {
       this._instance.destroy();
     }
@@ -248,22 +248,25 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     unsubscribeAll(this.subscriptions);
   }
 
-  getValues() {
-    return this._filterElm?.value;
+  getValues(): string {
+    return this._filterElm?.value || '';
   }
 
   /** Set value(s) on the DOM element  */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     if (values && this._filterElm) {
       this._filterElm.value = values as string;
     }
 
     // add/remove "filled" class name
-    const classCmd = this.getValues() !== '' ? 'add' : 'remove';
-    this._filterElm?.classList[classCmd]('filled');
+    this.updateFilterStyle(this.getValues() !== '');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
+
+    if (triggerChange) {
+      this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: [this.getValues()], shouldTriggerQuery: true });
+    }
   }
 
   //
@@ -310,7 +313,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * They each have their own purpose, the "propertyObserver" will trigger once the collection is replaced entirely
    * while the "collectionObverser" will trigger on collection changes (`push`, `unshift`, `splice`, ...)
    */
-  protected watchCollectionChanges() {
+  protected watchCollectionChanges(): void {
     if (this.columnFilter?.collection) {
       // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
       collectionObserver(this.columnFilter.collection, (updatedArray) => {
@@ -332,7 +335,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     }
   }
 
-  renderDomElement(collection?: any[]) {
+  renderDomElement(collection?: any[]): void {
     if (!Array.isArray(collection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       collection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
@@ -374,7 +377,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * @param searchTerm
    * @returns
    */
-  protected createFilterElement(collection?: any[], searchTerm?: SearchTerm) {
+  protected createFilterElement(collection?: any[], searchTerm?: SearchTerm): HTMLInputElement {
     this._collection = collection;
     const columnId = this.columnDef?.id ?? '';
     emptyElement(this.filterContainerElm);
@@ -501,7 +504,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  handleSelect(item: AutocompleteSearchItem) {
+  handleSelect(item: AutocompleteSearchItem): void | boolean {
     if (item !== undefined) {
       const event = undefined; // TODO do we need the event?
 
@@ -516,8 +519,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       itemValue = this.trimWhitespaceWhenEnabled(itemValue);
 
       // add/remove "filled" class name
-      const classCmd = itemValue === '' ? 'remove' : 'add';
-      this._filterElm?.classList[classCmd]('filled');
+      this.updateFilterStyle(itemValue !== '');
 
       this.setValues(itemLabel);
       this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [itemValue], shouldTriggerQuery: this._shouldTriggerQuery });
@@ -529,7 +531,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     return false;
   }
 
-  protected handleOnInputChange(e: DOMEvent<HTMLInputElement>) {
+  protected handleOnInputChange(e: DOMEvent<HTMLInputElement>): void {
     let value = e?.target?.value ?? '';
     const shouldTriggerOnEveryKeyStroke = this.filterOptions.triggerOnEveryKeyStroke ?? false;
 
@@ -545,13 +547,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
         callbackArgs.searchTerms = [value];
       }
 
-      if (value !== '') {
-        this.isItemSelected = true;
-        this._filterElm?.classList.add('filled');
-      } else {
-        this.isItemSelected = false;
-        this._filterElm?.classList.remove('filled');
-      }
+      this.updateFilterStyle(value !== '');
       this.callback(e, callbackArgs);
     }
 
@@ -560,14 +556,14 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this._shouldTriggerQuery = true;
   }
 
-  protected renderRegularItem(item: T) {
+  protected renderRegularItem(item: T): HTMLDivElement {
     const itemLabel = (typeof item === 'string' ? item : item?.label ?? '') as string;
     return createDomElement('div', {
       textContent: itemLabel || ''
     });
   }
 
-  protected renderCustomItem(item: T) {
+  protected renderCustomItem(item: T): HTMLDivElement {
     const templateString = this._autocompleterOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
@@ -576,7 +572,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     return tmpElm;
   }
 
-  protected renderCollectionItem(item: any) {
+  protected renderCollectionItem(item: any): HTMLDivElement {
     const isRenderHtmlEnabled = this.columnFilter?.enableRenderHtml ?? false;
     const prefixText = item.labelPrefix || '';
     const labelText = item.label || '';
@@ -597,12 +593,22 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * @param value - value found which could be a string or an object
    * @returns - trimmed value when it is a string and the feature is enabled
    */
-  protected trimWhitespaceWhenEnabled(value: any) {
+  protected trimWhitespaceWhenEnabled(value: any): any {
     let outputValue = value;
     const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
     if (typeof value === 'string' && enableWhiteSpaceTrim) {
       outputValue = value.trim();
     }
     return outputValue;
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    this.isItemSelected = isFilled;
+    if (isFilled) {
+      this._filterElm.classList.add('filled');
+    } else {
+      this._filterElm.classList.remove('filled');
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, hasData, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { SlickEventData, type SlickGrid } from '../core/index';
 import { Constants } from '../constants';
@@ -31,6 +31,7 @@ export class SliderFilter implements Filter {
   protected _clearFilterTriggered = false;
   protected _currentValue?: number;
   protected _currentValues?: number[];
+  protected _lastSearchValue?: number | string;
   protected _shouldTriggerQuery = true;
   protected _sliderOptions!: CurrentSliderOption;
   protected _operator?: OperatorType | OperatorString;
@@ -45,14 +46,14 @@ export class SliderFilter implements Filter {
   protected _sliderTrackElm!: HTMLDivElement;
   protected _sliderLeftInputElm?: HTMLInputElement;
   protected _sliderRightInputElm?: HTMLInputElement;
-  protected _sliderTrackFilledColor = DEFAULT_SLIDER_TRACK_FILLED_COLOR;
+  protected _sliderTrackFilledColor: string = DEFAULT_SLIDER_TRACK_FILLED_COLOR;
   sliderType: SliderType = 'double';
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -106,7 +107,7 @@ export class SliderFilter implements Filter {
   }
 
   /** Initialize the Filter */
-  init(args: FilterArguments) {
+  init(args: FilterArguments): void {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
@@ -125,7 +126,7 @@ export class SliderFilter implements Filter {
   }
 
   /** Clear the filter value */
-  clear(shouldTriggerQuery = true) {
+  clear(shouldTriggerQuery = true): void {
     if (this._filterElm) {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
@@ -163,14 +164,13 @@ export class SliderFilter implements Filter {
           this.renderSliderValues(undefined, lowestValue);
         }
       }
-      this._divContainerFilterElm.classList.remove('filled');
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
       this.callback(undefined, { columnDef: this.columnDef, clearFilterTriggered: true, shouldTriggerQuery, searchTerms: [] });
     }
   }
 
   /** destroy the filter */
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this._sliderTrackElm?.remove();
     this._sliderLeftInputElm?.remove();
@@ -182,7 +182,7 @@ export class SliderFilter implements Filter {
    * @param leftValue number
    * @param rightValue number
    */
-  renderSliderValues(leftValue?: number | string, rightValue?: number | string) {
+  renderSliderValues(leftValue?: number | string | undefined, rightValue?: number | string | undefined): void {
     if (this._leftSliderNumberElm?.textContent && leftValue) {
       this._leftSliderNumberElm.textContent = leftValue.toString();
     }
@@ -192,7 +192,7 @@ export class SliderFilter implements Filter {
   }
 
   /** get current slider value(s), it could be a single value or an array of 2 values depending on the slider filter type */
-  getValues() {
+  getValues(): number | number[] | undefined {
     return this.sliderType === 'double' ? this._currentValues : this._currentValue;
   }
 
@@ -200,7 +200,7 @@ export class SliderFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     if (values) {
       let sliderVals: Array<number | string | undefined> = [];
       const term1: SearchTerm | undefined = Array.isArray(values) ? values?.[0] : values;
@@ -211,7 +211,7 @@ export class SliderFilter implements Filter {
         if (typeof term1 === 'string' && (term1 as string).indexOf('..') > 0) {
           sliderVals = (term1 as string).split('..');
           this._currentValue = +(sliderVals?.[0] ?? 0);
-        } else if (hasData(term1) || term1 === '') {
+        } else if (isDefined(term1) || term1 === '') {
           this._currentValue = term1 === null ? undefined : +term1;
           sliderVals = [term1 as string | number];
         }
@@ -239,9 +239,9 @@ export class SliderFilter implements Filter {
 
     const val = this.getValues();
     const vals = val === undefined ? [] : Array.isArray(val) ? val : [val];
-    (vals.length > 0)
-      ? this._filterElm.classList.add('filled')
-      : this._filterElm.classList.remove('filled');
+
+    // set the operator when defined
+    this.updateFilterStyle(vals.length > 0);
 
     // set the operator when defined
     if (operator !== undefined) {
@@ -251,6 +251,10 @@ export class SliderFilter implements Filter {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
       this._selectOperatorElm.value = operatorShorthand;
     }
+
+    if (triggerChange) {
+      this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: vals, shouldTriggerQuery: true });
+    }
   }
 
   /**
@@ -259,7 +263,7 @@ export class SliderFilter implements Filter {
    * https://codingartistweb.com/2021/06/double-range-slider-html-css-javascript/
    * @param searchTerm optional preset search terms
    */
-  protected createDomFilterElement(searchTerms?: SearchTerm | SearchTerm[]) {
+  protected createDomFilterElement(searchTerms?: SearchTerm | SearchTerm[]): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
     const minValue = +(this.columnFilter.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
     const maxValue = +(this.columnFilter.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
@@ -346,7 +350,7 @@ export class SliderFilter implements Filter {
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (Array.isArray(searchTerms) && searchTerms.length > 0 && searchTerms[0] !== '') {
-      this._divContainerFilterElm.classList.add('filled');
+      this.updateFilterStyle(true);
       this._currentValue = defaultStartValue;
     }
     if (this.filterOptions.sliderStartValue !== undefined || this.columnFilter.minValue !== undefined) {
@@ -388,7 +392,7 @@ export class SliderFilter implements Filter {
   }
 
   /** handle value change event triggered, trigger filter callback & update "filled" class name */
-  protected onValueChanged(e: MouseEvent) {
+  protected onValueChanged(e: MouseEvent): void {
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
     let value;
     let searchTerms: SearchTerm[];
@@ -408,15 +412,17 @@ export class SliderFilter implements Filter {
     }
 
     if (this._clearFilterTriggered) {
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
     } else {
       const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
-      value === '' ? this._filterElm.classList.remove('filled') : this._filterElm.classList.add('filled');
+      this.updateFilterStyle(value !== '');
 
       // when changing compound operator, we don't want to trigger the filter callback unless the filter input is also provided
-      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
-      if (this.sliderType !== 'compound' || (!skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined)) {
+      const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      const hasSkipNullValChanged = (skipNullInput && isDefined(this._currentValue)) || (!isDefined(this._currentValue) && isDefined(this._lastSearchValue));
+
+      if (this.sliderType !== 'compound' || !skipNullInput || hasSkipNullValChanged) {
         this.callback(e, { columnDef: this.columnDef, operator: selectedOperator || '', searchTerms: searchTerms! as SearchTerm[], shouldTriggerQuery: this._shouldTriggerQuery });
       }
     }
@@ -428,15 +434,16 @@ export class SliderFilter implements Filter {
     // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
     // the minimum requirements for tooltip to work are the columnDef and targetElement
     this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    this._lastSearchValue = value;
   }
 
-  protected changeBothSliderFocuses(isAddingFocus: boolean) {
+  protected changeBothSliderFocuses(isAddingFocus: boolean): void {
     const addRemoveCmd = isAddingFocus ? 'add' : 'remove';
     this._sliderLeftInputElm?.classList[addRemoveCmd]('focus');
     this._sliderRightInputElm?.classList[addRemoveCmd]('focus');
   }
 
-  protected slideLeftInputChanged(e: Event) {
+  protected slideLeftInputChanged(e: Event): void {
     const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
 
@@ -460,7 +467,7 @@ export class SliderFilter implements Filter {
     this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
   }
 
-  protected slideRightInputChanged(e: Event) {
+  protected slideRightInputChanged(e: Event): void {
     const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
 
@@ -471,7 +478,7 @@ export class SliderFilter implements Filter {
     this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
   }
 
-  protected sliderLeftOrRightChanged(e: Event, sliderLeftVal: number, sliderRightVal: number) {
+  protected sliderLeftOrRightChanged(e: Event, sliderLeftVal: number, sliderRightVal: number): void {
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
@@ -490,7 +497,7 @@ export class SliderFilter implements Filter {
     this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
   }
 
-  protected sliderTrackClicked(e: MouseEvent) {
+  protected sliderTrackClicked(e: MouseEvent): void {
     e.preventDefault();
     const sliderTrackX = e.offsetX;
     const sliderTrackWidth = this._sliderTrackElm.offsetWidth;
@@ -515,7 +522,7 @@ export class SliderFilter implements Filter {
     }
   }
 
-  protected updateTrackFilledColorWhenEnabled() {
+  protected updateTrackFilledColorWhenEnabled(): void {
     if ((this.filterOptions as SliderRangeOption)?.enableSliderTrackColoring && this._sliderRightInputElm) {
       let percent1 = 0;
       if (this._sliderLeftInputElm) {
@@ -530,6 +537,17 @@ export class SliderFilter implements Filter {
 
       this._sliderTrackElm.style.background = bg;
       this._sliderOptions.sliderTrackBackground = bg;
+    }
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    if (isFilled) {
+      this._divContainerFilterElm.classList.add('filled');
+      this._filterElm?.classList.add('filled');
+    } else {
+      this._divContainerFilterElm.classList.remove('filled');
+      this._filterElm?.classList.remove('filled');
     }
   }
 }

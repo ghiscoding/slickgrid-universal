@@ -20,13 +20,13 @@ const noop = () => { };
 */
 export class SlickCellExternalCopyManager {
   pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
-  onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCells');
-  onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCancelled');
-  onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>('onPasteCells');
-  onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>('onBeforePasteCell');
+  onCopyCells: SlickEvent<{ ranges: SlickRange[]; }>;
+  onCopyCancelled: SlickEvent<{ ranges: SlickRange[]; }>;
+  onPasteCells: SlickEvent<{ ranges: SlickRange[]; }>;
+  onBeforePasteCell: SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>;
 
   protected _addonOptions!: ExcelCopyBufferOption;
-  protected _bodyElement = document.body;
+  protected _bodyElement: HTMLElement = document.body;
   protected _clearCopyTI?: NodeJS.Timeout;
   protected _copiedCellStyle = 'copied';
   protected _copiedCellStyleLayerKey = 'copy-manager';
@@ -37,10 +37,14 @@ export class SlickCellExternalCopyManager {
   protected _onCopySuccess?: (rowCount: number) => void;
 
   constructor() {
+    this.onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCells');
+    this.onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCancelled');
+    this.onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>('onPasteCells');
+    this.onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>('onBeforePasteCell');
     this._eventHandler = new SlickEventHandler();
   }
 
-  get addonOptions() {
+  get addonOptions(): ExcelCopyBufferOption {
     return this._addonOptions;
   }
 
@@ -48,7 +52,7 @@ export class SlickCellExternalCopyManager {
     return this._eventHandler;
   }
 
-  init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGrid, options?: ExcelCopyBufferOption): void {
     this._grid = grid;
     this._addonOptions = { ...this._addonOptions, ...options };
     this._copiedCellStyleLayerKey = this._addonOptions.copiedCellStyleLayerKey || 'copy-manager';
@@ -100,11 +104,11 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  dispose() {
+  dispose(): void {
     this._eventHandler.unsubscribeAll();
   }
 
-  clearCopySelection() {
+  clearCopySelection(): void {
     this._grid.removeCellCssStyles(this._copiedCellStyleLayerKey);
   }
 
@@ -118,7 +122,7 @@ export class SlickCellExternalCopyManager {
     return getHtmlStringOutput(columnDef.name || '', 'innerHTML');
   }
 
-  getDataItemValueForColumn(item: any, columnDef: Column, row: number, cell: number, event: SlickEventData) {
+  getDataItemValueForColumn(item: any, columnDef: Column, row: number, cell: number, event: SlickEventData): string {
     if (typeof this._addonOptions.dataItemColumnValueExtractor === 'function') {
       const val = this._addonOptions.dataItemColumnValueExtractor(item, columnDef, row, cell) as string | HTMLElement;
       if (val) {
@@ -200,7 +204,7 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  setIncludeHeaderWhenCopying(includeHeaderWhenCopying: boolean) {
+  setIncludeHeaderWhenCopying(includeHeaderWhenCopying: boolean): void {
     this._addonOptions.includeHeaderWhenCopying = includeHeaderWhenCopying;
   }
 
@@ -208,7 +212,7 @@ export class SlickCellExternalCopyManager {
   // protected functions
   // ---------------------
 
-  protected createTextBox(innerText: string) {
+  protected createTextBox(innerText: string): HTMLTextAreaElement {
     const textAreaElm = createDomElement(
       'textarea',
       {
@@ -221,7 +225,7 @@ export class SlickCellExternalCopyManager {
     return textAreaElm;
   }
 
-  protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement) {
+  protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement): void {
     const columns = grid.getColumns();
     const clipText = textAreaElement.value;
     const clipRows = clipText.split(/[\n\f\r](?=(?:[^"]*"[^"]*")*[^"]*$)/);
@@ -514,7 +518,7 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  protected markCopySelection(ranges: SlickRange[]) {
+  protected markCopySelection(ranges: SlickRange[]): void {
     this.clearCopySelection();
 
     const columns = this._grid.getColumns();

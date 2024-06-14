@@ -30,7 +30,7 @@ export class SlickCellRangeDecorator {
     this._options = deepMerge(this._defaults, options);
   }
 
-  get addonOptions() {
+  get addonOptions(): CellRangeDecoratorOption {
     return this._options;
   }
 
@@ -39,18 +39,18 @@ export class SlickCellRangeDecorator {
   }
 
   /** Dispose the plugin. */
-  destroy() {
+  destroy(): void {
     this.hide();
   }
 
-  init() { }
+  init(): void { }
 
-  hide() {
+  hide(): void {
     this._elem?.remove();
     this._elem = null;
   }
 
-  show(range: SlickRange) {
+  show(range: SlickRange): HTMLDivElement {
     if (!this._elem) {
       this._elem = createDomElement('div', { className: this._options.selectionCssClass });
       Object.keys(this._options.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {

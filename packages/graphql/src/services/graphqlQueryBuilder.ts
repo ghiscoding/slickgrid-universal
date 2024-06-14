@@ -14,7 +14,7 @@ export default class GraphqlQueryBuilder {
   body: any;
 
   /* Constructor, query/mutator you wish to use, and an alias or filter arguments. */
-  constructor(protected queryFnName: string, aliasOrFilter?: string | object) {
+  constructor(protected queryFnName: string, aliasOrFilter?: string | object | undefined) {
     if (typeof aliasOrFilter === 'string') {
       this.alias = aliasOrFilter;
     } else if (typeof aliasOrFilter === 'object') {
@@ -30,7 +30,7 @@ export default class GraphqlQueryBuilder {
    * The parameters to run the query against.
    * @param filters An object mapping attribute to values
    */
-  filter(filters: any) {
+  filter(filters: any): this {
     for (const prop of Object.keys(filters)) {
       if (typeof filters[prop] === 'function') {
         continue;
@@ -48,7 +48,7 @@ export default class GraphqlQueryBuilder {
    * Outlines the properties you wish to be returned from the query.
    * @param properties representing each attribute you want Returned
    */
-  find(...searches: any[]) { // THIS NEED TO BE A "FUNCTION" to scope 'arguments'
+  find(...searches: any[]): this { // THIS NEED TO BE A "FUNCTION" to scope 'arguments'
     if (!searches || !Array.isArray(searches) || searches.length === 0) {
       throw new TypeError(`find value can not be >>falsy<<`);
     }
@@ -63,7 +63,7 @@ export default class GraphqlQueryBuilder {
    * set an alias for this result.
    * @param alias
    */
-  setAlias(alias: string) {
+  setAlias(alias: string): void {
     this.alias = alias;
   }
 
@@ -71,7 +71,7 @@ export default class GraphqlQueryBuilder {
    * Return to the formatted query string
    * @return
    */
-  toString() {
+  toString(): string {
     if (this.body === undefined) {
       throw new ReferenceError(`return properties are not defined. use the 'find' function to defined them`);
     }
@@ -83,7 +83,7 @@ export default class GraphqlQueryBuilder {
   // protected functions
   // --------------------
 
-  protected parceFind(_levelA: any[]) {
+  protected parceFind(_levelA: any[]): string {
     const propsA = _levelA.map((_currentValue, index) => {
       const itemX = _levelA[index];
 
@@ -111,7 +111,7 @@ export default class GraphqlQueryBuilder {
     return propsA.join(',');
   }
 
-  protected getGraphQLValue(value: any) {
+  protected getGraphQLValue(value: any): any {
     if (typeof value === 'string') {
       value = JSON.stringify(value);
     } else if (Array.isArray(value)) {

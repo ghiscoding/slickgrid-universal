@@ -33,22 +33,22 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   pluginName = 'RowDetailView' as const;
 
   /** Fired when the async response finished */
-  onAsyncEndUpdate = new SlickEvent<OnRowDetailAsyncEndUpdateArgs>('onAsyncEndUpdate');
+  onAsyncEndUpdate: SlickEvent<OnRowDetailAsyncEndUpdateArgs>;
 
   /** This event must be used with the "notify" by the end user once the Asynchronous Server call returns the item detail */
-  onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>('onAsyncResponse');
+  onAsyncResponse: SlickEvent<OnRowDetailAsyncResponseArgs>;
 
   /** Fired after the row detail gets toggled */
-  onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>('onAfterRowDetailToggle');
+  onAfterRowDetailToggle: SlickEvent<OnAfterRowDetailToggleArgs>;
 
   /** Fired before the row detail gets toggled */
-  onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>('onBeforeRowDetailToggle');
+  onBeforeRowDetailToggle: SlickEvent<OnBeforeRowDetailToggleArgs>;
 
   /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>('onRowBackToViewportRange');
+  onRowBackToViewportRange: SlickEvent<OnRowBackToViewportRangeArgs>;
 
   /** Fired after a row becomes out of viewport range (when user can't see the row anymore) */
-  onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onRowOutOfViewportRange');
+  onRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
 
   // --
   // protected props
@@ -87,9 +87,15 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly pubSubService: PubSubService) {
     this._eventHandler = new SlickEventHandler();
+    this.onAsyncEndUpdate = new SlickEvent<OnRowDetailAsyncEndUpdateArgs>('onAsyncEndUpdate');
+    this.onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>('onAsyncResponse');
+    this.onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>('onAfterRowDetailToggle');
+    this.onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>('onBeforeRowDetailToggle');
+    this.onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>('onRowBackToViewportRange');
+    this.onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onRowOutOfViewportRange');
   }
 
-  get addonOptions() {
+  get addonOptions(): RowDetailView {
     return this._addonOptions;
   }
 
@@ -102,7 +108,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._dataViewIdProperty;
   }
 
-  get eventHandler() {
+  get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
 
@@ -111,7 +117,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._grid?.getOptions() || {};
   }
 
-  get gridUid() {
+  get gridUid(): string {
     return this._gridUid || (this._grid?.getUID() || '');
   }
 
@@ -132,7 +138,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * @param _grid
    * @param _containerService
    */
-  init(grid: SlickGrid) {
+  init(grid: SlickGrid): void {
     this._grid = grid;
     if (!grid) {
       throw new Error('[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.');
@@ -195,7 +201,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Dispose of the Slick Row Detail View */
-  dispose() {
+  dispose(): void {
     this._eventHandler?.unsubscribeAll();
   }
 
@@ -242,7 +248,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** set or change some of the plugin options */
-  setOptions(options: Partial<RowDetailViewOption>) {
+  setOptions(options: Partial<RowDetailViewOption>): void {
     this._addonOptions = extend(true, {}, this._addonOptions, options) as RowDetailView;
     if (this._addonOptions?.singleRowExpand) {
       this.collapseAll();
@@ -250,7 +256,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Collapse all of the open items */
-  collapseAll() {
+  collapseAll(): void {
     this.dataView.beginUpdate();
     this._expandedRows.forEach(expandedRow => {
       this.collapseDetailView(expandedRow, true);
@@ -259,7 +265,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Colapse an Item so it is not longer seen */
-  collapseDetailView(item: any, isMultipleCollapsing = false) {
+  collapseDetailView(item: any, isMultipleCollapsing = false): void {
     if (!isMultipleCollapsing) {
       this.dataView.beginUpdate();
     }
@@ -286,7 +292,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Expand a row given the dataview item that is to be expanded */
-  expandDetailView(item: any) {
+  expandDetailView(item: any): void {
     if (this._addonOptions?.singleRowExpand) {
       this.collapseAll();
     }
@@ -322,7 +328,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Saves the current state of the detail view */
-  saveDetailView(item: any) {
+  saveDetailView(item: any): void {
     const view = document.querySelector(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
     if (view) {
       const html = view.innerHTML;
@@ -336,7 +342,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
    * the response has to be as "args.item" (or "args.itemDetail") with it's data back
    */
-  handleOnAsyncResponse(e: SlickEventData, args: { item: any; itemDetail: any; detailView?: any; }) {
+  handleOnAsyncResponse(e: SlickEventData, args: { item: any; itemDetail: any; detailView?: any; }): void {
     if (!args || (!args.item && !args.itemDetail)) {
       console.error('SlickRowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
       return;
@@ -365,7 +371,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * In order word, user can choose which rows to be an available row detail (or not) by providing his own logic.
    * @param overrideFn: override function callback
    */
-  expandableOverride(overrideFn: UsabilityOverrideFn) {
+  expandableOverride(overrideFn: UsabilityOverrideFn): void {
     this._expandableOverride = overrideFn;
   }
 
@@ -408,7 +414,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Takes in the item we are filtering and if it is an expanded row returns it's parents row to filter on */
-  getFilterItem(item: any) {
+  getFilterItem(item: any): any {
     if (item[`${this._keyPrefix}isPadding`] && item[`${this._keyPrefix}parent`]) {
       item = item[`${this._keyPrefix}parent`];
     }
@@ -416,7 +422,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Resize the Row Detail View */
-  resizeDetailView(item: any) {
+  resizeDetailView(item: any): void {
     if (!item) {
       return;
     }
@@ -482,7 +488,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /**
    * create the detail ctr node. this belongs to the dev & can be custom-styled as per
    */
-  protected applyTemplateNewLineHeight(item: any) {
+  protected applyTemplateNewLineHeight(item: any): void {
     // the height is calculated by the template row count (how many line of items does the template view have)
     const rowCount = this._addonOptions.panelRows;
 
@@ -497,7 +503,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected calculateOutOfRangeViews() {
+  protected calculateOutOfRangeViews(): void {
     if (this._grid) {
       let scrollDir: 'UP' | 'DOWN';
       const renderedRange = this._grid.getRenderedRange();
@@ -563,7 +569,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected calculateOutOfRangeViewsSimplerVersion() {
+  protected calculateOutOfRangeViewsSimplerVersion(): void {
     if (this._grid) {
       const renderedRange = this._grid.getRenderedRange();
 
@@ -579,19 +585,19 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGrid) {
+  protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGrid): boolean {
     if (typeof this._expandableOverride === 'function') {
       return this._expandableOverride(row, dataContext, grid);
     }
     return true;
   }
 
-  protected checkIsRowOutOfViewportRange(rowIndex: number, renderedRange: any) {
+  protected checkIsRowOutOfViewportRange(rowIndex: number, renderedRange: any): boolean {
     return (Math.abs(renderedRange.bottom - this._gridRowBuffer - rowIndex) > this._visibleRenderedCellCount * 2);
   }
 
   /** Get the Row Detail padding (which are the rows dedicated to the detail panel) */
-  protected getPaddingItem(parent: any, offset: any) {
+  protected getPaddingItem(parent: any, offset: any): any {
     const item: any = {};
 
     Object.keys(this.dataView).forEach(prop => {
@@ -675,7 +681,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** When row is getting toggled, we will handle the action of collapsing/expanding */
-  protected handleAccordionShowHide(item: any) {
+  protected handleAccordionShowHide(item: any): void {
     if (item) {
       if (!item[`${this._keyPrefix}collapsed`]) {
         this.collapseDetailView(item);
@@ -686,7 +692,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Handle mouse click event */
-  protected handleClick(e: SlickEventData, args: { row: number; cell: number; }) {
+  protected handleClick(e: SlickEventData, args: { row: number; cell: number; }): void {
     const dataContext = this._grid.getDataItem(args.row);
 
     if (this.checkExpandableOverride(args.row, dataContext, this._grid)) {
@@ -722,7 +728,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected handleScroll() {
+  protected handleScroll(): void {
     if (this._addonOptions.useSimpleViewportCalc) {
       this.calculateOutOfRangeViewsSimplerVersion();
     } else {
@@ -730,7 +736,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected notifyOutOfViewport(item: any, rowId: number | string) {
+  protected notifyOutOfViewport(item: any, rowId: number | string): void {
     const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
 
     this.onRowOutOfViewportRange.notify({
@@ -743,7 +749,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }, null, this);
   }
 
-  protected notifyBackToViewportWhenDomExist(item: any, rowId: number | string) {
+  protected notifyBackToViewportWhenDomExist(item: any, rowId: number | string): void {
     const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
 
     setTimeout(() => {
@@ -761,7 +767,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }, 100);
   }
 
-  protected syncOutOfViewportArray(rowId: number | string, isAdding: boolean) {
+  protected syncOutOfViewportArray(rowId: number | string, isAdding: boolean): Array<string | number> {
     const arrayRowIndex = this._rowIdsOutOfViewport.findIndex(outOfViewportRowId => outOfViewportRowId === rowId);
 
     if (isAdding && arrayRowIndex < 0) {
@@ -772,7 +778,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._rowIdsOutOfViewport;
   }
 
-  protected toggleRowSelection(rowNumber: number, dataContext: any) {
+  protected toggleRowSelection(rowNumber: number, dataContext: any): void {
     if (this.checkExpandableOverride(rowNumber, dataContext, this._grid)) {
       this.dataView.beginUpdate();
       this.handleAccordionShowHide(dataContext);

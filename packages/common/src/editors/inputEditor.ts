@@ -75,7 +75,7 @@ export class InputEditor implements Editor {
   }
 
   /** Getter of input type (text, number, password) */
-  get inputType() {
+  get inputType(): string {
     return this._inputType;
   }
 
@@ -89,7 +89,7 @@ export class InputEditor implements Editor {
     return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
-  init() {
+  init(): void {
     const columnId = this.columnDef?.id ?? '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
@@ -138,12 +138,12 @@ export class InputEditor implements Editor {
     }
   }
 
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this._input?.remove?.();
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -192,7 +192,7 @@ export class InputEditor implements Editor {
     return '1';
   }
 
-  show() {
+  show(): void {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
@@ -204,7 +204,7 @@ export class InputEditor implements Editor {
     return this._input?.value || '';
   }
 
-  setValue(value: number | string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
+  setValue(value: number | string, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     if (this._input) {
       this._input.value = `${value}`;
 
@@ -220,7 +220,7 @@ export class InputEditor implements Editor {
     }
   }
 
-  applyValue(item: any, state: any) {
+  applyValue(item: any, state: any): void {
     const fieldName = this.columnDef && this.columnDef.field;
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
@@ -254,7 +254,7 @@ export class InputEditor implements Editor {
     return this._isValueTouched;
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     const fieldName = this.columnDef?.field;
 
     if (item && fieldName !== undefined && this._input) {
@@ -272,7 +272,7 @@ export class InputEditor implements Editor {
    * You can reset or clear the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputValue = value ?? this._originalValue ?? '';
     if (this._input) {
       this._originalValue = inputValue;
@@ -287,7 +287,7 @@ export class InputEditor implements Editor {
     }
   }
 
-  save() {
+  save(): void {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
 
@@ -332,7 +332,7 @@ export class InputEditor implements Editor {
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -340,7 +340,7 @@ export class InputEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -364,7 +364,7 @@ export class InputEditor implements Editor {
     );
   }
 
-  protected handleOnInputChange(event: KeyboardEvent) {
+  protected handleOnInputChange(event: KeyboardEvent): void {
     this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
@@ -375,7 +375,7 @@ export class InputEditor implements Editor {
   }
 
   /** When the input value changes (this will cover the input spinner arrows on the right) */
-  protected handleOnMouseWheel(event: KeyboardEvent) {
+  protected handleOnMouseWheel(event: KeyboardEvent): void {
     this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {

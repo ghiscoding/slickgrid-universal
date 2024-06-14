@@ -95,18 +95,33 @@ describe('executeStringFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return False when search term is a substring of the cell value and the operator is "<>" (not contains)', () => {
+  it('should return False when search term is a substring of the cell value and the operator is "<>" (not contains substring)', () => {
     const searchTerms = ['bost'];
     const options = { dataKey: '', operator: '<>', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
   });
 
-  it('should return True when search term is a substring of the cell value and the operator is "!=" (not contains) because "!=" compares agains the entire string', () => {
+  it('should return True when search term is a substring of the cell value and the operator is "!=" (not equal text) because "!=" compares agains the entire string', () => {
     const searchTerms = ['bost'];
     const options = { dataKey: '', operator: '!=', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
+  });
+
+  it('should exclude anything undefined when search term is empty string value and the operator is "!=" (not equal text) because "!=" compares agains the entire string', () => {
+    const searchTerms = [''];
+    const options1 = { dataKey: '', operator: '!=', cellValue: null, fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const options2 = { dataKey: '', operator: '!=', cellValue: '', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const options3 = { dataKey: '', operator: '!=', cellValue: 'hello world', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+
+    const output1 = executeStringFilterCondition(options1, getFilterParsedText(searchTerms));
+    const output2 = executeStringFilterCondition(options2, getFilterParsedText(searchTerms));
+    const output3 = executeStringFilterCondition(options3, getFilterParsedText(searchTerms));
+
+    expect(output1).toBe(false);
+    expect(output2).toBe(false);
+    expect(output3).toBe(true);
   });
 
   it('should return True when input value provided starts with same substring and the operator is empty string', () => {
@@ -171,17 +186,17 @@ describe('executeStringFilterCondition method', () => {
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
   });
-  
+
   it('should return True when input value contains accent is searchTerms value does not contain accent when "ignoreAccentOnStringFilterAndSort" is set in grid options', () => {
     const searchTerms = ['jose'];
-    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: true} as FilterConditionOption;
+    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: true } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
 
   it('should return False when input value contains accent is searchTerms value does not contain accent when "ignoreAccentOnStringFilterAndSort" is not set in grid options', () => {
     const searchTerms = ['jose'];
-    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: false} as FilterConditionOption;
+    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: false } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
   });

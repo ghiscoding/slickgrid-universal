@@ -163,7 +163,7 @@ export function tryParseDate(inputDate?: string | Date, inputFormat?: string, st
  * @param inputDate
  * @returns
  */
-export function toUtcDate(inputDate: string | Date) {
+export function toUtcDate(inputDate: string | Date): Date {
   // to parse as UTC in Tempo, we need to remove the offset (which is a simple inversed offset to cancel itself)
   return removeOffset(inputDate, offset(inputDate, 'utc'));
 };

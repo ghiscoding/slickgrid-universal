@@ -121,21 +121,21 @@ export class SliderEditor implements Editor {
     }
   }
 
-  cancel() {
+  cancel(): void {
     if (this._inputElm) {
       this._inputElm.value = `${this._originalValue}`;
     }
     this.args.cancelChanges();
   }
 
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     this._inputElm?.remove();
     this._editorElm?.remove();
     this._sliderTrackElm?.remove();
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -154,13 +154,13 @@ export class SliderEditor implements Editor {
     }
   }
 
-  focus() {
+  focus(): void {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
     this.grid.focus();
     this._inputElm?.focus();
   }
 
-  show() {
+  show(): void {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
@@ -172,7 +172,7 @@ export class SliderEditor implements Editor {
     return this._inputElm?.value ?? '';
   }
 
-  setValue(value: number | string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
+  setValue(value: number | string, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     if (this._inputElm) {
       this._inputElm.value = `${value}`;
     }
@@ -191,7 +191,7 @@ export class SliderEditor implements Editor {
     }
   }
 
-  applyValue(item: any, state: any) {
+  applyValue(item: any, state: any): void {
     const fieldName = this.columnDef?.field ?? '';
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
@@ -220,7 +220,7 @@ export class SliderEditor implements Editor {
     return this._isValueTouched;
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     const fieldName = this.columnDef?.field ?? '';
 
     if (item && fieldName !== undefined) {
@@ -247,7 +247,7 @@ export class SliderEditor implements Editor {
    * You can reset or clear the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputValue = value ?? this._originalValue ?? 0;
     if (this._inputElm) {
       this._inputElm.value = `${inputValue}`;
@@ -264,7 +264,7 @@ export class SliderEditor implements Editor {
     }
   }
 
-  save() {
+  save(): void {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
 
@@ -277,7 +277,7 @@ export class SliderEditor implements Editor {
     }
   }
 
-  serializeValue() {
+  serializeValue(): string | number | undefined {
     const elmValue: string = this._inputElm?.value ?? '';
     return elmValue !== '' ? parseInt(elmValue, 10) : this._originalValue;
   }
@@ -351,7 +351,7 @@ export class SliderEditor implements Editor {
   }
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -359,7 +359,7 @@ export class SliderEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeEvent(event: MouseEvent) {
+  protected handleChangeEvent(event: MouseEvent): void {
     this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
@@ -370,7 +370,7 @@ export class SliderEditor implements Editor {
     }
   }
 
-  protected handleChangeSliderNumber(event: Event) {
+  protected handleChangeSliderNumber(event: Event): void {
     const value = (<HTMLInputElement>event.target)?.value ?? '';
     if (value !== '') {
       if (!this.editorOptions.hideSliderNumber && this._sliderNumberElm) {
@@ -389,7 +389,7 @@ export class SliderEditor implements Editor {
     this.updateTrackFilledColorWhenEnabled();
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -413,7 +413,7 @@ export class SliderEditor implements Editor {
     );
   }
 
-  protected sliderTrackClicked(e: MouseEvent) {
+  protected sliderTrackClicked(e: MouseEvent): void {
     e.preventDefault();
     const sliderTrackX = e.offsetX;
     const sliderTrackWidth = this._sliderTrackElm.offsetWidth;
@@ -427,7 +427,7 @@ export class SliderEditor implements Editor {
     }
   }
 
-  protected updateTrackFilledColorWhenEnabled() {
+  protected updateTrackFilledColorWhenEnabled(): void {
     if (this.editorOptions.enableSliderTrackColoring && this._inputElm) {
       const percent1 = 0;
       const percent2 = ((+this.getValue() - +this._inputElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._inputElm.min)) * 100;

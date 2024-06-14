@@ -10,9 +10,9 @@ export interface BackendCallbacks {
 }
 
 export class BackendUtilityService {
-  constructor(protected rxjs?: RxJsFacade) { }
+  constructor(protected rxjs?: RxJsFacade | undefined) { }
 
-  addRxJsResource(rxjs: RxJsFacade) {
+  addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;
   }
 
@@ -47,7 +47,7 @@ export class BackendUtilityService {
   }
 
   /** On a backend service api error, we will run the "onError" if there is 1 provided or just throw back the error when nothing is provided */
-  onBackendError(e: any, backendApi: BackendServiceApi) {
+  onBackendError(e: any, backendApi: BackendServiceApi): void {
     if (typeof backendApi?.onError === 'function') {
       backendApi.onError(e);
     } else {
@@ -59,7 +59,7 @@ export class BackendUtilityService {
    * Execute the backend callback, which are mainly the "process" & "postProcess" methods.
    * Also note that "preProcess" was executed prior to this callback
    */
-  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, extraCallbacks?: BackendCallbacks) {
+  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, extraCallbacks?: BackendCallbacks): void {
     if (backendServiceApi) {
       // emit an onFilterChanged event when it's not called by a clear filter
       if (args && !args.clearFilterTriggered && !args.clearSortTriggered && extraCallbacks?.emitActionChangedCallback) {
@@ -105,7 +105,7 @@ export class BackendUtilityService {
   }
 
   /** Refresh the dataset through the Backend Service */
-  refreshBackendDataset(gridOptions: GridOption) {
+  refreshBackendDataset(gridOptions: GridOption): void {
     let query = '';
     const backendApi = gridOptions?.backendServiceApi;
 

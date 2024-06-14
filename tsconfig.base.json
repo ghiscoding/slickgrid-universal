@@ -19,6 +19,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "isolatedDeclarations": true,
     "noImplicitReturns": true,
     "rootDir": ".",
     "sourceMap": true,

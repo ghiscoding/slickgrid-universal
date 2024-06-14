@@ -406,7 +406,9 @@ export default class Example11 {
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (randomFinish < new Date()),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
-        countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
+        countryOfOrigin: i % 33
+          ? (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' }
+          : null
       };
 
       if (!(i % 8)) {

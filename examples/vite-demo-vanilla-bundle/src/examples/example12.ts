@@ -489,7 +489,8 @@ export default class Example12 {
             this.toggleBodyBackground();
           }
         }
-      }
+      },
+      skipCompoundOperatorFilterWithNullInput: true
     };
   }
 

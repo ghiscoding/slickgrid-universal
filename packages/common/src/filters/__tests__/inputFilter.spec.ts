@@ -160,6 +160,16 @@ describe('InputFilter', () => {
       expect(filledInputElm).toBeFalsy();
     });
 
+    it('should be able to call "setValues" and call an event trigger', () => {
+      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      filter.init(filterArguments);
+      filter.setValues('9', '>', true);
+      let filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+
+      expect(filledInputElm).toBeTruthy();
+      expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>', searchTerms: ['>9'], shouldTriggerQuery: true });
+    });
+
     it('should call "setValues" and include an operator and expect the operator to show up in the output search string shown in the filter input text value', () => {
       filter.init(filterArguments);
 

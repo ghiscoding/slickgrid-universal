@@ -2,7 +2,7 @@ import { FieldType } from '../enums/fieldType.enum';
 import type { SortComparer } from '../interfaces/index';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils';
 
-export function compareDates(value1: any, value2: any, sortDirection: number, format?: string, strict?: boolean) {
+export function compareDates(value1: any, value2: any, sortDirection: number, format?: string, strict?: boolean): number {
   let diff = 0;
 
   if (value1 === value2) {

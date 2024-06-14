@@ -165,7 +165,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
-  init() {
+  init(): void {
     this.labelName = this.customStructure?.label ?? 'label';
     this.valueName = this.customStructure?.value ?? 'value';
     this.labelPrefixName = this.customStructure?.labelPrefix ?? 'labelPrefix';
@@ -186,7 +186,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
   }
 
-  destroy() {
+  destroy(): void {
     this._bindEventService.unbindAll();
     if (typeof this._instance?.destroy === 'function') {
       this._instance.destroy();
@@ -195,7 +195,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._elementCollection = null;
   }
 
-  disable(isDisabled = true) {
+  disable(isDisabled = true): void {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
@@ -214,7 +214,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
   }
 
-  focus() {
+  focus(): void {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
     this.grid.focus();
 
@@ -224,7 +224,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
   }
 
-  show() {
+  show(): void {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
@@ -232,11 +232,11 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
   }
 
-  getValue() {
+  getValue(): string {
     return this._inputElm.value;
   }
 
-  setValue(inputValue: any, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
+  setValue(inputValue: any, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     // if user provided a custom structure, we will serialize the value returned from the object with custom structure
     this._inputElm.value = (inputValue?.hasOwnProperty(this.labelName))
       ? inputValue[this.labelName]
@@ -255,7 +255,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
   }
 
-  applyValue(item: any, state: any) {
+  applyValue(item: any, state: any): void {
     let newValue = state;
     const fieldName = this.columnDef?.field;
 
@@ -264,7 +264,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       if (Array.isArray(this.collection) && this.collection.length > 0) {
         newValue = findOrDefault(this.collection, (collectionItem: any) => {
           if (collectionItem && isObject(state) && collectionItem.hasOwnProperty(this.valueName)) {
-            return (collectionItem[this.valueName].toString()) === (state.hasOwnProperty(this.valueName) && state[this.valueName].toString());
+            return (collectionItem[this.valueName].toString()) === (state.hasOwnProperty(this.valueName) && (state as any)[this.valueName].toString());
           } else if (collectionItem && typeof state === 'string' && collectionItem.hasOwnProperty(this.valueName)) {
             return (collectionItem[this.valueName].toString()) === state;
           }
@@ -305,7 +305,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     return this._isValueTouched;
   }
 
-  loadValue(item: any) {
+  loadValue(item: any): void {
     const fieldName = this.columnDef?.field;
 
     if (item && fieldName !== undefined) {
@@ -321,7 +321,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
   }
 
-  clear(clearByDisableCommand = false) {
+  clear(clearByDisableCommand = false): void {
     if (this._inputElm) {
       this._currentValue = '';
       this._defaultTextValue = '';
@@ -343,7 +343,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
    * You can reset the input value,
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
-  reset(value?: any, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+  reset(value?: any, triggerCompositeEventWhenExist = true, clearByDisableCommand = false): void {
     const inputValue = value ?? this._originalValue ?? '';
     if (this._inputElm) {
       this._currentValue = inputValue;
@@ -359,7 +359,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
   }
 
-  save() {
+  save(): void {
     const validation = this.validate();
     const isValid = validation?.valid ?? false;
 
@@ -425,7 +425,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  protected applyInputUsabilityState() {
+  protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
@@ -433,7 +433,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -459,7 +459,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   // this function should be protected but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  handleSelect(item: AutocompleteSearchItem) {
+  handleSelect(item: AutocompleteSearchItem): boolean {
     if (item !== undefined) {
       const event = null; // TODO do we need the event?
       const selectedItem = item;
@@ -492,12 +492,12 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     return false;
   }
 
-  protected renderRegularItem(item: T) {
+  protected renderRegularItem(item: T): HTMLDivElement {
     const itemLabel = (typeof item === 'string' ? item : item?.label ?? '') as string;
     return createDomElement('div', { textContent: itemLabel || '' });
   }
 
-  protected renderCustomItem(item: T) {
+  protected renderCustomItem(item: T): HTMLDivElement {
     const templateString = this._autocompleterOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
@@ -506,7 +506,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     return tmpElm;
   }
 
-  protected renderCollectionItem(item: any) { // CollectionCustomStructure
+  protected renderCollectionItem(item: any): HTMLDivElement {
     const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
     const prefixText = item.labelPrefix || '';
     const labelText = item.label || '';
@@ -522,7 +522,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     return div;
   }
 
-  renderDomElement(collection?: any[]) {
+  renderDomElement(collection?: any[]): void {
     const columnId = this.columnDef?.id ?? '';
     const placeholder = this.columnEditor?.placeholder ?? '';
     const title = this.columnEditor?.title ?? '';
