@@ -240,9 +240,7 @@ export class SlickCellExternalCopyManager {
     this._bodyElement.removeChild(textAreaElement);
 
     for (const clipRow of clipRows) {
-      if (clipRow === '') {
-        clippedRange[j++] = [''];
-      } else if (clipRow.startsWith('"') && clipRow.endsWith('"')) {
+      if (clipRow.startsWith('"') && clipRow.endsWith('"')) {
         clippedRange[j++] = [clipRow
           .replaceAll('\n', this._addonOptions.replaceNewlinesWith || '\n')
           .replaceAll('\r', '')
