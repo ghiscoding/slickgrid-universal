@@ -182,6 +182,21 @@ describe('AutocompleterFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['abc'], shouldTriggerQuery: true });
   });
 
+  it('should be able to call "setValues" and call an event trigger', () => {
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    gridOptionMock.enableFilterTrimWhiteSpace = false;
+    mockColumn.filter.enableTrimWhiteSpace = true;
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues('xyz', 'NE', true);
+    const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
+
+    expect(filterElm).toBeTruthy();
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'NE', searchTerms: ['xyz'], shouldTriggerQuery: true });
+  });
+
   it('should trigger the callback method when user types something in the input and triggerOnEveryKeyStroke is enabled', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };

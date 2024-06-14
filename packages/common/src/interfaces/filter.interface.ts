@@ -44,7 +44,7 @@ export interface Filter {
   getValues?: () => SearchTerm | SearchTerm[] | undefined;
 
   /** Set value(s) on the DOM element */
-  setValues: (values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) => void;
+  setValues: (values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange?: boolean) => void;
 }
 
 export type FilterConstructor = {

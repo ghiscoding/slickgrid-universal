@@ -209,6 +209,16 @@ describe('CompoundSliderFilter', () => {
     expect(filledInputElm).toBeFalsy();
   });
 
+  it('should be able to call "setValues" and call an event trigger', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    filter.init(filterArguments);
+    filter.setValues(9, '>=', true);
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+
+    expect(filledInputElm).toBeTruthy();
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>=', searchTerms: [9], shouldTriggerQuery: true });
+  });
+
   it('should create the input filter with default search terms range when passed as a filter argument', () => {
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
 

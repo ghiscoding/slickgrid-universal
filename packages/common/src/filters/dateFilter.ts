@@ -207,7 +207,7 @@ export class DateFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString): void {
+  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString, triggerChange = false): void {
     let pickerValues: any | any[];
 
     if (this.inputFilterType === 'compound') {
@@ -227,17 +227,18 @@ export class DateFilter implements Filter {
     }
 
     const currentValueOrValues = this.getValues() || [];
-    if (this.getValues() || (Array.isArray(currentValueOrValues) && currentValueOrValues.length > 0 && values)) {
-      this._filterElm.classList.add('filled');
-    } else {
-      this._filterElm.classList.remove('filled');
-    }
+    const searchTerms = Array.isArray(currentValueOrValues) ? currentValueOrValues : [currentValueOrValues];
+    this.updateFilterStyle(searchTerms.length > 0);
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
     if (operator && this._selectOperatorElm) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
       this._selectOperatorElm.value = operatorShorthand;
+    }
+
+    if (triggerChange) {
+      this.callback(undefined, { columnDef: this.columnDef, searchTerms, operator: this.operator, shouldTriggerQuery: true });
     }
   }
 
@@ -489,11 +490,12 @@ export class DateFilter implements Filter {
       this._filterElm.classList.remove('filled');
     } else {
       if (this.inputFilterType === 'range') {
-        (this._currentDateStrings) ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
-        this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]), operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+        const searchTerms = (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]);
+        this.updateFilterStyle(searchTerms.length > 0);
+        this.callback(e, { columnDef: this.columnDef, searchTerms, operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
       } else if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
         const selectedOperator = this._selectOperatorElm.value as OperatorString;
-        this._currentValue ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
+        this.updateFilterStyle(!!this._currentValue);
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
         const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
@@ -509,5 +511,14 @@ export class DateFilter implements Filter {
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
     this._lastSearchValue = this._currentValue;
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    if (isFilled) {
+      this._filterElm.classList.add('filled');
+    } else {
+      this._filterElm.classList.remove('filled');
+    }
   }
 }

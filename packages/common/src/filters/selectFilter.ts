@@ -229,7 +229,7 @@ export class SelectFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     if (values !== undefined && this._msInstance) {
       values = Array.isArray(values)
         ? values.every(x => isPrimitiveValue(x)) ? values.map(String) : values
@@ -240,6 +240,10 @@ export class SelectFilter implements Filter {
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
+
+    if (triggerChange) {
+      this.onTriggerEvent();
+    }
   }
 
   //
@@ -463,7 +467,7 @@ export class SelectFilter implements Filter {
     }
   }
 
-  /** Set value(s) on the DOM element */
+  /** add/remove "filled" CSS class */
   protected updateFilterStyle(isFilled: boolean): void {
     if (isFilled) {
       this.isFilled = true;

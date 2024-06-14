@@ -225,7 +225,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       this.searchTerms = [];
       this._filterElm.value = '';
       this._filterElm.dispatchEvent(new CustomEvent('input'));
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
     }
   }
 
@@ -249,21 +249,24 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   getValues(): string {
-    return this._filterElm?.value;
+    return this._filterElm?.value || '';
   }
 
   /** Set value(s) on the DOM element  */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     if (values && this._filterElm) {
       this._filterElm.value = values as string;
     }
 
     // add/remove "filled" class name
-    const classCmd = this.getValues() !== '' ? 'add' : 'remove';
-    this._filterElm?.classList[classCmd]('filled');
+    this.updateFilterStyle(this.getValues() !== '');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
+
+    if (triggerChange) {
+      this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: [this.getValues()], shouldTriggerQuery: true });
+    }
   }
 
   //
@@ -516,8 +519,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       itemValue = this.trimWhitespaceWhenEnabled(itemValue);
 
       // add/remove "filled" class name
-      const classCmd = itemValue === '' ? 'remove' : 'add';
-      this._filterElm?.classList[classCmd]('filled');
+      this.updateFilterStyle(itemValue !== '');
 
       this.setValues(itemLabel);
       this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [itemValue], shouldTriggerQuery: this._shouldTriggerQuery });
@@ -545,13 +547,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
         callbackArgs.searchTerms = [value];
       }
 
-      if (value !== '') {
-        this.isItemSelected = true;
-        this._filterElm?.classList.add('filled');
-      } else {
-        this.isItemSelected = false;
-        this._filterElm?.classList.remove('filled');
-      }
+      this.updateFilterStyle(value !== '');
       this.callback(e, callbackArgs);
     }
 
@@ -604,5 +600,15 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       outputValue = value.trim();
     }
     return outputValue;
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    this.isItemSelected = isFilled;
+    if (isFilled) {
+      this._filterElm.classList.add('filled');
+    } else {
+      this._filterElm.classList.remove('filled');
+    }
   }
 }

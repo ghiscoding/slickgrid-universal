@@ -164,8 +164,7 @@ export class SliderFilter implements Filter {
           this.renderSliderValues(undefined, lowestValue);
         }
       }
-      this._divContainerFilterElm.classList.remove('filled');
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
       this.callback(undefined, { columnDef: this.columnDef, clearFilterTriggered: true, shouldTriggerQuery, searchTerms: [] });
     }
   }
@@ -201,7 +200,7 @@ export class SliderFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     if (values) {
       let sliderVals: Array<number | string | undefined> = [];
       const term1: SearchTerm | undefined = Array.isArray(values) ? values?.[0] : values;
@@ -240,9 +239,7 @@ export class SliderFilter implements Filter {
 
     const val = this.getValues();
     const vals = val === undefined ? [] : Array.isArray(val) ? val : [val];
-    (vals.length > 0)
-      ? this._filterElm.classList.add('filled')
-      : this._filterElm.classList.remove('filled');
+    this.updateFilterStyle(vals.length > 0);
 
     // set the operator when defined
     if (operator !== undefined) {
@@ -251,6 +248,10 @@ export class SliderFilter implements Filter {
     if (this.operator && this._selectOperatorElm) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
       this._selectOperatorElm.value = operatorShorthand;
+    }
+
+    if (triggerChange) {
+      this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: vals, shouldTriggerQuery: true });
     }
   }
 
@@ -347,7 +348,7 @@ export class SliderFilter implements Filter {
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (Array.isArray(searchTerms) && searchTerms.length > 0 && searchTerms[0] !== '') {
-      this._divContainerFilterElm.classList.add('filled');
+      this.updateFilterStyle(true);
       this._currentValue = defaultStartValue;
     }
     if (this.filterOptions.sliderStartValue !== undefined || this.columnFilter.minValue !== undefined) {
@@ -409,11 +410,11 @@ export class SliderFilter implements Filter {
     }
 
     if (this._clearFilterTriggered) {
-      this._filterElm.classList.remove('filled');
+      this.updateFilterStyle(false);
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
     } else {
       const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
-      value === '' ? this._filterElm.classList.remove('filled') : this._filterElm.classList.add('filled');
+      this.updateFilterStyle(value !== '');
 
       // when changing compound operator, we don't want to trigger the filter callback unless the filter input is also provided
       const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
@@ -534,6 +535,17 @@ export class SliderFilter implements Filter {
 
       this._sliderTrackElm.style.background = bg;
       this._sliderOptions.sliderTrackBackground = bg;
+    }
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    if (isFilled) {
+      this._divContainerFilterElm.classList.add('filled');
+      this._filterElm?.classList.add('filled');
+    } else {
+      this._divContainerFilterElm.classList.remove('filled');
+      this._filterElm?.classList.remove('filled');
     }
   }
 }
