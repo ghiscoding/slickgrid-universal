@@ -168,6 +168,18 @@ describe('CompoundDateFilter', () => {
     expect(filterOperatorElm.value).toBe('>=');
   });
 
+  it('should be able to call "setValues" and call an event trigger', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockDate = '2001-01-02T16:02:02.239Z';
+    filter.init(filterArguments);
+    filter.setValues([mockDate], '>=', true);
+    const filterOperatorElm = divContainer.querySelector('.input-group-prepend.operator select') as HTMLInputElement;
+
+    expect(filter.currentDateOrDates).toEqual(mockDate);
+    expect(filterOperatorElm.value).toBe('>=');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>=', searchTerms: [mockDate], shouldTriggerQuery: true });
+  });
+
   it('should trigger input change event and expect the callback to be called with the date provided in the input', () => {
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');

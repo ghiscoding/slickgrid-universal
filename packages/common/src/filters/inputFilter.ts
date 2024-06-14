@@ -120,11 +120,10 @@ export class InputFilter implements Filter {
       this.searchTerms = [];
       this._filterInputElm.value = '';
       this._currentValue = undefined;
+      this.updateFilterStyle(false);
       if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
-        this._filterContainerElm.classList.remove('filled');
       }
-      this._filterInputElm.classList.remove('filled');
       this.onTriggerEvent(undefined, true);
     }
   }
@@ -143,7 +142,7 @@ export class InputFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     const searchValues = Array.isArray(values) ? values : [values];
     let newInputValue: SearchTerm = '';
     for (const value of searchValues) {
@@ -156,19 +155,18 @@ export class InputFilter implements Filter {
       this._currentValue = this._filterInputElm.value;
     }
 
-    if (this.getValues() !== '') {
-      this._filterContainerElm.classList.add('filled');
-      this._filterInputElm.classList.add('filled');
-    } else {
-      this._filterContainerElm.classList.remove('filled');
-      this._filterInputElm.classList.remove('filled');
-    }
+    // update "filled" CSS class
+    this.updateFilterStyle(this.getValues() !== '');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
     if (operator && this._selectOperatorElm) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
       this._selectOperatorElm.value = operatorShorthand;
+    }
+
+    if (triggerChange) {
+      this.onTriggerEvent(undefined, false);
     }
   }
 
@@ -273,9 +271,7 @@ export class InputFilter implements Filter {
     });
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (searchTerm) {
-      this._filterInputElm.classList.add('filled');
-    }
+    this.updateFilterStyle(!!searchTerm);
     if (searchTerm !== undefined) {
       this._currentValue = searchVal;
     }
@@ -318,7 +314,7 @@ export class InputFilter implements Filter {
   protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false): void {
     if (isClearFilterEvent) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
-      this._filterContainerElm.classList.remove('filled');
+      this.updateFilterStyle(false);
     } else {
       const eventType = event?.type ?? '';
       const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
@@ -332,7 +328,7 @@ export class InputFilter implements Filter {
         this._currentValue = value;
       }
 
-      value === '' ? this._filterContainerElm.classList.remove('filled') : this._filterContainerElm.classList.add('filled');
+      this.updateFilterStyle(value !== '');
       const callbackArgs = { columnDef: this.columnDef, operator: selectedOperator, searchTerms: (value ? [value] : null), shouldTriggerQuery: this._shouldTriggerQuery };
       const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
@@ -352,5 +348,16 @@ export class InputFilter implements Filter {
 
     // reset both flags for next use
     this._shouldTriggerQuery = true;
+  }
+
+  /** add/remove "filled" CSS class */
+  protected updateFilterStyle(isFilled: boolean): void {
+    if (isFilled) {
+      this._filterContainerElm?.classList.add('filled');
+      this._filterInputElm.classList.add('filled');
+    } else {
+      this._filterContainerElm?.classList.remove('filled');
+      this._filterInputElm.classList.remove('filled');
+    }
   }
 }

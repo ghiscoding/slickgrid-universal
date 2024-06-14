@@ -200,8 +200,7 @@ export class SelectFilter implements Filter {
     if (this._msInstance && this._collectionLength > 0) {
       // reload the filter element by it's id, to make sure it's still a valid element (because of some issue in the GraphQL example)
       this._msInstance.setSelects([]);
-      this.filterElm?.classList.remove('filled');
-      this._msInstance?.getParentElement()?.classList.remove('filled');
+      this.updateFilterStyle(false);
       this.searchTerms = [];
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.callback(undefined, { columnDef: this.columnDef, clearFilterTriggered: true, shouldTriggerQuery: this._shouldTriggerQuery });
@@ -229,17 +228,23 @@ export class SelectFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     if (values !== undefined && this._msInstance) {
       values = Array.isArray(values)
         ? values.every(x => isPrimitiveValue(x)) ? values.map(String) : values
         : [values];
       this._msInstance.setSelects(values);
     }
+
+    // set the operator when defined
     this.updateFilterStyle(this.getValues().length > 0);
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
+
+    if (triggerChange) {
+      this.onTriggerEvent();
+    }
   }
 
   //
@@ -463,7 +468,7 @@ export class SelectFilter implements Filter {
     }
   }
 
-  /** Set value(s) on the DOM element */
+  /** add/remove "filled" CSS class */
   protected updateFilterStyle(isFilled: boolean): void {
     if (isFilled) {
       this.isFilled = true;
