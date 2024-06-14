@@ -272,6 +272,9 @@ export class InputFilter implements Filter {
 
     // if there's a search term, we will add the "filled" class for styling purposes
     this.updateFilterStyle(!!searchTerm);
+    if (searchTerm !== undefined) {
+      this._currentValue = searchVal;
+    }
 
     // create the DOM Select dropdown for the Operator
     if (this.inputFilterType === 'single') {
