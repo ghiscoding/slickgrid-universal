@@ -275,8 +275,8 @@ export default class Example11 {
           type: 'string',
           queryField: 'countryOfOrigin.name',
           filterShortcuts: [
-            { title: 'Blank Values', searchTerms: ['< 0'], iconCssClass: 'mdi mdi-filter-minus-outline', },
-            { title: 'Non-Blank Values', searchTerms: ['> 0'], iconCssClass: 'mdi mdi-filter-plus-outline', },
+            { title: 'Blank Values', searchTerms: ['< A'], iconCssClass: 'mdi mdi-filter-minus-outline', },
+            { title: 'Non-Blank Values', searchTerms: ['> A'], iconCssClass: 'mdi mdi-filter-plus-outline', },
           ]
         },
       },

@@ -1,3 +1,5 @@
+import { addDay, format } from '@formkit/tempo';
+
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {
@@ -113,6 +115,124 @@ describe('Example 11 - Batch Editing', () => {
         .find('.right-footer .item-count')
         .should($span => {
           expect(Number($span.text())).to.eq(484);
+        });
+    });
+
+    it('should open header menu of "Country of Origin" and choose "Filter Shortcuts -> Blanks Values" and expect 31 rows', () => {
+      cy.get('.grid11')
+        .find('.slick-header-column:nth-of-type(10)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('[data-command=filter-shortcuts-root-menu]')
+        .should('contain', 'Filter Shortcuts')
+        .trigger('mouseover');
+
+      cy.get('.slick-header-menu.slick-menu-level-1')
+        .find('[data-command=blank-values]')
+        .click();
+
+      cy.get('.search-filter.filter-countryOfOrigin')
+        .invoke('val')
+        .should('equal', '< A');
+
+      cy.get('.grid11')
+        .find('.slick-custom-footer')
+        .find('.right-footer .item-count')
+        .should($span => {
+          expect(Number($span.text())).to.eq(31);
+        });
+    });
+
+    it('should open header menu of "Country of Origin" again then choose "Filter Shortcuts -> Non-Blanks Values" and expect 969 rows', () => {
+      cy.get('.grid11')
+        .find('.slick-header-column:nth-of-type(10)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('[data-command=filter-shortcuts-root-menu]')
+        .should('contain', 'Filter Shortcuts')
+        .trigger('mouseover');
+
+      cy.get('.slick-header-menu.slick-menu-level-1')
+        .find('[data-command=non-blank-values]')
+        .click();
+
+      cy.get('.search-filter.filter-countryOfOrigin')
+        .invoke('val')
+        .should('equal', '> A');
+
+      cy.get('.grid11')
+        .find('.slick-custom-footer')
+        .find('.right-footer .item-count')
+        .should($span => {
+          expect(Number($span.text())).to.eq(969);
+        });
+    });
+
+    it('should open header menu of "Finish" and choose "Filter Shortcuts -> Until Now" and expect below 969 rows', () => {
+      cy.get('.grid11')
+        .find('.slick-header-column:nth-of-type(7)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('[data-command=filter-shortcuts-root-menu]')
+        .should('contain', 'Filter Shortcuts')
+        .trigger('mouseover');
+
+      cy.get('.slick-header-menu.slick-menu-level-1')
+        .find('[data-command=until-now]')
+        .click();
+
+      cy.get('.search-filter.filter-finish .input-group-prepend.operator select')
+        .contains('<=');
+
+      cy.get('.search-filter.filter-finish input.date-picker')
+        .invoke('val')
+        .should('equal', format(new Date(), 'YYYY-MM-DD'));
+
+      cy.get('.grid11')
+        .find('.slick-custom-footer')
+        .find('.right-footer .item-count')
+        .should($span => {
+          expect(Number($span.text())).to.lt(969);
+        });
+    });
+
+    it('should open header menu of "Finish" again then choose "Filter Shortcuts -> In the Future" and expect below 969 rows', () => {
+      cy.get('.grid11')
+        .find('.slick-header-column:nth-of-type(7)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('[data-command=filter-shortcuts-root-menu]')
+        .should('contain', 'Filter Shortcuts')
+        .trigger('mouseover');
+
+      cy.get('.slick-header-menu.slick-menu-level-1')
+        .find('[data-command=in-the-future]')
+        .click();
+
+      cy.get('.search-filter.filter-finish .input-group-prepend.operator select')
+        .contains('>=');
+
+      cy.get('.search-filter.filter-finish input.date-picker')
+        .invoke('val')
+        .should('equal', format(addDay(new Date(), 1), 'YYYY-MM-DD'));
+
+      cy.get('.grid11')
+        .find('.slick-custom-footer')
+        .find('.right-footer .item-count')
+        .should($span => {
+          expect(Number($span.text())).to.lt(969);
         });
     });
   });

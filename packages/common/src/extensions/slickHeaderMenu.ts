@@ -422,9 +422,12 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (columnDef.filter?.filterShortcuts && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'filter-shortcuts-root-menu')) {
             const shortcutSubItems: MenuCommandItem[] = [];
             columnDef.filter.filterShortcuts.forEach(fs => {
+              // use the Title name as the command key in kebab cas
+              const command = fs.title ? toKebabCase(fs.title) : (fs.titleKey || '').toLowerCase().replaceAll('_', '-');
+
               shortcutSubItems.push({
                 ...fs,
-                command: toKebabCase(fs.title || fs.titleKey || ''), // use the Title name as the command key in kebab case
+                command,
                 action: (_e, args) => {
                   // get associated Column Filter instance and use its `setValues()` method to update the filter with provided `searchTerms`
                   const filterRef = this.filterService.getFiltersMetadata().find(f => f.columnDef.id === args.column.id);
