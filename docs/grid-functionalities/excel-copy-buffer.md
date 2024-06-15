@@ -134,3 +134,5 @@ When copying Excel cells, where the value is a multiline text, the copy buffer w
 You can control if the newlines should be replaced with a specific value by defining it in `replaceNewlinesWith`. As an example you could set it to `' '`.
 
 Additionally, you can define that the quoted string is pasted without the quotes by setting `removeDoubleQuotesOnPaste` to true.
+
+> Note: requires v5.2.0 and higher
