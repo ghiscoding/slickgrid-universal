@@ -582,6 +582,20 @@
     }
   }
 
+  .slick-footerrow {
+    border-top: var(--slick-grid-footer-top-border-top, $slick-grid-footer-top-border-top);
+    background-color: var(--slick-grid-footer-bg-color, $slick-grid-footer-bg-color);
+    .slick-footerrow-columns {
+      .slick-footerrow-column {
+        display: var(--slick-grid-footer-display, $slick-grid-footer-display);
+        align-items: var(--slick-grid-footer-align-items, $slick-grid-footer-align-items);
+        justify-content: var(--slick-grid-footer-justify-content, $slick-grid-footer-justify-content);
+        font-size: var(--slick-grid-footer-font-size, $slick-grid-footer-font-size);
+        font-style: var(--slick-grid-footer-font-style, $slick-grid-footer-font-style);
+        font-weight: var(--slick-grid-footer-font-weight, $slick-grid-footer-font-weight);
+      }
+    }
+  }
   .slick-header-columns {
     background: var(--slick-grid-header-background, $slick-grid-header-background);
     background-color: var(--slick-header-background-color, $slick-header-background-color);
