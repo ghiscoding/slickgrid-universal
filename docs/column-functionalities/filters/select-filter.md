@@ -21,6 +21,7 @@
 - [Query against a different field](#query-against-another-field-property)
 - [Update Filters Dynamically](input-filter.md#update-filters-dynamically)
 - [Custom Filter Predicate](input-filter.md#custom-filter-predicate)
+- [Filter Shortcuts](input-filter.md#filter-shortcuts)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example10.ts)
