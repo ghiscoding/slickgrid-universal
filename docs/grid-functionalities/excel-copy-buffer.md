@@ -127,3 +127,12 @@ this.gridOptions = {
 ```
 
 This way you have full control, via the args parameters, to get a ref to the current row and cell being updated. Also keep in mind that while performing a buffered table paste (e.g three cols at once) and only one of them has a denying condition, the other cells paste will pass successfully.
+
+### Handling quoted multiline pastes
+When copying Excel cells, where the value is a multiline text, the copy buffer will result in a quoted text buffer. Slickgrid will properly handle the case when this content itself contains `\n` characters, to not break onto multiple rows as well as not split on the next column if `\t` characters are contained.
+
+You can control if the newlines should be replaced with a specific value by defining it in `replaceNewlinesWith`. As an example you could set it to `' '`.
+
+Additionally, you can define that the quoted string is pasted without the quotes by setting `removeDoubleQuotesOnPaste` to true.
+
+> Note: requires v5.2.0 and higher

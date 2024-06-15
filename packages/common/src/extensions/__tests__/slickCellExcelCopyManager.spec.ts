@@ -112,6 +112,8 @@ describe('CellExcelCopyManager', () => {
         newRowCreator: expect.anything(),
         includeHeaderWhenCopying: false,
         readOnlyMode: false,
+        removeDoubleQuotesOnPaste: false,
+        replaceNewlinesWith: false
       };
       expect(plugin.addonOptions).toEqual(expectedAddonOptions);
       expect(plugin.gridOptions).toEqual(gridOptionsMock);

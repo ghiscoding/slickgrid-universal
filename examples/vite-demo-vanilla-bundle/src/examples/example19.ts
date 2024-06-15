@@ -140,6 +140,8 @@ export default class Example19 {
           return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));
         },
         copyActiveEditorCell: true,
+        removeDoubleQuotesOnPaste: true,
+        replaceNewlinesWith: ' ',
       }
     };
   }
