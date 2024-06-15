@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, classNameToList } from '@slickgrid-universal/utils';
+import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, classNameToList, toKebabCase } from '@slickgrid-universal/utils';
 
 import { EmitterType } from '../enums/index';
 import type {
@@ -361,7 +361,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
                 titleKey: `${translationPrefix}FREEZE_COLUMNS`,
                 command: 'freeze-columns',
-                positionOrder: 47
+                positionOrder: 45
               });
             }
           }
@@ -374,14 +374,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
                 titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
                 command: 'column-resize-by-content',
-                positionOrder: 48
+                positionOrder: 47
               });
             }
           }
 
           // add a divider (separator) between the top freeze columns commands and the rest of the commands
-          if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 49)) {
-            columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 49 });
+          if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 48)) {
+            columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 48 });
           }
 
           // Sorting Commands
@@ -413,8 +413,41 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
                 titleKey: `${translationPrefix}REMOVE_SORT`,
                 command: 'clear-sort',
-                positionOrder: 54
+                positionOrder: 58
               });
+            }
+          }
+
+          // Filter Shortcuts via sub-menus
+          if (columnDef.filter?.filterShortcuts && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'filter-shortcuts-root-menu')) {
+            const shortcutSubItems: MenuCommandItem[] = [];
+            columnDef.filter.filterShortcuts.forEach(fs => {
+              // use the Title name as the command key in kebab cas
+              const command = fs.title ? toKebabCase(fs.title) : (fs.titleKey || '').toLowerCase().replaceAll('_', '-');
+
+              shortcutSubItems.push({
+                ...fs,
+                command,
+                action: (_e, args) => {
+                  // get associated Column Filter instance and use its `setValues()` method to update the filter with provided `searchTerms`
+                  const filterRef = this.filterService.getFiltersMetadata().find(f => f.columnDef.id === args.column.id);
+                  filterRef?.setValues(fs.searchTerms, fs.operator, true);
+                }
+              });
+            });
+
+            const filterShortcutsPositionOrder = headerMenuOptions.filterShortcutsPositionOrder ?? 55;
+            columnHeaderMenuItems.push({
+              iconCssClass: headerMenuOptions.iconFilterShortcutSubMenu || 'mdi mdi-filter-outline',
+              titleKey: `${translationPrefix}FILTER_SHORTCUTS`,
+              command: 'filter-shortcuts-root-menu',
+              positionOrder: filterShortcutsPositionOrder,
+              commandItems: shortcutSubItems
+            });
+
+            // add a divider (separator) between the top freeze columns commands and the rest of the commands
+            if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === filterShortcutsPositionOrder + 1)) {
+              columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: filterShortcutsPositionOrder + 1 });
             }
           }
 
@@ -425,7 +458,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
                 titleKey: `${translationPrefix}REMOVE_FILTER`,
                 command: 'clear-filter',
-                positionOrder: 53
+                positionOrder: 57
               });
             }
           }
@@ -436,7 +469,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
               titleKey: `${translationPrefix}HIDE_COLUMN`,
               command: 'hide-column',
-              positionOrder: 55
+              positionOrder: 59
             });
           }
 

@@ -43,6 +43,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'EXPORT_TO_EXCEL': output = this._locale === 'en' ? 'Export to Excel' : 'Exporter vers Excel'; break;
       case 'EXPORT_TO_TAB_DELIMITED': output = this._locale === 'en' ? 'Export in Text format (Tab delimited)' : 'Exporter en format texte (délimité par tabulation)'; break;
       case 'EXPORT_TO_TEXT_FORMAT': output = this._locale === 'en' ? 'Export in Text format' : 'Exporter en format texte'; break;
+      case 'FILTER_SHORTCUTS': output = this._locale === 'en' ? 'Filter Shortcuts' : 'Raccourcis de filtre'; break;
       case 'FEMALE': output = this._locale === 'en' ? 'Female' : 'Femme'; break;
       case 'FIRST_NAME': output = this._locale === 'en' ? 'First Name' : 'Prénom'; break;
       case 'FORCE_FIT_COLUMNS': output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes'; break;

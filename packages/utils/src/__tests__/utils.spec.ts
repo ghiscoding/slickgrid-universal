@@ -8,7 +8,6 @@ import {
   deepMerge,
   emptyObject,
   getFunctionDetails,
-  hasData,
   isDefined,
   isDefinedNumber,
   isEmptyObject,
@@ -764,6 +763,7 @@ describe('Service/Utilies', () => {
 
   describe('toKebabCase() method', () => {
     const sentence = 'the quick brown fox';
+    const snakeCaseSentence = 'the_quick_brown_fox';
 
     it('should return empty string when input is empty', () => {
       const output = toKebabCase('');
@@ -781,6 +781,11 @@ describe('Service/Utilies', () => {
       expect(output).toBe('the-quick-brown-fox');
     });
 
+    it('should return a kebab-case string when input is a snake_case word', () => {
+      const output = toKebabCase(sentence);
+      expect(output).toBe('the-quick-brown-fox');
+    });
+
     it('should return a kebab-case string when input is a sentence that may include numbers with only following char having the dash', () => {
       const output = toKebabCase(sentence + ' 123 ' + ' apples');
       expect(output).toBe('the-quick-brown-fox123-apples');
@@ -790,6 +795,7 @@ describe('Service/Utilies', () => {
   describe('toSentenceCase() method', () => {
     const camelCaseSentence = 'theQuickBrownFox';
     const kebabCaseSentence = 'the-quick-brown-fox';
+    const snakeCaseSentence = 'the_quick_brown_fox';
 
     it('should return empty string when input is empty', () => {
       const output = toSentenceCase('');
@@ -809,6 +815,11 @@ describe('Service/Utilies', () => {
 
     it('should return a sentence case string when input is kebab-case type', () => {
       const output = toSentenceCase(kebabCaseSentence);
+      expect(output).toBe('The quick brown fox');
+    });
+
+    it('should return a sentence case string when input is snake_case type', () => {
+      const output = toSentenceCase(snakeCaseSentence);
       expect(output).toBe('The quick brown fox');
     });
 

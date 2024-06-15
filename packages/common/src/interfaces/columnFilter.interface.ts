@@ -7,6 +7,7 @@ import type {
   Column,
   Filter,
   FilterConstructor,
+  MenuCommandItem,
   OperatorDetail,
   SearchColumnFilter,
 } from './index';
@@ -100,6 +101,13 @@ export interface ColumnFilter {
    * NOTE: currently only works with local/JSON dataset, meaning no backend service implementation yet.
    */
   filterPredicate?: (dataContext: any, searchFilterArgs: SearchColumnFilter) => boolean;
+
+  /**
+   * A list of optional filter shortcuts to display in the Header Menu,
+   * these shortcuts will simply prefill the column filter values with the shortcuts defined by the user.
+   * For example: `filterShortcuts: { command: 'blanks', title: 'Blanks', searchTerms: ['< a'] }`
+   */
+  filterShortcuts?: Array<Omit<MenuCommandItem, 'command' | 'divider' | 'action'> & { searchTerms: SearchTerm[]; operator?: OperatorType | OperatorString; }>;
 
   /**
    * Use "params" to pass any type of arguments to your Custom Filter
