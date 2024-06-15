@@ -1,6 +1,6 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, ColumnSort, ElementPosition, GridOption, HeaderButtonsOrMenu, HeaderMenuItems, MenuCommandItem } from '../../interfaces/index';
+import type { Column, ColumnSort, ElementPosition, Filter, GridOption, HeaderButtonsOrMenu, HeaderMenuItems, MenuCommandItem } from '../../interfaces/index';
 import { SlickHeaderMenu } from '../slickHeaderMenu';
 import { BackendUtilityService, FilterService, SharedService, SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
@@ -73,6 +73,7 @@ const dataViewStub = {
 const filterServiceStub = {
   clearFilterByColumnId: jest.fn(),
   clearFilters: jest.fn(),
+  getFiltersMetadata: jest.fn(),
 } as unknown as FilterService;
 
 const pubSubServiceStub = {
@@ -898,6 +899,61 @@ describe('HeaderMenu Plugin', () => {
         const clickEvent = new Event('click');
         commandDivElm.dispatchEvent(clickEvent);
         expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuColumnResizeByContent', { columnId: 'field2' });
+      });
+
+      it('should populate Filter Shortcuts list with shortcuts as sub-menus when a shortcu list is provided and we should also expect the command to execute necessary callback', () => {
+        columnsMock[0].filter = {
+          filterShortcuts: [
+            { title: 'Blank Values', searchTerms: ['A'], operator: '<', iconCssClass: 'mdi mdi-filter-minus-outline', },
+            { title: 'Non-Blank Values', searchTerms: ['A'], operator: '>', iconCssClass: 'mdi mdi-filter-plus-outline', },
+          ]
+        };
+        jest.spyOn(SharedService.prototype.slickGrid, 'getColumns').mockReturnValueOnce(columnsMock);
+        jest.spyOn(SharedService.prototype.slickGrid, 'getColumnIndex').mockReturnValue(0);
+        const setValueMock = jest.fn();
+        const filterMock = { columnDef: columnsMock[0], setValues: setValueMock } as unknown as Filter;
+        jest.spyOn(filterServiceStub, 'getFiltersMetadata').mockReturnValueOnce([filterMock]);
+
+        // calling `onBeforeSetColumns` 2x times shouldn't duplicate any column menus
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const headerMenuExpected = [
+          { command: 'freeze-columns', iconCssClass: 'mdi mdi-pin-outline', positionOrder: 45, title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', },
+          { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.', },
+          { command: 'column-resize-by-content', iconCssClass: 'mdi mdi-arrow-expand-horizontal', positionOrder: 47, title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', },
+          { command: '', divider: true, positionOrder: 48, },
+          {
+            command: 'filter-shortcuts-root-menu',
+            commandItems: [
+              { command: 'blank-values', action: expect.any(Function), iconCssClass: 'mdi mdi-filter-minus-outline', operator: '<', searchTerms: ['A'], title: 'Blank Values', },
+              { command: 'non-blank-values', action: expect.any(Function), iconCssClass: 'mdi mdi-filter-plus-outline', operator: '>', searchTerms: ['A'], title: 'Non-Blank Values', },
+            ],
+            iconCssClass: 'mdi mdi-filter-outline',
+            positionOrder: 55,
+            title: 'Filter Shortcuts',
+            titleKey: 'FILTER_SHORTCUTS',
+          },
+          { command: '', divider: true, positionOrder: 56 },
+          { command: 'hide-column', iconCssClass: 'mdi mdi-close', positionOrder: 59, title: 'Hide Column', titleKey: 'HIDE_COLUMN', },
+        ];
+        const shortcutSubMenuElm = gridContainerDiv.querySelector('[data-command="filter-shortcuts-root-menu"]') as HTMLDivElement;
+        shortcutSubMenuElm!.dispatchEvent(new Event('mouseover'));
+        const subCommandShortcut1 = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        const blankValueCommandElm = subCommandShortcut1.querySelector('[data-command="blank-values"]') as HTMLDivElement;
+        const commandIconElm = subCommandShortcut1.querySelector('.slick-menu-icon') as HTMLDivElement;
+        const commandLabelElm = subCommandShortcut1.querySelector('.slick-menu-content') as HTMLDivElement;
+        expect(columnsMock[0].header!.menu!.commandItems!).toEqual(headerMenuExpected);
+        expect(commandIconElm.classList.contains('mdi-filter-minus-outline')).toBeTruthy();
+        expect(commandLabelElm.textContent).toBe('Blank Values');
+
+        const clickEvent = new Event('click');
+        blankValueCommandElm.dispatchEvent(clickEvent);
+        expect(setValueMock).toHaveBeenCalledWith(['A'], '<', true);
       });
 
       it('should expect only the "hide-column" command in the menu when "enableSorting" and "hideSortCommands" are set and also expect the command to execute necessary callback', () => {
