@@ -16,7 +16,6 @@ export default class Example20 {
   dataset: any[] = [];
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
-  isWithPagination = true;
   sgb: SlickVanillaGridBundle;
 
   attached() {
@@ -35,7 +34,7 @@ export default class Example20 {
     // let's wrap the grid resize in a delay & show the grid only after the resize
     setTimeout(() => {
       this.sgb = new Slicker.GridBundle(shadowObj.gridContainer as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-      this.sgb.resizerService.resizeGrid();
+      this.sgb.resizerService.resizeGrid(150);
       shadowObj.gridContainer.style.opacity = '1';
     }, 50);
   }
@@ -123,14 +122,5 @@ export default class Example20 {
     }
 
     return datasetTmp;
-  }
-
-  // Toggle the Grid Pagination
-  // IMPORTANT, the Pagination MUST BE CREATED on initial page load before you can start toggling it
-  // Basically you cannot toggle a Pagination that doesn't exist (must created at the time as the grid)
-  togglePagination() {
-    this.isWithPagination = !this.isWithPagination;
-    this.sgb.paginationService!.togglePaginationVisibility(this.isWithPagination);
-    this.sgb.slickGrid!.setSelectedRows([]);
   }
 }
