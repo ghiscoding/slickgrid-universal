@@ -899,6 +899,11 @@ describe('Example 10 - GraphQL Grid', () => {
 
       cy.get('h3').click();
     });
+  });
+
+  describe('Filter Shortcuts', () => {
+    const today = format(new Date(), 'YYYY-MM-DD');
+    const next20Day = format(addDay(new Date(), 20), 'YYYY-MM-DD');
 
     it('should open header menu of "Finish" again then choose "Filter Shortcuts -> In the Future" and expect date range of the next 20 days', () => {
       cy.get('.grid10')
@@ -918,7 +923,7 @@ describe('Example 10 - GraphQL Grid', () => {
 
       cy.get('.search-filter.filter-finish input.date-picker')
         .invoke('val')
-        .should('equal', `${format(new Date(), 'YYYY-MM-DD')} — ${format(addDay(new Date(), 20), 'YYYY-MM-DD')}`);
+        .should('equal', `${today} — ${next20Day}`);
 
       // wait for the query to finish
       cy.get('[data-test=status]').should('contain', 'finished');
@@ -927,16 +932,14 @@ describe('Example 10 - GraphQL Grid', () => {
         .should(($span) => {
           const text = removeSpaces($span.text()); // remove all white spaces
           expect(text).to.eq(removeSpaces(`query { users (first:20,offset:0,orderBy:[{field:"name",direction:ASC},
-            {field:"company",direction:DESC}],filterBy:[{field:"gender",operator:EQ,value:"male"},
-            {field:"name",operator:StartsWith,value:"Joh"},{field:"name",operator:EndsWith,value:"oe"},
-            {field:"company",operator:IN,value:"xyz"},{field:"finish",operator:GE,value:"2024-06-14"},
-            {field:"finish",operator:LE,value:"2024-07-04"}],locale:"en",userId:123) {
-            totalCount, nodes { id,name,gender,company,billing{address{street,zip}},finish}}}`));
+                {field:"company",direction:DESC}],filterBy:[{field:"gender",operator:EQ,value:"male"},
+                {field:"name",operator:StartsWith,value:"Joh"},{field:"name",operator:EndsWith,value:"oe"},
+                {field:"company",operator:IN,value:"xyz"},{field:"finish",operator:GE,value:"${today}"},
+                {field:"finish",operator:LE,value:"${next20Day}"}],locale:"en",userId:123) {
+                totalCount, nodes { id,name,gender,company,billing{address{street,zip}},finish}}}`));
         });
     });
-  });
 
-  describe('Filter Shortcuts', () => {
     it('should switch locale to French', () => {
       cy.get('[data-test=language-button]')
         .click();
@@ -964,7 +967,7 @@ describe('Example 10 - GraphQL Grid', () => {
 
       cy.get('.search-filter.filter-finish input.date-picker')
         .invoke('val')
-        .should('equal', `${format(new Date(), 'YYYY-MM-DD')} — ${format(addDay(new Date(), 20), 'YYYY-MM-DD')}`);
+        .should('equal', `${today} — ${next20Day}`);
 
       // wait for the query to finish
       cy.get('[data-test=status]').should('contain', 'finished');
@@ -975,8 +978,8 @@ describe('Example 10 - GraphQL Grid', () => {
           expect(text).to.eq(removeSpaces(`query { users (first:20,offset:0,orderBy:[{field:"name",direction:ASC},
                   {field:"company",direction:DESC}],filterBy:[{field:"gender",operator:EQ,value:"male"},
                   {field:"name",operator:StartsWith,value:"Joh"},{field:"name",operator:EndsWith,value:"oe"},
-                  {field:"company",operator:IN,value:"xyz"},{field:"finish",operator:GE,value:"2024-06-14"},
-                  {field:"finish",operator:LE,value:"2024-07-04"}],locale:"fr",userId:123) {
+                  {field:"company",operator:IN,value:"xyz"},{field:"finish",operator:GE,value:"${today}"},
+                  {field:"finish",operator:LE,value:"${next20Day}"}],locale:"fr",userId:123) {
                   totalCount, nodes { id,name,gender,company,billing{address{street,zip}},finish}}}`));
         });
     });
