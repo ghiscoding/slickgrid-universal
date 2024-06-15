@@ -314,7 +314,7 @@ export function toCamelCase(inputStr: string): string {
  */
 export function toKebabCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    return toCamelCase(inputStr).replace(/([A-Z])/g, '-$1').toLowerCase();
+    return toCamelCase(inputStr).replace(/([A-Z])|([-_])/g, '-$1').toLowerCase();
   }
   return inputStr;
 }
@@ -326,7 +326,7 @@ export function toKebabCase(inputStr: string): string {
  */
 export function toSentenceCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    const result = inputStr.replace(/([A-Z])|(-)/g, ' $1').replace(/\s+/g, ' ').trim();
+    const result = inputStr.replace(/([A-Z])|([-_])/g, ' $1').replace(/\s+/g, ' ').trim();
     return result.charAt(0).toUpperCase() + result.slice(1);
   }
   return inputStr;
