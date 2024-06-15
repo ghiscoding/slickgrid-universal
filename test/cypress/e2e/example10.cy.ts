@@ -934,7 +934,9 @@ describe('Example 10 - GraphQL Grid', () => {
             totalCount, nodes { id,name,gender,company,billing{address{street,zip}},finish}}}`));
         });
     });
+  });
 
+  describe('Filter Shortcuts', () => {
     it('should switch locale to French', () => {
       cy.get('[data-test=language-button]')
         .click();
@@ -971,11 +973,11 @@ describe('Example 10 - GraphQL Grid', () => {
         .should(($span) => {
           const text = removeSpaces($span.text()); // remove all white spaces
           expect(text).to.eq(removeSpaces(`query { users (first:20,offset:0,orderBy:[{field:"name",direction:ASC},
-            {field:"company",direction:DESC}],filterBy:[{field:"gender",operator:EQ,value:"male"},
-            {field:"name",operator:StartsWith,value:"Joh"},{field:"name",operator:EndsWith,value:"oe"},
-            {field:"company",operator:IN,value:"xyz"},{field:"finish",operator:GE,value:"2024-06-14"},
-            {field:"finish",operator:LE,value:"2024-07-04"}],locale:"fr",userId:123) {
-            totalCount, nodes { id,name,gender,company,billing{address{street,zip}},finish}}}`));
+                  {field:"company",direction:DESC}],filterBy:[{field:"gender",operator:EQ,value:"male"},
+                  {field:"name",operator:StartsWith,value:"Joh"},{field:"name",operator:EndsWith,value:"oe"},
+                  {field:"company",operator:IN,value:"xyz"},{field:"finish",operator:GE,value:"2024-06-14"},
+                  {field:"finish",operator:LE,value:"2024-07-04"}],locale:"fr",userId:123) {
+                  totalCount, nodes { id,name,gender,company,billing{address{street,zip}},finish}}}`));
         });
     });
   });
