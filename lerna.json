@@ -16,7 +16,7 @@
       "createRelease": "github",
       "changelogIncludeCommitsClientLogin": " - by @%l",
       "changelogHeaderMessage": "## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀",
-      "message": "chore(release): publish new version %v",
+      "message": "chore(release): publish new version %s",
       "syncWorkspaceLock": true
     }
   },
