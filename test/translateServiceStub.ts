@@ -1,11 +1,10 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { TranslaterService, TranslateServiceEventName } from '@slickgrid-universal/common';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { TranslaterService, TranslateServiceEventName } from '@slickgrid-universal/common';
 
 export class TranslateServiceStub implements TranslaterService {
   eventName = 'onLanguageChange' as TranslateServiceEventName;
   private _locale = 'en';
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addPubSubMessaging(_pubSubService: BasePubSubService) { }
 
   getCurrentLanguage(): string {
