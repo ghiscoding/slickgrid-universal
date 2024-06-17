@@ -828,7 +828,6 @@ describe('Example 11 - Batch Editing', () => {
         .find('.slick-cell:nth(1)')
         .each(($cell, index) => {
           if (index < 10) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [_taskString, taskNumber] = $cell.text().split(' ');
             expect(taskNumber).to.be.eq('5');
           }
@@ -976,7 +975,6 @@ describe('Example 11 - Batch Editing', () => {
         .find('.slick-cell:nth(1)')
         .each(($cell, index) => {
           if (index < 10) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [_taskString, taskNumber] = $cell.text().split(' ');
             expect(taskNumber).to.include('5');
           }

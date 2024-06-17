@@ -97,7 +97,7 @@ export class Renderer {
   parsePropertyBinding(match: string, domAttribute: string, bindingType: string, variableName: string) {
     // wait a cycle so that the View is rendered before observing anything
     setTimeout(() => {
-      const elements = document.querySelectorAll<HTMLElement>(`[${domAttribute}\\\.${bindingType}=${variableName}]`);
+      const elements = document.querySelectorAll<HTMLElement>(`[${domAttribute}\\.${bindingType}=${variableName}]`);
       const attribute = domAttribute.toLowerCase();
 
       // before creating a new observer, first check if the variable already has an associated observer

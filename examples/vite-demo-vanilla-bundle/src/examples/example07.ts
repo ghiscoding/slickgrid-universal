@@ -433,7 +433,7 @@ export default class Example07 {
       grid?.filterService.clearFilters();
     });
 
-    for (const columnFilter of grid?.columnDefinitions) {
+    for (const columnFilter of grid?.columnDefinitions ?? []) {
       if (columnFilter.filterable) {
         const filterElm = `modal-allfilter-${columnFilter.id}`;
         const innerHtml = document.querySelector('#modal-allFilter-table')!.innerHTML;

@@ -22,6 +22,7 @@
 .chrome
 
 # misc
+.eslintcache
 .sass-cache
 /connect.lock
 /coverage

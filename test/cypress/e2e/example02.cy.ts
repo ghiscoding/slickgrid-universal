@@ -5,17 +5,25 @@ import { removeExtraSpaces } from '../plugins/utilities';
 describe('Example 02 - Grouping & Aggregators', () => {
   const fullTitles = ['#', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
   const GRID_ROW_HEIGHT = 45;
+  let currentTimestamp = '';
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example02`);
     cy.get('h3').should('contain', 'Example 02 - Grouping & Aggregators');
     cy.get('h3 span.subtitle').should('contain', '(with Material Theme)');
+
+    // after demo is rendered, let's grab current timestamp displayed in right footer
+    currentTimestamp = format(new Date(), 'YYYY-MM-DD, hh:mm a');
   });
 
-  it('should have a min size, to verify that autoResize works properly', () => {
+  it('should have some metrics shown in the grid right footer', () => {
     cy.get('.grid2')
-      .invoke('width')
-      .should('be.gt', 10);
+      .find('.slick-custom-footer')
+      .find('.right-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`Last Update ${currentTimestamp} | 500 of 500 items`);
+      });
   });
 
   it('should have exact column titles on 1st grid', () => {
@@ -25,21 +33,17 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should have a min size, to verify that autoResize works properly', () => {
+    cy.get('.grid2')
+      .invoke('width')
+      .should('be.gt', 10);
+  });
+
   it('should show a custom text in the grid footer left portion', () => {
     cy.get('.grid2')
       .find('.slick-custom-footer')
       .find('.left-footer')
       .contains('created with Slickgrid-Universal');
-  });
-
-  it('should have some metrics shown in the grid right footer', () => {
-    cy.get('.grid2')
-      .find('.slick-custom-footer')
-      .find('.right-footer')
-      .should($span => {
-        const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 500 of 500 items`);
-      });
   });
 
   it('should type a filter in the Title and expect 176 items shown in the footer', () => {

@@ -1,4 +1,4 @@
-import { ContainerInstance, ContainerService } from '@slickgrid-universal/common';
+import type { ContainerInstance, ContainerService } from '@slickgrid-universal/common';
 
 export class ContainerServiceStub implements ContainerService {
   dependencies: ContainerInstance[] = [];
