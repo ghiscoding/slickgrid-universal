@@ -5,11 +5,15 @@ import { removeExtraSpaces } from '../plugins/utilities';
 describe('Example 02 - Grouping & Aggregators', () => {
   const fullTitles = ['#', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
   const GRID_ROW_HEIGHT = 45;
+  let currentTimestamp = '';
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example02`);
     cy.get('h3').should('contain', 'Example 02 - Grouping & Aggregators');
     cy.get('h3 span.subtitle').should('contain', '(with Material Theme)');
+
+    // after demo is rendered, let's grab current timestamp displayed in right footer
+    currentTimestamp = format(new Date(), 'YYYY-MM-DD, hh:mm a');
   });
 
   it('should have a min size, to verify that autoResize works properly', () => {
@@ -38,7 +42,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should($span => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 500 of 500 items`);
+        expect(text).to.eq(`Last Update ${currentTimestamp} | 500 of 500 items`);
       });
   });
 
