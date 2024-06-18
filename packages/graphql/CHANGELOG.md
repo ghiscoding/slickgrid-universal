@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
+
+### Bug Fixes
+
+* **filters:** GraphQL Custom Filter Operator could be anything ([#1562](https://github.com/ghiscoding/slickgrid-universal/issues/1562)) ([5430486](https://github.com/ghiscoding/slickgrid-universal/commit/5430486709fd4e3159e9e4827a890f892a3027a5)) - by @ghiscoding
+* **GraphQL:** filter `<>` is `Not_Contains` instead of `Not_Equal` ([#1571](https://github.com/ghiscoding/slickgrid-universal/issues/1571)) ([c6f1cf3](https://github.com/ghiscoding/slickgrid-universal/commit/c6f1cf36778e04e64184417335f1584f981b85ce)), closes [#1569](https://github.com/ghiscoding/slickgrid-universal/issues/1569) - by @ghiscoding
+
 ## [5.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.1...v5.1.0) (2024-06-07)
 
 ### Features

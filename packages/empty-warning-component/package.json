@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/empty-warning-component",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Slick Empty Warning Component - Vanilla Implementation of an Empty Dataset Warning Component",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
