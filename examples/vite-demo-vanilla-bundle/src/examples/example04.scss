@@ -2,3 +2,22 @@
 .orange {
   color: orange;
 }
+
+.cell-menu-dropdown {
+  border: 1px solid #a3a3a3;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  height: 90%;
+  width: max-content;
+  padding: 0 12px;
+  cursor: pointer;
+  &:hover {
+    background-color: #a3a3a3;
+    color: #ffffff;
+  }
+
+  .mdi-chevron-down {
+    margin-left: 5px;
+  }
+}

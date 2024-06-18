@@ -25,7 +25,7 @@
     <div>
       <div class="range">
         <label for="refreshRateRange" class="form-label">Changes Rate(ms)</label>
-        <input type="range" class="form-range" id="refreshRateRange" min="0" max="250" value.bind="refreshRate">
+        <input type="range" class="form-range" id="refreshRateRange" min="0" max="250" step="5" value.bind="refreshRate">
         <span class="refresh-rate">
           <input type="number" class="is-narrow input is-small" value.bind="refreshRate">
         </span>
@@ -44,13 +44,13 @@
       </span>
       <span>
         <label for="change-per-cycle-input">Changes p/Cycle</label>
-        <input type="number" class="is-narrow input is-small" id="change-per-cycle-input" value.bind="minChangePerCycle" max.bind="maxChangePerCycle">
+        <input type="number" class="is-narrow input is-small" id="change-per-cycle-input" value.bind="minChangePerCycle" max.bind="maxChangePerCycle" step="5">
         to
-        <input type="number" class="is-narrow input is-small" value.bind="maxChangePerCycle" min.bind="minChangePerCycle">
+        <input type="number" class="is-narrow input is-small" value.bind="maxChangePerCycle" min.bind="minChangePerCycle" step="5">
       </span>
       <span>
         <label for="highlight-input">Highlight Duration(ms)</label>
-        <input type="number" class="is-narrow input is-small" id="highlight-input" data-test="highlight-input" value.bind="highlightDuration">
+        <input type="number" class="is-narrow input is-small" id="highlight-input" data-test="highlight-input" value.bind="highlightDuration" step="10">
       </span>
       <span class="float-right">
         <button class="button is-small" onclick.delegate="toggleFullScreen()">
