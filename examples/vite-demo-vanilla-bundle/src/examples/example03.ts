@@ -223,10 +223,10 @@ export default class Example03 {
         }
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
+        id: 'action', name: 'Action', field: 'action', width: 90, maxWidth: 90,
         excludeFromExport: true,
         formatter: () => {
-          return `<div class="fake-hyperlink text-color-primary">Action <span class="font-12px">&#9660;</span></div>`;
+          return `<div class="fake-hyperlink text-color-primary flex justify-center">Action <i class="mdi mdi-chevron-down"></i></div>`;
         },
         cellMenu: {
           hideCloseButton: false,

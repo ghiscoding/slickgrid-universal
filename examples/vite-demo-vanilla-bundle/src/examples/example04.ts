@@ -294,9 +294,7 @@ export default class Example04 {
       {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
-        formatter: () => {
-          return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
-        },
+        formatter: () => `<div class="cell-menu-dropdown">Action<i class="mdi mdi-chevron-down"></i></div>`,
         cellMenu: {
           hideCloseButton: false,
           // you can override the logic of when the menu is usable
