@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
+
+### Features
+
+* Date editor/filter improvements ([#1551](https://github.com/ghiscoding/slickgrid-universal/issues/1551)) ([7c61846](https://github.com/ghiscoding/slickgrid-universal/commit/7c61846f3cdf577e22a5129c249551bb88d47a63)) - by @zewa666
+* **filters:** add new optional `filterShortcuts` to Column Filter ([#1575](https://github.com/ghiscoding/slickgrid-universal/issues/1575)) ([cbd6ae4](https://github.com/ghiscoding/slickgrid-universal/commit/cbd6ae402e1794adc99bd1e8feedfcb45db89ccf)) - by @ghiscoding
+* **footer:** add Footer Totals Row and fix footer styling ([#1576](https://github.com/ghiscoding/slickgrid-universal/issues/1576)) ([809903a](https://github.com/ghiscoding/slickgrid-universal/commit/809903a1bd4eb5d935cfd17666cbca0600c19fdb)) - by @ghiscoding
+* paste multiline content as single cell ([#1563](https://github.com/ghiscoding/slickgrid-universal/issues/1563)) ([4398f1d](https://github.com/ghiscoding/slickgrid-universal/commit/4398f1d20e06d7c8e12c88889d30445f2b0e4750)) - by @zewa666
+
+### Bug Fixes
+
+* **filters:** filters with `!= ` (not empty) should return non-blanks ([#1570](https://github.com/ghiscoding/slickgrid-universal/issues/1570)) ([9837ef1](https://github.com/ghiscoding/slickgrid-universal/commit/9837ef16c15acd448592a7db2b184a471b057b50)), closes [#1569](https://github.com/ghiscoding/slickgrid-universal/issues/1569) - by @ghiscoding
+* **filters:** skipCompoundOperatorFilterWithNullInput skip empty string ([#1566](https://github.com/ghiscoding/slickgrid-universal/issues/1566)) ([4d69bc0](https://github.com/ghiscoding/slickgrid-universal/commit/4d69bc01a349ed1665c483d84c64544124a36c9b)) - by @ghiscoding
+
 ## [5.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.1...v5.1.0) (2024-06-07)
 
 ### Features

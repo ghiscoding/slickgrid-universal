@@ -4,6 +4,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
+
+### Features
+
+* Date editor/filter improvements ([#1551](https://github.com/ghiscoding/slickgrid-universal/issues/1551)) ([7c61846](https://github.com/ghiscoding/slickgrid-universal/commit/7c61846f3cdf577e22a5129c249551bb88d47a63)) - by @zewa666
+* **filters:** add `setValues()` optional flag to trigger query ([#1574](https://github.com/ghiscoding/slickgrid-universal/issues/1574)) ([025888d](https://github.com/ghiscoding/slickgrid-universal/commit/025888d0ceb0a29095b6036ab645de365bd08e8a)) - by @ghiscoding
+* **filters:** add new optional `filterShortcuts` to Column Filter ([#1575](https://github.com/ghiscoding/slickgrid-universal/issues/1575)) ([cbd6ae4](https://github.com/ghiscoding/slickgrid-universal/commit/cbd6ae402e1794adc99bd1e8feedfcb45db89ccf)) - by @ghiscoding
+* **footer:** add Footer Totals Row and fix footer styling ([#1576](https://github.com/ghiscoding/slickgrid-universal/issues/1576)) ([809903a](https://github.com/ghiscoding/slickgrid-universal/commit/809903a1bd4eb5d935cfd17666cbca0600c19fdb)) - by @ghiscoding
+* paste multiline content as single cell ([#1563](https://github.com/ghiscoding/slickgrid-universal/issues/1563)) ([4398f1d](https://github.com/ghiscoding/slickgrid-universal/commit/4398f1d20e06d7c8e12c88889d30445f2b0e4750)) - by @zewa666
+
+### Bug Fixes
+
+* **common:** Header Menu missing columnDef in sub-menu action callback ([#1572](https://github.com/ghiscoding/slickgrid-universal/issues/1572)) ([55d77d0](https://github.com/ghiscoding/slickgrid-universal/commit/55d77d0806bf5b1283c96e5e1f7f01f2d2114e8e)) - by @ghiscoding
+* **filters:** filters with `!= ` (not empty) should return non-blanks ([#1570](https://github.com/ghiscoding/slickgrid-universal/issues/1570)) ([9837ef1](https://github.com/ghiscoding/slickgrid-universal/commit/9837ef16c15acd448592a7db2b184a471b057b50)), closes [#1569](https://github.com/ghiscoding/slickgrid-universal/issues/1569) - by @ghiscoding
+* **filters:** skipCompoundOperatorFilterWithNullInput skip empty string ([#1566](https://github.com/ghiscoding/slickgrid-universal/issues/1566)) ([4d69bc0](https://github.com/ghiscoding/slickgrid-universal/commit/4d69bc01a349ed1665c483d84c64544124a36c9b)) - by @ghiscoding
+* **filters:** skipCompoundOperatorFilterWithNullInput skip undefined ([#1568](https://github.com/ghiscoding/slickgrid-universal/issues/1568)) ([711b03e](https://github.com/ghiscoding/slickgrid-universal/commit/711b03e956b34b56a49fa362e4a20ce377254ee3)), closes [#1566](https://github.com/ghiscoding/slickgrid-universal/issues/1566) - by @ghiscoding
+* **GraphQL:** filter `<>` is `Not_Contains` instead of `Not_Equal` ([#1571](https://github.com/ghiscoding/slickgrid-universal/issues/1571)) ([c6f1cf3](https://github.com/ghiscoding/slickgrid-universal/commit/c6f1cf36778e04e64184417335f1584f981b85ce)), closes [#1569](https://github.com/ghiscoding/slickgrid-universal/issues/1569) - by @ghiscoding
+* **styling:** add missing btn-default text color & border color ([bfdec1e](https://github.com/ghiscoding/slickgrid-universal/commit/bfdec1e69d7f82dc21d9beff2e2166bbd7d26332)) - by @ghiscoding
+* **styling:** Grid Menu, Col Picker labels should take full width ([#1564](https://github.com/ghiscoding/slickgrid-universal/issues/1564)) ([e942539](https://github.com/ghiscoding/slickgrid-universal/commit/e9425392b2728c8e92fce3604e242957cc067aae)) - by @ghiscoding
+
 ## [5.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.1...v5.1.0) (2024-06-07)
 
 ### Features

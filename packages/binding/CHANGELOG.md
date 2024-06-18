@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
+
+**Note:** Version bump only for package @slickgrid-universal/binding
+
 ## [5.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0) (2024-05-10)
 
 ### ⚠ BREAKING CHANGES
