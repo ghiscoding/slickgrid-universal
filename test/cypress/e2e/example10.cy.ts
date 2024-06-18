@@ -20,12 +20,12 @@ describe('Example 10 - GraphQL Grid', () => {
     cy.get('h3').should('contain', 'Example 10 - Grid with GraphQL Backend Service');
   });
 
-  it('should have a grid of size 900 by 275px', () => {
+  it('should have a grid of size 900 by 325px', () => {
     cy.get('.grid10')
       .should('have.css', 'width', '900px');
 
     cy.get('.grid10 > .slickgrid-container')
-      .should($el => expect(parseInt(`${$el.height()}`, 10)).to.eq(275));
+      .should($el => expect(parseInt(`${$el.height()}`, 10)).to.eq(325));
   });
 
   it('should have English Text inside some of the Filters', () => {
