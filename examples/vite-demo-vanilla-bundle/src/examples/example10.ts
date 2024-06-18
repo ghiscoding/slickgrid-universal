@@ -157,7 +157,7 @@ export default class Example10 {
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
       enableAutoResize: false,
-      gridHeight: 325,
+      gridHeight: 275,
       gridWidth: 900,
       compoundOperatorAltTexts: {
         // where '=' is any of the `OperatorString` type shown above
