@@ -94,7 +94,7 @@ export class CustomSumAggregator implements Aggregator {
   }
 }
 
-export default class Example19 {
+export default class Example23 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column<GroceryItem>[] = [];
   dataset: GroceryItem[] = [];

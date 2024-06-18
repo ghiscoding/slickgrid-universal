@@ -6,7 +6,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 
 const NB_ITEMS = 100;
 
-export default class Example20 {
+export default class Example24 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
   private _eventHandler: SlickEventHandler;
