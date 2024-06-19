@@ -24,6 +24,8 @@ const gridStub = {
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
+  onPreHeaderClick: new SlickEvent(),
+  onPreHeaderContextMenu: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
