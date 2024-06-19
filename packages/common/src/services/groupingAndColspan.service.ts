@@ -121,10 +121,7 @@ export class GroupingAndColspanService {
     preHeaderPanel.className = 'slick-header-columns';
     preHeaderPanel.style.left = '-1000px';
     preHeaderPanel.style.width = `${this._grid.getHeadersWidth()}px`;
-
-    if (preHeaderPanel.parentElement) {
-      preHeaderPanel.parentElement.classList.add('slick-header');
-    }
+    preHeaderPanel.parentElement?.classList.add('slick-header');
 
     const headerColumnWidthDiff = this._grid.getHeaderColumnWidthDiff();
 
@@ -147,6 +144,7 @@ export class GroupingAndColspanService {
           widthTotal = colDef.width || 0;
           headerElm = createDomElement('div', {
             className: `slick-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`,
+            dataset: { group: colDef.columnGroup },
             style: { width: `${widthTotal - headerColumnWidthDiff}px` }
           });
 

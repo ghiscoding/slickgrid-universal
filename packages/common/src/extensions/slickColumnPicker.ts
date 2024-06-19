@@ -100,6 +100,11 @@ export class SlickColumnPicker {
     this.addonOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
     this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
 
+    this._eventHandler.subscribe(this.grid.onPreHeaderContextMenu, (e) => {
+      if (['slick-column-name', 'slick-header-column'].some(className => e.target?.classList.contains(className))) {
+        this.handleHeaderContextMenu(e); // open picker only when preheader has column groups
+      }
+    });
     this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this));
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this));
     this._eventHandler.subscribe(this.grid.onClick, this.disposeMenu.bind(this));
