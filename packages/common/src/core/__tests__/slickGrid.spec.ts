@@ -5141,9 +5141,36 @@ describe('SlickGrid core file', () => {
       });
     });
 
-    describe('Header Click', () => {
-      // TODO: need to add another test when "columnResizeDragging"
+    describe('Pre-Header Click', () => {
+      it('should trigger onPreHeaderClick notify when not column resizing', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, createPreHeaderPanel: true, showPreHeaderPanel: true });
+        jest.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+        const onPreHeaderClickSpy = jest.spyOn(grid.onPreHeaderClick, 'notify');
+        const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: preHeaderElms[0] });
+        preHeaderElms[0].dispatchEvent(event);
 
+        expect(onPreHeaderClickSpy).toHaveBeenCalledWith({ node: preHeaderElms[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Pre-Header Context Menu', () => {
+      it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, createPreHeaderPanel: true, showPreHeaderPanel: true });
+        const onContextSpy = jest.spyOn(grid.onPreHeaderContextMenu, 'notify');
+        const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'target', { writable: true, value: preHeaderElms[0] });
+        preHeaderElms[0].dispatchEvent(event);
+
+        expect(onContextSpy).toHaveBeenCalledWith({ node: preHeaderElms[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Header Click', () => {
       it('should trigger onHeaderClick notify when not column resizing', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });

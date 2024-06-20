@@ -7,6 +7,7 @@ import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { BackendUtilityService } from '../../services/backendUtility.service';
+import { createDomElement } from '@slickgrid-universal/utils';
 
 const gridUid = 'slickgrid_124343';
 
@@ -24,6 +25,8 @@ const gridStub = {
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
+  onPreHeaderClick: new SlickEvent(),
+  onPreHeaderContextMenu: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
@@ -148,7 +151,7 @@ describe('ColumnPickerControl', () => {
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
       control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
@@ -172,11 +175,35 @@ describe('ColumnPickerControl', () => {
       control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
       const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(liElmList[2].textContent).toBe('Billing - Field 3');
+    });
+
+    it('should open the column picker via "onPreHeaderContextMenu" and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
+      const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
+      jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+
+      gridOptionsMock.columnPicker!.hideForceFitButton = false;
+      gridOptionsMock.forceFitColumns = true;
+      control.columns = columnsMock;
+      control.init();
+
+      const groupElm = createDomElement('div', { className: 'slick-column-name' });
+      gridStub.onPreHeaderContextMenu.notify({ node: groupElm, grid: gridStub }, { ...new SlickEventData(), preventDefault: jest.fn(), target: groupElm } as any, gridStub);
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const inputForcefitElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
+
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(control.menuElement?.style.display).not.toBe('none');
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+      expect(inputForcefitElm.checked).toBeTruthy();
+      expect(inputForcefitElm.dataset.option).toBe('autoresize');
+      expect(labelSyncElm.textContent).toBe('Force fit columns');
     });
 
     it('should open the column picker via "onHeaderContextMenu" and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
@@ -193,7 +220,7 @@ describe('ColumnPickerControl', () => {
       const inputForcefitElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
 
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(inputForcefitElm.checked).toBeTruthy();
@@ -215,7 +242,7 @@ describe('ColumnPickerControl', () => {
       const inputSyncElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-syncresize') as HTMLInputElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
 
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(inputSyncElm.checked).toBeTruthy();
@@ -244,7 +271,7 @@ describe('ColumnPickerControl', () => {
         visibleColumns: columnsMock,
         grid: gridStub,
       };
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(onColChangedMock).toBeCalledWith(expect.anything(), expectedCallbackArgs);
@@ -268,7 +295,7 @@ describe('ColumnPickerControl', () => {
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
       inputForcefitElm.dispatchEvent(new Event('click', { bubbles: true }));
 
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(inputForcefitElm.checked).toBeTruthy();
       expect(inputForcefitElm.dataset.option).toBe('autoresize');
@@ -294,7 +321,7 @@ describe('ColumnPickerControl', () => {
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
       inputSyncElm.dispatchEvent(new Event('click', { bubbles: true }));
 
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(inputSyncElm.checked).toBeTruthy();
       expect(inputSyncElm.dataset.option).toBe('syncresize');
@@ -340,7 +367,7 @@ describe('ColumnPickerControl', () => {
         control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
         const col4 = control.menuElement!.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
 
-        expect(handlerSpy).toHaveBeenCalledTimes(3);
+        expect(handlerSpy).toHaveBeenCalledTimes(4);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(control.columns).toEqual(columnsMock);
@@ -368,7 +395,7 @@ describe('ColumnPickerControl', () => {
       const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
 
-      expect(handlerSpy).toHaveBeenCalledTimes(3);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(labelForcefitElm.textContent).toBe('Ajustement forcé des colonnes');
       expect(labelSyncElm.textContent).toBe('Redimension synchrone');
       expect(utilitySpy).toHaveBeenCalled();

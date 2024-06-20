@@ -4,7 +4,6 @@ import globals from 'globals';
 import jest from 'eslint-plugin-jest';
 import n from 'eslint-plugin-n';
 import tseslint from 'typescript-eslint';
-import tsParser from '@typescript-eslint/parser';
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -44,7 +43,7 @@ export default tseslint.config(
         ...globals.es2021,
         ...globals.node,
       },
-      parser: tsParser,
+      parser: tseslint.parser,
       parserOptions: {
         project: ['./tsconfig.base.json']
       }

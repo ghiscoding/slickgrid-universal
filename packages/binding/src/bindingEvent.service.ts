@@ -19,7 +19,7 @@ export class BindingEventService {
 
   /** Bind an event listener to any element */
   bind(
-    elementOrElements: Document | Element | NodeListOf<Element> | Window,
+    elementOrElements: Document | Element | NodeListOf<Element> | Array<Element> | Window,
     eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject,
     listenerOptions?: boolean | AddEventListenerOptions,
     groupName = ''
@@ -35,7 +35,7 @@ export class BindingEventService {
           this._boundedEvents.push({ element, eventName, listener, groupName });
         }
       });
-    } else {
+    } else if (elementOrElements) {
       // single elements to bind to
       for (const eventName of eventNames) {
         (elementOrElements as Element).addEventListener(eventName, listener, listenerOptions);

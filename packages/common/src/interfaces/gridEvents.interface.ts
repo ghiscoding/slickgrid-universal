@@ -33,6 +33,8 @@ export interface OnHeaderContextMenuEventArgs extends SlickGridArg { column: Col
 export interface OnHeaderMouseEventArgs extends SlickGridArg { column: Column; }
 export interface OnHeaderRowCellRenderedEventArgs extends SlickGridArg { node: HTMLDivElement; column: Column; }
 export interface OnKeyDownEventArgs extends SlickGridArg { row: number; cell: number; }
+export interface OnPreHeaderClickEventArgs extends SlickGridArg { node: HTMLElement; }
+export interface OnPreHeaderContextMenuEventArgs extends SlickGridArg { node: HTMLElement; }
 export interface OnValidationErrorEventArgs extends SlickGridArg { row: number; cell: number; validationResults: EditorValidationResult; column: Column; editor: Editor; cellNode: HTMLDivElement; }
 export interface OnRenderedEventArgs extends SlickGridArg { startRow: number; endRow: number; }
 export interface OnSelectedRowsChangedEventArgs extends SlickGridArg { rows: number[]; previousSelectedRows: number[]; changedSelectedRows: number[]; changedUnselectedRows: number[]; caller: string; }

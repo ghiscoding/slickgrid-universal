@@ -106,6 +106,8 @@ const gridStub = {
   onHeaderCellRendered: new SlickEvent(),
   onHeaderClick: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
+  onPreHeaderClick: new SlickEvent(),
+  onPreHeaderContextMenu: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   onSelectedRowsChanged: new SlickEvent(),
   onScroll: new SlickEvent(),
