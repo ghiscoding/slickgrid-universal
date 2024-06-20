@@ -5036,30 +5036,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleHeaderClick(e: MouseEvent & { target: HTMLElement; }): void {
-    if (this.columnResizeDragging) {
-      return;
-    }
-
-    const header = e.target.closest('.slick-header-column');
-    const column = header && Utils.storage.get(header, 'column');
-    if (column) {
-      this.triggerEvent(this.onHeaderClick, { column }, e);
+    if (!this.columnResizeDragging) {
+      const header = e.target.closest('.slick-header-column');
+      const column = header && Utils.storage.get(header, 'column');
+      if (column) {
+        this.triggerEvent(this.onHeaderClick, { column }, e);
+      }
     }
   }
 
   protected handlePreHeaderContextMenu(e: MouseEvent & { target: HTMLElement; }): void {
-    const header = e.target.closest('.slick-header-column');
-    this.triggerEvent(this.onPreHeaderContextMenu, { node: header }, e);
+    this.triggerEvent(this.onPreHeaderContextMenu, { node: e.target }, e);
   }
 
   protected handlePreHeaderClick(e: MouseEvent & { target: HTMLElement; }): void {
-    if (this.columnResizeDragging) {
-      return;
-    }
-
-    const header = e.target.closest('.slick-header-column');
-    if (header) {
-      this.triggerEvent(this.onPreHeaderClick, { node: header }, e);
+    if (!this.columnResizeDragging) {
+      this.triggerEvent(this.onPreHeaderClick, { node: e.target }, e);
     }
   }
 

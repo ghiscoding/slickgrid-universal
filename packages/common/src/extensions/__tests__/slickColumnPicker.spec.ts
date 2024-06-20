@@ -7,6 +7,7 @@ import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { BackendUtilityService } from '../../services/backendUtility.service';
+import { createDomElement } from '@slickgrid-universal/utils';
 
 const gridUid = 'slickgrid_124343';
 
@@ -179,6 +180,30 @@ describe('ColumnPickerControl', () => {
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(liElmList[2].textContent).toBe('Billing - Field 3');
+    });
+
+    it('should open the column picker via "onPreHeaderContextMenu" and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
+      const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
+      jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+
+      gridOptionsMock.columnPicker!.hideForceFitButton = false;
+      gridOptionsMock.forceFitColumns = true;
+      control.columns = columnsMock;
+      control.init();
+
+      const groupElm = createDomElement('div', { className: 'slick-column-name' });
+      gridStub.onPreHeaderContextMenu.notify({ node: groupElm, grid: gridStub }, { ...new SlickEventData(), preventDefault: jest.fn(), target: groupElm } as any, gridStub);
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const inputForcefitElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
+
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(control.menuElement?.style.display).not.toBe('none');
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+      expect(inputForcefitElm.checked).toBeTruthy();
+      expect(inputForcefitElm.dataset.option).toBe('autoresize');
+      expect(labelSyncElm.textContent).toBe('Force fit columns');
     });
 
     it('should open the column picker via "onHeaderContextMenu" and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
