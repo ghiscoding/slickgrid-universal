@@ -25,7 +25,7 @@ describe('Example 11 - Batch Editing', () => {
   describe('built-in operators', () => {
     it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
       cy.get('[data-test="clear-storage-btn"]')
-        .click();
+        .click({ force: true });
 
       cy.get('.grid11')
         .find('.slick-header-columns')
@@ -240,7 +240,7 @@ describe('Example 11 - Batch Editing', () => {
   describe('Local Storage', () => {
     it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
       cy.get('[data-test="clear-storage-btn"]')
-        .click();
+        .click({ force: true });
 
       cy.get('.grid11')
         .find('.slick-header-columns')
@@ -511,7 +511,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.action.dropdown .dropdown-item')
         .contains('Create New View')
-        .click();
+        .click({ force: true });
 
       cy.get('@winPromptStubReturnNonNull').should('be.calledOnce')
         .and('be.calledWith', 'Please provide a name for the new View.');
@@ -561,6 +561,15 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.search-filter.filter-finish .date-picker input')
         .invoke('val')
         .then(text => expect(text).to.eq(`${currentYear + 1}-01-01`));
+
+      cy.get('.search-filter.filter-finish.filled')
+        .click();
+
+      cy.get('.vanilla-calendar-day__btn_selected')
+        .should('have.length', 1);
+
+      cy.get('.vanilla-calendar-day__btn_selected')
+        .should('have.text', '1');
 
       cy.get('.slick-column-name')
         .contains('Finish')
@@ -634,7 +643,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.action.dropdown .dropdown-item')
         .contains('Update Current View')
-        .click();
+        .click({ force: true });
 
       cy.get('.action.dropdown .dropdown-item:nth(1)')
         .then($elm => {
@@ -671,7 +680,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.action.dropdown .dropdown-item')
         .contains('Delete Current View')
-        .click();
+        .click({ force: true });
     });
 
     it('should expect all Filters & Sorting to be cleared and also expect all columns be back to original', () => {
@@ -692,6 +701,13 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.search-filter.filter-finish .date-picker input')
         .invoke('val')
         .then(text => expect(text).to.eq(''));
+
+      cy.get('.search-filter.filter-finish')
+        .should('not.have.class', 'filled')
+        .click();
+
+      cy.get('.vanilla-calendar-day__btn_selected')
+        .should('have.length', 0);
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
 
@@ -714,7 +730,7 @@ describe('Example 11 - Batch Editing', () => {
 
     it('should "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
       cy.get('[data-test="clear-storage-btn"]')
-        .click();
+        .click({ force: true });
 
       cy.get('.grid11')
         .find('.slick-header-columns')
@@ -1062,6 +1078,11 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.slick-custom-tooltip').should('be.visible');
       cy.get('.slick-custom-tooltip .tooltip-body').contains('Mark as Completed');
+    });
+
+    it('should clear local storage before leaving', () => {
+      cy.get('[data-test="clear-storage-btn"]')
+        .click({ force: true });
     });
   });
 });

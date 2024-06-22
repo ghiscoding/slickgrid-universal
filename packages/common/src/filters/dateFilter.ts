@@ -159,14 +159,19 @@ export class DateFilter implements Filter {
       if (this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
       }
-      if (this.calendarInstance.input) {
-        this.calendarInstance.settings.selected.dates = [];
-        this._dateInputElm.value = '';
-        this.calendarInstance.update({
-          dates: true,
-          month: true,
-          year: true,
-          time: true,
+
+      if (this.calendarInstance) {
+        const now = new Date();
+        setPickerDates(this.columnFilter, this._dateInputElm, this.calendarInstance, {
+          columnDef: this.columnDef,
+          oldVal: this._currentDateOrDates,
+          newVal: '',
+          updatePickerUI: true,
+          selectedSettings: {
+            dates: [],
+            month: now.getMonth(),
+            year: now.getFullYear()
+          }
         });
       }
     }
@@ -220,7 +225,12 @@ export class DateFilter implements Filter {
     }
 
     if (this.calendarInstance && pickerValues !== undefined) {
-      setPickerDates(this._dateInputElm, this.calendarInstance, pickerValues, this.columnDef, this.columnFilter);
+      setPickerDates(this.columnFilter, this._dateInputElm, this.calendarInstance, {
+        columnDef: this.columnDef,
+        oldVal: this._currentDateOrDates,
+        newVal: pickerValues,
+        updatePickerUI: true
+      });
       this._currentDateOrDates = (values && pickerValues) ? pickerValues : undefined;
     }
 
@@ -412,7 +422,12 @@ export class DateFilter implements Filter {
     }
 
     if (pickerValues) {
-      setPickerDates(this._dateInputElm, pickerOptions, pickerValues, this.columnDef, this.columnFilter);
+      setPickerDates(this.columnFilter, this._dateInputElm, this.calendarInstance, {
+        columnDef: this.columnDef,
+        oldVal: undefined,
+        newVal: pickerValues,
+        updatePickerUI: false
+      });
     }
   }
 

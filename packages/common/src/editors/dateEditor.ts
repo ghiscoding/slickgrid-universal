@@ -209,12 +209,11 @@ export class DateEditor implements Editor {
           this.focus();
         }
         if (this.calendarInstance) {
-          setPickerDates(this._inputElm, this.calendarInstance, this.defaultDate, this.columnDef, this.columnEditor);
-          this.calendarInstance.update({
-            dates: true,
-            month: true,
-            year: true,
-            time: true,
+          setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
+            columnDef: this.columnDef,
+            oldVal: this.getValue(),
+            newVal: this.defaultDate,
+            updatePickerUI: true
           });
         }
       });
@@ -305,7 +304,12 @@ export class DateEditor implements Editor {
 
   setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     if (this.calendarInstance) {
-      setPickerDates(this._inputElm, this.calendarInstance, val, this.columnDef, this.columnEditor);
+      setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
+        columnDef: this.columnDef,
+        oldVal: this.getValue(),
+        newVal: val,
+        updatePickerUI: true
+      });
     }
 
     if (isApplyingValue) {

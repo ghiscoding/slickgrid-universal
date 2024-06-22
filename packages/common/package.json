@@ -77,7 +77,7 @@
     "multiple-select-vanilla": "^3.2.2",
     "sortablejs": "^1.15.2",
     "un-flatten-tree": "^2.0.12",
-    "vanilla-calendar-picker": "^2.11.6"
+    "vanilla-calendar-picker": "^2.11.7"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

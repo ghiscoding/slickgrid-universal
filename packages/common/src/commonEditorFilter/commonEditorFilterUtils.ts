@@ -1,6 +1,7 @@
 import { format } from '@formkit/tempo';
 import type { AutocompleteItem } from 'autocompleter';
-import type { IOptions } from 'vanilla-calendar-picker';
+import { dequal } from 'dequal/lite';
+import type { IOptions, ISelected, VanillaCalendar } from 'vanilla-calendar-picker';
 
 import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
 import { FieldType } from '../enums';
@@ -33,30 +34,55 @@ export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteIt
   }
 }
 
-export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IOptions, dateValues: Date | Date[] | string | string[] | undefined, columnDef: Column, colEditorOrFilter: ColumnEditor | ColumnFilter): void {
-  const currentDateOrDates = dateValues;
-  const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || FieldType.dateUtc;
-  const inputFieldType = colEditorOrFilter.type || columnDef.type;
-  const isoFormat = mapTempoDateFormatWithFieldType(FieldType.dateIso) as string;
-  const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
-  const initialDates = Array.isArray(currentDateOrDates) ? currentDateOrDates : [(currentDateOrDates || '') as string];
-  if (initialDates.length && initialDates[0]) {
+export function setPickerDates(
+  colEditorOrFilter: ColumnEditor | ColumnFilter,
+  dateInputElm: HTMLInputElement,
+  pickerInstance: IOptions | VanillaCalendar,
+  options: {
+    oldVal?: Date | string | Array<Date | string> | undefined,
+    newVal: Date | string | Array<Date | string> | undefined,
+    columnDef: Column,
+    updatePickerUI?: boolean;
+    selectedSettings?: ISelected;
+  }
+): void {
+  const { oldVal, newVal, columnDef, selectedSettings, updatePickerUI } = options;
+
+  if (oldVal !== newVal) {
+    const inputFieldType = colEditorOrFilter.type || columnDef.type;
+    const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || FieldType.dateUtc;
+    const newDates = Array.isArray(newVal) ? newVal : [(newVal || '') as string];
     const pickerDates: Date[] = [];
-    for (const initialDate of initialDates) {
+
+    const isoFormat = mapTempoDateFormatWithFieldType(FieldType.dateIso) as string;
+    const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
+    for (const initialDate of newDates) {
       const date = initialDate instanceof Date ? initialDate : tryParseDate(initialDate, inputFormat);
       if (date) {
         pickerDates.push(date);
       }
     }
 
-    if (pickerDates.length) {
-      pickerOptions.settings!.selected = {
-        dates: [pickerDates.map(p => format(p, isoFormat)).join(':')],
-        month: pickerDates[0].getMonth(),
-        year: pickerDates[0].getFullYear(),
-        time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
-      };
+    const newSettingSelected: ISelected = selectedSettings ?? {
+      dates: [pickerDates.map(p => format(p, isoFormat)).join(':')],
+      month: pickerDates[0]?.getMonth(),
+      year: pickerDates[0]?.getFullYear(),
+      time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
+    };
+
+    if (!dequal(pickerInstance.settings!.selected, newSettingSelected)) {
+      pickerInstance.settings!.selected = newSettingSelected;
+
+      if (updatePickerUI && (pickerInstance as VanillaCalendar)?.update) {
+        (pickerInstance as VanillaCalendar).update({
+          dates: true,
+          month: true,
+          year: true,
+          time: true,
+        });
+      }
     }
-    dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
+
+    dateInputElm.value = newDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }
 }
