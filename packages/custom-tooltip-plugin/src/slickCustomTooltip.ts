@@ -150,6 +150,7 @@ export class SlickCustomTooltip {
     this._eventHandler
       .subscribe(grid.onMouseEnter, this.handleOnMouseOver.bind(this))
       .subscribe(grid.onHeaderMouseOver, (e, args) => this.handleOnHeaderMouseOverByType(e, args, 'slick-header-column'))
+      .subscribe(grid.onHeaderRowMouseEnter, (e, args) => this.handleOnHeaderMouseOverByType(e, args, 'slick-headerrow-column'))
       .subscribe(grid.onHeaderRowMouseOver, (e, args) => this.handleOnHeaderMouseOverByType(e, args, 'slick-headerrow-column'))
       .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this))
       .subscribe(grid.onHeaderMouseOut, this.hideTooltip.bind(this))
