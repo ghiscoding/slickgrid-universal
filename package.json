@@ -41,6 +41,7 @@
     "build:dev": "pnpm -r --filter=./examples/vite-demo-vanilla-bundle build:dev",
     "serve:vite": "pnpm -r --filter=./examples/vite-demo-vanilla-bundle dev",
     "lint": "eslint --cache .",
+    "lint:no-cache": "eslint .",
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.ts",
     "test:ci": "jest --runInBand --coverage=true --ci --config ./test/jest.config.ts",
     "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.ts",

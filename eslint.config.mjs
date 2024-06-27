@@ -1,5 +1,5 @@
 import eslint from '@eslint/js';
-import cypress from 'eslint-plugin-cypress';
+import cypress from 'eslint-plugin-cypress/flat';
 import globals from 'globals';
 import jest from 'eslint-plugin-jest';
 import n from 'eslint-plugin-n';
@@ -7,7 +7,6 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   eslint.configs.recommended,
-  // ...cypress.configs.recommended,
   ...tseslint.configs.recommended,
   {
     ignores: [
