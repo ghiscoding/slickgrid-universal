@@ -49,7 +49,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@formkit/tempo": "^0.1.1",
+    "@formkit/tempo": "^0.1.2",
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/common": "workspace:~"
   },
