@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.0...v5.3.1) (2024-06-28)
+
+### Bug Fixes
+
+* **filter:** changing Slider dynamically shouldn't display tooltip ([#1587](https://github.com/ghiscoding/slickgrid-universal/issues/1587)) ([34bdf76](https://github.com/ghiscoding/slickgrid-universal/commit/34bdf76e0207dd720819f33f5a6f2e9eaf14581c)) - by @ghiscoding
+* **filters:** set date filter dynamically not always setting input value ([#1586](https://github.com/ghiscoding/slickgrid-universal/issues/1586)) ([5233be9](https://github.com/ghiscoding/slickgrid-universal/commit/5233be9d973bcd8b587f49ed12d472a9c93be896)) - by @ghiscoding
+
 ## [5.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.2.0...v5.3.0) (2024-06-28)
 
 ### Features
