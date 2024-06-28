@@ -12,7 +12,7 @@
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "@fnando/sparkline": "^0.3.10",
-    "@formkit/tempo": "^0.1.1",
+    "@formkit/tempo": "^0.1.2",
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/composite-editor-component": "workspace:~",
@@ -34,10 +34,10 @@
   },
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.7",
-    "@types/node": "^20.14.3",
+    "@types/node": "^20.14.9",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.77.5",
-    "typescript": "^5.5.1-rc",
-    "vite": "^5.3.1"
+    "sass": "^1.77.6",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.2"
   }
 }
