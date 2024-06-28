@@ -154,6 +154,7 @@ export class SlickCustomTooltip {
       .subscribe(grid.onHeaderRowMouseOver, (e, args) => this.handleOnHeaderMouseOverByType(e, args, 'slick-headerrow-column'))
       .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this))
       .subscribe(grid.onHeaderMouseOut, this.hideTooltip.bind(this))
+      .subscribe(grid.onHeaderRowMouseLeave, this.hideTooltip.bind(this))
       .subscribe(grid.onHeaderRowMouseOut, this.hideTooltip.bind(this));
   }
 
@@ -221,7 +222,7 @@ export class SlickCustomTooltip {
     const isHeaderRowType = selector === 'slick-headerrow-column';
 
     // run the override function (when defined), if the result is false it won't go further
-    args = args || {};
+    args ||= {};
     args.cell = cell.cell;
     args.row = cell.row;
     args.columnDef = columnDef;

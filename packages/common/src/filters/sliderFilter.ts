@@ -8,6 +8,7 @@ import type {
   Column,
   ColumnFilter,
   CurrentSliderOption,
+  DOMEvent,
   Filter,
   FilterArguments,
   FilterCallback,
@@ -182,12 +183,22 @@ export class SliderFilter implements Filter {
    * @param leftValue number
    * @param rightValue number
    */
-  renderSliderValues(leftValue?: number | string | undefined, rightValue?: number | string | undefined): void {
-    if (this._leftSliderNumberElm?.textContent && leftValue) {
-      this._leftSliderNumberElm.textContent = leftValue.toString();
+  renderSliderValues(leftValue?: number | string, rightValue?: number | string, triggerTooltipMouseLeave = true): void {
+    const leftVal = leftValue?.toString() || '';
+    const rightVal = rightValue?.toString() || '';
+
+    if (this._leftSliderNumberElm?.textContent) {
+      this._leftSliderNumberElm.textContent = leftVal;
     }
-    if (this._rightSliderNumberElm?.textContent && rightValue) {
-      this._rightSliderNumberElm.textContent = rightValue.toString();
+    if (this._rightSliderNumberElm?.textContent) {
+      this._rightSliderNumberElm.textContent = rightVal;
+    }
+    this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${leftVal} - ${rightVal}` : `${rightVal}`;
+
+    // when changing slider values dynamically (typically via a button), we'll want to avoid tooltips showing up
+    // onHeaderRowMouseLeave will hide any tooltip
+    if (triggerTooltipMouseLeave) {
+      this.grid.onHeaderRowMouseLeave.notify({ column: this.columnDef, grid: this.grid });
     }
   }
 
@@ -363,13 +374,13 @@ export class SliderFilter implements Filter {
 
     // attach events
     this._bindEventService.bind(this._sliderTrackElm, 'click', this.sliderTrackClicked.bind(this) as EventListener);
-    this._bindEventService.bind(this._sliderRightInputElm, ['input', 'change'], this.slideRightInputChanged.bind(this));
+    this._bindEventService.bind(this._sliderRightInputElm, ['input', 'change'], this.slideRightInputChanged.bind(this) as EventListener);
     this._bindEventService.bind(this._sliderRightInputElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
 
     if (this.sliderType === 'compound' && this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, ['change'], this.onValueChanged.bind(this) as EventListener);
     } else if (this.sliderType === 'double' && this._sliderLeftInputElm) {
-      this._bindEventService.bind(this._sliderLeftInputElm, ['input', 'change'], this.slideLeftInputChanged.bind(this));
+      this._bindEventService.bind(this._sliderLeftInputElm, ['input', 'change'], this.slideLeftInputChanged.bind(this) as EventListener);
       this._bindEventService.bind(this._sliderLeftInputElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
     }
 
@@ -392,7 +403,7 @@ export class SliderFilter implements Filter {
   }
 
   /** handle value change event triggered, trigger filter callback & update "filled" class name */
-  protected onValueChanged(e: MouseEvent): void {
+  protected onValueChanged(e: DOMEvent<HTMLInputElement>): void {
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
     let value;
     let searchTerms: SearchTerm[];
@@ -443,7 +454,7 @@ export class SliderFilter implements Filter {
     this._sliderRightInputElm?.classList[addRemoveCmd]('focus');
   }
 
-  protected slideLeftInputChanged(e: Event): void {
+  protected slideLeftInputChanged(e: DOMEvent<HTMLInputElement>): void {
     const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
 
@@ -467,7 +478,7 @@ export class SliderFilter implements Filter {
     this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
   }
 
-  protected slideRightInputChanged(e: Event): void {
+  protected slideRightInputChanged(e: DOMEvent<HTMLInputElement>): void {
     const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
 
@@ -478,7 +489,7 @@ export class SliderFilter implements Filter {
     this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
   }
 
-  protected sliderLeftOrRightChanged(e: Event, sliderLeftVal: number, sliderRightVal: number): void {
+  protected sliderLeftOrRightChanged(e: DOMEvent<HTMLInputElement>, sliderLeftVal: number, sliderRightVal: number): void {
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
