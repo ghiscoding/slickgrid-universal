@@ -22,6 +22,7 @@ const gridStub = {
   render: jest.fn(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
+  onHeaderRowMouseLeave: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('SliderRangeFilter', () => {
@@ -120,6 +121,7 @@ describe('SliderRangeFilter', () => {
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
     const callbackSpy = jest.spyOn(filterArguments, 'callback');
     const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseLeaveSpy = jest.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
 
     filter.init(filterArguments);
     filter.setValues(['2..80']);
@@ -128,6 +130,7 @@ describe('SliderRangeFilter', () => {
 
     expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [2, 80], shouldTriggerQuery: true });
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+    expect(rowMouseLeaveSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub });
   });
 
   it('should trigger an slider input change event and expect slider value to be updated and also "onHeaderRowMouseEnter" to be notified', () => {

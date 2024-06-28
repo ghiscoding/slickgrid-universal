@@ -28,6 +28,7 @@ const gridStub = {
   render: jest.fn(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
+  onHeaderRowMouseLeave: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('CompoundSliderFilter', () => {
@@ -107,6 +108,7 @@ describe('CompoundSliderFilter', () => {
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be converted to number and in the callback when triggered', () => {
     const callbackSpy = jest.spyOn(filterArguments, 'callback');
     const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseLeaveSpy = jest.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
     const filterArgs = { ...filterArguments, operator: '>', grid: gridStub } as FilterArguments;
 
     filter.init(filterArgs);
@@ -116,6 +118,7 @@ describe('CompoundSliderFilter', () => {
 
     expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: [2], shouldTriggerQuery: true });
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+    expect(rowMouseLeaveSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub });
   });
 
   it('should trigger an slider input change event and expect slider value to be updated and also "onHeaderRowMouseEnter" to be notified', () => {

@@ -39,6 +39,7 @@ const gridStub = {
   onHeaderMouseOver: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
   onHeaderRowMouseOver: new SlickEvent(),
+  onHeaderRowMouseLeave: new SlickEvent(),
   onMouseLeave: new SlickEvent(),
   onHeaderMouseOut: new SlickEvent(),
   onHeaderRowMouseOut: new SlickEvent(),
@@ -309,7 +310,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
-  it('should create a tooltip as regular tooltip with coming from text content when it is filled & also expect "hideTooltip" to be called after leaving the cell when "onHeaderMouseOut" event is triggered', () => {
+  it('should create a tooltip as regular tooltip with coming from text content when it is filled & also expect "hideTooltip" to be called after leaving the cell when "onMouseLeave" event is triggered', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.textContent = 'some text content';
@@ -336,6 +337,36 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
 
     gridStub.onMouseLeave.notify({ grid: gridStub } as any);
+    expect(hideColumnSpy).toHaveBeenCalled();
+  });
+
+  it('should create a tooltip as regular tooltip with coming from text content when it is filled & also expect "hideTooltip" to be called after leaving the cell when "onHeaderRowMouseLeave" event is triggered', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.textContent = 'some text content';
+    cellNode.setAttribute('title', 'tooltip text');
+    Object.defineProperty(cellNode, 'scrollWidth', { writable: true, configurable: true, value: 400 });
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+    const hideColumnSpy = jest.spyOn(plugin, 'hideTooltip');
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, maxWidth: 85 });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm).toEqual(plugin.tooltipElm);
+    expect(plugin.addonOptions).toBeTruthy();
+    expect(tooltipElm.style.maxWidth).toBe('85px');
+    expect(tooltipElm.textContent).toBe('some text content');
+    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+
+    gridStub.onHeaderRowMouseLeave.notify({ grid: gridStub } as any);
     expect(hideColumnSpy).toHaveBeenCalled();
   });
 
