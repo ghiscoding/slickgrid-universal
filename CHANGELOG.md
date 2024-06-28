@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.2.0...v5.3.0) (2024-06-28)
+
+### Features
+
+* **grouping:** add onPreHeaderContextMenu for Column Picker usage ([#1580](https://github.com/ghiscoding/slickgrid-universal/issues/1580)) ([c742a83](https://github.com/ghiscoding/slickgrid-universal/commit/c742a83adaf8d7af9485005bbd76a37bc52fea9b)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1581](https://github.com/ghiscoding/slickgrid-universal/issues/1581)) ([e89d1ad](https://github.com/ghiscoding/slickgrid-universal/commit/e89d1ad8d8573b3faef9bc9d312ecac199461c81)) - by @renovate-bot
+* **filters:** setting date picker should always work, fixes [#1582](https://github.com/ghiscoding/slickgrid-universal/issues/1582) ([#1583](https://github.com/ghiscoding/slickgrid-universal/issues/1583)) ([92f6164](https://github.com/ghiscoding/slickgrid-universal/commit/92f6164ec275c204739b8e56426934a5ad82c1be)) - by @ghiscoding
+* **styling:** Column Header should always be on top of grid container ([#1578](https://github.com/ghiscoding/slickgrid-universal/issues/1578)) ([2f97dbb](https://github.com/ghiscoding/slickgrid-universal/commit/2f97dbb27e070eb29bbc95666dd64993d0a5818c)) - by @ghiscoding
+* **tooltip:** Slider Filter should auto update tooltip whenever sliding ([#1584](https://github.com/ghiscoding/slickgrid-universal/issues/1584)) ([4d56dfb](https://github.com/ghiscoding/slickgrid-universal/commit/4d56dfbe27399a4933c83eb2b1984ae4c0f2f858)) - by @ghiscoding
+
 ## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
 
 ### Features

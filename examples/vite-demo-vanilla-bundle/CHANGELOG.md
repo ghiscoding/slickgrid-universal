@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.2.0...v5.3.0) (2024-06-28)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1581](https://github.com/ghiscoding/slickgrid-universal/issues/1581)) ([e89d1ad](https://github.com/ghiscoding/slickgrid-universal/commit/e89d1ad8d8573b3faef9bc9d312ecac199461c81)) - by @renovate-bot
+* **filters:** setting date picker should always work, fixes [#1582](https://github.com/ghiscoding/slickgrid-universal/issues/1582) ([#1583](https://github.com/ghiscoding/slickgrid-universal/issues/1583)) ([92f6164](https://github.com/ghiscoding/slickgrid-universal/commit/92f6164ec275c204739b8e56426934a5ad82c1be)) - by @ghiscoding
+
 ## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
 
 ### Features

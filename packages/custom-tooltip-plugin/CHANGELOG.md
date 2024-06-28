@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.2.0...v5.3.0) (2024-06-28)
+
+### Bug Fixes
+
+* **tooltip:** Slider Filter should auto update tooltip whenever sliding ([#1584](https://github.com/ghiscoding/slickgrid-universal/issues/1584)) ([4d56dfb](https://github.com/ghiscoding/slickgrid-universal/commit/4d56dfbe27399a4933c83eb2b1984ae4c0f2f858)) - by @ghiscoding
+
 ## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

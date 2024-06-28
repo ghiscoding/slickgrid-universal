@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.2.0...v5.3.0) (2024-06-28)
+
+### Features
+
+* **grouping:** add onPreHeaderContextMenu for Column Picker usage ([#1580](https://github.com/ghiscoding/slickgrid-universal/issues/1580)) ([c742a83](https://github.com/ghiscoding/slickgrid-universal/commit/c742a83adaf8d7af9485005bbd76a37bc52fea9b)) - by @ghiscoding
+
 ## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
 
 **Note:** Version bump only for package @slickgrid-universal/binding
