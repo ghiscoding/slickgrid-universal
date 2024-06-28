@@ -303,7 +303,7 @@ export class SlickVanillaGridBundle<TData = any> {
   ) {
     // make sure that the grid container doesn't already have the "slickgrid-container" css class
     // if it does then we won't create yet another grid, just stop there
-    if (gridParentContainerElm.querySelectorAll('.slickgrid-container').length !== 0) {
+    if (!gridParentContainerElm || gridParentContainerElm.querySelectorAll('.slickgrid-container').length !== 0) {
       return;
     }
 
