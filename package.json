@@ -73,7 +73,7 @@
     "cypress": "^13.12.0",
     "cypress-real-events": "^1.13.0",
     "dotenv": "^16.4.5",
-    "eslint": "^9.5.0",
+    "eslint": "^9.6.0",
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jest": "^28.6.0",
