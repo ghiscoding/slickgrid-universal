@@ -227,7 +227,6 @@ export class DateFilter implements Filter {
     if (this.calendarInstance && pickerValues !== undefined) {
       setPickerDates(this.columnFilter, this._dateInputElm, this.calendarInstance, {
         columnDef: this.columnDef,
-        oldVal: this._currentDateOrDates,
         newVal: pickerValues,
         updatePickerUI: true
       });
