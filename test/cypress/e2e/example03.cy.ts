@@ -44,6 +44,44 @@ describe('Example 03 - Draggable Grouping', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
   });
 
+  it('should be able to change Start date and expect same date when reopening date picker', () => {
+    let pickerMonth = '';
+    let selectedDate = '';
+    const currentYear = new Date().getFullYear();
+    const firstRowStartYear = currentYear - 2;
+    // change Finish date to today's date
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', '').click();
+    cy.get('.vanilla-calendar-year').should('have.text', firstRowStartYear);
+    cy.get('.vanilla-calendar-month')
+      .should($button => {
+        pickerMonth = $button.text();
+        expect(pickerMonth).not.to.eq('');
+      });
+    cy.get('.vanilla-calendar-day__btn_selected')
+      .should($button => {
+        selectedDate = $button.text();
+        expect(pickerMonth).not.to.eq('');
+      });
+    cy.get('.vanilla-calendar-day__btn_selected')
+      .click(); // reselect it to close the picker
+
+    // reopen date picker should have same date
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', '').click();
+    cy.get('.vanilla-calendar-year').should('have.text', firstRowStartYear);
+
+    cy.get('.vanilla-calendar-month')
+      .should($button => {
+        expect($button.text()).to.eq(pickerMonth);
+      });
+    cy.get('.vanilla-calendar-day__btn_selected')
+      .should($button => {
+        expect($button.text()).to.eq(selectedDate);
+      });
+
+    cy.get('.vanilla-calendar-day__btn_selected')
+      .click(); // reselect it to close the picker
+  });
+
   describe('Grouping tests', () => {
     it('should "Group by Duration & sort groups by value" then Collapse All and expect only group titles', () => {
       cy.get('[data-test="add-50k-rows-btn"]').click();

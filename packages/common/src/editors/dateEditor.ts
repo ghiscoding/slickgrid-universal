@@ -211,7 +211,6 @@ export class DateEditor implements Editor {
         if (this.calendarInstance) {
           setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
             columnDef: this.columnDef,
-            oldVal: this.getValue(),
             newVal: this.defaultDate,
             updatePickerUI: true
           });
@@ -306,7 +305,6 @@ export class DateEditor implements Editor {
     if (this.calendarInstance) {
       setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
         columnDef: this.columnDef,
-        oldVal: this.getValue(),
         newVal: val,
         updatePickerUI: true
       });

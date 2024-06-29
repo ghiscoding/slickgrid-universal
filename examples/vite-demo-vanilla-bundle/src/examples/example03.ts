@@ -373,8 +373,9 @@ export default class Example03 {
   loadData(count: number) {
     // mock data
     const tmpArray: any[] = [];
+    const currentYear = new Date().getFullYear();
+
     for (let i = 0; i < count; i++) {
-      const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomFinishYear = (new Date().getFullYear() - 3) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
@@ -386,7 +387,7 @@ export default class Example03 {
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100) + '',
         percentComplete: Math.round(Math.random() * 100),
-        start: new Date(randomYear, randomMonth, randomDay),
+        start: new Date(currentYear - 2, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
         cost: (i % 33 === 0) ? -randomCost : randomCost,
         effortDriven: (i % 5 === 0)
