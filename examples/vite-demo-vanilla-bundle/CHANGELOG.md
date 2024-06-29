@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.1...v5.3.2) (2024-06-29)
+
+### Bug Fixes
+
+* **editor:** selecting date editor then reopen should have same date ([#1588](https://github.com/ghiscoding/slickgrid-universal/issues/1588)) ([80d40ff](https://github.com/ghiscoding/slickgrid-universal/commit/80d40ffbbe765816f12d9630ef70e589019c902c)) - by @ghiscoding
+
 ## [5.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.0...v5.3.1) (2024-06-28)
 
 ### Bug Fixes
