@@ -1,0 +1,11 @@
+/** override slick-cell to make it look like Excel sheet */
+.grid24 {
+  --slick-border-color: #b5b5b5;
+  --slick-grid-border-color: #b5b5b5;
+  --slick-cell-odd-background-color: #fbfbfb;
+  --slick-cell-border-left: 1px solid var(--slick-border-color);
+  --slick-grid-footer-cell-border-left: 1px solid var(--slick-border-color);
+  --slick-header-menu-display: none;
+  --slick-header-column-height: 20px;
+  --slick-row-selected-color: #d4ebfd;
+}

@@ -593,6 +593,7 @@
         font-style: var(--slick-grid-footer-font-style, $slick-grid-footer-font-style);
         font-weight: var(--slick-grid-footer-font-weight, $slick-grid-footer-font-weight);
         padding: var(--slick-grid-footer-cell-padding, $slick-grid-footer-cell-padding);
+        border-left: var(--slick-grid-footer-cell-border-left, $slick-grid-footer-cell-border-left);
       }
     }
   }

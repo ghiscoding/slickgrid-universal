@@ -62,7 +62,7 @@ $slick-container-border-left:                               0 none !default;
 $slick-canvas-bg-color:                                     #fff !default;
 
 /* grid */
-$slick-grid-border-color:                                   fade(black, 3%) !default;
+$slick-grid-border-color:                                   none !default;
 $slick-grid-border-style:                                   solid !default;
 $slick-grid-header-background:                              rgba(255, 255, 255, .6) !default;
 $slick-grid-header-unorderable-bg-color:                    $slick-grid-header-background !default;
@@ -884,13 +884,15 @@ $slick-viewport-border-left:                                0 none !default;
 /* SlickGrid built-in Footer */
 $slick-grid-footer-display:                                 flex !default;
 $slick-grid-footer-align-items:                             center !default;
-$slick-grid-footer-justify-content:                         normal !default;
 $slick-grid-footer-border-top:                              1px solid #d0d0d0 !default;
 $slick-grid-footer-bg-color:                                #fafaf9 !default;
+$slick-grid-footer-cell-padding:                            $slick-cell-padding !default;
+$slick-grid-footer-cell-border-left:                        1px transparent !default;
 $slick-grid-footer-font-size:                               13px !default;
 $slick-grid-footer-font-style:                              normal !default;
 $slick-grid-footer-font-weight:                             bold !default;
-$slick-grid-footer-cell-padding:                            $slick-cell-padding !default;
+$slick-grid-footer-justify-content:                         normal !default;
+
 
 /* Custom Footer */
 $slick-footer-bg-color:                                     transparent !default;
