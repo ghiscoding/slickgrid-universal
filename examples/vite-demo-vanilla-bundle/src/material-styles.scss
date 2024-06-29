@@ -69,7 +69,6 @@
     --slick-header-resizable-hover-border-top: 2px solid #83d9a0;
     --slick-header-resizable-hover-border-right: 2px solid #83d9a0;
     --slick-slider-filter-filled-track-color: #9ac49c;
-
     --ms-ok-button-text-color: #009530;
     --ms-select-all-text-color: #007c28;
     --slick-multiselect-icon-radio-border: none;
@@ -119,6 +118,7 @@
       }
     }
 
+    [data-theme="dark"] .slick-submenu,
     .ms-dark-mode,
     .ms-drop.ms-dark-mode,
     .slick-dark-mode .ms-dark-mode,
@@ -151,6 +151,12 @@
       --slick-row-mouse-hover-box-shadow: none;
       --slick-row-mouse-hover-color: #505050;
       --slick-row-selected-color: #474747;
+      --slick-menu-color: #ededed;
+      --slick-menu-bg-color: #212121;
+      --slick-menu-border: 1px solid #505050;
+      --slick-menu-item-hover-color: #363b40;
+      --slick-menu-item-hover-border: 1px solid #5a5a5a;
+      --slick-submenu-box-shadow: none;
       --ms-checkbox-color: #66bb6a;
       --ms-checkbox-hover-color: #{lighten(#49a54e, 13%)};
       --ms-ok-button-text-color: #66bb6a;
@@ -171,11 +177,18 @@
     }
   }
 
+  body.material-theme[data-theme="dark"] .slick-submenu,
   body.material-theme .ms-dark-mode,
   body.material-theme .ms-drop.ms-dark-mode,
   body.material-theme .slick-dark-mode .ms-dark-mode,
   body.material-theme .slick-dark-mode,
   body.material-theme .dark-mode .text-color-primary {
     --slick-primary-color: #66bb6a;
+    --slick-menu-color: #ededed;
+    --slick-menu-bg-color: #212121;
+    --slick-menu-border: 1px solid #505050;
+    --slick-menu-item-hover-color: #363b40;
+    --slick-menu-item-hover-border: 1px solid #5a5a5a;
+    --slick-submenu-box-shadow: none;
   }
 }
