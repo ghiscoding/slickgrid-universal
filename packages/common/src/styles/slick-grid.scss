@@ -582,7 +582,7 @@
   }
 
   .slick-footerrow {
-    border-top: var(--slick-grid-footer-top-border-top, $slick-grid-footer-top-border-top);
+    border-top: var(--slick-grid-footer-border-top, $slick-grid-footer-border-top);
     background-color: var(--slick-grid-footer-bg-color, $slick-grid-footer-bg-color);
     .slick-footerrow-columns {
       .slick-footerrow-column {
@@ -592,6 +592,7 @@
         font-size: var(--slick-grid-footer-font-size, $slick-grid-footer-font-size);
         font-style: var(--slick-grid-footer-font-style, $slick-grid-footer-font-style);
         font-weight: var(--slick-grid-footer-font-weight, $slick-grid-footer-font-weight);
+        padding: var(--slick-grid-footer-cell-padding, $slick-grid-footer-cell-padding);
       }
     }
   }

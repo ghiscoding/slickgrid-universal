@@ -885,11 +885,12 @@ $slick-viewport-border-left:                                0 none !default;
 $slick-grid-footer-display:                                 flex !default;
 $slick-grid-footer-align-items:                             center !default;
 $slick-grid-footer-justify-content:                         normal !default;
-$slick-grid-footer-top-border-top:                          1px solid #d0d0d0 !default;
+$slick-grid-footer-border-top:                              1px solid #d0d0d0 !default;
 $slick-grid-footer-bg-color:                                #fafaf9 !default;
 $slick-grid-footer-font-size:                               13px !default;
 $slick-grid-footer-font-style:                              normal !default;
 $slick-grid-footer-font-weight:                             bold !default;
+$slick-grid-footer-cell-padding:                            $slick-cell-padding !default;
 
 /* Custom Footer */
 $slick-footer-bg-color:                                     transparent !default;
@@ -1023,6 +1024,7 @@ $slick-dark-text-color:                                   #d4d4d4;
   --slick-row-mouse-hover-color:                          #2c3034;
   --slick-header-background-color:                        #1c1c1c;
   --slick-grid-footer-bg-color:                           #1c1c1c;
+  --slick-grid-footer-border-top:                         1px solid #606060;
   --slick-header-text-color:                              #e4e4e4;
   --slick-hover-header-color:                             var(--slick-base-dark-text-color);
   --slick-header-row-background-color:                    #2d2d2d;
