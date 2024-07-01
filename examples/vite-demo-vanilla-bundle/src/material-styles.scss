@@ -118,10 +118,10 @@
       }
     }
 
-    [data-theme="dark"] .slick-submenu,
     .ms-dark-mode,
     .ms-drop.ms-dark-mode,
     .slick-dark-mode .ms-dark-mode,
+    .slick-dark-mode .slick-submenu,
     .slick-dark-mode .icon-checkbox-container,
     .ms-dark-mode .icon-checkbox-container,
     .slick-dark-mode {
@@ -177,11 +177,11 @@
     }
   }
 
-  body.material-theme[data-theme="dark"] .slick-submenu,
   body.material-theme .ms-dark-mode,
   body.material-theme .ms-drop.ms-dark-mode,
-  body.material-theme .slick-dark-mode .ms-dark-mode,
   body.material-theme .slick-dark-mode,
+  body.material-theme .slick-dark-mode .ms-dark-mode,
+  body.material-theme .slick-dark-mode .slick-submenu,
   body.material-theme .dark-mode .text-color-primary {
     --slick-primary-color: #66bb6a;
     --slick-menu-color: #ededed;

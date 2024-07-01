@@ -971,6 +971,7 @@ $slick-dark-text-color:                                   #d4d4d4;
 .ms-dark-mode,
 .ms-drop.ms-dark-mode,
 .slick-dark-mode .ms-dark-mode,
+.slick-dark-mode .slick-submenu,
 .slick-dark-mode {
   // local common CSS vars for dark mode
   --slick-primary-color:                                  #{$slick-dark-primary-color};

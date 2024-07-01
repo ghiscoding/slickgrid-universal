@@ -620,10 +620,15 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       className: menuClasses,
       style: { minWidth: `${this.addonOptions.minWidth}px` },
     });
+
     if (level > 0) {
       menuElm.classList.add('slick-submenu');
       if (subMenuId) {
         menuElm.dataset.subMenuParent = subMenuId;
+      }
+      // add dark mode CSS class when enabled
+      if (this.gridOptions?.darkMode) {
+        menuElm.classList.add('slick-dark-mode');
       }
     }
 
