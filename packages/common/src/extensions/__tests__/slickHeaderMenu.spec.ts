@@ -748,6 +748,10 @@ describe('HeaderMenu Plugin', () => {
         const onCommandMock = jest.fn();
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
         jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValueOnce({
+          ...gridOptionsMock,
+          darkMode: true,
+        });
 
         plugin.init({ autoAlign: true });
         plugin.addonOptions.onCommand = onCommandMock;
@@ -785,6 +789,7 @@ describe('HeaderMenu Plugin', () => {
 
         expect(headerMenu2Elm2.classList.contains('dropup')).toBeTruthy();
         expect(headerMenu2Elm2.classList.contains('dropdown')).toBeFalsy();
+        expect(headerMenu2Elm2.classList.contains('slick-dark-mode')).toBeTruthy();
 
         // cell click should close it
         gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
