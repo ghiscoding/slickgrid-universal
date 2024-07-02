@@ -490,9 +490,16 @@ export class SliderFilter implements Filter {
   }
 
   protected sliderLeftOrRightChanged(e: DOMEvent<HTMLInputElement>, sliderLeftVal: number, sliderRightVal: number): void {
+    let triggerEvent = true;
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
+
+    // min value should never be above max value, override the min value with max when then happens
+    if (this._sliderLeftInputElm && sliderLeftVal > sliderRightVal) {
+      this._sliderLeftInputElm.value = `${sliderRightVal}`;
+      triggerEvent = false;
+    }
 
     const hideSliderNumbers = (this.filterOptions as SliderOption)?.hideSliderNumber ?? (this.filterOptions as SliderRangeOption)?.hideSliderNumbers;
     if (!hideSliderNumbers) {
@@ -505,7 +512,9 @@ export class SliderFilter implements Filter {
     }
 
     // also trigger mouse enter event on the filter in case a SlickCustomTooltip is attached
-    this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    if (triggerEvent) {
+      this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    }
   }
 
   protected sliderTrackClicked(e: MouseEvent): void {

@@ -149,6 +149,24 @@ describe('SliderRangeFilter', () => {
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 
+  it('should not have min value above max value', () => {
+    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.init(filterArguments);
+    filter.setValues([32, 25]);
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].dispatchEvent(new CustomEvent('input'));
+
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
+
+    expect(filterElms[0].value).toBe('25');
+    expect(filterElms[1].value).toBe('25');
+    expect(filterLowestElm.textContent).toBe('25');
+    expect(filterHighestElm.textContent).toBe('25');
+    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+  });
+
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
     const callbackSpy = jest.spyOn(filterArguments, 'callback');
 
