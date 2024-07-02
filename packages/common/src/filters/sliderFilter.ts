@@ -475,7 +475,7 @@ export class SliderFilter implements Filter {
       }
     }
 
-    this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, 'left', sliderLeftVal, sliderRightVal);
   }
 
   protected slideRightInputChanged(e: DOMEvent<HTMLInputElement>): void {
@@ -486,19 +486,25 @@ export class SliderFilter implements Filter {
       this._sliderRightInputElm.value = String(sliderLeftVal + ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES));
     }
 
-    this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, 'right', sliderLeftVal, sliderRightVal);
   }
 
-  protected sliderLeftOrRightChanged(e: DOMEvent<HTMLInputElement>, sliderLeftVal: number, sliderRightVal: number): void {
+  protected sliderLeftOrRightChanged(e: DOMEvent<HTMLInputElement>, side: 'left' | 'right', sliderLeftVal: number, sliderRightVal: number): void {
     let triggerEvent = true;
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
 
-    // min value should never be above max value, override the min value with max when then happens
-    if (this._sliderLeftInputElm && sliderLeftVal > sliderRightVal) {
-      this._sliderLeftInputElm.value = `${sliderRightVal}`;
-      triggerEvent = false;
+    //  left or right value should never be above each others
+    // override the min value with max when then happens (or the inverse)
+    if (this.sliderType === 'double' && this._sliderLeftInputElm && this._sliderRightInputElm) {
+      if (side === 'left' && sliderLeftVal > sliderRightVal) {
+        this._sliderLeftInputElm.value = `${sliderRightVal}`;
+        triggerEvent = false;
+      } else if (side === 'right' && sliderLeftVal > sliderRightVal) {
+        this._sliderRightInputElm.value = `${sliderLeftVal}`;
+        triggerEvent = false;
+      }
     }
 
     const hideSliderNumbers = (this.filterOptions as SliderOption)?.hideSliderNumber ?? (this.filterOptions as SliderRangeOption)?.hideSliderNumbers;
