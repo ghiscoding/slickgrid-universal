@@ -61,6 +61,9 @@ export interface CellMenuOption {
   /** Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   optionTitleKey?: string;
 
+  /** By default event bubbling will be prevented but in some cases we want the events to be bubbling (e.g. Cell Menu with Composite Editor not receiving active cell/row) */
+  preventEventBubbling?: boolean;
+
   /** Defaults to True, should we show bullets when icons are missing? */
   showBulletWhenIconMissing?: boolean;
 
