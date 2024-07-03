@@ -113,7 +113,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       const columnDef = this.grid.getColumns()[cell.cell];
 
       // prevent event from bubbling but only on column that has a cell menu defined
-      if (columnDef?.cellMenu) {
+      if (columnDef?.cellMenu && this.gridOptions.cellMenu?.preventEventBubbling !== false) {
         event.preventDefault();
       }
 
