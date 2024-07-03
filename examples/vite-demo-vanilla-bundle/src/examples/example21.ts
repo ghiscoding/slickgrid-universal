@@ -244,8 +244,8 @@ export default class Example21 {
         const itemDetail = item;
 
         // let's add some extra properties to our item for a better async simulation
-        itemDetail.assignee = randomNames[this.randomNumber(0, 10)];
-        itemDetail.reporter = randomNames[this.randomNumber(0, 10)];
+        itemDetail.assignee = randomNames[this.randomNumber(0, 10)] || '';
+        itemDetail.reporter = randomNames[this.randomNumber(0, 10)] || '';
 
         this.notifyTemplate(itemDetail);
 
