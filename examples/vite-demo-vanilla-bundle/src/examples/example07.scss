@@ -3,15 +3,27 @@
     --slick-cell-display: flex;
   }
 
-  #modal-allFilter-table {
-    display: table;
-  }
-  #modal-allFilter-table .row {
-      display: table-row;
-  }
-  #modal-allFilter-table .column {
-      display: table-cell;
-      vertical-align: top;
-      width: 40%;
+  #modal-allFilter {
+    --bulma-modal-card-head-padding: 18px;
+    .modal-card-foot {
+      justify-content: flex-end;
+    }
+    .modal-card-body {
+      overflow-x: hidden;
+    }
+    .form-control, .ms-choice {
+      height: 30px;
+    }
+    #modal-allFilter-table {
+      display: table;
+    }
+    #modal-allFilter-table .row {
+        display: table-row;
+    }
+    #modal-allFilter-table .column {
+        display: table-cell;
+        vertical-align: top;
+        width: 40%;
+    }
   }
 }

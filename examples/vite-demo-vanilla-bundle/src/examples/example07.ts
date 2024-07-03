@@ -398,7 +398,7 @@ export default class Example07 {
       <div class="modal-background"></div>
       <div class="modal-card">
         <header class="modal-card-head">
-          <p class="modal-card-title">Filter</p>
+          <p class="modal-card-title">Filters in a Modal</p>
           <button class="delete btn-close" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
@@ -410,9 +410,11 @@ export default class Example07 {
           </div>
         </section>
         <footer class="modal-card-foot">
-          <button class="button btn-close">Close</button>
-          <button id="btn-clear-all" class="button">Clear All Filter</button>
-          <button class="button btn-close is-success">Search</button>
+          <div class="row">
+            <button class="button is-normal btn-close">Close</button>
+            <button id="btn-clear-all" class="button is-normal">Clear All Filter</button>
+            <button class="button btn-close is-normal is-primary has-text-white">Search</button>
+          </div>
         </footer>
       </div>
     </div>`;
@@ -421,7 +423,7 @@ export default class Example07 {
     elm.innerHTML = DOMPurify.sanitize(modalHtml);
     document.body.appendChild(elm.querySelector('div') as HTMLDivElement);
 
-    this._bindingEventService.bind(document.querySelectorAll('.modal-card-foot .btn-close'), 'click', () => {
+    this._bindingEventService.bind(document.querySelectorAll('#modal-allFilter .btn-close'), 'click', () => {
       if (grid?.slickGrid?.getOptions().showHeaderRow) {
         grid?.showHeaderRow(true);
       }
