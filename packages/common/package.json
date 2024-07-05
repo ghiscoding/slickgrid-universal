@@ -83,9 +83,9 @@
     "autoprefixer": "^10.4.19",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "cssnano": "^7.0.3",
-    "npm-run-all2": "^6.2.0",
-    "postcss": "^8.4.38",
+    "cssnano": "^7.0.4",
+    "npm-run-all2": "^6.2.2",
+    "postcss": "^8.4.39",
     "postcss-cli": "^11.0.0",
     "sass": "^1.77.6"
   },
