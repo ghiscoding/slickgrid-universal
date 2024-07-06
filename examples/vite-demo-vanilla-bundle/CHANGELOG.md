@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.2...v5.3.3) (2024-07-06)
+
+### Bug Fixes
+
+* **editor:** Composite Editor should work with Cell Menu ([#1591](https://github.com/ghiscoding/slickgrid-universal/issues/1591)) ([a57bb13](https://github.com/ghiscoding/slickgrid-universal/commit/a57bb13b4f261829435d5b9b68fcef9d60832fd0)) - by @ghiscoding
+* **filters:** Slider Filter left value should never be above left value ([#1590](https://github.com/ghiscoding/slickgrid-universal/issues/1590)) ([3e165cf](https://github.com/ghiscoding/slickgrid-universal/commit/3e165cf33da53337ac9e157ab919e2056e537c72)) - by @ghiscoding
+* **styling:** add Dark Mode CSS class to Header Menu ([#1589](https://github.com/ghiscoding/slickgrid-universal/issues/1589)) ([3399ae8](https://github.com/ghiscoding/slickgrid-universal/commit/3399ae8fd146e94064f38672f38044d9c91156c7)) - by @ghiscoding
+* **styling:** Total Footer Row small styling fixes ([dc017f3](https://github.com/ghiscoding/slickgrid-universal/commit/dc017f3a0cbfe2cd63028b93ce509446ead5277e)) - by @ghiscoding
+
 ## [5.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.1...v5.3.2) (2024-06-29)
 
 ### Bug Fixes
