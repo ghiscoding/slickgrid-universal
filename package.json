@@ -95,7 +95,7 @@
     "ts-jest": "^29.1.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^7.15.0",
+    "typescript-eslint": "^8.0.0-alpha.41",
     "whatwg-fetch": "^3.6.20"
   },
   "funding": {
