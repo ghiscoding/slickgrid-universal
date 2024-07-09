@@ -32,7 +32,7 @@
 * [Formatters](column-functionalities/Formatters.md)
 * [Sorting](column-functionalities/Sorting.md)
 
-## Column Functionalities
+## Events
 
 * [Available events](events/Available-Events.md)
 * [On Events](events/Grid-&-DataView-Events.md)
@@ -58,6 +58,16 @@
 * [Tree Data Grid](grid-functionalities/Tree-Data-Grid.md)
 * [Row Based Editing Plugin](grid-functionalities/Row-based-edit.md)
 
+## Developer Guides
+
+* [CSP Compliance](developer-guides/csp-compliance.md)
+
+## Localization
+
+* [with I18N](localization/localization-i18n.md)
+* [with Custom Translate Service](localization/localization-translate-service.md)
+* [with Single Locale](localization/localization-single-locale.md)
+
 ## Backend Services
 
 * [Custom Backend Service](backend-services/Custom-Backend-Service.md)
@@ -67,10 +77,6 @@
   * [Filtering Schema](backend-services/graphql/GraphQL-Filtering.md)
   * [Pagination Schema](backend-services/graphql/GraphQL-Pagination.md)
   * [Sorting Schema](backend-services/graphql/GraphQL-Sorting.md)
-
-## Developer Guides
-
-* [CSP Compliance](developer-guides/csp-compliance.md)
 
 ## Migrations
 
