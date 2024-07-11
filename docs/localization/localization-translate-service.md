@@ -3,7 +3,7 @@
 
 ### Installation
 
-You can create your own Translate Service, for example installing the `whatwg-fetch` library to load JSON files for translations.
+You can create your own Translate Service, for example installing the `whatwg-fetch` library (or anything similar) to load JSON files for translations.
 
 ##### Install NPM package
 
@@ -14,6 +14,8 @@ npm install whatwg-fetch
 ##### Main.ts
 
 You must make sure to implement all functions of the `TranslaterService` interface.
+
+> for a full implementation demo with `whatwg-fetch`, take a look at [translate.service.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/translate.service.ts).
 
 ```ts
 export class TranslateService implements TranslaterService {
