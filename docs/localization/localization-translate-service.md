@@ -7,15 +7,15 @@ You can create your own Translate Service, for example installing the `whatwg-fe
 
 ##### Install NPM package
 
+You can install `whatwg-fetch` or any other library that you wish to use to load your JSON translation files.
+
 ```ts
 npm install whatwg-fetch
 ```
 
 ##### Main.ts
 
-You must make sure to implement all functions of the `TranslaterService` interface.
-
-> for a full implementation demo with `whatwg-fetch`, take a look at [translate.service.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/translate.service.ts).
+Create a Custom Translate Service and make sure to implement all functions that the `TranslaterService` interface requires.
 
 ```ts
 export class TranslateService implements TranslaterService {
@@ -29,6 +29,7 @@ export class TranslateService implements TranslaterService {
   use(language: string): Promise<any> | any {}
 }
 ```
+> for a full translater service implementation demo with `whatwg-fetch`, take a look at [translate.service.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/translate.service.ts).
 
 #### Class sample
 You need to add a translation key via the property `headerKey` to each column definition, for example: `headerKey: 'TITLE'`
