@@ -2793,8 +2793,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         w = this.columns[i].width || 0;
 
         rule = this.getColumnCssRules(i);
-        rule.left.style.left = `${x}px`;
-        rule.right.style.right = (((this._options.frozenColumn !== -1 && i > this._options.frozenColumn!) ? this.canvasWidthR : this.canvasWidthL) - x - w) + 'px';
+        if (rule.left) {          
+          rule.left.style.left = `${x}px`;
+        }
+        if (rule.right) {
+          rule.right.style.right = (((this._options.frozenColumn !== -1 && i > this._options.frozenColumn!) ? this.canvasWidthR : this.canvasWidthL) - x - w) + 'px';
+        }
 
         // If this column is frozen, reset the css left value since the
         // column starts in a new viewport.
