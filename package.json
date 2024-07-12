@@ -88,7 +88,7 @@
     "jsdom-global": "^3.0.2",
     "npm-run-all2": "^6.2.2",
     "pnpm": "^8.15.8",
-    "rimraf": "^5.0.7",
+    "rimraf": "^6.0.1",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
     "sortablejs": "^1.15.2",
