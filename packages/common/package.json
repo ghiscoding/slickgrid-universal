@@ -70,7 +70,7 @@
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "@types/sortablejs": "^1.15.8",
-    "autocompleter": "^9.2.1",
+    "autocompleter": "^9.3.0",
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
     "multiple-select-vanilla": "^3.2.2",
@@ -86,7 +86,7 @@
     "npm-run-all2": "^6.2.2",
     "postcss": "^8.4.39",
     "postcss-cli": "^11.0.0",
-    "sass": "^1.77.6"
+    "sass": "^1.77.8"
   },
   "engines": {
     "node": "^18.0.0 || >=20.0.0"
