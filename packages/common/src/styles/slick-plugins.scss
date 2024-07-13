@@ -25,12 +25,12 @@ li.hidden {
   min-width: var(--slick-column-picker-min-width, $slick-column-picker-min-width);
   padding: var(--slick-column-picker-padding, $slick-column-picker-padding);
   scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
+  box-shadow: var(--slick-column-picker-box-shadow, $slick-column-picker-box-shadow);
+  z-index: var(--slick-column-picker-z-index, $slick-column-picker-z-index);
   @-moz-document url-prefix() {
     /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
     padding: var(--slick-column-picker-padding-firefox, $slick-column-picker-padding-firefox);
   }
-  box-shadow: var(--slick-column-picker-box-shadow, $slick-column-picker-box-shadow);
-  z-index: var(--slick-column-picker-z-index, $slick-column-picker-z-index);
 
   .close {
     float: right;
@@ -174,13 +174,13 @@ li.hidden {
       &.mdi-icon-picker-uncheck {
         @include generateSvgStyle('slick-column-picker-icon-unchecked-svg', $slick-column-picker-icon-unchecked-svg-path);
         opacity: var(--slick-column-picker-unchecked-opacity, $slick-column-picker-unchecked-opacity); /* unchecked icon */
-        &:hover {
-          opacity: var(--slick-column-picker-opacity-hover, $slick-column-picker-opacity-hover);
-        }
 
         // since we use the div container with a border, we don't actually need an icon for unchecked
         // BUT since we want to keep the same size, we can simply hide the mask to keep the same size
         visibility: var(--slick-column-picker-icon-unchecked-color-visibility, $slick-column-picker-icon-unchecked-color-visibility);
+        &:hover {
+          opacity: var(--slick-column-picker-opacity-hover, $slick-column-picker-opacity-hover);
+        }
       }
     }
     & + span.checkbox-label {
@@ -407,16 +407,16 @@ li.hidden {
   border-radius: var(--slick-menu-border-radius, $slick-menu-border-radius);
   min-width: var(--slick-menu-min-width, $slick-menu-min-width);
   padding: var(--slick-menu-padding, $slick-menu-padding);
-  @-moz-document url-prefix() {
-    /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
-    padding: var(--slick-menu-padding-firefox, $slick-menu-padding-firefox);
-  }
-  z-index: 100000;
   cursor: default;
   display: inline-block;
   overflow-x: hidden;
   overflow-y: auto;
   resize: both;
+  z-index: 100000;
+  @-moz-document url-prefix() {
+    /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
+    padding: var(--slick-menu-padding-firefox, $slick-menu-padding-firefox);
+  }
 
   /* make sure that other UI frameworks aren't overriding our properties (Bulma was one of them affecting this) */
   &.dropdown,
@@ -624,13 +624,13 @@ li.hidden {
       &.mdi-icon-uncheck {
         @include generateSvgStyle('slick-checkbox-icon-unchecked-svg', $slick-checkbox-icon-unchecked-svg-path);
         opacity: var(--slick-checkbox-unchecked-opacity, $slick-checkbox-unchecked-opacity); /* unchecked icon */
-        &:hover {
-          opacity: var(--slick-checkbox-opacity-hover, $slick-checkbox-opacity-hover);
-        }
 
         // since we use the div container with a border, we don't actually need an icon for unchecked
         // BUT since we want to keep the same size, we can simply hide the mask to keep the same size
         visibility: var(--slick-checkbox-icon-unchecked-color-visibility, $slick-checkbox-icon-unchecked-color-visibility);
+        &:hover {
+          opacity: var(--slick-checkbox-opacity-hover, $slick-checkbox-opacity-hover);
+        }
       }
     }
   }
@@ -1036,6 +1036,9 @@ input.search-filter {
     height: var(--slick-slider-filter-height, $slick-slider-filter-height);
     padding: var(--slick-slider-filter-runnable-track-padding, $slick-slider-filter-runnable-track-padding);
 
+    /*fix for FF unable to apply focus style bug */
+    border: var(--slick-slider-filter-border, $slick-slider-filter-border);
+
     /* change runnable track color while in focus on all browsers */
     &:focus {
       outline: none;
@@ -1061,10 +1064,6 @@ input.search-filter {
     }
 
     /* Mozilla Firefox specific */
-
-    /*fix for FF unable to apply focus style bug */
-    border: var(--slick-slider-filter-border, $slick-slider-filter-border);
-
     &::-moz-range-track {
       height: var(--slick-slider-filter-runnable-track-height, $slick-slider-filter-runnable-track-height);
       border: none;
