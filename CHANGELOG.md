@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.3...v5.3.4) (2024-07-13)
+
+### Bug Fixes
+
+* **styling:** fix SASS warnings for declarations mixed with nested rules ([de9460d](https://github.com/ghiscoding/slickgrid-universal/commit/de9460dd0ccb925e3fa9fa503c44b1aa105ff9c0)) - by @ghiscoding
+
 ## [5.3.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.2...v5.3.3) (2024-07-06)
 
 ### Bug Fixes
