@@ -271,12 +271,12 @@
       &.outside {
         @media only screen and (min-width: 769px) {
           color: var(--slick-editor-modal-close-btn-outside-color, $slick-editor-modal-close-btn-outside-color);
-          &:hover {
-            color: var(--slick-editor-modal-close-btn-outside-color-hover, $slick-editor-modal-close-btn-outside-color-hover);
-          }
           font-size: var(--slick-editor-modal-close-btn-outside-font-size, $slick-editor-modal-close-btn-outside-font-size);
           right: var(--slick-editor-modal-close-btn-outside-right, $slick-editor-modal-close-btn-outside-right);
           top: var(--slick-editor-modal-close-btn-outside-top, $slick-editor-modal-close-btn-outside-top);
+          &:hover {
+            color: var(--slick-editor-modal-close-btn-outside-color-hover, $slick-editor-modal-close-btn-outside-color-hover);
+          }
         }
       }
     }

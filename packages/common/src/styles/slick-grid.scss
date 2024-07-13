@@ -124,6 +124,7 @@
       }
     }
     &.odd .slick-cell {
+      background: inherit;
       &.selected {
         background-color: var(--slick-row-selected-color, $slick-row-selected-color);
       }
@@ -131,7 +132,6 @@
         background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
         transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
       }
-      background: inherit;
     }
     &.highlight {
       background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
@@ -629,11 +629,13 @@
 
       @mixin ResetColumns () {
         /* like TH  */
-        background: var(--slick-header-background-color, $slick-header-background-color);
-        font-family: var(--slick-font-family, $slick-font-family);
-        color: var(--slick-header-text-color, $slick-header-text-color);
-        font-size: var(--slick-header-font-size, $slick-header-font-size);
-        font-weight: var(--slick-header-font-weight, $slick-header-font-weight);
+        & {
+          background: var(--slick-header-background-color, $slick-header-background-color);
+          font-family: var(--slick-font-family, $slick-font-family);
+          color: var(--slick-header-text-color, $slick-header-text-color);
+          font-size: var(--slick-header-font-size, $slick-header-font-size);
+          font-weight: var(--slick-header-font-weight, $slick-header-font-weight);
+        }
         a, a:visited {
           color: var(--slick-text-color, $slick-text-color);
         }
