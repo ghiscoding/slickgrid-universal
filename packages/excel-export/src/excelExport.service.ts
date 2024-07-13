@@ -146,7 +146,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     // wrap in a Promise so that we can add loading spinner
     return new Promise(resolve => {
       // prepare the Excel Workbook & Sheet
-      // we can use ExcelBuilder constructor with WebPack but we need to use function calls with RequireJS/SystemJS
       const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
       this._workbook = new Workbook();
       this._sheet = this._workbook.createWorksheet(worksheetOptions);
@@ -158,14 +157,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       const boldFormat = this._stylesheet.createFormat({ font: { bold: true } });
       const stringFormat = this._stylesheet.createFormat({ format: '@' });
       const numberFormat = this._stylesheet.createFormat({ format: '0' });
-      this._stylesheetFormats = {
-        boldFormat,
-        numberFormat,
-        stringFormat,
-      };
+      this._stylesheetFormats = { boldFormat, numberFormat, stringFormat };
       this._sheet.setColumnFormats([boldFormat]);
 
-      // get the CSV output from the grid data
+      // get all data by reading all DataView rows
       const dataOutput = this.getDataOutput();
 
       // trigger a download file
@@ -344,7 +339,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate) {
       groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
     } else if (!groupByColumnHeader) {
-      groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
+      groupByColumnHeader = this._locales?.TEXT_GROUP_BY;
     }
 
     // get grouped column titles and if found, we will add a "Group by" column at the first column index
@@ -366,7 +361,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
     const groupedColumnHeaders: Array<KeyTitlePair> = [];
 
-    if (columns && Array.isArray(columns)) {
+    if (Array.isArray(columns)) {
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';
@@ -396,7 +391,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected getColumnHeaders(columns: Column[]): Array<KeyTitlePair> | null {
     const columnHeaders: Array<KeyTitlePair> = [];
 
-    if (columns && Array.isArray(columns)) {
+    if (Array.isArray(columns)) {
       // Populate the Column Header, pull the name defined
       columns.forEach((columnDef) => {
         let headerTitle = '';
@@ -570,9 +565,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected readGroupedRowTitle(itemObj: any): string {
     const groupName = stripTags(itemObj.title);
 
-    if (this._excelExportOptions && this._excelExportOptions.addGroupIndentation) {
-      const collapsedSymbol = this._excelExportOptions && this._excelExportOptions.groupCollapsedSymbol || '⮞';
-      const expandedSymbol = this._excelExportOptions && this._excelExportOptions.groupExpandedSymbol || '⮟';
+    if (this._excelExportOptions?.addGroupIndentation) {
+      const collapsedSymbol = this._excelExportOptions?.groupCollapsedSymbol || '⮞';
+      const expandedSymbol = this._excelExportOptions?.groupExpandedSymbol || '⮟';
       const chevron = itemObj.collapsed ? collapsedSymbol : expandedSymbol;
       return chevron + ' ' + addWhiteSpaces(5 * itemObj.level) + groupName;
     }
