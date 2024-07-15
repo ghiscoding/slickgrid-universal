@@ -279,5 +279,10 @@ function pickerHeaderColumnValueExtractor(column: Column, gridOptions?: GridOpti
   if (headerGroup) {
     return headerGroup + columnGroupSeparator + column.name;
   }
+
+  if (column?.name instanceof HTMLElement || column?.name instanceof DocumentFragment) {
+    return column.name.textContent ?? '';
+  }
+
   return column?.name ?? '';
 }

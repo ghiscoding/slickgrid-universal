@@ -593,8 +593,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (emptyTarget) {
           emptyElement(target);
         }
-        const node = options?.cloneNode ? val.cloneNode(true) : val;
-        target.appendChild(node);
+        target.appendChild(val);
       } else {
         // when it's already empty and we try to reassign empty, it's probably ok to skip the assignment
         const skipEmptyReassignment = options?.skipEmptyReassignment !== false;
@@ -2793,7 +2792,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         w = this.columns[i].width || 0;
 
         rule = this.getColumnCssRules(i);
-        if (rule.left) {          
+        if (rule.left) {
           rule.left.style.left = `${x}px`;
         }
         if (rule.right) {
