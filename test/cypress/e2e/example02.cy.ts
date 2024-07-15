@@ -3,7 +3,7 @@ import { format } from '@formkit/tempo';
 import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 02 - Grouping & Aggregators', () => {
-  const fullTitles = ['#', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
+  const fullTitles = ['Id Click me', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
   const GRID_ROW_HEIGHT = 45;
   let currentTimestamp = '';
 
@@ -298,6 +298,17 @@ describe('Example 02 - Grouping & Aggregators', () => {
         .should('contain', 1);
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 311');
+    });
+  });
+
+  describe('Column Header with HTML Elements', () => {
+    it('should trigger an alert when clicking on the 1st column button inside its header', () => {
+      const stub = cy.stub();
+      cy.on('window:alert', stub);
+
+      cy.get('button[data-test=col1-hello-btn]')
+        .click({ force: true })
+        .then(() => expect(stub.getCall(0)).to.be.calledWith('Hello World'));
     });
   });
 });

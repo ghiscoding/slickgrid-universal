@@ -65,6 +65,12 @@ export interface Column<T = any> {
   /** Column group name translation key that can be used by the Translate Service (i18n) for grouping of column headers spanning accross multiple columns */
   columnGroupKey?: string;
 
+  /**
+   * Column Picker Label to use by ColumnPicker/GridMenu instead of the default column name (fallback to the column name when no label provided).
+   * Note: this will be used by the `columnPicker.headerColumnValueExtractor`
+   */
+  columnPickerLabel?: string | HTMLElement | DocumentFragment;
+
   /** Column span in cell count or use `*` to span across the entire row */
   colspan?: number | string | '*';
 

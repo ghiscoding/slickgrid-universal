@@ -274,10 +274,14 @@ export const GlobalGridOptions: Partial<GridOption> = {
  * else we'll simply return the column name title
  */
 function pickerHeaderColumnValueExtractor(column: Column, gridOptions?: GridOption) {
+  let colName = column?.columnPickerLabel ?? column?.name ?? '';
+  if (colName instanceof HTMLElement || colName instanceof DocumentFragment) {
+    colName = colName.textContent || '';
+  }
   const headerGroup = column?.columnGroup || '';
   const columnGroupSeparator = gridOptions?.columnGroupSeparator ?? ' - ';
   if (headerGroup) {
-    return headerGroup + columnGroupSeparator + column.name;
+    return headerGroup + columnGroupSeparator + colName;
   }
-  return column?.name ?? '';
+  return colName;
 }

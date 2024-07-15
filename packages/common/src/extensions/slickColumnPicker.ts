@@ -46,7 +46,7 @@ export class SlickColumnPicker {
     forceFitTitle: 'Force fit columns',
     minHeight: 200,
     syncResizeTitle: 'Synchronous resize',
-    headerColumnValueExtractor: (columnDef: Column) => getHtmlStringOutput(columnDef.name || '', 'innerHTML')
+    headerColumnValueExtractor: (columnDef: Column) => getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML')
   } as ColumnPickerOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
