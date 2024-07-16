@@ -310,5 +310,32 @@ describe('Example 02 - Grouping & Aggregators', () => {
         .click({ force: true })
         .then(() => expect(stub.getCall(0)).to.be.calledWith('Hello World'));
     });
+
+    it('should open Column Picker and have a "Custom Label" as the 1st column label', () => {
+      cy.get('.grid2')
+        .find('.slick-header-column')
+        .first()
+        .trigger('mouseover')
+        .trigger('contextmenu')
+        .invoke('show');
+
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list li:nth-child(1) .checkbox-label')
+        .should('have.text', 'Custom Label');
+    });
+
+    it('should open Grid Menu and have a "Custom Label" as the 1st column label', () => {
+      cy.get('.grid2')
+        .find('button.slick-grid-menu-button')
+        .trigger('click')
+        .click({ force: true });
+
+      cy.get(`.slick-grid-menu:visible`)
+        .find('.slick-column-picker-list li:nth-child(1) .checkbox-label')
+        .should('have.text', 'Custom Label');
+
+      cy.get('[data-dismiss="slick-grid-menu"]')
+        .click();
+    });
   });
 });

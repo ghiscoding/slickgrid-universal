@@ -199,7 +199,7 @@ export default class Example02 {
     this.gridOptions = {
       autoResize: {
         bottomPadding: 30,
-        rightPadding: 10
+        rightPadding: 30
       },
       enableTextExport: true,
       enableFiltering: true,
