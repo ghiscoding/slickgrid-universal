@@ -40,7 +40,7 @@ describe('ColumnPickerControl', () => {
   const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
   const columnsMock: Column[] = [
     { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
-    { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
+    { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
     { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
     { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
   ];
@@ -180,6 +180,25 @@ describe('ColumnPickerControl', () => {
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(liElmList[2].textContent).toBe('Billing - Field 3');
+    });
+
+    it('should return custom label when columnPickerLabel is defined', () => {
+      const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
+      jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(0);
+      const readjustSpy = jest.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
+
+      control.columns = columnsMock;
+      control.init();
+
+      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
+
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+      expect(liElmList[1].textContent).toBe('Custom Label');
     });
 
     it('should open the column picker via "onPreHeaderContextMenu" and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
@@ -352,7 +371,7 @@ describe('ColumnPickerControl', () => {
         ];
         const columnsMock: Column[] = [
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
-          { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
+          { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
           { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
         ];
@@ -405,7 +424,7 @@ describe('ColumnPickerControl', () => {
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).syncResizeTitle).toBe('Redimension synchrone');
       expect(columnsMock).toEqual([
         { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
-        { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
+        { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
         { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
         { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
       ]);

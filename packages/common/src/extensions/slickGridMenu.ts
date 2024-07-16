@@ -70,7 +70,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     resizeOnShowHeaderRow: false,
     syncResizeTitle: 'Synchronous resize',
     subMenuOpenByEvent: 'mouseover',
-    headerColumnValueExtractor: (columnDef: Column) => getHtmlStringOutput(columnDef.name || '', 'innerHTML')
+    headerColumnValueExtractor: (columnDef: Column) => getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML')
   } as GridMenuOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */

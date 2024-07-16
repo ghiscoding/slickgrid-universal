@@ -585,7 +585,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *   `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer.
    *   `skipEmptyReassignment`, defaults to true, when enabled it will not try to reapply an empty value when the target is already empty
    */
-  applyHtmlCode(target: HTMLElement, val: string | boolean | number | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean; cloneNode?: boolean; }): void {
+  applyHtmlCode(target: HTMLElement, val: string | boolean | number | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean; }): void {
     if (target) {
       if (val instanceof HTMLElement || val instanceof DocumentFragment) {
         // first empty target and then append new HTML element
@@ -593,8 +593,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (emptyTarget) {
           emptyElement(target);
         }
-        const node = options?.cloneNode ? val.cloneNode(true) : val;
-        target.appendChild(node);
+        target.appendChild(val);
       } else {
         // when it's already empty and we try to reassign empty, it's probably ok to skip the assignment
         const skipEmptyReassignment = options?.skipEmptyReassignment !== false;
@@ -1656,7 +1655,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         header.classList.add(this._options.unorderableColumnCssClass!);
       }
       const colNameElm = createDomElement('span', { className: 'slick-column-name' }, header);
-      this.applyHtmlCode(colNameElm, m.name, { cloneNode: true });
+      this.applyHtmlCode(colNameElm, m.name);
 
       Utils.width(header, m.width! - this.headerColumnWidthDiff);
 
@@ -2793,7 +2792,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         w = this.columns[i].width || 0;
 
         rule = this.getColumnCssRules(i);
-        if (rule.left) {          
+        if (rule.left) {
           rule.left.style.left = `${x}px`;
         }
         if (rule.right) {
