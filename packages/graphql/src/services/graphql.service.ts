@@ -450,7 +450,7 @@ export class GraphqlService implements BackendService {
             columnDef,
             operator,
             columnFilterOperator: columnFilter.operator,
-            searchValue,
+            searchValues: searchTerms,
             grid: this._grid
           });
         }

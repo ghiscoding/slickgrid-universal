@@ -433,7 +433,7 @@ export class GridOdataService implements BackendService {
               columnDef,
               operator,
               columnFilterOperator: columnFilter.operator,
-              searchValue,
+              searchValues: searchTerms,
               grid: this._grid
             });
           }
