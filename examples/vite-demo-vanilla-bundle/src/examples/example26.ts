@@ -1,7 +1,9 @@
+import { format } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, FieldType, Filters, type GridOption, type Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { type Column, FieldType, Filters, type GridOption, OperatorType, } from '@slickgrid-universal/common';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+
 import { ExampleGridOptions } from './example-grid-options';
 import Data from './data/customers_100.json';
 import './example09.scss';
@@ -15,7 +17,8 @@ export default class Example09 {
   backendService: GridOdataService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  metrics: Metrics;
+  metricsEndTime = '';
+  metricsTotalItemCount = 0;
   sgb: SlickVanillaGridBundle;
 
   odataQuery = '';
@@ -37,6 +40,9 @@ export default class Example09 {
     const gridContainerElm = document.querySelector(`.grid9`) as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
+
+    // bind any of the grid events
+    this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this));
   }
 
   dispose() {
@@ -113,9 +119,9 @@ export default class Example09 {
           infiniteScroll: { fetchSize: 30 },
 
           enableCount: true,
-          filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValue }) => {
+          filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
-              let matchesSearch = (searchValue as string).replace(/\*/g, '.*');
+              let matchesSearch = searchValues[0].replace(/\*/g, '.*');
               matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
               matchesSearch = matchesSearch.slice(0, -1) + '$\'';
 
@@ -144,7 +150,9 @@ export default class Example09 {
         },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
-          this.metrics = response.metrics;
+          // this.metrics = response.metrics;
+          this.metricsEndTime = format(new Date(), 'DD MMM, h:mm:ssa');
+          this.metricsTotalItemCount = response.metrics.totalItemCount;
           this.displaySpinner(false);
           this.getCustomerCallback(response);
         },
@@ -169,9 +177,9 @@ export default class Example09 {
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
-    if (this.metrics) {
-      this.metrics.totalItemCount = totalItemCount;
-    }
+    // if (this.metrics) {
+    //   this.metrics.totalItemCount = totalItemCount;
+    // }
 
     // once pagination totalItems is filled, we can update the dataset
     this.sgb.paginationOptions!.totalItems = totalItemCount;
@@ -383,6 +391,13 @@ export default class Example09 {
     this.sgb?.filterService.updateFilters([
       { columnId: 'gender', searchTerms: ['female'] },
     ]);
+  }
+
+  refreshMetrics(event) {
+    const args = event?.detail?.args;
+    if (args?.current >= 0) {
+      this.metricsTotalItemCount = this.sgb.dataset.length || 0;
+    }
   }
 
   setSortingDynamically() {

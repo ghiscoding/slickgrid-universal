@@ -3,16 +3,16 @@ import {
   CaseType,
   Column,
   ColumnFilter,
+  ColumnFilters,
   ColumnSort,
+  CurrentSorter,
   CurrentFilter,
+  FieldType,
   FilterChangedArgs,
   GridOption,
   MultiColumnSort,
-  Pagination,
-  ColumnFilters,
   OperatorType,
-  FieldType,
-  CurrentSorter,
+  Pagination,
   SharedService,
   type SlickGrid,
 } from '@slickgrid-universal/common';
@@ -34,6 +34,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectedRows: jest.fn(),
   setSortColumns: jest.fn(),
+  scrollTo: jest.fn(),
 } as unknown as SlickGrid;
 
 describe('GridOdataService', () => {

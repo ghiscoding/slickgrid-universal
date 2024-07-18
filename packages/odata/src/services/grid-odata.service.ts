@@ -79,7 +79,7 @@ export class GridOdataService implements BackendService {
     const mergedOptions = { ...this.defaultOptions, ...serviceOptions };
 
     // unless user specifically set "enablePagination" to False, we'll add "top" property for the pagination in every other cases
-    if (this._gridOptions && !this._gridOptions.enablePagination && this.options?.infiniteScroll) {
+    if (!this._gridOptions.enablePagination && !mergedOptions?.infiniteScroll) {
       // save current pagination as Page 1 and page size as "top"
       this._odataService.options = { ...mergedOptions, top: undefined };
       this._currentPagination = null;

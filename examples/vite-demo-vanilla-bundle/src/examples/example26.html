@@ -52,7 +52,7 @@
   </div>
 </div>
 
-<div class="columns mt-1">
+<div class="columns">
   <div class="column">
     <div class="notification is-info is-light" data-test="alert-odata-query">
       <strong>OData Query:</strong>
@@ -64,6 +64,12 @@
       <strong>Status:</strong> <span textcontent.bind="status"></span>
     </div>
   </div>
+</div>
+
+<div class="mb-2">
+  <b>Metrics:</b>
+  <span textcontent.bind="metricsEndTime"></span> —
+  <span textcontent.bind="metricsTotalItemCount"></span> items
 </div>
 
 <div class="grid9">
