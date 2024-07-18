@@ -40,7 +40,7 @@ export interface OnRenderedEventArgs extends SlickGridArg { startRow: number; en
 export interface OnSelectedRowsChangedEventArgs extends SlickGridArg { rows: number[]; previousSelectedRows: number[]; changedSelectedRows: number[]; changedUnselectedRows: number[]; caller: string; }
 export interface OnSetOptionsEventArgs extends SlickGridArg { optionsBefore: GridOption; optionsAfter: GridOption; }
 export interface OnActivateChangedOptionsEventArgs extends SlickGridArg { options: GridOption; }
-export interface OnScrollEventArgs extends SlickGridArg { scrollLeft: number; scrollTop: number; }
+export interface OnScrollEventArgs extends SlickGridArg { scrollLeft: number; scrollTop: number; scrollHeight: number; triggeredBy?: string; }
 export interface OnDragEventArgs extends SlickGridArg {
   count: number; deltaX: number; deltaY: number; offsetX: number; offsetY: number; originalX: number; originalY: number;
   available: HTMLDivElement | HTMLDivElement[]; drag: HTMLDivElement; drop: HTMLDivElement | HTMLDivElement[]; helper: HTMLDivElement;

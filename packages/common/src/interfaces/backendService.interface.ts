@@ -18,6 +18,9 @@ export interface BackendService {
   /** Backend Service options */
   options?: BackendServiceOption;
 
+  /** Optional dispose method */
+  dispose?: () => void;
+
   /** Build and the return the backend service query string */
   buildQuery: (serviceOptions?: BackendServiceOption) => string;
 

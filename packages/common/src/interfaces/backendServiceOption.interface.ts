@@ -2,7 +2,14 @@ import type { SlickGrid } from '../core';
 import type { OperatorType } from '../enums';
 import type { Column } from './column.interface';
 
+export interface InfiniteScrollOption {
+  fetchSize: number;
+}
+
 export interface BackendServiceOption {
+  /** Infinite Scroll will fetch next page but without showing any pagination in the UI. */
+  infiniteScroll?: boolean | InfiniteScrollOption;
+
   /** What are the pagination options? ex.: (first, last, offset) */
   paginationOptions?: any;
 
@@ -28,5 +35,5 @@ export interface BackendServiceFilterQueryOverrideArgs {
   /** The entered search value */
   searchValue: any;
   /** A reference to the SlickGrid instance */
-  grid: SlickGrid | undefined
+  grid: SlickGrid | undefined;
 }

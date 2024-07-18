@@ -1,0 +1,70 @@
+<h3 class="title is-3">
+  Example 26 - OData Backend Service with Infinite Scroll
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a class="is-size-5"
+       target="_blank"
+       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example26.ts">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="title is-6 italic content">
+  <ul>
+    <li>
+      Infinite Scroll will fetch the next set of data and append it to the grid every time the user reaches the end of the grid scroll.
+      This contrast with the regular approach of a Backend Pagination which will only keep data for 1 page at a time.
+    </li>
+    <li>NOTES</li>
+    <ol>
+      <li>
+        <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page.
+        The reason is simply because since it appends the data, it has to start on first page.
+      </li>
+      <li>
+        Pagination is not shown but that is in fact what is being used behind the scene,
+        ALSO when Sorting/Filtering it will reset and go back for first set (page) of data.
+      </li>
+    </ol>
+  </ul>
+</h6>
+
+<div class="row mb-1">
+  <button class="button is-small" data-test="clear-filters-sorting"
+          onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
+    <span class="mdi mdi-close"></span>
+    <span>Clear all Filter & Sorts</span>
+  </button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+    Set Filters Dynamically
+  </button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
+    Set Sorting Dynamically
+  </button>
+</div>
+
+<div class="columns">
+  <div class="column is-narrow px-0">
+    <div class.bind="errorStatusClass" data-test="error-status">
+      <em><strong>Backend Error:</strong> <span textcontent.bind="errorStatus"></span></em>
+    </div>
+  </div>
+</div>
+
+<div class="columns mt-1">
+  <div class="column">
+    <div class="notification is-info is-light" data-test="alert-odata-query">
+      <strong>OData Query:</strong>
+      <span data-test="odata-query-result" textcontent.bind="odataQuery"></span>
+    </div>
+  </div>
+  <div class="column is-narrow">
+    <div class.bind="statusClass" data-test="status">
+      <strong>Status:</strong> <span textcontent.bind="status"></span>
+    </div>
+  </div>
+</div>
+
+<div class="grid9">
+</div>

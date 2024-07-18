@@ -37,6 +37,9 @@ export interface BackendServiceApi {
   /** On init (or on page load), what action to perform? */
   onInit?: (query: string) => Promise<any> | Observable<any>;
 
+  /** When user reaches the end of the scroll (only works with infinite scroll enabled) */
+  onScrollEnd?: () => void;
+
   /** Before executing the query, what action to perform? For example, start a spinner */
   preProcess?: () => void;
 

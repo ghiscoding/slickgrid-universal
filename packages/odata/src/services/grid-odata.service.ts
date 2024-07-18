@@ -10,6 +10,7 @@ import type {
   CurrentSorter,
   FilterChangedArgs,
   GridOption,
+  InfiniteScrollOption,
   MultiColumnSort,
   Pagination,
   PaginationChangedArgs,
@@ -26,6 +27,7 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   parseUtcDate,
+  SlickEventHandler,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
@@ -40,8 +42,10 @@ export class GridOdataService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions: Column[] = [];
+  protected _eventHandler: SlickEventHandler;
   protected _grid: SlickGrid | undefined;
   protected _odataService: OdataQueryBuilderService;
+  protected _scrollEndCalled = false;
   options?: Partial<OdataOption>;
   pagination: Pagination | undefined;
   defaultOptions: OdataOption = {
@@ -66,6 +70,7 @@ export class GridOdataService implements BackendService {
   }
 
   constructor() {
+    this._eventHandler = new SlickEventHandler();
     this._odataService = new OdataQueryBuilderService();
   }
 
@@ -74,12 +79,12 @@ export class GridOdataService implements BackendService {
     const mergedOptions = { ...this.defaultOptions, ...serviceOptions };
 
     // unless user specifically set "enablePagination" to False, we'll add "top" property for the pagination in every other cases
-    if (this._gridOptions && !this._gridOptions.enablePagination) {
+    if (this._gridOptions && !this._gridOptions.enablePagination && this.options?.infiniteScroll) {
       // save current pagination as Page 1 and page size as "top"
       this._odataService.options = { ...mergedOptions, top: undefined };
       this._currentPagination = null;
     } else {
-      const topOption = (pagination && pagination.pageSize) ? pagination.pageSize : this.defaultOptions.top;
+      const topOption = (mergedOptions.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? pagination?.pageSize ?? this.defaultOptions.top;
       this._odataService.options = { ...mergedOptions, top: topOption };
       this._currentPagination = {
         pageNumber: 1,
@@ -97,6 +102,25 @@ export class GridOdataService implements BackendService {
 
     this._odataService.columnDefinitions = this._columnDefinitions;
     this._odataService.datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
+
+    if (grid && mergedOptions.infiniteScroll) {
+      this._eventHandler.subscribe(grid.onScroll, (_e, args) => {
+        const viewportElm = args.grid.getViewportNode()!;
+        if (['mousewheel', 'scroll'].includes(args.triggeredBy || '') && args.scrollTop > 0 && this.pagination?.totalItems && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight) {
+          if (!this._scrollEndCalled) {
+            const backendApi = this._gridOptions.backendServiceApi;
+            backendApi?.onScrollEnd?.();
+            this._scrollEndCalled = true;
+          }
+        }
+      });
+    }
+  }
+
+  /** Dispose the service */
+  dispose(): void {
+    // unsubscribe all SlickGrid events
+    this._eventHandler.unsubscribeAll();
   }
 
   buildQuery(): string {
@@ -104,6 +128,7 @@ export class GridOdataService implements BackendService {
   }
 
   postProcess(processResult: any): void {
+    this._scrollEndCalled = false;
     const odataVersion = this._odataService.options.version ?? 2;
 
     if (this.pagination && this._odataService.options.enableCount) {
@@ -268,7 +293,7 @@ export class GridOdataService implements BackendService {
    * PAGINATION
    */
   processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs): string {
-    const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
+    const pageSize = +((this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize || args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
     this.updatePagination(args.newPage, pageSize);
 
     // build the OData query which we will use in the WebAPI callback
@@ -283,6 +308,11 @@ export class GridOdataService implements BackendService {
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);
+
+    // when using infinite scroll, we need to go back to 1st page
+    if (this.options?.infiniteScroll) {
+      this._odataService.updateOptions({ skip: undefined });
+    }
 
     // build the OData query which we will use in the WebAPI callback
     return this._odataService.buildQuery();
@@ -512,7 +542,7 @@ export class GridOdataService implements BackendService {
     };
 
     // unless user specifically set "enablePagination" to False, we'll update pagination options in every other cases
-    if (this._gridOptions && (this._gridOptions.enablePagination || !this._gridOptions.hasOwnProperty('enablePagination'))) {
+    if (this._gridOptions && (this._gridOptions.enablePagination || !this._gridOptions.hasOwnProperty('enablePagination') || this.options?.infiniteScroll)) {
       this._odataService.updateOptions({
         top: pageSize,
         skip: (newPage - 1) * pageSize
