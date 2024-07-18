@@ -20,4 +20,12 @@ describe('the Icon Formatter', () => {
     const result = iconFormatter(0, 0, input, { field: 'user', params: { formatterIcon: icon } } as Column, {}, {} as any);
     expect((result as HTMLElement).outerHTML).toBe(`<i class="${icon}" aria-hidden="true"></i>`);
   });
+
+  it('should always return a <i> with the title attribute provided in the "title" property from "params"', () => {
+    const input = null;
+    const title = 'This is a title';
+    const icon = 'mdi mdi-magnify';
+    const result = iconFormatter(0, 0, input, { field: 'user', params: { icon, title } } as Column, {}, {} as any);
+    expect((result as HTMLElement).outerHTML).toBe(`<i class="${icon}" aria-hidden="true" title="${title}"></i>`);
+  });
 });

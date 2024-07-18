@@ -33,7 +33,7 @@ export interface BackendServiceFilterQueryOverrideArgs {
   /** The inferred operator. See columnDef.autoParseInputFilterOperator */
   operator: OperatorType;
   /** The entered search value */
-  searchValue: any;
+  searchValues: any[];
   /** A reference to the SlickGrid instance */
   grid: SlickGrid | undefined;
 }

@@ -213,13 +213,13 @@ export default class Example10 {
             field: 'userId',
             value: 123
           }],
-          filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValue }) => {
+          filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               // technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
               // What that means is that GraphQL won't let you write arbitrary queries out of the box.
               // It will only support the types of queries defined in your GraphQL schema.
               // see this SO: https://stackoverflow.com/a/37981802/1212166
-              return { field: fieldName, operator: 'Like', value: searchValue };
+              return { field: fieldName, operator: 'Like', value: searchValues[0] };
             }
           },
           useCursor: this.isWithCursor, // sets pagination strategy, if true requires a call to setPageInfo() when graphql call returns
