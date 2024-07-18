@@ -490,7 +490,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         }
 
         this._editors = {};
-        this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
+        this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid='${col.id}']`)) || [];
         this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
         const compositeEditor = new (SlickCompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions) as typeof SlickCompositeEditor;
         this.grid.editActiveCell(compositeEditor as any);
