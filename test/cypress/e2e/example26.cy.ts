@@ -1,11 +1,4 @@
 describe('Example 26 - OData with Infinite Scroll', () => {
-  const GRID_ROW_HEIGHT = 33;
-
-  beforeEach(() => {
-    // create a console.log spy for later use
-    cy.window().then(win => cy.spy(win.console, 'log'));
-  });
-
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example26`);
     cy.get('h3').should('contain', 'Example 26 - OData Backend Service with Infinite Scroll');
