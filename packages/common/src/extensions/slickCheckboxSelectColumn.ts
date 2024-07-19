@@ -348,7 +348,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     });
   }
 
-  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid): DocumentFragment | null {
+  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid): DocumentFragment | HTMLSpanElement | null {
     if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
       const UID = this.createUID() + row;
       return this.createCheckboxElement(`selector${UID}`, !!this._selectedRowsLookup[row]);
