@@ -135,11 +135,14 @@ export default class Example09 {
           this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
           this.displaySpinner(false, true);
         },
-        onScrollEnd: async () => {
+        onScrollEnd: () => {
           this._scrollNextPage = true;
+
+          // even if we're not showing pagination, we still use pagination service behind the scene
+          // to keep track of the scroll position and fetch next set of data (aka next page)
           this.sgb.paginationService.goToNextPage().then(hasNext => {
             if (!hasNext) {
-              this._scrollNextPage = false;
+              this._scrollNextPage = false; // nothing else to fetch, our dataset is fully loaded and we reached the end
             }
           });
         },
@@ -150,7 +153,6 @@ export default class Example09 {
         },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
-          // this.metrics = response.metrics;
           this.metricsEndTime = format(new Date(), 'DD MMM, h:mm:ssa');
           this.metricsTotalItemCount = response.metrics.totalItemCount;
           this.displaySpinner(false);
@@ -173,19 +175,22 @@ export default class Example09 {
   }
 
   getCustomerCallback(data) {
-    console.log('getCustomerCallback', data);
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
-    // if (this.metrics) {
-    //   this.metrics.totalItemCount = totalItemCount;
-    // }
+    this.metricsTotalItemCount = totalItemCount;
 
+    // even if we're not showing pagination, it is still used behind the scene to fetch next set of data (next page basically)
     // once pagination totalItems is filled, we can update the dataset
     this.sgb.paginationOptions!.totalItems = totalItemCount;
-    this.sgb.dataset = this._scrollNextPage
-      ? [...this.sgb.dataset, ...data.value]
-      : data.value;
+
+    if (this._scrollNextPage) {
+      // for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
+      this.sgb.dataView?.addItems(data.value);
+    } else {
+      // initial load, full dataset assignment
+      this.sgb.dataset = data.value;
+    }
 
     this.odataQuery = data['query'];
     this._scrollNextPage = false;

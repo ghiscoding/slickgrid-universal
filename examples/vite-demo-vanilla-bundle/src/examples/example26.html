@@ -13,24 +13,27 @@
 <h6 class="title is-6 italic content">
   <ul>
     <li>
-      Infinite Scroll will fetch the next set of data and append it to the grid every time the user reaches the end of the grid scroll.
-      This contrast with the regular approach of a Backend Pagination which will only keep data for 1 page at a time.
+      Infinite Scroll will fetch data whenever reaching the end of the current grid scroll, when that happens it will keep appending to the original dataset.
+      If the user reaches the end of the current grid scroll and there's no more data to fetch, our grid will have the entire dataset loaded in memory.
+      This contrast with the regular Pagination approach which will hold only hold data for 1 page at a time.
     </li>
     <li>NOTES</li>
     <ol>
       <li>
-        <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page.
-        The reason is simply because since it appends the data, it has to start on first page.
+        <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page,
+        simply because since we keep appending data, we always have to start from index zero (no offset).
       </li>
       <li>
-        Pagination is not shown but that is in fact what is being used behind the scene,
-        ALSO when Sorting/Filtering it will reset and go back for first set (page) of data.
+        Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next batch).
+      </li>
+      <li>
+        Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
       </li>
     </ol>
   </ul>
 </h6>
 
-<div class="row mb-1">
+<div class="row">
   <button class="button is-small" data-test="clear-filters-sorting"
           onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
     <span class="mdi mdi-close"></span>
