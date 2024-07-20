@@ -1,79 +1,84 @@
-<h3 class="title is-3">
-  Example 26 - OData (v4) Backend Service with Infinite Scroll
-  <div class="subtitle code-link">
-    <span class="is-size-6">see</span>
-    <a class="is-size-5"
-       target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example26.ts">
-      <span class="mdi mdi-link-variant"></span> code
-    </a>
+<div class="demo26">
+
+  <h3 class="title is-3">
+    Example 26 - OData (v4) Backend Service with Infinite Scroll
+    <div class="subtitle code-link">
+      <span class="is-size-6">see</span>
+      <a class="is-size-5"
+         target="_blank"
+         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example26.ts">
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </div>
+  </h3>
+
+  <h6 class="title is-6 italic content">
+    <ul>
+      <li>
+        Infinite Scroll will fetch data whenever reaching the end of the current grid scroll, when that happens it will keep appending to the original dataset.
+        If the user reaches the end of the current grid scroll and there's no more data to fetch, our grid will have the entire dataset loaded in memory.
+        This contrast with the regular Pagination approach which will hold only hold data for 1 page at a time.
+      </li>
+      <li>NOTES</li>
+      <ol>
+        <li>
+          <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page,
+          simply because since we keep appending data, we always have to start from index zero (no offset).
+        </li>
+        <li>
+          Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next batch).
+        </li>
+        <li>
+          Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
+        </li>
+      </ol>
+    </ul>
+  </h6>
+
+  <div class="row">
+    <button class="button is-small" data-test="clear-filters-sorting"
+            onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
+      <span class="mdi mdi-close"></span>
+      <span>Clear all Filter & Sorts</span>
+    </button>
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+      Set Filters Dynamically
+    </button>
+    <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
+      Set Sorting Dynamically
+    </button>
   </div>
-</h3>
 
-<h6 class="title is-6 italic content">
-  <ul>
-    <li>
-      Infinite Scroll will fetch data whenever reaching the end of the current grid scroll, when that happens it will keep appending to the original dataset.
-      If the user reaches the end of the current grid scroll and there's no more data to fetch, our grid will have the entire dataset loaded in memory.
-      This contrast with the regular Pagination approach which will hold only hold data for 1 page at a time.
-    </li>
-    <li>NOTES</li>
-    <ol>
-      <li>
-        <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page,
-        simply because since we keep appending data, we always have to start from index zero (no offset).
-      </li>
-      <li>
-        Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next batch).
-      </li>
-      <li>
-        Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
-      </li>
-    </ol>
-  </ul>
-</h6>
-
-<div class="row">
-  <button class="button is-small" data-test="clear-filters-sorting"
-          onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
-    <span class="mdi mdi-close"></span>
-    <span>Clear all Filter & Sorts</span>
-  </button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
-    Set Filters Dynamically
-  </button>
-  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
-</div>
-
-<div class="columns">
-  <div class="column is-narrow px-0">
-    <div class.bind="errorStatusClass" data-test="error-status">
-      <em><strong>Backend Error:</strong> <span textcontent.bind="errorStatus"></span></em>
+  <div class="columns">
+    <div class="column is-narrow px-0">
+      <div classname.bind="errorStatusClass" data-test="error-status">
+        <em><strong>Backend Error:</strong> <span textcontent.bind="errorStatus"></span></em>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="columns">
-  <div class="column">
-    <div class="notification is-info is-light" data-test="alert-odata-query">
-      <strong>OData Query:</strong>
-      <span data-test="odata-query-result" textcontent.bind="odataQuery"></span>
+  <div class="columns">
+    <div class="column">
+      <div class="notification is-info is-light" data-test="alert-odata-query">
+        <strong>OData Query:</strong>
+        <span data-test="odata-query-result" textcontent.bind="odataQuery"></span>
+      </div>
+    </div>
+    <div class="column is-narrow">
+      <div classname.bind="statusClass" data-test="status">
+        <strong>Status:</strong> <span textcontent.bind="status"></span>
+      </div>
     </div>
   </div>
-  <div class="column is-narrow">
-    <div class.bind="statusClass" data-test="status">
-      <strong>Status:</strong> <span textcontent.bind="status"></span>
-    </div>
+
+  <div class="mb-2">
+    <b>Metrics:</b>
+    <span textcontent.bind="metricsEndTime"></span> —
+    <span textcontent.bind="metricsItemCount" data-test="itemCount"></span> of
+    <span textcontent.bind="metricsTotalItemCount" data-test="totalItemCount"></span> items
+    <span classname.bind="tagDataClass" data-test="data-loaded-tag">All Data Loaded!!!</span>
   </div>
-</div>
 
-<div class="mb-2">
-  <b>Metrics:</b>
-  <span textcontent.bind="metricsEndTime"></span> —
-  <span textcontent.bind="metricsTotalItemCount" data-test="totalItemCount"></span> items
-</div>
-
-<div class="grid9">
+  <div class="grid26">
+  </div>
 </div>

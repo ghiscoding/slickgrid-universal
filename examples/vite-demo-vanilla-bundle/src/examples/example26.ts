@@ -1,24 +1,26 @@
 import { format } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, FieldType, Filters, type GridOption, OperatorType, } from '@slickgrid-universal/common';
+import { type Column, FieldType, Filters, type GridOption, type OnRowCountChangedEventArgs, OperatorType, } from '@slickgrid-universal/common';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import Data from './data/customers_100.json';
-import './example09.scss';
+import './example26.scss';
 
 const CARET_HTML_ESCAPED = '%5E';
 const PERCENT_HTML_ESCAPED = '%25';
 
-export default class Example09 {
+export default class Example26 {
   private _bindingEventService: BindingEventService;
   backendService: GridOdataService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   metricsEndTime = '';
+  metricsItemCount = 0;
   metricsTotalItemCount = 0;
   sgb: SlickVanillaGridBundle;
+  tagDataClass = 'tag is-primary tag-data';
 
   odataQuery = '';
   processing = false;
@@ -36,12 +38,12 @@ export default class Example09 {
 
   attached() {
     this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.grid9`) as HTMLDivElement;
+    const gridContainerElm = document.querySelector(`.grid26`) as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
 
     // bind any of the grid events
-    this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
   }
 
   dispose() {
@@ -163,6 +165,7 @@ export default class Example09 {
   }
 
   getCustomerCallback(data) {
+    console.log('getCustomerCallback', data);
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
@@ -183,6 +186,10 @@ export default class Example09 {
     }
 
     this.odataQuery = data['query'];
+
+    // NOTE: you can get currently loaded item count via the `onRowCountChanged`slick event, see `refreshMetrics()` below
+    // OR you could also calculate it yourself or get it via: `this.sgb.dataView.getItemCount() === totalItemCount`
+    // console.log('is data fully loaded: ', this.sgb.dataView?.getItemCount() === totalItemCount);
   }
 
   getCustomerApiCall(query) {
@@ -387,10 +394,13 @@ export default class Example09 {
     ]);
   }
 
-  refreshMetrics(event) {
+  refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs; }>) {
     const args = event?.detail?.args;
     if (args?.current >= 0) {
-      this.metricsTotalItemCount = this.sgb.dataset.length || 0;
+      this.metricsItemCount = this.sgb.dataset.length || 0;
+      this.tagDataClass = this.metricsItemCount === this.metricsTotalItemCount
+        ? 'tag is-primary tag-data fully-loaded'
+        : 'tag is-primary tag-data partial-load';
     }
   }
 

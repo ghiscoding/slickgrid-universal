@@ -46,6 +46,7 @@ export class BackendUtilityService {
 
         if (backendApi.service.options?.infiniteScroll) {
           processResult.infiniteScrollBottomHit = this._infiniteScrollBottomHit;
+          delete processResult.itemCount; // our item count is unknown when using infinite scroll
         }
       }
       backendApi.postProcess(processResult);
