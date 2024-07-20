@@ -1,7 +1,7 @@
 describe('Example 26 - OData with Infinite Scroll', () => {
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example26`);
-    cy.get('h3').should('contain', 'Example 26 - OData Backend Service with Infinite Scroll');
+    cy.get('h3').should('contain', 'Example 26 - OData (v4) Backend Service with Infinite Scroll');
   });
 
   describe('when "enableCount" is set', () => {
