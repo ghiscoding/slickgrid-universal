@@ -15,8 +15,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * adjust graphql service as well ([931e84f](https://github.com/ghiscoding/slickgrid-universal/commit/931e84fa501065a673a6308215658ec7f3cfc690)) - by @zewa666
 * example10 ([4ae38b9](https://github.com/ghiscoding/slickgrid-universal/commit/4ae38b905e236094b0ab86813aac25398d1cd894)) - by @zewa666
-* provide all search values ([0e97a1a](https://github.com/ghiscoding/slickgrid-universal/commit/0e97a1addb289c50e5c7687b1b24e13159b05473)) - by @vsoftic
+* `filterQueryOverride` provide all search values ([0e97a1a](https://github.com/ghiscoding/slickgrid-universal/commit/0e97a1addb289c50e5c7687b1b24e13159b05473)) - by @vsoftic
 * queryselector should support numeric ids ([8951984](https://github.com/ghiscoding/slickgrid-universal/commit/89519848d6157545dbbf4d813156d871d94a61bc)) - by @zewa666
+* don't use Document Fragment in SlickCheckbox for Salesforce Usage ([5eea8a41](https://github.com/ghiscoding/slickgrid-universal/commit/5eea8a41e51a81fce8a34a4535bcd17f3c603d07)) - by @good-ghost
 
 ## [5.3.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.3...v5.3.4) (2024-07-13)
 
