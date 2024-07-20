@@ -13,7 +13,6 @@ const PERCENT_HTML_ESCAPED = '%25';
 
 export default class Example09 {
   private _bindingEventService: BindingEventService;
-  private _scrollNextPage = false;
   backendService: GridOdataService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -115,8 +114,8 @@ export default class Example09 {
       backendServiceApi: {
         service: this.backendService,
         options: {
-          // infiniteScroll: true, // as Boolean OR { fetchSize: number }
-          infiniteScroll: { fetchSize: 30 },
+          // enable infinite via Boolean OR via { fetchSize: number }
+          infiniteScroll: { fetchSize: 30 }, // or use true, in that case it would use default size of 25
 
           enableCount: true,
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
@@ -134,17 +133,6 @@ export default class Example09 {
           this.errorStatus = error.message;
           this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
           this.displaySpinner(false, true);
-        },
-        onScrollEnd: () => {
-          this._scrollNextPage = true;
-
-          // even if we're not showing pagination, we still use pagination service behind the scene
-          // to keep track of the scroll position and fetch next set of data (aka next page)
-          this.sgb.paginationService.goToNextPage().then(hasNext => {
-            if (!hasNext) {
-              this._scrollNextPage = false; // nothing else to fetch, our dataset is fully loaded and we reached the end
-            }
-          });
         },
         preProcess: () => {
           this.errorStatus = '';
@@ -184,16 +172,17 @@ export default class Example09 {
     // once pagination totalItems is filled, we can update the dataset
     this.sgb.paginationOptions!.totalItems = totalItemCount;
 
-    if (this._scrollNextPage) {
-      // for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
-      this.sgb.dataView?.addItems(data.value);
-    } else {
-      // initial load, full dataset assignment
+    // infinite scroll has an extra data property to determine if we hit an infinite scroll and there's still more data (in that case we need append data)
+    // or if we're on first data fetching (no scroll bottom ever occured yet)
+    if (!data.infiniteScrollBottomHit) {
+      // initial load not scroll hit yet, full dataset assignment
       this.sgb.dataset = data.value;
+    } else {
+      // scroll hit, for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
+      this.sgb.dataView?.addItems(data.value);
     }
 
     this.odataQuery = data['query'];
-    this._scrollNextPage = false;
   }
 
   getCustomerApiCall(query) {

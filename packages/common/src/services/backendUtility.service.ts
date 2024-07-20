@@ -10,6 +10,8 @@ export interface BackendCallbacks {
 }
 
 export class BackendUtilityService {
+  protected _infiniteScrollBottomHit = false;
+
   constructor(protected rxjs?: RxJsFacade | undefined) { }
 
   addRxJsResource(rxjs: RxJsFacade): void {
@@ -41,8 +43,13 @@ export class BackendUtilityService {
           itemCount: totalItems,
           totalItemCount: totalItems,
         };
+
+        if (backendApi.service.options?.infiniteScroll) {
+          processResult.infiniteScrollBottomHit = this._infiniteScrollBottomHit;
+        }
       }
       backendApi.postProcess(processResult);
+      this.setInfiniteScrollBottomHit(false);
     }
   }
 
@@ -128,5 +135,9 @@ export class BackendUtilityService {
       const totalItems = gridOptions?.pagination?.totalItems ?? 0;
       this.executeBackendCallback(backendApi, query, null, startTime, totalItems);
     }
+  }
+
+  setInfiniteScrollBottomHit(scrollBottomHit: boolean): void {
+    this._infiniteScrollBottomHit = scrollBottomHit;
   }
 }

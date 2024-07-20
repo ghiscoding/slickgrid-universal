@@ -932,6 +932,21 @@ export class SlickVanillaGridBundle<TData = any> {
           }
         });
       }
+
+      // when user enables Infinite Scroll
+      if (backendApi.service.options?.infiniteScroll) {
+        this.slickGrid!.getOptions().backendServiceApi!.onScrollEnd = () => {
+          this.backendUtilityService.setInfiniteScrollBottomHit(true);
+
+          // even if we're not showing pagination, we still use pagination service behind the scene
+          // to keep track of the scroll position and fetch next set of data (aka next page)
+          this.paginationService.goToNextPage().then(hasNext => {
+            if (!hasNext) {
+              this.backendUtilityService.setInfiniteScrollBottomHit(false);
+            }
+          });
+        };
+      }
     }
   }
 

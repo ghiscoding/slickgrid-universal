@@ -106,10 +106,14 @@ export class GridOdataService implements BackendService {
     if (grid && mergedOptions.infiniteScroll) {
       this._eventHandler.subscribe(grid.onScroll, (_e, args) => {
         const viewportElm = args.grid.getViewportNode()!;
-        if (['mousewheel', 'scroll'].includes(args.triggeredBy || '') && args.scrollTop > 0 && this.pagination?.totalItems && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight) {
+        if (
+          this._gridOptions.backendServiceApi?.onScrollEnd
+          && ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
+          && args.scrollTop > 0 && this.pagination?.totalItems
+          && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
+        ) {
           if (!this._scrollEndCalled) {
-            const backendApi = this._gridOptions.backendServiceApi;
-            backendApi?.onScrollEnd?.();
+            this._gridOptions.backendServiceApi.onScrollEnd();
             this._scrollEndCalled = true;
           }
         }
