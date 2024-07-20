@@ -220,8 +220,8 @@ export class SlickCheckboxSelectColumn<T = any> {
    * @param {Boolean} checked - is the input checkbox checked?
    * @returns
    */
-  createCheckboxElement(inputId: string, checked = false): DocumentFragment {
-    const fragmentElm = new DocumentFragment();
+  createCheckboxElement(inputId: string, checked = false): DocumentFragment | HTMLSpanElement {
+    const checkboxElm = this.gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
     const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
     const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
     divElm.appendChild(
@@ -231,9 +231,9 @@ export class SlickCheckboxSelectColumn<T = any> {
       createDomElement('div', { className: `mdi ${checked ? CHECK_ICON : UNCHECK_ICON}` })
     );
     labelElm.appendChild(divElm);
-    fragmentElm.appendChild(labelElm);
+    checkboxElm.appendChild(labelElm);
 
-    return fragmentElm;
+    return checkboxElm;
   }
 
   getColumnDefinition(): Column {
@@ -348,7 +348,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     });
   }
 
-  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid): DocumentFragment | null {
+  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid): DocumentFragment | HTMLSpanElement | null {
     if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
       const UID = this.createUID() + row;
       return this.createCheckboxElement(`selector${UID}`, !!this._selectedRowsLookup[row]);
