@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.4...v5.4.0) (2024-07-20)
+
+### Bug Fixes
+
+* queryselector should support numeric ids ([8951984](https://github.com/ghiscoding/slickgrid-universal/commit/89519848d6157545dbbf4d813156d871d94a61bc)) - by @zewa666
+
 ## [5.3.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.3...v5.3.4) (2024-07-13)
 
 **Note:** Version bump only for package @slickgrid-universal/composite-editor-component
