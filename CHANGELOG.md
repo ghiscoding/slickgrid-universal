@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.4...v5.4.0) (2024-07-20)
+
+### Features
+
+* add `columnPickerLabel` for custom label, also fix [#1605](https://github.com/ghiscoding/slickgrid-universal/issues/1605) ([f4360b9](https://github.com/ghiscoding/slickgrid-universal/commit/f4360b9badd2743e78658ea0be4e6acaa2a5b303)), closes [#1476](https://github.com/ghiscoding/slickgrid-universal/issues/1476) [#1475](https://github.com/ghiscoding/slickgrid-universal/issues/1475) - by @ghiscoding-SE
+* support tooltips on icon formatters ([317affd](https://github.com/ghiscoding/slickgrid-universal/commit/317affd5b5363162af2bf438badf58c9ea177153)) - by @zewa666
+
+### Bug Fixes
+
+* adjust graphql service as well ([931e84f](https://github.com/ghiscoding/slickgrid-universal/commit/931e84fa501065a673a6308215658ec7f3cfc690)) - by @zewa666
+* example10 ([4ae38b9](https://github.com/ghiscoding/slickgrid-universal/commit/4ae38b905e236094b0ab86813aac25398d1cd894)) - by @zewa666
+* provide all search values ([0e97a1a](https://github.com/ghiscoding/slickgrid-universal/commit/0e97a1addb289c50e5c7687b1b24e13159b05473)) - by @vsoftic
+* queryselector should support numeric ids ([8951984](https://github.com/ghiscoding/slickgrid-universal/commit/89519848d6157545dbbf4d813156d871d94a61bc)) - by @zewa666
+
 ## [5.3.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.3...v5.3.4) (2024-07-13)
 
 ### Bug Fixes
