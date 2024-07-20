@@ -13,7 +13,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* provide all search values ([0e97a1a](https://github.com/ghiscoding/slickgrid-universal/commit/0e97a1addb289c50e5c7687b1b24e13159b05473)) - by @vsoftic
+* `filterQueryOverride` provide all search values ([0e97a1a](https://github.com/ghiscoding/slickgrid-universal/commit/0e97a1addb289c50e5c7687b1b24e13159b05473)) - by @vsoftic
+* don't use Document Fragment in SlickCheckbox for Salesforce Usage ([5eea8a41](https://github.com/ghiscoding/slickgrid-universal/commit/5eea8a41e51a81fce8a34a4535bcd17f3c603d07)) - by @good-ghost
 
 ## [5.3.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.3...v5.3.4) (2024-07-13)
 
