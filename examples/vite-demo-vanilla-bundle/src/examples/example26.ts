@@ -148,7 +148,10 @@ export default class Example26 {
           this.displaySpinner(false);
           this.getCustomerCallback(response);
         },
-      } as OdataServiceApi
+        // we could use local in-memory Filtering (please note that it only filters against what is currently loaded)
+        // that is when we want to avoid reloading the entire dataset every time
+        // useLocalFiltering: true,
+      } as OdataServiceApi,
     };
   }
 
