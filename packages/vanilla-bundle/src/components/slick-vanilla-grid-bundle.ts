@@ -935,11 +935,13 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // when user enables Infinite Scroll
       if (backendApi.service.options?.infiniteScroll) {
-        this.slickGrid!.getOptions().backendServiceApi!.onScrollEnd = () => {
+        const gridOptions = this.slickGrid!.getOptions();
+        gridOptions.backendServiceApi!.onScrollEnd = () => {
           this.backendUtilityService.setInfiniteScrollBottomHit(true);
 
           // even if we're not showing pagination, we still use pagination service behind the scene
           // to keep track of the scroll position and fetch next set of data (aka next page)
+          // we also need a flag to know if we reached the of the dataset or not (no more pages)
           this.paginationService.goToNextPage().then(hasNext => {
             if (!hasNext) {
               this.backendUtilityService.setInfiniteScrollBottomHit(false);

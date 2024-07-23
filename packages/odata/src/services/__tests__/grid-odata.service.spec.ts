@@ -572,6 +572,21 @@ describe('GridOdataService', () => {
         expect(querySpy).toHaveBeenCalled();
       });
     });
+
+    it('should expect the "skip" options to be undefined when the "processOnSortChanged()" is called and infinite scroll is enabled', () => {
+      const expectation = `$top=10&$orderby=Gender desc`;
+      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+      const mockColumn = { id: 'gender', field: 'gender' } as Column;
+      const mockSortChangedArgs = { columnId: 'gender', sortCol: mockColumn, sortAsc: false, multiColumnSort: false } as ColumnSort;
+
+      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
+      service.updateOptions({ skip: 10 });
+      const query = service.processOnSortChanged(null as any, mockSortChangedArgs);
+
+      expect(service.options!.skip).toBeUndefined();
+      expect(query).toBe(expectation);
+      expect(querySpy).toHaveBeenCalled();
+    });
   });
 
   describe('updateFilters method', () => {

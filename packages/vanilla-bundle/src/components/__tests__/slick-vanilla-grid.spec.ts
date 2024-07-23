@@ -97,6 +97,7 @@ const backendUtilityServiceStub = {
   executeBackendCallback: jest.fn(),
   onBackendError: jest.fn(),
   refreshBackendDataset: jest.fn(),
+  setInfiniteScrollBottomHit: jest.fn(),
 } as unknown as BackendUtilityService;
 
 const collectionServiceStub = {
@@ -146,6 +147,7 @@ const paginationServiceStub = {
   init: jest.fn(),
   dispose: jest.fn(),
   getFullPagination: jest.fn(),
+  goToNextPage: jest.fn(),
   updateTotalItems: jest.fn(),
 } as unknown as PaginationService;
 
@@ -293,6 +295,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         minWidth: 300,
         rightPadding: 0,
       },
+      backendServiceApi: null,
     } as unknown as GridOption;
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
@@ -1131,6 +1134,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       afterEach(() => {
         jest.clearAllMocks();
+        mockGraphqlService.options = undefined;
       });
 
       it('should call the "createBackendApiInternalPostProcessCallback" method when Backend Service API is defined with a Graphql Service', () => {
@@ -1379,6 +1383,54 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(backendErrorSpy).toHaveBeenCalledWith(mockError, component.gridOptions.backendServiceApi);
+          done();
+        });
+      });
+
+      it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(true) when we still have more pages in the dataset', (done) => {
+        component.paginationService.goToNextPage;
+        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
+        const backendServiceApi = {
+          service: mockGraphqlService,
+          process: jest.fn(),
+        };
+
+        const gotoSpy = jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(true);
+        gridOptions = { backendServiceApi } as unknown as GridOption;
+        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
+        component.gridOptions = gridOptions;
+        component.initialization(divContainer, slickEventHandler);
+        gridOptions.backendServiceApi?.onScrollEnd!();
+
+        expect(gotoSpy).toHaveBeenCalled();
+        expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
+        mockGraphqlService.options.infiniteScroll = false;
+        setTimeout(() => {
+          expect(component.backendUtilityService.setInfiniteScrollBottomHit).not.toHaveBeenCalledWith(false);
+          done();
+        });
+      });
+
+      it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(false) when we no longer have more pages', (done) => {
+        component.paginationService.goToNextPage;
+        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
+        const backendServiceApi = {
+          service: mockGraphqlService,
+          process: jest.fn(),
+        };
+
+        const gotoSpy = jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(false);
+        gridOptions = { backendServiceApi } as unknown as GridOption;
+        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
+        component.gridOptions = gridOptions;
+        component.initialization(divContainer, slickEventHandler);
+        gridOptions.backendServiceApi?.onScrollEnd!();
+
+        expect(gotoSpy).toHaveBeenCalled();
+        expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
+        mockGraphqlService.options.infiniteScroll = false;
+        setTimeout(() => {
+          expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(false);
           done();
         });
       });
