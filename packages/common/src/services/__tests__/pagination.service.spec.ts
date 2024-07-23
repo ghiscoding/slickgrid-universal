@@ -683,6 +683,18 @@ describe('PaginationService', () => {
       expect(resetSpy).toHaveBeenCalled();
       expect(refreshSpy).toHaveBeenCalledWith(true, true);
     });
+
+    it('should call reset and refreshPagination when "onSortChanged" is triggered and Infinite Scroll is enabled', () => {
+      const resetSpy = jest.spyOn(service, 'resetPagination');
+      const refreshSpy = jest.spyOn(service, 'refreshPagination');
+      mockGridOption.backendServiceApi!.options.infiniteScroll = true;
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      fnCallbacks['onSortChanged'](true);
+
+      expect(resetSpy).toHaveBeenCalled();
+      expect(refreshSpy).toHaveBeenCalledWith(true, true);
+    });
   });
 
   describe('resetPagination method', () => {

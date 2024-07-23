@@ -11,7 +11,7 @@ const addVanillaEventPropagation = function (event) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   return event;
-}
+};
 
 const mockGridOptions = {
   frozenColumn: 1,
@@ -145,7 +145,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -191,7 +191,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(initEvent);
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -235,7 +235,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -284,7 +284,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -344,7 +344,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -398,7 +398,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -454,7 +454,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -501,7 +501,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -557,7 +557,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -612,7 +612,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -675,7 +675,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
@@ -732,7 +732,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const initEvent = new Event('dragInit');
     const propagationSpy = jest.spyOn(initEvent, 'stopImmediatePropagation');
@@ -781,7 +781,7 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+    gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
     const initEvent = new Event('dragInit');
     const propagationSpy = jest.spyOn(initEvent, 'stopImmediatePropagation');

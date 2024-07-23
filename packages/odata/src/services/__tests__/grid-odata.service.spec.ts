@@ -14,6 +14,7 @@ import {
   OperatorType,
   Pagination,
   SharedService,
+  SlickEvent,
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import { GridOdataService } from '../grid-odata.service';
@@ -24,12 +25,24 @@ const DEFAULT_PAGE_SIZE = 20;
 
 let gridOptionMock: GridOption;
 
+const addVanillaEventPropagation = function (event) {
+  Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
+  Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
+  return event;
+};
+
+const viewportElm = document.createElement('div');
+viewportElm.className = 'slick-viewport';
+Object.defineProperty(viewportElm, 'offsetHeight', { writable: true, configurable: true, value: 12 });
+
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getScrollbarDimensions: jest.fn(),
   getColumns: jest.fn(),
   getOptions: () => gridOptionMock,
+  getViewportNode: () => viewportElm,
+  onScroll: new SlickEvent(),
   setColumns: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectedRows: jest.fn(),
@@ -42,6 +55,7 @@ describe('GridOdataService', () => {
   let paginationOptions: Pagination;
   let serviceOptions: OdataOption;
   let sharedService: SharedService;
+  const onScrollEndMock = jest.fn();
 
   beforeEach(() => {
     sharedService = new SharedService();
@@ -63,6 +77,7 @@ describe('GridOdataService', () => {
       defaultFilterRangeOperator: OperatorType.rangeInclusive,
       backendServiceApi: {
         service: service as BackendService,
+        onScrollEnd: onScrollEndMock,
         preProcess: jest.fn(),
         process: jest.fn(),
         postProcess: jest.fn(),
@@ -72,6 +87,7 @@ describe('GridOdataService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    service.dispose();
   });
 
   it('should create the service', () => {
@@ -93,6 +109,33 @@ describe('GridOdataService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(service.columnDefinitions).toEqual(columns);
+    });
+
+    it('should execute onScrollEnd callback when SlickGrid onScroll is triggered with a "mousewheel" event', () => {
+      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
+
+      const mouseEvent = addVanillaEventPropagation(new Event('scroll'));
+      gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub, triggeredBy: 'mousewheel' }, mouseEvent, gridStub);
+
+      expect(onScrollEndMock).toHaveBeenCalled();
+    });
+
+    it('should execute onScrollEnd callback when SlickGrid onScroll is triggered with a "scroll" event', () => {
+      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
+
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
+      gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub, triggeredBy: 'scroll' }, scrollEvent, gridStub);
+
+      expect(onScrollEndMock).toHaveBeenCalled();
+    });
+
+    it('should NOT execute onScrollEnd callback when SlickGrid onScroll is triggered with an event that is NOT "mousewheel" neither "scroll"', () => {
+      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
+
+      const clickEvent = addVanillaEventPropagation(new Event('click'));
+      gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub, triggeredBy: 'click' }, clickEvent, gridStub);
+
+      expect(onScrollEndMock).not.toHaveBeenCalled();
     });
   });
 
