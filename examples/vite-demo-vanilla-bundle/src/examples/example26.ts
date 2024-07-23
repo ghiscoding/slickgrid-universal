@@ -168,7 +168,6 @@ export default class Example26 {
   }
 
   getCustomerCallback(data) {
-    console.log('getCustomerCallback', data);
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];

@@ -935,8 +935,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // when user enables Infinite Scroll
       if (backendApi.service.options?.infiniteScroll) {
-        const gridOptions = this.slickGrid!.getOptions();
-        gridOptions.backendServiceApi!.onScrollEnd = () => {
+        this.slickGrid!.getOptions().backendServiceApi!.onScrollEnd = () => {
           this.backendUtilityService.setInfiniteScrollBottomHit(true);
 
           // even if we're not showing pagination, we still use pagination service behind the scene
@@ -1121,7 +1120,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * Check if there's any Pagination Presets defined in the Grid Options,
    * if there are then load them in the paginationOptions object
    */
-  setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
+  protected setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
     if (gridOptions.presets?.pagination && paginationOptions && !this._isPaginationInitialized) {
       if (this.hasInfiniteScroll()) {
         console.warn('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');

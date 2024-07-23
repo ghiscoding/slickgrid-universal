@@ -1388,7 +1388,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(true) when we still have more pages in the dataset', (done) => {
-        component.paginationService.goToNextPage;
         mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
         const backendServiceApi = {
           service: mockGraphqlService,
@@ -1412,7 +1411,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(false) when we no longer have more pages', (done) => {
-        component.paginationService.goToNextPage;
         mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
         const backendServiceApi = {
           service: mockGraphqlService,
@@ -1433,6 +1431,29 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(false);
           done();
         });
+      });
+
+      it('should throw an error if we try to set a "presets.pagination" with Infinite Scroll', () => {
+        const consoleSpy = jest.spyOn(console, 'warn').mockReturnValue();
+        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
+        const backendServiceApi = {
+          service: mockGraphqlService,
+          process: jest.fn(),
+        };
+
+        gridOptions = {
+          enablePagination: true,
+          backendServiceApi,
+          presets: { pagination: { pageNumber: 2 } },
+          pagination: { pageSizes: [10, 20], pageSize: 10 }
+        } as unknown as GridOption;
+        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
+        component.gridOptions = gridOptions;
+
+        component.initialization(divContainer, slickEventHandler);
+        component.refreshGridData([]);
+
+        expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');
       });
     });
 
