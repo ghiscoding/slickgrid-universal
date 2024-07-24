@@ -10,6 +10,7 @@ import {
   type Formatter,
   Formatters,
   type GridOption,
+  InputEditor,
   type LongTextEditorOption,
   type OnCompositeEditorChangeEventArgs,
   SlickGlobalEditorLock,
@@ -180,7 +181,7 @@ export default class Example12 {
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
+        editor: { model: CustomEditor, massUpdate: true, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
       },
       {
         id: 'cost', name: 'Cost', field: 'cost', width: 90, minWidth: 70,
@@ -1036,5 +1037,16 @@ export default class Example12 {
         }
       });
     }, openDelay);
+  }
+}
+
+class CustomEditor extends InputEditor {
+  constructor(args: any) {
+    super(args, '');
+  }
+
+  override save(): void {
+    this.args.item["cost"] = 1234567;
+    super.save();
   }
 }
