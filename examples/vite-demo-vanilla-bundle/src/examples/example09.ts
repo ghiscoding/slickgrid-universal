@@ -100,7 +100,10 @@ export default class Example09 {
         }
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
-      { id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true }
+      {
+        id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true,
+        formatter: (row, cell, val, colDef, dataContext) => dataContext['category']?.['name'] || ''
+      }
     ];
 
     this.gridOptions = {
@@ -190,7 +193,7 @@ export default class Example09 {
 
   getCustomerCallback(data) {
     // totalItems property needs to be filled for pagination to work correctly
-    // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
+    // however we need to force a dirty check, doing a clone object will do just that
     let totalItemCount: number = data['totalRecordCount']; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
     if (this.isCountEnabled) {
       totalItemCount = (this.odataVersion === 4) ? data['@odata.count'] : data['d']['__count'];

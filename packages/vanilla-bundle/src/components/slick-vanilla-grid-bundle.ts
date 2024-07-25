@@ -505,7 +505,10 @@ export class SlickVanillaGridBundle<TData = any> {
     this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
     this._paginationOptions = this.gridOptions?.pagination;
 
-    this.createBackendApiInternalPostProcessCallback(this._gridOptions);
+    // unless specified, we'll create an internal postProcess callback (currently only available for GraphQL)
+    if (this._gridOptions.backendServiceApi && !this._gridOptions.backendServiceApi?.disableInternalPostProcess) {
+      this.createBackendApiInternalPostProcessCallback(this._gridOptions);
+    }
 
     if (!this.customDataView) {
       const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
@@ -734,13 +737,14 @@ export class SlickVanillaGridBundle<TData = any> {
 
   /**
    * Define our internal Post Process callback, it will execute internally after we get back result from the Process backend call
-   * For now, this is GraphQL Service ONLY feature and it will basically
-   * refresh the Dataset & Pagination without having the user to create his own PostProcess every time
+   * Currently ONLY available with the GraphQL Backend Service.
+   * The behavior is to refresh the Dataset & Pagination without requiring the user to create his own PostProcess every time
    */
   createBackendApiInternalPostProcessCallback(gridOptions?: GridOption): void {
     const backendApi = gridOptions?.backendServiceApi;
     if (backendApi?.service) {
       const backendApiService = backendApi.service;
+      this.addBackendInfiniteScrollCallback(gridOptions);
 
       // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
       if (/* backendApiService instanceof GraphqlService || */ typeof backendApiService.getDatasetName === 'function') {
@@ -935,19 +939,26 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // when user enables Infinite Scroll
       if (backendApi.service.options?.infiniteScroll) {
-        this.slickGrid!.getOptions().backendServiceApi!.onScrollEnd = () => {
-          this.backendUtilityService.setInfiniteScrollBottomHit(true);
-
-          // even if we're not showing pagination, we still use pagination service behind the scene
-          // to keep track of the scroll position and fetch next set of data (aka next page)
-          // we also need a flag to know if we reached the of the dataset or not (no more pages)
-          this.paginationService.goToNextPage().then(hasNext => {
-            if (!hasNext) {
-              this.backendUtilityService.setInfiniteScrollBottomHit(false);
-            }
-          });
-        };
+        this.addBackendInfiniteScrollCallback();
       }
+    }
+  }
+
+  protected addBackendInfiniteScrollCallback(gridOptions?: GridOption): void {
+    gridOptions ??= this.slickGrid!.getOptions();
+    if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi?.onScrollEnd) {
+      gridOptions.backendServiceApi!.onScrollEnd = () => {
+        this.backendUtilityService.setInfiniteScrollBottomHit(true);
+
+        // even if we're not showing pagination, we still use pagination service behind the scene
+        // to keep track of the scroll position and fetch next set of data (aka next page)
+        // we also need a flag to know if we reached the of the dataset or not (no more pages)
+        this.paginationService.goToNextPage().then(hasNext => {
+          if (!hasNext) {
+            this.backendUtilityService.setInfiniteScrollBottomHit(false);
+          }
+        });
+      };
     }
   }
 

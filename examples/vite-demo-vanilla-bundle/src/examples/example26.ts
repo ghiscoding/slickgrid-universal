@@ -87,7 +87,10 @@ export default class Example26 {
         }
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
-      { id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true }
+      {
+        id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true,
+        formatter: (row, cell, val, colDef, dataContext) => dataContext['category']?.['name'] || ''
+      }
     ];
 
     this.gridOptions = {
@@ -169,7 +172,7 @@ export default class Example26 {
 
   getCustomerCallback(data) {
     // totalItems property needs to be filled for pagination to work correctly
-    // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
+    // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
     this.metricsTotalItemCount = totalItemCount;
 
@@ -204,7 +207,7 @@ export default class Example26 {
    * This function is only here to mock a WebAPI call (since we are using a JSON file for the demo)
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
-  getCustomerDataApiMock(query): Promise<any> {
+  getCustomerDataApiMock(query: string): Promise<any> {
     this.errorStatusClass = 'hidden';
 
     // the mock is returning a Promise, just like a WebAPI typically does
@@ -238,17 +241,17 @@ export default class Example26 {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
           if (filterBy.includes('matchespattern')) {
             const regex = new RegExp(`matchespattern\\(([a-zA-Z]+),\\s'${CARET_HTML_ESCAPED}(.*?)'\\)`, 'i');
-            const filterMatch = filterBy.match(regex);
+            const filterMatch = filterBy.match(regex) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'matchespattern', term: '^' + filterMatch[2].trim() };
           }
           if (filterBy.includes('contains')) {
-            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[2].trim() };
           }
           if (filterBy.includes('substringof')) {
-            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z/]+)/);
+            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z/]+)/) || [];
             const fieldName = filterMatch[2].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[1].trim() };
           }
@@ -263,16 +266,16 @@ export default class Example26 {
             }
           }
           if (filterBy.includes('startswith') && filterBy.includes('endswith')) {
-            const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
-            const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
+            const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
             const fieldName = filterStartMatch[1].trim();
             columnFilters[fieldName] = { type: 'starts+ends', term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()] };
           } else if (filterBy.includes('startswith')) {
-            const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'starts', term: filterMatch[2].trim() };
           } else if (filterBy.includes('endswith')) {
-            const filterMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
           }
