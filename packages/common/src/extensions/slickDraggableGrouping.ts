@@ -571,7 +571,7 @@ export class SlickDraggableGrouping {
         this.columnsGroupBy = newGroupingOrder;
         this.updateGroupBy('sort-group');
       },
-    });
+    } as SortableOptions);
 
     // Sortable doesn't have onOver, we need to implement it ourselves
     this.addDragOverDropzoneListeners();

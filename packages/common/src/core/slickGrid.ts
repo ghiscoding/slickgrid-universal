@@ -1,4 +1,3 @@
-import Sortable, { type SortableEvent } from 'sortablejs';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
@@ -13,6 +12,7 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
+import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
 import type { TrustedHTML } from 'trusted-types/lib';
 
 import {
@@ -1884,7 +1884,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           window.clearInterval(columnScrollTimer);
         }
       },
-      onEnd: (e: SortableEvent) => {
+      onEnd: (e) => {
         window.clearInterval(columnScrollTimer);
 
         if (!this.getEditorLock()?.commitCurrentEdit()) {
@@ -1907,7 +1907,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.setFocus(); // refocus on active cell
         }
       }
-    } as Sortable.Options;
+    } as SortableOptions;
 
     this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
     this.sortableSideRightInstance = Sortable.create(this._headerR, sortableOptions);
