@@ -102,7 +102,7 @@ export default class Example09 {
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
       {
         id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true,
-        formatter: (row, cell, val, colDef, dataContext) => dataContext['category']?.['name'] || ''
+        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || ''
       }
     ];
 
