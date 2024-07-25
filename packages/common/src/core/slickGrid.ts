@@ -1,4 +1,3 @@
-import Sortable, { type SortableEvent } from 'sortablejs';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
@@ -13,6 +12,9 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
+// @ts-ignore: use the ESM imports for smaller build, it however doesn't play nice with @types/sortablejs
+import Sortable from 'sortablejs/modular/sortable.core.esm.js';
+import type { Options as SortableOptions, SortableEvent } from 'sortablejs'; // from @types/sortablejs
 
 import {
   type BasePubSub,
@@ -1906,7 +1908,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.setFocus(); // refocus on active cell
         }
       }
-    } as Sortable.Options;
+    } as SortableOptions;
 
     this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
     this.sortableSideRightInstance = Sortable.create(this._headerR, sortableOptions);

@@ -1,7 +1,9 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, isEmptyObject, classNameToList } from '@slickgrid-universal/utils';
-import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
+// @ts-ignore: use the ESM imports for smaller build, it however doesn't play nice with @types/sortablejs
+import Sortable from 'sortablejs/modular/sortable.core.esm.js';
+import type { Options as SortableOptions, SortableEvent } from 'sortablejs'; // from @types/sortablejs
 
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { SortDirectionNumber } from '../enums/index';
@@ -553,7 +555,7 @@ export class SlickDraggableGrouping {
       onAdd: (evt: SortableEvent) => {
         const el = evt.item;
         if (el.getAttribute('id')?.replace(this._gridUid, '')) {
-          this.handleGroupByDrop(dropzoneElm, (Sortable.utils as any).clone(evt.item));
+          this.handleGroupByDrop(dropzoneElm, (el as any).cloneNode(true));
         }
         el.parentNode?.removeChild(el);
       },
@@ -571,7 +573,7 @@ export class SlickDraggableGrouping {
         this.columnsGroupBy = newGroupingOrder;
         this.updateGroupBy('sort-group');
       },
-    });
+    } as SortableOptions);
 
     // Sortable doesn't have onOver, we need to implement it ourselves
     this.addDragOverDropzoneListeners();
