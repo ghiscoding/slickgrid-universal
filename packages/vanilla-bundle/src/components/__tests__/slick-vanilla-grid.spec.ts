@@ -1123,6 +1123,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       beforeEach(() => {
         component.gridOptions = {
           backendServiceApi: {
+            disableInternalPostProcess: false,
             onInit: jest.fn(),
             service: mockGraphqlService as any,
             preProcess: jest.fn(),
@@ -1144,6 +1145,16 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(spy).toHaveBeenCalled();
         expect(component.gridOptions.backendServiceApi!.internalPostProcess).toEqual(expect.any(Function));
+      });
+
+      it('should NOT call the "createBackendApiInternalPostProcessCallback" method when Backend Service API is defined with a Graphql Service with "disableInternalPostProcess"', () => {
+        const spy = jest.spyOn(component, 'createBackendApiInternalPostProcessCallback');
+
+        component.gridOptions.backendServiceApi!.disableInternalPostProcess = true;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(spy).not.toHaveBeenCalled();
+        expect(component.gridOptions.backendServiceApi!.internalPostProcess).toBeUndefined();
       });
 
       it('should execute the "internalPostProcess" callback method that was created by "createBackendApiInternalPostProcessCallback" with Pagination', () => {

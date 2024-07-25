@@ -86,8 +86,8 @@ describe('GridOdataService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
     service.dispose();
+    jest.clearAllMocks();
   });
 
   it('should create the service', () => {
