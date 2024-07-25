@@ -1790,4 +1790,13 @@ describe('GraphqlService', () => {
       expect(currentSorters).toEqual([]);
     });
   });
+
+  describe('postProcess method', () => {
+    it('should set pagination totalCount from data result from dataset group name result', () => {
+      service.init({ datasetName: 'users' }, paginationOptions, gridStub);
+      service.postProcess({ data: { 'users': { nodes: [], totalCount: 20 } } });
+
+      expect(paginationOptions.totalItems).toBe(20);
+    });
+  });
 });
