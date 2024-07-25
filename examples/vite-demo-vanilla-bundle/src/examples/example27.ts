@@ -5,8 +5,6 @@ import {
   Filters,
   type GridOption,
   type OnRowCountChangedEventArgs,
-  OperatorType,
-  SortDirection,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, } from '@slickgrid-universal/graphql';
