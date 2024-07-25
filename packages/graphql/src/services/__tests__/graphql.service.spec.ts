@@ -754,7 +754,7 @@ describe('GraphqlService', () => {
       expect(querySpy).toHaveBeenCalled();
     });
 
-    it('should expect the "offset" options to be undefined when the "processOnSortChanged()" is called and infinite scroll is enabled', () => {
+    it('should expect the "offset" options to be 0 when the "processOnSortChanged()" is called and infinite scroll is enabled', () => {
       const expectation = `query { users (first:10,offset:0,orderBy:[{field:gender,direction:DESC}]) { totalCount, nodes { id,field1,field2 } } }`;
       const querySpy = jest.spyOn(service, 'buildQuery');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
