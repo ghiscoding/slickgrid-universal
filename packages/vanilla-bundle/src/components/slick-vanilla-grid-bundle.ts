@@ -47,7 +47,7 @@ import {
   unsubscribeAll,
   SlickEventHandler,
   SlickDataView,
-  SlickGrid
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { extend } from '@slickgrid-universal/utils';
 import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';

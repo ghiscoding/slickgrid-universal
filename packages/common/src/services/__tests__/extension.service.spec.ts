@@ -647,6 +647,38 @@ describe('ExtensionService', () => {
         expect(extCheckSelectSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(extRowMoveSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
       });
+
+      it('should create & init external extensions when "preRegisterExternalExtensions" is set in the grid options', () => {
+        const createMock = jest.fn();
+        const initMock = jest.fn();
+        class ExternalExtension {
+          create(columnDefinitions: Column[], gridOptions: GridOption) {
+            createMock(columnDefinitions, gridOptions);
+          }
+          init(grid: SlickGrid) {
+            initMock(grid);
+          }
+        }
+
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }, { id: 'field2', field: 'field2', width: 50, }] as Column[];
+        const gridOptionsMock = {
+          enableCheckboxSelector: true, enableRowSelection: true,
+          checkboxSelector: { columnIndexPosition: 1 },
+          preRegisterExternalExtensions: (pubSub) => {
+            const ext = new ExternalExtension();
+            return [{ name: ExtensionName.rowDetailView, instance: ext }];
+          }
+        } as GridOption;
+        const extCheckSelectSpy = jest.spyOn(mockCheckboxSelectColumn, 'create');
+
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+
+        expect(extCheckSelectSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+        expect(createMock).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+
+        service.bindDifferentExtensions();
+        expect(initMock).toHaveBeenCalledWith(gridStub);
+      });
     });
 
     it('should call hideColumn and expect "visibleColumns" to be updated accordingly', () => {

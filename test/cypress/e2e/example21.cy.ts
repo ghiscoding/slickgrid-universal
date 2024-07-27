@@ -1,5 +1,5 @@
 describe('Example 21 - Row Detail View', () => {
-  const fullTitles = ['', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Effort Driven'];
+  const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Effort Driven'];
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
@@ -101,7 +101,7 @@ describe('Example 21 - Row Detail View', () => {
         if (index > expectedTasks.length - 1) {
           return;
         }
-        cy.wrap($row).children('.slick-cell:nth(1)')
+        cy.wrap($row).children('.slick-cell:nth(2)')
           .first()
           .should('contain', expectedTasks[index]);
       });
@@ -157,7 +157,7 @@ describe('Example 21 - Row Detail View', () => {
         if (index > expectedTasks.length - 1) {
           return;
         }
-        cy.wrap($row).children('.slick-cell:nth(1)')
+        cy.wrap($row).children('.slick-cell:nth(2)')
           .first()
           .should('contain', expectedTasks[index]);
       });
@@ -179,7 +179,7 @@ describe('Example 21 - Row Detail View', () => {
       .contains('Task 1');
 
     cy.get('.grid21')
-      .find('.slick-row:nth(9)')
+      .find('.slick-row:nth(9) .slick-cell:nth(1)')
       .click();
 
     cy.get('.grid21')
@@ -191,7 +191,7 @@ describe('Example 21 - Row Detail View', () => {
       .contains('Task 5');
 
     cy.get('.grid21')
-      .find('.slick-header-column:nth(1)')
+      .find('.slick-header-column:nth(2)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
       .should('be.hidden')
@@ -206,7 +206,7 @@ describe('Example 21 - Row Detail View', () => {
       .click();
 
     cy.get('.grid21')
-      .find('.slick-header-column:nth(1)')
+      .find('.slick-header-column:nth(2)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
       .invoke('show')
@@ -220,7 +220,7 @@ describe('Example 21 - Row Detail View', () => {
       .click();
 
     cy.get('.grid21')
-      .find('.slick-header-column:nth(1)')
+      .find('.slick-header-column:nth(2)')
       .find('.slick-sort-indicator-asc')
       .should('have.length', 1);
 
@@ -241,7 +241,7 @@ describe('Example 21 - Row Detail View', () => {
         if (index > expectedTasks.length - 1) {
           return;
         }
-        cy.wrap($row).children('.slick-cell:nth(1)')
+        cy.wrap($row).children('.slick-cell:nth(2)')
           .first()
           .should('contain', expectedTasks[index]);
       });
@@ -249,11 +249,11 @@ describe('Example 21 - Row Detail View', () => {
 
   it('should click open Row Detail of Task 1 and Task 101 then type a title filter of "Task 101" and expect Row Detail to be opened and still be rendered', () => {
     cy.get('.grid21')
-      .find('.slick-row:nth(4)')
+      .find('.slick-row:nth(4) .slick-cell:nth(1)')
       .click();
 
     cy.get('.grid21')
-      .find('.slick-row:nth(1)')
+      .find('.slick-row:nth(1) .slick-cell:nth(1)')
       .click();
 
     cy.get('.grid21')
@@ -316,7 +316,7 @@ describe('Example 21 - Row Detail View', () => {
 
   it('should click on 5th row detail open icon and expect it to open', () => {
     cy.get('.grid21')
-      .find('.slick-row:nth(4) .slick-cell:nth(0)')
+      .find('.slick-row:nth(4) .slick-cell:nth(1)')
       .click();
 
     cy.get('.grid21')
@@ -330,8 +330,8 @@ describe('Example 21 - Row Detail View', () => {
 
   it('should click on 2nd row "Title" cell to edit it and expect Task 5 row detail to get closed', () => {
     cy.get('.grid21')
-      .find('.slick-row:nth(1) .slick-cell:nth(1)')
-      .click();
+      .find('.slick-row:nth(1) .slick-cell:nth(2)')
+      .dblclick();
 
     cy.get('.editor-title')
       .invoke('val')
@@ -348,7 +348,7 @@ describe('Example 21 - Row Detail View', () => {
     cy.get('.slick-viewport-top.slick-viewport-left')
       .scrollTo('top');
 
-    cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 8}px;"] .slick-cell:nth(1)`)
+    cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 8}px;"] .slick-cell:nth(2)`)
       .click()
       .wait(40);
 
@@ -391,5 +391,13 @@ describe('Example 21 - Row Detail View', () => {
 
     cy.get('.dynamic-cell-detail')
       .should('have.length', 0);
+  });
+
+  it('should be able to select any rows, i.e.: row 2 and 4', () => {
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).click();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).click();
+
+    cy.get('[data-test="row-selections"]')
+      .contains('2,4');
   });
 });
