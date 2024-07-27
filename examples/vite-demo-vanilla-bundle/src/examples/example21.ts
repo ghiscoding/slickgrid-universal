@@ -32,6 +32,7 @@ export default class Example21 {
   columnDefinitions!: Column<Item>[];
   dataset!: Item[];
   sgb!: SlickVanillaGridBundle;
+  selectedRowString = '';
   serverApiDelay = 400;
   status = '';
   statusClass = '';
@@ -55,6 +56,12 @@ export default class Example21 {
 
     // add all row detail event listeners
     this.addRowDetailEventHandlers();
+    this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowschanged', () => {
+      this.selectedRowString = this.sgb.slickGrid?.getSelectedRows().join(',') || '';
+      if (this.selectedRowString.length > 50) {
+        this.selectedRowString = this.selectedRowString.substring(0, 50) + '...';
+      }
+    });
   }
 
   dispose() {

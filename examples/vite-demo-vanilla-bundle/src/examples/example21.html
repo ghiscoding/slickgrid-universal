@@ -36,6 +36,11 @@
       <label for="server-delay">Simulated Server Delay (ms): </label>
       <input type="number" id="server-delay" class="is-narrow input is-small" data-test="server-delay" value.bind="serverApiDelay">
     </span>
+
+    <span class="ml-2">
+      <label>Selected Rows:</label>
+      <span textcontent.bind="selectedRowString" data-test="row-selections"></span>
+    </span>
   </div>
 
   <div class="column is-narrow">

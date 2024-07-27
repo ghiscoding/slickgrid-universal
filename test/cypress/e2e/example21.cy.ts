@@ -392,4 +392,12 @@ describe('Example 21 - Row Detail View', () => {
     cy.get('.dynamic-cell-detail')
       .should('have.length', 0);
   });
+
+  it('should be able to select any rows, i.e.: row 2 and 4', () => {
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).click();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).click();
+
+    cy.get('[data-test="row-selections"]')
+      .contains('2,4');
+  });
 });
