@@ -1,6 +1,6 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
+import type { Column, ExtensionModel, GridOption } from '../interfaces/index';
 import { type ColumnReorderFunction, type ExtensionList, ExtensionName, type InferExtensionByName, type SlickControlList, type SlickPluginList } from '../enums/index';
 import type { SharedService } from './shared.service';
 import type { TranslaterService } from './translater.service';
@@ -26,12 +26,6 @@ import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
 import type { GridService } from './grid.service';
 
-interface ExtensionWithColumnIndexPosition {
-  name: ExtensionName;
-  columnIndexPosition: number;
-  extension: SlickCheckboxSelectColumn | SlickRowDetailView | SlickRowMoveManager | SlickRowBasedEdit;
-}
-
 export class ExtensionService {
   protected _extensionCreatedList: ExtensionList<any> = {} as ExtensionList<any>;
   protected _extensionList: ExtensionList<any> = {} as ExtensionList<any>;
@@ -48,6 +42,7 @@ export class ExtensionService {
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
   protected _rowSelectionModel?: SlickRowSelectionModel;
   protected _rowBasedEdit?: SlickRowBasedEdit;
+  protected _requireInitExternalExtensions: Array<ExtensionModel<any>> = [];
 
   get extensionList(): ExtensionList<any> {
     return this._extensionList;
@@ -302,6 +297,12 @@ export class ExtensionService {
           this._extensionList[ExtensionName.rowMoveManager] = { name: ExtensionName.rowMoveManager, instance: this._rowMoveManagerPlugin };
         }
       }
+
+      if (this._requireInitExternalExtensions.length) {
+        this._requireInitExternalExtensions.forEach(extension => {
+          extension.instance.init(this.sharedService.slickGrid, undefined as any);
+        });
+      }
     }
   }
 
@@ -312,27 +313,36 @@ export class ExtensionService {
    * @param gridOptions
    */
   createExtensionsBeforeGridCreation(columnDefinitions: Column[], gridOptions: GridOption): void {
-    const featureWithColumnIndexPositions: ExtensionWithColumnIndexPosition[] = [];
+    const featureWithColumnIndexPositions: Array<ExtensionModel<any>> = [];
 
     // the following 3 features might have `columnIndexPosition` that we need to respect their column order, we will execute them by their sort order further down
     // we push them into a array and we'll process them by their position (if provided, else use same order that they were inserted)
     if (gridOptions.enableCheckboxSelector) {
       if (!this.getCreatedExtensionByName(ExtensionName.checkboxSelector)) {
         this._checkboxSelectColumn = new SlickCheckboxSelectColumn(this.pubSubService, this.sharedService.gridOptions.checkboxSelector);
-        featureWithColumnIndexPositions.push({ name: ExtensionName.checkboxSelector, extension: this._checkboxSelectColumn, columnIndexPosition: gridOptions?.checkboxSelector?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+        featureWithColumnIndexPositions.push({ name: ExtensionName.checkboxSelector, instance: this._checkboxSelectColumn, columnIndexPosition: gridOptions?.checkboxSelector?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
     if (gridOptions.enableRowMoveManager) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowMoveManager)) {
         this._rowMoveManagerPlugin = new SlickRowMoveManager(this.pubSubService);
-        featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, extension: this._rowMoveManagerPlugin, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+        featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, instance: this._rowMoveManagerPlugin, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
     if (gridOptions.enableRowBasedEdit) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowBasedEdit)) {
         this._rowBasedEdit = new SlickRowBasedEdit(this.extensionUtility, this.pubSubService);
-        featureWithColumnIndexPositions.push({ name: ExtensionName.rowBasedEdit, extension: this._rowBasedEdit, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+        featureWithColumnIndexPositions.push({ name: ExtensionName.rowBasedEdit, instance: this._rowBasedEdit, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
+    }
+
+    // user could also optionally preRegister some external resources (extensions)
+    if (gridOptions.preRegisterExternalExtensions) {
+      const extraExtensions = gridOptions.preRegisterExternalExtensions(this.pubSubService);
+      extraExtensions.forEach(extension => {
+        featureWithColumnIndexPositions.push(extension);
+        this._requireInitExternalExtensions.push(extension);
+      });
     }
 
     // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
@@ -494,13 +504,13 @@ export class ExtensionService {
    * @param columnDefinitions
    * @param gridOptions
    */
-  protected createExtensionByTheirColumnIndex(featureWithIndexPositions: ExtensionWithColumnIndexPosition[], columnDefinitions: Column[], gridOptions: GridOption): void {
+  protected createExtensionByTheirColumnIndex(featureWithIndexPositions: Array<ExtensionModel<any>>, columnDefinitions: Column[], gridOptions: GridOption): void {
     // 1- first step is to sort them by their index position
-    featureWithIndexPositions.sort((feat1, feat2) => feat1.columnIndexPosition - feat2.columnIndexPosition);
+    featureWithIndexPositions.sort((feat1, feat2) => (feat1?.columnIndexPosition ?? 0) - (feat2?.columnIndexPosition ?? 0));
 
     // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
     featureWithIndexPositions.forEach(feature => {
-      const instance = feature.extension.create(columnDefinitions, gridOptions);
+      const instance = feature.instance.create(columnDefinitions, gridOptions);
       if (instance) {
         this._extensionCreatedList[feature.name] = { name: feature.name, instance };
       }

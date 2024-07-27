@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, createDomElement, FieldType, Filters, Formatters, type GridOption, SlickEventHandler, Editors } from '@slickgrid-universal/common';
+import { type Column, createDomElement, FieldType, Filters, Formatters, type GridOption, SlickEventHandler, Editors, ExtensionName } from '@slickgrid-universal/common';
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -52,12 +52,6 @@ export default class Example21 {
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid21`) as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    this.rowDetail = new SlickRowDetailView(this.sgb.instances!.eventPubSubService!);
-    this.rowDetail.create(this.columnDefinitions, this.gridOptions);
-    this.rowDetail.init(this.sgb.slickGrid!);
-
-    // we need to sync the column definitions to include the new row detail icon column in the grid
-    this.sgb.columnDefinitions = this.columnDefinitions.slice();
 
     // add all row detail event listeners
     this.addRowDetailEventHandlers();
@@ -86,19 +80,22 @@ export default class Example21 {
       autoResize: {
         container: '.demo-container',
       },
-      enableColumnReorder: true,
       enableFiltering: true,
       enableRowDetailView: true,
-      rowSelectionOptions: {
-        selectActiveRow: true
+      preRegisterExternalExtensions: (pubSubService) => {
+        // Row Detail View is a special case because of its requirement to create extra column definition dynamically
+        // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
+        this.rowDetail = new SlickRowDetailView(pubSubService);
+        return [{ name: ExtensionName.rowDetailView, instance: this.rowDetail }];
       },
       rowHeight: 33,
       rowDetailView: {
+        columnIndexPosition: 1,
         cssClass: 'detail-view-toggle',
         preTemplate: this.loadingTemplate.bind(this),
         postTemplate: this.loadView.bind(this),
         process: this.simulateServerAsyncCall.bind(this),
-        useRowClick: true,
+        useRowClick: false,
 
         // how many grid rows do we want to use for the detail panel
         // also note that the detail view adds an extra 1 row for padding purposes
@@ -109,7 +106,19 @@ export default class Example21 {
         // by using the override function to provide custom logic of which row is expandable
         // you can override it here in the options or externally by calling the method on the plugin instance
         expandableOverride: (_row, dataContext) => dataContext.id % 2 === 1,
-      }
+      },
+      rowSelectionOptions: {
+        // True (Single Selection), False (Multiple Selections)
+        selectActiveRow: false
+      },
+
+      // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
+      enableCheckboxSelector: true,
+      enableRowSelection: true,
+      checkboxSelector: {
+        hideInFilterHeaderRow: false,
+        hideSelectAllCheckbox: true,
+      },
     };
   }
 

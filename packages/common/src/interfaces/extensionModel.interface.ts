@@ -6,4 +6,6 @@ export interface ExtensionModel<P extends (SlickControlList | SlickPluginList)> 
 
   /** Instance of the Addon (3rd party SlickGrid Control or Plugin) */
   instance: P;
+
+  columnIndexPosition?: number;
 }

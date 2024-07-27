@@ -1,4 +1,4 @@
-import type { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 import type {
@@ -20,6 +20,7 @@ import type {
   EmptyWarning,
   ExcelCopyBufferOption,
   ExcelExportOption,
+  ExtensionModel,
   ExternalResource,
   Formatter,
   FormatterOption,
@@ -525,6 +526,12 @@ export interface GridOption<C extends Column = Column> {
 
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
   externalResources?: ExternalResource[];
+
+  /**
+   * Some external (optional) extensions might need to be pre-registered, for example SlickRowDetail.
+   * Note: this will not only call `create()` method before SlickGrid instantiation, but will also call its `init()` method
+   */
+  preRegisterExternalExtensions?: (eventPubSubService: BasePubSubService) => Array<ExtensionModel<any>>;
 
   /**
    * Default to 0, how long to wait between each characters that the user types before processing the filtering process (only applies for local/in-memory grid).
