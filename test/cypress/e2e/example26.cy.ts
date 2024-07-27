@@ -76,7 +76,6 @@ describe('Example 26 - OData with Infinite Scroll', () => {
       cy.get('[data-test="data-loaded-tag"]')
         .should('have.class', 'fully-loaded');
 
-
       cy.get('[data-id="name"]')
         .click();
 

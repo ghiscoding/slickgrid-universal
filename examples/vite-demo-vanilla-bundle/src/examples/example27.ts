@@ -27,6 +27,7 @@ function unescapeAndLowerCase(val: string) {
 export default class Example27 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
+  backendService: GraphqlService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset = [];
@@ -47,6 +48,7 @@ export default class Example27 {
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
   constructor() {
+    this.backendService = new GraphqlService();
     this._bindingEventService = new BindingEventService();
     // get the Translate Service from the window object,
     // it might be better with proper Dependency Injection but this project doesn't have any at this point
@@ -80,7 +82,7 @@ export default class Example27 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', field: 'name', nameKey: 'NAME', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'name', field: 'name', nameKey: 'NAME', width: 60,
         type: FieldType.string,
         sortable: true,
         filterable: true,
@@ -89,14 +91,14 @@ export default class Example27 {
         }
       },
       {
-        id: 'gender', field: 'gender', nameKey: 'GENDER', filterable: true, sortable: true, width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'gender', field: 'gender', nameKey: 'GENDER', filterable: true, sortable: true, width: 60,
         filter: {
           model: Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: 'male', labelKey: 'MALE', }, { value: 'female', labelKey: 'FEMALE', }]
         }
       },
       {
-        id: 'company', field: 'company', nameKey: 'COMPANY', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'company', field: 'company', nameKey: 'COMPANY', width: 60,
         sortable: true,
         filterable: true,
         filter: {
@@ -112,32 +114,27 @@ export default class Example27 {
     ];
 
     this.gridOptions = {
+      enableAutoResize: true,
+      autoResize: {
+        container: '.demo-container',
+        rightPadding: 10
+      },
       enableAutoTooltip: true,
       autoTooltipOptions: {
         enableForHeaderCells: true
       },
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
-      enableAutoResize: false,
-      gridHeight: 275,
-      gridWidth: 900,
-      compoundOperatorAltTexts: {
-        // where '=' is any of the `OperatorString` type shown above
-        text: { 'Custom': { operatorAlt: '%%', descAlt: 'SQL Like' } },
-      },
       enableFiltering: true,
       enableCellNavigation: true,
       multiColumnSort: false,
-      createPreHeaderPanel: true,
-      showPreHeaderPanel: true,
-      preHeaderPanelHeight: 28,
       gridMenu: {
         resizeOnShowHeaderRow: true,
       },
       backendServiceApi: {
         // we need to disable default internalPostProcess so that we deal with either replacing full dataset or appending to it
         disableInternalPostProcess: true,
-        service: new GraphqlService(),
+        service: this.backendService,
         options: {
           datasetName: GRAPHQL_QUERY_DATASET_NAME, // the only REQUIRED property
           addLocaleIntoQuery: true,   // optionally add current locale into the query
@@ -175,7 +172,6 @@ export default class Example27 {
   }
 
   getCustomerCallback(result) {
-    console.log('getCustomerCallback', result);
     const { nodes, totalCount } = this.metricsTotalItemCount = result.data[GRAPHQL_QUERY_DATASET_NAME];
     this.metricsTotalItemCount = totalCount;
 
@@ -187,6 +183,7 @@ export default class Example27 {
     // or if we're on first data fetching (no scroll bottom ever occured yet)
     if (!result.infiniteScrollBottomHit) {
       // initial load not scroll hit yet, full dataset assignment
+      this.sgb.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
       this.sgb.dataset = nodes;
     } else {
       // scroll hit, for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
@@ -302,7 +299,6 @@ export default class Example27 {
     // return data subset (page)
     const updatedData = filteredData.slice(firstRow, firstRow + firstCount);
 
-
     // in your case, you will call your WebAPI function (wich needs to return a Promise)
     // for the demo purpose, we will call a mock WebAPI function
     const mockedResult = {
@@ -339,6 +335,9 @@ export default class Example27 {
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+
+    // we could also force a query since we provide a Locale and it changed
+    this.getCustomerApiCall(this.backendService.buildQuery() || '');
   }
 
   toggleDarkMode() {

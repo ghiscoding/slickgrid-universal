@@ -1,6 +1,6 @@
 import { format } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, FieldType, Filters, type GridOption, type OnRowCountChangedEventArgs, OperatorType, } from '@slickgrid-universal/common';
+import { Aggregators, type Column, FieldType, Filters, type GridOption, type Grouping, type OnRowCountChangedEventArgs, OperatorType, SortComparers, } from '@slickgrid-universal/common';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -67,17 +67,7 @@ export default class Example26 {
         id: 'name', name: 'Name', field: 'name', sortable: true,
         type: FieldType.string,
         filterable: true,
-        filter: {
-          model: Filters.compoundInput,
-          compoundOperatorList: [
-            { operator: '', desc: 'Contains' },
-            { operator: '<>', desc: 'Not Contains' },
-            { operator: '=', desc: 'Equals' },
-            { operator: '!=', desc: 'Not equal to' },
-            { operator: 'a*', desc: 'Starts With' },
-            { operator: 'Custom', desc: 'SQL Like' },
-          ],
-        }
+        filter: { model: Filters.compoundInput }
       },
       {
         id: 'gender', name: 'Gender', field: 'gender', filterable: true, sortable: true,
@@ -104,14 +94,14 @@ export default class Example26 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true
       },
-      compoundOperatorAltTexts: {
-        // where '=' is any of the `OperatorString` type shown above
-        text: { 'Custom': { operatorAlt: '%%', descAlt: 'SQL Like' } },
-      },
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,
+      enableGrouping: true,
+      headerMenu: {
+        hideFreezeColumnsCommand: false,
+      },
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll
         // filters: [{ columnId: 'gender', searchTerms: ['female'] }]
@@ -184,6 +174,7 @@ export default class Example26 {
     // or if we're on first data fetching (no scroll bottom ever occured yet)
     if (!data.infiniteScrollBottomHit) {
       // initial load not scroll hit yet, full dataset assignment
+      this.sgb.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
       this.sgb.dataset = data.value;
     } else {
       // scroll hit, for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
@@ -384,6 +375,23 @@ export default class Example26 {
         resolve(backendResult);
       }, 150);
     });
+  }
+
+  groupByGender() {
+    this.sgb?.dataView?.setGrouping({
+      getter: 'gender',
+      formatter: (g) => `Gender: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+      comparer: (a, b) => SortComparers.string(a.value, b.value),
+      aggregators: [
+        new Aggregators.Sum('gemder')
+      ],
+      aggregateCollapsed: false,
+      lazyTotalsCalculation: true
+    } as Grouping);
+
+    // you need to manually add the sort icon(s) in UI
+    this.sgb?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
   clearAllFiltersAndSorts() {
