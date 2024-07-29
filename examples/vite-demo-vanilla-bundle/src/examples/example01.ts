@@ -34,10 +34,6 @@ export default class Example01 {
 
     this.sgb1 = new Slicker.GridBundle(document.querySelector(`.grid1`) as HTMLDivElement, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
     this.sgb2 = new Slicker.GridBundle(document.querySelector(`.grid2`) as HTMLDivElement, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
-
-    // setTimeout(() => {
-    //   this.slickgridLwc2.dataset = this.dataset2;
-    // }, 1000);
   }
 
   dispose() {
