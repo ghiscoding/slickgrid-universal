@@ -85,7 +85,7 @@
     "cross-env": "^7.0.3",
     "cssnano": "^7.0.4",
     "npm-run-all2": "^6.2.2",
-    "postcss": "^8.4.39",
+    "postcss": "^8.4.40",
     "postcss-cli": "^11.0.0",
     "sass": "^1.77.8"
   },
