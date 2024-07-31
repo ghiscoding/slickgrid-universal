@@ -238,7 +238,7 @@ describe('Resizer Service', () => {
       service.init(gridStub, divContainer);
       const output = service.bindAutoResizeDataGrid();
 
-      expect(output).toBe(null as any);
+      expect(output).toBeFalsy();
       expect(service.eventHandler).toBeTruthy();
     });
 
@@ -246,7 +246,7 @@ describe('Resizer Service', () => {
       jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
       service.init(gridStub, divContainer);
       const output = service.calculateGridNewDimensions(mockGridOptions);
-      expect(output).toBe(null as any);
+      expect(output).toBeFalsy();
     });
 
     it('should trigger a grid resize when a window resize event occurs', () => {
