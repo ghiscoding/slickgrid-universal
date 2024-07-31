@@ -364,11 +364,11 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
       const parentOffset = getOffset(parentElm);
-      let menuOffsetLeft = (parentElm && this._camelPluginName === 'cellMenu') ? parentOffset?.left ?? 0 : targetEvent.pageX;
-      let menuOffsetTop = (parentElm && this._camelPluginName === 'cellMenu') ? parentOffset?.top ?? 0 : targetEvent.pageY;
+      let menuOffsetLeft = (parentElm && this._camelPluginName === 'cellMenu') ? parentOffset.left : targetEvent.pageX;
+      let menuOffsetTop = (parentElm && this._camelPluginName === 'cellMenu') ? parentOffset.top : targetEvent.pageY;
       if (isSubMenu && this._camelPluginName === 'contextMenu') {
-        menuOffsetLeft = parentOffset?.left ?? 0;
-        menuOffsetTop = parentOffset?.top ?? 0;
+        menuOffsetLeft = parentOffset.left;
+        menuOffsetTop = parentOffset.top;
       }
       const parentCellWidth = parentElm.offsetWidth || 0;
       const menuHeight = menuElm?.offsetHeight || 0;

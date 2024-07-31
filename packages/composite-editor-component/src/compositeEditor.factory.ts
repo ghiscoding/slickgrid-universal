@@ -60,10 +60,10 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
     const height = container?.clientHeight ?? 0;
 
     return {
-      top: offset?.top ?? 0,
-      left: offset?.left ?? 0,
-      bottom: (offset?.top ?? 0) + height,
-      right: (offset?.left ?? 0) + width,
+      top: offset.top,
+      left: offset.left,
+      bottom: offset.top + height,
+      right: offset.left + width,
       width,
       height,
       visible: true

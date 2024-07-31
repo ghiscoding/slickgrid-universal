@@ -1,6 +1,6 @@
 import { delay, of, throwError } from 'rxjs';
 
-import { Column, getOffset, GridOption, SlickGrid, SharedService, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
+import { Column, getOffset, GridOption, SlickGrid, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';
@@ -50,16 +50,15 @@ describe('SlickCustomTooltip plugin', () => {
   let container: ContainerServiceStub;
   let plugin: SlickCustomTooltip;
   let rxjsResourceStub: RxJsResourceStub;
-  let sharedService: SharedService;
 
   beforeEach(() => {
     container = new ContainerServiceStub();
-    sharedService = new SharedService();
     rxjsResourceStub = new RxJsResourceStub();
     plugin = new SlickCustomTooltip();
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
     (document as any).elementFromPoint = jest.fn(); // document.elementFromPoint() doesn't exist in JSDOM but we can mock it
+    (getOffset as jest.Mock).mockReturnValue({ top: 0, left: 0, right: 0, bottom: 0 });
   });
 
   afterEach(() => {
@@ -651,7 +650,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
-    (getOffset as jest.Mock).mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
+    (getOffset as jest.Mock).mockReturnValueOnce({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
 
     plugin.init(gridStub, container);
     plugin.setOptions({
@@ -766,7 +765,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('name title tooltip');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderMouseOver" is triggered', () => {
@@ -795,7 +794,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header tooltip text');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderRowMouseEnter" is triggered', () => {
@@ -824,7 +823,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header row tooltip text');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderRowMouseOver" is triggered', () => {
@@ -853,6 +852,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header row tooltip text');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 });

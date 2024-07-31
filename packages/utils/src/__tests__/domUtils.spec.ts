@@ -232,7 +232,7 @@ describe('Service/domUtilies', () => {
 
     it('should return undefined when element if not a valid html element', () => {
       const output = getOffset(null as any);
-      expect(output).toEqual(undefined);
+      expect(output).toEqual({ top: 0, bottom: 0, left: 0, right: 0 });
     });
 
     it('should return top/left 0 when creating a new element in the document without positions', () => {

@@ -456,7 +456,7 @@ export class SlickCustomTooltip {
   protected reposition(cell: { row: number; cell: number; }): void {
     if (this._tooltipElm) {
       this._cellNodeElm = this._cellNodeElm || this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
-      const cellPosition = getOffset(this._cellNodeElm) || { top: 0, left: 0 };
+      const cellPosition = getOffset(this._cellNodeElm);
       const cellContainerWidth = this._cellNodeElm.offsetWidth;
       const calculatedTooltipHeight = this._tooltipElm.getBoundingClientRect().height;
       const calculatedTooltipWidth = this._tooltipElm.getBoundingClientRect().width;
@@ -502,7 +502,7 @@ export class SlickCustomTooltip {
 
       // when having multiple tooltips, we'll try to reposition tooltip to mouse position
       if (this._tooltipElm && (this._hasMultipleTooltips || this.cellAddonOptions?.repositionByMouseOverTarget)) {
-        const mouseElmOffset = getOffset(this._mouseTarget)!;
+        const mouseElmOffset = getOffset(this._mouseTarget);
         if (finalTooltipPosition.includes('left') || finalTooltipPosition === 'top-center') {
           newPositionLeft = mouseElmOffset.left - (this._addonOptions?.offsetArrow ?? 3);
         } else if (finalTooltipPosition.includes('right')) {

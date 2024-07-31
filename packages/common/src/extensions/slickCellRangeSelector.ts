@@ -133,8 +133,8 @@ export class SlickCellRangeSelector {
     const viewportBottom = viewportTop + this._viewportHeight;
 
     const viewportOffset = getOffset(this._activeViewport);
-    const viewportOffsetLeft = viewportOffset?.left ?? 0;
-    const viewportOffsetTop = viewportOffset?.top ?? 0;
+    const viewportOffsetLeft = viewportOffset.left;
+    const viewportOffsetTop = viewportOffset.top;
     const viewportOffsetRight = viewportOffsetLeft + this._viewportWidth;
     const viewportOffsetBottom = viewportOffsetTop + this._viewportHeight;
 
@@ -264,8 +264,8 @@ export class SlickCellRangeSelector {
   protected handleDragTo(e: { pageX: number; pageY: number; }, dd: DragPosition): void {
     const targetEvent: MouseEvent | Touch = (e as unknown as TouchEvent)?.touches?.[0] ?? e;
     const end = this._grid.getCellFromPoint(
-      targetEvent.pageX - (getOffset(this._activeCanvas)?.left ?? 0) + this._columnOffset,
-      targetEvent.pageY - (getOffset(this._activeCanvas)?.top ?? 0) + this._rowOffset
+      targetEvent.pageX - getOffset(this._activeCanvas).left + this._columnOffset,
+      targetEvent.pageY - getOffset(this._activeCanvas).top + this._rowOffset
     );
 
     if (end !== undefined) {
@@ -376,12 +376,12 @@ export class SlickCellRangeSelector {
     this._grid.focus();
 
     const canvasOffset = getOffset(this._canvas);
-    let startX = dd.startX - (canvasOffset?.left ?? 0);
+    let startX = dd.startX - (canvasOffset.left);
     if (this._gridOptions.frozenColumn! >= 0 && this._isRightCanvas) {
       startX += this._scrollLeft;
     }
 
-    let startY = dd.startY - (canvasOffset?.top ?? 0);
+    let startY = dd.startY - (canvasOffset.top);
     if (this._gridOptions.frozenRow! >= 0 && this._isBottomCanvas) {
       startY += this._scrollTop;
     }

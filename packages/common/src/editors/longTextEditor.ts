@@ -315,8 +315,8 @@ export class LongTextEditor implements Editor {
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
     // first defined position will be bottom/right (which will position the editor completely over the cell)
-    let newPositionTop = containerOffset?.top ?? parentPosition.top ?? 0;
-    let newPositionLeft = containerOffset?.left ?? parentPosition.left ?? 0;
+    let newPositionTop = this.args.container ? containerOffset.top : parentPosition.top ?? 0;
+    let newPositionLeft = this.args.container ? containerOffset.left : parentPosition.left ?? 0;
 
     // user could explicitely use a "left" position (when user knows his column is completely on the right)
     // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
