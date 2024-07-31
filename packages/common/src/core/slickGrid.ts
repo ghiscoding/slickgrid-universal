@@ -1867,13 +1867,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       },
       onStart: (e: SortableEvent) => {
         canDragScroll = !this.hasFrozenColumns() ||
-          getOffset(e.item)!.left > getOffset(this._viewportScrollContainerX)!.left;
+          getOffset(e.item).left > getOffset(this._viewportScrollContainerX).left;
 
         if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent; }).originalEvent.pageX > this._container.clientWidth) {
           if (!(columnScrollTimer)) {
             columnScrollTimer = setInterval(scrollColumnsRight, 100);
           }
-        } else if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent; }).originalEvent.pageX < getOffset(this._viewportScrollContainerX)!.left) {
+        } else if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent; }).originalEvent.pageX < getOffset(this._viewportScrollContainerX).left) {
           if (!(columnScrollTimer)) {
             columnScrollTimer = setInterval(scrollColumnsLeft, 100);
           }
@@ -5192,8 +5192,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         rowOffset = (this._options.frozenBottom) ? Utils.height(this._canvasTopL) as number : this.frozenRowsHeight;
       }
 
-      const x = targetEvent.clientX - c!.left;
-      const y = targetEvent.clientY - c!.top + rowOffset + document.documentElement.scrollTop;
+      const x = targetEvent.clientX - c.left;
+      const y = targetEvent.clientY - c.top + rowOffset + document.documentElement.scrollTop;
       row = this.getCellFromPoint(x, y).row;
     }
 
@@ -5307,7 +5307,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (isDefined(this.activeCellNode)) {
       const activeCellOffset = getOffset(this.activeCellNode);
-      let rowOffset = Math.floor(getOffset(Utils.parents(this.activeCellNode, '.grid-canvas')[0] as HTMLElement)!.top);
+      let rowOffset = Math.floor(getOffset(Utils.parents(this.activeCellNode, '.grid-canvas')[0] as HTMLElement).top);
       const isBottom = Utils.parents(this.activeCellNode, '.grid-canvas-bottom').length;
 
       if (this.hasFrozenRows && isBottom) {
@@ -5316,7 +5316,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           : this.frozenRowsHeight;
       }
 
-      const cell = this.getCellFromPoint(activeCellOffset!.left, Math.ceil(activeCellOffset!.top) - rowOffset);
+      const cell = this.getCellFromPoint(activeCellOffset.left, Math.ceil(activeCellOffset.top) - rowOffset);
       this.activeRow = cell.row;
       this.activeCell = this.activePosX = this.activeCell = this.activePosX = this.getCellFromNode(this.activeCellNode);
 

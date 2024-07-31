@@ -371,14 +371,14 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       const menuWidth = menuElm?.offsetWidth ?? 0;
       const contentMinWidth = gridMenuOptions?.contentMinWidth ?? this._defaults.contentMinWidth ?? 0;
       const currentMenuWidth = ((contentMinWidth > menuWidth) ? contentMinWidth : (menuWidth)) || 0;
-      const nextPositionTop = menuIconOffset?.top ?? 0;
-      const nextPositionLeft = menuIconOffset?.right ?? 0;
+      const nextPositionTop = menuIconOffset.top;
+      const nextPositionLeft = menuIconOffset.right;
 
       let menuOffsetLeft;
       let menuOffsetTop;
       if (isSubMenu) {
-        menuOffsetTop = parentOffset?.top ?? 0;
-        menuOffsetLeft = parentOffset?.left ?? 0;
+        menuOffsetTop = parentOffset.top;
+        menuOffsetLeft = parentOffset.left;
       } else {
         menuOffsetTop = nextPositionTop + iconButtonElm.offsetHeight; // top position has to include button height so the menu is placed just below it
         menuOffsetLeft = gridMenuOptions?.dropSide === 'right'

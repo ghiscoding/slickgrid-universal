@@ -199,7 +199,7 @@ export class SlickRowMoveManager {
       const e = evt.getNativeEvent<MouseEvent | TouchEvent>();
 
       const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-      const top = targetEvent.pageY - (getOffset(this._canvas)?.top ?? 0);
+      const top = targetEvent.pageY - (getOffset(this._canvas).top);
       dd.selectionProxy.style.top = `${top - 5}px`;
       dd.selectionProxy.style.display = 'block';
 

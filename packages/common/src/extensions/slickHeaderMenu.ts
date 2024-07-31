@@ -143,9 +143,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const gridPos = this.grid.getGridPosition();
     const menuWidth = menuElm.offsetWidth;
     const parentOffset = getOffset(parentElm);
-    let menuOffsetLeft = isSubMenu ? parentOffset?.left ?? 0 : relativePos?.left ?? 0;
+    let menuOffsetLeft = isSubMenu ? parentOffset.left : relativePos?.left ?? 0;
     let menuOffsetTop = isSubMenu
-      ? parentOffset?.top ?? 0
+      ? parentOffset.top
       : (relativePos?.top ?? 0) + (this.addonOptions?.menuOffsetTop ?? 0) + buttonElm.clientHeight;
 
     // for sub-menus only, auto-adjust drop position (up/down)

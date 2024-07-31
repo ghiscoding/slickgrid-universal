@@ -168,7 +168,7 @@ export class ResizerService {
       this._resizeObserver.observe(this._pageContainerElm);
     } else {
       // if we can't find the grid to resize, return without binding anything
-      if (this._gridDomElm === undefined || getOffset(this._gridDomElm) === undefined) {
+      if (this._gridDomElm === undefined) {
         return null;
       }
 
@@ -210,7 +210,7 @@ export class ResizerService {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
     const gridElmOffset = getOffset(this._gridDomElm);
 
-    if (!window || gridElmOffset === undefined) {
+    if (!window || this._gridDomElm === undefined) {
       return null;
     }
 
@@ -237,7 +237,7 @@ export class ResizerService {
     } else {
       // uses the browser's window height with its top offset to calculate grid height
       gridHeight = window.innerHeight || 0;
-      gridOffsetTop = gridElmOffset?.top ?? 0;
+      gridOffsetTop = gridElmOffset.top;
     }
 
     const availableHeight = gridHeight - gridOffsetTop - bottomPadding;
@@ -648,7 +648,7 @@ export class ResizerService {
       this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getOffset(headerElm);
-        let headerOffsetTop = headerPos?.top ?? 0;
+        let headerOffsetTop = headerPos.top;
         if (this.gridOptions?.enableFiltering && this.gridOptions.headerRowHeight) {
           headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
         }
@@ -658,13 +658,13 @@ export class ResizerService {
         headerOffsetTop += headerTitleRowHeight; // header title row height
 
         const viewportPos = getOffset(viewportElm);
-        const viewportOffsetTop = viewportPos?.top ?? 0;
+        const viewportOffsetTop = viewportPos.top;
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
         // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
         const containerElmOffset = getOffset(this._gridContainerElm);
-        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset?.left === 0 && containerElmOffset?.top === 0)) ? true : false;
+        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset.left === 0 && containerElmOffset.top === 0)) ? true : false;
 
         // another condition for a required resize is when the grid is hidden (not in current tab) then its "rightPx" rendered range will be 0px
         // if that's the case then we know the grid is still hidden and we need to resize it whenever it becomes visible (when its "rightPx" becomes greater than 0 then it's visible)
@@ -680,7 +680,7 @@ export class ResizerService {
         }
 
         // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
-        if (this.checkIsGridShown() && (isResizeRequired || containerElmOffset?.left === 0 || containerElmOffset?.top === 0)) {
+        if (this.checkIsGridShown() && (isResizeRequired || containerElmOffset.left === 0 || containerElmOffset.top === 0)) {
           await this.resizeGrid();
           if (resizeGoodCount < 5) {
             this._grid.updateColumns(); // also refresh header titles after grid becomes visible in new tab, this fixes an issue observed in Salesforce

@@ -7,16 +7,16 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   let left = 0;
   let right = 0;
 
-  const windowHeight = window.innerHeight ?? 0;
-  const windowWidth = window.innerWidth ?? 0;
+  const windowHeight = window.innerHeight || 0;
+  const windowWidth = window.innerWidth || 0;
   const scrollPosition = windowScrollPosition();
   const pageScrollTop = scrollPosition.top;
   const pageScrollLeft = scrollPosition.left;
   const elmOffset = getOffset(element);
 
   if (elmOffset) {
-    const elementOffsetTop = elmOffset.top ?? 0;
-    const elementOffsetLeft = elmOffset.left ?? 0;
+    const elementOffsetTop = elmOffset.top;
+    const elementOffsetLeft = elmOffset.left;
     top = elementOffsetTop - pageScrollTop;
     left = elementOffsetLeft - pageScrollLeft;
     bottom = windowHeight - (elementOffsetTop - pageScrollTop + element.clientHeight);
@@ -142,17 +142,17 @@ export function getOffsetRelativeToParent(parentElm: HTMLElement | null, childEl
 }
 
 /** Get HTML element offset with pure JS */
-export function getOffset(elm?: HTMLElement | null): HtmlElementPosition | undefined {
-  if (!elm || !elm.getBoundingClientRect) {
-    return undefined;
-  }
-  const box = elm.getBoundingClientRect();
-  const docElem = document.documentElement;
-
+export function getOffset(elm?: HTMLElement | null): HtmlElementPosition {
   let top = 0;
   let left = 0;
   let bottom = 0;
   let right = 0;
+
+  if (!elm || !elm.getBoundingClientRect) {
+    return { top, bottom, left, right };
+  }
+  const box = elm.getBoundingClientRect();
+  const docElem = document.documentElement;
 
   if (box?.top !== undefined && box.left !== undefined) {
     top = box.top + window.pageYOffset - docElem.clientTop;
