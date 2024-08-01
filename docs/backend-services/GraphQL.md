@@ -6,6 +6,7 @@
   - [Pagination](graphql/GraphQL-Pagination.md)
   - [Sorting](graphql/GraphQL-Sorting.md)
   - [Filtering](graphql/GraphQL-Filtering.md)
+- [Infinite Scroll](../grid-functionalities/infinite-scroll.md#infinite-scroll-with-backend-services)
 
 ### Description
 GraphQL Backend Service (for Pagination purposes) to get data from a backend server with the help of GraphQL.

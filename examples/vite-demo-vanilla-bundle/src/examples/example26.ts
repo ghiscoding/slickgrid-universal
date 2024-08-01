@@ -1,6 +1,6 @@
 import { format } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { Aggregators, type Column, FieldType, Filters, type GridOption, type Grouping, type OnRowCountChangedEventArgs, OperatorType, SortComparers, } from '@slickgrid-universal/common';
+import { Aggregators, type Column, FieldType, Filters, type GridOption, type Grouping, type Metrics, type OnRowCountChangedEventArgs, OperatorType, SortComparers, } from '@slickgrid-universal/common';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -160,7 +160,8 @@ export default class Example26 {
     }
   }
 
-  getCustomerCallback(data) {
+  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[]; }) {
+    console.log(data);
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
