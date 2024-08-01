@@ -114,7 +114,7 @@ export class PaginationService {
   }
 
   init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi): void {
-    this._availablePageSizes = paginationOptions.pageSizes;
+    this._availablePageSizes = paginationOptions.pageSizes || [];
     this.grid = grid;
     this._backendServiceApi = backendServiceApi;
     this._paginationOptions = paginationOptions;
@@ -144,6 +144,11 @@ export class PaginationService {
     // Subscribe to Filter Clear & Changed and go back to page 1 when that happen
     this._subscriptions.push(this.pubSubService.subscribe('onFilterChanged', () => this.resetPagination()));
     this._subscriptions.push(this.pubSubService.subscribe('onFilterCleared', () => this.resetPagination()));
+
+    // when using Infinite Scroll (only), we also need to reset pagination when sorting
+    if (backendServiceApi?.options?.infiniteScroll) {
+      this._subscriptions.push(this.pubSubService.subscribe('onSortChanged', () => this.resetPagination()));
+    }
 
     // Subscribe to any dataview row count changed so that when Adding/Deleting item(s) through the DataView
     // that would trigger a refresh of the pagination numbers
@@ -310,7 +315,7 @@ export class PaginationService {
       }
 
       // calculate and refresh the multiple properties of the pagination UI
-      this._availablePageSizes = pagination.pageSizes;
+      this._availablePageSizes = pagination.pageSizes || [];
       if (!this._totalItems && pagination.totalItems) {
         this._totalItems = pagination.totalItems;
       }
@@ -337,13 +342,16 @@ export class PaginationService {
   }
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
-  resetPagination(triggerChangedEvent = true): void {
+  resetPagination(triggerChangedEvent = true, scrollToTop = true): void {
     if (this._isLocalGrid && this.dataView && this.sharedService?.gridOptions?.enablePagination) {
       // on a local grid we also need to reset the DataView paging to 1st page
       this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: 0 });
     }
     this._cursorPageInfo = undefined;
     this.refreshPagination(true, triggerChangedEvent);
+    if (scrollToTop) {
+      this.grid.scrollTo(0);
+    }
   }
 
   /**

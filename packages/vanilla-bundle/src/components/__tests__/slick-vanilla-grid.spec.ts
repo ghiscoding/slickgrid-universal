@@ -97,6 +97,7 @@ const backendUtilityServiceStub = {
   executeBackendCallback: jest.fn(),
   onBackendError: jest.fn(),
   refreshBackendDataset: jest.fn(),
+  setInfiniteScrollBottomHit: jest.fn(),
 } as unknown as BackendUtilityService;
 
 const collectionServiceStub = {
@@ -146,6 +147,7 @@ const paginationServiceStub = {
   init: jest.fn(),
   dispose: jest.fn(),
   getFullPagination: jest.fn(),
+  goToNextPage: jest.fn(),
   updateTotalItems: jest.fn(),
 } as unknown as PaginationService;
 
@@ -293,6 +295,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         minWidth: 300,
         rightPadding: 0,
       },
+      backendServiceApi: null,
     } as unknown as GridOption;
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
@@ -1120,6 +1123,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       beforeEach(() => {
         component.gridOptions = {
           backendServiceApi: {
+            disableInternalPostProcess: false,
             onInit: jest.fn(),
             service: mockGraphqlService as any,
             preProcess: jest.fn(),
@@ -1131,6 +1135,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       afterEach(() => {
         jest.clearAllMocks();
+        mockGraphqlService.options = undefined;
       });
 
       it('should call the "createBackendApiInternalPostProcessCallback" method when Backend Service API is defined with a Graphql Service', () => {
@@ -1140,6 +1145,16 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(spy).toHaveBeenCalled();
         expect(component.gridOptions.backendServiceApi!.internalPostProcess).toEqual(expect.any(Function));
+      });
+
+      it('should NOT call the "createBackendApiInternalPostProcessCallback" method when Backend Service API is defined with a Graphql Service with "disableInternalPostProcess"', () => {
+        const spy = jest.spyOn(component, 'createBackendApiInternalPostProcessCallback');
+
+        component.gridOptions.backendServiceApi!.disableInternalPostProcess = true;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(spy).not.toHaveBeenCalled();
+        expect(component.gridOptions.backendServiceApi!.internalPostProcess).toBeUndefined();
       });
 
       it('should execute the "internalPostProcess" callback method that was created by "createBackendApiInternalPostProcessCallback" with Pagination', () => {
@@ -1381,6 +1396,75 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(backendErrorSpy).toHaveBeenCalledWith(mockError, component.gridOptions.backendServiceApi);
           done();
         });
+      });
+
+      it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(true) when we still have more pages in the dataset', (done) => {
+        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
+        const backendServiceApi = {
+          service: mockGraphqlService,
+          process: jest.fn(),
+        };
+
+        const gotoSpy = jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(true);
+        gridOptions = { backendServiceApi } as unknown as GridOption;
+        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
+        component.gridOptions = gridOptions;
+        component.initialization(divContainer, slickEventHandler);
+        gridOptions.backendServiceApi?.onScrollEnd!();
+
+        expect(gotoSpy).toHaveBeenCalled();
+        expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
+        mockGraphqlService.options.infiniteScroll = false;
+        setTimeout(() => {
+          expect(component.backendUtilityService.setInfiniteScrollBottomHit).not.toHaveBeenCalledWith(false);
+          done();
+        });
+      });
+
+      it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(false) when we no longer have more pages', (done) => {
+        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
+        const backendServiceApi = {
+          service: mockGraphqlService,
+          process: jest.fn(),
+        };
+
+        const gotoSpy = jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(false);
+        gridOptions = { backendServiceApi } as unknown as GridOption;
+        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
+        component.gridOptions = gridOptions;
+        component.initialization(divContainer, slickEventHandler);
+        gridOptions.backendServiceApi?.onScrollEnd!();
+
+        expect(gotoSpy).toHaveBeenCalled();
+        expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
+        mockGraphqlService.options.infiniteScroll = false;
+        setTimeout(() => {
+          expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(false);
+          done();
+        });
+      });
+
+      it('should throw an error if we try to set a "presets.pagination" with Infinite Scroll', () => {
+        const consoleSpy = jest.spyOn(console, 'warn').mockReturnValue();
+        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
+        const backendServiceApi = {
+          service: mockGraphqlService,
+          process: jest.fn(),
+        };
+
+        gridOptions = {
+          enablePagination: true,
+          backendServiceApi,
+          presets: { pagination: { pageNumber: 2 } },
+          pagination: { pageSizes: [10, 20], pageSize: 10 }
+        } as unknown as GridOption;
+        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
+        component.gridOptions = gridOptions;
+
+        component.initialization(divContainer, slickEventHandler);
+        component.refreshGridData([]);
+
+        expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');
       });
     });
 

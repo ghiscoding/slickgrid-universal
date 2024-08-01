@@ -3,7 +3,7 @@ export interface Pagination {
   pageNumber?: number;
 
   /** The available page sizes */
-  pageSizes: number[];
+  pageSizes?: number[];
 
   /** Current page size chosen */
   pageSize: number;

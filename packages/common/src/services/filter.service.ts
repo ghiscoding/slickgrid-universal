@@ -198,13 +198,13 @@ export class FilterService {
           this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
         }
 
-        if (args.columnId !== null) {
-          this._dataView.refresh();
-        }
-
         // emit an onFilterChanged event except when it's called by a clear filter
         if (!isClearFilterEvent) {
           await this.emitFilterChanged(EmitterType.local);
+        }
+
+        if (args.columnId !== null) {
+          this._dataView.refresh();
         }
 
         // keep a copy of the filters in case we need to rollback

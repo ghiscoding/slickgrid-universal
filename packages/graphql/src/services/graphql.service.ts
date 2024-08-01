@@ -9,6 +9,7 @@ import type {
   CurrentSorter,
   FilterChangedArgs,
   GridOption,
+  InfiniteScrollOption,
   MultiColumnSort,
   OperatorString,
   Pagination,
@@ -25,6 +26,7 @@ import {
   mapOperatorType,
   mapOperatorByFieldType,
   OperatorType,
+  SlickEventHandler,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
@@ -34,6 +36,7 @@ import type {
   GraphqlCustomFilteringOption,
   GraphqlDatasetFilter,
   GraphqlFilteringOption,
+  GraphqlPaginatedResult,
   GraphqlPaginationOption,
   GraphqlServiceOption,
   GraphqlSortingOption,
@@ -49,8 +52,10 @@ export class GraphqlService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions?: Column[] | undefined;
+  protected _eventHandler: SlickEventHandler;
   protected _grid: SlickGrid | undefined;
   protected _datasetIdPropName = 'id';
+  protected _scrollEndCalled = false;
   options: GraphqlServiceOption | undefined;
   pagination: Pagination | undefined;
   defaultPaginationOptions: GraphqlPaginationOption = {
@@ -68,6 +73,10 @@ export class GraphqlService implements BackendService {
     return this._grid?.getOptions() ?? {} as GridOption;
   }
 
+  constructor() {
+    this._eventHandler = new SlickEventHandler();
+  }
+
   /** Initialization of the service, which acts as a constructor */
   init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
     this._grid = grid;
@@ -75,9 +84,33 @@ export class GraphqlService implements BackendService {
     this.pagination = pagination;
     this._datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
-    if (grid?.getColumns) {
+    if (typeof grid?.getColumns === 'function') {
       this._columnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
     }
+
+    if (grid && this.options.infiniteScroll) {
+      this._eventHandler.subscribe(grid.onScroll, (_e, args) => {
+        const viewportElm = args.grid.getViewportNode()!;
+        if (
+          this._gridOptions.backendServiceApi?.onScrollEnd
+          && ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
+          && args.scrollTop > 0
+          && this.pagination?.totalItems
+          && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
+        ) {
+          if (!this._scrollEndCalled) {
+            this._gridOptions.backendServiceApi.onScrollEnd();
+            this._scrollEndCalled = true;
+          }
+        }
+      });
+    }
+  }
+
+  /** Dispose the service */
+  dispose(): void {
+    // unsubscribe all SlickGrid events
+    this._eventHandler.unsubscribeAll();
   }
 
   /**
@@ -88,7 +121,6 @@ export class GraphqlService implements BackendService {
     if (!this.options || !this.options.datasetName || !Array.isArray(this._columnDefinitions)) {
       throw new Error('GraphQL Service requires the "datasetName" property to properly build the GraphQL query');
     }
-
     // get the column definitions and exclude some if they were tagged as excluded
     let columnDefinitions = this._columnDefinitions || [];
     columnDefinitions = columnDefinitions.filter((column: Column) => !column.excludeFromQuery);
@@ -99,7 +131,7 @@ export class GraphqlService implements BackendService {
 
     // get all the columnds Ids for the filters to work
     const columnIds: string[] = [];
-    if (columnDefinitions && Array.isArray(columnDefinitions)) {
+    if (Array.isArray(columnDefinitions)) {
       for (const column of columnDefinitions) {
         if (!column.excludeFieldFromQuery) {
           columnIds.push(column.field);
@@ -121,7 +153,7 @@ export class GraphqlService implements BackendService {
     const columnsQuery = this.buildFilterQuery(columnIds);
     let graphqlNodeFields = [];
 
-    if (this._gridOptions.enablePagination !== false) {
+    if (this._gridOptions.enablePagination !== false || this.options.infiniteScroll) {
       if (this.options.useCursor) {
         // ...pageInfo { hasNextPage, endCursor }, edges { cursor, node { _columns_ } }, totalCount: 100
         const edgesQb = new QueryBuilder('edges');
@@ -146,7 +178,7 @@ export class GraphqlService implements BackendService {
     let datasetFilters: GraphqlDatasetFilter = {};
 
     // only add pagination if it's enabled in the grid options
-    if (this._gridOptions.enablePagination !== false) {
+    if (this._gridOptions.enablePagination !== false || this.options.infiniteScroll) {
       datasetFilters = {};
 
       if (this.options.useCursor && this.options.paginationOptions) {
@@ -154,7 +186,10 @@ export class GraphqlService implements BackendService {
       }
       else {
         const paginationOptions = this.options?.paginationOptions;
-        datasetFilters.first = this.options?.paginationOptions?.first ?? this.pagination?.pageSize ?? this.defaultPaginationOptions.first;
+        datasetFilters.first = (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize
+          ?? this.options?.paginationOptions?.first
+          ?? this.pagination?.pageSize
+          ?? this.defaultPaginationOptions.first;
         datasetFilters.offset = paginationOptions?.hasOwnProperty('offset') ? +(paginationOptions as any)['offset'] : 0;
       }
     }
@@ -185,6 +220,13 @@ export class GraphqlService implements BackendService {
 
     const enumSearchProperties = ['direction:', 'field:', 'operator:'];
     return this.trimDoubleQuotesOnEnumField(queryQb.toString(), enumSearchProperties, this.options.keepArgumentFieldDoubleQuotes || false);
+  }
+
+  postProcess(processResult: GraphqlPaginatedResult): void {
+    this._scrollEndCalled = false;
+    if (processResult.data && this.pagination) {
+      this.pagination.totalItems = processResult.data[this.getDatasetName()]?.totalCount || 0;
+    }
   }
 
   /**
@@ -225,11 +267,11 @@ export class GraphqlService implements BackendService {
   }
 
   /**
-   * Get an initialization of Pagination options
+   * Get default initial Pagination options
    * @return Pagination Options
    */
   getInitPaginationOptions(): GraphqlDatasetFilter {
-    const paginationFirst = this.pagination ? this.pagination.pageSize : DEFAULT_ITEMS_PER_PAGE;
+    const paginationFirst = (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? this.pagination?.pageSize ?? DEFAULT_ITEMS_PER_PAGE;
     return this.options?.useCursor
       ? { first: paginationFirst }
       : { first: paginationFirst, offset: 0 };
@@ -276,7 +318,7 @@ export class GraphqlService implements BackendService {
     };
 
     // unless user specifically set "enablePagination" to False, we'll update pagination options in every other cases
-    if (this._gridOptions && (this._gridOptions.enablePagination || !this._gridOptions.hasOwnProperty('enablePagination'))) {
+    if (this._gridOptions && (this._gridOptions.enablePagination || !this._gridOptions.hasOwnProperty('enablePagination') || this.options?.infiniteScroll)) {
       this.updateOptions({ paginationOptions });
     }
   }
@@ -339,7 +381,7 @@ export class GraphqlService implements BackendService {
    *   }
    */
   processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)): string {
-    const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
+    const pageSize = +((this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize || args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
 
     // if first/last defined on args, then it is a cursor based pagination change
     'first' in args || 'last' in args
@@ -369,6 +411,11 @@ export class GraphqlService implements BackendService {
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);
+
+    // when using infinite scroll, we need to go back to 1st page
+    if (this.options?.infiniteScroll) {
+      this.updateOptions({ paginationOptions: { offset: 0 } });
+    }
 
     // build the GraphQL query which we will use in the WebAPI callback
     return this.buildQuery();
@@ -571,7 +618,7 @@ export class GraphqlService implements BackendService {
       // use offset based pagination
       paginationOptions = {
         first: pageSize,
-        offset: (newPage > 1) ? ((newPage - 1) * pageSize!) : 0 // recalculate offset but make sure the result is always over 0
+        offset: (newPage > 1) ? ((newPage - 1) * pageSize) : 0 // recalculate offset but make sure the result is always over 0
       };
     }
 

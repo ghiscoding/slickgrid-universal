@@ -2,8 +2,11 @@ import type { Observable } from '../services/rxjsFacade';
 import type { BackendService } from './backendService.interface';
 
 export interface BackendServiceApi {
-  /** How long to wait until we start querying backend to avoid sending too many requests to backend server. Default to 500ms */
+  /** Default to 500ms, how long to wait until we start querying backend to avoid sending too many requests to backend server. */
   filterTypingDebounce?: number;
+
+  /** Do we want to disable the default creation of an internal post process callback (currently only available for GraphQL) */
+  disableInternalPostProcess?: boolean;
 
   /** Backend Service Options */
   options?: any;
@@ -31,11 +34,20 @@ export interface BackendServiceApi {
   // available methods
   // ------------------
 
+  /**
+   * INTERNAL USAGE ONLY by Slickgrid-Universal
+   * This internal process will be run just before postProcess and is meant to refresh the Dataset & Pagination after a GraphQL call
+   */
+  internalPostProcess?: (result: any) => void;
+
   /** On error callback, when an error is thrown by the process execution */
   onError?: (e: any) => void;
 
   /** On init (or on page load), what action to perform? */
   onInit?: (query: string) => Promise<any> | Observable<any>;
+
+  /** When user reaches the end of the current grid scroll position (only works when Infinite Scroll feature is enabled) */
+  onScrollEnd?: () => void;
 
   /** Before executing the query, what action to perform? For example, start a spinner */
   preProcess?: () => void;
@@ -45,10 +57,4 @@ export interface BackendServiceApi {
 
   /** After executing the query, what action to perform? For example, stop the spinner */
   postProcess?: (response: any) => void;
-
-  /**
-   * INTERNAL USAGE ONLY by Slickgrid-Universal
-   * This internal process will be run just before postProcess and is meant to refresh the Dataset & Pagination after a GraphQL call
-   */
-  internalPostProcess?: (result: any) => void;
 }

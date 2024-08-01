@@ -76,6 +76,27 @@ describe('Backend Utility Service', () => {
 
       expect(spy).toHaveBeenCalled();
     });
+
+    it('should execute the service "postProcess" when it is defined', () => {
+      const now = new Date();
+      gridOptionMock.backendServiceApi!.service.postProcess = jest.fn();
+      const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'postProcess');
+      service.executeBackendProcessesCallback(now, { data: {} }, gridOptionMock.backendServiceApi as BackendServiceApi, 0);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should execute the service "postProcess" and infinite scroll when it is defined', () => {
+      const now = new Date();
+      gridOptionMock.backendServiceApi!.service.postProcess = jest.fn();
+      gridOptionMock.backendServiceApi!.service.options = {
+        infiniteScroll: true
+      };
+      const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'postProcess');
+      service.executeBackendProcessesCallback(now, { data: {} }, gridOptionMock.backendServiceApi as BackendServiceApi, 0);
+
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   describe('onBackendError method', () => {
@@ -83,14 +104,14 @@ describe('Backend Utility Service', () => {
       gridOptionMock.backendServiceApi!.onError = jest.fn();
       const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
 
-      service.onBackendError('some error', gridOptionMock.backendServiceApi);
+      service.onBackendError('some error', gridOptionMock.backendServiceApi!);
 
       expect(spy).toHaveBeenCalled();
     });
 
     it('should throw back the error when callback was provided', () => {
       gridOptionMock.backendServiceApi!.onError = undefined;
-      expect(() => service.onBackendError('some error', gridOptionMock.backendServiceApi)).toThrow();
+      expect(() => service.onBackendError('some error', gridOptionMock.backendServiceApi!)).toThrow();
     });
   });
 
@@ -122,7 +143,7 @@ describe('Backend Utility Service', () => {
       gridOptionMock.enablePagination = true;
       try {
         gridOptionMock.backendServiceApi = undefined;
-        service.refreshBackendDataset(undefined);
+        service.refreshBackendDataset(undefined as any);
       } catch (e) {
         expect(e.toString()).toContain('BackendServiceApi requires at least a "process" function and a "service" defined');
         done();
@@ -142,11 +163,11 @@ describe('Backend Utility Service', () => {
       };
 
       const nextSpy = jest.spyOn(subject, 'next');
-      const processSpy = jest.spyOn(gridOptionMock.backendServiceApi, 'process').mockReturnValue(of(processResult));
+      const processSpy = jest.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(of(processResult));
       const executeProcessesSpy = jest.spyOn(service, 'executeBackendProcessesCallback');
 
       service.addRxJsResource(rxjsResourceStub);
-      service.executeBackendCallback(gridOptionMock.backendServiceApi, query, {}, now, 10, {
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query, {}, now, 10, {
         successCallback: successCallbackMock,
         httpCancelRequestSubject: subject as Subject<void>,
       });
@@ -168,10 +189,10 @@ describe('Backend Utility Service', () => {
       service.onBackendError = jest.fn();
       const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
       const nextSpy = jest.spyOn(subject, 'next');
-      const processSpy = jest.spyOn(gridOptionMock.backendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
+      const processSpy = jest.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(throwError(errorExpected));
 
       service.addRxJsResource(rxjsResourceStub);
-      service.executeBackendCallback(gridOptionMock.backendServiceApi, query, {}, now, 10, {
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query, {}, now, 10, {
         errorCallback: errorCallbackMock,
         httpCancelRequestSubject: subject as Subject<void>,
       });

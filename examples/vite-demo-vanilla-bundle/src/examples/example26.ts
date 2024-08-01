@@ -1,27 +1,27 @@
+import { format } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, type GridState, } from '@slickgrid-universal/common';
-import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
+import { Aggregators, type Column, FieldType, Filters, type GridOption, type Grouping, type Metrics, type OnRowCountChangedEventArgs, OperatorType, SortComparers, } from '@slickgrid-universal/common';
+import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+
 import { ExampleGridOptions } from './example-grid-options';
 import Data from './data/customers_100.json';
-import './example09.scss';
+import './example26.scss';
 
-const STORAGE_KEY = 'slickgrid-universal-example09-gridstate';
-const defaultPageSize = 20;
 const CARET_HTML_ESCAPED = '%5E';
 const PERCENT_HTML_ESCAPED = '%25';
 
-export default class Example09 {
+export default class Example26 {
   private _bindingEventService: BindingEventService;
+  backendService: GridOdataService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  metrics: Metrics;
+  metricsEndTime = '';
+  metricsItemCount = 0;
+  metricsTotalItemCount = 0;
   sgb: SlickVanillaGridBundle;
+  tagDataClass = 'tag is-primary tag-data';
 
-  isCountEnabled = true;
-  isSelectEnabled = false;
-  isExpandEnabled = false;
-  odataVersion = 2;
   odataQuery = '';
   processing = false;
   errorStatus = '';
@@ -33,30 +33,17 @@ export default class Example09 {
   constructor() {
     this._bindingEventService = new BindingEventService();
     this.resetAllStatus();
+    this.backendService = new GridOdataService();
   }
 
   attached() {
     this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.grid9`) as HTMLDivElement;
+    const gridContainerElm = document.querySelector(`.grid26`) as HTMLDivElement;
 
-    this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
-    // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
-    // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
 
-    // you can optionally cancel the Filtering, Sorting or Pagination with code shown below
-    // this._bindingEventService.bind(gridContainerElm, 'onbeforesort', (e) => {
-    //   e.preventDefault();
-    //   return false;
-    // });
-    // this._bindingEventService.bind(gridContainerElm, 'onbeforesearchchange', (e) => {
-    //   e.preventDefault();
-    //   return false;
-    // });
-    // this._bindingEventService.bind(gridContainerElm, 'onbeforepaginationchange', (e) => {
-    //   e.preventDefault();
-    //   return false;
-    // });
+    // bind any of the grid events
+    this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
   }
 
   dispose() {
@@ -80,17 +67,7 @@ export default class Example09 {
         id: 'name', name: 'Name', field: 'name', sortable: true,
         type: FieldType.string,
         filterable: true,
-        filter: {
-          model: Filters.compoundInput,
-          compoundOperatorList: [
-            { operator: '', desc: 'Contains' },
-            { operator: '<>', desc: 'Not Contains' },
-            { operator: '=', desc: 'Equals' },
-            { operator: '!=', desc: 'Not equal to' },
-            { operator: 'a*', desc: 'Starts With' },
-            { operator: 'Custom', desc: 'SQL Like' },
-          ],
-        }
+        filter: { model: Filters.compoundInput }
       },
       {
         id: 'gender', name: 'Gender', field: 'gender', filterable: true, sortable: true,
@@ -117,37 +94,25 @@ export default class Example09 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true
       },
-      compoundOperatorAltTexts: {
-        // where '=' is any of the `OperatorString` type shown above
-        text: { 'Custom': { operatorAlt: '%%', descAlt: 'SQL Like' } },
-      },
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,
-      enablePagination: true, // you could optionally disable the Pagination
-      pagination: {
-        pageSizes: [10, 20, 50, 100, 500, 50000],
-        pageSize: defaultPageSize,
+      enableGrouping: true,
+      headerMenu: {
+        hideFreezeColumnsCommand: false,
       },
-      presets: localStorage.getItem(STORAGE_KEY) ? JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') as GridState : {
-        // you can also type operator as string, e.g.: operator: 'EQ'
-        filters: [
-          // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
-          { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-        ],
-        sorters: [
-          // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
-          { columnId: 'name', direction: 'asc' },
-        ],
-        pagination: { pageNumber: 2, pageSize: 20 }
+      presets: {
+        // NOTE: pagination preset is NOT supported with infinite scroll
+        // filters: [{ columnId: 'gender', searchTerms: ['female'] }]
       },
       backendServiceApi: {
-        service: new GridOdataService(),
+        service: this.backendService,
         options: {
-          enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
-          enableSelect: this.isSelectEnabled,
-          enableExpand: this.isExpandEnabled,
+          // enable infinite via Boolean OR via { fetchSize: number }
+          infiniteScroll: { fetchSize: 30 }, // or use true, in that case it would use default size of 25
+
+          enableCount: true,
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               let matchesSearch = searchValues[0].replace(/\*/g, '.*');
@@ -157,7 +122,7 @@ export default class Example09 {
               return `matchesPattern(${fieldName}, ${matchesSearch})`;
             }
           },
-          version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
+          version: 4
         },
         onError: (error: Error) => {
           this.errorStatus = error.message;
@@ -171,11 +136,15 @@ export default class Example09 {
         },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
-          this.metrics = response.metrics;
+          this.metricsEndTime = format(new Date(), 'DD MMM, h:mm:ssa');
+          this.metricsTotalItemCount = response.metrics.totalItemCount;
           this.displaySpinner(false);
           this.getCustomerCallback(response);
         },
-      } as OdataServiceApi
+        // we could use local in-memory Filtering (please note that it only filters against what is currently loaded)
+        // that is when we want to avoid reloading the entire dataset every time
+        // useLocalFiltering: true,
+      } as OdataServiceApi,
     };
   }
 
@@ -191,21 +160,33 @@ export default class Example09 {
     }
   }
 
-  getCustomerCallback(data) {
+  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[]; }) {
+    console.log(data);
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
-    let totalItemCount: number = data['totalRecordCount']; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
-    if (this.isCountEnabled) {
-      totalItemCount = (this.odataVersion === 4) ? data['@odata.count'] : data['d']['__count'];
-    }
-    if (this.metrics) {
-      this.metrics.totalItemCount = totalItemCount;
-    }
+    const totalItemCount: number = data['@odata.count'];
+    this.metricsTotalItemCount = totalItemCount;
 
+    // even if we're not showing pagination, it is still used behind the scene to fetch next set of data (next page basically)
     // once pagination totalItems is filled, we can update the dataset
     this.sgb.paginationOptions!.totalItems = totalItemCount;
-    this.sgb.dataset = this.odataVersion === 4 ? data.value : data.d.results;
+
+    // infinite scroll has an extra data property to determine if we hit an infinite scroll and there's still more data (in that case we need append data)
+    // or if we're on first data fetching (no scroll bottom ever occured yet)
+    if (!data.infiniteScrollBottomHit) {
+      // initial load not scroll hit yet, full dataset assignment
+      this.sgb.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
+      this.sgb.dataset = data.value;
+    } else {
+      // scroll hit, for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
+      this.sgb.dataView?.addItems(data.value);
+    }
+
     this.odataQuery = data['query'];
+
+    // NOTE: you can get currently loaded item count via the `onRowCountChanged`slick event, see `refreshMetrics()` below
+    // OR you could also calculate it yourself or get it via: `this.sgb.dataView.getItemCount() === totalItemCount`
+    // console.log('is data fully loaded: ', this.sgb.dataView?.getItemCount() === totalItemCount);
   }
 
   getCustomerApiCall(query) {
@@ -218,7 +199,7 @@ export default class Example09 {
    * This function is only here to mock a WebAPI call (since we are using a JSON file for the demo)
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
-  getCustomerDataApiMock(query): Promise<any> {
+  getCustomerDataApiMock(query: string): Promise<any> {
     this.errorStatusClass = 'hidden';
 
     // the mock is returning a Promise, just like a WebAPI typically does
@@ -252,17 +233,17 @@ export default class Example09 {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
           if (filterBy.includes('matchespattern')) {
             const regex = new RegExp(`matchespattern\\(([a-zA-Z]+),\\s'${CARET_HTML_ESCAPED}(.*?)'\\)`, 'i');
-            const filterMatch = filterBy.match(regex);
+            const filterMatch = filterBy.match(regex) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'matchespattern', term: '^' + filterMatch[2].trim() };
           }
           if (filterBy.includes('contains')) {
-            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[2].trim() };
           }
           if (filterBy.includes('substringof')) {
-            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z/]+)/);
+            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z/]+)/) || [];
             const fieldName = filterMatch[2].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[1].trim() };
           }
@@ -277,16 +258,16 @@ export default class Example09 {
             }
           }
           if (filterBy.includes('startswith') && filterBy.includes('endswith')) {
-            const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
-            const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
+            const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
             const fieldName = filterStartMatch[1].trim();
             columnFilters[fieldName] = { type: 'starts+ends', term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()] };
           } else if (filterBy.includes('startswith')) {
-            const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'starts', term: filterMatch[2].trim() };
           } else if (filterBy.includes('endswith')) {
-            const filterMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
           }
@@ -388,26 +369,30 @@ export default class Example09 {
 
       setTimeout(() => {
         const backendResult = { query };
-        if (!this.isCountEnabled) {
-          backendResult['totalRecordCount'] = countTotalItems;
-        }
-
-        if (this.odataVersion === 4) {
-          backendResult['value'] = updatedData;
-          if (this.isCountEnabled) {
-            backendResult['@odata.count'] = countTotalItems;
-          }
-        } else {
-          backendResult['d'] = { results: updatedData };
-          if (this.isCountEnabled) {
-            backendResult['d']['__count'] = countTotalItems;
-          }
-        }
+        backendResult['value'] = updatedData;
+        backendResult['@odata.count'] = countTotalItems;
 
         // console.log('Backend Result', backendResult);
         resolve(backendResult);
       }, 150);
     });
+  }
+
+  groupByGender() {
+    this.sgb?.dataView?.setGrouping({
+      getter: 'gender',
+      formatter: (g) => `Gender: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+      comparer: (a, b) => SortComparers.string(a.value, b.value),
+      aggregators: [
+        new Aggregators.Sum('gemder')
+      ],
+      aggregateCollapsed: false,
+      lazyTotalsCalculation: true
+    } as Grouping);
+
+    // you need to manually add the sort icon(s) in UI
+    this.sgb?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
   clearAllFiltersAndSorts() {
@@ -416,31 +401,21 @@ export default class Example09 {
     }
   }
 
-  goToFirstPage() {
-    this.sgb?.paginationService?.goToFirstPage();
-  }
-
-  goToLastPage() {
-    this.sgb?.paginationService?.goToLastPage();
-  }
-
-  /** Dispatched event of a Grid State Changed event */
-  gridStateChanged(event) {
-    if (event?.detail) {
-      const gridStateChanges: GridStateChange = event.detail;
-      // console.log('Client sample, Grid State changed:: ', gridStateChanges);
-      console.log('Client sample, Grid State changed:: ', gridStateChanges.change);
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(gridStateChanges.gridState));
-    }
-  }
-
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.sgb?.filterService.updateFilters([
-      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-      { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
+      { columnId: 'gender', searchTerms: ['female'] },
     ]);
+  }
+
+  refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs; }>) {
+    const args = event?.detail?.args;
+    if (args?.current >= 0) {
+      this.metricsItemCount = this.sgb.dataset.length || 0;
+      this.tagDataClass = this.metricsItemCount === this.metricsTotalItemCount
+        ? 'tag is-primary tag-data fully-loaded'
+        : 'tag is-primary tag-data partial-load';
+    }
   }
 
   setSortingDynamically() {
@@ -449,47 +424,8 @@ export default class Example09 {
     ]);
   }
 
-  clearLocalStorage() {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-
   throwPageChangeError() {
     this.isPageErrorTest = true;
     this.sgb.paginationService.goToLastPage();
-  }
-
-  // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE
-  // ---
-
-  changeCountEnableFlag() {
-    this.isCountEnabled = !this.isCountEnabled;
-    this.resetOptions({ enableCount: this.isCountEnabled });
-    return true;
-  }
-
-  changeEnableSelectFlag() {
-    this.isSelectEnabled = !this.isSelectEnabled;
-    this.resetOptions({ enableSelect: this.isSelectEnabled });
-    return true;
-  }
-
-  changeEnableExpandFlag() {
-    this.isExpandEnabled = !this.isExpandEnabled;
-    this.resetOptions({ enableExpand: this.isExpandEnabled });
-    return true;
-  }
-
-  setOdataVersion(version: number) {
-    this.odataVersion = version;
-    this.resetOptions({ version: this.odataVersion });
-    return true;
-  }
-
-  private resetOptions(options: Partial<OdataOption>) {
-    this.displaySpinner(true);
-    const odataService = this.gridOptions.backendServiceApi!.service;
-    odataService.updateOptions(options);
-    odataService.clearFilters?.();
-    this.sgb?.filterService.clearFilters();
   }
 }

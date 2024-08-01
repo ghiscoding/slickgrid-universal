@@ -223,7 +223,7 @@ export default class Example15 {
 
   getCustomerCallback(data) {
     // totalItems property needs to be filled for pagination to work correctly
-    // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
+    // however we need to force a dirty check, doing a clone object will do just that
     let countPropName = 'totalRecordCount'; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
     if (this.isCountEnabled) {
       countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';

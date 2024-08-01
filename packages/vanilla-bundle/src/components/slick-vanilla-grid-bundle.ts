@@ -1,5 +1,6 @@
 import { dequal } from 'dequal/lite';
 import type {
+  BackendService,
   BackendServiceApi,
   BackendServiceOption,
   Column,
@@ -9,10 +10,10 @@ import type {
   GridOption,
   Metrics,
   Pagination,
+  RxJsFacade,
   SelectEditor,
   ServicePagination,
   Subscription,
-  RxJsFacade,
 } from '@slickgrid-universal/common';
 
 import {
@@ -121,6 +122,10 @@ export class SlickVanillaGridBundle<TData = any> {
   slickEmptyWarning: SlickEmptyWarningComponent | undefined;
   slickFooter: SlickFooterComponent | undefined;
   slickPagination: SlickPaginationComponent | undefined;
+
+  get backendService(): BackendService | undefined {
+    return this.gridOptions.backendServiceApi?.service;
+  }
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -422,6 +427,9 @@ export class SlickVanillaGridBundle<TData = any> {
     this.treeDataService?.dispose();
     this.universalContainerService?.dispose();
 
+    // dispose backend service when defined and a dispose method exists
+    this.backendService?.dispose?.();
+
     // dispose all registered external resources
     this.disposeExternalResources();
 
@@ -497,7 +505,10 @@ export class SlickVanillaGridBundle<TData = any> {
     this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
     this._paginationOptions = this.gridOptions?.pagination;
 
-    this.createBackendApiInternalPostProcessCallback(this._gridOptions);
+    // unless specified, we'll create an internal postProcess callback (currently only available for GraphQL)
+    if (this._gridOptions.backendServiceApi && !this._gridOptions.backendServiceApi?.disableInternalPostProcess) {
+      this.createBackendApiInternalPostProcessCallback(this._gridOptions);
+    }
 
     if (!this.customDataView) {
       const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
@@ -670,7 +681,7 @@ export class SlickVanillaGridBundle<TData = any> {
       dispose: this.dispose.bind(this),
 
       // return all available Services (non-singleton)
-      backendService: this.gridOptions?.backendServiceApi?.service,
+      backendService: this.backendService,
       eventPubSubService: this._eventPubSubService,
       filterService: this.filterService,
       gridEventService: this.gridEventService,
@@ -691,6 +702,10 @@ export class SlickVanillaGridBundle<TData = any> {
     // all instances (SlickGrid, DataView & all Services)
     this._eventPubSubService.publish('onSlickerGridCreated', this.instances);
     this._isGridInitialized = true;
+  }
+
+  hasInfiniteScroll(): boolean {
+    return !!this.backendService?.options?.infiniteScroll;
   }
 
   mergeGridOptions(gridOptions: GridOption): GridOption {
@@ -722,13 +737,14 @@ export class SlickVanillaGridBundle<TData = any> {
 
   /**
    * Define our internal Post Process callback, it will execute internally after we get back result from the Process backend call
-   * For now, this is GraphQL Service ONLY feature and it will basically
-   * refresh the Dataset & Pagination without having the user to create his own PostProcess every time
+   * Currently ONLY available with the GraphQL Backend Service.
+   * The behavior is to refresh the Dataset & Pagination without requiring the user to create his own PostProcess every time
    */
   createBackendApiInternalPostProcessCallback(gridOptions?: GridOption): void {
     const backendApi = gridOptions?.backendServiceApi;
     if (backendApi?.service) {
       const backendApiService = backendApi.service;
+      this.addBackendInfiniteScrollCallback(gridOptions);
 
       // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
       if (/* backendApiService instanceof GraphqlService || */ typeof backendApiService.getDatasetName === 'function') {
@@ -877,7 +893,7 @@ export class SlickVanillaGridBundle<TData = any> {
           backendApiService.updateSorters(undefined, sortColumns);
         }
         // Pagination "presets"
-        if (backendApiService.updatePagination && gridOptions.presets.pagination) {
+        if (backendApiService.updatePagination && gridOptions.presets.pagination && !this.hasInfiniteScroll()) {
           const { pageNumber, pageSize } = gridOptions.presets.pagination;
           backendApiService.updatePagination(pageNumber, pageSize);
         }
@@ -920,6 +936,29 @@ export class SlickVanillaGridBundle<TData = any> {
           }
         });
       }
+
+      // when user enables Infinite Scroll
+      if (backendApi.service.options?.infiniteScroll) {
+        this.addBackendInfiniteScrollCallback();
+      }
+    }
+  }
+
+  protected addBackendInfiniteScrollCallback(gridOptions?: GridOption): void {
+    gridOptions ??= this.slickGrid!.getOptions();
+    if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi?.onScrollEnd) {
+      gridOptions.backendServiceApi!.onScrollEnd = () => {
+        this.backendUtilityService.setInfiniteScrollBottomHit(true);
+
+        // even if we're not showing pagination, we still use pagination service behind the scene
+        // to keep track of the scroll position and fetch next set of data (aka next page)
+        // we also need a flag to know if we reached the of the dataset or not (no more pages)
+        this.paginationService.goToNextPage().then(hasNext => {
+          if (!hasNext) {
+            this.backendUtilityService.setInfiniteScrollBottomHit(false);
+          }
+        });
+      };
     }
   }
 
@@ -1010,7 +1049,7 @@ export class SlickVanillaGridBundle<TData = any> {
         }
 
         // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
-        this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
+        this.showPagination = !!(this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined)));
 
         if (this._paginationOptions && this._gridOptions?.pagination && this._gridOptions?.backendServiceApi) {
           const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
@@ -1092,10 +1131,14 @@ export class SlickVanillaGridBundle<TData = any> {
    * Check if there's any Pagination Presets defined in the Grid Options,
    * if there are then load them in the paginationOptions object
    */
-  setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
+  protected setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
     if (gridOptions.presets?.pagination && paginationOptions && !this._isPaginationInitialized) {
-      paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;
-      paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
+      if (this.hasInfiniteScroll()) {
+        console.warn('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');
+      } else {
+        paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;
+        paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
+      }
     }
     return paginationOptions;
   }
@@ -1184,9 +1227,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.slickPagination.renderPagination(this._gridParentContainerElm);
       this._isPaginationInitialized = true;
     } else if (!showPagination) {
-      if (this.slickPagination) {
-        this.slickPagination.dispose();
-      }
+      this.slickPagination?.dispose();
       this._isPaginationInitialized = false;
     }
   }

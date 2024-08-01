@@ -3,8 +3,8 @@ import { of, throwError } from 'rxjs';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { BackendServiceApi, Column, CursorPageInfo, GridOption, Pagination } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
+import { BackendServiceApi, Column, CursorPageInfo, GridOption, Pagination } from '../../interfaces/index';
 import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
@@ -89,6 +89,7 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
+  scrollTo: jest.fn(),
 } as unknown as SlickGrid;
 
 describe('PaginationService', () => {
@@ -679,6 +680,18 @@ describe('PaginationService', () => {
       expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
         dataFrom: 1, dataTo: 25, pageCount: 4, pageNumber: 1, pageSize: 25, pageSizes: [5, 10, 15, 20], totalItems: 85
       });
+      expect(resetSpy).toHaveBeenCalled();
+      expect(refreshSpy).toHaveBeenCalledWith(true, true);
+    });
+
+    it('should call reset and refreshPagination when "onSortChanged" is triggered and Infinite Scroll is enabled', () => {
+      const resetSpy = jest.spyOn(service, 'resetPagination');
+      const refreshSpy = jest.spyOn(service, 'refreshPagination');
+      mockGridOption.backendServiceApi!.options.infiniteScroll = true;
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      fnCallbacks['onSortChanged'](true);
+
       expect(resetSpy).toHaveBeenCalled();
       expect(refreshSpy).toHaveBeenCalledWith(true, true);
     });

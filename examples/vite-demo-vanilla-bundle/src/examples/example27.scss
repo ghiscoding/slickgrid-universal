@@ -1,0 +1,8 @@
+.demo27 {
+  .tag-data {
+    display: none;
+    &.fully-loaded {
+      display: inline-flex;
+    }
+  }
+}
