@@ -142,5 +142,18 @@ describe('Example 26 - OData with Infinite Scroll', () => {
           expect($span.text()).to.eq(`$count=true&$top=30&$skip=30&$orderby=Name asc&$filter=(Gender eq 'female')`);
         });
     });
+
+    it('should "Group by Gender" and expect 50 items grouped', () => {
+      cy.get('[data-test="group-by-gender"]').click();
+
+      cy.get('[data-test="itemCount"]')
+        .should('have.text', '50');
+
+      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
+        .scrollTo('top');
+
+      cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-title`).contains(/Gender: [female|male]/);
+    });
   });
 });

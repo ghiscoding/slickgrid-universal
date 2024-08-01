@@ -8,6 +8,9 @@ In its simplest form, the more the user scrolls down, the more rows will get loa
 
 [GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example27) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example27.ts)
 
+> ![WARNING]
+> Pagination Grid Preset (`presets.pagination`) is **not** supported with Infinite Scroll
+
 ## Infinite Scroll with Backend Services
 
 As describe above, when used with the Backend Service API, it will add data to the in-memory dataset whenever we scroll to the bottom. However there is one thing to note that might surprise you which is that even if Pagination is hidden in the UI, but the fact is that behind the scene that is exactly what it uses (mainly the Pagination Service `.goToNextPage()` to fetch the next set of data).
