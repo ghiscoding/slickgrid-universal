@@ -11,6 +11,65 @@ In its simplest form, the more the user scrolls down, the more rows will get loa
 > ![WARNING]
 > Pagination Grid Preset (`presets.pagination`) is **not** supported with Infinite Scroll
 
+## Infinite Scroll with JSON data
+
+As describe above, when used with a local JSON dataset, it will add data to the in-memory dataset whenever we scroll to the bottom until we reach the end of the dataset (if ever).
+
+#### Code Sample
+When used with a local JSON dataset, the Infinite Scroll is a feature that must be implemented by yourself. You implement by subscribing to 1 main event (`onScroll`) and if you want to reset the data when Sorting then you'll also need to subscribe to the (`onSort`) event. So the idea is to have simple code in the `onScroll` event to detect when we reach the scroll end  and then use the DataView `addItems()` to append data to the existing dataset (in-memory) and that's about it.
+
+```ts
+export class Example {
+  scrollEndCalled = false;
+
+  constructor() {
+    // we're using a Binding Service but that will most probably be different on your end
+    this._bindingEventService = new BindingEventService();
+  }
+
+  attached() {
+    this.defineGrid();
+
+    // bind any of the grid events
+    this._bindingEventService.bind(gridContainerElm, 'onsort', this.handleOnSort.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onscroll', this.handleOnScroll.bind(this));
+  }
+
+  // add onScroll listener which will detect when we reach the scroll end
+  // if so, then append items to the dataset
+  handleOnScroll(event) {
+    const args = event.detail?.args;
+    const viewportElm = args.grid.getViewportNode();
+    if (
+      ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
+      && !this.scrollEndCalled
+      && viewportElm.scrollTop > 0
+      && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
+    ) {
+      // onScroll end reached, add more items
+      // for demo purposes, we'll mock next subset of data at last id index + 1
+      const startIdx = this.sgb.dataView?.getItemCount() || 0;
+      const newItems = this.loadData(startIdx, FETCH_SIZE);
+      this.sgb.dataView?.addItems(newItems);
+      this.scrollEndCalled = false; //
+    }
+  }
+
+  // do we want to reset the dataset when Sorting?
+  // if answering Yes then use the code below
+  handleOnSort() {
+    if (this.shouldResetOnSort) {
+      const newData = this.loadData(0, FETCH_SIZE);
+      this.sgb.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
+      this.sgb.dataView?.setItems(newData);
+      this.sgb.dataView?.reSort();
+    }
+  }
+}
+```
+
+---
+
 ## Infinite Scroll with Backend Services
 
 As describe above, when used with the Backend Service API, it will add data to the in-memory dataset whenever we scroll to the bottom. However there is one thing to note that might surprise you which is that even if Pagination is hidden in the UI, but the fact is that behind the scene that is exactly what it uses (mainly the Pagination Service `.goToNextPage()` to fetch the next set of data).

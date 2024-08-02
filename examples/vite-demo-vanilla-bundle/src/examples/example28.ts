@@ -20,15 +20,10 @@ export default class Example28 {
 
   odataQuery = '';
   processing = false;
-  errorStatus = '';
-  errorStatusClass = 'hidden';
-  status = '';
-  statusClass = 'is-success';
   isPageErrorTest = false;
 
   constructor() {
     this._bindingEventService = new BindingEventService();
-    this.resetAllStatus();
   }
 
   attached() {
@@ -52,21 +47,13 @@ export default class Example28 {
       this.sgb?.dispose();
     }
     this._bindingEventService.unbindAll();
-    this.resetAllStatus();
-  }
-
-  resetAllStatus() {
-    this.status = '';
-    this.errorStatus = '';
-    this.statusClass = 'is-success';
-    this.errorStatusClass = 'hidden';
   }
 
   defineGrid() {
     this.columnDefinitions = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
+      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true, formatter: Formatters.checkmarkMaterial }
@@ -80,24 +67,11 @@ export default class Example28 {
       enableFiltering: true,
       editable: false,
       rowHeight: 33,
-      presets: {
-        // NOTE: pagination preset is NOT supported with infinite scroll
-        // filters: [{ columnId: 'gender', searchTerms: ['female'] }]
-      },
     };
   }
 
-  handleOnSort() {
-    // reset data loaded
-    if (this.shouldResetOnSort) {
-      const newData = this.loadData(0, FETCH_SIZE);
-      this.sgb.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
-      this.sgb.dataView?.setItems(newData);
-      this.sgb.dataView?.reSort();
-    }
-  }
-
-  // add onScroll listener to append items to the dataset whenever reaching the scroll bottom (scroll end)
+  // add onScroll listener which will detect when we reach the scroll end
+  // if so, then append items to the dataset
   handleOnScroll(event) {
     const args = event.detail?.args;
     const viewportElm = args.grid.getViewportNode();
@@ -107,17 +81,23 @@ export default class Example28 {
       && viewportElm.scrollTop > 0
       && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
     ) {
-      this.scrollEndCalled = true;
-      this.handleOnScrollEnd();
+      console.log('onScroll end reached, add more items');
+      const startIdx = this.sgb.dataView?.getItemCount() || 0;
+      const newItems = this.loadData(startIdx, FETCH_SIZE);
+      this.sgb.dataView?.addItems(newItems);
+      this.scrollEndCalled = false;
     }
   }
 
-  handleOnScrollEnd() {
-    console.log('onScroll end reached, add more items');
-    const startIdx = this.sgb.dataView?.getItemCount() || 0;
-    const newItems = this.loadData(startIdx, FETCH_SIZE);
-    this.sgb.dataView?.addItems(newItems);
-    this.scrollEndCalled = false;
+  // do we want to reset the dataset when Sorting?
+  // if answering Yes then use the code below
+  handleOnSort() {
+    if (this.shouldResetOnSort) {
+      const newData = this.loadData(0, FETCH_SIZE);
+      this.sgb.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
+      this.sgb.dataView?.setItems(newData);
+      this.sgb.dataView?.reSort();
+    }
   }
 
   groupByDuration() {
@@ -177,7 +157,7 @@ export default class Example28 {
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.sgb?.filterService.updateFilters([
-      { columnId: 'percentComplete', searchTerms: ['>=50'] },
+      { columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' },
     ]);
   }
 
