@@ -3,7 +3,6 @@ import { Aggregators, type Column, FieldType, Formatters, type GridOption, type 
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
-import './example26.scss';
 
 const FETCH_SIZE = 50;
 

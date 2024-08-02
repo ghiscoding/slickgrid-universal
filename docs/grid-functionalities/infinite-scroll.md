@@ -4,6 +4,8 @@ Infinite scrolling allows the grid to lazy-load rows from the server (or locally
 In its simplest form, the more the user scrolls down, the more rows will get loaded and appended to the in-memory dataset.
 
 ### Demo
+[JSON Data - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example28) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example28.ts)
+
 [OData Backend Service - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example26) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example26.ts)
 
 [GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example27) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example27.ts)
