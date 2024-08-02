@@ -143,14 +143,55 @@ describe('Example 26 - OData with Infinite Scroll', () => {
         });
     });
 
-    it('should "Group by Gender" and expect 50 items grouped', () => {
+    it('should "Group by Gender" and expect 30 items grouped', () => {
+      cy.get('[data-test="clear-filters-sorting"]').click();
       cy.get('[data-test="group-by-gender"]').click();
 
       cy.get('[data-test="itemCount"]')
-        .should('have.text', '50');
+        .should('have.text', '30');
 
       cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
         .scrollTo('top');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$count=true&$top=30`);
+        });
+
+      cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-title`).contains(/Gender: [female|male]/);
+    });
+
+    it('should scroll to the bottom "Group by Gender" and expect 30 more items for a total of 60 items grouped', () => {
+      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
+        .scrollTo('bottom');
+
+      cy.get('[data-test="itemCount"]')
+        .should('have.text', '60');
+
+      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
+        .scrollTo('top');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$count=true&$top=30&$skip=30`);
+        });
+
+      cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-title`).contains(/Gender: [female|male]/);
+    });
+
+    it('should sort by Name column again and expect dataset to restart at index zero and have a total of 30 items still having Group Gender', () => {
+      cy.get('[data-id="name"]')
+        .click();
+
+      cy.get('[data-test="itemCount"]')
+        .should('have.text', '30');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$count=true&$top=30&$orderby=Name asc`);
+        });
 
       cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
       cy.get(`[style="top: 0px;"] > .slick-cell:nth(0) .slick-group-title`).contains(/Gender: [female|male]/);
