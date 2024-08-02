@@ -423,9 +423,4 @@ export default class Example26 {
       { columnId: 'name', direction: 'DESC' },
     ]);
   }
-
-  throwPageChangeError() {
-    this.isPageErrorTest = true;
-    this.sgb.paginationService.goToLastPage();
-  }
 }
