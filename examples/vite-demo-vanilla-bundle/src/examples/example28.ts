@@ -17,10 +17,6 @@ export default class Example28 {
   metricsTotalItemCount = 0;
   sgb: SlickVanillaGridBundle;
 
-  odataQuery = '';
-  processing = false;
-  isPageErrorTest = false;
-
   constructor() {
     this._bindingEventService = new BindingEventService();
   }
@@ -64,6 +60,7 @@ export default class Example28 {
       },
       enableAutoResize: true,
       enableFiltering: true,
+      enableGrouping: true,
       editable: false,
       rowHeight: 33,
     };

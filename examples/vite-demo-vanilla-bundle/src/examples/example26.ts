@@ -161,7 +161,6 @@ export default class Example26 {
   }
 
   getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[]; }) {
-    console.log(data);
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
@@ -371,8 +370,6 @@ export default class Example26 {
         const backendResult = { query };
         backendResult['value'] = updatedData;
         backendResult['@odata.count'] = countTotalItems;
-
-        // console.log('Backend Result', backendResult);
         resolve(backendResult);
       }, 150);
     });

@@ -172,7 +172,7 @@ export default class Example27 {
   }
 
   getCustomerCallback(result) {
-    const { nodes, totalCount } = this.metricsTotalItemCount = result.data[GRAPHQL_QUERY_DATASET_NAME];
+    const { nodes, totalCount } = result.data[GRAPHQL_QUERY_DATASET_NAME];
     this.metricsTotalItemCount = totalCount;
 
     // even if we're not showing pagination, it is still used behind the scene to fetch next set of data (next page basically)
