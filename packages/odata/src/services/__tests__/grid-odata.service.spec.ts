@@ -472,7 +472,7 @@ describe('GridOdataService', () => {
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockSortChangedArgs = { columnId: 'gender', sortCol: mockColumn, sortAsc: false, multiColumnSort: false } as ColumnSort;
 
-      service.init(serviceOptions, paginationOptions, gridStub);
+      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
       const query = service.processOnSortChanged(null as any, mockSortChangedArgs);
 
       expect(query).toBe(expectation);
