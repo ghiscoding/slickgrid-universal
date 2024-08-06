@@ -6,6 +6,12 @@ describe('Example 27 - GraphQL with Infinite Scroll', () => {
     cy.get('h3').should('contain', 'Example 27 - GraphQL Backend Service with Infinite Scroll');
   });
 
+  it('should use fake smaller server wait delay for faster E2E tests', () => {
+    cy.get('[data-test="server-delay"]')
+      .clear()
+      .type('20');
+  });
+
   it('should have default GraphQL query', () => {
     cy.get('[data-test=alert-graphql-query]').should('exist');
     cy.get('[data-test=alert-graphql-query]').should('contain', 'GraphQL Query');
@@ -59,6 +65,9 @@ describe('Example 27 - GraphQL with Infinite Scroll', () => {
       .should('have.text', '90');
 
     cy.get('[data-test="data-loaded-tag"]')
+      .should('be.hidden');
+
+    cy.get('[data-test="data-loaded-tag"]')
       .should('not.have.class', 'fully-loaded');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
@@ -72,6 +81,9 @@ describe('Example 27 - GraphQL with Infinite Scroll', () => {
         const text = removeWhitespaces($span.text()); // remove all white spaces
         expect(text).to.eq(removeWhitespaces(`query { users (first:30,offset:90,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`));
       });
+
+    cy.get('[data-test="data-loaded-tag"]')
+      .should('be.visible');
 
     cy.get('[data-test="data-loaded-tag"]')
       .should('have.class', 'fully-loaded');

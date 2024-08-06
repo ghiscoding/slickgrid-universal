@@ -24,24 +24,24 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
   });
 
   it('should scroll to bottom of the grid and expect next batch of 50 items appended to current dataset for a total of 100 items', () => {
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '50');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
       .scrollTo('bottom');
 
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '100');
   });
 
   it('should scroll to bottom of the grid again and expect 50 more items for a total of now 150 items', () => {
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '100');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
       .scrollTo('bottom');
 
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '150');
   });
 
@@ -51,7 +51,7 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
     cy.get('[data-id="title"]')
       .click();
 
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '150');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
@@ -69,7 +69,7 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
     cy.get('[data-id="title"]')
       .click();
 
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '50');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
@@ -84,7 +84,7 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
   it('should "Group by Duration" and expect 50 items grouped', () => {
     cy.get('[data-test="group-by-duration"]').click();
 
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '50');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
@@ -98,7 +98,7 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
       .scrollTo('bottom');
 
-    cy.get('[data-test="itemCount"]')
+    cy.get('[data-test="totalItemCount"]')
       .should('have.text', '100');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')

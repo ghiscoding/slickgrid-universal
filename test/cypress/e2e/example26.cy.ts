@@ -55,6 +55,9 @@ describe('Example 26 - OData with Infinite Scroll', () => {
         .should('have.text', '90');
 
       cy.get('[data-test="data-loaded-tag"]')
+        .should('be.hidden');
+
+      cy.get('[data-test="data-loaded-tag"]')
         .should('not.have.class', 'fully-loaded');
 
       cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
@@ -67,6 +70,9 @@ describe('Example 26 - OData with Infinite Scroll', () => {
         .should(($span) => {
           expect($span.text()).to.eq(`$count=true&$top=30&$skip=90`);
         });
+
+      cy.get('[data-test="data-loaded-tag"]')
+        .should('be.visible');
 
       cy.get('[data-test="data-loaded-tag"]')
         .should('have.class', 'fully-loaded');

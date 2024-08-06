@@ -20,7 +20,7 @@ export default class Example26 {
   metricsItemCount = 0;
   metricsTotalItemCount = 0;
   sgb: SlickVanillaGridBundle;
-  tagDataClass = 'tag is-primary tag-data';
+  tagDataClass = 'tag tag-data is-primary';
 
   odataQuery = '';
   processing = false;
@@ -32,8 +32,8 @@ export default class Example26 {
 
   constructor() {
     this._bindingEventService = new BindingEventService();
-    this.resetAllStatus();
     this.backendService = new GridOdataService();
+    this.resetAllStatus();
   }
 
   attached() {
@@ -410,8 +410,8 @@ export default class Example26 {
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
       this.tagDataClass = this.metricsItemCount === this.metricsTotalItemCount
-        ? 'tag is-primary tag-data fully-loaded'
-        : 'tag is-primary tag-data partial-load';
+        ? 'tag tag-data is-primary fully-loaded'
+        : 'tag tag-data is-primary partial-load';
     }
   }
 
