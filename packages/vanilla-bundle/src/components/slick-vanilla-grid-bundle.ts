@@ -704,7 +704,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._isGridInitialized = true;
   }
 
-  hasInfiniteScroll(): boolean {
+  hasBackendInfiniteScroll(): boolean {
     return !!this.backendService?.options?.infiniteScroll;
   }
 
@@ -893,7 +893,7 @@ export class SlickVanillaGridBundle<TData = any> {
           backendApiService.updateSorters(undefined, sortColumns);
         }
         // Pagination "presets"
-        if (backendApiService.updatePagination && gridOptions.presets.pagination && !this.hasInfiniteScroll()) {
+        if (backendApiService.updatePagination && gridOptions.presets.pagination && !this.hasBackendInfiniteScroll()) {
           const { pageNumber, pageSize } = gridOptions.presets.pagination;
           backendApiService.updatePagination(pageNumber, pageSize);
         }
@@ -1133,7 +1133,7 @@ export class SlickVanillaGridBundle<TData = any> {
    */
   protected setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
     if (gridOptions.presets?.pagination && paginationOptions && !this._isPaginationInitialized) {
-      if (this.hasInfiniteScroll()) {
+      if (this.hasBackendInfiniteScroll()) {
         console.warn('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');
       } else {
         paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;

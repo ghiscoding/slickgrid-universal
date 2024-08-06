@@ -14,7 +14,7 @@ import { type MultipleSelectOption } from 'multiple-select-vanilla';
 import { ExampleGridOptions } from './example-grid-options';
 import type { TranslateService } from '../translate.service';
 import CustomersData from './data/customers_100.json';
-import './example10.scss';
+import './example27.scss';
 import '../material-styles.scss';
 
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
@@ -325,8 +325,8 @@ export default class Example27 {
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
       this.tagDataClass = this.metricsItemCount === this.metricsTotalItemCount
-        ? 'tag is-primary tag-data fully-loaded'
-        : 'tag is-primary tag-data partial-load';
+        ? 'tag tag-data is-primary fully-loaded'
+        : 'tag tag-data is-primary partial-load';
     }
   }
 
