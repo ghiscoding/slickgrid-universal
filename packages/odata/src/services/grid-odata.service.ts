@@ -27,7 +27,6 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   parseUtcDate,
-  SlickEventHandler,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
@@ -42,10 +41,8 @@ export class GridOdataService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions: Column[] = [];
-  protected _eventHandler: SlickEventHandler;
   protected _grid: SlickGrid | undefined;
   protected _odataService: OdataQueryBuilderService;
-  protected _scrollEndCalled = false;
   options?: Partial<OdataOption>;
   pagination: Pagination | undefined;
   defaultOptions: OdataOption = {
@@ -70,7 +67,6 @@ export class GridOdataService implements BackendService {
   }
 
   constructor() {
-    this._eventHandler = new SlickEventHandler();
     this._odataService = new OdataQueryBuilderService();
   }
 
@@ -102,29 +98,6 @@ export class GridOdataService implements BackendService {
 
     this._odataService.columnDefinitions = this._columnDefinitions;
     this._odataService.datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
-
-    if (grid && mergedOptions.infiniteScroll) {
-      this._eventHandler.subscribe(grid.onScroll, (_e, args) => {
-        const viewportElm = args.grid.getViewportNode()!;
-        if (
-          this._gridOptions.backendServiceApi?.onScrollEnd
-          && ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
-          && args.scrollTop > 0 && this.pagination?.totalItems
-          && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
-        ) {
-          if (!this._scrollEndCalled) {
-            this._gridOptions.backendServiceApi.onScrollEnd();
-            this._scrollEndCalled = true;
-          }
-        }
-      });
-    }
-  }
-
-  /** Dispose the service */
-  dispose(): void {
-    // unsubscribe all SlickGrid events
-    this._eventHandler.unsubscribeAll();
   }
 
   buildQuery(): string {
@@ -132,7 +105,6 @@ export class GridOdataService implements BackendService {
   }
 
   postProcess(processResult: any): void {
-    this._scrollEndCalled = false;
     const odataVersion = this._odataService.options.version ?? 2;
 
     if (this.pagination && this._odataService.options.enableCount) {
