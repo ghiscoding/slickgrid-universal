@@ -56,6 +56,16 @@ import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockS
 import { UniversalContainerService } from '../../services/universalContainer.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
+const addVanillaEventPropagation = function (event) {
+  Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
+  Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
+  return event;
+};
+
+const viewportElm = document.createElement('div');
+viewportElm.className = 'slick-viewport';
+Object.defineProperty(viewportElm, 'offsetHeight', { writable: true, configurable: true, value: 12 });
+
 const extensionServiceStub = {
   addRxJsResource: jest.fn(),
   bindDifferentExtensions: jest.fn(),
@@ -230,6 +240,7 @@ const mockGrid = {
   getColumns: jest.fn(),
   getCellEditor: jest.fn(),
   getEditorLock: () => mockGetEditorLock,
+  getViewportNode: () => viewportElm,
   getUID: () => 'slickgrid_12345',
   getContainerNode: jest.fn(),
   getGridPosition: jest.fn(),
@@ -250,7 +261,7 @@ const mockGrid = {
   onColumnsReordered: new MockSlickEvent(),
   onSetOptions: new MockSlickEvent(),
   onRendered: jest.fn(),
-  onScroll: jest.fn(),
+  onScroll: new MockSlickEvent(),
   onDataviewCreated: new MockSlickEvent(),
 } as unknown as SlickGrid;
 
@@ -1319,8 +1330,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           data: { users: { nodes: [] }, pageInfo: { hasNextPage: true }, totalCount: 0 },
           metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
         };
-        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi as BackendServiceApi, 'process').mockReturnValue(of(processResult));
-        jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const processSpy = jest.spyOn((component.gridOptions as GridOption).backendServiceApi as BackendServiceApi, 'process').mockReturnValue(of(processResult));
+        jest.spyOn((component.gridOptions as GridOption).backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
         const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
         component.gridOptions.externalResources = [rxjsMock];
@@ -1381,8 +1392,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockError = { error: '404' };
         const rxjsMock = new RxJsResourceStub();
         const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
-        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi as BackendServiceApi, 'process').mockReturnValue(throwError(mockError));
-        jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const processSpy = jest.spyOn((component.gridOptions as GridOption).backendServiceApi as BackendServiceApi, 'process').mockReturnValue(throwError(mockError));
+        jest.spyOn((component.gridOptions as GridOption).backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
         const backendErrorSpy = jest.spyOn(backendUtilityServiceStub, 'onBackendError');
 
         component.gridOptions.externalResources = [rxjsMock];
@@ -1399,45 +1410,38 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(true) when we still have more pages in the dataset', (done) => {
-        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
-        const backendServiceApi = {
-          service: mockGraphqlService,
-          process: jest.fn(),
-        };
-
         const gotoSpy = jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(true);
-        gridOptions = { backendServiceApi } as unknown as GridOption;
-        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
-        component.gridOptions = gridOptions;
+        component.gridOptions.backendServiceApi!.service.options = { infiniteScroll: true };
         component.initialization(divContainer, slickEventHandler);
-        gridOptions.backendServiceApi?.onScrollEnd!();
+        component.gridOptions.backendServiceApi?.onScrollEnd!();
 
         expect(gotoSpy).toHaveBeenCalled();
         expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
-        mockGraphqlService.options.infiniteScroll = false;
+        component.gridOptions.backendServiceApi!.service.options.infiniteScroll = false;
         setTimeout(() => {
           expect(component.backendUtilityService.setInfiniteScrollBottomHit).not.toHaveBeenCalledWith(false);
           done();
         });
       });
 
-      it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(false) when we no longer have more pages', (done) => {
-        mockGraphqlService.options = { datasetName: 'users', infiniteScroll: true };
-        const backendServiceApi = {
-          service: mockGraphqlService,
-          process: jest.fn(),
-        };
-
-        const gotoSpy = jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(false);
-        gridOptions = { backendServiceApi } as unknown as GridOption;
-        jest.spyOn(component.slickGrid!, 'getOptions').mockReturnValue(gridOptions);
-        component.gridOptions = gridOptions;
+      it('should execute original "postProcess" when calling the same method when Infinite Scroll is enabled', () => {
+        const orgPostProcess = component.gridOptions.backendServiceApi!.postProcess;
+        component.gridOptions.backendServiceApi!.service.options = { infiniteScroll: true };
         component.initialization(divContainer, slickEventHandler);
-        gridOptions.backendServiceApi?.onScrollEnd!();
+        component.gridOptions.backendServiceApi?.postProcess!({ infiniteScrollBottomHit: true, query: '', value: [] });
+
+        expect(orgPostProcess).toHaveBeenCalled();
+      });
+
+      it('should call "onScrollEnd" when defined and call backend util setInfiniteScrollBottomHit(false) when we no longer have more pages', (done) => {
+        const gotoSpy = jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(false);
+        component.gridOptions.backendServiceApi!.service.options = { infiniteScroll: true };
+        component.initialization(divContainer, slickEventHandler);
+        component.gridOptions.backendServiceApi?.onScrollEnd!();
 
         expect(gotoSpy).toHaveBeenCalled();
         expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
-        mockGraphqlService.options.infiniteScroll = false;
+        component.gridOptions.backendServiceApi!.service.options.infiniteScroll = false;
         setTimeout(() => {
           expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(false);
           done();
@@ -1465,6 +1469,39 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.refreshGridData([]);
 
         expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');
+      });
+
+      it('should execute onScrollEnd callback when SlickGrid onScroll is triggered with a "mousewheel" event', () => {
+        jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(false);
+        component.gridOptions.backendServiceApi!.service.options = { infiniteScroll: true };
+        component.initialization(divContainer, slickEventHandler);
+        jest.spyOn(paginationServiceStub, 'totalItems', 'get').mockReturnValue(100);
+        const mouseEvent = addVanillaEventPropagation(new Event('scroll'));
+        mockGrid.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: mockGrid, triggeredBy: 'mousewheel' }, mouseEvent, mockGrid);
+
+        expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
+      });
+
+      it('should execute onScrollEnd callback when SlickGrid onScroll is triggered with a "scroll" event', () => {
+        jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(false);
+        component.gridOptions.backendServiceApi!.service.options = { infiniteScroll: true };
+        component.initialization(divContainer, slickEventHandler);
+        jest.spyOn(paginationServiceStub, 'totalItems', 'get').mockReturnValue(100);
+        const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
+        mockGrid.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: mockGrid, triggeredBy: 'scroll' }, scrollEvent, mockGrid);
+
+        expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
+      });
+
+      it('should NOT execute onScrollEnd callback when SlickGrid onScroll is triggered with an event that is NOT "mousewheel" neither "scroll"', () => {
+        jest.spyOn(component.paginationService, 'goToNextPage').mockResolvedValueOnce(false);
+        component.gridOptions.backendServiceApi!.service.options = { infiniteScroll: true };
+        component.initialization(divContainer, slickEventHandler);
+        jest.spyOn(paginationServiceStub, 'totalItems', 'get').mockReturnValue(100);
+        const clickEvent = addVanillaEventPropagation(new Event('click'));
+        mockGrid.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: mockGrid, triggeredBy: 'scroll' }, clickEvent, mockGrid);
+
+        expect(component.backendUtilityService.setInfiniteScrollBottomHit).toHaveBeenCalledWith(true);
       });
     });
 

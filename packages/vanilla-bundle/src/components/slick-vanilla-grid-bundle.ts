@@ -78,6 +78,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _extensions: ExtensionList<any> | undefined;
   protected _paginationOptions: Pagination | undefined;
   protected _registeredResources: ExternalResource[] = [];
+  protected _scrollEndCalled = false;
   protected _slickgridInitialized = false;
   protected _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
@@ -744,7 +745,6 @@ export class SlickVanillaGridBundle<TData = any> {
     const backendApi = gridOptions?.backendServiceApi;
     if (backendApi?.service) {
       const backendApiService = backendApi.service;
-      this.addBackendInfiniteScrollCallback(gridOptions);
 
       // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
       if (/* backendApiService instanceof GraphqlService || */ typeof backendApiService.getDatasetName === 'function') {
@@ -944,10 +944,9 @@ export class SlickVanillaGridBundle<TData = any> {
     }
   }
 
-  protected addBackendInfiniteScrollCallback(gridOptions?: GridOption): void {
-    gridOptions ??= this.slickGrid!.getOptions();
-    if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi?.onScrollEnd) {
-      gridOptions.backendServiceApi!.onScrollEnd = () => {
+  protected addBackendInfiniteScrollCallback(): void {
+    if (this.slickGrid && this.gridOptions.backendServiceApi && this.hasBackendInfiniteScroll() && !this.gridOptions.backendServiceApi?.onScrollEnd) {
+      const onScrollEnd = () => {
         this.backendUtilityService.setInfiniteScrollBottomHit(true);
 
         // even if we're not showing pagination, we still use pagination service behind the scene
@@ -958,6 +957,34 @@ export class SlickVanillaGridBundle<TData = any> {
             this.backendUtilityService.setInfiniteScrollBottomHit(false);
           }
         });
+      };
+      this.gridOptions.backendServiceApi.onScrollEnd = onScrollEnd;
+
+      // subscribe to SlickGrid onScroll to determine when reaching the end of the scroll bottom position
+      // run onScrollEnd() method when that happens
+      this._eventHandler.subscribe(this.slickGrid.onScroll, (_e, args) => {
+        const viewportElm = args.grid.getViewportNode()!;
+        if (
+          ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
+          && this.paginationService?.totalItems
+          && args.scrollTop > 0
+          && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
+        ) {
+          if (!this._scrollEndCalled) {
+            onScrollEnd();
+            this._scrollEndCalled = true;
+          }
+        }
+      });
+
+      // use postProcess to identify when scrollEnd process is finished to avoid calling the scrollEnd multiple times
+      // we also need to keep a ref of the user's postProcess and call it after our own postProcess
+      const orgPostProcess = this.gridOptions.backendServiceApi.postProcess;
+      this.gridOptions.backendServiceApi.postProcess = (processResult: any) => {
+        this._scrollEndCalled = false;
+        if (orgPostProcess) {
+          orgPostProcess(processResult);
+        }
       };
     }
   }

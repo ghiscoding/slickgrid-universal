@@ -13,12 +13,11 @@ import {
   OperatorType,
   Pagination,
   SharedService,
-  SlickEvent,
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
-import type { GraphqlServiceApi, GraphqlServiceOption, GraphqlPaginationOption } from '../../interfaces/index';
+import type { GraphqlServiceApi, GraphqlServiceOption } from '../../interfaces/index';
 import { GraphqlService } from './../graphql.service';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
@@ -30,23 +29,11 @@ function removeSpaces(text: string) {
 
 let gridOptionMock: GridOption;
 
-const addVanillaEventPropagation = function (event) {
-  Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
-  Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
-  return event;
-};
-
-const viewportElm = document.createElement('div');
-viewportElm.className = 'slick-viewport';
-Object.defineProperty(viewportElm, 'offsetHeight', { writable: true, configurable: true, value: 12 });
-
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getScrollbarDimensions: jest.fn(),
   getOptions: () => gridOptionMock,
-  getViewportNode: () => viewportElm,
-  onScroll: new SlickEvent(),
   getColumns: jest.fn(),
   setColumns: jest.fn(),
   registerPlugin: jest.fn(),
@@ -61,7 +48,6 @@ describe('GraphqlService', () => {
   let paginationOptions: Pagination;
   let serviceOptions: GraphqlServiceOption;
   let sharedService: SharedService;
-  const onScrollEndMock = jest.fn();
 
   beforeEach(() => {
     mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
@@ -81,7 +67,6 @@ describe('GraphqlService', () => {
       defaultFilterRangeOperator: OperatorType.rangeInclusive,
       backendServiceApi: {
         service: service as unknown as BackendService,
-        onScrollEnd: onScrollEndMock,
         options: { datasetName: '' },
         preProcess: jest.fn(),
         process: jest.fn(),
@@ -92,7 +77,6 @@ describe('GraphqlService', () => {
   });
 
   afterEach(() => {
-    service.dispose();
     jest.clearAllMocks();
   });
 
@@ -115,33 +99,6 @@ describe('GraphqlService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(service.columnDefinitions).toEqual(columns);
-    });
-
-    it('should execute onScrollEnd callback when SlickGrid onScroll is triggered with a "mousewheel" event', () => {
-      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
-
-      const mouseEvent = addVanillaEventPropagation(new Event('scroll'));
-      gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub, triggeredBy: 'mousewheel' }, mouseEvent, gridStub);
-
-      expect(onScrollEndMock).toHaveBeenCalled();
-    });
-
-    it('should execute onScrollEnd callback when SlickGrid onScroll is triggered with a "scroll" event', () => {
-      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
-
-      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-      gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub, triggeredBy: 'scroll' }, scrollEvent, gridStub);
-
-      expect(onScrollEndMock).toHaveBeenCalled();
-    });
-
-    it('should NOT execute onScrollEnd callback when SlickGrid onScroll is triggered with an event that is NOT "mousewheel" neither "scroll"', () => {
-      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
-
-      const clickEvent = addVanillaEventPropagation(new Event('click'));
-      gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub, triggeredBy: 'click' }, clickEvent, gridStub);
-
-      expect(onScrollEndMock).not.toHaveBeenCalled();
     });
   });
 
@@ -750,21 +707,6 @@ describe('GraphqlService', () => {
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.processOnSortChanged(null as any, mockSortChangedArgs);
 
-      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-      expect(querySpy).toHaveBeenCalled();
-    });
-
-    it('should expect the "offset" options to be 0 when the "processOnSortChanged()" is called and infinite scroll is enabled', () => {
-      const expectation = `query { users (first:10,offset:0,orderBy:[{field:gender,direction:DESC}]) { totalCount, nodes { id,field1,field2 } } }`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
-      const mockColumn = { id: 'gender', field: 'gender' } as Column;
-      const mockSortChangedArgs = { columnId: 'gender', sortCol: mockColumn, sortAsc: false, multiColumnSort: false } as ColumnSort;
-
-      service.init({ ...serviceOptions, infiniteScroll: true }, paginationOptions, gridStub);
-      service.updateOptions({ paginationOptions: { offset: 10 } });
-      const query = service.processOnSortChanged(null as any, mockSortChangedArgs);
-
-      expect((service.options!.paginationOptions as GraphqlPaginationOption).offset).toBe(0);
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
       expect(querySpy).toHaveBeenCalled();
     });

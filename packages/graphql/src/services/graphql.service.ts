@@ -22,11 +22,9 @@ import type {
 } from '@slickgrid-universal/common';
 import {
   FieldType,
-  // utilities
   mapOperatorType,
   mapOperatorByFieldType,
   OperatorType,
-  SlickEventHandler,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
@@ -52,10 +50,8 @@ export class GraphqlService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions?: Column[] | undefined;
-  protected _eventHandler: SlickEventHandler;
   protected _grid: SlickGrid | undefined;
   protected _datasetIdPropName = 'id';
-  protected _scrollEndCalled = false;
   options: GraphqlServiceOption | undefined;
   pagination: Pagination | undefined;
   defaultPaginationOptions: GraphqlPaginationOption = {
@@ -73,10 +69,6 @@ export class GraphqlService implements BackendService {
     return this._grid?.getOptions() ?? {} as GridOption;
   }
 
-  constructor() {
-    this._eventHandler = new SlickEventHandler();
-  }
-
   /** Initialization of the service, which acts as a constructor */
   init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
     this._grid = grid;
@@ -87,30 +79,6 @@ export class GraphqlService implements BackendService {
     if (typeof grid?.getColumns === 'function') {
       this._columnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
     }
-
-    if (grid && this.options.infiniteScroll) {
-      this._eventHandler.subscribe(grid.onScroll, (_e, args) => {
-        const viewportElm = args.grid.getViewportNode()!;
-        if (
-          this._gridOptions.backendServiceApi?.onScrollEnd
-          && ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
-          && args.scrollTop > 0
-          && this.pagination?.totalItems
-          && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
-        ) {
-          if (!this._scrollEndCalled) {
-            this._gridOptions.backendServiceApi.onScrollEnd();
-            this._scrollEndCalled = true;
-          }
-        }
-      });
-    }
-  }
-
-  /** Dispose the service */
-  dispose(): void {
-    // unsubscribe all SlickGrid events
-    this._eventHandler.unsubscribeAll();
   }
 
   /**
@@ -223,7 +191,6 @@ export class GraphqlService implements BackendService {
   }
 
   postProcess(processResult: GraphqlPaginatedResult): void {
-    this._scrollEndCalled = false;
     if (processResult.data && this.pagination) {
       this.pagination.totalItems = processResult.data[this.getDatasetName()]?.totalCount || 0;
     }
