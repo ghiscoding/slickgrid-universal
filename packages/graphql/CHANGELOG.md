@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.4.0...v5.5.0) (2024-08-07)
+
+### Features
+
+* Infinite Scroll for GraphQL Backend Service ([a057864](https://github.com/ghiscoding/slickgrid-universal/commit/a057864568984afea1a607a6f919214bfd549e70)) - by @ghiscoding
+
 ## [5.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.4...v5.4.0) (2024-07-20)
 
 ### Bug Fixes

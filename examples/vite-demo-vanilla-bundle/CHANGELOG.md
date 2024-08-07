@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.4.0...v5.5.0) (2024-08-07)
+
+### Features
+
+* add `preRegisterExternalExtensions` to help external RowDetail ([016af41](https://github.com/ghiscoding/slickgrid-universal/commit/016af41affddd776230e445d05322aacfa2e9202)) - by @ghiscoding
+* add Infinite Scroll with local JSON data ([ef52d3f](https://github.com/ghiscoding/slickgrid-universal/commit/ef52d3f0fd581aa2b46b4e957ceb99f52e2640f4)) - by @ghiscoding
+* Infinite Scroll for Backend Services (POC) ([1add6a3](https://github.com/ghiscoding/slickgrid-universal/commit/1add6a3b0e400cf1f67f4d4bfa35f9d8e52e869e)) - by @ghiscoding
+* Infinite Scroll for GraphQL Backend Service ([a057864](https://github.com/ghiscoding/slickgrid-universal/commit/a057864568984afea1a607a6f919214bfd549e70)) - by @ghiscoding
+
 ## [5.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.4...v5.4.0) (2024-07-20)
 
 ### Features
