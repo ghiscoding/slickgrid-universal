@@ -6,8 +6,6 @@ import n from 'eslint-plugin-n';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     ignores: [
        '**/*.js',
@@ -18,6 +16,10 @@ export default tseslint.config(
     ],
   },
   {
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+    ],
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       cypress,
