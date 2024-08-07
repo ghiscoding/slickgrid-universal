@@ -10,6 +10,8 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     ignores: [
+       '**/*.js',
+      '**/*.mjs',
       '**/*/*.d.ts',
       '**/__tests__/*',
       '**/dist',      
