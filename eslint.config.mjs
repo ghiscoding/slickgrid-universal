@@ -10,22 +10,9 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     ignores: [
-      '**/*.css',
-      '**/*.scss',
-      '**/*.html',
-      '**/*.png',
-      '**/*.json',
-      '**/*.js',
-      '**/*.mjs',
       '**/*/*.d.ts',
-      '**/*.map',
-      '**/*.md',
-      '**.zip',
-      '**/*.json',
-      '**/*.js',
       '**/__tests__/*',
-      '**/dist',
-      '**/*.d.ts',
+      '**/dist',      
     ],
   },
   {
@@ -50,7 +37,7 @@ export default tseslint.config(
     },
     settings: {
       node: {
-        tryExtensions: ['.js', '.json', '.node', '.ts', '.d.ts'],
+        tryExtensions: ['.ts'],
         resolvePaths: ['node_modules/@types']
       }
     },
