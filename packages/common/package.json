@@ -77,15 +77,15 @@
     "multiple-select-vanilla": "^3.2.2",
     "sortablejs": "^1.15.2",
     "un-flatten-tree": "^2.0.12",
-    "vanilla-calendar-picker": "^2.11.7"
+    "vanilla-calendar-picker": "^2.11.8"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.20",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "cssnano": "^7.0.4",
     "npm-run-all2": "^6.2.2",
-    "postcss": "^8.4.40",
+    "postcss": "^8.4.41",
     "postcss-cli": "^11.0.0",
     "sass": "^1.77.8"
   },
