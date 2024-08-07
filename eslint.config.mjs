@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   {
     ignores: [
-       '**/*.js',
+      '**/*.js',
       '**/*.mjs',
       '**/*/*.d.ts',
       '**/__tests__/*',
