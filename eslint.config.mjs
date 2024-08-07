@@ -6,29 +6,20 @@ import n from 'eslint-plugin-n';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     ignores: [
-      '**/*.css',
-      '**/*.scss',
-      '**/*.html',
-      '**/*.png',
-      '**/*.json',
       '**/*.js',
       '**/*.mjs',
       '**/*/*.d.ts',
-      '**/*.map',
-      '**/*.md',
-      '**.zip',
-      '**/*.json',
-      '**/*.js',
       '**/__tests__/*',
-      '**/dist',
-      '**/*.d.ts',
+      '**/dist',      
     ],
   },
   {
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+    ],
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       cypress,
@@ -50,7 +41,7 @@ export default tseslint.config(
     },
     settings: {
       node: {
-        tryExtensions: ['.js', '.json', '.node', '.ts', '.d.ts'],
+        tryExtensions: ['.ts'],
         resolvePaths: ['node_modules/@types']
       }
     },
