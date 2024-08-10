@@ -1,4 +1,4 @@
-import { Column, GridOption } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { maxTotalsFormatter } from '../maxTotalsFormatter';
 import { type SlickGrid } from '../../core/index';
 

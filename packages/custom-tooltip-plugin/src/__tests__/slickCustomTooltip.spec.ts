@@ -1,6 +1,6 @@
 import { delay, of, throwError } from 'rxjs';
 
-import { Column, getOffset, GridOption, SlickGrid, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
+import { type Column, getOffset, type GridOption, type SlickGrid, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';
@@ -46,7 +46,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('SlickCustomTooltip plugin', () => {
-  let divContainer = document.createElement('div');
+  const divContainer = document.createElement('div');
   let container: ContainerServiceStub;
   let plugin: SlickCustomTooltip;
   let rxjsResourceStub: RxJsResourceStub;
@@ -632,7 +632,7 @@ describe('SlickCustomTooltip plugin', () => {
     });
     gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
-    let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('loading...');
 

@@ -1,4 +1,4 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { percentCompleteBarWithTextFormatter } from '../percentCompleteBarWithTextFormatter';
 
 describe('the Percent Complete with Text Formatter', () => {

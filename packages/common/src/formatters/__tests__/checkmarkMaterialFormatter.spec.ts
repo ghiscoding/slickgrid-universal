@@ -1,4 +1,4 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { checkmarkMaterialFormatter } from '../checkmarkMaterialFormatter';
 
 describe('the Checkmark Formatter with Material Design Icon', () => {

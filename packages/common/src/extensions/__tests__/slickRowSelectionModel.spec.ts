@@ -1,10 +1,10 @@
 import 'jest-extended';
-import { SlickEvent, SlickGrid, SlickRange } from '../../core/index';
+import { SlickEvent, type SlickGrid, SlickRange } from '../../core/index';
 
 import type { Column, GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickRowSelectionModel } from '../slickRowSelectionModel';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const GRID_UID = 'slickgrid_12345';
 

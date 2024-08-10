@@ -1,6 +1,6 @@
 import { of, Subject, throwError } from 'rxjs';
 
-import { BackendServiceApi, GridOption } from '../../interfaces/index';
+import type { BackendServiceApi, GridOption } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 

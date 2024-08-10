@@ -6,7 +6,7 @@ jest.mock('@slickgrid-universal/utils', () => ({
 
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
-import { Column, Editor, type EditorArguments, type LongTextEditorOption, GridOption } from '../../interfaces/index';
+import type { Column, Editor, EditorArguments, LongTextEditorOption, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { getOffset } from '@slickgrid-universal/utils';

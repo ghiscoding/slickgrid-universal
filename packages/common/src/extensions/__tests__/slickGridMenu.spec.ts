@@ -1,11 +1,11 @@
 import 'jest-extended';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { DelimiterType, FileType } from '../../enums/index';
 import type { Column, DOMEvent, GridMenu, GridOption } from '../../interfaces/index';
 import { SlickGridMenu } from '../slickGridMenu';
-import { BackendUtilityService, ExcelExportService, FilterService, SharedService, SortService, TextExportService, } from '../../services';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import { BackendUtilityService, type ExcelExportService, type FilterService, SharedService, type SortService, type TextExportService, } from '../../services';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
@@ -1474,7 +1474,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {
-          let copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideToggleDarkModeCommand: false } } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideToggleDarkModeCommand: false } } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 

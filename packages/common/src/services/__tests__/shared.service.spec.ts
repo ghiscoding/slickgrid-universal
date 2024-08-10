@@ -1,10 +1,8 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
 import { SharedService } from '../shared.service';
-import { Column, CurrentPagination, GridOption } from '../../interfaces/index';
+import type { Column, CurrentPagination, GridOption } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
 import type { SlickDataView, SlickGrid } from '../../core';
-import { SlickGroupItemMetadataProvider } from '../../extensions';
+import type { SlickGroupItemMetadataProvider } from '../../extensions';
 
 const dataviewStub = {
   onRowCountChanged: jest.fn(),
@@ -21,13 +19,6 @@ const gridStub = {
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
 } as unknown as SlickGrid;
-
-const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
-} as BasePubSubService;
 
 describe('Shared Service', () => {
   let mockColumns: Column[];

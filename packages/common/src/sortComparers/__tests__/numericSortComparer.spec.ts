@@ -1,6 +1,6 @@
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum';
 import { numericSortComparer } from '../numericSortComparer';
-import { Column } from '../../interfaces/column.interface';
+import type { Column } from '../../interfaces/column.interface';
 
 describe('the Numeric Sorter', () => {
   it('should return an array of numbers sorted ascending when only numbers are provided', () => {

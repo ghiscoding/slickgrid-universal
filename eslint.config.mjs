@@ -11,7 +11,6 @@ export default tseslint.config(
       '**/*.{js,mjs}',
       '**/*/*.d.ts',
       '**/dist',
-      '**/__tests__/*',
     ],
   },
   {

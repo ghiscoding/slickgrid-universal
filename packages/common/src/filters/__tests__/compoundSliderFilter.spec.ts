@@ -1,8 +1,8 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, type SliderOption } from '../../interfaces/index';
+import type { Column, FilterArguments, GridOption, SliderOption } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundSliderFilter } from '../compoundSliderFilter';
-import { SlickEvent, SlickGrid } from '../../core/index';
+import { SlickEvent, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
@@ -216,7 +216,7 @@ describe('CompoundSliderFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     filter.init(filterArguments);
     filter.setValues(9, '>=', true);
-    let filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+    const filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
 
     expect(filledInputElm).toBeTruthy();
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>=', searchTerms: [9], shouldTriggerQuery: true });

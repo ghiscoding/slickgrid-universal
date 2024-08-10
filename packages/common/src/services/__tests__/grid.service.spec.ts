@@ -1,9 +1,9 @@
 import 'jest-extended';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { FilterService, GridService, GridStateService, PaginationService, SharedService, SortService, TreeDataService } from '../index';
-import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index';
-import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { type FilterService, GridService, type GridStateService, type PaginationService, SharedService, type SortService, type TreeDataService } from '../index';
+import type { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index';
+import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
 const mockRowSelectionModel = {

@@ -1,14 +1,14 @@
-import { of, Subject } from 'rxjs';
+import { of, type Subject } from 'rxjs';
 
 import { Filters } from '../index';
 import { AutocompleterFilter } from '../autocompleterFilter';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index';
+import type { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
 
@@ -312,7 +312,7 @@ describe('AutocompleterFilter', () => {
       filterOptions: {
         triggerOnEveryKeyStroke: true,
         showOnFocus: true,
-        fetch: (searchText, updateCallback) => {
+        fetch: (searchText) => {
           callbackMock(searchText);
         }
       }
@@ -691,7 +691,6 @@ describe('AutocompleterFilter', () => {
     let collectionService: CollectionService;
     let rxjs: RxJsResourceStub;
     let translaterService: TranslateServiceStub;
-    const http = new HttpStub();
 
     beforeEach(() => {
       translaterService = new TranslateServiceStub();

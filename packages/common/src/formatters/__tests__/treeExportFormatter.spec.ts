@@ -1,6 +1,6 @@
 import type { Column, GridOption } from '../../interfaces/index';
 import { treeExportFormatter } from '../treeExportFormatter';
-import { SlickGrid } from '../../core';
+import type { SlickGrid } from '../../core';
 
 const gridStub = {
   getData: jest.fn(),

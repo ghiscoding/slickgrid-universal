@@ -1,13 +1,13 @@
 import 'jest-extended';
 import { format } from '@formkit/tempo';
-import { VanillaCalendar } from 'vanilla-calendar-picker';
+import type { VanillaCalendar } from 'vanilla-calendar-picker';
 
 import { Filters } from '../filters.index';
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CompoundDateFilter } from '../compoundDateFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 import { mapTempoDateFormatWithFieldType } from '../../services/dateUtils';
 
 const containerId = 'demo-container';

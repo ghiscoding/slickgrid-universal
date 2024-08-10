@@ -1,20 +1,20 @@
 import {
-  BackendService,
-  Column,
-  ColumnFilter,
-  ColumnFilters,
-  ColumnSort,
-  CurrentFilter,
-  CurrentSorter,
+  type BackendService,
+  type Column,
+  type ColumnFilter,
+  type ColumnFilters,
+  type ColumnSort,
+  type CurrentFilter,
+  type CurrentSorter,
   FieldType,
-  FilterChangedArgs,
-  GridOption,
-  MultiColumnSort,
+  type FilterChangedArgs,
+  type GridOption,
+  type MultiColumnSort,
   OperatorType,
-  Pagination,
+  type Pagination,
   SharedService,
-  SlickGrid,
-  TranslaterService,
+  type SlickGrid,
+  type TranslaterService,
 } from '@slickgrid-universal/common';
 
 import type { GraphqlServiceApi, GraphqlServiceOption } from '../../interfaces/index';
@@ -663,7 +663,7 @@ describe('GraphqlService', () => {
         ${"Next Page"}        | ${{ first: 20, after: 'a' }}  | ${'query{users(first:20, after:"a") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
         ${"Previous Page"}  | ${{ last: 20, before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
         ${"Last Page"}        | ${{ last: 20 }}               | ${'query{users(last:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
-      `(`$description`, ({ description, cursorArgs, expectation }) => {
+      `(`$description`, ({ cursorArgs, expectation }) => {
         it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
           const querySpy = jest.spyOn(service, 'buildQuery');
 
@@ -1403,7 +1403,7 @@ describe('GraphqlService', () => {
         ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
         ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female, male"}]) { totalCount,nodes{ id,company,gender,name } }}'}
         ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\", \\"male\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-      `(`$description`, ({ description, verbatim, operator, searchTerms, expectation }) => {
+      `(`$description`, ({ verbatim, operator, searchTerms, expectation }) => {
 
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         let mockColumnFilters: ColumnFilters;

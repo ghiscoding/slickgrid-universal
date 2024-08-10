@@ -1,11 +1,11 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
 
 import type { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index';
 import { SlickCellMenu } from '../slickCellMenu';
 import { BackendUtilityService, SharedService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
@@ -255,7 +255,7 @@ describe('CellMenu Plugin', () => {
       plugin.init();
       gridStub.onClick.notify(null as any, eventData, gridStub);
 
-      let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+      const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       expect(cellMenuElm).toBeTruthy();
       expect(cellMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
     });
@@ -272,7 +272,7 @@ describe('CellMenu Plugin', () => {
       Object.defineProperty(slickCellElm, 'clientWidth', { writable: true, configurable: true, value: 300 });
       gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);
 
-      let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+      const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       Object.defineProperty(cellMenuElm, 'clientHeight', { writable: true, configurable: true, value: 300 });
       Object.defineProperty(plugin.menuElement, 'clientWidth', { writable: true, configurable: true, value: 350 });
       gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);

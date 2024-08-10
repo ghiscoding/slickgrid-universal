@@ -1,12 +1,12 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { ExtensionService } from '../extension.service';
-import { FilterService } from '../filter.service';
+import type { ExtensionService } from '../extension.service';
+import type { FilterService } from '../filter.service';
 import { GridStateService } from '../gridState.service';
-import { SortService } from '../sort.service';
+import type { SortService } from '../sort.service';
 import { GridStateType, ExtensionName } from '../../enums/index';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
-import {
+import type {
   BackendService,
   CheckboxSelectorOption,
   Column,
@@ -24,9 +24,9 @@ import {
   TreeToggleStateChange,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
-import { TreeDataService } from '../treeData.service';
-import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
-import { SlickColumnPicker } from '../../extensions/slickColumnPicker';
+import type { TreeDataService } from '../treeData.service';
+import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import type { SlickColumnPicker } from '../../extensions/slickColumnPicker';
 
 const fnCallbacks = {};
 const mockPubSub = {

@@ -1,4 +1,4 @@
-import { Column, GridOption } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { sumTotalsDollarBoldFormatter } from '../sumTotalsDollarBoldFormatter';
 import { type SlickGrid } from '../../core/index';
 

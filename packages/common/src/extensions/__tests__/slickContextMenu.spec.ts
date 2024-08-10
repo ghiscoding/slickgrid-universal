@@ -1,10 +1,10 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
 
-import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import { DelimiterType, FileType } from '../../enums/index';
 import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index';
-import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
+import { BackendUtilityService, type ExcelExportService, SharedService, type TextExportService, type TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickContextMenu } from '../slickContextMenu';
@@ -300,7 +300,7 @@ describe('ContextMenu Plugin', () => {
       Object.defineProperty(slickCellElm, 'clientWidth', { writable: true, configurable: true, value: 300 });
       gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
 
-      let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
+      const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
       Object.defineProperty(contextMenuElm, 'clientHeight', { writable: true, configurable: true, value: 300 });
       Object.defineProperty(plugin.menuElement, 'clientWidth', { writable: true, configurable: true, value: 350 });
       gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
@@ -360,10 +360,10 @@ describe('ContextMenu Plugin', () => {
                 <span class="slick-menu-content bold">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
-              <li class=\"slick-menu-item slick-submenu-item\" role="menuitem" data-command=\"sub-commands\">
-                <div class=\"slick-menu-icon\"></div>
-                <span class=\"slick-menu-content\">Sub Commands</span>
-                <span class=\"sub-item-chevron\">⮞</span>
+              <li class="slick-menu-item slick-submenu-item" role="menuitem" data-command="sub-commands">
+                <div class="slick-menu-icon"></div>
+                <span class="slick-menu-content">Sub Commands</span>
+                <span class="sub-item-chevron">⮞</span>
               </li>
           </div>
         </div>`));
@@ -1373,10 +1373,10 @@ describe('ContextMenu Plugin', () => {
                 <span class="slick-menu-content underline">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
-              <li class=\"slick-menu-item slick-submenu-item\" role="menuitem" data-option=\"sub-options\">
-                <div class=\"slick-menu-icon\"></div>
-                <span class=\"slick-menu-content\">Sub Options</span>
-                <span class=\"sub-item-chevron\">⮞</span>
+              <li class="slick-menu-item slick-submenu-item" role="menuitem" data-option="sub-options">
+                <div class="slick-menu-icon"></div>
+                <span class="slick-menu-content">Sub Options</span>
+                <span class="sub-item-chevron">⮞</span>
               </li>
           </div>
         </div>`));

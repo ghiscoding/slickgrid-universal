@@ -1,8 +1,8 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
 
 import { EmitterType, FieldType, } from '../../enums/index';
-import {
+import type {
   BackendService,
   Column,
   ColumnSort,
@@ -17,7 +17,7 @@ import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
 import { BackendUtilityService } from '../backendUtility.service';
 import { SharedService } from '../shared.service';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
 const gridOptionMock = {
@@ -524,7 +524,7 @@ describe('SortService', () => {
       const spyProcess = jest.fn();
       const errorExpected = 'observable error';
       gridOptionMock.backendServiceApi!.process = () => of(spyProcess);
-      gridOptionMock.backendServiceApi!.onError = (e) => jest.fn();
+      gridOptionMock.backendServiceApi!.onError = () => jest.fn();
       const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi!, 'onError');
       jest.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(throwError(errorExpected));
 

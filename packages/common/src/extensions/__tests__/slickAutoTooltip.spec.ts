@@ -1,9 +1,9 @@
 import type { AutoTooltipOption, Column } from '../../interfaces/index';
 import { SharedService } from '../../services/shared.service';
 import { SlickAutoTooltip } from '../slickAutoTooltip';
-import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 
-let addonOptions: AutoTooltipOption = {
+const addonOptions: AutoTooltipOption = {
   enableForCells: true,
   enableForHeaderCells: true,
   maxToolTipLength: 20,

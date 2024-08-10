@@ -176,7 +176,7 @@ describe('Service/Utilies', () => {
     test('ES6 arrow async function and spread arguments', () => {
       const fn = (async (a: number, b: number, ...rest: number[]) => {
         let sum = a + b;
-        for (let n of rest) {
+        for (const n of rest) {
           sum += n;
         }
         return sum;
@@ -187,7 +187,7 @@ describe('Service/Utilies', () => {
       expect(result.isAsync).toBe(true);
       expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
         let sum = a + b;
-        for (let n of rest) {
+        for (const n of rest) {
           sum += n;
         }
         return sum;
@@ -763,7 +763,6 @@ describe('Service/Utilies', () => {
 
   describe('toKebabCase() method', () => {
     const sentence = 'the quick brown fox';
-    const snakeCaseSentence = 'the_quick_brown_fox';
 
     it('should return empty string when input is empty', () => {
       const output = toKebabCase('');

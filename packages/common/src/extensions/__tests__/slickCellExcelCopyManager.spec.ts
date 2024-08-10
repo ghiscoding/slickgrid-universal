@@ -1,9 +1,9 @@
 import type { EditCommand, Formatter, GridOption } from '../../interfaces/index';
 import { SharedService } from '../../services/shared.service';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
-import { SlickCellSelectionModel } from '../slickCellSelectionModel';
-import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
-import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
+import type { SlickCellSelectionModel } from '../slickCellSelectionModel';
+import type { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
+import { SlickEvent, SlickEventData, type SlickGrid, type SlickRange } from '../../core/index';
 import { Editors } from '../../editors';
 
 const getEditorLockMock = {

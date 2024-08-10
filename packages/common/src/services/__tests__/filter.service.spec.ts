@@ -1,9 +1,9 @@
 import 'jest-extended';
 import { of, throwError } from 'rxjs';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { FieldType } from '../../enums/index';
-import {
+import type {
   BackendService,
   BackendServiceApi,
   Column,
@@ -22,7 +22,7 @@ import { SlickgridConfig } from '../../slickgrid-config';
 import { SharedService } from '../shared.service';
 import { BackendUtilityService } from '../backendUtility.service';
 import { CollectionService } from '../collection.service';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 

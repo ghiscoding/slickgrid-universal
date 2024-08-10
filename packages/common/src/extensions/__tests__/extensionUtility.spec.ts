@@ -1,9 +1,9 @@
 import type { Column, GridOption, MenuCommandItem } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { BackendUtilityService } from '../../services/backendUtility.service';
+import type { BackendUtilityService } from '../../services/backendUtility.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickGrid } from '../../core';
+import type { SlickGrid } from '../../core';
 
 const gridStub = {
   getOptions: jest.fn(),

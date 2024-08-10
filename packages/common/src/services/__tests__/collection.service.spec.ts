@@ -1,6 +1,6 @@
 import { CollectionService } from '../collection.service';
 import { FieldType, FilterMultiplePassType, OperatorType, } from '../../enums/index';
-import { CollectionFilterBy, CollectionSortBy, Column, } from '../../interfaces/index';
+import type { CollectionFilterBy, CollectionSortBy, Column, } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 describe('CollectionService', () => {

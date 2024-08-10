@@ -1,8 +1,8 @@
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundInputNumberFilter } from '../compoundInputNumberFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 

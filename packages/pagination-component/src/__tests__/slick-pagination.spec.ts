@@ -1,4 +1,4 @@
-import { GridOption, PaginationService, SharedService, SlickGrid, } from '@slickgrid-universal/common';
+import { type GridOption, type PaginationService, SharedService, type SlickGrid, } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { TranslateServiceStub } from '../../../../test/translateServiceStub';
@@ -51,7 +51,7 @@ const basicPaginationServiceStub = {
 const paginationServiceStubWithCursor = {
   ...basicPaginationServiceStub,
   isCursorBased: true,
-} as unknown as PaginationService
+} as unknown as PaginationService;
 
 [basicPaginationServiceStub, paginationServiceStubWithCursor].forEach(stub => {
 
@@ -75,7 +75,7 @@ describe('Slick-Pagination Component', () => {
       description                   | paginationServiceStub
       ${"Without CursorPagination"} | ${basicPaginationServiceStub}
       ${"With CursorPagination"}    | ${paginationServiceStubWithCursor}
-    `(`$description`, ({ description, paginationServiceStub }) => {
+    `(`$description`, ({ paginationServiceStub }) => {
       // Reset mockFullPagination before each entry in the test table
       beforeAll(() => {
         mockFullPagination = {

@@ -1,7 +1,7 @@
 import 'jest-extended';
 import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
-import { type SlickDataView, SlickEvent, SlickGrid, SlickGroup } from '../../core/index';
+import { type SlickDataView, SlickEvent, type SlickGrid, SlickGroup } from '../../core/index';
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 const gridOptionMock = {
@@ -56,7 +56,7 @@ describe('GroupItemMetadataProvider Service', () => {
   const mockColumns = [
     { id: 'firstName', field: 'firstName' },
     { id: 'lastName', field: 'lastName' },
-    { id: 'age', field: 'age', groupTotalsFormatter: (totals, grid) => `<strong>Totals:</strong> ${totals.sum}` },
+    { id: 'age', field: 'age', groupTotalsFormatter: (totals) => `<strong>Totals:</strong> ${totals.sum}` },
   ] as Column[];
 
   beforeEach(() => {

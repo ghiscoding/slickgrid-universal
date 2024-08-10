@@ -1,9 +1,9 @@
 import 'jest-extended';
-import { EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, GridOption } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addTreeLevelByMutation,
@@ -85,11 +85,6 @@ describe('Service/Utilies', () => {
   });
 
   describe('cancellablePromise method', () => {
-    let rxjs: RxJsResourceStub;
-    beforeEach(() => {
-      rxjs = new RxJsResourceStub();
-    });
-
     it('should return the same input when it is not a Promise provided', () => {
       const notPromise = () => true;
       const wrappedOutput = cancellablePromise(notPromise as any);

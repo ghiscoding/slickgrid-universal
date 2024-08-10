@@ -1,4 +1,4 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { progressBarFormatter } from '../progressBarFormatter';
 
 describe('the Progress Bar Formatter', () => {

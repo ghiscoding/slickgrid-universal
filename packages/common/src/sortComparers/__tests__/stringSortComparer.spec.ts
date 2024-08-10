@@ -1,6 +1,6 @@
 import { SortDirectionNumber } from '../../enums/index';
 import { stringSortComparer } from '../stringSortComparer';
-import { Column, GridOption } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 
 describe('the String SortComparer', () => {
   it('should return original unsorted array when no direction is provided', () => {

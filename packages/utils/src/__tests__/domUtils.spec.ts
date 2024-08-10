@@ -8,7 +8,6 @@ import {
   emptyElement,
   findFirstAttribute,
   findWidthOrDefault,
-  getHTMLFromFragment,
   getHtmlStringOutput,
   getOffsetRelativeToParent,
   getStyleProp,

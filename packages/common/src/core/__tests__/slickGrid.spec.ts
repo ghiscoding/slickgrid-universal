@@ -1,9 +1,9 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import { CheckboxEditor, InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand, EditorConstructor } from '../../interfaces';
+import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand } from '../../interfaces';
 import { SlickEventData, SlickGlobalEditorLock } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -641,7 +641,7 @@ describe('SlickGrid core file', () => {
       const gridOptions = { ...defaultOptions, createFooterRow: false, showFooterRow: false, frozenColumn: 1 } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
-      let footerElm = container.querySelector<HTMLDivElement>('.slick-footerrow');
+      const footerElm = container.querySelector<HTMLDivElement>('.slick-footerrow');
 
       expect(grid.getFooterRow()).toBeFalsy();
       expect(footerElm).toBeFalsy();
@@ -962,7 +962,7 @@ describe('SlickGrid core file', () => {
         enableAsyncPostRenderCleanup: true, asyncPostRenderDelay: 1, asyncPostRenderCleanupDelay: 1
       } as GridOption;
       const data: any[] = [];
-      for (var i = 0; i < 500; i++) {
+      for (let i = 0; i < 500; i++) {
         data[i] = {
           name: 'Item ' + i,
           values: [i + 8, i + 9, i + 11]
@@ -974,7 +974,7 @@ describe('SlickGrid core file', () => {
       grid.render();
 
       // below is simply testing scrollTo() with different offset
-      let secondItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+      const secondItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
       expect(secondItemCell.textContent).toBe('8');
 
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
@@ -1066,7 +1066,7 @@ describe('SlickGrid core file', () => {
   describe('flashCell() method', () => {
     it('should flash cell 2 times', () => {
       const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
-      let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+      const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
       grid.flashCell(1, 1, 10);
@@ -1739,7 +1739,7 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
       const sed = new SlickEventData();
       jest.spyOn(sed, 'getReturnValue').mockReturnValue(false);
-      const onBeforeEditCellSpy = jest.spyOn(grid.onBeforeEditCell, 'notify').mockReturnValue(sed);
+      jest.spyOn(grid.onBeforeEditCell, 'notify').mockReturnValue(sed);
       grid.setActiveCell(0, 1);
       grid.editActiveCell(InputEditor as any, true);
       const result = grid.getCellEditor();
@@ -2168,7 +2168,7 @@ describe('SlickGrid core file', () => {
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
     const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
-    for (var i = 0; i < 500; i++) {
+    for (let i = 0; i < 500; i++) {
       data[i] = {
         id: i,
         firstName: i % 2 ? 'John' : 'Jane',
@@ -2957,7 +2957,7 @@ describe('SlickGrid core file', () => {
       const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
 
       const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
       const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
       const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
       const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
@@ -2985,7 +2985,7 @@ describe('SlickGrid core file', () => {
       const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
 
       const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
       const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
       const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
       const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
@@ -3011,7 +3011,7 @@ describe('SlickGrid core file', () => {
       jest.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
 
       const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
       const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
       const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
       const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
@@ -3368,14 +3368,14 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
       Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
       Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
       Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
 
-      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      let topHeaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
+      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const topHeaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
@@ -3401,15 +3401,15 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
       Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
       Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
       Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
 
-      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      const footerRowElm = container.querySelectorAll('.slick-footerrow');
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
@@ -3434,15 +3434,15 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
       Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
       Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
       Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
 
-      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      const footerRowElm = container.querySelectorAll('.slick-footerrow');
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
@@ -3467,15 +3467,15 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+      const viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
       Object.defineProperty(viewportTopRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
       Object.defineProperty(viewportTopRightElm, 'clientHeight', { writable: true, value: 125 });
       Object.defineProperty(viewportTopRightElm, 'clientWidth', { writable: true, value: 75 });
 
-      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      const footerRowElm = container.querySelectorAll('.slick-footerrow');
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
@@ -3501,16 +3501,16 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      let viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: 25 });
       Object.defineProperty(viewportBottomRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
       Object.defineProperty(viewportBottomRightElm, 'clientHeight', { writable: true, value: 125 });
       Object.defineProperty(viewportBottomRightElm, 'clientWidth', { writable: true, value: 75 });
 
-      let viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      const viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      const footerRowElm = container.querySelectorAll('.slick-footerrow');
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
@@ -3543,7 +3543,7 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       viewportBottomLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportBottomLeftElm, 'scrollHeight', { writable: true, value: 50 });
       Object.defineProperty(viewportBottomLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
@@ -3551,8 +3551,8 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(viewportBottomLeftElm, 'clientWidth', { writable: true, value: 75 });
 
       // let viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      const footerRowElm = container.querySelectorAll('.slick-footerrow');
       Object.defineProperty(viewportBottomLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportBottomLeftElm.dispatchEvent(mouseEvent);
 
@@ -3578,15 +3578,15 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
+      const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
       Object.defineProperty(viewportBottomRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
       Object.defineProperty(viewportBottomRightElm, 'clientHeight', { writable: true, value: 125 });
       Object.defineProperty(viewportBottomRightElm, 'clientWidth', { writable: true, value: 75 });
 
-      let viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      const viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      const footerRowElm = container.querySelectorAll('.slick-footerrow');
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
@@ -3611,15 +3611,15 @@ describe('SlickGrid core file', () => {
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
-      let viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+      const viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
       Object.defineProperty(viewportTopRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
       Object.defineProperty(viewportTopRightElm, 'clientHeight', { writable: true, value: 125 });
       Object.defineProperty(viewportTopRightElm, 'clientWidth', { writable: true, value: 75 });
 
-      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      const footerRowElm = container.querySelectorAll('.slick-footerrow');
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
@@ -3864,7 +3864,7 @@ describe('SlickGrid core file', () => {
       const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
       grid.setActiveCell(0, 1);
-      const result = grid.navigateRight();
+      grid.navigateRight();
 
       expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, true);
       expect(onActiveCellSpy).toHaveBeenCalled();
@@ -4190,7 +4190,7 @@ describe('SlickGrid core file', () => {
         { id: 10, name: 'Ariane', age: 43 },
       ];
       hash = {};
-      for (let item of items) {
+      for (const item of items) {
         if (item.age >= 30) {
           hash[item.id] = { age: 'highlight' };
         }
@@ -4541,14 +4541,14 @@ describe('SlickGrid core file', () => {
     describe('updateCell() method', () => {
       it('should change an item property then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => val > 20 ? `<strong>${val}</strong>` : null } as any];
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
         items[1].age = 25;
         grid.updateCell(1, 1);
 
-        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
 
         expect(getDataItemSpy).toHaveBeenCalledTimes(1);
         expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
@@ -4560,7 +4560,7 @@ describe('SlickGrid core file', () => {
           { id: 'name', field: 'name', name: 'Name' },
           { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node) => node.textContent = newValue },
         ] as Column[];
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
         const gridOptions = { ...defaultOptions, enableCellNavigation: true, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true, asyncPostRenderDelay: 1, asyncPostRenderCleanupDelay: 1 };
         grid = new SlickGrid<any, Column>(container, items, columns, gridOptions);
         let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
@@ -4578,7 +4578,7 @@ describe('SlickGrid core file', () => {
 
       it('should change an item from an Editor then call updateCell() and expect it call the editor loadValue() method', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         grid.setActiveCell(0, 1);
@@ -4629,7 +4629,7 @@ describe('SlickGrid core file', () => {
         items[1].age = 25;
         grid.updateRow(1);
 
-        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
 
         expect(getDataItemSpy).toHaveBeenCalledTimes(1);
         expect(secondItemAgeCell.innerHTML).toBe('');
@@ -4643,14 +4643,13 @@ describe('SlickGrid core file', () => {
         items[1].age = 25;
         grid.updateRow(1);
 
-        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
 
         expect(getDataItemSpy).toHaveBeenCalledTimes(1);
         expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
       });
 
       it('should change an item value via asyncPostRenderer then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
-        const newValue = '25';
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
           {

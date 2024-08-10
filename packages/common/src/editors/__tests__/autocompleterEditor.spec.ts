@@ -3,9 +3,9 @@ import 'jest-extended';
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
 import { FieldType } from '../../enums/index';
-import { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import type { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
+import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -608,7 +608,6 @@ describe('AutocompleterEditor', () => {
 
       it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
         editor = new AutocompleterEditor(editorArguments);
-        const selectSpy = jest.spyOn(editor, 'handleSelect');
         const setValueSpy = jest.spyOn(editor, 'setValue');
         const saveSpy = jest.spyOn(editor, 'save');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
@@ -625,7 +624,6 @@ describe('AutocompleterEditor', () => {
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
-        const spy = jest.spyOn(editor, 'handleSelect');
         const saveSpy = jest.spyOn(editor, 'save');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
 
@@ -641,7 +639,6 @@ describe('AutocompleterEditor', () => {
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
-        const handleSelectSpy = jest.spyOn(editor, 'handleSelect');
         const focusSpy = jest.spyOn(editor, 'focus');
         const saveSpy = jest.spyOn(editor, 'save');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
@@ -660,10 +657,9 @@ describe('AutocompleterEditor', () => {
         jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         mockColumn.editor!.editorOptions = { minLength: 3, onSelectItem: mockOnSelect } as AutocompleterOption;
 
-        const event = new CustomEvent('change');
         editor = new AutocompleterEditor(editorArguments);
-        const saveSpy = jest.spyOn(editor, 'save');
-        const handleSelectSpy = jest.spyOn(editor, 'handleSelect');
+        jest.spyOn(editor, 'save');
+        jest.spyOn(editor, 'handleSelect');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
 
         // expect(saveSpy).toHaveBeenCalled();

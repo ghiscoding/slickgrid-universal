@@ -1,6 +1,6 @@
 import { Aggregators } from '../../aggregators';
 import { SortDirectionNumber } from '../../enums';
-import { GridOption, Grouping } from '../../interfaces';
+import type { GridOption, Grouping } from '../../interfaces';
 import { SortComparers } from '../../sortComparers';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -464,10 +464,8 @@ describe('SlickDatView core file', () => {
     it('should throw when batching updateItems with some invalid Ids', () => {
       const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
       const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
-      const refreshSpy = jest.spyOn(dv, 'refresh');
 
       dv.setItems(items); // original items list
-
       dv.beginUpdate(true);
 
       expect(() => dv.updateItems([-1, 1], updatedItems)).toThrow('[SlickGrid DataView] Invalid id');
@@ -1386,7 +1384,7 @@ describe('SlickDatView core file', () => {
       it('should call the method and expect item to be added when called with a descending sort comparer', () => {
         const items = [{ id: 2, name: 'John', age: 20 }, { id: 0, name: 'Jane', age: 24 }, { id: 1, name: 'Bob', age: 22 }];
         const updatedItem = { id: 2, name: 'Bobby', age: 30 };
-        const comparer = (a, b) => 1; // just return some static value
+        const comparer = () => 1; // just return some static value
 
         dv.setItems(items);
         dv.sort(comparer, false);
@@ -1767,7 +1765,6 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
       const setSelectedRowSpy = jest.spyOn(grid, 'setSelectedRows');
       const onSelectedRowIdsSpy = jest.spyOn(dv.onSelectedRowIdsChanged, 'notify');
       grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
@@ -1816,7 +1813,7 @@ describe('SlickDatView core file', () => {
         { id: 10, name: 'Ariane', age: 43 },
       ];
       hash = {};
-      for (let item of items) {
+      for (const item of items) {
         if (item.age >= 30) {
           hash[item.id] = 'highlight';
         }

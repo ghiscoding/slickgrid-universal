@@ -2,7 +2,7 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Editors } from '../../editors/index';
 import { FieldType, } from '../../enums/index';
-import { Column, GridOption, } from '../../interfaces/index';
+import type { Column, GridOption, } from '../../interfaces/index';
 import { ResizerService } from '../resizer.service';
 import { SlickEvent, type SlickGrid } from '../../core/index';
 

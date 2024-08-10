@@ -135,7 +135,6 @@ describe('BindingEvent Service', () => {
     const mockCallback2 = jest.fn();
     const mockCallback3 = jest.fn();
     const mockCallback4 = jest.fn();
-    const mockCallback5 = jest.fn();
 
     service = new BindingEventService();
     service.bind(mockElm1, 'keyup', mockCallback1, false, 'wonderful');

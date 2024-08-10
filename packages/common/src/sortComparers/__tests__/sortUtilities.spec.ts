@@ -1,4 +1,4 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { FieldType, SortDirectionNumber } from '../../enums/index';
 import { sortByFieldType } from '../sortUtilities';
 import { SortComparers } from '../sortComparers.index';

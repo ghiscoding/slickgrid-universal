@@ -1,5 +1,5 @@
 import { FieldType } from '../../enums/index';
-import { FilterConditionOption } from '../../interfaces/index';
+import type { FilterConditionOption } from '../../interfaces/index';
 import { executeCollectionSearchFilterCondition } from '../collectionSearchFilterCondition';
 import { executeFilterConditionTest } from '../filterConditionProcesses';
 
