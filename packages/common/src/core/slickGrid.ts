@@ -2476,9 +2476,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       let columnIdx;
       for (i = 0; i < cssRules.length; i++) {
         const selector = cssRules[i].selectorText;
+        // eslint-disable-next-line no-cond-assign
         if (matches = /\.l\d+/.exec(selector)) {
           columnIdx = parseInt(matches[0].substr(2, matches[0].length - 2), 10);
           this.columnCssRulesL[columnIdx] = cssRules[i];
+          // eslint-disable-next-line no-cond-assign
         } else if (matches = /\.r\d+/.exec(selector)) {
           columnIdx = parseInt(matches[0].substr(2, matches[0].length - 2), 10);
           this.columnCssRulesR[columnIdx] = cssRules[i];
