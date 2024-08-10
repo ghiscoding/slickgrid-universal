@@ -1,4 +1,4 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type {
   Column,
@@ -8,7 +8,7 @@ import type {
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../../interfaces/index';
-import { SlickEvent, SlickGrid } from '../../core/index';
+import { SlickEvent, type SlickGrid } from '../../core/index';
 import {
   BTN_ACTION_CANCEL,
   BTN_ACTION_DELETE,
@@ -19,10 +19,10 @@ import {
 } from '../slickRowBasedEdit';
 import { GridService } from '../../services';
 import { Editors } from '../../editors';
-import { ExtensionUtility } from '../extensionUtility';
+import type { ExtensionUtility } from '../extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-let addonOptions: RowBasedEditOptions = {
+const addonOptions: RowBasedEditOptions = {
   actionsColumnLabel: 'MyActions',
   columnId: '_my_fancy_column_id',
   allowMultipleRows: false,
@@ -70,7 +70,7 @@ const gridStubBlueprint = {
     cancelCurrentEdit: jest.fn(),
   }),
   getCellEditor: jest.fn().mockReturnValue({}),
-  getActiveCell: jest.fn().mockReturnValue({ row: 0, cell: 0}),
+  getActiveCell: jest.fn().mockReturnValue({ row: 0, cell: 0 }),
   setColumns: jest.fn().mockImplementation((columns) => {
     (gridStubBlueprint as any).columns = columns;
   }),
@@ -563,7 +563,7 @@ describe('Row Based Edit Plugin', () => {
     }
 
     it('should have overrideable action column options', () => {
-      const { onCellClick, gridService, confirmSpy } = arrange({
+      arrange({
         actionColumnConfig: {
           width: 100,
           minWidth: 100,

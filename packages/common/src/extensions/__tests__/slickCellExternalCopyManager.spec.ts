@@ -1,12 +1,12 @@
 import 'jest-extended';
 
-import { SelectionModel } from '../../enums/index';
+import type { SelectionModel } from '../../enums/index';
 import type { Column, GridOption, OnEventArgs, } from '../../interfaces/index';
-import { SlickCellSelectionModel } from '../slickCellSelectionModel';
+import type { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
-import { InputEditor } from '../../editors/inputEditor';
-import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { InputEditor } from '../../editors/inputEditor';
+import { SlickEvent, SlickEventData, type SlickGrid, SlickRange } from '../../core/index';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -460,7 +460,6 @@ describe('CellExternalCopyManager', () => {
 
           const getDataItemSpy = jest.spyOn(gridStub, 'getDataItem');
           const updateCell2Spy = jest.spyOn(gridStub, 'updateCell');
-          const onCellChange2Spy = jest.spyOn(gridStub.onCellChange, 'notify');
           const setDataItemValSpy = jest.spyOn(plugin, 'setDataItemValueForColumn');
           clipCommand.undo();
           expect(getDataItemSpy).toHaveBeenCalled();

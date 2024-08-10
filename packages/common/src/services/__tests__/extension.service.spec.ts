@@ -1,27 +1,27 @@
 jest.mock('../../extensions/slickDraggableGrouping');
 
 import 'jest-extended';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption } from '../../interfaces/index';
+import type { Column, ExtensionModel, GridOption } from '../../interfaces/index';
 import { ExtensionUtility, SlickRowBasedEdit } from '../../extensions';
-import { ExtensionService, FilterService, GridService, SharedService, SortService, TreeDataService } from '../index';
-import { SlickEvent, SlickGrid } from '../../core/index';
+import { ExtensionService, type FilterService, type GridService, SharedService, type SortService, type TreeDataService } from '../index';
+import { SlickEvent, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import {
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
   SlickCellMenu,
-  SlickCellSelectionModel,
-  SlickCheckboxSelectColumn,
+  type SlickCellSelectionModel,
+  type SlickCheckboxSelectColumn,
   SlickColumnPicker,
   SlickContextMenu,
   SlickDraggableGrouping,
   SlickGridMenu,
   SlickHeaderButtons,
   SlickHeaderMenu,
-  SlickRowMoveManager,
+  type SlickRowMoveManager,
   SlickRowSelectionModel,
 } from '../../extensions/index';
 
@@ -340,9 +340,9 @@ describe('ExtensionService', () => {
             onExtensionRegistered: onRegisteredMock
           }
         } as GridOption;
-        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        const extSpy = jest.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation();
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        jest.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation();
 
         service = new ExtensionService(
           extensionUtility,
@@ -591,12 +591,6 @@ describe('ExtensionService', () => {
     });
 
     describe('createExtensionsBeforeGridCreation method', () => {
-      let instanceMock;
-
-      beforeEach(() => {
-        instanceMock = { onColumnsChanged: () => { } };
-      });
-
       it('should call checkboxSelectorExtension create when "enableCheckboxSelector" is set in the grid options provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = { enableCheckboxSelector: true } as GridOption;
@@ -664,7 +658,7 @@ describe('ExtensionService', () => {
         const gridOptionsMock = {
           enableCheckboxSelector: true, enableRowSelection: true,
           checkboxSelector: { columnIndexPosition: 1 },
-          preRegisterExternalExtensions: (pubSub) => {
+          preRegisterExternalExtensions: () => {
             const ext = new ExternalExtension();
             return [{ name: ExtensionName.rowDetailView, instance: ext }];
           }

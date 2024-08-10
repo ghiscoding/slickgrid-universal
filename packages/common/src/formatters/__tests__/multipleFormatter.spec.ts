@@ -1,4 +1,4 @@
-import { Column, Formatter } from '../../interfaces/index';
+import type { Column, Formatter } from '../../interfaces/index';
 import { multipleFormatter } from '../multipleFormatter';
 
 const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';

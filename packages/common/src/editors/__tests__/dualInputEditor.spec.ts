@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { DualInputEditor } from '../dualInputEditor';
-import { Column, ColumnEditor, ColumnEditorDualInput, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import type { Column, ColumnEditorDualInput, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';

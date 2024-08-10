@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import { Column, Editor, EditorArguments, GridOption, type SliderOption } from '../../interfaces/index';
+import type { Column, Editor, EditorArguments, GridOption, type SliderOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
@@ -37,7 +37,6 @@ const gridStub = {
 
 describe('SliderEditor', () => {
   let divContainer: HTMLDivElement;
-  let consoleSpy: any;
   let editor: SliderEditor;
   let editorArguments: EditorArguments;
   let mockColumn: Column;

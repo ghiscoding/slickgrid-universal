@@ -1,11 +1,11 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { InputFilter } from '../inputFilter';
 import { FilterFactory } from '../filterFactory';
 import { SlickgridConfig } from '../../slickgrid-config';
 import { CollectionService } from '../../services/collection.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { AutocompleterFilter } from '../autocompleterFilter';
+import type { AutocompleterFilter } from '../autocompleterFilter';
 
 const mockAutocompleterFilter = jest.fn().mockImplementation(() => ({
   constructor: jest.fn(),

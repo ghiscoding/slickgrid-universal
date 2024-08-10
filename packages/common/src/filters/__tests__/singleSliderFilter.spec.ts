@@ -1,7 +1,7 @@
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { SingleSliderFilter } from '../singleSliderFilter';
-import { SlickEvent, SlickGrid } from '../../core/index';
+import { SlickEvent, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';

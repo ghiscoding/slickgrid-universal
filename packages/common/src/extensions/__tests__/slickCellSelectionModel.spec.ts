@@ -3,8 +3,8 @@ import 'jest-extended';
 import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
-import { SlickEvent, SlickGrid, SlickRange } from '../../core/index';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { SlickEvent, type SlickGrid, type SlickRange } from '../../core/index';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const GRID_UID = 'slickgrid_12345';
 const NB_ITEMS = 200;

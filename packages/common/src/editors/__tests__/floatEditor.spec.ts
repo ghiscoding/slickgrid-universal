@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { FloatEditor } from '../floatEditor';
-import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';

@@ -1,7 +1,7 @@
 import { autoAddEditorFormatterToColumnsWithEditor, exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities';
 import { FieldType } from '../../enums/index';
 import { Editors } from '../../editors/index';
-import { Column, Formatter, GridOption } from '../../interfaces/index';
+import type { Column, Formatter, GridOption } from '../../interfaces/index';
 import { complexObjectFormatter } from '../complexObjectFormatter';
 import { multipleFormatter } from '../multipleFormatter';
 import { type SlickGrid } from '../../core/index';

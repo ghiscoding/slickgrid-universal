@@ -1,7 +1,7 @@
 import 'jest-extended';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { EditController } from '../../interfaces';
+import type { EditController } from '../../interfaces';
 import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore';
 
 const pubSubServiceStub = {
@@ -182,7 +182,7 @@ describe('SlickCore file', () => {
       const onClick = new SlickEvent('onClick', pubSubCopy);
       pubSubCopy.publish = (_evtName, _data, _delay, evtCallback) => {
         evtCallback!(new CustomEvent('click'));
-      }
+      };
 
       onClick.notify({ hello: 'world' }, ed);
 

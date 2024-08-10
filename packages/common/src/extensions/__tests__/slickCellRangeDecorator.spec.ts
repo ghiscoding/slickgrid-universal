@@ -1,8 +1,7 @@
 import 'jest-extended';
 
-import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
-import { SlickGrid } from '../../core';
+import type { SlickGrid } from '../../core';
 
 const gridStub = {
   getActiveCell: jest.fn(),
@@ -11,18 +10,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('CellRangeDecorator Plugin', () => {
-  const mockEventCallback = () => { };
   let plugin: SlickCellRangeDecorator;
-  const gridOptionsMock = {
-    editable: true,
-    enableCheckboxSelector: true,
-    excelCopyBufferOptions: {
-      onExtensionRegistered: jest.fn(),
-      onCopyCells: mockEventCallback,
-      onCopyCancelled: mockEventCallback,
-      onPasteCells: mockEventCallback,
-    }
-  } as GridOption;
 
   beforeEach(() => {
     plugin = new SlickCellRangeDecorator(gridStub);
@@ -41,7 +29,7 @@ describe('CellRangeDecorator Plugin', () => {
         zIndex: '9999',
       },
       offset: { top: -1, left: -1, height: -2, width: -2 },
-    })
+    });
   });
 
   it('should dispose of the addon', () => {

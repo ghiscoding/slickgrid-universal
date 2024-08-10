@@ -1,6 +1,6 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { hyperlinkFormatter } from '../hyperlinkFormatter';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 
 const gridStub = {
   getData: jest.fn(),

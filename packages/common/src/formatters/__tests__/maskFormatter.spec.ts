@@ -1,5 +1,5 @@
-import { SlickGrid } from '../../core/index';
-import { Column } from '../../interfaces/index';
+import type { SlickGrid } from '../../core/index';
+import type { Column } from '../../interfaces/index';
 import { maskFormatter } from '../maskFormatter';
 
 const gridStub = {

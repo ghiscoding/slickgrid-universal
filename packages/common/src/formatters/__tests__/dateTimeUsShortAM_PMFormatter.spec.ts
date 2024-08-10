@@ -1,4 +1,4 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { Formatters } from '../index';
 
 describe('the DateTimeUsShortAM_PM Formatter', () => {

@@ -1,5 +1,5 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { FilterConditionOption } from '../../interfaces/index';
+import type { FilterConditionOption } from '../../interfaces/index';
 import { executeDateFilterCondition, getFilterParsedDates } from '../dateFilterCondition';
 import { executeFilterConditionTest, getParsedSearchTermsByFieldType } from '../filterConditionProcesses';
 

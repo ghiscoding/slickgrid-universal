@@ -1,6 +1,6 @@
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption, type SliderRangeOption } from '../../interfaces/index';
-import { SlickEvent, SlickGrid } from '../../core/index';
+import type { Column, FilterArguments, GridOption, SliderRangeOption } from '../../interfaces/index';
+import { SlickEvent, type SlickGrid } from '../../core/index';
 import { SliderRangeFilter } from '../sliderRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -27,7 +27,6 @@ const gridStub = {
 
 describe('SliderRangeFilter', () => {
   let translateService: TranslateServiceStub;
-  let consoleSpy: any;
   let divContainer: HTMLDivElement;
   let filter: SliderRangeFilter;
   let filterArguments: FilterArguments;
@@ -36,7 +35,6 @@ describe('SliderRangeFilter', () => {
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
-    consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
@@ -368,9 +366,7 @@ describe('SliderRangeFilter', () => {
     filter.setValues(['2..80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
     filterElms[0].dispatchEvent(new CustomEvent('change'));
-    const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
-    // expect(sliderTrackElm.style.background).toBe('linear-gradient(to right, #eee 2%, #86bff8 2%, #86bff8 80%, #eee 80%)');
     expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 2%, #86bff8 2%, #86bff8 80%, #eee 80%)');
   });
 

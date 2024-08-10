@@ -1,12 +1,12 @@
 import 'jest-extended';
-import { VanillaCalendar } from 'vanilla-calendar-picker';
+import type { VanillaCalendar } from 'vanilla-calendar-picker';
 
 import { FieldType } from '../../enums/index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 import { DateRangeFilter } from '../dateRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 

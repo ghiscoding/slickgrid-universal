@@ -1,12 +1,12 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Constants } from '../../constants';
-import { Column, GridOption, BackendService } from '../../interfaces/index';
+import type { Column, GridOption, BackendService } from '../../interfaces/index';
 import { SumAggregator } from '../../aggregators';
 import { SharedService } from '../shared.service';
-import { SortService } from '../sort.service';
+import type { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
 import * as utilities from '../utilities';
 
 const mockUnflattenParentChildArrayToTree = jest.fn();
@@ -609,7 +609,7 @@ describe('TreeData Service', () => {
 
       // 2nd test, if we toggled all items to be collapsed, we should expect the unflatten to be called with updated `initiallyCollapsed` flag
       await service.toggleTreeDataCollapse(true);
-      const result2 = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
+      service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
       expect(mockUnflattenParentChildArrayToTree).toHaveBeenNthCalledWith(2, mockFlatDataset, {
         columnId: 'file',
         identifierPropName: 'id',

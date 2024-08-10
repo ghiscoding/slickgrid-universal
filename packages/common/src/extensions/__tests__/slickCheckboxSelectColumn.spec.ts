@@ -1,10 +1,10 @@
 import 'jest-extended';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
 import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index';
-import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
-import { SlickEvent, SlickGrid } from '../../core/index';
+import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { SlickEvent, type SlickGrid } from '../../core/index';
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 const addVanillaEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {

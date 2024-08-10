@@ -1,18 +1,18 @@
 import {
-  BackendService,
+  type BackendService,
   CaseType,
-  Column,
-  ColumnFilter,
-  ColumnFilters,
-  ColumnSort,
-  CurrentSorter,
-  CurrentFilter,
+  type Column,
+  type ColumnFilter,
+  type ColumnFilters,
+  type ColumnSort,
+  type CurrentSorter,
+  type CurrentFilter,
   FieldType,
-  FilterChangedArgs,
-  GridOption,
-  MultiColumnSort,
+  type FilterChangedArgs,
+  type GridOption,
+  type MultiColumnSort,
   OperatorType,
-  Pagination,
+  type Pagination,
   SharedService,
   type SlickGrid,
 } from '@slickgrid-universal/common';
@@ -1648,18 +1648,18 @@ describe('GridOdataService', () => {
         ${"Verbatim false, Filter for null"}                    | ${false} | ${'EQ'}   | ${null}                | ${'$top=10'}
         ${"Verbatim true,  Filter for null"}                    | ${true}  | ${'EQ'}   | ${null}                | ${'$top=10&$filter=(gender EQ null)'}
         ${"Verbatim false, Empty string"}                       | ${false} | ${'EQ'}   | ${''}                  | ${'$top=10'}
-        ${"Verbatim true,  Empty string"}                       | ${true}  | ${'EQ'}   | ${''}                  | ${'$top=10&$filter=(gender EQ \"\")'}
+        ${"Verbatim true,  Empty string"}                       | ${true}  | ${'EQ'}   | ${''}                  | ${'$top=10&$filter=(gender EQ "")'}
         ${"Verbatim false, Empty list"}                         | ${false} | ${'IN'}   | ${[]}                  | ${'$top=10'}
         ${"Verbatim true,  Empty list"}                         | ${true}  | ${'IN'}   | ${[]}                  | ${'$top=10&$filter=(gender IN [])'}
         ${"Verbatim false, Filter for null (in list)"}          | ${false} | ${'IN'}   | ${[null]}              | ${'$top=10'}
         ${"Verbatim true,  Filter for null (in list)"}          | ${true}  | ${'IN'}   | ${[null]}              | ${'$top=10&$filter=(gender IN [null])'}
         ${"Verbatim false, Filter for empty string (in list)"}  | ${false} | ${'IN'}   | ${['']}                | ${'$top=10'}
-        ${"Verbatim true,  Filter for empty string (in list)"}  | ${true}  | ${'IN'}   | ${['']}                | ${'$top=10&$filter=(gender IN [\"\"])'}
+        ${"Verbatim true,  Filter for empty string (in list)"}  | ${true}  | ${'IN'}   | ${['']}                | ${'$top=10&$filter=(gender IN [""])'}
         ${"Verbatim false, Filter for female"}                  | ${false} | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(Gender eq \'female\')'}
-        ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(gender IN [\"female\"])'}
+        ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(gender IN ["female"])'}
         ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(Gender eq \'female\' or Gender eq \'male\')'}
-        ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(gender IN [\"female\",\"male\"])'}
-      `(`$description`, ({ description, verbatim, operator, searchTerms, expectation }) => {
+        ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(gender IN ["female","male"])'}
+      `(`$description`, ({ verbatim, operator, searchTerms, expectation }) => {
 
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         let mockColumnFilters: ColumnFilters;

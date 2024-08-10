@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { InputEditor } from '../inputEditor';
-import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();

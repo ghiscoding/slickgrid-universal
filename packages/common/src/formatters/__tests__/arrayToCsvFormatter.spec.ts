@@ -1,4 +1,4 @@
-import { Column } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { arrayToCsvFormatter } from '../arrayToCsvFormatter';
 
 describe('the ArrayToCsv Formatter', () => {

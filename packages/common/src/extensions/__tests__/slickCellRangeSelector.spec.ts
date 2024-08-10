@@ -2,8 +2,8 @@ import 'jest-extended';
 
 import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
-import { SlickEvent, SlickGrid } from '../../core/index';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { SlickEvent, type SlickGrid } from '../../core/index';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const GRID_UID = 'slickgrid_12345';
 
@@ -226,7 +226,6 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     const onBeforeCellSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
     } as any);
@@ -445,7 +444,6 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 0 });
-    const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
     } as any);

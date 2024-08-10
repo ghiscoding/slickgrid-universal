@@ -1,8 +1,8 @@
-import { Column, Formatter, GridOption } from '../../interfaces/index';
+import type { Column, Formatter, GridOption } from '../../interfaces/index';
 import { GroupTotalFormatters } from '../../grouping-formatters';
 import { treeParseTotalsFormatter } from '../treeParseTotalsFormatter';
 import { dollarFormatter } from '../dollarFormatter';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 
 const gridStub = {
   getData: jest.fn(),

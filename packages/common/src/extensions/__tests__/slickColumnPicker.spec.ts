@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import type { Column, ColumnPicker, GridOption } from '../../interfaces/index';
 import { SlickColumnPicker } from '../slickColumnPicker';
 import { ExtensionUtility } from '../extensionUtility';

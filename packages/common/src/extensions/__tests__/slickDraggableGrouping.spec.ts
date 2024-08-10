@@ -26,7 +26,7 @@ const sortableMock = {
 jest.mock('sortablejs', () => sortableMock);
 
 import 'jest-extended';
-import { SortableOptions } from 'sortablejs';
+import { type SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
 
@@ -38,11 +38,11 @@ import { BackendUtilityService, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SortDirectionNumber } from '../../enums/index';
-import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 
 const GRID_UID = 'slickgrid12345';
 
-let addonOptions: DraggableGroupingOption = {
+const addonOptions: DraggableGroupingOption = {
   dropPlaceHolderText: 'Drop a column header here to group by the column',
   hideGroupSortIcons: false,
   hideToggleAllButton: false,
@@ -235,10 +235,7 @@ describe('Draggable Grouping Plugin', () => {
   });
 
   describe('setupColumnReorder definition', () => {
-    let dropEvent;
-    let mockHelperElm: HTMLSpanElement;
     let mockDivPaneContainer1: HTMLDivElement;
-    let mockDivPaneContainer2: HTMLDivElement;
     let headerColumnDiv1: HTMLDivElement;
     let headerColumnDiv2: HTMLDivElement;
     let headerColumnDiv3: HTMLDivElement;
@@ -253,8 +250,6 @@ describe('Draggable Grouping Plugin', () => {
 
     beforeEach(() => {
       mockDivPaneContainer1 = document.createElement('div');
-      mockDivPaneContainer2 = document.createElement('div');
-      mockHelperElm = document.createElement('span');
       const mockDivPaneContainerElm = document.createElement('div');
       mockDivPaneContainerElm.className = 'slick-pane-header';
       const mockDivPaneContainerElm2 = document.createElement('div');
@@ -268,7 +263,6 @@ describe('Draggable Grouping Plugin', () => {
       mockDivPaneContainerElm2.appendChild(mockHeaderLeftDiv2);
       gridContainerDiv.appendChild(mockDivPaneContainerElm);
       gridContainerDiv.appendChild(mockDivPaneContainerElm2);
-      dropEvent = new Event('mouseup');
       headerColumnDiv1 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}firstName`, dataset: { id: 'firstName' } }, preHeaderDiv);
       headerColumnDiv2 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}lastName`, dataset: { id: 'lastName' } }, preHeaderDiv);
       headerColumnDiv3 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
@@ -322,8 +316,8 @@ describe('Draggable Grouping Plugin', () => {
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
       fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
 
-      let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
-      let dropGroupingElm = preHeaderDiv.querySelector('.slick-dropped-grouping') as HTMLDivElement;
+      const placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
+      const dropGroupingElm = preHeaderDiv.querySelector('.slick-dropped-grouping') as HTMLDivElement;
       expect(placeholderElm.style.display).toBe('none');
       expect(dropGroupingElm.style.display).toBe('flex');
     });
@@ -570,8 +564,8 @@ describe('Draggable Grouping Plugin', () => {
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
           expect(plugin.addonOptions.hideGroupSortIcons).toBe(true);
-          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
-          let groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
+          const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          const groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
 
           expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
           expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
@@ -591,8 +585,8 @@ describe('Draggable Grouping Plugin', () => {
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
-          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
-          let groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
+          const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          const groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
 
           // we're not hiding the columns, but it's not Sortable so the result is the same
           expect(plugin.addonOptions.hideGroupSortIcons).toBe(false);
@@ -610,7 +604,7 @@ describe('Draggable Grouping Plugin', () => {
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
-          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
           let groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
 
           expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
@@ -653,7 +647,7 @@ describe('Draggable Grouping Plugin', () => {
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
-          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
           let groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
 
           expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);

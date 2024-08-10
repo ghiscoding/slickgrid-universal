@@ -1,6 +1,6 @@
-import { Column, GridOption } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { decimalFormatter } from '../decimalFormatter';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 
 describe('the Decimal Formatter', () => {
   const gridStub = {

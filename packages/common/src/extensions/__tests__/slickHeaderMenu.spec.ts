@@ -1,8 +1,8 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type { Column, ColumnSort, ElementPosition, Filter, GridOption, HeaderButtonsOrMenu, HeaderMenuItems, MenuCommandItem } from '../../interfaces/index';
 import { SlickHeaderMenu } from '../slickHeaderMenu';
-import { BackendUtilityService, FilterService, SharedService, SortService } from '../../services';
+import { BackendUtilityService, type FilterService, SharedService, type SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';

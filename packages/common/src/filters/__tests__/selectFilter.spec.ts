@@ -1,14 +1,14 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
-import { of, Subject } from 'rxjs';
+import { of, type Subject } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { Filters } from '../filters.index';
 import { SelectFilter } from '../selectFilter';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -893,12 +893,10 @@ describe('SelectFilter', () => {
     let divContainer: HTMLDivElement;
     let filter: SelectFilter;
     let filterArguments: FilterArguments;
-    let spyGetHeaderRow;
     let mockColumn: Column;
     let collectionService: CollectionService;
     let rxjs: RxJsResourceStub;
     let translateService: TranslateServiceStub;
-    const http = new HttpStub();
 
     beforeEach(() => {
       translateService = new TranslateServiceStub();

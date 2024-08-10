@@ -6,7 +6,7 @@ import { SlickEvent, type SlickDataView } from '../../core/index';
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { type SlickGrid } from '../../core/index';
 
@@ -244,7 +244,6 @@ describe('SelectEditor', () => {
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
       editor = new SelectEditor(editorArguments, true);
       editor.loadValue(mockItemData);
-      const editorElm = editor.editorDomElement;
 
       expect(editor.getValue()).toEqual(['male']);
       expect(editor.msInstance!.getSelects()).toEqual(['male']);

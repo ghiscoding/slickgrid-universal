@@ -1,7 +1,7 @@
 import { InputFilter } from '../inputFilter';
-import { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
+import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
-import { SlickGrid } from '../../core/index';
+import type { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -164,7 +164,7 @@ describe('InputFilter', () => {
       const spyCallback = jest.spyOn(filterArguments, 'callback');
       filter.init(filterArguments);
       filter.setValues('9', '>', true);
-      let filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+      const filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
 
       expect(filledInputElm).toBeTruthy();
       expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>', searchTerms: ['>9'], shouldTriggerQuery: true });

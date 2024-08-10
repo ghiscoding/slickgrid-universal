@@ -3,9 +3,9 @@ import { of, throwError } from 'rxjs';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { BackendUtilityService } from '../backendUtility.service';
-import { BackendServiceApi, Column, CursorPageInfo, GridOption, Pagination } from '../../interfaces/index';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import type { BackendUtilityService } from '../backendUtility.service';
+import type { BackendServiceApi, Column, CursorPageInfo, GridOption, Pagination } from '../../interfaces/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
 const fnCallbacks = {};
@@ -215,7 +215,6 @@ describe('PaginationService', () => {
 
   describe('goToFirstPage method', () => {
     it('should be able to change isCursorBased flag by calling setCursorBased()', () => {
-      const spy = jest.spyOn(service, 'processOnPageChanged');
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
 
       service.setCursorBased(true);

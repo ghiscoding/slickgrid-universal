@@ -1,7 +1,7 @@
 import { GroupingAndColspanService } from '../groupingAndColspan.service';
-import { Column, GridOption } from '../../interfaces/index';
-import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index';
+import type { ExtensionUtility } from '../../extensions/extensionUtility';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
 
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';

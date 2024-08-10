@@ -1,9 +1,9 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import 'jest-extended';
 
 import type { Column, DragRowMove, GridOption } from '../../interfaces/index';
 import { SlickRowMoveManager } from '../slickRowMoveManager';
-import { SlickEvent, SlickGrid } from '../../core/index';
+import { SlickEvent, type SlickGrid } from '../../core/index';
 
 const GRID_UID = 'slickgrid_12345';
 
