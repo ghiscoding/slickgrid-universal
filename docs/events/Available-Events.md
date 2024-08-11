@@ -40,10 +40,16 @@ handleOnHeaderMenuCommand(e) {
   - `onPasteCells`
   - `onBeforePasteCell`
 
-#### SlickContextMenu (extension)
+#### SlickContextMenu / SlickCellMenu (extension)
   - `onContextMenuClearGrouping`
   - `onContextMenuCollapseAllGroups`
   - `onContextMenuExpandAllGroups`
+  - **Slick Events**
+    - `onAfterMenuShow`
+    - `onBeforeMenuShow`
+    - `onBeforeMenuClose`
+    - `onCommand`
+    - `onOptionSelected`
 
 #### SlickGridMenu (extension)
   - `onGridMenuMenuClose`
@@ -53,6 +59,13 @@ handleOnHeaderMenuCommand(e) {
   - `onGridMenuClearAllFilters`
   - `onGridMenuClearAllSorting`
   - `onGridMenuCommand`
+  - **Slick Events**
+    - `onAfterMenuShow`
+    - `onBeforeMenuShow`
+    - `onBeforeMenuClose`
+    - `onColumnsChanged`
+    - `onMenuClose`
+    - `onCommand`
 
 #### SlickHeaderButtons (extension)
   - `onHeaderButtonCommand`
@@ -134,8 +147,8 @@ handleOnHeaderMenuCommand(e) {
   - `onColumnsResizeDblClick`
   - `onCompositeEditorChange`
   - `onContextMenu`
-  - `onDrag`
   - `onDblClick`
+  - `onDrag`
   - `onDragInit`
   - `onDragStart`
   - `onDragEnd`
@@ -157,6 +170,8 @@ handleOnHeaderMenuCommand(e) {
   - `onKeyDown`
   - `onMouseEnter`
   - `onMouseLeave`
+  - `onPreHeaderClick`
+  - `onPreHeaderContextMenu`
   - `onRendered`
   - `onScroll`
   - `onSelectedRowsChanged`

@@ -154,8 +154,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onColumnsResizeDblClick: SlickEvent<OnColumnsResizeDblClickEventArgs>;
   onCompositeEditorChange: SlickEvent<OnCompositeEditorChangeEventArgs>;
   onContextMenu: SlickEvent<{ grid: SlickGrid; }>;
-  onDrag: SlickEvent<DragRowMove>;
   onDblClick: SlickEvent<OnDblClickEventArgs>;
+  onDrag: SlickEvent<DragRowMove>;
   onDragInit: SlickEvent<DragRowMove>;
   onDragStart: SlickEvent<DragRowMove>;
   onDragEnd: SlickEvent<DragRowMove>;
@@ -166,9 +166,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onHeaderClick: SlickEvent<OnHeaderClickEventArgs>;
   onHeaderContextMenu: SlickEvent<OnHeaderContextMenuEventArgs>;
   onHeaderMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseOver: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseOut: SlickEvent<OnHeaderMouseEventArgs>;
-  onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowCellRendered: SlickEvent<OnHeaderRowCellRenderedEventArgs>;
   onHeaderRowMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
@@ -530,8 +530,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onColumnsResizeDblClick = new SlickEvent<OnColumnsResizeDblClickEventArgs>('onColumnsResizeDblClick', externalPubSub);
     this.onCompositeEditorChange = new SlickEvent<OnCompositeEditorChangeEventArgs>('onCompositeEditorChange', externalPubSub);
     this.onContextMenu = new SlickEvent<{ grid: SlickGrid; }>('onContextMenu', externalPubSub);
-    this.onDrag = new SlickEvent<DragRowMove>('onDrag', externalPubSub);
     this.onDblClick = new SlickEvent<OnDblClickEventArgs>('onDblClick', externalPubSub);
+    this.onDrag = new SlickEvent<DragRowMove>('onDrag', externalPubSub);
     this.onDragInit = new SlickEvent<DragRowMove>('onDragInit', externalPubSub);
     this.onDragStart = new SlickEvent<DragRowMove>('onDragStart', externalPubSub);
     this.onDragEnd = new SlickEvent<DragRowMove>('onDragEnd', externalPubSub);
@@ -542,9 +542,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onHeaderClick = new SlickEvent<OnHeaderClickEventArgs>('onHeaderClick', externalPubSub);
     this.onHeaderContextMenu = new SlickEvent<OnHeaderContextMenuEventArgs>('onHeaderContextMenu', externalPubSub);
     this.onHeaderMouseEnter = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseEnter', externalPubSub);
+    this.onHeaderMouseLeave = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseLeave', externalPubSub);
     this.onHeaderMouseOver = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseOver', externalPubSub);
     this.onHeaderMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseOut', externalPubSub);
-    this.onHeaderMouseLeave = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseLeave', externalPubSub);
     this.onHeaderRowMouseOver = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOver', externalPubSub);
     this.onHeaderRowMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOut', externalPubSub);
     this.onHeaderRowCellRendered = new SlickEvent<OnHeaderRowCellRenderedEventArgs>('onHeaderRowCellRendered', externalPubSub);
