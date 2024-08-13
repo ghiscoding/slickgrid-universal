@@ -1,5 +1,4 @@
-import type { SlickGroupTotals } from '../core/slickCore';
-import type { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator, GroupTotals } from './../interfaces';
 
 export class CloneAggregator implements Aggregator {
   private _isInitialized = false;
@@ -38,7 +37,7 @@ export class CloneAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { clone: Record<number | string, string>; }): void {
+  storeResult(groupTotals: GroupTotals): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

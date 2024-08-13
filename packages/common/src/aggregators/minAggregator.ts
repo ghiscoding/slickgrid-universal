@@ -1,7 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import type { SlickGroupTotals } from '../core/slickCore';
-import type { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator, GroupTotals } from './../interfaces';
 
 export class MinAggregator implements Aggregator {
   private _isInitialized = false;
@@ -66,7 +65,7 @@ export class MinAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
+  storeResult(groupTotals: GroupTotals): void {
     let min = this._min;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 

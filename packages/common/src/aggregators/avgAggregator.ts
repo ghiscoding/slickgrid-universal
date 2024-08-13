@@ -1,7 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import type { SlickGroupTotals } from '../core/slickCore';
-import type { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator, GroupTotals } from './../interfaces';
 
 export class AvgAggregator implements Aggregator {
   private _isInitialized = false;
@@ -75,7 +74,7 @@ export class AvgAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
+  storeResult(groupTotals: GroupTotals): void {
     let sum = this._sum;
     let itemCount = this._nonNullCount;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);

@@ -1,7 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import type { Aggregator } from './../interfaces/aggregator.interface';
-import type { SlickGroupTotals } from '../core/slickCore';
+import type { Aggregator, GroupTotals } from './../interfaces';
 
 export class MaxAggregator implements Aggregator {
   private _isInitialized = false;
@@ -66,7 +65,7 @@ export class MaxAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }): void {
+  storeResult(groupTotals: GroupTotals): void {
     let max = this._max;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 
@@ -80,7 +79,7 @@ export class MaxAggregator implements Aggregator {
     groupTotals[this._type][this._field] = max;
   }
 
-  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
+  protected addGroupTotalPropertiesWhenNotExist(groupTotals: GroupTotals): void {
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

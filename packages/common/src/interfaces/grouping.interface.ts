@@ -40,5 +40,7 @@ export interface Grouping<T = any> {
   predefinedValues?: any[];
 
   /** defaults to true, so far only used internally by SlickDraggableGrouping */
-  sortAsc?: boolean
+  sortAsc?: boolean;
 }
+
+export type GroupTotals<T = string | number | null> = Record<string, Record<number | string, T>>;

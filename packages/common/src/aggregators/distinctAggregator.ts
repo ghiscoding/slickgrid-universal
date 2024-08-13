@@ -1,5 +1,4 @@
-import type { SlickGroupTotals } from '../core/slickCore';
-import type { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator, GroupTotals } from './../interfaces';
 
 export class DistinctAggregator implements Aggregator {
   private _isInitialized = false;
@@ -38,7 +37,7 @@ export class DistinctAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: SlickGroupTotals & { distinct: Record<number | string, any>; }): void {
+  storeResult(groupTotals: GroupTotals<any[]>): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
