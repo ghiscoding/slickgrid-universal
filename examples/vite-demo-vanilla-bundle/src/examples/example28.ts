@@ -10,7 +10,6 @@ export default class Example28 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  scrollEndCalled = false;
   shouldResetOnSort = false;
   metricsEndTime = '';
   metricsItemCount = 0;
@@ -73,7 +72,6 @@ export default class Example28 {
     const viewportElm = args.grid.getViewportNode();
     if (
       ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
-      && !this.scrollEndCalled
       && viewportElm.scrollTop > 0
       && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
     ) {
@@ -81,7 +79,6 @@ export default class Example28 {
       const startIdx = this.sgb.dataView?.getItemCount() || 0;
       const newItems = this.loadData(startIdx, FETCH_SIZE);
       this.sgb.dataView?.addItems(newItems);
-      this.scrollEndCalled = false;
     }
   }
 
