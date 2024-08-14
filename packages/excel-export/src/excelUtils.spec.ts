@@ -1,4 +1,3 @@
-import { type StyleSheet } from 'excel-builder-vanilla';
 import {
   type Column,
   FieldType,
@@ -8,6 +7,7 @@ import {
   GroupTotalFormatters,
   type SlickGrid
 } from '@slickgrid-universal/common';
+import { type StyleSheet } from 'excel-builder-vanilla';
 
 import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils';
 

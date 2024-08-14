@@ -1,4 +1,5 @@
 import { EMPTY, isObservable, Observable, Subject, } from 'rxjs';
+
 import { RxJsResource } from './rxjs.resource';
 
 describe('RxJs Resource', () => {

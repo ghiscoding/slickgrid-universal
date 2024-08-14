@@ -48,8 +48,8 @@ describe('Binding Helper', () => {
     elm.dispatchEvent(mockEvent);
 
     // remove the UID before comparing or else it will always fail
-    delete helper.observers[0].boundedEventWithListeners[0].uid;
-    delete helper.observers[1].boundedEventWithListeners[0].uid;
+    helper.observers[0].boundedEventWithListeners[0].uid = '';
+    helper.observers[1].boundedEventWithListeners[0].uid = '';
 
     expect(helper.observers.length).toBe(2);
     expect(JSON.stringify(helper.observers[0])).toEqual(JSON.stringify(helper.observers[1]));

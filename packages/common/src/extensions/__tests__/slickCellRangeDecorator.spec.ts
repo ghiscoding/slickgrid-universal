@@ -1,7 +1,7 @@
 import 'jest-extended';
 
 import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
-import type { SlickGrid } from '../../core';
+import type { SlickGrid, SlickRange } from '../../core';
 
 const gridStub = {
   getActiveCell: jest.fn(),
@@ -47,7 +47,7 @@ describe('CellRangeDecorator Plugin', () => {
     jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
 
     plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
-    plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 });
+    plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange);
 
     expect(plugin.addonElement!.style.top).toEqual('');
     expect(plugin.addonElement!.style.left).toEqual('');
@@ -61,7 +61,7 @@ describe('CellRangeDecorator Plugin', () => {
     jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ top: 25, left: 26, right: 27, bottom: 12 });
 
     plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
-    plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 });
+    plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange);
 
     expect(plugin.addonElement!.style.top).toEqual('45px');    // 25 + 20px
     expect(plugin.addonElement!.style.left).toEqual('31px');   // 26 + 5px

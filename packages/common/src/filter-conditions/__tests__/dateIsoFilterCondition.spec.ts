@@ -153,14 +153,14 @@ describe('dateIsoFilterCondition method', () => {
   describe('when using executeDateFilterCondition method', () => {
     describe('single date filtering', () => {
       it('should return False when no cell value is provided, neither search terms', () => {
-        const searchTerms = [undefined];
+        const searchTerms = [undefined] as any;
         const options = { dataKey: '', operator: 'EQ', fieldType: FieldType.dateIso, cellValue: '' } as FilterConditionOption;
         const output = executeDateFilterCondition(options, getParsedSearchTermsByFieldType(searchTerms, 'dateIso') as any[]);
         expect(output).toBe(false);
       });
 
       it('should return False when any cell value is provided without any search terms', () => {
-        const searchTerms = [undefined];
+        const searchTerms = [undefined] as any;
         const options = { dataKey: '', operator: 'EQ', fieldType: FieldType.dateIso, cellValue: '2000-12-25' } as FilterConditionOption;
         const output = executeDateFilterCondition(options, getParsedSearchTermsByFieldType(searchTerms, FieldType.dateIso) as any[]);
         expect(output).toBe(false);

@@ -414,6 +414,9 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
     devDependencies:
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:~
+        version: link:../event-pub-sub
       '@types/text-encoding-utf-8':
         specifier: ^1.0.5
         version: 1.0.5

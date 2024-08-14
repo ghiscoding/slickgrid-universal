@@ -1,4 +1,5 @@
 import { createDomElement, type EmptyWarning, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
+
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';

@@ -91,7 +91,7 @@ describe('Slick-Pagination Component', () => {
 
       beforeEach(() => {
         jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
+        jest.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
         div = document.createElement('div');
         document.body.appendChild(div);
@@ -99,7 +99,7 @@ describe('Slick-Pagination Component', () => {
         eventPubSubService = new EventPubSubService();
         translateService = new TranslateServiceStub();
 
-        component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);
+        component = new SlickPaginationComponent(paginationServiceStub as PaginationService, eventPubSubService, sharedService, translateService);
         component.renderPagination(div);
       });
 
@@ -132,15 +132,15 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should call changeToFirstPage() from the View and expect the pagination service to be called with correct method', () => {
-        const spy = jest.spyOn(paginationServiceStub, 'goToFirstPage');
+        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToFirstPage');
 
         const button = document.querySelector('.icon-seek-first') as HTMLAnchorElement;
         button.click();
         mockFullPagination.pageNumber = 1;
         mockFullPagination.dataFrom = 1;
         mockFullPagination.dataTo = 10;
-        jest.spyOn(paginationServiceStub, 'dataFrom', 'get').mockReturnValue(mockFullPagination.dataFrom);
-        jest.spyOn(paginationServiceStub, 'dataTo', 'get').mockReturnValue(mockFullPagination.dataTo);
+        jest.spyOn(paginationServiceStub as PaginationService, 'dataFrom', 'get').mockReturnValue(mockFullPagination.dataFrom);
+        jest.spyOn(paginationServiceStub as PaginationService, 'dataTo', 'get').mockReturnValue(mockFullPagination.dataTo);
 
 
         const itemFrom = document.querySelector('.item-from') as HTMLInputElement;
@@ -148,7 +148,7 @@ describe('Slick-Pagination Component', () => {
 
         expect(spy).toHaveBeenCalled();
 
-        if (paginationServiceStub.isCursorBased) {
+        if ((paginationServiceStub as any).isCursorBased) {
           const span = document.querySelector('span.page-number') as HTMLSpanElement;
           expect(span.textContent).toBe('1');
         } else {
@@ -164,14 +164,14 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should change the page number and expect the pagination service to go to that page (except for cursor based pagination)', () => {
-        const spy = jest.spyOn(paginationServiceStub, 'goToPageNumber');
+        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToPageNumber');
 
         const newPageNumber = 3;
         const input = document.querySelector('input.page-number') as HTMLInputElement;
         const span = document.querySelector('span.page-number') as HTMLInputElement;
 
         const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: newPageNumber } } });
-        if (paginationServiceStub.isCursorBased) {
+        if ((paginationServiceStub as any).isCursorBased) {
           expect(input).toBe(null);
           expect(span).not.toBe(null);
 
@@ -188,7 +188,7 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should call changeToNextPage() from the View and expect the pagination service to be called with correct method', () => {
-        const spy = jest.spyOn(paginationServiceStub, 'goToNextPage');
+        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToNextPage');
 
         const button = document.querySelector('.icon-seek-next') as HTMLAnchorElement;
         button.click();
@@ -198,7 +198,7 @@ describe('Slick-Pagination Component', () => {
 
       it('should call changeToPreviousPage() from the View and expect the pagination service to be called with correct method', () => {
         mockFullPagination.pageNumber = 2;
-        const spy = jest.spyOn(paginationServiceStub, 'goToPreviousPage');
+        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToPreviousPage');
 
         const button = document.querySelector('.icon-seek-prev') as HTMLAnchorElement;
         button.click();
@@ -207,7 +207,7 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should call changeToLastPage() from the View and expect the pagination service to be called with correct method', () => {
-        const spy = jest.spyOn(paginationServiceStub, 'goToLastPage');
+        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToLastPage');
 
         const button = document.querySelector('.icon-seek-end') as HTMLAnchorElement;
         button.click();
@@ -216,7 +216,7 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should change the changeItemPerPage select dropdown and expect the pagination service call a change', () => {
-        const spy = jest.spyOn(paginationServiceStub, 'changeItemPerPage');
+        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'changeItemPerPage');
 
         const newItemsPerPage = 10;
         const select = document.querySelector('select') as HTMLSelectElement;
@@ -274,7 +274,7 @@ describe('Slick-Pagination Component', () => {
         mockFullPagination.pageNumber = 1;
         mockFullPagination.pageCount = 10;
         mockFullPagination.totalItems = 100;
-        paginationServiceStub.isCursorBased = true;
+        (paginationServiceStub as any).isCursorBased = true;
         eventPubSubService.publish('onPaginationSetCursorBased', { isCursorBased: true });
         const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
         const pageNbSpan = document.querySelector('span[data-test=page-number-label]') as HTMLSpanElement;
@@ -316,7 +316,7 @@ describe('with different i18n locale', () => {
     mockGridOptions.enableTranslate = true;
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination2);
+    jest.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination2);
     div = document.createElement('div');
     document.body.appendChild(div);
     sharedService = new SharedService();

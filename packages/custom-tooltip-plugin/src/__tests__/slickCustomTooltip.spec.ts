@@ -1,6 +1,5 @@
-import { delay, of, throwError } from 'rxjs';
-
 import { type Column, getOffset, type GridOption, type SlickGrid, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
+import { delay, of, throwError } from 'rxjs';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';

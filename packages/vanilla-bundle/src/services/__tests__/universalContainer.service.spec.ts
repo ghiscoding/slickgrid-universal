@@ -1,4 +1,5 @@
 import { SharedService } from '@slickgrid-universal/common';
+
 import { UniversalContainerService } from '../universalContainer.service';
 
 describe('UniversalContainer Service', () => {

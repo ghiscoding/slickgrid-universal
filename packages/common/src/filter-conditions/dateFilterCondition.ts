@@ -50,7 +50,7 @@ export function executeDateFilterCondition(options: FilterConditionOption, parse
  * From our search filter value(s), get the parsed value(s), they are parsed as Date objects.
  * This is called only once per filter before running the actual filter condition check on each cell
  */
-export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm[] {
+export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): Array<Date | string> {
   const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [];
   const filterSearchType = inputFilterSearchType || FieldType.dateIso;
   const FORMAT = mapTempoDateFormatWithFieldType(filterSearchType);
