@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import type { Column, Editor, EditorArguments, GridOption, type SliderOption } from '../../interfaces/index';
+import type { Column, Editor, EditorArguments, GridOption, SliderOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
@@ -43,7 +43,6 @@ describe('SliderEditor', () => {
   let mockItemData: any;
 
   beforeEach(() => {
-    consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);

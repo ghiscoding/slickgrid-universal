@@ -1,4 +1,5 @@
 import 'jest-extended';
+
 import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
 import { type SlickDataView, SlickEvent, type SlickGrid, SlickGroup } from '../../core/index';

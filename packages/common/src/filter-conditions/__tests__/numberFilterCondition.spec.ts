@@ -19,7 +19,7 @@ describe('executeNumberFilterCondition method', () => {
   });
 
   it('should return True when first searchTerm is undefined provided neither an operator when executing "executeFilterConditionTest" method', () => {
-    const searchTerms = [undefined];
+    const searchTerms = [undefined] as any;
     const options = { dataKey: '', cellValue: 0, fieldType: FieldType.number } as FilterConditionOption;
     const output = executeFilterConditionTest(options, searchTerms);
     expect(output).toBe(true);

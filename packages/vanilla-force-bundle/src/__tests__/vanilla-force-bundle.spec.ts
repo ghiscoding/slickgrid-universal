@@ -1,5 +1,4 @@
 import 'jest-extended';
-
 import {
   type BackendUtilityService,
   type Column,
@@ -482,7 +481,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableCompositeEditor: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
-        expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBeTrue();
+        expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBe(true);
       });
 
       it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
@@ -511,7 +510,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         expect(sortServiceSpy).toHaveBeenCalled();
         expect(paginationServiceSpy).toHaveBeenCalled();
         expect(component.registeredResources.length).toBe(5); // RxJsResourceStub, GridService, GridStateService, CustomTooltip, SlickEmptyCompositeEditorComponent
-        expect(component.registeredResources[0] instanceof RxJsResourceStub).toBeTrue();
+        expect(component.registeredResources[0] instanceof RxJsResourceStub).toBe(true);
       });
 
       it('should destroy customElement and its DOM element when requested', () => {

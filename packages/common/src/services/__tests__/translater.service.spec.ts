@@ -1,4 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { TranslaterService } from '../translater.service';
 
 describe('Translater Service', () => {

@@ -1,4 +1,5 @@
 import { CaseType } from '@slickgrid-universal/common';
+
 import { OdataQueryBuilderService } from '../odataQueryBuilder.service';
 
 describe('OdataService', () => {

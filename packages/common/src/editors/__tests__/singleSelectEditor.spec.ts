@@ -97,20 +97,20 @@ describe('SingleSelectEditor', () => {
       editor = new SingleSelectEditor(editorArguments);
 
       editor.show(null);
-      expect(editor.msInstance!.getDropElement().style.display).toBe('block');
+      expect(editor.msInstance!.getDropElement()?.style.display).toBe('block');
 
       editor.hide();
-      expect(editor.msInstance!.getDropElement().style.display).toBe('none');
+      expect(editor.msInstance!.getDropElement()?.style.display).toBe('none');
     });
 
     it('should show the DOM element div wrapper when the "show" method is called', () => {
       editor = new SingleSelectEditor(editorArguments);
 
       editor.hide();
-      expect(editor.msInstance!.getDropElement().style.display).toBe('none');
+      expect(editor.msInstance!.getDropElement()?.style.display).toBe('none');
 
       editor.show(null);
-      expect(editor.msInstance!.getDropElement().style.display).toBe('block');
+      expect(editor.msInstance!.getDropElement()?.style.display).toBe('block');
     });
 
     it('should call "setValue" with a single string and expect the string to be returned as an single string when calling "getValue"', () => {

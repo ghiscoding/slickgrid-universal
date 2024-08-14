@@ -595,7 +595,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandDetailView(itemMock);
 
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',
@@ -621,10 +621,10 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandDetailView(itemMock);
 
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       plugin.lastRange = { bottom: 18, top: 30 };
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',
@@ -653,10 +653,10 @@ describe('SlickRowDetailView plugin', () => {
 
       const onRowBackToViewportSpy = jest.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       plugin.lastRange = { bottom: 18, top: 30 };
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
       setTimeout(() => {
         expect(mockProcess).toHaveBeenCalledWith({
@@ -690,10 +690,10 @@ describe('SlickRowDetailView plugin', () => {
 
       const onRowBackToViewportSpy = jest.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       plugin.lastRange = { bottom: 18, top: 30 };
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
       setTimeout(() => {
         expect(mockProcess).toHaveBeenCalledWith({
@@ -726,7 +726,7 @@ describe('SlickRowDetailView plugin', () => {
 
       const onRowOutOfViewportRangeSpy = jest.spyOn(plugin.onRowOutOfViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',
@@ -760,7 +760,7 @@ describe('SlickRowDetailView plugin', () => {
 
       const onRowBackToViewportSpy = jest.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',

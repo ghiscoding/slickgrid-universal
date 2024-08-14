@@ -16,6 +16,7 @@ import {
   SharedService,
   type SlickGrid,
 } from '@slickgrid-universal/common';
+
 import { GridOdataService } from '../grid-odata.service';
 import type { OdataOption } from '../../interfaces/odataOption.interface';
 
