@@ -7,10 +7,10 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 
 export default class Example29 {
   private _bindingEventService: BindingEventService;
-  gridOptions!: GridOption;
-  columnDefinitions!: Column[];
-  dataset!: any[];
-  sgb!: SlickVanillaGridBundle;
+  gridOptions1!: GridOption;
+  columnDefinitions1!: Column[];
+  dataset1!: any[];
+  sgb1!: SlickVanillaGridBundle;
   dragHelper;
   dragRows: number[];
   dragMode = '';
@@ -24,9 +24,9 @@ export default class Example29 {
     const gridContainer1Elm = document.querySelector(`.grid29-1`) as HTMLDivElement;
 
     // mock some data (different in each dataset)
-    this.dataset = this.mockData();
+    this.dataset1 = this.mockData(1);
 
-    this.sgb = new Slicker.GridBundle(gridContainer1Elm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb1 = new Slicker.GridBundle(gridContainer1Elm, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainer1Elm, 'ondraginit', this.handleOnDragInit.bind(this) as EventListener);
@@ -36,7 +36,7 @@ export default class Example29 {
   }
 
   dispose() {
-    this.sgb?.dispose();
+    this.sgb1?.dispose();
   }
 
   isBrowserDarkModeEnabled() {
@@ -45,11 +45,11 @@ export default class Example29 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions = [
+    this.columnDefinitions1 = [
       { id: 'name', name: 'Name', field: 'name', width: 300, cssClass: 'cell-title', editor: { model: Editors.Text, }, validator: this.requiredFieldValidator },
       { id: 'complete', name: 'Complete', width: 60, cssClass: 'cell-effort-driven', field: 'complete', cannotTriggerInsert: true, formatter: Formatters.checkmarkMaterial, editor: { model: Editors.Checkbox }, }
     ];
-    this.gridOptions = {
+    this.gridOptions1 = {
       enableAutoResize: false,
       gridHeight: 225,
       gridWidth: 800,
@@ -75,13 +75,23 @@ export default class Example29 {
     };
   }
 
-  mockData() {
-    return [
-      { id: 0, name: 'Make a list', complete: true },
-      { id: 1, name: 'Check it twice', complete: false },
-      { id: 2, name: `Find out who's naughty`, complete: false },
-      { id: 3, name: `Find out who's nice`, complete: false }
-    ];
+  mockData(gridNo: 1 | 2) {
+    switch (gridNo) {
+      case 1:
+        return [
+          { id: 0, name: 'Make a list', complete: true },
+          { id: 1, name: 'Check it twice', complete: false },
+          { id: 2, name: `Find out who's naughty`, complete: false },
+          { id: 3, name: `Find out who's nice`, complete: false }
+        ];
+      case 2:
+        return [
+          { id: 0, name: 'Onions', complete: true },
+          { id: 1, name: 'Vegemite', complete: false },
+          { id: 2, name: 'Corn Flakes', complete: false },
+          { id: 3, name: 'Beans', complete: false }
+        ];
+    }
   }
 
   onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number; }) {
@@ -99,13 +109,13 @@ export default class Example29 {
     const extractedRows: any[] = [];
     const rows = args.rows;
     const insertBefore = args.insertBefore;
-    const left = this.sgb.dataset.slice(0, insertBefore);
-    const right = this.sgb.dataset.slice(insertBefore, this.sgb.dataset.length);
+    const left = this.sgb1.dataset.slice(0, insertBefore);
+    const right = this.sgb1.dataset.slice(insertBefore, this.sgb1.dataset.length);
 
     rows.sort((a, b) => a - b);
 
     for (let i = 0; i < rows.length; i++) {
-      extractedRows.push(this.sgb.dataset[rows[i]]);
+      extractedRows.push(this.sgb1.dataset[rows[i]]);
     }
 
     rows.reverse();
@@ -119,14 +129,14 @@ export default class Example29 {
       }
     }
 
-    this.dataset = left.concat(extractedRows.concat(right));
+    this.dataset1 = left.concat(extractedRows.concat(right));
 
     const selectedRows: number[] = [];
     for (let i = 0; i < rows.length; i++)
       selectedRows.push(left.length + i);
 
-    this.sgb.slickGrid?.resetActiveCell();
-    this.sgb.dataset = this.dataset; // update dataset and re-render the grid
+    this.sgb1.slickGrid?.resetActiveCell();
+    this.sgb1.dataset = this.dataset1; // update dataset and re-render the grid
   }
 
   handleOnDragInit(e: CustomEvent) {
@@ -137,7 +147,7 @@ export default class Example29 {
 
   handleOnDragStart(e: CustomEvent) {
     const { eventData } = e.detail;
-    const cell = this.sgb.slickGrid?.getCellFromEvent(eventData);
+    const cell = this.sgb1.slickGrid?.getCellFromEvent(eventData);
 
     if (!cell || cell.cell === 0) {
       this.dragMode = '';
@@ -145,7 +155,7 @@ export default class Example29 {
     }
 
     const row = cell.row;
-    if (!this.dataset[row]) {
+    if (!this.dataset1[row]) {
       return;
     }
 
@@ -156,11 +166,11 @@ export default class Example29 {
     eventData.stopImmediatePropagation();
     this.dragMode = 'recycle';
 
-    let selectedRows: number[] = this.sgb.slickGrid?.getSelectedRows() || [];
+    let selectedRows: number[] = this.sgb1.slickGrid?.getSelectedRows() || [];
 
     if (!selectedRows.length || selectedRows.findIndex(row => row === row) === -1) {
       selectedRows = [row];
-      this.sgb.slickGrid?.setSelectedRows(selectedRows);
+      this.sgb1.slickGrid?.setSelectedRows(selectedRows);
     }
 
     this.dragRows = selectedRows;
@@ -179,6 +189,9 @@ export default class Example29 {
     document.body.appendChild(proxy);
 
     this.dragHelper = proxy;
+
+    const dropzoneElm = document.querySelector<HTMLDivElement>('#dropzone')!;
+    dropzoneElm.style.border = '2px dashed pink';
 
     return proxy;
   }
@@ -212,6 +225,8 @@ export default class Example29 {
       return;
     }
     this.dragHelper.remove();
+    const dropzoneElm = document.querySelector<HTMLDivElement>('#dropzone')!;
+    dropzoneElm.style.border = '2px solid #e4e4e4';
 
     if (this.dragMode != 'recycle' || args.target.id !== 'dropzone') {
       return;
@@ -220,13 +235,12 @@ export default class Example29 {
     // reaching here means that we'll remove the row that we started dragging from the dataset
     const rowsToDelete = this.dragRows.sort().reverse();
     for (let i = 0; i < rowsToDelete.length; i++) {
-      this.dataset.splice(rowsToDelete[i], 1);
+      this.dataset1.splice(rowsToDelete[i], 1);
     }
-    this.sgb.dataset = this.dataset;
-    this.sgb.slickGrid?.invalidate();
-    this.sgb.slickGrid?.setSelectedRows([]);
+    this.sgb1.dataset = this.dataset1;
+    this.sgb1.slickGrid?.invalidate();
+    this.sgb1.slickGrid?.setSelectedRows([]);
 
-    const dropzoneElm = document.querySelector<HTMLDivElement>('#dropzone')!;
     dropzoneElm.style.background = '';
   }
 
