@@ -237,6 +237,9 @@ importers:
       '@types/sortablejs':
         specifier: ^1.15.8
         version: 1.15.8
+      '@types/trusted-types':
+        specifier: ^2.0.7
+        version: 2.0.7
       autocompleter:
         specifier: ^9.3.0
         version: 9.3.0
