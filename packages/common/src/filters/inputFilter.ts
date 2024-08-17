@@ -337,7 +337,7 @@ export class InputFilter implements Filter {
 
       if (this.inputFilterType === 'single' || !skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {
-          window.clearTimeout(this._timer as number);
+          window.clearTimeout(this._timer);
           this._timer = window.setTimeout(() => this.callback(event, callbackArgs), typingDelay);
         } else {
           this.callback(event, callbackArgs);

@@ -369,7 +369,7 @@ export class InputEditor implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      window.clearTimeout(this._timer as number);
+      window.clearTimeout(this._timer);
       this._timer = window.setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
