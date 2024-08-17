@@ -1,6 +1,6 @@
+import { parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
-import { parse } from '@formkit/tempo';
 import VanillaCalendar from 'vanilla-calendar-pro';
 import type { FormatDateString, IOptions } from 'vanilla-calendar-pro/types';
 
