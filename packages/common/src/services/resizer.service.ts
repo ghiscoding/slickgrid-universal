@@ -85,9 +85,7 @@ export class ResizerService {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
-    if (this._intervalId) {
-      window.clearInterval(this._intervalId);
-    }
+    window.clearInterval(this._intervalId);
     window.clearTimeout(this._timer);
 
     if (this.gridOptions.autoResize?.resizeDetection === 'container' && this._resizeObserver) {
