@@ -8,9 +8,13 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 export default class Example29 {
   private _bindingEventService: BindingEventService;
   gridOptions1!: GridOption;
+  gridOptions2!: GridOption;
   columnDefinitions1!: Column[];
+  columnDefinitions2!: Column[];
   dataset1!: any[];
+  dataset2!: any[];
   sgb1!: SlickVanillaGridBundle;
+  sgb2!: SlickVanillaGridBundle;
   dragHelper;
   dragRows: number[];
   dragMode = '';
@@ -22,11 +26,14 @@ export default class Example29 {
   attached() {
     this.defineGrids();
     const gridContainer1Elm = document.querySelector(`.grid29-1`) as HTMLDivElement;
+    const gridContainer2Elm = document.querySelector(`.grid29-2`) as HTMLDivElement;
 
     // mock some data (different in each dataset)
     this.dataset1 = this.mockData(1);
+    this.dataset2 = this.mockData(2);
 
     this.sgb1 = new Slicker.GridBundle(gridContainer1Elm, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.sgb2 = new Slicker.GridBundle(gridContainer2Elm, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainer1Elm, 'ondraginit', this.handleOnDragInit.bind(this) as EventListener);
@@ -37,6 +44,7 @@ export default class Example29 {
 
   dispose() {
     this.sgb1?.dispose();
+    this.sgb2?.dispose();
   }
 
   isBrowserDarkModeEnabled() {
@@ -73,6 +81,11 @@ export default class Example29 {
         // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
       },
     };
+
+    // copy the same Grid Options and Column Definitions to 2nd grid
+    // but also add Pagination in this grid
+    this.columnDefinitions2 = this.columnDefinitions1;
+    this.gridOptions2 = { ...this.gridOptions1 };
   }
 
   mockData(gridNo: 1 | 2) {
