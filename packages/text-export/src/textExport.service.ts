@@ -119,7 +119,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // trigger a download file
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
-      setTimeout(() => {
+      window.setTimeout(() => {
         const downloadOptions = {
           filename: `${this._exportOptions.filename}.${this._fileFormat}`,
           format: this._fileFormat || FileType.csv,

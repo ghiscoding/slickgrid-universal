@@ -149,7 +149,7 @@ describe('Composite Editor Factory', () => {
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       expect(document.activeElement).not.toBeUndefined();
       done();
     }, 1);

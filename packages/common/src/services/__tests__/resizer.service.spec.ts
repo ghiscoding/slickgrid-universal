@@ -199,7 +199,7 @@ describe('Resizer Service', () => {
       service.resizeGrid(1);
       service.dispose();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(resizeGridWithDimensionsSpy).not.toHaveBeenCalled();
         done();
       }, 2);
@@ -522,7 +522,7 @@ describe('Resizer Service', () => {
 
       service.resizeGrid(0);
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(resizeContentSpy).toHaveBeenCalledWith(false);
         done();
       });
@@ -741,7 +741,7 @@ describe('Resizer Service', () => {
         divContainer.style.top = '10px';
         divContainer.style.left = '20px';
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(divContainer.outerHTML).toBeTruthy();
           expect(resizeSpy).toHaveBeenCalled();
           expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
@@ -769,7 +769,7 @@ describe('Resizer Service', () => {
         // expect(divContainer.outerHTML).toBeTruthy();
         expect(resizeSpy).toHaveBeenCalled();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(divContainer.outerHTML).toBeTruthy();
           expect(resizeSpy).toHaveBeenCalled();
           done();
@@ -792,7 +792,7 @@ describe('Resizer Service', () => {
         expect(divContainer.outerHTML).toBeTruthy();
         expect(resizeSpy).toHaveBeenCalled();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           service.requestStopOfAutoFixResizeGrid();
 
           expect(divContainer.outerHTML).toBeTruthy();
@@ -823,7 +823,7 @@ describe('Resizer Service', () => {
         divContainer.style.left = '20px';
         service.init(gridStub, divContainer);
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(divContainer.outerHTML).toBeTruthy();
           expect(resizeSpy).toHaveBeenCalled();
           expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
@@ -836,12 +836,12 @@ describe('Resizer Service', () => {
 
       it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {
         const consoleSpy = jest.spyOn(global.console, 'log').mockReturnValue();
-        const promise = new Promise((_resolve, reject) => setTimeout(() => reject('some error'), 0));
+        const promise = new Promise((_resolve, reject) => window.setTimeout(() => reject('some error'), 0));
         jest.spyOn(service, 'resizeGrid').mockReturnValue(promise as any);
 
         service.init(gridStub, divContainer);
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(consoleSpy).toHaveBeenCalledWith('Error:', 'some error');
           done();
         }, 1);

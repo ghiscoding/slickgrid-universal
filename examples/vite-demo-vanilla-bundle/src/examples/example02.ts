@@ -188,7 +188,7 @@ export default class Example02 {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
 
           // Select Filters can also support collection that are async, it could be a Promise (shown below) or Fetch result
-          // collectionAsync: new Promise<any>(resolve => setTimeout(() => {
+          // collectionAsync: new Promise<any>(resolve => window.setTimeout(() => {
           //   resolve([{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }]);
           // }, 250)),
         },

@@ -126,7 +126,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return original Promise when argument is already a Promise', async () => {
-      const promise = new Promise((resolve) => setTimeout(() => resolve('hello'), 1));
+      const promise = new Promise((resolve) => window.setTimeout(() => resolve('hello'), 1));
       const castPromise = castObservableToPromise(rxjs, promise);
       expect(promise).toBe(castPromise);
     });

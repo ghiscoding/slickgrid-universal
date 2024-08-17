@@ -37,7 +37,7 @@ export class SlickCellRangeSelector {
 
   // autoScroll related variables
   protected _activeViewport!: HTMLElement;
-  protected _autoScrollTimerId?: NodeJS.Timeout;
+  protected _autoScrollTimerId?: number;
   protected _draggingMouseOffset!: MouseOffsetViewport;
   protected _moveDistanceForOneCell!: { x: number; y: number; };
   protected _xDelayForNextCell = 0;
@@ -170,7 +170,6 @@ export class SlickCellRangeSelector {
   stopIntervalTimer(): void {
     if (this._autoScrollTimerId) {
       clearInterval(this._autoScrollTimerId);
-      this._autoScrollTimerId = undefined;
     }
   }
 
@@ -206,7 +205,7 @@ export class SlickCellRangeSelector {
       let xTotalDelay = 0;
       let yTotalDelay = 0;
 
-      this._autoScrollTimerId = setInterval(() => {
+      this._autoScrollTimerId = window.setInterval(() => {
         let xNeedUpdate = false;
         let yNeedUpdate = false;
         // ... horizontal

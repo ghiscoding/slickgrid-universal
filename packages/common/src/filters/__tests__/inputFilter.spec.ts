@@ -235,7 +235,7 @@ describe('InputFilter', () => {
     filterElm.value = 'a';
     filterElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
       done();
     }, 2);
@@ -255,7 +255,7 @@ describe('InputFilter', () => {
     filterElm.value = 'a';
     filterElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
       done();
     }, 2);

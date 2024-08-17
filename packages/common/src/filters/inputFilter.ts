@@ -21,7 +21,7 @@ export class InputFilter implements Filter {
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
-  protected _timer?: NodeJS.Timeout;
+  protected _timer?: number;
   protected _cellContainerElm!: HTMLDivElement;
   protected _filterContainerElm!: HTMLDivElement;
   protected _filterInputElm!: HTMLInputElement;
@@ -337,8 +337,8 @@ export class InputFilter implements Filter {
 
       if (this.inputFilterType === 'single' || !skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {
-          clearTimeout(this._timer as NodeJS.Timeout);
-          this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
+          clearTimeout(this._timer as number);
+          this._timer = window.setTimeout(() => this.callback(event, callbackArgs), typingDelay);
         } else {
           this.callback(event, callbackArgs);
         }

@@ -207,7 +207,7 @@ describe('CompositeEditorService', () => {
       const mockModalOptions = { headerTitle: 'Details', modalType: 'create', onError: mockOnError } as CompositeEditorOpenDetailOption;
       const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         component.openDetails(mockModalOptions);
         expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when cloning/creating a new item.', });
         done();
@@ -224,7 +224,7 @@ describe('CompositeEditorService', () => {
       const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', onError: mockOnError } as CompositeEditorOpenDetailOption;
       const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         component.openDetails(mockModalOptions);
         expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.', });
         done();
@@ -242,7 +242,7 @@ describe('CompositeEditorService', () => {
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
       const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         component.openDetails(mockModalOptions);
         expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.' });
         done();
@@ -259,7 +259,7 @@ describe('CompositeEditorService', () => {
 
       const mockModalOptions = { headerTitle: 'Details' } as CompositeEditorOpenDetailOption;
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         component.openDetails(mockModalOptions);
         expect(consoleSpy).toHaveBeenCalledWith('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.');
         done();
@@ -275,7 +275,7 @@ describe('CompositeEditorService', () => {
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
       const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         component.openDetails(mockModalOptions);
         expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit or clone operation.' });
         done();
@@ -292,7 +292,7 @@ describe('CompositeEditorService', () => {
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
       const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         component.openDetails(mockModalOptions);
         expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.', });
         done();
@@ -313,7 +313,7 @@ describe('CompositeEditorService', () => {
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
       const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         component.openDetails(mockModalOptions);
         expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'NO_EDITOR_FOUND', message: 'We could not find any Editor in your Column Definition' });
         done();
@@ -610,7 +610,7 @@ describe('CompositeEditorService', () => {
       const productNameLabelElm = productNameDetailContainerElm.querySelector('.item-details-label.editor-productName') as HTMLSelectElement;
       compositeFooterCancelBtnElm.click();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
@@ -651,7 +651,7 @@ describe('CompositeEditorService', () => {
       const productNameLabelElm = productNameDetailContainerElm.querySelector('.item-details-label.editor-productName') as HTMLSelectElement;
       compositeFooterCancelBtnElm.click();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.eventHandler).toBeTruthy();
         expect(component.constructor).toBeDefined();
@@ -947,7 +947,7 @@ describe('CompositeEditorService', () => {
         expect(compositeFooterSaveBtnElm.disabled).toBeTruthy();
         expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeTruthy();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(component).toBeTruthy();
           expect(component.constructor).toBeDefined();
           expect(compositeContainerElm).toBeTruthy();
@@ -1007,7 +1007,7 @@ describe('CompositeEditorService', () => {
         expect(compositeFooterSaveBtnElm.disabled).toBeTruthy();
         expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeTruthy();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(component).toBeTruthy();
           expect(component.constructor).toBeDefined();
           expect(compositeContainerElm).toBeTruthy();
@@ -1065,7 +1065,7 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(component).toBeTruthy();
           expect(component.constructor).toBeDefined();
           expect(compositeContainerElm).toBeTruthy();
@@ -1212,7 +1212,7 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(component).toBeTruthy();
           expect(component.constructor).toBeDefined();
           expect(compositeContainerElm).toBeTruthy();
@@ -1267,7 +1267,7 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(component).toBeTruthy();
           expect(component.constructor).toBeDefined();
           expect(compositeContainerElm).toBeTruthy();
@@ -1581,7 +1581,7 @@ describe('CompositeEditorService', () => {
         const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection', onError: mockOnError } as CompositeEditorOpenDetailOption;
         const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           component.openDetails(mockModalOptions);
           expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).' });
           done();
@@ -1597,7 +1597,7 @@ describe('CompositeEditorService', () => {
         const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection', onError: mockOnError } as CompositeEditorOpenDetailOption;
         const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           component.openDetails(mockModalOptions);
           expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: `some error`, message: `some error` });
           done();
@@ -1695,7 +1695,7 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(component).toBeTruthy();
           expect(component.constructor).toBeDefined();
           expect(compositeContainerElm).toBeTruthy();
@@ -1749,7 +1749,7 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
+        window.setTimeout(() => {
           expect(component).toBeTruthy();
           expect(component.constructor).toBeDefined();
           expect(compositeContainerElm).toBeTruthy();
@@ -1817,7 +1817,7 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
@@ -1871,7 +1871,7 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
@@ -1926,7 +1926,7 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
@@ -1983,7 +1983,7 @@ describe('CompositeEditorService', () => {
       expect(compositeFooterSaveBtnElm.disabled).toBeTruthy();
       expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeTruthy();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
@@ -2119,7 +2119,7 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
@@ -2164,7 +2164,7 @@ describe('CompositeEditorService', () => {
       const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
       const compositeFooterSaveBtnElm = compositeFooterElm.querySelector('.btn-save') as HTMLSelectElement;
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();

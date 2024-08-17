@@ -383,7 +383,7 @@ export default class Example15 {
       }
       const updatedData = filteredData.slice(firstRow, firstRow + top);
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         let countPropName = 'totalRecordCount';
         if (this.isCountEnabled) {
           countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';

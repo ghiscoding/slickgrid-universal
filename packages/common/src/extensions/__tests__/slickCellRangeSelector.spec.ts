@@ -570,7 +570,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
-    setTimeout(() => {
+    window.setTimeout(() => {
       expect(onCellRangeSelectingSpy).not.toHaveBeenCalled();
       done();
     }, 7);
@@ -626,7 +626,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
         range: {
           fromCell: 4, fromRow: 2, toCell: 22, toRow: 5,
@@ -689,7 +689,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
         range: {
           fromCell: 4, fromRow: 2, toCell: 22, toRow: 5,

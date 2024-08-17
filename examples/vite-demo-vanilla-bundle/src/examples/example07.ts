@@ -207,7 +207,7 @@ export default class Example07 {
 
           // Select Editor can also support collection that are async, it could be a Promise (shown below) or Fetch result
           enableRenderHtml: true,
-          collectionAsync: new Promise<any>(resolve => setTimeout(() => {
+          collectionAsync: new Promise<any>(resolve => window.setTimeout(() => {
             resolve([
               { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
               { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` }
@@ -241,7 +241,7 @@ export default class Example07 {
 
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
-            setTimeout(() => {
+            window.setTimeout(() => {
               resolve(Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
@@ -266,7 +266,7 @@ export default class Example07 {
         filter: {
           // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
           collectionAsync: new Promise((resolve) => {
-            setTimeout(() => {
+            window.setTimeout(() => {
               resolve(Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
             });
           }),
@@ -363,7 +363,7 @@ export default class Example07 {
     const newRows = this.loadData(1, lastRowIndex);
 
     // wrap into a timer to simulate a backend async call
-    setTimeout(() => {
+    window.setTimeout(() => {
       // at any time, we can poke the "collection" property and modify it
       const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites') as Column;
       if (requisiteColumnDef) {

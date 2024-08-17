@@ -256,7 +256,7 @@ export default class Example21 {
 
     // fill the template on async delay
     return new Promise((resolve) => {
-      setTimeout(() => {
+      window.setTimeout(() => {
         const itemDetail = item;
 
         // let's add some extra properties to our item for a better async simulation
@@ -310,7 +310,7 @@ export default class Example21 {
       this.statusClass = 'notification is-light is-danger is-narrow';
 
       // remove message after 2sec.
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.status = '';
         this.statusClass = '';
       }, 2000);

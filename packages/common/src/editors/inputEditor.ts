@@ -28,7 +28,7 @@ export class InputEditor implements Editor {
   protected _isValueTouched = false;
   protected _lastInputKeyEvent?: KeyboardEvent;
   protected _originalValue?: number | string;
-  protected _timer?: NodeJS.Timeout;
+  protected _timer?: number;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -369,8 +369,8 @@ export class InputEditor implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      clearTimeout(this._timer as NodeJS.Timeout);
-      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
+      clearTimeout(this._timer as number);
+      this._timer = window.setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 

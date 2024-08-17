@@ -337,7 +337,7 @@ describe('with different i18n locale', () => {
     translateService.use('fr');
     eventPubSubService.publish('onLanguageChange', 'fr');
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
       const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
       expect(translateService.getCurrentLanguage()).toBe('fr');

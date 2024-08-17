@@ -172,7 +172,7 @@ describe('Backend Utility Service', () => {
         httpCancelRequestSubject: subject as Subject<void>,
       });
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(successCallbackMock).toHaveBeenCalled();
         expect(nextSpy).toHaveBeenCalled();
         expect(processSpy).toHaveBeenCalled();
@@ -197,7 +197,7 @@ describe('Backend Utility Service', () => {
         httpCancelRequestSubject: subject as Subject<void>,
       });
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         expect(errorCallbackMock).toHaveBeenCalled();
         expect(nextSpy).toHaveBeenCalled();
         expect(processSpy).toHaveBeenCalled();

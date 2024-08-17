@@ -30,7 +30,7 @@ export class LongTextEditor implements Editor {
   protected _defaultTextValue: any;
   protected _isValueTouched = false;
   protected _locales: Locale;
-  protected _timer?: NodeJS.Timeout;
+  protected _timer?: number;
   protected _currentLengthElm!: HTMLSpanElement;
   protected _textareaElm!: HTMLTextAreaElement;
   protected _wrapperElm!: HTMLDivElement;
@@ -456,8 +456,8 @@ export class LongTextEditor implements Editor {
     // when using a Composite Editor, we'll want to add a debounce delay to avoid perf issue since Composite could affect other editors in the same form
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      clearTimeout(this._timer as NodeJS.Timeout);
-      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
+      clearTimeout(this._timer as number);
+      this._timer = window.setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 

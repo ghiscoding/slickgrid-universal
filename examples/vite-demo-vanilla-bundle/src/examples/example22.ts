@@ -266,7 +266,7 @@ export default class Example22 {
 
 function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefined): Promise<Response> {
   return new Promise((resolve) => {
-    setTimeout(() => {
+    window.setTimeout(() => {
       resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
       // reduces the delay for automated Cypress tests
     }, (window as any).Cypress ? 10 : 500);

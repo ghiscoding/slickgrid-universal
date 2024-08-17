@@ -29,12 +29,12 @@ export class TreeDataService {
   protected _isOneCpuCyclePassed = false;
   protected _isTreeDataEnabled = false;
   protected _subscriptions: EventSubscription[] = [];
-  protected _timer?: NodeJS.Timeout;
+  protected _timer?: number;
   protected _treeDataRecalcHandler: (() => void) | null = null;
 
   constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
     this._eventHandler = new SlickEventHandler();
-    setTimeout(() => this._isOneCpuCyclePassed = true);
+    window.setTimeout(() => this._isOneCpuCyclePassed = true);
   }
 
   set currentToggledItems(newToggledItems: TreeToggledItem[]) {
@@ -117,8 +117,8 @@ export class TreeDataService {
       // call Tree Data recalc handler, inside a debounce, when defined but only when at least 1 CPU cycle is passed
       // we wait for 1 CPU cycle to make sure that we only run it after filtering and grid initialization of tree & grid is over
       if (typeof this._treeDataRecalcHandler === 'function' && this._isOneCpuCyclePassed) {
-        clearTimeout(this._timer as NodeJS.Timeout);
-        this._timer = setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
+        clearTimeout(this._timer as number);
+        this._timer = window.setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
       }
     });
   }
