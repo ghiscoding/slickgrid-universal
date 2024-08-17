@@ -294,7 +294,7 @@ describe('CellExternalCopyManager', () => {
         Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(clearSpy).toHaveBeenCalled();
           done();
@@ -333,7 +333,7 @@ describe('CellExternalCopyManager', () => {
         Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(clearSpy).toHaveBeenCalled();
           done();
@@ -368,7 +368,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(updateCellSpy).toHaveBeenCalledWith(1, 0);
           expect(updateCellSpy).toHaveBeenCalledWith(1, 1);
@@ -411,7 +411,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(updateCellSpy).not.toHaveBeenCalledWith(1, 0);
           expect(updateCellSpy).toHaveBeenCalledWith(1, 1);
@@ -452,7 +452,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `Smith`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(updateCellSpy).toHaveBeenCalledWith(0, 1);
           expect(updateCellSpy).toHaveBeenCalledWith(0, 2);
@@ -500,7 +500,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `"Smith"`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(updateCellSpy).toHaveBeenCalledWith(0, 1);
           expect(updateCellSpy).toHaveBeenCalledWith(0, 2);
@@ -549,7 +549,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `"Smith\nDoe"`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(updateCellSpy).toHaveBeenCalledWith(0, 1);
           expect(updateCellSpy).toHaveBeenCalledWith(0, 2);
@@ -592,7 +592,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(mockClipboardCommandHandler).toHaveBeenCalled();
           done();
@@ -622,7 +622,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(mockClipboardCommandHandler).not.toHaveBeenCalled();
           done();
@@ -659,7 +659,7 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
         document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
           expect(renderSpy).toHaveBeenCalled();
           expect(setDataSpy).toHaveBeenCalledWith([{ firstName: 'John', lastName: 'Doe', age: 30 }, { firstName: 'Jane', lastName: 'Doe' }, {}, {}]);

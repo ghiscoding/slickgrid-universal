@@ -544,13 +544,13 @@ describe('PaginationService', () => {
       jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
       const now = new Date();
       const processResult = { users: [{ name: 'John' }], metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 } };
-      const promise = new Promise((resolve) => window.setTimeout(() => resolve(processResult), 1));
+      const promise = new Promise((resolve) => setTimeout(() => resolve(processResult), 1));
       jest.spyOn(mockGridOption.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(promise);
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
       service.processOnPageChanged(1);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(postSpy).toHaveBeenCalled();
         expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, mockGridOption.backendServiceApi as BackendServiceApi, 85);
         done();
@@ -570,7 +570,7 @@ describe('PaginationService', () => {
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
       service.processOnPageChanged(1);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(postSpy).toHaveBeenCalled();
         expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, mockGridOption.backendServiceApi as BackendServiceApi, 85);
         done();
@@ -926,7 +926,7 @@ describe('PaginationService', () => {
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
       service.init(gridStub, mockGridOption.pagination as Pagination);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(service.paginationOptions).toEqual(mockGridOption.pagination);
         expect(refreshSpy).toHaveBeenCalled();
         expect(onPagingSpy).toHaveBeenCalled();
@@ -945,7 +945,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination!.pageNumber = 3;
       service.init(gridStub, mockGridOption.pagination as Pagination);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(service.paginationOptions).toEqual(mockGridOption.pagination);
         expect(refreshSpy).toHaveBeenCalled();
         expect(onPagingSpy).toHaveBeenCalled();

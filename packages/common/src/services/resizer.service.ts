@@ -86,9 +86,9 @@ export class ResizerService {
     this._eventHandler?.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
     if (this._intervalId) {
-      clearInterval(this._intervalId);
+      window.clearInterval(this._intervalId);
     }
-    clearTimeout(this._timer);
+    window.clearTimeout(this._timer);
 
     if (this.gridOptions.autoResize?.resizeDetection === 'container' && this._resizeObserver) {
       this._resizeObserver.disconnect();
@@ -300,7 +300,7 @@ export class ResizerService {
       delay = delay || 0;
 
       if (delay > 0) {
-        clearTimeout(this._timer);
+        window.clearTimeout(this._timer);
         this._timer = window.setTimeout(() => resolve(this.resizeGridCallback(newSizes)), delay);
       } else {
         resolve(this.resizeGridCallback(newSizes));
@@ -699,7 +699,7 @@ export class ResizerService {
         }
 
         if (this.checkIsGridShown() && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {
-          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
+          window.clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, this.intervalRetryDelay);
     }

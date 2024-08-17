@@ -530,7 +530,7 @@ export class SlickCellExternalCopyManager {
       }
     }
     this._grid.setCellCssStyles(this._copiedCellStyleLayerKey, hash);
-    clearTimeout(this._clearCopyTI as number);
+    window.clearTimeout(this._clearCopyTI as number);
     this._clearCopyTI = window.setTimeout(() => this.clearCopySelection(), this.addonOptions?.clearCopySelectionDelay || CLEAR_COPY_SELECTION_DELAY);
   }
 }

@@ -1880,11 +1880,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             columnScrollTimer = window.setInterval(scrollColumnsLeft, 100);
           }
         } else {
-          clearInterval(columnScrollTimer);
+          window.clearInterval(columnScrollTimer);
         }
       },
       onEnd: (e: SortableEvent) => {
-        clearInterval(columnScrollTimer);
+        window.clearInterval(columnScrollTimer);
 
         if (!this.getEditorLock()?.commitCurrentEdit()) {
           return;
@@ -2241,7 +2241,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             this.updateCanvasWidth(true);
             this.render();
             this.triggerEvent(this.onColumnsResized, { triggeredByColumn });
-            clearTimeout(this._columnResizeTimer);
+            window.clearTimeout(this._columnResizeTimer);
             this._columnResizeTimer = window.setTimeout(() => this.columnResizeDragging = false, this._options.columnResizingDelay);
           }
         })
@@ -2500,11 +2500,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Clear all highlight timers that might have been left opened */
   protected clearAllTimers(): void {
-    clearTimeout(this._columnResizeTimer);
-    clearTimeout(this._executionBlockTimer);
-    clearTimeout(this._flashCellTimer);
-    clearTimeout(this._highlightRowTimer);
-    clearTimeout(this.h_editorLoader);
+    window.clearTimeout(this._columnResizeTimer);
+    window.clearTimeout(this._executionBlockTimer);
+    window.clearTimeout(this._flashCellTimer);
+    window.clearTimeout(this._highlightRowTimer);
+    window.clearTimeout(this.h_editorLoader);
   }
 
   /**
@@ -4298,13 +4298,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this._options.enableAsyncPostRender) {
       return;
     }
-    clearTimeout(this.h_postrender);
+    window.clearTimeout(this.h_postrender);
     this.h_postrender = window.setTimeout(this.asyncPostProcessRows.bind(this), this._options.asyncPostRenderDelay);
   }
 
   protected startPostProcessingCleanup(): void {
     if (this._options.enableAsyncPostRenderCleanup) {
-      clearTimeout(this.h_postrenderCleanup);
+      window.clearTimeout(this.h_postrenderCleanup);
       this.h_postrenderCleanup = window.setTimeout(this.asyncPostProcessCleanupRows.bind(this), this._options.asyncPostRenderCleanupDelay);
     }
   }
@@ -4566,7 +4566,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const blockAndExecute = () => {
       blocked = true;
-      clearTimeout(this._executionBlockTimer);
+      window.clearTimeout(this._executionBlockTimer);
       this._executionBlockTimer = window.setTimeout(unblock, minPeriod_ms);
       action.call(this);
     };
@@ -4752,7 +4752,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         return;
       }
 
-      clearTimeout(this._flashCellTimer);
+      window.clearTimeout(this._flashCellTimer);
       this._flashCellTimer = window.setTimeout(() => {
         if (times % 2 === 0) {
           cellNode.classList.add(this._options.cellFlashingCssClass || '');
@@ -4782,7 +4782,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (Array.isArray(rowCache?.rowNode) && this._options.rowHighlightCssClass) {
       rowCache.rowNode.forEach(node => node.classList.add(...classNameToList(this._options.rowHighlightCssClass)));
-      clearTimeout(this._highlightRowTimer);
+      window.clearTimeout(this._highlightRowTimer);
       this._highlightRowTimer = window.setTimeout(() => {
         rowCache.rowNode?.forEach(node => node.classList.remove(...classNameToList(this._options.rowHighlightCssClass)));
       }, duration);
@@ -5342,7 +5342,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this._options.editable && opt_editMode && this.isCellPotentiallyEditable(this.activeRow, this.activeCell)) {
         if (this._options.asyncEditorLoading) {
-          clearTimeout(this.h_editorLoader);
+          window.clearTimeout(this.h_editorLoader);
           this.h_editorLoader = window.setTimeout(() => {
             this.makeActiveCellEditable(undefined, preClickModeOn, e);
           }, this._options.asyncEditorLoadDelay);
@@ -5449,7 +5449,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     // cancel pending async call if there is one
-    clearTimeout(this.h_editorLoader);
+    window.clearTimeout(this.h_editorLoader);
 
     if (!this.isCellPotentiallyEditable(this.activeRow, this.activeCell)) {
       return;

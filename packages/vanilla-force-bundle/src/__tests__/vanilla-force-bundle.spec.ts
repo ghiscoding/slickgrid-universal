@@ -557,7 +557,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(component.paginationOptions!.pageSize).toBe(2);
           expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
           expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
@@ -583,7 +583,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(getPagingSpy).toHaveBeenCalled();
           expect(component.paginationOptions!.pageSize).toBe(10);
           expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);

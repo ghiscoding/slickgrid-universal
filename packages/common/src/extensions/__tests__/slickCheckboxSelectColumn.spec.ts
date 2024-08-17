@@ -337,7 +337,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const selectRowSpy = jest.spyOn(plugin, 'selectRows');
     plugin.init(gridStub);
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       expect(selectRowSpy).toHaveBeenCalledWith([1, 2]);
       done();
     }, 1);

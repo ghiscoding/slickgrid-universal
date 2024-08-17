@@ -573,7 +573,7 @@ describe('GridStateService', () => {
 
         dataViewStub.onSelectedRowIdsChanged.notify({ rows: mockNewRowIndexes, filteredIds: mockNewDataIds, ids: mockNewDataIds, selectedRowIds: mockNewDataIds, dataView: dataViewStub, grid: gridStub });
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(service.selectedRowDataContextIds).toEqual(mockNewDataIds);
           expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, {
             change: {

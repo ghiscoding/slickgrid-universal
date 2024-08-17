@@ -117,7 +117,7 @@ export class TreeDataService {
       // call Tree Data recalc handler, inside a debounce, when defined but only when at least 1 CPU cycle is passed
       // we wait for 1 CPU cycle to make sure that we only run it after filtering and grid initialization of tree & grid is over
       if (typeof this._treeDataRecalcHandler === 'function' && this._isOneCpuCyclePassed) {
-        clearTimeout(this._timer as number);
+        window.clearTimeout(this._timer as number);
         this._timer = window.setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
       }
     });

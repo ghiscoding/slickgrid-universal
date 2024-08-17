@@ -308,7 +308,7 @@ export default class Example18 {
   }
 
   stopSimulation() {
-    clearTimeout(this.timer);
+    window.clearTimeout(this.timer);
   }
 
   findColumnById(columnName: string): Column {

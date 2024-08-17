@@ -241,7 +241,7 @@ describe('FilterService', () => {
       service.onSearchChange!.notify(mockSearchArgs, new SlickEventData(), gridStub);
 
       expect(spyBackendChange).toHaveBeenCalledWith(expect.anything(), mockSearchArgs);
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(spyCurrentFilters).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
@@ -294,7 +294,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       service.onSearchChange!.notify(mockArgs as any, new SlickEventData(), gridStub);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, []);
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
         done();
@@ -329,7 +329,7 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs as any, new SlickEventData(), gridStub);
       service.onSearchChange!.notify(mockSearchArgs, new SlickEventData(), gridStub);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
         done();
@@ -359,7 +359,7 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new SlickEventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
         expect(spySearchChange).toHaveBeenCalledWith({
           clearFilterTriggered: undefined,
@@ -584,7 +584,7 @@ describe('FilterService', () => {
         service.clearFilters();
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
           expect(updateFilterSpy).toHaveBeenCalledWith(previousFilters, false, false, false);
@@ -605,7 +605,7 @@ describe('FilterService', () => {
         service.addRxJsResource(rxjsResourceStub);
         service.clearFilters();
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
@@ -1261,7 +1261,7 @@ describe('FilterService', () => {
       expect(spyRefresh).not.toHaveBeenCalled();
       jest.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(spyGetCols).toHaveBeenCalled();
         expect(spyPreFilter).toHaveBeenCalled();
         expect(spyRefresh).toHaveBeenCalled();

@@ -658,7 +658,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.lastRange = { bottom: 18, top: 30 };
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(mockProcess).toHaveBeenCalledWith({
           firstName: 'John', id: 123, lastName: 'Doe',
           _collapsed: false, _detailContent: '', _detailViewLoaded: false, _height: 150, _sizePadding: 6,
@@ -695,7 +695,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.lastRange = { bottom: 18, top: 30 };
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(mockProcess).toHaveBeenCalledWith({
           firstName: 'John', id: 123, lastName: 'Doe',
           _collapsed: false, _detailContent: '<span>loading...</span>', _detailViewLoaded: false, _height: 150, _sizePadding: 6,
@@ -766,7 +766,7 @@ describe('SlickRowDetailView plugin', () => {
         firstName: 'John', id: 123, lastName: 'Doe',
         _collapsed: false, _detailContent: '<span>loading...</span>', _detailViewLoaded: false, _height: 150, _sizePadding: 6,
       });
-      window.setTimeout(() => {
+      setTimeout(() => {
         expect(mockProcess).toHaveBeenCalledWith({
           firstName: 'John', id: 123, lastName: 'Doe',
           _collapsed: false, _detailContent: '<span>loading...</span>', _detailViewLoaded: false, _height: 150, _sizePadding: 6,

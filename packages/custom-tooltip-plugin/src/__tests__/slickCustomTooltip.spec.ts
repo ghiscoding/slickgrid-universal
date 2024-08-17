@@ -604,7 +604,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('loading...');
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
       expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
       expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
@@ -635,7 +635,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('loading...');
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       expect(consoleSpy).toHaveBeenCalledWith(`observable error`);
       done();
     }, 0);
@@ -671,7 +671,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('loading...');
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
       expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
       expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
@@ -704,7 +704,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('loading...');
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
       expect(tooltipElm.textContent).toBe('tooltip title text with ratio: 1.2');
       expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();

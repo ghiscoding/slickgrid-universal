@@ -169,7 +169,7 @@ export class SlickCellRangeSelector {
 
   stopIntervalTimer(): void {
     if (this._autoScrollTimerId) {
-      clearInterval(this._autoScrollTimerId);
+      window.clearInterval(this._autoScrollTimerId);
     }
   }
 
