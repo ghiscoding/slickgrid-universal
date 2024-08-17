@@ -2,7 +2,7 @@ import { format } from '@formkit/tempo';
 import type { AutocompleteItem } from 'autocompleter';
 import { dequal } from 'dequal/lite';
 import type VanillaCalendar from 'vanilla-calendar-pro';
-import type { IOptions, ISelected } from 'vanilla-calendar-pro/types';
+import type { IOptions, ISelected, FormatDateString } from 'vanilla-calendar-pro/types';
 
 import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
 import { FieldType } from '../enums';
@@ -64,12 +64,12 @@ export function setPickerDates(
       }
     }
 
-    const newSettingSelected = selectedSettings ?? {
-      dates: [pickerDates.map(p => format(p, isoFormat)).join(':')],
+    const newSettingSelected: ISelected = selectedSettings ?? {
+      dates: [pickerDates.map(p => format(p, isoFormat)).join(':') as FormatDateString],
       month: pickerDates[0]?.getMonth(),
       year: pickerDates[0]?.getFullYear(),
       time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
-    } as ISelected;
+    };
 
     if (!dequal(pickerInstance.settings!.selected, newSettingSelected)) {
       pickerInstance.settings!.selected = newSettingSelected;
