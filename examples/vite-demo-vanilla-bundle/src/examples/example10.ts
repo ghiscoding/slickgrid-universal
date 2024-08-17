@@ -302,7 +302,7 @@ export default class Example10 {
     };
 
     return new Promise<GraphqlPaginatedResult>(resolve => {
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.graphqlQuery = this.gridOptions.backendServiceApi!.service.buildQuery();
         if (this.isWithCursor) {
           // When using cursor pagination, the pagination service needs to be updated with the PageInfo data from the latest request
@@ -377,7 +377,7 @@ export default class Example10 {
       { columnId: 'name', direction: 'asc' },
       { columnId: 'company', direction: SortDirection.DESC }
     ]);
-    setTimeout(() => {
+    window.setTimeout(() => {
       this.sgb?.paginationService?.changeItemPerPage(20);
       this.sgb?.paginationService?.goToPageNumber(2);
     });

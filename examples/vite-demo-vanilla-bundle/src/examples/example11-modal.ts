@@ -40,7 +40,7 @@ export default class Example11Modal {
         this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
 
         // force editor to open (top-left)
-        setTimeout(() => this.sgb.slickGrid?.gotoCell(0, 0, true), 50);
+        window.setTimeout(() => this.sgb.slickGrid?.gotoCell(0, 0, true), 50);
       }
       this.remoteCallbackFn = bindings.remoteCallback;
       this.selectedIds = bindings.selectedIds || [];

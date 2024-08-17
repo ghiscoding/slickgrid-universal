@@ -95,7 +95,7 @@ export class GroupingAndColspanService {
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
   delayRenderPreHeaderRowGroupingTitles(delay = 0): void {
-    setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
+    window.setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
   }
 
   /** Create or Render the Pre-Header Row Grouping Titles */

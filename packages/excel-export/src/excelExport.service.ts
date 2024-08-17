@@ -165,7 +165,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // trigger a download file
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
-      setTimeout(async () => {
+      window.setTimeout(async () => {
         if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
           this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
         }

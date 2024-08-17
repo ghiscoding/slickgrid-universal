@@ -35,7 +35,7 @@ export class DualInputEditor implements Editor {
   protected _rightFieldName!: string;
   protected _originalLeftValue!: string | number;
   protected _originalRightValue!: string | number;
-  protected _timer?: NodeJS.Timeout;
+  protected _timer?: number;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -129,7 +129,7 @@ export class DualInputEditor implements Editor {
       this._bindEventService.bind(this._leftInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
       this._bindEventService.bind(this._rightInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
     } else {
-      setTimeout(() => this._leftInput.select(), 50);
+      window.setTimeout(() => this._leftInput.select(), 50);
     }
   }
 
@@ -548,8 +548,8 @@ export class DualInputEditor implements Editor {
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      clearTimeout(this._timer as NodeJS.Timeout);
-      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
+      window.clearTimeout(this._timer);
+      this._timer = window.setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 }

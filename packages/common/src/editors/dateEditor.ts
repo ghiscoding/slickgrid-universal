@@ -470,7 +470,7 @@ export class DateEditor implements Editor {
         this.save();
       }
     }
-    setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
+    window.setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
   }
 
   protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {

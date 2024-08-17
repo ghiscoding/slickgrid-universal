@@ -27,7 +27,7 @@ export class SlickCellExternalCopyManager {
 
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bodyElement: HTMLElement = document.body;
-  protected _clearCopyTI?: NodeJS.Timeout;
+  protected _clearCopyTI?: number;
   protected _copiedCellStyle = 'copied';
   protected _copiedCellStyleLayerKey = 'copy-manager';
   protected _copiedRanges: SlickRange[] | null = null;
@@ -488,7 +488,7 @@ export class SlickCellExternalCopyManager {
             const textAreaElm = this.createTextBox(clipText);
             textAreaElm.focus();
 
-            setTimeout(() => {
+            window.setTimeout(() => {
               this._bodyElement.removeChild(textAreaElm);
               // restore focus when possible
               focusElm ? focusElm.focus() : console.log('No element to restore focus to after copy?');
@@ -510,7 +510,7 @@ export class SlickCellExternalCopyManager {
         || e.key === 'Insert' && e.shiftKey && !e.ctrlKey
       )) {    // CTRL+V or Shift+INS
         const textBoxElm = this.createTextBox('');
-        setTimeout(() => this.decodeTabularData(this._grid, textBoxElm), this.addonOptions?.clipboardPasteDelay ?? CLIPBOARD_PASTE_DELAY);
+        window.setTimeout(() => this.decodeTabularData(this._grid, textBoxElm), this.addonOptions?.clipboardPasteDelay ?? CLIPBOARD_PASTE_DELAY);
         return false;
       }
     }
@@ -530,7 +530,7 @@ export class SlickCellExternalCopyManager {
       }
     }
     this._grid.setCellCssStyles(this._copiedCellStyleLayerKey, hash);
-    clearTimeout(this._clearCopyTI as NodeJS.Timeout);
-    this._clearCopyTI = setTimeout(() => this.clearCopySelection(), this.addonOptions?.clearCopySelectionDelay || CLEAR_COPY_SELECTION_DELAY);
+    window.clearTimeout(this._clearCopyTI as number);
+    this._clearCopyTI = window.setTimeout(() => this.clearCopySelection(), this.addonOptions?.clearCopySelectionDelay || CLEAR_COPY_SELECTION_DELAY);
   }
 }

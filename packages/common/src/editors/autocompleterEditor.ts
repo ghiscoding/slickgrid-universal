@@ -487,7 +487,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
         this.editorOptions.onSelectItem(item, row, cell, this.args.column, this.args.item);
       }
 
-      setTimeout(() => this._lastTriggeredByClearInput = false); // reset flag after a cycle
+      window.setTimeout(() => this._lastTriggeredByClearInput = false); // reset flag after a cycle
     }
     return false;
   }
@@ -663,7 +663,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this.args.container.appendChild(this._editorInputGroupElm);
 
     if (!this.args.compositeEditorOptions) {
-      setTimeout(() => this.focus(), 50);
+      window.setTimeout(() => this.focus(), 50);
     }
   }
 }

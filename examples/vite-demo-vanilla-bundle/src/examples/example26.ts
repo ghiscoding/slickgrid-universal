@@ -366,7 +366,7 @@ export default class Example26 {
       }
       const updatedData = filteredData.slice(firstRow, firstRow + top);
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         const backendResult = { query };
         backendResult['value'] = updatedData;
         backendResult['@odata.count'] = countTotalItems;
