@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/odata",
-  "version": "5.5.1",
+  "version": "5.5.2",
   "description": "Grid OData Service to sync a grid with an OData backend server",
   "main": "./dist/cjs/index.js",
   "types": "./dist/types/index.d.ts",
