@@ -31,13 +31,13 @@ export class ResizerService {
   protected _gridDomElm!: HTMLElement;
   protected _gridContainerElm!: HTMLElement;
   protected _pageContainerElm!: HTMLElement;
-  protected _intervalId!: number;
+  protected _intervalId?: number;
   protected _intervalRetryDelay: number = DEFAULT_INTERVAL_RETRY_DELAY;
   protected _isStopResizeIntervalRequested = false;
   protected _hasResizedByContentAtLeastOnce = false;
   protected _lastDimensions?: GridSize;
   protected _totalColumnsWidthByContent = 0;
-  protected _timer!: number;
+  protected _timer?: number;
   protected _resizePaused = false;
   protected _resizeObserver!: ResizeObserver;
   protected _subscriptions: EventSubscription[] = [];
