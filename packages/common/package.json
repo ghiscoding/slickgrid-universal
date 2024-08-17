@@ -72,19 +72,19 @@
     "@slickgrid-universal/utils": "workspace:~",
     "@types/sortablejs": "^1.15.8",
     "@types/trusted-types": "^2.0.7",
-    "autocompleter": "^9.3.0",
+    "autocompleter": "^9.3.2",
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
-    "multiple-select-vanilla": "^3.2.2",
+    "multiple-select-vanilla": "^3.3.0",
     "sortablejs": "^1.15.2",
     "un-flatten-tree": "^2.0.12",
-    "vanilla-calendar-picker": "^2.11.8"
+    "vanilla-calendar-picker": "^2.11.9"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "cssnano": "^7.0.4",
+    "cssnano": "^7.0.5",
     "npm-run-all2": "^6.2.2",
     "postcss": "^8.4.41",
     "postcss-cli": "^11.0.0",
