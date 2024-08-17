@@ -13,6 +13,7 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
+import type { TrustedHTML } from 'trusted-types/lib';
 
 import {
   type BasePubSub,

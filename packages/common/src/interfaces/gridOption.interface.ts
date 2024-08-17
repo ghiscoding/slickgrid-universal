@@ -1,5 +1,6 @@
 import type { BasePubSubService, EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
+import type { TrustedHTML } from 'trusted-types/lib';
 
 import type {
   AutoResizeOption,
