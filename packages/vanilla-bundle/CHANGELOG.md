@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.0...v5.5.1) (2024-08-17)
+
+### Bug Fixes
+
+* **common:** Tree Data should work without initial sort ([ee26a76](https://github.com/ghiscoding/slickgrid-universal/commit/ee26a76bbfdba1fff3fc697f44302b8071c0647e)) - by @ghiscoding
+
 ## [5.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.4.0...v5.5.0) (2024-08-07)
 
 ### Features
