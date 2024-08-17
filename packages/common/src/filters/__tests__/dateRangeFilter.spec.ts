@@ -1,5 +1,5 @@
 import 'jest-extended';
-import type { VanillaCalendar } from 'vanilla-calendar-picker';
+import type VanillaCalendar from 'vanilla-calendar-pro';
 
 import { FieldType } from '../../enums/index';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index';

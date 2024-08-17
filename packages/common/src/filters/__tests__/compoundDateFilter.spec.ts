@@ -1,6 +1,6 @@
 import 'jest-extended';
 import { format } from '@formkit/tempo';
-import type { VanillaCalendar } from 'vanilla-calendar-picker';
+import type VanillaCalendar from 'vanilla-calendar-pro';
 
 import { Filters } from '../filters.index';
 import { FieldType, OperatorType } from '../../enums/index';

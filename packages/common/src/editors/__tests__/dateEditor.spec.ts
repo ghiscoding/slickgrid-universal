@@ -1,5 +1,6 @@
 import { format } from '@formkit/tempo';
-import { type VanillaCalendar } from 'vanilla-calendar-picker';
+import type VanillaCalendar from 'vanilla-calendar-pro';
+import type { ISelected } from 'vanilla-calendar-pro/types';
 
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
@@ -240,7 +241,7 @@ describe('DateEditor', () => {
       expect(editor.pickerOptions.settings?.selected).toEqual({ dates: ['2001-02-04'], month: 2 });
 
       editor.changeEditorOption('range', { edgesOnly: true });
-      editor.changeEditorOption('selected', { dates: ['2020-03-10', 'today'] });
+      editor.changeEditorOption('selected', { dates: ['2020-03-10', 'today'] } as ISelected);
 
       expect(editor.pickerOptions.settings?.range).toEqual({ disablePast: true, edgesOnly: true });
       expect(editor.pickerOptions.settings?.selected).toEqual({ dates: ['2020-03-10', 'today'], month: 2 });

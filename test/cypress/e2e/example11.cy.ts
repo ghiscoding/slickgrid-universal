@@ -562,8 +562,10 @@ describe('Example 11 - Batch Editing', () => {
         .invoke('val')
         .then(text => expect(text).to.eq(`${currentYear + 1}-01-01`));
 
-      cy.get('.search-filter.filter-finish.filled')
-        .click();
+      cy.get('.search-filter.filter-finish.filled input')
+        .click({ force: true });
+
+      cy.get('.vanilla-calendar:visible');
 
       cy.get('.vanilla-calendar-day__btn_selected')
         .should('have.length', 1);

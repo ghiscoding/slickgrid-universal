@@ -108,6 +108,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   },
   datasetIdPropertyName: 'id',
   defaultFilter: Filters.input,
+  defaultEditorOptions: { date: { range: { min: 'today'}}},
   defaultBackendServiceFilterTypingDebounce: 500,
   enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
   defaultFilterPlaceholder: '🔎︎',

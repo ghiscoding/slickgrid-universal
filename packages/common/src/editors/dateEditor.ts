@@ -1,7 +1,8 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
 import { parse } from '@formkit/tempo';
-import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
+import VanillaCalendar from 'vanilla-calendar-pro';
+import type { FormatDateString, IOptions } from 'vanilla-calendar-pro/types';
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -23,7 +24,7 @@ import { setPickerDates } from '../commonEditorFilter';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
 
 /*
- * An example of a date picker editor using Vanilla-Calendar-Picker
+ * An example of a date picker editor using Vanilla-Calendar-Pro
  */
 export class DateEditor implements Editor {
   protected _bindEventService: BindingEventService;
@@ -382,7 +383,7 @@ export class DateEditor implements Editor {
     const inputValue = value ?? this._originalDate ?? '';
     if (this.calendarInstance) {
       this._originalDate = inputValue;
-      this.calendarInstance.settings.selected.dates = [inputValue];
+      this.calendarInstance.settings.selected.dates = [inputValue as FormatDateString];
       if (!inputValue) {
         this.calendarInstance.settings.selected.dates = [];
         this._inputElm.value = '';
