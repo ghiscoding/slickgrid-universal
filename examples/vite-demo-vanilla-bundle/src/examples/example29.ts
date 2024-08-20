@@ -8,13 +8,9 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 export default class Example29 {
   private _bindingEventService: BindingEventService;
   gridOptions1!: GridOption;
-  gridOptions2!: GridOption;
   columnDefinitions1!: Column[];
-  columnDefinitions2!: Column[];
   dataset1!: any[];
-  dataset2!: any[];
   sgb1!: SlickVanillaGridBundle;
-  sgb2!: SlickVanillaGridBundle;
   dragHelper;
   dragRows: number[];
   dragMode = '';
@@ -26,14 +22,11 @@ export default class Example29 {
   attached() {
     this.defineGrids();
     const gridContainer1Elm = document.querySelector(`.grid29-1`) as HTMLDivElement;
-    const gridContainer2Elm = document.querySelector(`.grid29-2`) as HTMLDivElement;
 
     // mock some data (different in each dataset)
     this.dataset1 = this.mockData(1);
-    this.dataset2 = this.mockData(2);
 
     this.sgb1 = new Slicker.GridBundle(gridContainer1Elm, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
-    this.sgb2 = new Slicker.GridBundle(gridContainer2Elm, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainer1Elm, 'ondraginit', this.handleOnDragInit.bind(this) as EventListener);
@@ -44,7 +37,6 @@ export default class Example29 {
 
   dispose() {
     this.sgb1?.dispose();
-    this.sgb2?.dispose();
   }
 
   isBrowserDarkModeEnabled() {
@@ -81,11 +73,6 @@ export default class Example29 {
         // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
       },
     };
-
-    // copy the same Grid Options and Column Definitions to 2nd grid
-    // but also add Pagination in this grid
-    this.columnDefinitions2 = this.columnDefinitions1;
-    this.gridOptions2 = { ...this.gridOptions1 };
   }
 
   mockData(gridNo: 1 | 2) {
@@ -189,24 +176,14 @@ export default class Example29 {
     this.dragRows = selectedRows;
     const dragCount = selectedRows.length;
 
-    const proxy = document.createElement('span');
-    proxy.style.position = 'absolute';
-    proxy.style.display = 'inline-block';
-    proxy.style.padding = '4px 10px';
-    proxy.style.background = '#e0e0e0';
-    proxy.style.border = '1px solid gray';
-    proxy.style.zIndex = '99999';
-    proxy.style.borderRadius = '8px';
-    proxy.style.boxShadow = '2px 2px 6px silver';
-    proxy.textContent = `Drag to Recycle Bin to delete ${dragCount} selected row(s)`;
-    document.body.appendChild(proxy);
+    const dragMsgElm = document.createElement('span');
+    dragMsgElm.className = 'drag-message';
+    dragMsgElm.textContent = `Drag to Recycle Bin to delete ${dragCount} selected row(s)`;
+    this.dragHelper = dragMsgElm;
+    document.body.appendChild(dragMsgElm);
+    document.querySelector<HTMLDivElement>('#dropzone')?.classList.add('drag-dropzone');
 
-    this.dragHelper = proxy;
-
-    const dropzoneElm = document.querySelector<HTMLDivElement>('#dropzone')!;
-    dropzoneElm.style.border = '2px dashed pink';
-
-    return proxy;
+    return dragMsgElm;
   }
 
   handleOnDrag(e: CustomEvent) {
@@ -223,12 +200,9 @@ export default class Example29 {
     // add/remove pink background color when hovering recycle bin
     const dropzoneElm = document.querySelector<HTMLDivElement>('#dropzone')!;
     if (args.target instanceof HTMLElement && (args.target.id === 'dropzone' || args.target === dropzoneElm)) {
-      dropzoneElm.style.background = 'pink'; // OR: dd.target.style.background = 'pink';
-      dropzoneElm.style.cursor = 'crosshair';
-
+      dropzoneElm.classList.add('drag-hover'); // OR: dd.target.style.background = 'pink';
     } else {
-      dropzoneElm.style.cursor = 'default';
-      dropzoneElm.style.background = '';
+      dropzoneElm.classList.remove('drag-hover');
     }
   }
 
@@ -238,8 +212,7 @@ export default class Example29 {
       return;
     }
     this.dragHelper.remove();
-    const dropzoneElm = document.querySelector<HTMLDivElement>('#dropzone')!;
-    dropzoneElm.style.border = '2px solid #e4e4e4';
+    document.querySelector<HTMLDivElement>('#dropzone')?.classList.remove('drag-dropzone', 'drag-hover');
 
     if (this.dragMode != 'recycle' || args.target.id !== 'dropzone') {
       return;
@@ -253,8 +226,6 @@ export default class Example29 {
     this.sgb1.dataset = this.dataset1;
     this.sgb1.slickGrid?.invalidate();
     this.sgb1.slickGrid?.setSelectedRows([]);
-
-    dropzoneElm.style.background = '';
   }
 
   requiredFieldValidator(value: any) {
