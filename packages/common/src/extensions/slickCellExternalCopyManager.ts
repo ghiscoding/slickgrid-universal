@@ -114,7 +114,6 @@ export class SlickCellExternalCopyManager {
 
   dispose(): void {
     this._eventHandler.unsubscribeAll();
-    this._dataWrapper.dispose();
   }
 
   clearCopySelection(): void {

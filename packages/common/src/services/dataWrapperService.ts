@@ -11,12 +11,6 @@ export class DataWrapperService {
     }
   }
 
-  dispose(): void {
-    this._dataView
-      ? this._dataView.destroy()
-      : this._grid.destroy();
-  }
-
   getDataItem(row: number): any {
     return this._dataView
       ? this._dataView.getItem(row)

@@ -37,13 +37,6 @@ describe('DataWrapper Service', () => {
       jest.spyOn(gridStub, 'hasDataView').mockReturnValueOnce(false);
     });
 
-    it('should create and dispose the service', () => {
-      service.dispose();
-
-      expect(service).toBeTruthy();
-      expect(gridStub.destroy).toHaveBeenCalled();
-    });
-
     it('should call getDataItem() method and expect item to be returned via SlickGrid.getDataItem()', () => {
       const itemMock = { id: 1, firstName: 'John', lastName: 'Doe' };
       const getDataItemSpy = jest.spyOn(gridStub, 'getDataItem').mockReturnValueOnce(itemMock);
@@ -91,18 +84,11 @@ describe('DataWrapper Service', () => {
       service.init(gridStub);
     });
 
-    it('should create and dispose the service', () => {
-      service.init(gridStub);
-      service.dispose();
-
-      expect(service).toBeTruthy();
-      expect(dataViewStub.destroy).toHaveBeenCalled();
-    });
-
     it('should call getDataItem() method and expect item to be returned via DataView.getItem()', () => {
       const itemMock = { id: 1, firstName: 'John', lastName: 'Doe' };
       const getDataItemSpy = jest.spyOn(dataViewStub, 'getItem').mockReturnValueOnce(itemMock);
 
+      service.init(gridStub);
       const result = service.getDataItem(1);
 
       expect(result).toEqual(itemMock);
