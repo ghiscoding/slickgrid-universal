@@ -32,7 +32,6 @@ export class SlickCellExternalCopyManager {
   protected _copiedCellStyle = 'copied';
   protected _copiedCellStyleLayerKey = 'copy-manager';
   protected _copiedRanges: SlickRange[] | null = null;
-  protected _dataView?: SlickDataView;
   protected _dataWrapper: DataWrapperService;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
@@ -59,9 +58,6 @@ export class SlickCellExternalCopyManager {
   init(grid: SlickGrid, options?: ExcelCopyBufferOption): void {
     this._grid = grid;
     this._dataWrapper.init(grid);
-    if (grid.hasDataView()) {
-      this._dataView = grid.getData<SlickDataView>();
-    }
     this._addonOptions = { ...this._addonOptions, ...options };
     this._copiedCellStyleLayerKey = this._addonOptions.copiedCellStyleLayerKey || 'copy-manager';
     this._copiedCellStyle = this._addonOptions.copiedCellStyle || 'copied';
@@ -92,15 +88,13 @@ export class SlickCellExternalCopyManager {
     });
 
     if (grid && typeof this._addonOptions?.onBeforePasteCell === 'function') {
-      const dataView = grid?.getData<SlickDataView>();
-
       // subscribe to this Slickgrid event of onBeforeEditCell
       this._eventHandler.subscribe(this.onBeforePasteCell, (e, args) => {
         const column: Column = grid.getColumns()[args.cell];
         const returnedArgs: OnEventArgs = {
           row: args.row!,
           cell: args.cell,
-          dataView,
+          dataView: grid.getData<SlickDataView>(),
           grid,
           columnDef: column,
           dataContext: grid.getDataItem(args.row!)
