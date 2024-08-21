@@ -82,6 +82,7 @@ const pubSubServiceStub = {
 
 const gridStub = {
   autosizeColumns: jest.fn(),
+  destroy: jest.fn(),
   getColumnIndex: jest.fn(),
   getContainerNode: jest.fn(),
   getPubSubService: () => pubSubServiceStub,
@@ -92,6 +93,7 @@ const gridStub = {
   getUID: () => GRID_UID,
   getColumns: jest.fn(),
   setColumns: jest.fn(),
+  hasDataView: () => false,
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
