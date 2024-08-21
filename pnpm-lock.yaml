@@ -259,8 +259,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12
       vanilla-calendar-pro:
-        specifier: ^2.9.9
-        version: 2.9.9
+        specifier: ^2.9.10
+        version: 2.9.10
     devDependencies:
       autoprefixer:
         specifier: ^10.4.20
@@ -9290,8 +9290,8 @@ packages:
       builtins: 5.0.1
     dev: true
 
-  /vanilla-calendar-pro@2.9.9:
-    resolution: {integrity: sha512-cUrS9iyoWXxQGZoHPi6VaR0B2lZlKZqKiLEd+85CDUQ0rGE44NJ8cwnO9Y68MY88Mznl3ad1tZAgRc988KhclQ==}
+  /vanilla-calendar-pro@2.9.10:
+    resolution: {integrity: sha512-0yqWqlvitfQSRqjyVVr613whIgp62qC1JHgXyLalcJkNkMRZXRqEr+QQQvRdQavB2PBgB4HW+GM6VU4KU0K3Ng==}
     dev: false
 
   /verror@1.10.0:
