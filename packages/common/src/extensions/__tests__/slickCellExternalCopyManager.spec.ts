@@ -5,7 +5,7 @@ import type { Column, GridOption, OnEventArgs, } from '../../interfaces/index';
 import type { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import type { InputEditor } from '../../editors/inputEditor';
-import { SlickEvent, SlickEventData, type SlickGrid, SlickRange } from '../../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid, SlickRange } from '../../core/index';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const pubSubServiceStub = {
@@ -19,16 +19,27 @@ const mockGetSelectionModel = {
   getSelectedRanges: jest.fn(),
 };
 const returnValueStub = jest.fn();
+
+const dataViewStub = {
+  destroy: jest.fn(),
+  getItem: jest.fn(),
+  getItems: jest.fn(),
+  getItemCount: jest.fn(),
+  setItems: jest.fn(),
+} as unknown as SlickDataView;
+
 const gridStub = {
+  destroy: jest.fn(),
   getActiveCell: jest.fn(),
   getActiveCellNode: jest.fn(),
   getColumns: jest.fn().mockReturnValue([
     { id: 'firstName', field: 'firstName', name: 'First Name', },
     { id: 'lastName', field: 'lastName', name: 'Last Name' },
   ]),
-  getData: jest.fn(),
+  getData: () => dataViewStub,
   getDataItem: jest.fn(),
   getDataLength: jest.fn(),
+  hasDataView: () => true,
   getPubSubService: () => pubSubServiceStub,
   getEditorLock: () => ({
     isActive: () => false,
@@ -251,6 +262,7 @@ describe('CellExternalCopyManager', () => {
         jest.spyOn(gridStub, 'getDataLength').mockReturnValue(2);
         jest.spyOn(gridStub, 'getData').mockReturnValue([{ firstName: 'John', lastName: 'Doe', age: 30 }, { firstName: 'Jane', lastName: 'Doe' }]);
         jest.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' }).mockReturnValueOnce({ firstName: 'Jane', lastName: 'Doe' });
+        jest.spyOn(gridStub, 'hasDataView').mockReturnValue(false);
       });
 
       afterEach(() => {
