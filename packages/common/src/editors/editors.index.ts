@@ -19,7 +19,7 @@ export const Editors: Record<string, EditorConstructor> = {
   /** Checkbox Editor (uses native checkbox DOM element) */
   checkbox: CheckboxEditor,
 
-  /** Date Picker Editor (which uses 3rd party lib "vanilla-calendar-picker") */
+  /** Date Picker Editor (which uses 3rd party lib "vanilla-calendar-pro") */
   date: DateEditor,
 
   /** Dual Input Editor, default input type is text but it could be (integer/float/number/password/text) */
