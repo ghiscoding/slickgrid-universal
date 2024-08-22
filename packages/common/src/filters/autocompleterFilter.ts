@@ -53,7 +53,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   callback!: FilterCallback;
   isFilled = false;
   isItemSelected = false;
-  filterContainerElm!: HTMLDivElement;
+  filterContainerElm!: HTMLElement;
 
   /** The property name for labels in the collection */
   labelName!: string;

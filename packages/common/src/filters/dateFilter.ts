@@ -47,7 +47,7 @@ export class DateFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  filterContainerElm!: HTMLDivElement;
+  filterContainerElm!: HTMLElement;
 
   constructor(protected readonly translaterService?: TranslaterService | undefined) {
     this._bindEventService = new BindingEventService();

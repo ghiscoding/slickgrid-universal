@@ -10,5 +10,5 @@ export interface FilterArguments {
   searchTerms?: SearchTerm[];
   i18n?: any;
   params?: any | any[];
-  filterContainerElm: HTMLDivElement;
+  filterContainerElm: HTMLElement;
 }

@@ -37,7 +37,7 @@ export class SliderFilter implements Filter {
   protected _sliderOptions!: CurrentSliderOption;
   protected _operator?: OperatorType | OperatorString;
   protected _filterElm!: HTMLDivElement;
-  protected _argFilterContainerElm!: HTMLDivElement;
+  protected _argFilterContainerElm!: HTMLElement;
   protected _divContainerFilterElm!: HTMLDivElement;
   protected _filterContainerElm!: HTMLDivElement;
   protected _leftSliderNumberElm?: HTMLSpanElement;

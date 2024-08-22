@@ -50,7 +50,7 @@ export class SelectFilter implements Filter {
   valueName!: string;
   enableTranslateLabel = false;
   subscriptions: Subscription[] = [];
-  filterContainerElm!: HTMLDivElement;
+  filterContainerElm!: HTMLElement;
 
   /**
    * Initialize the Filter

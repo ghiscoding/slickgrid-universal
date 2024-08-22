@@ -22,8 +22,8 @@ export class InputFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
   protected _timer?: number;
-  protected _cellContainerElm!: HTMLDivElement;
-  protected _filterContainerElm!: HTMLDivElement;
+  protected _cellContainerElm!: HTMLElement;
+  protected _filterContainerElm!: HTMLElement;
   protected _filterInputElm!: HTMLInputElement;
   protected _lastSearchValue?: number | string;
   protected _selectOperatorElm?: HTMLSelectElement;

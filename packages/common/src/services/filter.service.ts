@@ -1099,7 +1099,7 @@ export class FilterService {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
-    if (columnId !== 'selector' && columnDef?.filterable) {
+    if (columnId !== 'selector' && columnDef?.filterable && !columnDef?.hidden) {
       let searchTerms: SearchTerm[] | undefined;
       let operator: OperatorString | OperatorType | undefined;
       const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
@@ -1120,11 +1120,11 @@ export class FilterService {
         operator,
         searchTerms,
         columnDef,
-        filterContainerElm: this._grid.getHeaderRowColumn(columnId) as HTMLDivElement,
+        filterContainerElm: args.node,
         callback: this.callbackSearchEvent.bind(this)
       };
 
-      if (newFilter) {
+      if (newFilter && filterArguments.filterContainerElm) {
         newFilter.init(filterArguments, isFilterFirstRender);
         const filterExistIndex = this._filtersMetadata.findIndex((filter) => newFilter.columnDef.id === filter.columnDef.id);
 
