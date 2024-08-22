@@ -342,6 +342,9 @@ export class ExtensionService {
       extraExtensions.forEach(extension => {
         featureWithColumnIndexPositions.push(extension);
         this._requireInitExternalExtensions.push(extension);
+        if (!this._extensionList[extension.name]) {
+          this.addExtensionToList(extension.name, extension);
+        }
       });
     }
 

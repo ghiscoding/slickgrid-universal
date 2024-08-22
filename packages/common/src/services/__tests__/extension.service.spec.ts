@@ -674,6 +674,7 @@ describe('ExtensionService', () => {
 
         service.bindDifferentExtensions();
         expect(initMock).toHaveBeenCalledWith(gridStub);
+        expect(service.extensionList.rowDetailView).toBeTruthy();
       });
     });
 
