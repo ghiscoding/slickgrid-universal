@@ -551,7 +551,10 @@ export interface GridOption<C extends Column = Column> {
   /** Do we want to force fit columns in the grid at all time? */
   forceFitColumns?: boolean;
 
-  /** Defaults to false, force synchronous scrolling */
+  /**
+   * Defaults to false, force synchronous scrolling without throttling the UI render when scrolling.
+   * Note: it might be risky to disable this option on large dataset, use at your own risk
+   */
   forceSyncScrolling?: boolean;
 
   /** Formatter class factory */
@@ -739,7 +742,7 @@ export interface GridOption<C extends Column = Column> {
    */
   sanitizer?: (dirtyHtml: string) => string | TrustedHTML;
 
-  /** Defaults to 5(ms), render throttling when using virtual scroll on large dataset */
+  /** Defaults to 10(ms), render throttling when using virtual scroll on large dataset */
   scrollRenderThrottling?: number;
 
   /** CSS class name used when cell is selected */
