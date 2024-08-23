@@ -134,13 +134,13 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="collapse-all-btn"]').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 1');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 2');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 3');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 4');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 1');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 2');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 3');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 4');
     });
 
     it('should click on Expand All columns and expect 1st row as grouping title and 2nd row as a regular row', () => {
@@ -148,11 +148,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="expand-all-btn"]').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(2)`).should('contain', '0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Task');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', '0');
     });
 
     it('should "Group by Duration then Effort-Driven" and expect 1st row to be expanded, 2nd row to be collapsed and 3rd row to have group totals', () => {
@@ -165,29 +165,29 @@ describe('Example 02 - Grouping & Aggregators', () => {
         .find('span:nth(2)')
         .click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.collapsed`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-title`).should('contain', 'Effort-Driven: False');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-totals.slick-group-level-0 .slick-cell:nth(2)`).should('contain', 'Total: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-totals.slick-group-level-0 .slick-cell:nth(2)`).should('contain', 'Total: 0');
     });
 
     it('should "Group by Duration then Effort-Driven then Percent" and expect fist 2 rows to be expanded, 3rd row to be collapsed then 4th row to have group total', () => {
       cy.get('[data-test="group-duration-effort-percent-btn"]').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.expanded`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-title`).should('contain', 'Effort-Driven: False');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-2 .slick-group-toggle.collapsed`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-2 .slick-group-title`).contains(/^% Complete: [0-9]/);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-level-2 .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-level-2 .slick-group-title`).contains(/^% Complete: [0-9]/);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`).contains(/^Avg: [0-9]%$/);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2`)
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`).contains(/^Avg: [0-9]%$/);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"].slick-group-totals.slick-group-level-2`)
         .find('.slick-cell:nth(3)').contains('Avg: ');
     });
   });
@@ -212,10 +212,10 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('.item-count')
         .should('contain', 500);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 33');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 133');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 233');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 333');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 33');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 133');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 233');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 333');
     });
 
     it('should return 40000 rows using "Ta*" (starts with "Ta")', () => {
@@ -226,10 +226,10 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('.item-count')
         .should('contain', 40000);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
     });
 
     it('should return 500 rows using "*11" (ends with "11")', () => {
@@ -240,10 +240,10 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('.item-count')
         .should('contain', 500);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 11');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 21');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 31');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 11');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 21');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 31');
     });
 
     it('should return 497 rows using ">222" (greater than 222)', () => {
@@ -254,10 +254,10 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('.item-count')
         .should('contain', 497);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 311');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 411');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 511');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 611');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 311');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 411');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 511');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 611');
     });
 
     it('should return 499 rows using "<>311" (not equal to 311)', () => {
@@ -275,11 +275,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('.item-count')
         .should('contain', 499);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 11');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 111');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 211');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 411');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 511');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 11');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 111');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 211');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 411');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 511');
     });
 
     it('should return 1 rows using "=311" or "==311" (equal to 311)', () => {
@@ -297,7 +297,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('.item-count')
         .should('contain', 1);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 311');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 311');
     });
   });
 

@@ -734,6 +734,13 @@ export interface GridOption<C extends Column = Column> {
   rowSelectionOptions?: RowSelectionModelOption;
 
   /**
+   * Defaults to "top", what CSS style to we want to use to render each row top offset (we can use "top" or "transform").
+   * For example, with a default `rowHeight: 22`, the 2nd row will have a `top` offset of 44px and by default have a CSS style of `top: 44px`.
+   * NOTE: for perf reasons, the "transform" might become the default in our future major version.
+   */
+  rowTopOffsetRenderType?: 'top' | 'transform';
+
+  /**
    * Provide an optional sanitizer, a recommendation is to use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`.
    * see https://github.com/cure53/DOMPurify
    */

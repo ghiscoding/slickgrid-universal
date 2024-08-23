@@ -275,6 +275,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     editorCellNavOnLRKeys: false,
     enableMouseWheelScrollHandler: true,
     doPaging: true,
+    rowTopOffsetRenderType: 'top',
     scrollRenderThrottling: 50,
     suppressCssChangesOnHiddenInit: false,
     ffMaxSupportedCssHeight: 6000000,
@@ -3252,7 +3253,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // Rendering / Scrolling
 
   protected getRowTop(row: number): number {
-    return this._options.rowHeight! * row - this.offset;
+    return Math.round(this._options.rowHeight! * row - this.offset);
   }
 
   protected getRowFromPosition(y: number): number {
@@ -3361,9 +3362,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       rowCss += ` ${metadata.cssClasses}`;
     }
 
+    const rowDiv = createDomElement('div', { className: `slick-widget-content ${rowCss}`, role: 'row' });
     const frozenRowOffset = this.getFrozenRowOffset(row);
+    const topOffset = this.getRowTop(row) - frozenRowOffset;
+    if (this._options.rowTopOffsetRenderType === 'transform') {
+      rowDiv.style.transform = `translateY(${topOffset}px)`;
+    } else {
+      rowDiv.style.top = `${topOffset}px`; // default to `top: {offset}px`
+    }
 
-    const rowDiv = createDomElement('div', { className: `slick-widget-content ${rowCss}`, role: 'row', style: { top: `${this.getRowTop(row) - frozenRowOffset}px` } });
     let rowDivR: HTMLElement | undefined;
     divArrayL.push(rowDiv);
 
@@ -4327,7 +4334,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.rowsCache && typeof this.rowsCache === 'object') {
       Object.keys(this.rowsCache).forEach(row => {
         const rowNumber = row ? parseInt(row, 10) : 0;
-        Utils.setStyleSize(this.rowsCache[rowNumber].rowNode![0], 'top', this.getRowTop(rowNumber));
+        const rowNode = this.rowsCache[rowNumber].rowNode![0];
+        if (this._options.rowTopOffsetRenderType === 'transform') {
+          rowNode.style.transform = `translateY(${this.getRowTop(rowNumber)}px)`;
+        } else {
+          rowNode.style.top = `${this.getRowTop(rowNumber)}px`; // default to `top: {offset}px`
+        }
       });
     }
   }

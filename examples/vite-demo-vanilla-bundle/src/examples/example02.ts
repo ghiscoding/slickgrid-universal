@@ -244,6 +244,8 @@ export default class Example02 {
         hideTotalItemCount: false,
         hideLastUpdateTimestamp: false
       },
+      // forceSyncScrolling: true,
+      rowTopOffsetRenderType: 'transform' // defaults: 'top'
     };
   }
 
