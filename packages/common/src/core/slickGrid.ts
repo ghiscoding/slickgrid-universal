@@ -275,7 +275,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     editorCellNavOnLRKeys: false,
     enableMouseWheelScrollHandler: true,
     doPaging: true,
-    scrollRenderThrottling: 5,
+    scrollRenderThrottling: 10,
     suppressCssChangesOnHiddenInit: false,
     ffMaxSupportedCssHeight: 6000000,
     maxSupportedCssHeight: 1000000000,
