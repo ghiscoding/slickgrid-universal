@@ -739,7 +739,7 @@ export interface GridOption<C extends Column = Column> {
    */
   sanitizer?: (dirtyHtml: string) => string | TrustedHTML;
 
-  /** Defaults to 5, render throttling when using virtual scroll on large dataset */
+  /** Defaults to 5(ms), render throttling when using virtual scroll on large dataset */
   scrollRenderThrottling?: number;
 
   /** CSS class name used when cell is selected */
