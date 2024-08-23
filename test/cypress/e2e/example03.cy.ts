@@ -84,7 +84,7 @@ describe('Example 03 - Draggable Grouping', () => {
 
   describe('Grouping tests', () => {
     it('should "Group by Duration & sort groups by value" then Collapse All and expect only group titles', () => {
-      cy.get('[data-test="add-50k-rows-btn"]').click();
+      cy.get('[data-test="add-500k-rows-btn"]').click();
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="collapse-all-btn"]').click();
 
@@ -124,7 +124,7 @@ describe('Example 03 - Draggable Grouping', () => {
     });
 
     it('should click on Expand All columns and expect 1st row as grouping title and 2nd row as a regular row', () => {
-      cy.get('[data-test="add-50k-rows-btn"]').click();
+      cy.get('[data-test="add-500k-rows-btn"]').click();
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="expand-all-btn"]').click();
 
