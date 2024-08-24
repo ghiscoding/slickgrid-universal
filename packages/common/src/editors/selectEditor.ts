@@ -193,11 +193,6 @@ export class SelectEditor implements Editor {
     return this.args.item;
   }
 
-  /** Getter for the Editor DOM Element */
-  get editorDomElement(): HTMLElement | undefined {
-    return this.editorElm;
-  }
-
   get editorOptions(): MultipleSelectOption {
     return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions };
   }
