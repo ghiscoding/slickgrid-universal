@@ -8,19 +8,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* migrate back to Vanilla-Calendar-Pro ([bfcdbd5](https://github.com/ghiscoding/slickgrid-universal/commit/bfcdbd5f827d791a76bcb107b924ec83c43aeca4)) - by @ghiscoding
+* migrate back to Vanilla-Calendar-Pro ([bfcdbd5](https://github.com/ghiscoding/slickgrid-universal/commit/bfcdbd5f827d791a76bcb107b924ec83c43aeca4)) [#1644](https://github.com/ghiscoding/slickgrid-universal/pull/1644) - by @ghiscoding
+
 
 ### Bug Fixes
 
-* calling `preRegisterExternalExtensions` should be added to ext list ([0af5d59](https://github.com/ghiscoding/slickgrid-universal/commit/0af5d59b4c1aca597959143ec9adaa6911f38f41)) - by @ghiscoding
+* calling `preRegisterExternalExtensions` should be added to ext list ([0af5d59](https://github.com/ghiscoding/slickgrid-universal/commit/0af5d59b4c1aca597959143ec9adaa6911f38f41)) [#1647](https://github.com/ghiscoding/slickgrid-universal/pull/1647) - by @ghiscoding
 * don't render filter element on hidden column ([559d7de](https://github.com/ghiscoding/slickgrid-universal/commit/559d7de9bd37d12a3741d93866ad5bbeeafd95aa)) - by @ghiscoding
 * SlickCellExternalCopyManager should use DataView ([abed483](https://github.com/ghiscoding/slickgrid-universal/commit/abed4834a5f1103a22f0a269f0757b3cfc40576f)) - by @ghiscoding
-* SlickCellExternalCopyManager should work w/hidden cols fixes [#1634](https://github.com/ghiscoding/slickgrid-universal/issues/1634) ([b156bfa](https://github.com/ghiscoding/slickgrid-universal/commit/b156bfaf1b0774a5a8d24a42e46aaed77eb94344)) - by @ghiscoding
+* SlickCellExternalCopyManager should work w/hidden cols fixes [#1634](https://github.com/ghiscoding/slickgrid-universal/issues/1634) ([b156bfa](https://github.com/ghiscoding/slickgrid-universal/commit/b156bfaf1b0774a5a8d24a42e46aaed77eb94344)) [#1651](https://github.com/ghiscoding/slickgrid-universal/pull/1651) - by @ghiscoding
+
 
 ### Performance Improvements
 
-* add new `rowTopOffsetRenderType` grid option to use "transform" ([cf0a22c](https://github.com/ghiscoding/slickgrid-universal/commit/cf0a22c059191e1bc14b5a6ae1d56a4543389335)) - by @ghiscoding
-* decrease virtual scroll render throttling to 5ms ([4419132](https://github.com/ghiscoding/slickgrid-universal/commit/4419132e3664d8a5381a664da67d5f4ea6589ecb)), closes [/github.com/6pac/SlickGrid/issues/219#issuecomment-1630077429](https://github.com/ghiscoding//github.com/6pac/SlickGrid/issues/219/issues/issuecomment-1630077429) - by @ghiscoding-SE
+* add new `rowTopOffsetRenderType` grid option to use "transform" ([cf0a22c](https://github.com/ghiscoding/slickgrid-universal/commit/cf0a22c059191e1bc14b5a6ae1d56a4543389335)) [#1650](https://github.com/ghiscoding/slickgrid-universal/pull/1650) - by @ghiscoding
+* decrease virtual scroll render throttling to 10ms ([4419132](https://github.com/ghiscoding/slickgrid-universal/commit/4419132e3664d8a5381a664da67d5f4ea6589ecb)) [#1648](https://github.com/ghiscoding/slickgrid-universal/pull/1648) - by @ghiscoding
 
 ## [5.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.1...v5.5.2) (2024-08-17)
 
