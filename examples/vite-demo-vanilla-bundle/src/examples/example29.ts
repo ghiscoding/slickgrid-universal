@@ -11,7 +11,7 @@ export default class Example29 {
   columnDefinitions1!: Column[];
   dataset1!: any[];
   sgb1!: SlickVanillaGridBundle;
-  dragHelper;
+  dragHelper: HTMLElement;
   dragRows: number[];
   dragMode = '';
 
@@ -95,9 +95,9 @@ export default class Example29 {
   }
 
   onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number; }) {
-    for (let i = 0; i < data.rows.length; i++) {
+    for (const dataRow of data.rows) {
       // no point in moving before or after itself
-      if (data.rows[i] == data.insertBefore || data.rows[i] == data.insertBefore - 1) {
+      if (dataRow === data.insertBefore || dataRow === data.insertBefore - 1) {
         e.stopPropagation();
         return false;
       }
@@ -114,14 +114,13 @@ export default class Example29 {
 
     rows.sort((a, b) => a - b);
 
-    for (let i = 0; i < rows.length; i++) {
-      extractedRows.push(this.sgb1.dataset[rows[i]]);
+    for (const row of rows) {
+      extractedRows.push(this.sgb1.dataset[row]);
     }
 
     rows.reverse();
 
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
+    for (const row of rows) {
       if (row < insertBefore) {
         left.splice(row, 1);
       } else {
@@ -132,8 +131,9 @@ export default class Example29 {
     this.dataset1 = left.concat(extractedRows.concat(right));
 
     const selectedRows: number[] = [];
-    for (let i = 0; i < rows.length; i++)
+    for (let i = 0; i < rows.length; i++) {
       selectedRows.push(left.length + i);
+    }
 
     this.sgb1.slickGrid?.resetActiveCell();
     this.sgb1.dataset = this.dataset1; // update dataset and re-render the grid
@@ -220,8 +220,8 @@ export default class Example29 {
 
     // reaching here means that we'll remove the row that we started dragging from the dataset
     const rowsToDelete = this.dragRows.sort().reverse();
-    for (let i = 0; i < rowsToDelete.length; i++) {
-      this.dataset1.splice(rowsToDelete[i], 1);
+    for (const rowToDelete of rowsToDelete) {
+      this.sgb1.dataset.splice(rowToDelete, 1);
     }
     this.sgb1.dataset = this.dataset1;
     this.sgb1.slickGrid?.invalidate();
