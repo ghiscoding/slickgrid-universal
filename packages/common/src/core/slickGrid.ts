@@ -2252,7 +2252,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected getVBoxDelta(el: HTMLElement): number {
     const p = ['borderTopWidth', 'borderBottomWidth', 'paddingTop', 'paddingBottom'];
-    const styles = getComputedStyle(el);
+    const styles = window.getComputedStyle(el);
     let delta = 0;
     p.forEach((val) => delta += Utils.toFloat(styles[val as any]));
     return delta;
@@ -2367,7 +2367,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.cellWidthDiff = this.cellHeightDiff = 0;
 
     let el = createDomElement('div', { className: 'slick-state-default slick-header-column', style: { visibility: 'hidden' }, textContent: '-' }, header);
-    let style = getComputedStyle(el);
+    let style = window.getComputedStyle(el);
     if (style.boxSizing !== 'border-box') {
       h.forEach((val) => this.headerColumnWidthDiff += Utils.toFloat(style[val as any]));
       v.forEach((val) => this.headerColumnHeightDiff += Utils.toFloat(style[val as any]));
@@ -2376,7 +2376,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const r = createDomElement('div', { className: 'slick-row' }, this._canvas[0]);
     el = createDomElement('div', { className: 'slick-cell', id: '', style: { visibility: 'hidden' }, textContent: '-' }, r);
-    style = getComputedStyle(el);
+    style = window.getComputedStyle(el);
     if (style.boxSizing !== 'border-box') {
       h.forEach((val) => this.cellWidthDiff += Utils.toFloat(style[val as any]));
       v.forEach((val) => this.cellHeightDiff += Utils.toFloat(style[val as any]));
@@ -3754,7 +3754,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const preHeaderH = (this._options.createPreHeaderPanel && this._options.showPreHeaderPanel) ? this._options.preHeaderPanelHeight! + this.getVBoxDelta(this._preHeaderPanelScroller) : 0;
       const topHeaderH = (this._options.createTopHeaderPanel && this._options.showTopHeaderPanel) ? this._options.topHeaderPanelHeight! + this.getVBoxDelta(this._topHeaderPanelScroller) : 0;
 
-      const style = getComputedStyle(this._container);
+      const style = window.getComputedStyle(this._container);
       this.viewportH = Utils.toFloat(style.height)
         - Utils.toFloat(style.paddingTop)
         - Utils.toFloat(style.paddingBottom)
@@ -3811,7 +3811,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this._options.autoHeight) {
         if (this.hasFrozenColumns()) {
-          const style = getComputedStyle(this._headerScrollerL);
+          const style = window.getComputedStyle(this._headerScrollerL);
           Utils.height(this._container, this.paneTopH + Utils.toFloat(style.height));
         }
 
@@ -5558,7 +5558,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         break;
       }
 
-      const styles = getComputedStyle(elem);
+      const styles = window.getComputedStyle(elem);
       if (box.visible && elem.scrollHeight !== elem.offsetHeight && styles['overflowY'] !== 'visible') {
         box.visible = box.bottom > elem.scrollTop && box.top < elem.scrollTop + elem.clientHeight;
       }

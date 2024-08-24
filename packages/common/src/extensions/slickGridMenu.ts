@@ -365,7 +365,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       const menuIconOffset = getOffset(buttonElm); // get button offset position
       const parentOffset = getOffset(parentElm);
       const gridMenuOptions = addonOptions ?? this._addonOptions;
-      const buttonComptStyle = getComputedStyle(iconButtonElm as HTMLButtonElement);
+      const buttonComptStyle = window.getComputedStyle(iconButtonElm as HTMLButtonElement);
       const buttonWidth = parseInt(buttonComptStyle?.width ?? this._defaults?.menuWidth, 10);
 
       const menuWidth = menuElm?.offsetWidth ?? 0;
