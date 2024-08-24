@@ -5232,7 +5232,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const y2 = y1 + this._options.rowHeight! - 1;
     let x1 = 0;
     for (let i = 0; i < cell; i++) {
-      if (!this.columns[i]) {
+      if (!this.columns[i] || this.columns[i].hidden) {
         continue;
       }
 
