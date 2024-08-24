@@ -467,22 +467,26 @@ export class SlickCellExternalCopyManager {
               if (clipTextRows.length === 0 && this._addonOptions.includeHeaderWhenCopying) {
                 const clipTextHeaders: string[] = [];
                 for (let j = range.fromCell; j < range.toCell + 1; j++) {
-                  const colName: string = columns[j].name instanceof HTMLElement
-                    ? stripTags((columns[j].name as HTMLElement).innerHTML)
-                    : columns[j].name as string;
-                  if (colName.length > 0 && !columns[j].hidden) {
-                    clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));
+                  if (columns[j]) {
+                    const colName: string = columns[j].name instanceof HTMLElement
+                      ? stripTags((columns[j].name as HTMLElement).innerHTML)
+                      : columns[j].name as string;
+                    if (colName.length > 0 && !columns[j].hidden) {
+                      clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));
+                    }
                   }
                 }
                 clipTextRows.push(clipTextHeaders.join('\t'));
               }
 
               for (let j = range.fromCell; j < range.toCell + 1; j++) {
-                const colName: string = columns[j].name instanceof HTMLElement
-                  ? stripTags((columns[j].name as HTMLElement).innerHTML)
-                  : columns[j].name as string;
-                if (colName.length > 0 && !columns[j].hidden) {
-                  clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], i, j, e));
+                if (columns[j]) {
+                  const colName: string = columns[j].name instanceof HTMLElement
+                    ? stripTags((columns[j].name as HTMLElement).innerHTML)
+                    : columns[j].name as string;
+                  if (colName.length > 0 && !columns[j].hidden) {
+                    clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], i, j, e));
+                  }
                 }
               }
               clipTextRows.push(clipTextCells.join('\t'));
