@@ -1,7 +1,7 @@
 import { createDomElement, getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import { DataWrapperService } from '../services/dataWrapperService';
-import type { Column, Editor, EditorConstructor, ElementPosition, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
+import type { Column, CssStyleHash, Editor, EditorConstructor, ElementPosition, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
 import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index';
 
 // using external SlickGrid JS libraries
@@ -311,31 +311,40 @@ export class SlickCellExternalCopyManager {
       maxDestX: this._grid.getColumns().length,
       h: 0,
       w: 0,
-
       execute: () => {
         clipCommand.h = 0;
         for (let y = 0; y < clipCommand.destH; y++) {
           clipCommand.oldValues[y] = [];
           clipCommand.w = 0;
           clipCommand.h++;
+          let xOffset = 0; // the x offset for hidden col
+
           for (let x = 0; x < clipCommand.destW; x++) {
-            clipCommand.w++;
             const desty = activeRow + y;
             const destx = activeCell + x;
+            const column = columns[destx];
+
+            // paste on hidden column will be skipped, but we need to paste 1 cell further on X axis
+            // we'll increase our X and increase the offset`
+            if (column.hidden) {
+              clipCommand.destW++;
+              xOffset++;
+              continue;
+            }
+            clipCommand.w++;
 
             if (desty < clipCommand.maxDestY && destx < clipCommand.maxDestX) {
-              // const nd = this._grid.getCellNode(desty, destx);
               const dt = this._dataWrapper.getDataItem(desty);
 
-              if (this._grid.triggerEvent(this.onBeforePasteCell, { row: desty, cell: destx, dt, column: columns[destx], target: 'grid' }).getReturnValue() === false) {
+              if (this._grid.triggerEvent(this.onBeforePasteCell, { row: desty, cell: destx, dt, column, target: 'grid' }).getReturnValue() === false) {
                 continue;
               }
 
-              clipCommand.oldValues[y][x] = dt[columns[destx]['field']];
+              clipCommand.oldValues[y][x - xOffset] = dt[column['field']];
               if (oneCellToMultiple) {
-                this.setDataItemValueForColumn(dt, columns[destx], clippedRange[0][0]);
+                this.setDataItemValueForColumn(dt, column, clippedRange[0][0]);
               } else {
-                this.setDataItemValueForColumn(dt, columns[destx], clippedRange[y] ? clippedRange[y][x] : '');
+                this.setDataItemValueForColumn(dt, column, clippedRange[y] ? clippedRange[y][x - xOffset] : '');
               }
               this._grid.updateCell(desty, destx);
               this._grid.onCellChange.notify({
@@ -359,7 +368,6 @@ export class SlickCellExternalCopyManager {
         this._grid.getSelectionModel()?.setSelectedRanges([bRange]);
         this.onPasteCells.notify({ ranges: [bRange] });
       },
-
       undo: () => {
         for (let y = 0; y < clipCommand.destH; y++) {
           for (let x = 0; x < clipCommand.destW; x++) {
@@ -522,7 +530,7 @@ export class SlickCellExternalCopyManager {
     this.clearCopySelection();
 
     const columns = this._grid.getColumns();
-    const hash: any = {};
+    const hash: CssStyleHash = {};
     for (const range of ranges) {
       for (let j = range.fromRow; j <= range.toRow; j++) {
         hash[j] = {};
