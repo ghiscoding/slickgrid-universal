@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.2...v5.6.0) (2024-08-24)
+
+### Performance Improvements
+
+* add new `rowTopOffsetRenderType` grid option to use "transform" ([cf0a22c](https://github.com/ghiscoding/slickgrid-universal/commit/cf0a22c059191e1bc14b5a6ae1d56a4543389335)) - by @ghiscoding
+
 ## [5.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.1...v5.5.2) (2024-08-17)
 
 ### Bug Fixes
