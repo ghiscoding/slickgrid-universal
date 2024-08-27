@@ -61,6 +61,6 @@ describe('the Translate Formatter', () => {
 
   it('should throw an error when no Translate service provided to neither ColumnDefinition and GridOptions', () => {
     (gridStub.getOptions as jest.Mock).mockReturnValueOnce({});
-    expect(() => translateFormatter(1, 1, null, {} as Column, {}, gridStub)).toThrowError('"Formatters.translate" requires the Translate Service');
+    expect(() => translateFormatter(1, 1, null, {} as Column, {}, gridStub)).toThrow('"Formatters.translate" requires the Translate Service');
   });
 });

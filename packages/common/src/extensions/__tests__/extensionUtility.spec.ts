@@ -205,7 +205,7 @@ describe('extensionUtility', () => {
       const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
-      expect(() => utility.getPickerTitleOutputString('columnTitle', 'gridMenu')).toThrowError('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+      expect(() => utility.getPickerTitleOutputString('columnTitle', 'gridMenu')).toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
     });
 
     describe('translateWhenEnabledAndServiceExist method', () => {

@@ -12,7 +12,7 @@ describe('the ComplexObject Formatter', () => {
 
   it('should throw an error when omitting to pass "complexFieldLabel" to "params"', () => {
     expect(() => complexObjectFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrowError('For the Formatters.complexObject to work properly');
+      .toThrow('For the Formatters.complexObject to work properly');
   });
 
   it('should return empty string when no column definition is provided', () => {

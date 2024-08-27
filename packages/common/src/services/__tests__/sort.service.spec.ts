@@ -469,26 +469,26 @@ describe('SortService', () => {
     });
 
     it('should throw an error when not passing a grid in the args', () => {
-      expect(() => service.onBackendSortChanged(undefined, undefined as any)).toThrowError('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function');
+      expect(() => service.onBackendSortChanged(undefined, undefined as any)).toThrow('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function');
     });
 
     it('should throw an error when backend service is missing', () => {
       gridOptionMock.backendServiceApi!.service = undefined as any;
       service.bindBackendOnSort(gridStub);
-      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should throw an error when backend "process" method is missing', () => {
       gridOptionMock.backendServiceApi!.process = undefined as any;
       service.bindBackendOnSort(gridStub);
-      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should use an empty grid option object when grid "getOptions" method is not available', () => {
       gridStub.getOptions = () => undefined as any;
 
       service.bindBackendOnSort(gridStub);
-      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should execute the "onError" method when the Promise throws an error & also execute internal "errorCallback" to reapply previous sort icons+query', (done) => {

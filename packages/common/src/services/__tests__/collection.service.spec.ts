@@ -322,7 +322,7 @@ describe('CollectionService', () => {
       const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
 
       expect(() => service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: FieldType.string }, true))
-        .toThrowError('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+        .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
     });
   });
 });

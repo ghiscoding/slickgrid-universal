@@ -13,13 +13,13 @@ const gridStub = {
 describe('the ArrayObjectToCsv Formatter', () => {
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
     expect(() => maskFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrowError('You must provide a "mask" via the generic "params" options');
+      .toThrow('You must provide a "mask" via the generic "params" options');
   });
 
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
     const params = { mask: '' };
     expect(() => maskFormatter(0, 0, 'anything', { field: 'user', params } as Column, {}, gridStub))
-      .toThrowError('You must provide a "mask" via the generic "params" options');
+      .toThrow('You must provide a "mask" via the generic "params" options');
   });
 
   it('should return null when no value is provided', () => {

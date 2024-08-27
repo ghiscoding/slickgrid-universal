@@ -122,7 +122,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should throw an error when argument provided is not a Promise neither an Observable', async () => {
-      expect(() => castObservableToPromise(rxjs, null as any)).toThrowError('Something went wrong,');
+      expect(() => castObservableToPromise(rxjs, null as any)).toThrow('Something went wrong,');
     });
 
     it('should return original Promise when argument is already a Promise', async () => {
@@ -221,7 +221,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should throw an error when the children property name argument is missing', () => {
-      expect(() => findItemInTreeStructure(mockColumns, x => x.file === 'pop', '')).toThrowError('findRecursive requires parameter "childrenPropertyName"');
+      expect(() => findItemInTreeStructure(mockColumns, x => x.file === 'pop', '')).toThrow('findRecursive requires parameter "childrenPropertyName"');
     });
 
     it('should find an item from a hierarchical array', () => {

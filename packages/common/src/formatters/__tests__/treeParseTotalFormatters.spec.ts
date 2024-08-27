@@ -61,6 +61,6 @@ describe('TreeParseTotalFormatters', () => {
   it('should throw an error when this formatter is used without groupTotalsFormatter or treeTotalsFormatter', () => {
     const cellValue = 2.1;
     expect(() => treeParseTotalsFormatter(1, 1, cellValue, {} as Column, {}, gridStub))
-      .toThrowError('[Slickgrid-Universal] When using Formatters.treeParseTotals, you must provide a total formatter via "groupTotalsFormatter" or "treeTotalsFormatter".');
+      .toThrow('[Slickgrid-Universal] When using Formatters.treeParseTotals, you must provide a total formatter via "groupTotalsFormatter" or "treeTotalsFormatter".');
   });
 });

@@ -32,7 +32,7 @@ describe('Tree Formatter', () => {
 
   it('should throw an error when oarams are mmissing', () => {
     expect(() => treeFormatter(1, 1, 'blah', {} as Column, {}, gridStub))
-      .toThrowError('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
+      .toThrow('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
   });
 
   it('should return empty string when value is null', () => {

@@ -284,7 +284,7 @@ describe('GridOdataService', () => {
       service.init(serviceOptions, paginationOptions, gridStub);
 
       expect(() => service.processOnFilterChanged(null as any, { grid: undefined as any } as any))
-        .toThrowError('Something went wrong when trying create the GridOdataService');
+        .toThrow('Something went wrong when trying create the GridOdataService');
     });
 
     it('should return a query with the new filter', () => {
@@ -541,13 +541,13 @@ describe('GridOdataService', () => {
     it('should throw an error when filter columnId is not found to be part of the column definitions', () => {
       const mockCurrentFilter = { columnDef: { id: 'city', field: 'city' }, columnId: 'city', operator: 'EQ', searchTerms: ['Boston'] } as CurrentFilter;
       service.init(serviceOptions, paginationOptions, gridStub);
-      expect(() => service.updateFilters([mockCurrentFilter], true)).toThrowError('[GridOData Service]: Something went wrong in trying to get the column definition');
+      expect(() => service.updateFilters([mockCurrentFilter], true)).toThrow('[GridOData Service]: Something went wrong in trying to get the column definition');
     });
 
     it('should throw an error when neither "field" nor "name" are being part of the column definition', () => {
       const mockColumnFilters = { gender: { columnId: 'gender', columnDef: { id: 'gender' }, searchTerms: ['female'], operator: 'EQ' }, } as unknown as ColumnFilters;
       service.init(serviceOptions, paginationOptions, gridStub);
-      expect(() => service.updateFilters(mockColumnFilters, false)).toThrowError('GridOData filter could not find the field name to query the search');
+      expect(() => service.updateFilters(mockColumnFilters, false)).toThrow('GridOData filter could not find the field name to query the search');
     });
 
     it('should return a query with the new filter when filters are passed as a filter trigger by a filter event and is of type ColumnFilters', () => {

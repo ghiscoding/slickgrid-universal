@@ -116,7 +116,7 @@ describe('Resizer Service', () => {
 
   describe('init method', () => {
     it('should throw an error when there is no grid object defined', () => {
-      expect(() => service.init(null as any, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.');
+      expect(() => service.init(null as any, divContainer)).toThrow('[Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.');
     });
 
     it('should call "bindAutoResizeDataGrid" when autoResize is enabled', () => {
@@ -159,7 +159,7 @@ describe('Resizer Service', () => {
       mockGridOptions.autoResize!.resizeDetection = 'container';
       mockGridOptions.autoResize!.container = '#doesnotexist';
 
-      expect(() => service.init(gridStub, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"');
+      expect(() => service.init(gridStub, divContainer)).toThrow('[Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"');
     });
 
     it('should execute "resizeGrid" when "resizeDetection" is "container"', () => {
@@ -276,7 +276,7 @@ describe('Resizer Service', () => {
       expect(gridSpy).toHaveBeenCalled();
       expect(serviceResizeSpy).toHaveBeenCalled();
       expect(window.innerHeight).not.toEqual(previousHeight);
-      expect(serviceCalculateSpy).toReturnWith(dimensionResult);
+      expect(serviceCalculateSpy).toHaveReturnedWith(dimensionResult);
       expect(lastDimensions).toEqual(dimensionResult);
       expect(pubSubSpy).toHaveBeenCalledWith(`onGridBeforeResize`);
       expect(pubSubSpy).toHaveBeenCalledWith(`onGridAfterResize`, dimensionResult);
@@ -296,7 +296,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(mockGridOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: fixedHeight, width: fixedWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: fixedHeight, width: fixedWidth });
     });
 
     it('should calculate new dimensions even when no container element is defined', () => {
@@ -312,7 +312,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(mockGridOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING), width: fixedWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING), width: fixedWidth });
     });
 
     it('should calculate new dimensions when calculateGridNewDimensions is called', () => {
@@ -327,7 +327,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(mockGridOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING), width: fixedWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING), width: fixedWidth });
     });
 
     it('should calculate new dimensions, minus the custom footer height, when calculateGridNewDimensions is called', () => {
@@ -343,7 +343,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(newOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING - DATAGRID_FOOTER_HEIGHT), width: fixedWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING - DATAGRID_FOOTER_HEIGHT), width: fixedWidth });
     });
 
     it('should calculate new dimensions, minus the custom footer height passed in grid options, when calculateGridNewDimensions is called', () => {
@@ -360,7 +360,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(newOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING - footerHeight), width: fixedWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING - footerHeight), width: fixedWidth });
     });
 
     it('should use maxHeight when new dimensions are higher than maximum defined', () => {
@@ -375,7 +375,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(mockGridOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: mockGridOptions.autoResize!.maxHeight, width: fixedWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: mockGridOptions.autoResize!.maxHeight, width: fixedWidth });
     });
 
     it('should use maxWidth when new dimensions are higher than maximum defined', () => {
@@ -390,7 +390,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(mockGridOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: fixedHeight, width: mockGridOptions.autoResize!.maxWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: fixedHeight, width: mockGridOptions.autoResize!.maxWidth });
     });
 
     it('should use minWidth constant when new dimensions are lower than minimum defined', () => {
@@ -405,7 +405,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(mockGridOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: fixedHeight, width: DATAGRID_MIN_WIDTH });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: fixedHeight, width: DATAGRID_MIN_WIDTH });
     });
 
     it('should calculate new width dimensions minus a padding when "rightPadding" is defined', () => {
@@ -420,7 +420,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions(mockGridOptions);
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: fixedHeight, width: newWidth - mockGridOptions.autoResize!.rightPadding! });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: fixedHeight, width: newWidth - mockGridOptions.autoResize!.rightPadding! });
     });
 
     it('should calculate new dimensions minus a padding when "bottomPadding" is defined in "autoResize" and calculateGridNewDimensions is called', () => {
@@ -436,7 +436,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { bottomPadding: inputBottomPadding } });
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
-      expect(serviceCalculateSpy).toReturnWith({ height: (newHeight - inputBottomPadding), width: fixedWidth });
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: (newHeight - inputBottomPadding), width: fixedWidth });
     });
 
     it('should use new dimensions when passed as argument to the "resizeGrid" method', (done) => {
@@ -466,7 +466,7 @@ describe('Resizer Service', () => {
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
       const calculatedDimensions = { height: (newHeight - DATAGRID_BOTTOM_PADDING - DATAGRID_PAGINATION_HEIGHT), width: fixedWidth };
-      expect(serviceCalculateSpy).toReturnWith(calculatedDimensions);
+      expect(serviceCalculateSpy).toHaveReturnedWith(calculatedDimensions);
       expect(newGridDimensions).toEqual(calculatedDimensions);
       expect(pubSubSpy).toHaveBeenCalledWith('onGridBeforeResize');
       expect(pubSubSpy).toHaveBeenCalledWith('onGridAfterResize', newGridDimensions);
@@ -483,7 +483,7 @@ describe('Resizer Service', () => {
       service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { calculateAvailableSizeBy: 'container' } });
 
       // with JSDOM the height is always 0 so we can assume that the height will be the minimum height (without the padding)
-      expect(calculateSpy).toReturnWith({ height: DATAGRID_MIN_HEIGHT, width: fixedWidth });
+      expect(calculateSpy).toHaveReturnedWith({ height: DATAGRID_MIN_HEIGHT, width: fixedWidth });
     });
 
     it('should call the autosizeColumns from the core lib when "enableAutoSizeColumns" is set and the new width is wider than prior width', () => {
@@ -649,17 +649,16 @@ describe('Resizer Service', () => {
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
 
-        expect(setColumnsSpy).toHaveBeenCalledWith(
-          expect.arrayContaining([
-            expect.objectContaining({ id: 'userId', width: 30 }),
-            expect.objectContaining({ id: 'firstName', width: 56 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
-            expect.objectContaining({ id: 'lastName', width: 68 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 67.6 ceil to => 68
-            expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
-            expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
-            expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
-            expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-            expect.objectContaining({ id: 'zip', width: 48 }), // longest number "777555"
-          ]));
+        expect(setColumnsSpy).toHaveBeenCalledWith([
+          expect.objectContaining({ id: 'userId', width: 30 }),
+          expect.objectContaining({ id: 'firstName', width: 56 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
+          expect.objectContaining({ id: 'lastName', width: 68 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 67.6 ceil to => 68
+          expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
+          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+          expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
+          expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
+          expect.objectContaining({ id: 'zip', width: 48 }), // longest number "777555"
+        ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
 
@@ -691,17 +690,16 @@ describe('Resizer Service', () => {
         service.resizeColumnsByCellContent(true);
 
         // same as previous except firstName/lastName have editors with padding of 5px
-        expect(setColumnsSpy).toHaveBeenCalledWith(
-          expect.arrayContaining([
-            expect.objectContaining({ id: 'userId', width: 30 }),
-            expect.objectContaining({ id: 'firstName', width: 61 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 60.28 ceil to => 61
-            expect.objectContaining({ id: 'lastName', width: 73 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 72.6 ceil to => 73
-            expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
-            expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
-            expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
-            expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-            expect.objectContaining({ id: 'zip', width: 48 }), // longest number "777555"
-          ]));
+        expect(setColumnsSpy).toHaveBeenCalledWith([
+          expect.objectContaining({ id: 'userId', width: 30 }),
+          expect.objectContaining({ id: 'firstName', width: 61 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 60.28 ceil to => 61
+          expect.objectContaining({ id: 'lastName', width: 73 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 72.6 ceil to => 73
+          expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
+          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+          expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
+          expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
+          expect.objectContaining({ id: 'zip', width: 48 }), // longest number "777555"
+        ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
 

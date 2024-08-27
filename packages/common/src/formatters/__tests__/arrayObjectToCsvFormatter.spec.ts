@@ -12,7 +12,7 @@ describe('the ArrayObjectToCsv Formatter', () => {
 
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
     expect(() => arrayObjectToCsvFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrowError('Formatters.arrayObjectToCsv requires you to pass an array of "propertyNames"');
+      .toThrow('Formatters.arrayObjectToCsv requires you to pass an array of "propertyNames"');
   });
 
   it('should return original input value when the "propertyNames" is not found in the given object', () => {

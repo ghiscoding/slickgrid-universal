@@ -4,7 +4,7 @@ import { iconFormatter } from '../iconFormatter';
 describe('the Icon Formatter', () => {
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
     expect(() => iconFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrowError('[Slickgrid-Universal] When using `Formatters.icon`, you must provide the "iconCssClass" via the generic "params"');
+      .toThrow('[Slickgrid-Universal] When using `Formatters.icon`, you must provide the "iconCssClass" via the generic "params"');
   });
 
   it('should always return a <i> with the icon class name provided in the "icon" property from "params"', () => {
