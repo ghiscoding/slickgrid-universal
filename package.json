@@ -97,6 +97,11 @@
     "typescript-eslint": "^8.2.0",
     "whatwg-fetch": "^3.6.20"
   },
+  "pnpm": {
+    "overrides": {
+      "braces": "^3.0.3"
+    }
+  },
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
