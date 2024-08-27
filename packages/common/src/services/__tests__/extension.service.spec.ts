@@ -957,7 +957,7 @@ describe('ExtensionService', () => {
 
     it('should throw an error if "enableTranslate" is set but the Translate Service is null and "translateColumnHeaders" method is called', () => {
       expect(() => service.translateColumnHeaders())
-        .toThrowError('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+        .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
     });
 
     it('should throw an error if "enableTranslate" is set but the Translate Service is null and "translateItems" private method is called', (done) => {

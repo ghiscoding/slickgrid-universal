@@ -202,7 +202,7 @@ describe('SlickRowDetailView plugin', () => {
   });
 
   it('should throw an error when calling "create" without "rowDetailView" options in grid options', () => {
-    expect(() => plugin.create(mockColumns, {})).toThrowError('[Slickgrid-Universal] The Row Detail View requires options to be passed via the "rowDetailView" property of the Grid Options');
+    expect(() => plugin.create(mockColumns, {})).toThrow('[Slickgrid-Universal] The Row Detail View requires options to be passed via the "rowDetailView" property of the Grid Options');
   });
 
   it('should add the Row Detail to the column definitions at index when calling "create" without specifying position', () => {

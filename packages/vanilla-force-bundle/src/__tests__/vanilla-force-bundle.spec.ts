@@ -409,8 +409,8 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.dataset = mockData;
 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
-        expect(setOptionSpy).toBeCalledWith(mockGridOptions, false, true);
-        expect(sharedOptionSpy).toBeCalledWith(mockGridOptions);
+        expect(setOptionSpy).toHaveBeenCalledWith(mockGridOptions, false, true);
+        expect(sharedOptionSpy).toHaveBeenCalledWith(mockGridOptions);
       });
 
       it('should merge grid options with global options and expect bottom padding to be calculated', () => {
@@ -425,8 +425,8 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.dataset = mockData;
 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
-        expect(setOptionSpy).toBeCalledWith(mockGridOptions, false, true);
-        expect(sharedOptionSpy).toBeCalledWith(mockGridOptions);
+        expect(setOptionSpy).toHaveBeenCalledWith(mockGridOptions, false, true);
+        expect(sharedOptionSpy).toHaveBeenCalledWith(mockGridOptions);
       });
 
       it('should merge paginationOptions when some already exist', () => {

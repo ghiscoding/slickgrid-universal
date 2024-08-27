@@ -165,11 +165,11 @@ describe('Grid Service', () => {
     });
 
     it('should throw an error when 1st argument for the item object is missing', () => {
-      expect(() => service.upsertItem(null as any)).toThrowError('[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "id" property');
+      expect(() => service.upsertItem(null as any)).toThrow('[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "id" property');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
-      expect(() => service.upsertItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "id" property');
+      expect(() => service.upsertItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "id" property');
     });
 
     it('should expect the service to call the "addItem" when calling "upsertItem" with the item not being found in the grid', () => {
@@ -301,12 +301,12 @@ describe('Grid Service', () => {
 
     it('should throw an error when calling "upsertItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      expect(() => service.upsertItemById(undefined as any, mockItem)).toThrowError('[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property');
+      expect(() => service.upsertItemById(undefined as any, mockItem)).toThrow('[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "upsertItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      expect(() => service.upsertItemById(undefined as any, mockItem, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property');
+      expect(() => service.upsertItemById(undefined as any, mockItem, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property');
     });
 
     it('should call the "upsertItemById" method and expect it to call the "addItem" with default boolean flags', () => {
@@ -366,11 +366,11 @@ describe('Grid Service', () => {
     });
 
     it('should throw an error when 1st argument for the item object is missing', () => {
-      expect(() => service.updateItem(null as any)).toThrowError('[Slickgrid-Universal] Calling Update of an item requires the item to include an "id" property');
+      expect(() => service.updateItem(null as any)).toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "id" property');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
-      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Calling Update of an item requires the item to include an "id" property');
+      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "id" property');
     });
 
     it('should expect the service to call the "updateItemById" when calling "updateItem"', () => {
@@ -516,28 +516,28 @@ describe('Grid Service', () => {
 
     it('should throw an error when calling "updateItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      expect(() => service.updateItemById(undefined as any, mockItem)).toThrowError('[Slickgrid-Universal] Cannot update a row without a valid "id"');
+      expect(() => service.updateItemById(undefined as any, mockItem)).toThrow('[Slickgrid-Universal] Cannot update a row without a valid "id"');
     });
 
     it('should throw an error when calling "updateItemById" with an invalid/undefined item', () => {
       jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
-      expect(() => service.updateItemById(5, undefined)).toThrowError('[Slickgrid-Universal] The item to update in the grid was not found with id: 5');
+      expect(() => service.updateItemById(5, undefined)).toThrow('[Slickgrid-Universal] The item to update in the grid was not found with id: 5');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      expect(() => service.updateItemById(undefined as any, mockItem, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Cannot update a row without a valid "id"');
+      expect(() => service.updateItemById(undefined as any, mockItem, { skipError: true })).not.toThrow('[Slickgrid-Universal] Cannot update a row without a valid "id"');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" and not finding the item in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
-      expect(() => service.updateItemById(5, mockItem, { skipError: true })).not.toThrowError('[Slickgrid-Universal] The item to update in the grid was not found with id: 5');
+      expect(() => service.updateItemById(5, mockItem, { skipError: true })).not.toThrow('[Slickgrid-Universal] The item to update in the grid was not found with id: 5');
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.updateItem(null as any)).toThrowError('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
+      expect(() => service.updateItem(null as any)).toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
 
       // reset mock
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -545,7 +545,7 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
+      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
 
       // reset mock
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -609,30 +609,30 @@ describe('Grid Service', () => {
 
     it('should throw an error when 1st argument for the item object is missing', () => {
       jest.spyOn(gridStub, 'getData').mockReturnValueOnce(undefined as any);
-      expect(() => service.addItem(null as any)).toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
+      expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     });
 
     it('should throw an error when 1st argument for the item object is missing or "id" is missing', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
-      expect(() => service.addItem(null as any)).toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
-      expect(() => service.addItem({ user: 'John' })).toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
+      expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
+      expect(() => service.addItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing or "id" is missing', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
-      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.addItem(null as any)).toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
-      expect(() => service.addItem({ user: 'John' })).toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -640,8 +640,8 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
-      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -649,7 +649,7 @@ describe('Grid Service', () => {
 
     it('should throw an error when addItem and a position is provided when used with Tree Data', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true } as GridOption);
-      expect(() => service.addItem({ id: 0, user: 'John' }, { position: 'top' })).toThrowError('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.');
+      expect(() => service.addItem({ id: 0, user: 'John' }, { position: 'top' })).toThrow('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.');
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({}); // reset mock
     });
 
@@ -1057,8 +1057,8 @@ describe('Grid Service', () => {
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.addItem(null as any)).toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
-      expect(() => service.addItem({ user: 'John' })).toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
@@ -1067,8 +1067,8 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
-      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
@@ -1078,23 +1078,23 @@ describe('Grid Service', () => {
 
   describe('deleteItem methods', () => {
     it('should throw an error when calling "deleteItem" method and 1st argument for the item object is missing or "id" is missing', () => {
-      expect(() => service.deleteItem(null as any)).toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
-      expect(() => service.deleteItem({ user: 'John' })).toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
+      expect(() => service.deleteItem(null as any)).toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
+      expect(() => service.deleteItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "deleteItem" method and 1st argument for the item object is missing or "id" is missing', () => {
-      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
-      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
+      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
+      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
     });
 
     it('should throw an error when calling "deleteItemById" without a valid "id" as argument', () => {
-      expect(() => service.deleteItemById(null as any)).toThrowError('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
-      expect(() => service.deleteItemById(undefined as any)).toThrowError('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
+      expect(() => service.deleteItemById(null as any)).toThrow('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
+      expect(() => service.deleteItemById(undefined as any)).toThrow('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "deleteItemById" without a valid "id" as argument', () => {
-      expect(() => service.deleteItemById(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
-      expect(() => service.deleteItemById(undefined as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
+      expect(() => service.deleteItemById(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
+      expect(() => service.deleteItemById(undefined as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Cannot delete a row without a valid "id"');
     });
 
     it('should expect the service to call "deleteItemById" method when calling "deleteItem" with an item', () => {
@@ -1267,8 +1267,8 @@ describe('Grid Service', () => {
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.deleteItem(null as any)).toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
-      expect(() => service.deleteItem({ user: 'John' })).toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
+      expect(() => service.deleteItem(null as any)).toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
+      expect(() => service.deleteItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
@@ -1277,8 +1277,8 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
-      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrowError('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
+      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
+      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
@@ -1293,8 +1293,8 @@ describe('Grid Service', () => {
 
       service.clearAllFiltersAndSorts();
 
-      expect(sortSpy).toBeCalledWith(false);
-      expect(filterSpy).toBeCalledWith();
+      expect(sortSpy).toHaveBeenCalledWith(false);
+      expect(filterSpy).toHaveBeenCalledWith();
     });
   });
 
@@ -1367,7 +1367,7 @@ describe('Grid Service', () => {
     it('should throw an error when slickgrid getColumns method is not available', () => {
       gridStub.getColumns = undefined as any;
       expect(() => service.getColumnFromEventArguments({} as CellArgs))
-        .toThrowError('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
+        .toThrow('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
 
       gridStub.getColumns = jest.fn(); // put it back as a valid mock for later tests
     });
@@ -1375,7 +1375,7 @@ describe('Grid Service', () => {
     it('should throw an error when slickgrid getDataItem method is not available', () => {
       gridStub.getDataItem = undefined as any;
       expect(() => service.getColumnFromEventArguments({} as CellArgs))
-        .toThrowError('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
+        .toThrow('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
 
       gridStub.getDataItem = jest.fn(); // put it back as a valid mock for later tests
     });
@@ -1397,7 +1397,7 @@ describe('Grid Service', () => {
   describe('getDataItemByRowNumber method', () => {
     it('should throw an error when slickgrid "getDataItem" method is not available', () => {
       gridStub.getDataItem = undefined as any;
-      expect(() => service.getDataItemByRowNumber(0)).toThrowError(`We could not find SlickGrid Grid object or it's "getDataItem" method`);
+      expect(() => service.getDataItemByRowNumber(0)).toThrow(`We could not find SlickGrid Grid object or it's "getDataItem" method`);
       gridStub.getDataItem = jest.fn(); // put it back as a valid mock for later tests
     });
 
@@ -1421,7 +1421,7 @@ describe('Grid Service', () => {
     it('should throw an error when the grid "getDataItem" method is not available', () => {
       gridStub.getDataItem = undefined as any;
       expect(() => service.getDataItemByRowIndex(0))
-        .toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
+        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
     });
 
     it('should return data item object when method is called', () => {
@@ -1443,7 +1443,7 @@ describe('Grid Service', () => {
     it('should throw an error when the grid "getDataItem" method is not available', () => {
       gridStub.getDataItem = undefined as any;
       expect(() => service.getDataItemByRowIndexes([0]))
-        .toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
+        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
     });
 
     it('should return data item object when method is called', () => {
@@ -1465,7 +1465,7 @@ describe('Grid Service', () => {
     it('should throw an error when the grid "getSelectedRows" method is not available', () => {
       gridStub.getSelectedRows = undefined as any;
       expect(() => service.getSelectedRows())
-        .toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
     });
 
     it('should return selected row indexes', () => {
@@ -1485,7 +1485,7 @@ describe('Grid Service', () => {
     it('should throw an error when the grid "getSelectedRows" method is not available', () => {
       gridStub.getSelectedRows = undefined as any;
       expect(() => service.getSelectedRowsDataItem())
-        .toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
     });
 
     it('should return selected row indexes', () => {

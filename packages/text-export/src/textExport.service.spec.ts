@@ -1053,7 +1053,7 @@ describe('ExportService', () => {
       const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, translater: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub, container)).toThrowError('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
+      expect(() => service.init(gridStub, container)).toThrow('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
     });
   });
 });

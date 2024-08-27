@@ -489,7 +489,7 @@ describe('GridMenuControl', () => {
         expect(handlerSpy).toHaveBeenCalledTimes(4);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
-        expect(onColChangedMock).toBeCalledWith(expect.anything(), expectedCallbackArgs);
+        expect(onColChangedMock).toHaveBeenCalledWith(expect.anything(), expectedCallbackArgs);
         expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuColumnsChanged', expectedCallbackArgs);
       });
 
@@ -901,8 +901,8 @@ describe('GridMenuControl', () => {
 
         control.recreateGridMenu();
 
-        expect(deleteSpy).toBeCalled();
-        expect(initSpy).toBeCalled();
+        expect(deleteSpy).toHaveBeenCalled();
+        expect(initSpy).toHaveBeenCalled();
       });
 
       describe('with sub-menus', () => {

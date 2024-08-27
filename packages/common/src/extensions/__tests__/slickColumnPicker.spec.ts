@@ -293,7 +293,7 @@ describe('ColumnPickerControl', () => {
       expect(handlerSpy).toHaveBeenCalledTimes(4);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
-      expect(onColChangedMock).toBeCalledWith(expect.anything(), expectedCallbackArgs);
+      expect(onColChangedMock).toHaveBeenCalledWith(expect.anything(), expectedCallbackArgs);
       expect(pubSubSpy).toHaveBeenCalledWith('onColumnPickerColumnsChanged', expectedCallbackArgs);
     });
 

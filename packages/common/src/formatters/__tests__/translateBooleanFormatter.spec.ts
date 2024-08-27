@@ -65,6 +65,6 @@ describe('the Translate Boolean Formatter', () => {
 
   it('should throw an error when no Translate service is not provided to Column Definition and/or Grid Options', () => {
     (gridStub.getOptions as jest.Mock).mockReturnValueOnce({});
-    expect(() => translateBooleanFormatter(1, 1, null, {} as Column, {}, gridStub)).toThrowError('"Formatters.translateBoolean" requires the Translate Service');
+    expect(() => translateBooleanFormatter(1, 1, null, {} as Column, {}, gridStub)).toThrow('"Formatters.translateBoolean" requires the Translate Service');
   });
 });
