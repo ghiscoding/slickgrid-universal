@@ -222,6 +222,9 @@ importers:
 
   packages/common:
     dependencies:
+      '@excel-builder-vanilla/types':
+        specifier: ^3.0.3
+        version: 3.0.3
       '@formkit/tempo':
         specifier: ^0.1.2
         version: 0.1.2
@@ -246,9 +249,6 @@ importers:
       dequal:
         specifier: ^2.0.3
         version: 2.0.3
-      excel-builder-vanilla:
-        specifier: 3.0.1
-        version: 3.0.1
       multiple-select-vanilla:
         specifier: ^3.3.2
         version: 3.3.2
@@ -345,8 +345,8 @@ importers:
         specifier: workspace:~
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^3.0.3
+        version: 3.0.3
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
@@ -1345,6 +1345,12 @@ packages:
     resolution: {integrity: sha512-BsWiH1yFGjXXS2yvrf5LyuoSIIbPrGUWob917o+BTKuZ7qJdxX8aJLRxs1fS9n6r7vESrq1OUqb68dANcFXuQQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     dev: true
+
+  /@excel-builder-vanilla/types@3.0.3:
+    resolution: {integrity: sha512-zrIV6x+CjeoFAbYjpxGyrb0dJXmAq+QUOZa3/Y6O3KO4brf+HbVrtjUHkFqiaJnu5jFSgBhM3GrohNiOrd9RnQ==}
+    dependencies:
+      fflate: 0.8.2
+    dev: false
 
   /@faker-js/faker@8.4.1:
     resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
@@ -4765,8 +4771,8 @@ packages:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
     dev: true
 
-  /excel-builder-vanilla@3.0.1:
-    resolution: {integrity: sha512-pVB10+81o16pB9ERoku0vjvPEQgVH3amKCAw8qU1hc2XiKKLn0gJS/cIb8/QzIsC/51gcRDswJLBSzfUzm1nfw==}
+  /excel-builder-vanilla@3.0.3:
+    resolution: {integrity: sha512-2G39hN7RiTRqwolUJOqz41o4t3VZC6oaOpJCSuzOGMKSOdPE7fxDVEaoQnsImHxu5SlVXUYvYsL0t0Dh2gFFyg==}
     dependencies:
       fflate: 0.8.2
     dev: false

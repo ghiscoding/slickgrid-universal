@@ -1,4 +1,4 @@
-import type { ExcelStyleInstruction, Worksheet, Workbook } from 'excel-builder-vanilla';
+import type { ExcelStyleInstruction, Worksheet, Workbook } from '@excel-builder-vanilla/types';
 import type { FileType } from '../enums/fileType.enum';
 
 export interface ExcelExportOption {

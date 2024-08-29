@@ -1,4 +1,4 @@
-import type { ExcelColumnMetadata, ExcelStyleInstruction, StyleSheet } from 'excel-builder-vanilla';
+import type { ExcelColumnMetadata, ExcelStyleInstruction, StyleSheet } from '@excel-builder-vanilla/types';
 
 import type { Column } from './column.interface';
 import type { GridOption } from './gridOption.interface';
