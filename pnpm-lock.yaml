@@ -90,11 +90,11 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2(jest@30.0.0-alpha.6)
       jsdom:
-        specifier: ^24.1.1
-        version: 24.1.1
+        specifier: ^25.0.0
+        version: 25.0.0
       jsdom-global:
         specifier: ^3.0.2
-        version: 3.0.2(jsdom@24.1.1)
+        version: 3.0.2(jsdom@25.0.0)
       npm-run-all2:
         specifier: ^6.2.2
         version: 6.2.2
@@ -6437,16 +6437,16 @@ packages:
     resolution: {integrity: sha512-4bYVV3aAMtDTTu4+xsDYa6sy9GyJ69/amsu9sYF2zqjiEoZA5xJi3BrfX3uY+/IekIu7MwdObdbDWpoZdBv3/A==}
     dev: true
 
-  /jsdom-global@3.0.2(jsdom@24.1.1):
+  /jsdom-global@3.0.2(jsdom@25.0.0):
     resolution: {integrity: sha512-t1KMcBkz/pT5JrvcJbpUR2u/w1kO9jXctaaGJ0vZDzwFnIvGWw9IDSRciT83kIs8Bnw4qpOl8bQK08V01YgMPg==}
     peerDependencies:
       jsdom: '>=10.0.0'
     dependencies:
-      jsdom: 24.1.1
+      jsdom: 25.0.0
     dev: true
 
-  /jsdom@24.1.1:
-    resolution: {integrity: sha512-5O1wWV99Jhq4DV7rCLIoZ/UIhyQeDR7wHVyZAHAshbrvZsLs+Xzz7gtwnlJTJDjleiTKh54F4dXrX70vJQTyJQ==}
+  /jsdom@25.0.0:
+    resolution: {integrity: sha512-OhoFVT59T7aEq75TVw9xxEfkXgacpqAhQaYgP9y/fDqWQCMB/b1H66RfmPm/MaeaAIU9nDwMOVTlPN51+ao6CQ==}
     engines: {node: '>=18'}
     peerDependencies:
       canvas: ^2.11.2
