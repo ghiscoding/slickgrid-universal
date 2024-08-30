@@ -182,38 +182,6 @@ describe('TreeData Service', () => {
     expect(service.datasetHierarchical).toEqual(mockHierarchical);
   });
 
-  describe('getTreeDataOptionPropName method', () => {
-    it('should return default constant children prop name', () => {
-      const output = service.getTreeDataOptionPropName('childrenPropName');
-      expect(output).toBe(Constants.treeDataProperties.CHILDREN_PROP);
-    });
-
-    it('should return default constant collapsed prop name', () => {
-      const output = service.getTreeDataOptionPropName('collapsedPropName');
-      expect(output).toBe(Constants.treeDataProperties.COLLAPSED_PROP);
-    });
-
-    it('should return default constant hasChildren prop name', () => {
-      const output = service.getTreeDataOptionPropName('hasChildrenPropName');
-      expect(output).toBe(Constants.treeDataProperties.HAS_CHILDREN_PROP);
-    });
-
-    it('should return default constant level prop name', () => {
-      const output = service.getTreeDataOptionPropName('levelPropName');
-      expect(output).toBe(Constants.treeDataProperties.TREE_LEVEL_PROP);
-    });
-
-    it('should return default constant parent prop name', () => {
-      const output = service.getTreeDataOptionPropName('parentPropName');
-      expect(output).toBe(Constants.treeDataProperties.PARENT_PROP);
-    });
-
-    it('should return "id" as default identifier prop name', () => {
-      const output = service.getTreeDataOptionPropName('identifierPropName');
-      expect(output).toBe('id');
-    });
-  });
-
   describe('handleOnCellClick method', () => {
     let div;
     let mockColumn;
