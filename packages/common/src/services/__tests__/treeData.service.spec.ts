@@ -1,6 +1,5 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { Constants } from '../../constants';
 import type { Column, GridOption, BackendService } from '../../interfaces/index';
 import { SumAggregator } from '../../aggregators';
 import { SharedService } from '../shared.service';
