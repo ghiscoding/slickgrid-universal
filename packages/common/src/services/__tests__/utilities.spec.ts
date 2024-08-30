@@ -111,7 +111,7 @@ describe('Service/Utilies', () => {
       ]);
     });
 
-    it('should produce same result when calling the function twice with input that have a parent/child array with aggregators and return a hierarchical array structure', () => {
+    it('should produce same result when calling the function multiple times with input that have a parent/child array with aggregators and return a hierarchical array structure', () => {
       const input = [
         { id: 18, size: 90, dateModified: '2015-03-03', file: 'something.txt', parentId: null, },
         { id: 11, file: 'Music', parentId: null, __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, },
@@ -124,6 +124,7 @@ describe('Service/Utilies', () => {
 
       const output1 = unflattenParentChildArrayToTree(input, { aggregators: [new SumAggregator('size')], parentPropName: 'parentId', childrenPropName: 'files' });
       const output2 = unflattenParentChildArrayToTree(input, { aggregators: [new SumAggregator('size')], parentPropName: 'parentId', childrenPropName: 'files' });
+      const output3 = unflattenParentChildArrayToTree(input, { aggregators: [new SumAggregator('size')], parentPropName: 'parentId', childrenPropName: 'files' });
 
       expect(output1).toEqual([
         {
@@ -137,6 +138,7 @@ describe('Service/Utilies', () => {
         { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90, },
       ]);
       expect(output1).toEqual(output2);
+      expect(output1).toEqual(output3);
     });
   });
 
