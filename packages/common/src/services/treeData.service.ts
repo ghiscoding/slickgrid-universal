@@ -14,6 +14,7 @@ import type {
 import {
   addTreeLevelAndAggregatorsByMutation,
   findItemInTreeStructure,
+  getTreeDataOptionPropName,
   unflattenParentChildArrayToTree
 } from './utilities';
 import type { SharedService } from './shared.service';
@@ -133,8 +134,8 @@ export class TreeDataService {
    */
   applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'> | Extract<ToggleStateChangeTypeString, 'full-collapse' | 'full-expand'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false): void {
     if (Array.isArray(treeToggledItems)) {
-      const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
-      const hasChildrenPropName = this.getTreeDataOptionPropName('hasChildrenPropName');
+      const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
+      const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
 
       // for the rows we identified as collapsed, we'll send them to the DataView with the new updated collapsed flag
       // and we'll refresh the DataView to see the collapsing applied in the grid
@@ -235,7 +236,7 @@ export class TreeDataService {
    */
   getItemCount(treeLevel?: number): number {
     if (treeLevel !== undefined) {
-      const levelPropName = this.getTreeDataOptionPropName('levelPropName');
+      const levelPropName = getTreeDataOptionPropName(this.treeDataOptions, 'levelPropName');
       return this.dataView.getItems().filter(dataContext => dataContext[levelPropName] === treeLevel).length;
     }
     return this.dataView.getItemCount();
@@ -247,32 +248,6 @@ export class TreeDataService {
    */
   getToggledItems(): TreeToggledItem[] {
     return this._currentToggledItems;
-  }
-
-  /** Find the associated property name from the Tree Data option when found or return a default property name that we defined internally */
-  getTreeDataOptionPropName(optionName: keyof TreeDataOption): string {
-    let propName = '';
-    switch (optionName) {
-      case 'childrenPropName':
-        propName = this.treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
-        break;
-      case 'collapsedPropName':
-        propName = this.treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-        break;
-      case 'hasChildrenPropName':
-        propName = this.treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
-        break;
-      case 'identifierPropName':
-        propName = this.treeDataOptions?.identifierPropName ?? this.gridOptions?.datasetIdPropertyName ?? 'id';
-        break;
-      case 'levelPropName':
-        propName = this.treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-        break;
-      case 'parentPropName':
-        propName = this.treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
-        break;
-    }
-    return propName;
   }
 
   /** Clear the sorting and set it back to initial sort */
@@ -374,7 +349,7 @@ export class TreeDataService {
    */
   async toggleTreeDataCollapse(collapsing: boolean, shouldTriggerEvent = true): Promise<void> {
     if (this.gridOptions?.enableTreeData) {
-      const hasChildrenPropName = this.getTreeDataOptionPropName('hasChildrenPropName');
+      const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
 
       // emit an event when full toggle starts (useful to show a spinner)
       if (shouldTriggerEvent) {
@@ -418,8 +393,8 @@ export class TreeDataService {
     if (event && args) {
       const targetElm: any = event.target || {};
       const idPropName = this.gridOptions.datasetIdPropertyName ?? 'id';
-      const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
-      const childrenPropName = this.getTreeDataOptionPropName('childrenPropName');
+      const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
+      const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
 
       if (typeof targetElm?.className === 'string') {
         const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
@@ -464,8 +439,8 @@ export class TreeDataService {
 
   protected updateToggledItem(item: any, isCollapsed: boolean): void {
     const dataViewIdIdentifier = this.gridOptions?.datasetIdPropertyName ?? 'id';
-    const childrenPropName = this.getTreeDataOptionPropName('childrenPropName');
-    const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
+    const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
+    const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
 
     if (item) {
       // update the flat dataset item
