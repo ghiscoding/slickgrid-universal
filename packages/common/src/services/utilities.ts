@@ -123,7 +123,7 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggrega
   type FlatParentChildArray = Omit<T, keyof typeof childrenPropName>;
 
   if (options?.shouldAddTreeLevelNumber) {
-    if (options?.aggregators) {
+    if (Array.isArray(options?.aggregators)) {
       options.aggregators.forEach((aggregator) => {
         addTreeLevelAndAggregatorsByMutation(treeArray, { childrenPropName, levelPropName, aggregator });
       });
@@ -179,7 +179,13 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
       if (!(childrenPropName in p)) {
         p[childrenPropName] = [];
       }
-      p[childrenPropName].push(item);
+      const existIdx = p[childrenPropName]?.findIndex((x: any) => x.id === item.id);
+      if (existIdx < 0) {
+        p[childrenPropName].push(item);
+      } else {
+        // replace existing one when already exists (probably equal to the same item in the end)
+        p[childrenPropName][existIdx] = item;
+      }
       if (p[collapsedPropName] === undefined) {
         p[collapsedPropName] = options?.initiallyCollapsed ?? false;
       }
@@ -189,7 +195,7 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
   // we need and want the Tree Level,
   // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
   // perhaps there might be a way to add this while creating the tree for now that is the easiest way I found
-  if (options?.aggregators) {
+  if (Array.isArray(options?.aggregators)) {
     options.aggregators.forEach((aggregator) => {
       addTreeLevelAndAggregatorsByMutation(roots, { childrenPropName, levelPropName, aggregator }, 0);
     });
