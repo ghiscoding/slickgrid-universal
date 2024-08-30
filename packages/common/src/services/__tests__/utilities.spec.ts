@@ -3,7 +3,7 @@ import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import type { Column, GridOption } from '../../interfaces/index';
+import type { Column, GridOption, TreeDataPropNames } from '../../interfaces/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addTreeLevelByMutation,
@@ -26,8 +26,10 @@ import {
   mapOperatorType,
   thousandSeparatorFormatted,
   unsubscribeAll,
+  getTreeDataOptionPropName,
 } from '../utilities';
 import { SumAggregator } from '../../aggregators';
+import { Constants } from '../../constants';
 
 describe('Service/Utilies', () => {
   describe('unflattenParentChildArrayToTree method', () => {
@@ -260,6 +262,44 @@ describe('Service/Utilies', () => {
       ]);
     });
   });
+
+  describe('getTreeDataOptionPropName method', () => {
+    let treeDataOptions: TreeDataPropNames;
+    beforeEach(() => {
+      treeDataOptions = {};
+    });
+
+    it('should return default constant children prop name', () => {
+      const output = getTreeDataOptionPropName(treeDataOptions, 'childrenPropName');
+      expect(output).toBe(Constants.treeDataProperties.CHILDREN_PROP);
+    });
+
+    it('should return default constant collapsed prop name', () => {
+      const output = getTreeDataOptionPropName(treeDataOptions, 'collapsedPropName');
+      expect(output).toBe(Constants.treeDataProperties.COLLAPSED_PROP);
+    });
+
+    it('should return default constant hasChildren prop name', () => {
+      const output = getTreeDataOptionPropName(treeDataOptions, 'hasChildrenPropName');
+      expect(output).toBe(Constants.treeDataProperties.HAS_CHILDREN_PROP);
+    });
+
+    it('should return default constant level prop name', () => {
+      const output = getTreeDataOptionPropName(treeDataOptions, 'levelPropName');
+      expect(output).toBe(Constants.treeDataProperties.TREE_LEVEL_PROP);
+    });
+
+    it('should return default constant parent prop name', () => {
+      const output = getTreeDataOptionPropName(treeDataOptions, 'parentPropName');
+      expect(output).toBe(Constants.treeDataProperties.PARENT_PROP);
+    });
+
+    it('should return "id" as default identifier prop name', () => {
+      const output = getTreeDataOptionPropName(treeDataOptions, 'identifierPropName');
+      expect(output).toBe('id');
+    });
+  });
+
 
   describe('findItemInTreeStructure method', () => {
     let mockColumns;

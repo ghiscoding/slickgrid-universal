@@ -3,7 +3,7 @@ import { flatten } from 'un-flatten-tree';
 
 import { Constants } from '../constants';
 import { FieldType, type OperatorString, OperatorType } from '../enums/index';
-import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, } from '../interfaces/index';
+import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames, } from '../interfaces/index';
 import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /** Cancelled Extension that can be only be thrown by the `cancellablePromise()` function */
@@ -64,8 +64,8 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
  * @param {Object} options - options containing info like children & treeLevel property names
  * @param {Number} [treeLevel] - current tree level
  */
-export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; levelPropName: string; }, treeLevel = 0): void {
-  const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T;
+export function addTreeLevelByMutation<T>(treeArray: T[], options: Required<Pick<TreeDataPropNames, 'childrenPropName' | 'levelPropName'>>, treeLevel = 0): void {
+  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T;
 
   if (Array.isArray(treeArray)) {
     treeArray.forEach(item => {
@@ -81,8 +81,8 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
   }
 }
 
-export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], options: { aggregator: Aggregator; childrenPropName: string; levelPropName: string; }, treeLevel = 0, parent: T = null as any): void {
-  const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T;
+export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], options: { aggregator: Aggregator; } & Required<Pick<TreeDataPropNames, 'childrenPropName' | 'levelPropName'>>, treeLevel = 0, parent: T = null as any): void {
+  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T;
   const { aggregator } = options;
 
   if (Array.isArray(treeArray)) {
@@ -114,12 +114,12 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], op
  * @param {Object} options - you can provide "childrenPropName" and other options (defaults to "children")
  * @return {Array<Object>} output - Parent/Child array
  */
-export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggregators?: Aggregator[]; parentPropName?: string; childrenPropName?: string; hasChildrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }): any[] {
-  const identifierPropName = (options?.identifierPropName ?? 'id') as keyof T & string;
-  const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T & string;
-  const hasChildrenPropName = (options?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP) as keyof T & string;
-  const parentPropName = (options?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP) as keyof T & string;
-  const levelPropName = options?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggregators?: Aggregator[]; shouldAddTreeLevelNumber?: boolean; } & Omit<TreeDataPropNames, 'collapsedPropName'>): any[] {
+  const identifierPropName = getTreeDataOptionPropName(options, 'identifierPropName') as keyof T & string;
+  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T & string;
+  const hasChildrenPropName = getTreeDataOptionPropName(options, 'hasChildrenPropName') as keyof T & string;
+  const parentPropName = getTreeDataOptionPropName(options, 'parentPropName') as keyof T & string;
+  const levelPropName = getTreeDataOptionPropName(options, 'levelPropName');
   type FlatParentChildArray = Omit<T, keyof typeof childrenPropName>;
 
   if (options?.shouldAddTreeLevelNumber) {
@@ -148,6 +148,32 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggrega
   return flat;
 }
 
+/** Find the associated property name from the Tree Data option when found or return a default property name that we defined internally */
+export function getTreeDataOptionPropName(treeDataOptions: Partial<TreeDataPropNames> | undefined, optionName: keyof TreeDataPropNames, defaultDataIdPropName = 'id'): string {
+  let propName = '';
+  switch (optionName) {
+    case 'childrenPropName':
+      propName = treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
+      break;
+    case 'collapsedPropName':
+      propName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+      break;
+    case 'hasChildrenPropName':
+      propName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
+      break;
+    case 'identifierPropName':
+      propName = treeDataOptions?.identifierPropName ?? defaultDataIdPropName;
+      break;
+    case 'levelPropName':
+      propName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+      break;
+    case 'parentPropName':
+      propName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
+      break;
+  }
+  return propName;
+}
+
 /**
  * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
  * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
@@ -155,12 +181,12 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggrega
  * @param options you can provide the following tree data options (which are all prop names, except 1 boolean flag, to use or else use their defaults):: collapsedPropName, childrenPropName, parentPropName, identifierPropName and levelPropName and initiallyCollapsed (boolean)
  * @return roots - hierarchical (tree) data view array
  */
-export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[]; }>(flatArray: P[], options?: { aggregators?: Aggregator[]; childrenPropName?: string; collapsedPropName?: string; identifierPropName?: string; levelPropName?: string; parentPropName?: string; initiallyCollapsed?: boolean; }): T[] {
-  const identifierPropName = options?.identifierPropName ?? 'id';
-  const childrenPropName = options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
-  const parentPropName = options?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
-  const levelPropName = options?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-  const collapsedPropName = options?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[]; }>(flatArray: P[], options?: { aggregators?: Aggregator[]; initiallyCollapsed?: boolean; } & Omit<TreeDataPropNames, 'hasChildrenPropName'>): T[] {
+  const identifierPropName = getTreeDataOptionPropName(options, 'identifierPropName');
+  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName');
+  const parentPropName = getTreeDataOptionPropName(options, 'parentPropName');
+  const levelPropName = getTreeDataOptionPropName(options, 'levelPropName');
+  const collapsedPropName = getTreeDataOptionPropName(options, 'collapsedPropName');
   const inputArray: P[] = flatArray || [];
   const roots: T[] = []; // items without parent which at the root
 

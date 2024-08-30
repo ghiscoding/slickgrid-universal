@@ -3,7 +3,7 @@ import type { SortDirection, SortDirectionString } from '../enums/index';
 import type { Aggregator } from './aggregator.interface';
 import type { Formatter } from './formatter.interface';
 
-export interface TreeDataOption {
+export interface TreeDataOption extends TreeDataPropNames {
   /** Tree Data Aggregators array that can be provided to aggregate the tree (avg, sum, ...) */
   aggregators?: Aggregator[];
 
@@ -47,27 +47,6 @@ export interface TreeDataOption {
   /** Defaults to False, will the Tree be collapsed on first load? */
   initiallyCollapsed?: boolean;
 
-  /** Defaults to "children", object property name used to designate the Children array */
-  childrenPropName?: string;
-
-  /** Defaults to "__collapsed", object property name used to designate the Collapsed flag */
-  collapsedPropName?: string;
-
-  /** Defaults to "__hasChildren", object property name used to designate if the item has children or not (boolean) */
-  hasChildrenPropName?: string;
-
-  /**
-   * Defaults to "id", object property name used to designate the Id field (you would rarely override this property, it is mostly used for internal usage).
-   * NOTE: by default it will read the `datasetIdPropertyName` from the grid option, so it's typically better NOT to override this property.
-   */
-  identifierPropName?: string;
-
-  /** Defaults to "__treeLevel", object property name used to designate the Tree Level depth number */
-  levelPropName?: string;
-
-  /** Defaults to "__parentId", object property name used to designate the Parent Id */
-  parentPropName?: string;
-
   /**
    * Defaults to 15px, margin to add from the left (calculated by the tree level multiplied by this number).
    * For example if tree depth level is 2, the calculation will be (2 * 15 = 30), so the column will be displayed 30px from the left
@@ -94,4 +73,27 @@ export interface TreeDataOption {
 
   /** Optional Title Formatter (allows you to format/style the title text differently) */
   titleFormatter?: Formatter;
+}
+
+export interface TreeDataPropNames {
+  /** Defaults to "children", object property name used to designate the Children array */
+  childrenPropName?: string;
+
+  /** Defaults to "__collapsed", object property name used to designate the Collapsed flag */
+  collapsedPropName?: string;
+
+  /** Defaults to "__hasChildren", object property name used to designate if the item has children or not (boolean) */
+  hasChildrenPropName?: string;
+
+  /**
+   * Defaults to "id", object property name used to designate the Id field (you would rarely override this property, it is mostly used for internal usage).
+   * NOTE: by default it will read the `datasetIdPropertyName` from the grid option, so it's typically better NOT to override this property.
+   */
+  identifierPropName?: string;
+
+  /** Defaults to "__treeLevel", object property name used to designate the Tree Level depth number */
+  levelPropName?: string;
+
+  /** Defaults to "__parentId", object property name used to designate the Parent Id */
+  parentPropName?: string;
 }
