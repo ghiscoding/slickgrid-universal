@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.0...v5.6.1) (2024-08-31)
+
+### Bug Fixes
+
+* only import `@excel-builder-vanilla/types` for optional dep ([27e983e](https://github.com/ghiscoding/slickgrid-universal/commit/27e983e084dc6854db4af90d32c86e0687c95fe1)) - by @ghiscoding
+* **tree:** unflattening tree->flat array multiple times, fixes [#1657](https://github.com/ghiscoding/slickgrid-universal/issues/1657) ([67edd1e](https://github.com/ghiscoding/slickgrid-universal/commit/67edd1e9c0ec1ff28be1b9c55e1e304cd1261351)) - by @ghiscoding
+
 ## [5.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.2...v5.6.0) (2024-08-24)
 
 ### Features
