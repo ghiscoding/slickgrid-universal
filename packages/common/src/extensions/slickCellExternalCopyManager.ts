@@ -280,11 +280,7 @@ export class SlickCellExternalCopyManager {
 
     // ignore new rows if we don't have a "newRowCreator"
     if ((availableRows < destH) && typeof this._addonOptions.newRowCreator === 'function') {
-      const d = this._dataWrapper.getDataItems();
-      for (addRows = 1; addRows <= (destH - availableRows); addRows++) {
-        d.push({});
-      }
-      this._dataWrapper.setDataItems(d);
+      this._addonOptions.newRowCreator(destH - availableRows);
       this._grid.render();
     }
 
