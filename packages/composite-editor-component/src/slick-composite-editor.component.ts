@@ -893,7 +893,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this._itemDataContext = editor?.dataContext ?? {}; // keep reference of the item data context
 
     // add extra css styling to the composite editor input(s) that got modified
-    const editorElm = this._modalElm.querySelector(`[data-editorid=${columnId}]`);
+    const editorElm = this._modalElm.querySelector(`[data-editorid='${columnId}']`);
     if (editorElm?.classList) {
       if (isEditorValueTouched) {
         editorElm.classList.add('modified');
