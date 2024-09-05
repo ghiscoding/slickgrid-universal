@@ -20,11 +20,15 @@ export default defineConfig({
       include: ['packages/**/*.ts'],
       exclude: [
         ...configDefaults.exclude,
+        '**/enums/**',
+        '**/interfaces/**',
         '**/models/**',
-        '**/__fixtures__/**',
-        '**/__mocks__/**',
-        '**/__tests__/**',
-        '**/index.ts',
+        '**/*.d.ts',
+        '**/global-grid-options.ts',
+        '**/salesforce-global-grid-options.ts',
+        '**/interfaces.ts',
+        '**/enums.index.ts',
+        '**/index.ts'
       ],
       provider: 'v8',
       reportsDirectory: 'test/vitest-coverage'
