@@ -20,6 +20,8 @@ export default defineConfig({
       include: ['packages/**/*.ts'],
       exclude: [
         ...configDefaults.exclude,
+        '**/__mocks__/**',
+        '**/__tests__/**',
         '**/enums/**',
         '**/interfaces/**',
         '**/models/**',
