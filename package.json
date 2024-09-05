@@ -43,7 +43,7 @@
     "lint": "eslint --cache .",
     "lint:no-cache": "eslint .",
     "test": "vitest --config ./test/vitest.config.mts",
-    "test:ci": "vitest --coverage --config ./test/vitest.config.mts",
+    "test:coverage": "vitest --coverage --config ./test/vitest.config.mts",
     "test:watch": "vitest --watch --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit"

@@ -14,12 +14,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  checks: write
-  pages: write
-  contents: write
-  pull-requests: write
-
 jobs:
   run:
     strategy:
@@ -84,7 +78,7 @@ jobs:
 
       - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
-        run: pnpm test:ci
+        run: pnpm test:coverage
 
       - name: Upload Vitest coverage to Codecov
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}

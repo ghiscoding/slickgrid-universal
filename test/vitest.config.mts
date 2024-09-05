@@ -27,6 +27,7 @@ export default defineConfig({
         '**/index.ts',
       ],
       provider: 'v8',
+      reportsDirectory: 'test/vitest-coverage'
     },
 
   },
