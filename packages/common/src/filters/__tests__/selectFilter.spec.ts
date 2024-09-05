@@ -1,5 +1,4 @@
-// import 3rd party lib multiple-select for the tests
-import 'multiple-select-vanilla';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import { of, type Subject } from 'rxjs';
 
@@ -13,7 +12,7 @@ import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const containerId = 'demo-container';
 
@@ -27,9 +26,9 @@ const gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
   sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
@@ -51,7 +50,7 @@ describe('SelectFilter', () => {
     divContainer.innerHTML = template;
     document.body.innerHTML = '';
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
       id: 'gender', field: 'gender', filterable: true,
@@ -63,7 +62,7 @@ describe('SelectFilter', () => {
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
@@ -72,31 +71,31 @@ describe('SelectFilter', () => {
 
   afterEach(() => {
     filter.destroy();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should throw an error when trying to call init without any arguments', () => {
     expect(() => filter.init(null as any)).toThrow('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
-  it('should throw an error when there is no collection provided in the filter property', (done) => {
+  it('should throw an error when there is no collection provided in the filter property', () => new Promise((done: any) => {
     try {
       filter.init(filterArguments);
     } catch (e) {
       expect(e.message).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly.`);
       done();
     }
-  });
+  }));
 
-  it('should throw an error when collection is not a valid array', (done) => {
+  it('should throw an error when collection is not a valid array', () => new Promise((done: any) => {
     mockColumn.filter!.collection = { hello: 'world' } as any;
     filter.init(filterArguments).catch(e => {
       expect(e.message).toContain(`The "collection" passed to the Select Filter is not a valid array.`);
       done();
     });
-  });
+  }));
 
-  it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', (done) => {
+  it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', () => new Promise((done: any) => {
     try {
       translateService = undefined as any;
       mockColumn.filter!.enableTranslateLabel = true;
@@ -107,7 +106,7 @@ describe('SelectFilter', () => {
       expect(e.toString()).toContain(`[select-filter] The Translate Service is required for the Select Filter to work correctly when "enableTranslateLabel" is set.`);
       done();
     }
-  });
+  }));
 
   it('should initialize the filter', () => {
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
@@ -159,7 +158,7 @@ describe('SelectFilter', () => {
   });
 
   it('should trigger multiple select change event and expect the callback to be called with the search terms we select from dropdown list', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
@@ -179,7 +178,7 @@ describe('SelectFilter', () => {
   });
 
   it('should trigger multiple select change event without choosing an option and expect the callback to be called without search terms and also expect the dropdown list to not have "filled" css class', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
@@ -197,7 +196,7 @@ describe('SelectFilter', () => {
   });
 
   it('should trigger multiple select change event and expect this to work with a regular array of strings', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     mockColumn.filter!.collection = ['male', 'female'];
     mockColumn.filter!.filterOptions = { showClear: true };
@@ -218,7 +217,7 @@ describe('SelectFilter', () => {
   });
 
   it('should type a search filter and expect clear() method to be called when ms-select clear button is clicked', () => {
-    const spyClear = jest.spyOn(filter, 'clear');
+    const spyClear = vi.spyOn(filter, 'clear');
 
     mockColumn.filter!.collection = ['male', 'female'];
     mockColumn.filter!.filterOptions = { showClear: true };
@@ -237,7 +236,7 @@ describe('SelectFilter', () => {
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the search terms we select from dropdown list', () => {
     mockColumn.filter!.operator = 'NIN';
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init({ ...filterArguments, columnDef: mockColumn });
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
@@ -287,7 +286,7 @@ describe('SelectFilter', () => {
   });
 
   it('should be able to call "setValues" and call an event trigger', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter!.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
 
     filter.init(filterArguments);
@@ -316,7 +315,7 @@ describe('SelectFilter', () => {
 
   it('should create the multi-select filter with a default search term when passed as a filter argument', () => {
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filterArguments.searchTerms = ['female'];
     filter.init(filterArguments);
@@ -336,7 +335,7 @@ describe('SelectFilter', () => {
 
   it('should create the multi-select filter with default boolean search term converted as strings when passed as a filter argument', () => {
     mockColumn.filter!.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filterArguments.searchTerms = [false];
     filter.init(filterArguments);
@@ -356,7 +355,7 @@ describe('SelectFilter', () => {
 
   it('should create the multi-select filter with default number search term converted as strings when passed as a filter argument', () => {
     mockColumn.filter!.collection = [{ value: 1, label: 'male' }, { value: 2, label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filterArguments.searchTerms = [2];
     filter.init(filterArguments);
@@ -375,7 +374,7 @@ describe('SelectFilter', () => {
   });
 
   it('should create the multi-select filter with a default search term when passed as a filter argument even with collection an array of strings', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter!.collection = ['male', 'female'];
 
     filterArguments.searchTerms = ['female'];
@@ -540,7 +539,7 @@ describe('SelectFilter', () => {
     filterArguments.searchTerms = ['female'];
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter!.collectionOptions = { addBlankEntry: true };
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
@@ -564,7 +563,7 @@ describe('SelectFilter', () => {
     filterArguments.searchTerms = ['female'];
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter!.collectionOptions = { addCustomFirstEntry: { value: null, label: '' } };
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
@@ -586,7 +585,7 @@ describe('SelectFilter', () => {
     filterArguments.searchTerms = ['female'];
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter!.collectionOptions = { addCustomLastEntry: { value: null, label: '' } };
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
@@ -607,7 +606,7 @@ describe('SelectFilter', () => {
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
     filterArguments.searchTerms = ['female'];
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear();
@@ -621,7 +620,7 @@ describe('SelectFilter', () => {
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
     filterArguments.searchTerms = ['female'];
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear(false);
@@ -647,7 +646,7 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
@@ -680,7 +679,7 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
@@ -712,7 +711,7 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const filterElm = divContainer.querySelector('.ms-parent') as HTMLButtonElement;
 
@@ -720,7 +719,7 @@ describe('SelectFilter', () => {
   });
 
   it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', async () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter!.collection = undefined;
     mockColumn.filter!.collectionAsync = Promise.resolve(mockCollection);
@@ -743,7 +742,7 @@ describe('SelectFilter', () => {
   });
 
   it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', async () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter!.collection = undefined;
     mockColumn.filter!.collectionAsync = Promise.resolve({ content: mockCollection });
@@ -766,7 +765,7 @@ describe('SelectFilter', () => {
   });
 
   it('should create the multi-select filter with a default search term when using "collectionAsync" is a Fetch Promise', async () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
 
     http.status = 200;
@@ -814,7 +813,7 @@ describe('SelectFilter', () => {
   });
 
   it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
-    const renderSpy = jest.spyOn(filter, 'renderDomElement');
+    const renderSpy = vi.spyOn(filter, 'renderDomElement');
     const newCollection = [{ value: 'val1', label: 'label1' }, { value: 'val2', label: 'label2' }];
     const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
 
@@ -828,7 +827,7 @@ describe('SelectFilter', () => {
     mockColumn.filter!.collection = newCollection;
     mockColumn.filter!.collection!.push({ value: 'val3', label: 'label3' });
 
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     expect(renderSpy).toHaveBeenCalledTimes(3);
     expect(renderSpy).toHaveBeenCalledWith(newCollection);
@@ -844,7 +843,7 @@ describe('SelectFilter', () => {
   });
 
   it('should trigger a re-render of the DOM element when collection changes', async () => {
-    const renderSpy = jest.spyOn(filter, 'renderDomElement');
+    const renderSpy = vi.spyOn(filter, 'renderDomElement');
 
     mockColumn.filter = {
       collection: [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }],
@@ -854,7 +853,7 @@ describe('SelectFilter', () => {
     await filter.init(filterArguments);
     mockColumn.filter!.collection!.push({ value: 'other', label: 'Other' });
 
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     expect(renderSpy).toHaveBeenCalledTimes(2);
     expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter!.collection);
@@ -880,14 +879,14 @@ describe('SelectFilter', () => {
     }
   });
 
-  it('should throw an error when "collectionAsync" Promise does not return a valid array', (done) => {
+  it('should throw an error when "collectionAsync" Promise does not return a valid array', () => new Promise((done: any) => {
     const promise = Promise.resolve({ hello: 'world' });
     mockColumn.filter!.collectionAsync = promise;
     filter.init(filterArguments).catch((e) => {
       expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
       done();
     });
-  });
+  }));
 
   describe('SelectFilter using RxJS Observables', () => {
     let divContainer: HTMLDivElement;
@@ -906,7 +905,7 @@ describe('SelectFilter', () => {
       divContainer = document.createElement('div');
       divContainer.innerHTML = template;
       document.body.appendChild(divContainer);
-      spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+      spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
       mockColumn = {
         id: 'gender', field: 'gender', filterable: true,
@@ -918,7 +917,7 @@ describe('SelectFilter', () => {
       filterArguments = {
         grid: gridStub,
         columnDef: mockColumn,
-        callback: jest.fn(),
+        callback: vi.fn(),
         filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
       };
 
@@ -927,7 +926,7 @@ describe('SelectFilter', () => {
 
     afterEach(() => {
       filter.destroy();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should create the multi-select filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', async () => {
@@ -955,7 +954,7 @@ describe('SelectFilter', () => {
     });
 
     it('should create the multi-select filter with a default search term when using "collectionAsync" as an Observable', async () => {
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
       const mockCollection = ['male', 'female'];
       mockColumn.filter!.collection = undefined;
       mockColumn.filter!.collectionAsync = of(mockCollection);
@@ -1030,12 +1029,12 @@ describe('SelectFilter', () => {
       expect(filterUpdatedListElm.length).toBe(3);
     });
 
-    it('should throw an error when "collectionAsync" Observable does not return a valid array', (done) => {
+    it('should throw an error when "collectionAsync" Observable does not return a valid array', () => new Promise((done: any) => {
       mockColumn.filter!.collectionAsync = of({ hello: 'world' });
       filter.init(filterArguments).catch((e) => {
         expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
         done();
       });
-    });
+    }));
   });
 });

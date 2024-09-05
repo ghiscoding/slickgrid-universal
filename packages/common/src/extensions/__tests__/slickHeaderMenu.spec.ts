@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type { Column, ColumnSort, ElementPosition, Filter, GridOption, HeaderButtonsOrMenu, HeaderMenuItems, MenuCommandItem } from '../../interfaces/index';
@@ -17,12 +18,12 @@ const gridOptionsMock = {
   enableTranslate: true,
   backendServiceApi: {
     service: {
-      buildQuery: jest.fn(),
+      buildQuery: vi.fn(),
     },
-    internalPostProcess: jest.fn(),
-    preProcess: jest.fn(),
-    process: jest.fn(),
-    postProcess: jest.fn(),
+    internalPostProcess: vi.fn(),
+    preProcess: vi.fn(),
+    process: vi.fn(),
+    postProcess: vi.fn(),
   },
   headerMenu: {
     buttonCssClass: 'mdi mdi-chevron-down',
@@ -30,7 +31,7 @@ const gridOptionsMock = {
     hideColumnResizeByContentCommand: false,
     hideForceFitButton: false,
     hideSyncResizeButton: true,
-    onExtensionRegistered: jest.fn(),
+    onExtensionRegistered: vi.fn(),
     onCommand: mockEventCallback,
   },
   multiColumnSort: true,
@@ -43,20 +44,20 @@ const gridOptionsMock = {
 } as unknown as GridOption;
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  getCellNode: jest.fn(),
-  getCellFromEvent: jest.fn(),
-  getColumns: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getContainerNode: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getCellNode: vi.fn(),
+  getCellFromEvent: vi.fn(),
+  getColumns: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getContainerNode: vi.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
   getUID: () => 'slickgrid12345',
   getOptions: () => gridOptionsMock,
-  registerPlugin: jest.fn(),
-  setColumns: jest.fn(),
-  setOptions: jest.fn(),
-  setSortColumns: jest.fn(),
-  updateColumnHeader: jest.fn(),
+  registerPlugin: vi.fn(),
+  setColumns: vi.fn(),
+  setOptions: vi.fn(),
+  setSortColumns: vi.fn(),
+  updateColumnHeader: vi.fn(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
@@ -67,30 +68,30 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 const dataViewStub = {
-  refresh: jest.fn(),
+  refresh: vi.fn(),
 } as unknown as SlickDataView;
 
 const filterServiceStub = {
-  clearFilterByColumnId: jest.fn(),
-  clearFilters: jest.fn(),
-  getFiltersMetadata: jest.fn(),
+  clearFilterByColumnId: vi.fn(),
+  clearFilters: vi.fn(),
+  getFiltersMetadata: vi.fn(),
 } as unknown as FilterService;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  subscribeEvent: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  subscribeEvent: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 const sortServiceStub = {
-  clearSortByColumnId: jest.fn(),
-  clearSorting: jest.fn(),
-  emitSortChanged: jest.fn(),
-  getCurrentColumnSorts: jest.fn(),
-  onBackendSortChanged: jest.fn(),
-  onLocalSortChanged: jest.fn(),
+  clearSortByColumnId: vi.fn(),
+  clearSorting: vi.fn(),
+  emitSortChanged: vi.fn(),
+  getCurrentColumnSorts: vi.fn(),
+  onBackendSortChanged: vi.fn(),
+  onLocalSortChanged: vi.fn(),
 } as unknown as SortService;
 
 const headerMock = {
@@ -127,10 +128,10 @@ describe('HeaderMenu Plugin', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
-    jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
+    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+    vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
     plugin = new SlickHeaderMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
   });
 
@@ -176,7 +177,7 @@ describe('HeaderMenu Plugin', () => {
     let headersDiv: HTMLDivElement;
 
     beforeEach(() => {
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       columnsMock[0].header!.menu!.commandItems![1] = undefined as any;
       columnsMock[0].header!.menu!.commandItems![1] = {
         cssClass: 'mdi mdi-lightbulb-on',
@@ -189,8 +190,8 @@ describe('HeaderMenu Plugin', () => {
       gridContainerDiv.className = 'slickgrid-container';
       headersDiv = document.createElement('div');
       headersDiv.className = 'slick-header-columns';
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
-      jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
+      vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
       headersDiv.appendChild(headerDiv);
       gridContainerDiv.appendChild(headersDiv);
       document.body.appendChild(gridContainerDiv);
@@ -205,7 +206,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
@@ -217,7 +218,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.init({ tooltip: 'some tooltip text' });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
@@ -229,7 +230,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
@@ -245,7 +246,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
@@ -259,7 +260,7 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
 
@@ -282,9 +283,9 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
-      const publishSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const publishSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button:nth-child(1)') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -308,7 +309,7 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = undefined;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -328,7 +329,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).hidden = true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -348,7 +349,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).tooltip = 'Some Tooltip';
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -364,13 +365,13 @@ describe('HeaderMenu Plugin', () => {
     });
 
     it('should populate a Header Menu and a 2nd button and expect the button click handler & action callback to be executed when defined', () => {
-      const actionMock = jest.fn();
+      const actionMock = vi.fn();
 
       plugin.dispose();
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).action = actionMock;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       const clickEvent = new Event('click', { bubbles: true, cancelable: true, composed: false });
@@ -391,13 +392,13 @@ describe('HeaderMenu Plugin', () => {
     });
 
     it('should populate a Header Menu and a 2nd button and expect the "onCommand" handler to be executed when defined', () => {
-      const onCommandMock = jest.fn();
+      const onCommandMock = vi.fn();
 
       plugin.dispose();
       plugin.init();
       plugin.addonOptions.onCommand = onCommandMock;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -417,7 +418,7 @@ describe('HeaderMenu Plugin', () => {
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" but still expect the button NOT to be disabled because the "itemUsabilityOverride" has priority over the "disabled" property', () => {
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
 
       plugin.dispose();
       plugin.init();
@@ -425,7 +426,7 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
@@ -445,7 +446,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.dispose();
       plugin.init({ autoAlign: true });
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const buttonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
@@ -474,7 +475,7 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button:nth-child(1)') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -484,7 +485,7 @@ describe('HeaderMenu Plugin', () => {
     });
 
     it('should not populate a Header Menu when "menuUsabilityOverride" is defined and returns False', () => {
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
 
       plugin.dispose();
       plugin.init({ menuUsabilityOverride: () => false });
@@ -492,7 +493,7 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
@@ -501,13 +502,13 @@ describe('HeaderMenu Plugin', () => {
     });
 
     it('should open the Header Menu and then expect it to hide when clicking anywhere in the DOM body', () => {
-      const hideMenuSpy = jest.spyOn(plugin, 'hideMenu');
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      const hideMenuSpy = vi.spyOn(plugin, 'hideMenu');
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
 
       plugin.dispose();
       plugin.init();
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
@@ -534,26 +535,26 @@ describe('HeaderMenu Plugin', () => {
 
     describe('hideColumn method', () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         columnsMock[0].header!.menu = undefined;
         columnsMock[1].header!.menu = undefined;
         columnsMock[2].header!.menu = undefined;
         const mockColumn = { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE', sortable: true, filterable: true } as any;
-        jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue([mockColumn]);
-        jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock);
+        vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue([mockColumn]);
+        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock);
       });
 
       it('should call hideColumn and expect "visibleColumns" to be updated accordingly', () => {
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true, }
         });
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-        const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
-        const visibleSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
+        const visibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
         const updatedColumnsMock = [
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined, }, },
           { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined, }, width: 75, },
@@ -567,17 +568,17 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should call hideColumn and expect "setOptions" to be called with new "frozenColumn" index when the grid is detected to be a frozen grid', () => {
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, frozenColumn: 1,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true, }
         });
 
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-        const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
-        const visibleSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
+        const visibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
         const updatedColumnsMock = [
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined, }, },
           { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined, }, width: 75, },
@@ -627,17 +628,17 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should create Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
-        const onCommandMock = jest.fn();
-        const subCommand33ActionMock = jest.fn();
-        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        const onCommandMock = vi.fn();
+        const subCommand33ActionMock = vi.fn();
+        const disposeSubMenuSpy = vi.spyOn(plugin, 'disposeSubMenus');
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
-        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
 
         plugin.init({ autoAlign: true });
         plugin.addonOptions.onCommand = onCommandMock;
         ((columnsMock[1].header!.menu!.commandItems![2] as MenuCommandItem).commandItems![0] as MenuCommandItem).action = subCommand33ActionMock;
 
-        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -692,15 +693,15 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should create a Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
-        const onCommandMock = jest.fn();
-        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        const onCommandMock = vi.fn();
+        const disposeSubMenuSpy = vi.spyOn(plugin, 'disposeSubMenus');
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
-        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
 
         plugin.init({ autoAlign: true, subItemChevronClass: 'mdi mdi-chevron-right' });
         plugin.addonOptions.onCommand = onCommandMock;
 
-        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -744,11 +745,11 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should create a Grid Menu item with commands sub-menu commandItems and expect sub-menu to be positioned on top (dropup)', () => {
-        const hideMenuSpy = jest.spyOn(plugin, 'hideMenu');
-        const onCommandMock = jest.fn();
+        const hideMenuSpy = vi.spyOn(plugin, 'hideMenu');
+        const onCommandMock = vi.fn();
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
-        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValueOnce({
+        vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValueOnce({
           ...gridOptionsMock,
           darkMode: true,
         });
@@ -756,7 +757,7 @@ describe('HeaderMenu Plugin', () => {
         plugin.init({ autoAlign: true });
         plugin.addonOptions.onCommand = onCommandMock;
 
-        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
@@ -778,7 +779,7 @@ describe('HeaderMenu Plugin', () => {
         const menuItem = document.createElement('div');
         menuItem.className = 'slick-menu-item';
         menuItem.style.top = '465px';
-        jest.spyOn(menuItem, 'getBoundingClientRect').mockReturnValue({ top: 465, left: 25 } as any);
+        vi.spyOn(menuItem, 'getBoundingClientRect').mockReturnValue({ top: 465, left: 25 } as any);
         Object.defineProperty(menuItem, 'target', { writable: true, configurable: true, value: menuItem });
         subMenuElm.className = 'slick-submenu';
         Object.defineProperty(divEvent, 'target', { writable: true, configurable: true, value: subMenuElm });
@@ -806,19 +807,79 @@ describe('HeaderMenu Plugin', () => {
         columnsMock[2].header!.menu = undefined;
         headerDiv = document.createElement('div');
         headerDiv.className = 'slick-header-column';
-        eventData = { ...new SlickEventData(), preventDefault: jest.fn() } as unknown as SlickEventData;
+        eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as unknown as SlickEventData;
       });
 
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
+      });
+
+      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+        });
+
+        // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
+        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
+        ]);
+        expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
+        expect(commandLabelElm.textContent).toBe('Freeze Columns');
+
+        await translateService.use('fr');
+        plugin.translateHeaderMenu();
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Geler les colonnes', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
+        ]);
+
+        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 1, enableMouseWheelScrollHandler: true }, false, true);
+        expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
+      });
+
+      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        const setColSpy = vi.spyOn(gridStub, 'setColumns');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+        });
+
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
+          { divider: true, command: '', positionOrder: 48 },
+        ]);
+
+        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, enableMouseWheelScrollHandler: true }, false, true);
+        expect(setColSpy).toHaveBeenCalledWith(columnsMock);
       });
 
       it('should expect menu to show and "onBeforeMenuShow" callback to run when defined', () => {
         const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
-        jest.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(true);
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(true);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: {
             hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true,
@@ -840,19 +901,20 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect menu to show and "onAfterMenuShow" callback to run when defined', () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableFiltering: true,
           headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
         plugin.init({ onAfterMenuShow: () => false });
-        const onAfterSpy = jest.spyOn(plugin.addonOptions, 'onAfterMenuShow').mockReturnValue(false);
+        const onAfterSpy = vi.spyOn(plugin.addonOptions, 'onAfterMenuShow');
+        (onAfterSpy as Mock).mockReturnValue(false);
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
+        const clearFilterSpy = vi.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
         const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 }];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
@@ -875,7 +937,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should have the commands "column-resize-by-content" and "hide-column" in the header menu list and also expect the command to execute necessary callback', () => {
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnResizeByContentCommand: false, }
         });
@@ -887,7 +949,7 @@ describe('HeaderMenu Plugin', () => {
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         const headerMenuExpected = [
           { iconCssClass: 'mdi mdi-arrow-expand-horizontal', title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', command: 'column-resize-by-content', positionOrder: 47 },
@@ -913,11 +975,11 @@ describe('HeaderMenu Plugin', () => {
             { title: 'Non-Blank Values', searchTerms: ['A'], operator: '>', iconCssClass: 'mdi mdi-filter-plus-outline', },
           ]
         };
-        jest.spyOn(SharedService.prototype.slickGrid, 'getColumns').mockReturnValueOnce(columnsMock);
-        jest.spyOn(SharedService.prototype.slickGrid, 'getColumnIndex').mockReturnValue(0);
-        const setValueMock = jest.fn();
+        vi.spyOn(SharedService.prototype.slickGrid, 'getColumns').mockReturnValueOnce(columnsMock);
+        vi.spyOn(SharedService.prototype.slickGrid, 'getColumnIndex').mockReturnValue(0);
+        const setValueMock = vi.fn();
         const filterMock = { columnDef: columnsMock[0], setValues: setValueMock } as unknown as Filter;
-        jest.spyOn(filterServiceStub, 'getFiltersMetadata').mockReturnValueOnce([filterMock]);
+        vi.spyOn(filterServiceStub, 'getFiltersMetadata').mockReturnValueOnce([filterMock]);
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate any column menus
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -962,9 +1024,9 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect only the "hide-column" command in the menu when "enableSorting" and "hideSortCommands" are set and also expect the command to execute necessary callback', () => {
-        jest.spyOn(SharedService.prototype.slickGrid, 'getColumnIndex').mockReturnValue(1);
-        jest.spyOn(SharedService.prototype.slickGrid, 'getColumns').mockReturnValue(columnsMock);
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        vi.spyOn(SharedService.prototype.slickGrid, 'getColumnIndex').mockReturnValue(1);
+        vi.spyOn(SharedService.prototype.slickGrid, 'getColumns').mockReturnValue(columnsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true, enableColumnResizeOnDoubleClick: false,
           headerMenu: { hideColumnHideCommand: false, hideSortCommands: true, }
         });
@@ -976,7 +1038,7 @@ describe('HeaderMenu Plugin', () => {
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
+        const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
 
         const headerMenuExpected = [
           { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
@@ -995,7 +1057,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect all menu related to Filtering when "enableFiltering" is set', () => {
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableFiltering: true,
           headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
@@ -1006,7 +1068,7 @@ describe('HeaderMenu Plugin', () => {
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
+        const clearFilterSpy = vi.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
         const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 }];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
@@ -1022,19 +1084,19 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect all menu related to Sorting when "enableSorting" is set', () => {
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
-        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const clearSortSpy = jest.spyOn(sortServiceStub, 'clearSortByColumnId');
+        const clearSortSpy = vi.spyOn(sortServiceStub, 'clearSortByColumnId');
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-sort"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
@@ -1061,75 +1123,14 @@ describe('HeaderMenu Plugin', () => {
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', () => {
-        const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
-        const setColSpy = jest.spyOn(gridStub, 'setColumns');
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
-        });
-
-        // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
-        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
-        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
-        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
-        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
-          { divider: true, command: '', positionOrder: 48 },
-        ]);
-        expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Freeze Columns');
-
-        translateService.use('fr');
-        plugin.translateHeaderMenu();
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Geler les colonnes', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
-          { divider: true, command: '', positionOrder: 48 },
-        ]);
-
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
-        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 1, enableMouseWheelScrollHandler: true }, false, true);
-        expect(setColSpy).toHaveBeenCalledWith(columnsMock);
-      });
-
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
-        const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
-        const setColSpy = jest.spyOn(gridStub, 'setColumns');
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
-        });
-
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
-        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
-        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
-        expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
-          { divider: true, command: '', positionOrder: 48 },
-        ]);
-
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
-        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, enableMouseWheelScrollHandler: true }, false, true);
-        expect(setColSpy).toHaveBeenCalledWith(columnsMock);
-      });
-
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "setColumns" to be called with same as original even when the column definitions list did not change', () => {
         const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
-        const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
-        const setColSpy = jest.spyOn(gridStub, 'setColumns');
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
-        jest.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(false);
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        const setColSpy = vi.spyOn(gridStub, 'setColumns');
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(false);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
@@ -1153,10 +1154,10 @@ describe('HeaderMenu Plugin', () => {
       it('should trigger the command "sort-asc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {
         const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
-        const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
-        const backendSortSpy = jest.spyOn(sortServiceStub, 'onBackendSortChanged');
-        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
+        const backendSortSpy = vi.spyOn(sortServiceStub, 'onBackendSortChanged');
+        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
@@ -1185,10 +1186,10 @@ describe('HeaderMenu Plugin', () => {
       it('should trigger the command "sort-desc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {
         const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
-        const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
-        const backendSortSpy = jest.spyOn(sortServiceStub, 'onBackendSortChanged');
-        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
+        const backendSortSpy = vi.spyOn(sortServiceStub, 'onBackendSortChanged');
+        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
@@ -1215,13 +1216,13 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should trigger the command "sort-desc" and expect Sort Service to call "onLocalSortChanged" being called without the sorted column', () => {
-        jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
+        vi.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
         const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
-        const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
-        const localSortSpy = jest.spyOn(sortServiceStub, 'onLocalSortChanged');
-        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
+        const localSortSpy = vi.spyOn(sortServiceStub, 'onLocalSortChanged');
+        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true, backendServiceApi: undefined,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
@@ -1239,13 +1240,13 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should trigger the command "sort-desc" and expect "onSort" event triggered when no DataView is provided', () => {
-        jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(undefined as any);
+        vi.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(undefined as any);
         const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
-        const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
-        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
-        const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+        const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
+        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
+        const gridSortSpy = vi.spyOn(gridStub.onSort, 'notify');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true, backendServiceApi: undefined,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });

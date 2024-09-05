@@ -1,3 +1,5 @@
+import { describe, expect, it, type Mock, vi } from 'vitest';
+
 import type { Column, GridOption } from '../../interfaces/index';
 import { avgTotalsPercentageFormatter } from '../avgTotalsPercentageFormatter';
 import { type SlickGrid } from '../../core/index';
@@ -5,7 +7,7 @@ import { type SlickGrid } from '../../core/index';
 describe('avgTotalsPercentageFormatter', () => {
   // stub some methods of the SlickGrid Grid instance
   const gridStub = {
-    getOptions: jest.fn()
+    getOptions: vi.fn()
   } as unknown as SlickGrid;
 
   it('should display an empty string when no value is provided', () => {
@@ -79,7 +81,7 @@ describe('avgTotalsPercentageFormatter', () => {
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    (gridStub.getOptions as jest.Mock).mockReturnValue({ formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
+    (gridStub.getOptions as Mock).mockReturnValue({ formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { avg: { column1: 123, column2: 345, column3: -2.4 } };
     const output = avgTotalsPercentageFormatter(totals, columnDef, gridStub);
@@ -109,7 +111,7 @@ describe('avgTotalsPercentageFormatter', () => {
   });
 
   it('should display an average number with user defined minimum & maximum decimal count in his grid option', () => {
-    (gridStub.getOptions as jest.Mock).mockReturnValue({ formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true } } as GridOption);
+    (gridStub.getOptions as Mock).mockReturnValue({ formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true } } as GridOption);
     const totals = { avg: { column1: 123.45678, column2: 345, column3: -2.45 } };
 
     const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1' } as Column, gridStub);

@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   calculateAvailableSpace,
@@ -38,7 +38,7 @@ describe('Service/domUtilies', () => {
     it('should calculate space on all sides', () => {
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 400 });
       Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 1200 });
-      jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 25 } as any);
+      vi.spyOn(div, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 25 } as any);
       div.style.top = '10px';
       div.style.left = '25px';
 
@@ -87,7 +87,7 @@ describe('Service/domUtilies', () => {
     });
 
     it('should display a warning when trying to use innerHTML via the  method', () => {
-      const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+      const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
       createDomElement('div', { className: 'red bold', innerHTML: '<input />' });
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('div', { innerHTML: 'some html'})"`));
@@ -214,8 +214,8 @@ describe('Service/domUtilies', () => {
     });
 
     it('should return same top/left positions as defined in the document/window', () => {
-      jest.spyOn(parentDiv, 'getBoundingClientRect').mockReturnValue({ top: 20, bottom: 33, left: 25, right: 44 } as any);
-      jest.spyOn(childDiv, 'getBoundingClientRect').mockReturnValue({ top: 130, bottom: 70, left: 250, right: 66 } as any);
+      vi.spyOn(parentDiv, 'getBoundingClientRect').mockReturnValue({ top: 20, bottom: 33, left: 25, right: 44 } as any);
+      vi.spyOn(childDiv, 'getBoundingClientRect').mockReturnValue({ top: 130, bottom: 70, left: 250, right: 66 } as any);
       parentDiv.style.top = '10px';
       parentDiv.style.left = '25px';
 
@@ -240,7 +240,7 @@ describe('Service/domUtilies', () => {
     });
 
     it('should return same top/left positions as defined in the document/window', () => {
-      jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 25 } as any);
+      vi.spyOn(div, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 25 } as any);
       div.style.top = '10px';
       div.style.left = '25px';
 

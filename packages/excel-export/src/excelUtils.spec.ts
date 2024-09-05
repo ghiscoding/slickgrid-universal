@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type Column,
   FieldType,
@@ -18,14 +19,14 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
-  getColumnIndex: jest.fn(),
+  getColumnIndex: vi.fn(),
   getOptions: () => mockGridOptions,
-  getColumns: jest.fn(),
-  getGrouping: jest.fn(),
+  getColumns: vi.fn(),
+  getGrouping: vi.fn(),
 } as unknown as SlickGrid;
 
 const stylesheetStub = {
-  createFormat: jest.fn(),
+  createFormat: vi.fn(),
 } as unknown as StyleSheet;
 
 describe('excelUtils', () => {
@@ -34,11 +35,11 @@ describe('excelUtils', () => {
   const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
 
   beforeEach(() => {
-    createFormatSpy = jest.spyOn(stylesheetStub, 'createFormat').mockReturnValue({ id: mockedFormatId });
+    createFormatSpy = vi.spyOn(stylesheetStub, 'createFormat').mockReturnValue({ id: mockedFormatId });
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getExcelNumberCallback() method', () => {
@@ -77,7 +78,7 @@ describe('excelUtils', () => {
 
   describe('decimal formatter', () => {
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should call createFormat with a format of "###0.00" when a number is provided without any specific formatter options', () => {
@@ -85,7 +86,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '0.00;"-"0.00' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "0.0##" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -93,7 +94,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '0.0##;"-"0.0##' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "€0.00" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -101,7 +102,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '"€"0.00;"-€"0.00' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "#,##0.00" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -109,7 +110,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '#,##0.00;"-"#,##0.00' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "# ##0.00 USD" when a number is provided with thousandSeparator & numberSuffix formatter options', () => {
@@ -117,7 +118,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '# ##0.00" USD";"-"# ##0.00" USD"' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 135 });
     });
 
     it('should call createFormat with a format of "#,##0.00 USD;(#,##0.00 USD)" when a number is provided displayNegativeNumberWithParentheses, thousandSeparator & numberSuffix formatter options', () => {
@@ -125,7 +126,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '#,##0.00" USD";(#,##0.00" USD")' });
-      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 135 });
     });
   });
 

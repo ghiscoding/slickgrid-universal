@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { FieldType, OperatorType } from '../../enums/index';
 import type { FilterConditionOption } from '../../interfaces/index';
 import { executeFilterConditionTest } from '../filterConditionProcesses';

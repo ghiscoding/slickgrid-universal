@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { beforeEach, describe, expect, it, test } from 'vitest';
 
 import {
   addToArrayWhenNotExists,
@@ -117,7 +117,7 @@ describe('Service/Utilies', () => {
         if (input.length > 1) {
           return true;
         }
-        return input['age'].toString().includes(args.searchString)
+        return input["age"].toString().includes(args.searchString)
       `));
     });
 
@@ -136,7 +136,7 @@ describe('Service/Utilies', () => {
         if (input.length > 1) {
           return true;
         }
-        return input['age'].toString().includes(args.searchString)
+        return input["age"].toString().includes(args.searchString)
       `));
     });
 
@@ -158,7 +158,7 @@ describe('Service/Utilies', () => {
       expect(result.params).toEqual([]);
       expect(result.isAsync).toBe(false);
       expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
-        return { status: 200, body: 'hello world' }
+        return { status: 200, body: "hello world" }
       `));
     });
 
@@ -226,7 +226,7 @@ describe('Service/Utilies', () => {
         if (input.length > 1) {
           return true;
         }
-        return input['age'].toString().includes(args.searchString);
+        return input["age"].toString().includes(args.searchString);
       `));
     });
   });
@@ -286,7 +286,7 @@ describe('Service/Utilies', () => {
   describe('isEmptyObject() method', () => {
     it('should return True when comparing against an object that has properties', () => {
       const result = isEmptyObject({ firstName: 'John', lastName: 'Doe' });
-      expect(result).toBeFalse();
+      expect(result).toBe(false);
     });
 
     it('should return False when comparing against an object is either empty, null or undefined', () => {
@@ -294,87 +294,87 @@ describe('Service/Utilies', () => {
       const result2 = isEmptyObject(null);
       const result3 = isEmptyObject(undefined);
 
-      expect(result1).toBeTrue();
-      expect(result2).toBeTrue();
-      expect(result3).toBeTrue();
+      expect(result1).toBe(true);
+      expect(result2).toBe(true);
+      expect(result3).toBe(true);
     });
   });
 
   describe('isObject() method', () => {
     it('should return false when input is undefined', () => {
-      expect(isObject(undefined)).toBeFalse();
+      expect(isObject(undefined)).toBe(false);
     });
 
     it('should return false when input is null', () => {
-      expect(isObject(null)).toBeFalse();
+      expect(isObject(null)).toBe(false);
     });
 
     it('should return false when input is empty string', () => {
-      expect(isObject('')).toBeFalse();
+      expect(isObject('')).toBe(false);
     });
 
     it('should return false when input is a string', () => {
-      expect(isObject('some text')).toBeFalse();
+      expect(isObject('some text')).toBe(false);
     });
 
     it('should return false when input is an empty array', () => {
-      expect(isObject([])).toBeFalse();
+      expect(isObject([])).toBe(false);
     });
 
     it('should return false when input a Date', () => {
-      expect(isObject(new Date())).toBeFalse();
+      expect(isObject(new Date())).toBe(false);
     });
 
     it('should return true when input is an empty object', () => {
-      expect(isObject({})).toBeTrue();
+      expect(isObject({})).toBe(true);
     });
 
     it('should return true when input is an object', () => {
-      expect(isObject({ msg: 'hello workd' })).toBeTrue();
+      expect(isObject({ msg: 'hello workd' })).toBe(true);
     });
   });
 
   describe('isObjectEmpty() method', () => {
     it('should return True when input is undefined', () => {
       const result = isObjectEmpty(undefined);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is null', () => {
       const result = isObjectEmpty(null);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is {} (empty object)', () => {
       const result = isObjectEmpty({});
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return False when input is an object with at least 1 property', () => {
       const result = isObjectEmpty({ name: 'John' });
-      expect(result).toBeFalse();
+      expect(result).toBe(false);
     });
   });
 
   describe('isPrimitiveValue() method', () => {
     it('should return True when input is undefined', () => {
       const result = isPrimitiveValue(undefined);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is null', () => {
       const result = isPrimitiveValue(null);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is a number', () => {
       const result = isPrimitiveValue(0);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is a string', () => {
       const result = isPrimitiveValue('');
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return False when input is an empty object', () => {
@@ -391,22 +391,22 @@ describe('Service/Utilies', () => {
   describe('isPrimitiveOrHTML() method', () => {
     it('should return True when input is undefined', () => {
       const result = isPrimitiveOrHTML(undefined);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is null', () => {
       const result = isPrimitiveOrHTML(null);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is a number', () => {
       const result = isPrimitiveOrHTML(0);
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return True when input is a string', () => {
       const result = isPrimitiveOrHTML('');
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     it('should return False when input is an empty object', () => {
@@ -437,13 +437,13 @@ describe('Service/Utilies', () => {
       const result1 = isNumber(22);
       const result2 = isNumber('33');
 
-      expect(result1).toBeTrue();
-      expect(result2).toBeTrue();
+      expect(result1).toBe(true);
+      expect(result2).toBe(true);
     });
 
     it('should return False when comparing string that has a number but also other text within and the strict mode is disable', () => {
       const result = isNumber('33test');
-      expect(result).toBeFalse();
+      expect(result).toBe(false);
     });
 
     it('should return False when comparing a number from a string variable with strict mode enabled', () => {
@@ -452,10 +452,10 @@ describe('Service/Utilies', () => {
       const result3 = isNumber('33', true);
       const result4 = isNumber('33test', true);
 
-      expect(result1).toBeFalse();
-      expect(result2).toBeFalse();
-      expect(result3).toBeFalse();
-      expect(result4).toBeFalse();
+      expect(result1).toBe(false);
+      expect(result2).toBe(false);
+      expect(result3).toBe(false);
+      expect(result4).toBe(false);
     });
   });
 

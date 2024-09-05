@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { Column, Formatter, GridOption } from '../../interfaces/index';
 import { GroupTotalFormatters } from '../../grouping-formatters';
 import { treeParseTotalsFormatter } from '../treeParseTotalsFormatter';
@@ -5,8 +7,8 @@ import { dollarFormatter } from '../dollarFormatter';
 import type { SlickGrid } from '../../core/index';
 
 const gridStub = {
-  getData: jest.fn(),
-  getOptions: jest.fn(),
+  getData: vi.fn(),
+  getOptions: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('TreeParseTotalFormatters', () => {
@@ -18,7 +20,7 @@ describe('TreeParseTotalFormatters', () => {
     mockGridOptions = {
       treeDataOptions: { levelPropName: 'indent' }
     } as GridOption;
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
 
   it('should return expected output of groupTotalsFormatter when detecting the dataContext has tree children and a "__treeTotals" prop', () => {

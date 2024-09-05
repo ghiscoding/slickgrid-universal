@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { TextExportService } from '../textExport.service';
 
 describe('Export Service', () => {

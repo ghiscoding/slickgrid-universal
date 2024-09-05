@@ -1,11 +1,5 @@
-// mocked modules
-const downloadExcelFileMock = jest.fn().mockResolvedValue(true);
-jest.mock('excel-builder-vanilla', () => ({
-  ...(jest.requireActual('excel-builder-vanilla') as any),
-  downloadExcelFile: downloadExcelFileMock,
-}));
-
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { downloadExcelFile } from 'excel-builder-vanilla';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   type Column,
@@ -29,15 +23,21 @@ import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
 import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
+// mocked modules
+vi.mock('excel-builder-vanilla', async (importOriginal) => ({
+  ...await importOriginal() as any,
+  downloadExcelFile: vi.fn().mockResolvedValue(true),
+}));
+
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 // URL object is not supported in JSDOM, we can simply mock it
-(global as any).URL.createObjectURL = jest.fn();
+(global as any).URL.createObjectURL = vi.fn();
 
 const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: `<b>${value}</b>` } : null as any;
 const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null as any;
@@ -61,11 +61,11 @@ const myCustomObjectFormatter: Formatter = (_row, _cell, value, _columnDef, data
 };
 
 const dataViewStub = {
-  getGrouping: jest.fn(),
-  getItem: jest.fn(),
-  getItemMetadata: jest.fn(),
-  getLength: jest.fn(),
-  setGrouping: jest.fn(),
+  getGrouping: vi.fn(),
+  getItem: vi.fn(),
+  getItemMetadata: vi.fn(),
+  getLength: vi.fn(),
+  setGrouping: vi.fn(),
 } as unknown as SlickDataView;
 
 const mockGridOptions = {
@@ -75,11 +75,11 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
-  getColumnIndex: jest.fn(),
+  getColumnIndex: vi.fn(),
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
-  getColumns: jest.fn(),
-  getGrouping: jest.fn(),
+  getColumns: vi.fn(),
+  getGrouping: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
@@ -108,7 +108,7 @@ describe('ExcelExportService', () => {
     afterEach(() => {
       delete mockGridOptions.backendServiceApi;
       service?.dispose();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should create the service', () => {
@@ -117,7 +117,7 @@ describe('ExcelExportService', () => {
     });
 
     it('should not have any output since there are no column definitions provided', async () => {
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.init(gridStub, container);
       const result = await service.exportToExcel(mockExportExcelOptions);
@@ -125,7 +125,7 @@ describe('ExcelExportService', () => {
       expect(result).toBeTruthy();
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
       expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-      expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xlsx', { mimeType: mimeTypeXLSX });
+      expect(downloadExcelFile).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xlsx', { mimeType: mimeTypeXLSX });
     });
 
     describe('exportToExcel method', () => {
@@ -139,11 +139,11 @@ describe('ExcelExportService', () => {
           { id: 'order', field: 'order', width: 100, exportWithFormatter: true, formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
         ] as Column[];
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should throw an error when trying call exportToExcel" without a grid and/or dataview object initialized', async () => {
@@ -156,7 +156,7 @@ describe('ExcelExportService', () => {
       });
 
       it('should trigger an event before exporting the file', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
@@ -166,7 +166,7 @@ describe('ExcelExportService', () => {
       });
 
       it('should trigger an event after exporting the file', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
@@ -177,38 +177,38 @@ describe('ExcelExportService', () => {
       });
 
       it('should call download with a Blob and xlsx file when browser is not IE11 (basically any other browser) when exporting as xlsx', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLSX });
+        expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLSX });
       });
 
       it('should call download with a Blob and xlsx file without any MIME type when providing an empty string as a mime type', async () => {
         mockGridOptions.excelExportOptions = { mimeType: '' };
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: '' });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: '' });
+        expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: '' });
       });
 
       it('should call download with a Blob and expect same mime type when provided', async () => {
         mockGridOptions.excelExportOptions = { mimeType: mimeTypeXLS };
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLS });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLS });
+        expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLS });
       });
     });
 
@@ -225,15 +225,15 @@ describe('ExcelExportService', () => {
 
       it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -254,15 +254,15 @@ describe('ExcelExportService', () => {
 
       it(`should have the LastName in uppercase when "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -283,15 +283,15 @@ describe('ExcelExportService', () => {
 
       it(`should have the LastName as empty string when item LastName is NULL and column definition "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava Luna', lastName: null, position: 'HUMAN_RESOURCES', order: 3 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -312,15 +312,15 @@ describe('ExcelExportService', () => {
 
       it(`should have the UserId as empty string even when UserId property is not found in the item object`, async () => {
         mockCollection = [{ id: 2, firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 3 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -341,15 +341,15 @@ describe('ExcelExportService', () => {
 
       it(`should have the Order as empty string when using multiple formatters and last one result in a null output because its value is bigger than 10`, async () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 13 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -370,15 +370,15 @@ describe('ExcelExportService', () => {
 
       it(`should have the UserId as empty string when its input value is null`, async () => {
         mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 },];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -400,15 +400,15 @@ describe('ExcelExportService', () => {
       it(`should have the Order without html tags when the grid option has "sanitizeDataExport" is enabled`, async () => {
         mockGridOptions.excelExportOptions = { sanitizeDataExport: true };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -430,15 +430,15 @@ describe('ExcelExportService', () => {
       it(`should have different styling for header titles when the grid option has "columnHeaderStyle" provided with custom styles`, async () => {
         mockGridOptions.excelExportOptions = { columnHeaderStyle: { font: { bold: true, italic: true } } };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -480,15 +480,15 @@ describe('ExcelExportService', () => {
           }
         };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -530,11 +530,11 @@ describe('ExcelExportService', () => {
           { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso },
         ] as Column[];
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it(`should expect Date to be formatted as ISO Date only "exportWithFormatter" is undefined or set to True but remains untouched when "exportWithFormatter" is explicitely set to False`, async () => {
@@ -542,15 +542,15 @@ describe('ExcelExportService', () => {
           { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', startDate: '2005-12-20T18:19:19.992Z', endDate: null },
           { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'HUMAN_RESOURCES', startDate: '2010-10-09T18:19:19.992Z', endDate: '2024-01-02T16:02:02.000Z' },
         ];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(service.stylesheet).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -586,22 +586,22 @@ describe('ExcelExportService', () => {
           { id: 'position', field: 'position', width: 100, type: FieldType.number },
         ] as Column[];
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
       let mockCollection: any[];
 
       it(`should export correctly with complex object formatters`, async () => {
         mockCollection = [{ id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -623,15 +623,15 @@ describe('ExcelExportService', () => {
           { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 },
           { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 } }
         ];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -665,20 +665,20 @@ describe('ExcelExportService', () => {
           { id: 'order', field: 'order', width: 100, exportWithFormatter: true, formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
         ] as Column[];
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
       it(`should have the LastName header title translated when defined as a "nameKey" and "translater" is set in grid option`, async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -736,7 +736,7 @@ describe('ExcelExportService', () => {
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
-          compiledAccumulators: [jest.fn(), jest.fn()],
+          compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
           formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
@@ -754,26 +754,26 @@ describe('ExcelExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem')
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem')
           .mockReturnValue(null)
           .mockReturnValueOnce(mockCollection[0])
           .mockReturnValueOnce(mockCollection[1])
           .mockReturnValueOnce(mockCollection[2])
           .mockReturnValueOnce(mockCollection[3]);
-        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -803,8 +803,8 @@ describe('ExcelExportService', () => {
       let mockItem1;
       let mockItem2;
       let mockGroup1;
-      const parserCallbackSpy = jest.fn();
-      const groupTotalParserCallbackSpy = jest.fn();
+      const parserCallbackSpy = vi.fn();
+      const groupTotalParserCallbackSpy = vi.fn();
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
@@ -838,7 +838,7 @@ describe('ExcelExportService', () => {
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
-          compiledAccumulators: [jest.fn(), jest.fn()],
+          compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
           formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
@@ -856,27 +856,27 @@ describe('ExcelExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem')
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem')
           .mockReturnValue(null)
           .mockReturnValueOnce(mockCollection[0])
           .mockReturnValueOnce(mockCollection[1])
           .mockReturnValueOnce(mockCollection[2])
           .mockReturnValueOnce(mockCollection[3]);
-        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         parserCallbackSpy.mockReturnValue(8888);
         groupTotalParserCallbackSpy.mockReturnValueOnce(9999);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -936,7 +936,7 @@ describe('ExcelExportService', () => {
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
-          compiledAccumulators: [jest.fn(), jest.fn()],
+          compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
           formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
@@ -954,26 +954,26 @@ describe('ExcelExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem')
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem')
           .mockReturnValue(null)
           .mockReturnValueOnce(mockCollection[0])
           .mockReturnValueOnce(mockCollection[1])
           .mockReturnValueOnce(mockCollection[2])
           .mockReturnValueOnce(mockCollection[3]);
-        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -1006,10 +1006,10 @@ describe('ExcelExportService', () => {
       let mockGroup2;
       let mockGroup3;
       let mockGroup4;
-      const groupTotalParserCallbackSpy = jest.fn();
+      const groupTotalParserCallbackSpy = vi.fn();
 
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
         mockGridOptions.excelExportOptions = { autoDetectCellFormat: true, sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true };
@@ -1035,7 +1035,7 @@ describe('ExcelExportService', () => {
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
-          compiledAccumulators: [jest.fn(), jest.fn()],
+          compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
           formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
@@ -1071,14 +1071,14 @@ describe('ExcelExportService', () => {
           totals: { value: '0', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         mockCollection = [
           mockGroup1, mockGroup2, mockItem1, mockGroup3, mockItem2, mockGroup4,
           { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 },
           { __groupTotals: true, initialized: true, sum: { order: 10 }, group: mockGroup2 },
         ];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem')
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem')
           .mockReturnValue(null)
           .mockReturnValueOnce(mockCollection[0])
           .mockReturnValueOnce(mockCollection[1])
@@ -1088,19 +1088,19 @@ describe('ExcelExportService', () => {
           .mockReturnValueOnce(mockCollection[5])
           .mockReturnValueOnce(mockCollection[6])
           .mockReturnValueOnce(mockCollection[7]);
-        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
         groupTotalParserCallbackSpy.mockReturnValue({ value: 9999, metadata: { style: 4 } });
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(groupTotalParserCallbackSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -1128,7 +1128,7 @@ describe('ExcelExportService', () => {
       });
 
       it(`should not call group total value parser when column "exportAutoDetectCellFormat" is disabled`, async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         mockGridOptions.excelExportOptions!.autoDetectCellFormat = false;
 
         service.init(gridStub, container);
@@ -1142,13 +1142,13 @@ describe('ExcelExportService', () => {
       and field should be exported as metadata when "exportWithFormatter" is false and the field type is number`, async () => {
         mockColumns[5].exportWithFormatter = false; // "order" is a field of type number that will be exported as a number cell format metadata
         mockGridOptions.excelExportOptions!.addGroupIndentation = false;
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -1185,7 +1185,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
 
-        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: undefined });
+        expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: undefined });
       });
 
       it('should return a number format when using FieldType.number and a number is provided as input', async () => {
@@ -1195,7 +1195,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
 
-        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: 3 });
+        expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 3 });
       });
 
       it('should NOT return a number format when using FieldType.number but autoDetectCellFormat is disabled', async () => {
@@ -1205,7 +1205,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub, false);
 
-        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), excelFormatId: undefined });
+        expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: undefined });
       });
     });
 
@@ -1213,7 +1213,7 @@ describe('ExcelExportService', () => {
       let mockCollection2: any[];
 
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockGridOptions.createPreHeaderPanel = true;
         mockGridOptions.showPreHeaderPanel = true;
         mockColumns = [
@@ -1225,21 +1225,21 @@ describe('ExcelExportService', () => {
           { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroup: 'Sales', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
         ] as Column[];
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null as any);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null as any);
       });
 
       it('should export with grouped header titles showing up on first row', async () => {
         mockCollection2 = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection2.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection2[0]);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection2.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection2[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -1280,25 +1280,25 @@ describe('ExcelExportService', () => {
             { id: 'position', field: 'position', name: 'Position', width: 100, columnGroupKey: 'COMPANY_PROFILE', formatter: Formatters.translate, exportWithFormatter: true },
             { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroupKey: 'SALES', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
           ] as Column[];
-          jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+          vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         });
 
         afterEach(() => {
-          jest.clearAllMocks();
+          vi.clearAllMocks();
         });
 
         it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, async () => {
           mockGridOptions.excelExportOptions!.sanitizeDataExport = false;
           mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
-          jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
-          jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockTranslateCollection[0]);
-          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+          vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
+          vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockTranslateCollection[0]);
+          const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
           service.init(gridStub, container);
           await service.exportToExcel(mockExportExcelOptions);
 
           expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-          expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect(downloadExcelFile).toHaveBeenCalledWith(
             expect.objectContaining({
               worksheets: [expect.objectContaining({
                 data: [
@@ -1348,11 +1348,11 @@ describe('ExcelExportService', () => {
           { id: 'order', field: 'order', width: 100, },
         ] as Column[];
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should return associated Excel column name when calling "getExcelColumnNameByIndex" method with a column index', () => {
@@ -1373,16 +1373,16 @@ describe('ExcelExportService', () => {
           { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'DEVELOPER', order: 15 },
           { id: 2, userId: '2ABC', firstName: 'Sponge', lastName: 'Bob', position: 'IT_ADMIN', order: 33 },
         ];
-        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]).mockReturnValueOnce(mockCollection[2]);
-        jest.spyOn(dataViewStub, 'getItemMetadata').mockReturnValue(oddMetatadata).mockReturnValueOnce(evenMetatadata).mockReturnValueOnce(oddMetatadata).mockReturnValueOnce(evenMetatadata);
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]).mockReturnValueOnce(mockCollection[2]);
+        vi.spyOn(dataViewStub, 'getItemMetadata').mockReturnValue(oddMetatadata).mockReturnValueOnce(evenMetatadata).mockReturnValueOnce(oddMetatadata).mockReturnValueOnce(evenMetatadata);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+        expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [expect.objectContaining({
               data: [
@@ -1413,7 +1413,7 @@ describe('ExcelExportService', () => {
 
     it('should throw an error if "enableTranslate" is set but the Translater Service is null', () => {
       const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, translater: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       expect(() => service.init(gridStub, container)).toThrow('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
     });

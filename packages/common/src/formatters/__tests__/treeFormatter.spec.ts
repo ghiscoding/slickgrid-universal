@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 import type { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index';
@@ -6,8 +8,8 @@ import type { SlickGrid } from '../../core/index';
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  getData: jest.fn(),
-  getOptions: jest.fn(),
+  getData: vi.fn(),
+  getOptions: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('Tree Formatter', () => {
@@ -27,7 +29,7 @@ describe('Tree Formatter', () => {
     mockGridOptions = {
       treeDataOptions: { levelPropName: 'indent' }
     } as GridOption;
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
 
   it('should throw an error when oarams are mmissing', () => {
@@ -59,7 +61,7 @@ describe('Tree Formatter', () => {
   });
 
   it('should return the Tree content wrapped inside a span HTML element when "allowDocumentFragmentUsage" grid option is disabled', () => {
-    jest.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, preventDocumentFragmentUsage: true });
+    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, preventDocumentFragmentUsage: true });
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');

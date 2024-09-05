@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { InputPasswordFilter } from '../inputPasswordFilter';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
@@ -15,9 +17,9 @@ const gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('InputPasswordFilter', () => {
@@ -31,13 +33,13 @@ describe('InputPasswordFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = { id: 'passwordField', field: 'password', filterable: true, filter: { model: Filters.inputPassword } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 

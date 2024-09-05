@@ -12,13 +12,15 @@
     "types": [
       "@4tw/cypress-drag-drop",
       "cypress",
-      "jest",
+      "cypress-real-events",
+      "jest-extended",
       "node"
     ],
     "typeRoots": [
       "../node_modules/@types"
     ]
   },
+  "files": ["jest-extended.d.ts"],
   "include": [
     "**/*.spec.ts",
     "src/typings/**/*.ts",

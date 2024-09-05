@@ -180,7 +180,9 @@ export class ResizerService {
 
       // -- 2nd bind a trigger on the Window DOM element, so that it happens also when resizing after first load
       // -- bind auto-resize to Window object only if it exist
-      this._bindingEventService.bind(window, 'resize', this.handleResizeGrid.bind(this, newSizes));
+      this._bindingEventService.bind(window, 'resize', () => {
+        this.handleResizeGrid(newSizes);
+      });
     }
   }
 

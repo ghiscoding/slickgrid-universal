@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { describe, expect, it } from 'vitest';
 
 import { FieldType } from '../../enums/index';
 import { mapTempoDateFormatWithFieldType, parseUtcDate } from '../dateUtils';

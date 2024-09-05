@@ -1,12 +1,12 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
 import type { SlickGrid, SlickRange } from '../../core';
 
 const gridStub = {
-  getActiveCell: jest.fn(),
-  getActiveCanvasNode: jest.fn(),
-  getCellNodeBox: jest.fn(),
+  getActiveCell: vi.fn(),
+  getActiveCanvasNode: vi.fn(),
+  getCellNodeBox: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('CellRangeDecorator Plugin', () => {
@@ -17,7 +17,7 @@ describe('CellRangeDecorator Plugin', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create the plugin', () => {
@@ -34,8 +34,8 @@ describe('CellRangeDecorator Plugin', () => {
 
   it('should dispose of the addon', () => {
     plugin.init();
-    const disposeSpy = jest.spyOn(plugin, 'destroy');
-    const hideSpy = jest.spyOn(plugin, 'hide');
+    const disposeSpy = vi.spyOn(plugin, 'destroy');
+    const hideSpy = vi.spyOn(plugin, 'hide');
 
     plugin.destroy();
     expect(disposeSpy).toHaveBeenCalled();
@@ -44,7 +44,7 @@ describe('CellRangeDecorator Plugin', () => {
 
   it('should Show range when called and not return any new position when getCellNodeBox returns null', () => {
     const divContainer = document.createElement('div');
-    jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
+    vi.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
 
     plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
     plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange);
@@ -57,8 +57,8 @@ describe('CellRangeDecorator Plugin', () => {
 
   it('should Show range when called and calculate new position when getCellNodeBox returns a cell position', () => {
     const divContainer = document.createElement('div');
-    jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
-    jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ top: 25, left: 26, right: 27, bottom: 12 });
+    vi.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
+    vi.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ top: 25, left: 26, right: 27, bottom: 12 });
 
     plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
     plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange);

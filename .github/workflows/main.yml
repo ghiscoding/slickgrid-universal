@@ -1,4 +1,4 @@
-# CI Build & Jest Unit Tests (ship smaller name for CI badge)
+# CI Build & Vitest Unit Tests (ship smaller name for CI badge)
 name: Build & Tests
 on:
   # Trigger the workflow on push or pull request,
@@ -63,31 +63,31 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: Cache TypeScript and Jest
+      - name: Cache TypeScript and Vitest
         uses: actions/cache@v4
         with:
           path: |
             packages/*/lib
             packages/*/tsconfig.tsbuildinfo
-            test/.jest-cache
-          key: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
-          restore-keys: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-
+            test/.vitest-cache
+          key: ts-vitest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
+          restore-keys: ts-vitest-${{ matrix.platform }}-${{ matrix.node }}-
 
       - name: TSC Full Bundle (all Bundler types)
         run: pnpm bundle
 
-      - name: Run Jest unit tests
+      - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
         run: pnpm test:ci
 
-      - name: Upload Jest coverage to Codecov
+      - name: Upload Vitest coverage to Codecov
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
         uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: test/jest-coverage
+          directory: test/vitest-coverage
           verbose: true
 
       - name: Retry Codecov upload when 1st try failed
@@ -97,5 +97,5 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: test/jest-coverage
+          directory: test/vitest-coverage
           verbose: true

@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Editors } from '../../editors/index';
@@ -27,34 +28,34 @@ const template =
   </div>`;
 
 const mockDataView = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-  getItemMetadata: jest.fn(),
-  getItemCount: jest.fn(),
-  getItems: jest.fn(),
+  constructor: vi.fn(),
+  init: vi.fn(),
+  destroy: vi.fn(),
+  getItemMetadata: vi.fn(),
+  getItemCount: vi.fn(),
+  getItems: vi.fn(),
 };
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  getContainerNode: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getColumns: jest.fn(),
-  getOptions: jest.fn(),
-  getRenderedRange: jest.fn(),
-  getViewports: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getContainerNode: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getColumns: vi.fn(),
+  getOptions: vi.fn(),
+  getRenderedRange: vi.fn(),
+  getViewports: vi.fn(),
   getData: () => mockDataView,
   getUID: () => GRID_UID,
-  reRenderColumns: jest.fn(),
-  registerPlugin: jest.fn(),
-  resizeCanvas: jest.fn(),
-  setColumns: jest.fn(),
-  setHeaderRowVisibility: jest.fn(),
-  setTopPanelVisibility: jest.fn(),
-  setPreHeaderPanelVisibility: jest.fn(),
-  setOptions: jest.fn(),
-  setSortColumns: jest.fn(),
-  updateColumns: jest.fn(),
+  reRenderColumns: vi.fn(),
+  registerPlugin: vi.fn(),
+  resizeCanvas: vi.fn(),
+  setColumns: vi.fn(),
+  setHeaderRowVisibility: vi.fn(),
+  setTopPanelVisibility: vi.fn(),
+  setPreHeaderPanelVisibility: vi.fn(),
+  setOptions: vi.fn(),
+  setSortColumns: vi.fn(),
+  updateColumns: vi.fn(),
   onColumnsResizeDblClick: new SlickEvent(),
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -64,19 +65,19 @@ describe('Resizer Service', () => {
   let service: ResizerService;
   let divContainer: HTMLDivElement;
   let mockGridOptions: GridOption;
-  let resizeObserverMock: jest.Mock<ResizeObserver, [callback: ResizeObserverCallback]>;
+  let resizeObserverMock: Mock<(callback: ResizeObserverCallback) => ResizeObserver>;
 
   beforeEach(() => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    resizeObserverMock = jest.fn(function (callback: ResizeObserverCallback): ResizeObserver {
-      this.observe = jest.fn().mockImplementation(() => {
+    resizeObserverMock = vi.fn(function (callback: ResizeObserverCallback): ResizeObserver {
+      this.observe = vi.fn().mockImplementation(() => {
         callback([], this); // Execute the callback on observe, similar to the window.ResizeObserver.
       });
-      this.unobserve = jest.fn();
-      this.disconnect = jest.fn();
+      this.unobserve = vi.fn();
+      this.disconnect = vi.fn();
       return this;
     });
 
@@ -101,12 +102,12 @@ describe('Resizer Service', () => {
       preHeaderPanelHeight: 20,
       resizeByContentOptions: {},
     } as GridOption;
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
-    jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`.${GRID_UID}`) as HTMLDivElement);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`.${GRID_UID}`) as HTMLDivElement);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     service.dispose();
   });
 
@@ -121,8 +122,8 @@ describe('Resizer Service', () => {
 
     it('should call "bindAutoResizeDataGrid" when autoResize is enabled', () => {
       mockGridOptions.enableAutoResize = true;
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
-      const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
+      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(() => null);
 
       service.init(gridStub, divContainer);
 
@@ -131,8 +132,8 @@ describe('Resizer Service', () => {
 
     it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
       mockGridOptions.enableAutoResize = false;
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
-      const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
+      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(() => null);
 
       service.init(gridStub, divContainer);
 
@@ -168,7 +169,7 @@ describe('Resizer Service', () => {
       const resizeContainer = document.createElement('div');
       mockGridOptions.autoResize!.container = resizeContainer;
 
-      const resizeGridSpy = jest.spyOn(service, 'resizeGrid');
+      const resizeGridSpy = vi.spyOn(service, 'resizeGrid');
 
       service.init(gridStub, divContainer);
 
@@ -181,7 +182,7 @@ describe('Resizer Service', () => {
       const resizeContainer = document.createElement('div');
       mockGridOptions.autoResize!.container = resizeContainer;
 
-      const resizeGridSpy = jest.spyOn(service, 'resizeGrid');
+      const resizeGridSpy = vi.spyOn(service, 'resizeGrid');
 
       service.pauseResizer(true);
 
@@ -192,10 +193,10 @@ describe('Resizer Service', () => {
   });
 
   describe('dispose method', () => {
-    it('should clear resizeGrid timeout', (done) => {
+    it('should clear resizeGrid timeout', () => new Promise((done: any) => {
       service.init(gridStub, divContainer);
 
-      const resizeGridWithDimensionsSpy = jest.spyOn(service, 'resizeGridWithDimensions');
+      const resizeGridWithDimensionsSpy = vi.spyOn(service, 'resizeGridWithDimensions');
       service.resizeGrid(1);
       service.dispose();
 
@@ -203,7 +204,7 @@ describe('Resizer Service', () => {
         expect(resizeGridWithDimensionsSpy).not.toHaveBeenCalled();
         done();
       }, 2);
-    });
+    }));
 
     it('should disconnect from resize events on the container element when "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
@@ -230,11 +231,11 @@ describe('Resizer Service', () => {
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should return null when calling "bindAutoResizeDataGrid" method with a gridId that is not found in the DOM', () => {
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
       service.init(gridStub, divContainer);
       const output = service.bindAutoResizeDataGrid();
 
@@ -243,7 +244,7 @@ describe('Resizer Service', () => {
     });
 
     it('should return null when calling "calculateGridNewDimensions" method with a gridId that is not found in the DOM', () => {
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
       service.init(gridStub, divContainer);
       const output = service.calculateGridNewDimensions(mockGridOptions);
       expect(output).toBeFalsy();
@@ -256,10 +257,10 @@ describe('Resizer Service', () => {
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
       const previousHeight = window.innerHeight;
-      const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
-      const gridSpy = jest.spyOn(gridStub, 'getOptions');
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
-      const serviceResizeSpy = jest.spyOn(service, 'resizeGrid');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
+      const gridSpy = vi.spyOn(gridStub, 'getOptions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
+      const serviceResizeSpy = vi.spyOn(service, 'resizeGrid');
 
       // act
       // bind window resize & call a viewport resize
@@ -289,7 +290,7 @@ describe('Resizer Service', () => {
       mockGridOptions.gridHeight = fixedHeight;
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: windowHeight });
       window.dispatchEvent(new Event('resize'));
@@ -305,7 +306,7 @@ describe('Resizer Service', () => {
       mockGridOptions.gridWidth = fixedWidth;
       mockGridOptions.autoResize!.container = undefined;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
       window.dispatchEvent(new Event('resize'));
@@ -320,7 +321,7 @@ describe('Resizer Service', () => {
       const fixedWidth = 800;
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
       window.dispatchEvent(new Event('resize'));
@@ -336,7 +337,7 @@ describe('Resizer Service', () => {
       const newOptions = { ...mockGridOptions, enablePagination: false, showCustomFooter: true } as GridOption;
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
       window.dispatchEvent(new Event('resize'));
@@ -353,7 +354,7 @@ describe('Resizer Service', () => {
       const newOptions = { ...mockGridOptions, enablePagination: false, showCustomFooter: true, customFooterOptions: { footerHeight } } as GridOption;
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
       window.dispatchEvent(new Event('resize'));
@@ -368,7 +369,7 @@ describe('Resizer Service', () => {
       const fixedWidth = 800;
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
       window.dispatchEvent(new Event('resize'));
@@ -383,7 +384,7 @@ describe('Resizer Service', () => {
       const fixedHeight = 500;
       mockGridOptions.gridHeight = fixedHeight;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: newWidth });
       window.dispatchEvent(new Event('resize'));
@@ -398,7 +399,7 @@ describe('Resizer Service', () => {
       const fixedHeight = 500;
       mockGridOptions.gridHeight = fixedHeight;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: newWidth });
       window.dispatchEvent(new Event('resize'));
@@ -413,7 +414,7 @@ describe('Resizer Service', () => {
       const fixedHeight = 500;
       mockGridOptions.gridHeight = fixedHeight;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: newWidth });
       window.dispatchEvent(new Event('resize'));
@@ -429,7 +430,7 @@ describe('Resizer Service', () => {
       const inputBottomPadding = 13;
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
       window.dispatchEvent(new Event('resize'));
@@ -439,7 +440,7 @@ describe('Resizer Service', () => {
       expect(serviceCalculateSpy).toHaveReturnedWith({ height: (newHeight - inputBottomPadding), width: fixedWidth });
     });
 
-    it('should use new dimensions when passed as argument to the "resizeGrid" method', (done) => {
+    it('should use new dimensions when passed as argument to the "resizeGrid" method', () => new Promise((done: any) => {
       const newHeight = 422;
       const newWidth = 804;
       service.init(gridStub, divContainer);
@@ -448,17 +449,17 @@ describe('Resizer Service', () => {
         expect(newDimensions).toEqual({ height: newHeight, width: newWidth });
         done();
       });
-    });
+    }));
 
     it('should calculate new dimensions minus the pagination height when pagination is enabled and resizeGrid is called with a delay', async () => {
-      const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
       const newHeight = 440;
       const fixedWidth = 800;
       mockGridOptions.gridWidth = fixedWidth;
       mockGridOptions.enablePagination = true;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
       window.dispatchEvent(new Event('resize'));
@@ -475,7 +476,7 @@ describe('Resizer Service', () => {
     it('should calculate new dimensions by using the container dimensions (instead of the window dimensions) when calculateAvailableSizeBy is set to container', () => {
       const newHeight = 500;
       const fixedWidth = 800;
-      const calculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+      const calculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
       mockGridOptions.gridWidth = fixedWidth;
       service.init(gridStub, divContainer);
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
@@ -487,11 +488,11 @@ describe('Resizer Service', () => {
     });
 
     it('should call the autosizeColumns from the core lib when "enableAutoSizeColumns" is set and the new width is wider than prior width', () => {
-      const newHeight = 500;
+      const newHeight = 520;
       mockGridOptions.enableAutoSizeColumns = true;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
-      const gridAutosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
+      const gridAutosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
 
       service.bindAutoResizeDataGrid();
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
@@ -503,7 +504,7 @@ describe('Resizer Service', () => {
     });
 
     it('should call "resizeGridWithDimensions" method and expect "resizeColumnsByCellContent" to be called when "enableAutoResizeColumnsByCellContent" is set', () => {
-      const resizeContentSpy = jest.spyOn(service, 'resizeColumnsByCellContent');
+      const resizeContentSpy = vi.spyOn(service, 'resizeColumnsByCellContent');
 
       mockGridOptions.enableAutoResizeColumnsByCellContent = true;
       service.init(gridStub, divContainer);
@@ -513,9 +514,9 @@ describe('Resizer Service', () => {
       expect(resizeContentSpy).toHaveBeenCalledWith(false);
     });
 
-    it('should expect "resizeColumnsByCellContent" to be called when "enableAutoResizeColumnsByCellContent" is set and "onGridAfterResize" event is called after "resizeGrid"', (done) => {
-      jest.spyOn(service, 'resizeGridWithDimensions').mockReturnValue({ height: 200, width: 800 });
-      const resizeContentSpy = jest.spyOn(service, 'resizeColumnsByCellContent');
+    it('should expect "resizeColumnsByCellContent" to be called when "enableAutoResizeColumnsByCellContent" is set and "onGridAfterResize" event is called after "resizeGrid"', () => new Promise((done: any) => {
+      vi.spyOn(service, 'resizeGridWithDimensions').mockReturnValue({ height: 200, width: 800 });
+      const resizeContentSpy = vi.spyOn(service, 'resizeColumnsByCellContent');
 
       mockGridOptions.enableAutoResizeColumnsByCellContent = true;
       service.init(gridStub, divContainer);
@@ -526,7 +527,7 @@ describe('Resizer Service', () => {
         expect(resizeContentSpy).toHaveBeenCalledWith(false);
         done();
       });
-    });
+    }));
 
     it('should stop resizing when user called "pauseResizer" with true', () => {
       service.bindAutoResizeDataGrid();
@@ -534,7 +535,7 @@ describe('Resizer Service', () => {
       window.dispatchEvent(new Event('resize'));
 
       service.pauseResizer(true);
-      const spy = jest.spyOn(service, 'resizeGrid');
+      const spy = vi.spyOn(service, 'resizeGrid');
 
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 550 });
       window.dispatchEvent(new Event('resize'));
@@ -545,8 +546,8 @@ describe('Resizer Service', () => {
     it('should call a grid "resizeCanvas" when size changes', () => {
       const newHeight = 500;
       service.init(gridStub, divContainer);
-      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
-      const resizeCanvasSpy = jest.spyOn(gridStub, 'resizeCanvas');
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
+      const resizeCanvasSpy = vi.spyOn(gridStub, 'resizeCanvas');
 
       service.bindAutoResizeDataGrid();
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
@@ -563,7 +564,7 @@ describe('Resizer Service', () => {
 
       afterEach(() => {
         service.dispose();
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       beforeEach(() => {
@@ -593,12 +594,12 @@ describe('Resizer Service', () => {
           { userId: 6, firstName: 'Therese', lastName: 'Brakus', gender: 'female', age: 99, street: '34767 Lindgren Dam', country: 'Bosnia', zip: 654321 },
         ];
 
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
-        jest.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
       });
 
       it('should call handleSingleColumnResizeByContent when "onHeaderMenuColumnResizeByContent" gets triggered', () => {
-        const reRenderSpy = jest.spyOn(gridStub, 'reRenderColumns');
+        const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
         mockGridOptions.enableColumnResizeOnDoubleClick = true;
         service.init(gridStub, divContainer);
@@ -617,8 +618,8 @@ describe('Resizer Service', () => {
         viewportRight.className = 'slick-viewport-right';
         Object.defineProperty(viewportRight, 'clientWidth', { writable: true, configurable: true, value: 27 });
 
-        jest.spyOn(gridStub, 'getViewports').mockReturnValue([viewportLeft, viewportRight]);
-        const reRenderSpy = jest.spyOn(gridStub, 'reRenderColumns');
+        vi.spyOn(gridStub, 'getViewports').mockReturnValue([viewportLeft, viewportRight]);
+        const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
         mockGridOptions.frozenColumn = 7;
         mockGridOptions.enableColumnResizeOnDoubleClick = true;
@@ -636,15 +637,15 @@ describe('Resizer Service', () => {
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
 
-        const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
+        const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         service.resizeColumnsByCellContent(false);
 
         expect(autosizeSpy).toHaveBeenCalled();
       });
 
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content', () => {
-        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-        const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
+        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const reRenderColumnsSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
@@ -663,9 +664,9 @@ describe('Resizer Service', () => {
       });
 
       it('should not return without resizing if "resizeByContentOnlyOnFirstLoad" is set to True and we already resized once', () => {
-        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-        const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
-        const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
+        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const reRenderColumnsSpy = vi.spyOn(gridStub, 'reRenderColumns');
+        const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
@@ -682,8 +683,8 @@ describe('Resizer Service', () => {
       });
 
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content and grid is editable', () => {
-        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-        const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
+        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const reRenderColumnsSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
         mockGridOptions.editable = true;
         service.init(gridStub, divContainer);
@@ -704,7 +705,7 @@ describe('Resizer Service', () => {
       });
 
       it('should call "resizeColumnsByCellContent" when "onFullResizeByContentRequested" pubsub event is triggered', () => {
-        const resizeSpy = jest.spyOn(service, 'resizeColumnsByCellContent');
+        const resizeSpy = vi.spyOn(service, 'resizeColumnsByCellContent');
 
         service.init(gridStub, divContainer);
         eventPubSubService.publish('onFullResizeByContentRequested', { caller: 'GridStateService' });
@@ -715,14 +716,14 @@ describe('Resizer Service', () => {
 
     describe('AutoFix broken resize styling UI', () => {
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         service.dispose();
         service.intervalRetryDelay = 1;
         service.requestStopOfAutoFixResizeGrid(true);
       });
 
-      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" to be called on interval', (done) => {
-        const resizeSpy = jest.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" to be called on interval', () => new Promise((done: any) => {
+        const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
         Object.defineProperty(document.querySelector(`.${GRID_UID}`), 'offsetParent', { writable: true, configurable: true, value: 55 });
 
         mockGridOptions.autoFixResizeTimeout = 10;
@@ -732,8 +733,8 @@ describe('Resizer Service', () => {
         service.init(gridStub, divContainer);
 
         const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-        jest.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
-        jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
+        vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
+        vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
         divHeaderElm.style.top = '30px';
         divHeaderElm.style.left = '25px';
         divContainer.style.top = '10px';
@@ -746,18 +747,18 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenNthCalledWith(3);
           done();
         }, 25);
-      });
+      }));
 
-      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" but it should stop whenever we force it', (done) => {
-        const resizeSpy = jest.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" but it should stop whenever we force it', () => new Promise((done: any) => {
+        const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
 
         mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
         service.intervalRetryDelay = 1;
         service.init(gridStub, divContainer);
 
         const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-        jest.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
-        jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
+        vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
+        vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
         divHeaderElm.style.top = '30px';
         divHeaderElm.style.left = '25px';
         divContainer.style.top = '10px';
@@ -772,18 +773,18 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenCalled();
           done();
         }, 10);
-      });
+      }));
 
-      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" and then stops after manually requesting a stop', (done) => {
-        const resizeSpy = jest.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" and then stops after manually requesting a stop', () => new Promise((done: any) => {
+        const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
 
         mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
         service.intervalRetryDelay = 1;
         service.init(gridStub, divContainer);
 
         const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-        jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
-        jest.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 4, left: 0 } as unknown as DOMRect);
+        vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
+        vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 4, left: 0 } as unknown as DOMRect);
         divHeaderElm.style.top = '30px';
         divHeaderElm.style.left = '25px';
 
@@ -797,13 +798,13 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenCalled();
           done();
         }, 15);
-      });
+      }));
 
-      it('should try to resize grid when its UI is deemed broken by the 2nd condition check of "getRenderedRange"', (done) => {
-        const resizeSpy = jest.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+      it('should try to resize grid when its UI is deemed broken by the 2nd condition check of "getRenderedRange"', () => new Promise((done: any) => {
+        const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
         Object.defineProperty(document.querySelector(`.${GRID_UID}`), 'offsetParent', { writable: true, configurable: true, value: 55 });
-        jest.spyOn(mockDataView, 'getItemCount').mockReturnValue(99);
-        jest.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 0, leftPx: 0, rightPx: 0 });
+        vi.spyOn(mockDataView, 'getItemCount').mockReturnValue(99);
+        vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 0, leftPx: 0, rightPx: 0 });
 
         mockGridOptions.autoFixResizeTimeout = 10;
         mockGridOptions.autoFixResizeRequiredGoodCount = 5;
@@ -812,9 +813,9 @@ describe('Resizer Service', () => {
 
         const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
         const divViewportElm = divContainer.querySelector('.slick-viewport') as HTMLDivElement;
-        jest.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
-        jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 5, left: 25 } as unknown as DOMRect);
-        jest.spyOn(divViewportElm, 'getBoundingClientRect').mockReturnValue({ top: 98, left: 25 } as unknown as DOMRect);
+        vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
+        vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 5, left: 25 } as unknown as DOMRect);
+        vi.spyOn(divViewportElm, 'getBoundingClientRect').mockReturnValue({ top: 98, left: 25 } as unknown as DOMRect);
         divHeaderElm.style.top = '5px';
         divHeaderElm.style.left = '25px';
         divContainer.style.top = '10px';
@@ -830,12 +831,12 @@ describe('Resizer Service', () => {
           done();
           service.requestStopOfAutoFixResizeGrid();
         }, 25);
-      });
+      }));
 
-      it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {
-        const consoleSpy = jest.spyOn(global.console, 'log').mockReturnValue();
+      it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', () => new Promise((done: any) => {
+        const consoleSpy = vi.spyOn(global.console, 'log').mockReturnValue();
         const promise = new Promise((_resolve, reject) => window.setTimeout(() => reject('some error'), 0));
-        jest.spyOn(service, 'resizeGrid').mockReturnValue(promise as any);
+        vi.spyOn(service, 'resizeGrid').mockReturnValue(promise as any);
 
         service.init(gridStub, divContainer);
 
@@ -843,7 +844,7 @@ describe('Resizer Service', () => {
           expect(consoleSpy).toHaveBeenCalledWith('Error:', 'some error');
           done();
         }, 1);
-      });
+      }));
     });
   });
 });

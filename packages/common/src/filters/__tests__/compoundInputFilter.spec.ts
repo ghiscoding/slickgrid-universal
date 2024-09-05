@@ -1,9 +1,13 @@
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+
 import { FieldType, OperatorType } from '../../enums/index';
 import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundInputFilter } from '../compoundInputFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import type { SlickGrid } from '../../core/index';
+
+vi.useFakeTimers();
 
 const containerId = 'demo-container';
 
@@ -20,10 +24,10 @@ const gridOptionMock = {
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  getOptions: jest.fn(),
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getOptions: vi.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('CompoundInputFilter', () => {
@@ -31,7 +35,7 @@ describe('CompoundInputFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: CompoundInputFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow: jest.SpyInstance;
+  let spyGetHeaderRow: MockInstance;
   let mockColumn: Column;
 
   beforeEach(() => {
@@ -40,14 +44,14 @@ describe('CompoundInputFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.input, operator: 'EQ' } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
@@ -90,7 +94,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues(['abc']);
@@ -105,7 +109,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered by ENTER key', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues(['abc']);
@@ -123,8 +127,8 @@ describe('CompoundInputFilter', () => {
 
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be in the callback when triggered', () => {
     mockColumn.type = FieldType.number;
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArgs);
     filter.setValues(['9']);
@@ -138,7 +142,7 @@ describe('CompoundInputFilter', () => {
 
   it('should be able to call "setValues" with a value and an extra operator and expect it to be set as new operator', () => {
     mockColumn.type = FieldType.number;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues(['9'], OperatorType.greaterThanOrEqual);
@@ -164,7 +168,7 @@ describe('CompoundInputFilter', () => {
 
   it('should trigger an operator change event and expect the callback to be called with the searchTerms and operator defined', () => {
     mockColumn.type = FieldType.number;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues(['9']);
@@ -179,7 +183,7 @@ describe('CompoundInputFilter', () => {
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is undefined', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
     mockColumn.type = FieldType.number;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
@@ -193,7 +197,7 @@ describe('CompoundInputFilter', () => {
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is empty string', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
     mockColumn.type = FieldType.number;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues(['']);
@@ -208,7 +212,7 @@ describe('CompoundInputFilter', () => {
   it('should change operator dropdown without a value entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" but value was changed from set to unset', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
     mockColumn.type = FieldType.number;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
@@ -225,7 +229,7 @@ describe('CompoundInputFilter', () => {
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
     mockColumn.type = FieldType.number;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
@@ -239,8 +243,8 @@ describe('CompoundInputFilter', () => {
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options', () => {
     gridOptionMock.enableFilterTrimWhiteSpace = true;
     mockColumn.type = FieldType.number;
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArgs);
     filter.setValues(['   987 ']);
@@ -256,8 +260,8 @@ describe('CompoundInputFilter', () => {
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter!.enableTrimWhiteSpace = true;
     mockColumn.type = FieldType.number;
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArgs);
     filter.setValues(['   987 ']);
@@ -270,7 +274,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should trigger the callback method when user types something in the input', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
@@ -282,8 +286,8 @@ describe('CompoundInputFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
   });
 
-  it('should trigger the callback method with a delay when "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+  it('should trigger the callback method with a delay when "filterTypingDebounce" is set in grid options and user types something in the input', () => {
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     gridOptionMock.filterTypingDebounce = 2;
 
     filter.init(filterArguments);
@@ -293,14 +297,13 @@ describe('CompoundInputFilter', () => {
     filterInputElm.value = 'a';
     filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
-    setTimeout(() => {
-      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
-      done();
-    }, 2);
+    vi.advanceTimersByTime(2);
+
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
   });
 
-  it('should trigger the callback method with a delay when BackendService is used with a "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+  it('should trigger the callback method with a delay when BackendService is used with a "filterTypingDebounce" is set in grid options and user types something in the input', () => {
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     gridOptionMock.defaultBackendServiceFilterTypingDebounce = 2;
     gridOptionMock.backendServiceApi = {
       filterTypingDebounce: 2,
@@ -314,10 +317,9 @@ describe('CompoundInputFilter', () => {
     filterInputElm.value = 'a';
     filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
-    setTimeout(() => {
-      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
-      done();
-    }, 2);
+    vi.advanceTimersByTime(2);
+
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {
@@ -375,7 +377,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -390,7 +392,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -426,7 +428,7 @@ describe('CompoundInputFilter', () => {
   it('should be able to change compound operator & description with alternate texts for the operator list showing up in the operator select dropdown options list', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['xyz'];
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
       ...gridOptionMock, compoundOperatorAltTexts: {
         numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
         text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
@@ -455,7 +457,7 @@ describe('CompoundInputFilter', () => {
       { operator: '>', desc: 'Greater than' },
       { operator: 'Custom', desc: 'SQL LIKE' },
     ];
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
       ...gridOptionMock, compoundOperatorAltTexts: {
         text: {
           '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' },

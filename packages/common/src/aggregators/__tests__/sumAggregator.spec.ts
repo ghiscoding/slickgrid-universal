@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { SumAggregator } from '../sumAggregator';
 
 describe('sumAggregator', () => {

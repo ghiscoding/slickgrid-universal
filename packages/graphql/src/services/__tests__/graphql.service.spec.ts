@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import {
   type BackendService,
   type Column,
@@ -30,16 +31,16 @@ function removeSpaces(text: string) {
 let gridOptionMock: GridOption;
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getScrollbarDimensions: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getScrollbarDimensions: vi.fn(),
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  setColumns: jest.fn(),
-  registerPlugin: jest.fn(),
-  setSelectedRows: jest.fn(),
-  setSortColumns: jest.fn(),
-  scrollTo: jest.fn(),
+  getColumns: vi.fn(),
+  setColumns: vi.fn(),
+  registerPlugin: vi.fn(),
+  setSelectedRows: vi.fn(),
+  setSortColumns: vi.fn(),
+  scrollTo: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('GraphqlService', () => {
@@ -68,16 +69,16 @@ describe('GraphqlService', () => {
       backendServiceApi: {
         service: service as unknown as BackendService,
         options: { datasetName: '' },
-        preProcess: jest.fn(),
-        process: jest.fn(),
-        postProcess: jest.fn(),
+        preProcess: vi.fn(),
+        process: vi.fn(),
+        postProcess: vi.fn(),
       } as unknown as GraphqlServiceApi
     } as unknown as GridOption;
-    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create the service', () => {
@@ -93,7 +94,7 @@ describe('GraphqlService', () => {
 
     it('should get the column definitions from "getColumns"', () => {
       const columns = [{ id: 'field4', field: 'field4', width: 50 }, { id: 'field2', field: 'field2', width: 50 }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
 
@@ -104,8 +105,8 @@ describe('GraphqlService', () => {
 
   describe('buildQuery method', () => {
     beforeEach(() => {
-      jest.resetAllMocks();
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.resetAllMocks();
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
 
     it('should throw an error when no service options exists after service init', () => {
@@ -146,7 +147,7 @@ describe('GraphqlService', () => {
       gridOptionMock.enablePagination = true;
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id, field1 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
@@ -157,7 +158,7 @@ describe('GraphqlService', () => {
     it('should return a simple query with pagination set and nodes that includes at least "id" when the column definitions is an empty array', () => {
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id }}}`;
       const columns = [];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
@@ -168,7 +169,7 @@ describe('GraphqlService', () => {
     it('should add extra column extra "fields" and expect them to be part of the query string', () => {
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id, field1, field2, field3, field4 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, fields: ['field3', 'field4'] }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
@@ -179,7 +180,7 @@ describe('GraphqlService', () => {
     it('should exclude a column and expect a query string without it', () => {
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id, field1 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
@@ -193,7 +194,7 @@ describe('GraphqlService', () => {
         { id: 'field1', field: 'field1', width: 100 },
         { id: 'field2', field: 'field2', fields: ['field3', 'field4', 'field5'], width: 100, excludeFieldFromQuery: true }
       ];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
@@ -204,7 +205,7 @@ describe('GraphqlService', () => {
     it('should use default pagination "first" option when "paginationOptions" is not provided', () => {
       const expectation = `query{ users(first:${DEFAULT_ITEMS_PER_PAGE}, offset:0){ totalCount, nodes{ id, field1 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, undefined, gridStub);
       const query = service.buildQuery();
@@ -215,7 +216,7 @@ describe('GraphqlService', () => {
     it('should return a simple query with pagination set and nodes that includes at least "id" when the column definitions is an empty array when using cursor', () => {
       const expectation = `query{users(first:20) { totalCount, nodes{id}, pageInfo{ hasNextPage,hasPreviousPage,endCursor,startCursor }, edges{ cursor }}}`;
       const columns = [];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', useCursor: true }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -227,7 +228,7 @@ describe('GraphqlService', () => {
     it('should return a query with pageInfo and edges included when cursor is enabled', () => {
       const expectation = `query{users(first:20) { totalCount, nodes{id,field1}, pageInfo{ hasNextPage,hasPreviousPage,endCursor,startCursor }, edges{ cursor }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', useCursor: true }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -243,7 +244,7 @@ describe('GraphqlService', () => {
         { id: 'billing.address.street', field: 'billing.address.street' },
         { id: 'billing.address.zip', field: 'billing.address.zip' }
       ];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
@@ -255,7 +256,7 @@ describe('GraphqlService', () => {
       const expectation = `query{ users{ id, field1, field2 }}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
       gridOptionMock.enablePagination = false;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -268,7 +269,7 @@ describe('GraphqlService', () => {
     it('should have a different pagination offset when it is updated before calling the buildQuery query (presets does that)', () => {
       const expectation = `query{ users(first:20, offset:40){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -280,7 +281,7 @@ describe('GraphqlService', () => {
     it('should make sure the offset pagination is never below zero, even when new page is 0', () => {
       const expectation = `query{ users(first:20, offset:0){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(0, 20);
@@ -292,7 +293,7 @@ describe('GraphqlService', () => {
     it('should make sure the offset pagination is never below zero, even when new is 1 the offset should remain 0', () => {
       const expectation = `query{ users(first:20, offset:0){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(1, 20);
@@ -304,7 +305,7 @@ describe('GraphqlService', () => {
     it('should be able to provide "sortingOptions" and see the query string include the sorting', () => {
       const expectation = `query{ users(first:20, offset:40,orderBy:[{field:field1, direction:DESC}]){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', sortingOptions: [{ field: 'field1', direction: 'DESC' }] }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -316,7 +317,7 @@ describe('GraphqlService', () => {
     it('should be able to provide "filteringOptions" and see the query string include the filters', () => {
       const expectation = `query{ users(first:20, offset:40,filterBy:[{field:field1, operator: >, value:"2000-10-10"}]){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', filteringOptions: [{ field: 'field1', operator: '>', value: '2000-10-10' }] }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -329,7 +330,7 @@ describe('GraphqlService', () => {
       const expectation = `query{ users(orderBy:[{field:field1, direction:DESC}]){ id, field1, field2 }}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
       gridOptionMock.enablePagination = false;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', sortingOptions: [{ field: 'field1', direction: 'DESC' }] }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -343,7 +344,7 @@ describe('GraphqlService', () => {
       const expectation = `query{ users(filterBy:[{field:field1, operator: >, value:"2000-10-10"}]){ id, field1, field2 }}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
       gridOptionMock.enablePagination = false;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', filteringOptions: [{ field: 'field1', operator: '>', value: '2000-10-10' }] }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -356,7 +357,7 @@ describe('GraphqlService', () => {
     it('should include default locale "en" in the query string when option "addLocaleIntoQuery" is enabled and translater is not defined', () => {
       const expectation = `query{ users(first:10, offset:0, locale: "en"){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', addLocaleIntoQuery: true }, paginationOptions, gridStub);
       const query = service.buildQuery();
@@ -367,7 +368,7 @@ describe('GraphqlService', () => {
     it('should include the locale in the query string when option "addLocaleIntoQuery" is enabled', () => {
       const expectation = `query{ users(first:10, offset:0, locale: "fr-CA"){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       gridOptionMock.translater = { getCurrentLanguage: () => 'fr-CA' } as TranslaterService;
       service.init({ datasetName: 'users', addLocaleIntoQuery: true }, paginationOptions, gridStub);
@@ -379,7 +380,7 @@ describe('GraphqlService', () => {
     it('should include extra query arguments in the query string when option "extraQueryArguments" is used', () => {
       const expectation = `query{users(first:10, offset:0, userId:123, firstName:"John"){ totalCount, nodes{id,field1,field2}}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({
         datasetName: 'users',
@@ -399,7 +400,7 @@ describe('GraphqlService', () => {
                             totalCount, nodes { id,field1,field2 }}
                           }`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({
         datasetName: 'users',
@@ -415,7 +416,7 @@ describe('GraphqlService', () => {
     it('should include the operationName if provided', () => {
       const expectation = `query foo {users(first:10, offset:0, userId:123, firstName:"John"){ totalCount, nodes{id,field1,field2}}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({
         datasetName: 'users',
@@ -459,7 +460,7 @@ describe('GraphqlService', () => {
 
   describe('clearFilters method', () => {
     it('should call "updateOptions" to clear all filters', () => {
-      const spy = jest.spyOn(service, 'updateOptions');
+      const spy = vi.spyOn(service, 'updateOptions');
       service.clearFilters();
       expect(spy).toHaveBeenCalledWith({ filteringOptions: [] });
     });
@@ -467,7 +468,7 @@ describe('GraphqlService', () => {
 
   describe('clearSorters method', () => {
     it('should call "updateOptions" to clear all sorting', () => {
-      const spy = jest.spyOn(service, 'updateOptions');
+      const spy = vi.spyOn(service, 'updateOptions');
       service.clearSorters();
       expect(spy).toHaveBeenCalledWith({ sortingOptions: [] });
     });
@@ -479,21 +480,21 @@ describe('GraphqlService', () => {
     });
 
     it('should return the pagination options without cursor by default', () => {
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
       service.init({ datasetName: 'users' }, paginationOptions);
       const output = service.getInitPaginationOptions();
       expect(output).toEqual({ first: 20, offset: 0 });
     });
 
     it('should return the pagination options with cursor info when "useCursor" is enabled', () => {
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
       service.init({ datasetName: 'users', useCursor: true }, paginationOptions);
       const output = service.getInitPaginationOptions();
       expect(output).toEqual({ first: 20 });
     });
 
     it('should return the pagination options with default page size of 25 when "paginationOptions" is undefined', () => {
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
       service.init({ datasetName: 'users' }, undefined);
       const output = service.getInitPaginationOptions();
       expect(output).toEqual({ first: DEFAULT_ITEMS_PER_PAGE, offset: 0 });
@@ -502,14 +503,14 @@ describe('GraphqlService', () => {
 
   describe('getDatasetName method', () => {
     it('should return the dataset name when defined', () => {
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
       service.init({ datasetName: 'users' });
       const output = service.getDatasetName();
       expect(output).toBe('users');
     });
 
     it('should return empty string when dataset name is undefined', () => {
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
       service.init({ datasetName: undefined as any });
       const output = service.getDatasetName();
       expect(output).toBe('');
@@ -522,9 +523,9 @@ describe('GraphqlService', () => {
     });
 
     it('should reset the pagination options with default pagination', () => {
-      const spy = jest.spyOn(service, 'updateOptions');
+      const spy = vi.spyOn(service, 'updateOptions');
 
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
       service.init({ datasetName: 'users' }, paginationOptions);
       service.resetPaginationOptions();
 
@@ -532,9 +533,9 @@ describe('GraphqlService', () => {
     });
 
     it('should reset the pagination options when using cursor', () => {
-      const spy = jest.spyOn(service, 'updateOptions');
+      const spy = vi.spyOn(service, 'updateOptions');
 
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
       service.init({ datasetName: 'users', useCursor: true }, paginationOptions);
       service.resetPaginationOptions();
 
@@ -557,8 +558,8 @@ describe('GraphqlService', () => {
 
     it('should return a query with the new filter', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"female"}]) { totalCount,nodes{ id,field1,field2 } }}`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
-      const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
+      const querySpy = vi.spyOn(service, 'buildQuery');
+      const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
       const mockFilterChangedArgs = {
@@ -586,8 +587,8 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0,
                           filterBy:[{field:gender, operator:EQ, value:"female"}, {field:firstName, operator:StartsWith, value:"John"}])
                           { totalCount,nodes{ id,field1,field2 } }}`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
-      const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
+      const querySpy = vi.spyOn(service, 'buildQuery');
+      const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
       const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
@@ -619,7 +620,7 @@ describe('GraphqlService', () => {
   describe('processOnPaginationChanged method', () => {
     it('should return a query with the new pagination', () => {
       const expectation = `query{users(first:20, offset:40) { totalCount,nodes { id, field1, field2 }}}`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
+      const querySpy = vi.spyOn(service, 'buildQuery');
 
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.processOnPaginationChanged(null as any, { newPage: 3, pageSize: 20 });
@@ -632,7 +633,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
       const expectation = `query{users(first:10, offset:20) { totalCount,nodes { id, field1, field2 }}}`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
+      const querySpy = vi.spyOn(service, 'buildQuery');
 
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.processOnPaginationChanged(null as any, { newPage: 3 } as any);
@@ -645,7 +646,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with the new pagination and use default pagination size when not provided as argument', () => {
       const expectation = `query{users(first:${DEFAULT_PAGE_SIZE}, offset:${DEFAULT_PAGE_SIZE * 2}) { totalCount,nodes { id, field1, field2 }}}`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
+      const querySpy = vi.spyOn(service, 'buildQuery');
 
       service.init(serviceOptions, undefined, gridStub);
       const query = service.processOnPaginationChanged(null as any, { newPage: 3 } as any);
@@ -665,7 +666,7 @@ describe('GraphqlService', () => {
         ${"Last Page"}        | ${{ last: 20 }}               | ${'query{users(last:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
       `(`$description`, ({ cursorArgs, expectation }) => {
         it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
-          const querySpy = jest.spyOn(service, 'buildQuery');
+          const querySpy = vi.spyOn(service, 'buildQuery');
 
           service.init({ ...serviceOptions, useCursor: true }, paginationOptions, gridStub);
           const query = service.processOnPaginationChanged(null as any, { newPage: 3, pageSize: 20, ...cursorArgs });
@@ -682,7 +683,7 @@ describe('GraphqlService', () => {
   describe('processOnSortChanged method', () => {
     it('should return a query with the new sorting when using single sort', () => {
       const expectation = `query{ users(first:10, offset:0, orderBy:[{field:gender, direction: DESC}]) { totalCount,nodes{ id,field1,field2 } }}`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
+      const querySpy = vi.spyOn(service, 'buildQuery');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockSortChangedArgs = { columnId: 'gender', sortCol: mockColumn, sortAsc: false, multiColumnSort: false } as ColumnSort;
 
@@ -697,7 +698,7 @@ describe('GraphqlService', () => {
       const expectation = `query{ users(first:10, offset:0,
                             orderBy:[{field:gender, direction: DESC}, {field:firstName, direction: ASC}]) {
                               totalCount,nodes{ id,field1,field2 } }}`;
-      const querySpy = jest.spyOn(service, 'buildQuery');
+      const querySpy = vi.spyOn(service, 'buildQuery');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
       const mockColumnSort = { columnId: 'gender', sortCol: mockColumn, sortAsc: false } as ColumnSort;
@@ -715,7 +716,7 @@ describe('GraphqlService', () => {
   describe('updateFilters method', () => {
     beforeEach(() => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
     it('should throw an error when filter columnId is not found to be part of the column definitions', () => {
@@ -1429,11 +1430,11 @@ describe('GraphqlService', () => {
     let mockColumns: Column[] = [];
     beforeEach(() => {
       mockColumns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }, { id: 'startDate', field: 'startDate' }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should return a query with search having a range of exclusive numbers when the search value contains 2 dots (..) to represent a range of numbers', () => {
@@ -1458,10 +1459,10 @@ describe('GraphqlService', () => {
 
       // remove "Gender" column from `getColumns` (to simulate hidden field)
       mockColumnsCopy.splice(1, 1);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumnsCopy);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumnsCopy);
 
       // but still pass all columns to the service init
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
 
       service.init(serviceOptions, paginationOptions, gridStub, sharedService);
       service.updateFilters(presetFilters, true);
@@ -1622,7 +1623,7 @@ describe('GraphqlService', () => {
   describe('updateSorters method', () => {
     beforeEach(() => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
     it('should return a query with the multiple new sorting when using multiColumnSort', () => {

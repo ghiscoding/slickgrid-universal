@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { type FilterService, GridService, type GridStateService, type PaginationService, SharedService, type SortService, type TreeDataService } from '../index';
@@ -7,98 +7,98 @@ import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionM
 import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
 const mockRowSelectionModel = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-  dispose: jest.fn(),
-  getSelectedRows: jest.fn(),
-  setSelectedRows: jest.fn(),
-  getSelectedRanges: jest.fn(),
-  setSelectedRanges: jest.fn(),
+  constructor: vi.fn(),
+  init: vi.fn(),
+  destroy: vi.fn(),
+  dispose: vi.fn(),
+  getSelectedRows: vi.fn(),
+  setSelectedRows: vi.fn(),
+  getSelectedRanges: vi.fn(),
+  setSelectedRanges: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 
-jest.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
+vi.mock('../../extensions/slickRowSelectionModel', () => ({
+  SlickRowSelectionModel: vi.fn().mockImplementation(() => mockRowSelectionModel),
 }));
 
 const filterServiceStub = {
-  clearFilters: jest.fn(),
-  refreshTreeDataFilters: jest.fn(),
+  clearFilters: vi.fn(),
+  refreshTreeDataFilters: vi.fn(),
 } as unknown as FilterService;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 const sortServiceStub = {
-  clearSorting: jest.fn(),
-  getCurrentColumnSorts: jest.fn(),
+  clearSorting: vi.fn(),
+  getCurrentColumnSorts: vi.fn(),
 } as unknown as SortService;
 
 const dataviewStub = {
-  addItem: jest.fn(),
-  addItems: jest.fn(),
-  beginUpdate: jest.fn(),
-  endUpdate: jest.fn(),
-  deleteItem: jest.fn(),
-  deleteItems: jest.fn(),
-  getIdxById: jest.fn(),
-  getItemMetadata: jest.fn(),
-  getItem: jest.fn(),
-  getItems: jest.fn(),
-  getRowById: jest.fn(),
-  insertItem: jest.fn(),
-  insertItems: jest.fn(),
-  reSort: jest.fn(),
-  setItems: jest.fn(),
-  updateItem: jest.fn(),
-  updateItems: jest.fn(),
+  addItem: vi.fn(),
+  addItems: vi.fn(),
+  beginUpdate: vi.fn(),
+  endUpdate: vi.fn(),
+  deleteItem: vi.fn(),
+  deleteItems: vi.fn(),
+  getIdxById: vi.fn(),
+  getItemMetadata: vi.fn(),
+  getItem: vi.fn(),
+  getItems: vi.fn(),
+  getRowById: vi.fn(),
+  insertItem: vi.fn(),
+  insertItems: vi.fn(),
+  reSort: vi.fn(),
+  setItems: vi.fn(),
+  updateItem: vi.fn(),
+  updateItems: vi.fn(),
 } as unknown as SlickDataView;
 
 const gridStateServiceStub = {
-  needToPreserveRowSelection: jest.fn(),
-  resetColumns: jest.fn(),
+  needToPreserveRowSelection: vi.fn(),
+  resetColumns: vi.fn(),
 } as unknown as GridStateService;
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  insertItem: jest.fn(),
-  invalidate: jest.fn(),
-  getColumnIndex: jest.fn(),
+  autosizeColumns: vi.fn(),
+  insertItem: vi.fn(),
+  invalidate: vi.fn(),
+  getColumnIndex: vi.fn(),
   getData: () => dataviewStub,
-  getDataItem: jest.fn(),
-  getOptions: jest.fn(),
-  getColumns: jest.fn(),
-  getSelectionModel: jest.fn(),
-  setSelectionModel: jest.fn(),
-  getSelectedRows: jest.fn(),
-  highlightRow: jest.fn(),
-  navigateBottom: jest.fn(),
-  navigateTop: jest.fn(),
-  render: jest.fn(),
-  setColumns: jest.fn(),
-  setOptions: jest.fn(),
-  setSelectedRows: jest.fn(),
-  scrollRowIntoView: jest.fn(),
-  updateRow: jest.fn(),
+  getDataItem: vi.fn(),
+  getOptions: vi.fn(),
+  getColumns: vi.fn(),
+  getSelectionModel: vi.fn(),
+  setSelectionModel: vi.fn(),
+  getSelectedRows: vi.fn(),
+  highlightRow: vi.fn(),
+  navigateBottom: vi.fn(),
+  navigateTop: vi.fn(),
+  render: vi.fn(),
+  setColumns: vi.fn(),
+  setOptions: vi.fn(),
+  setSelectedRows: vi.fn(),
+  scrollRowIntoView: vi.fn(),
+  updateRow: vi.fn(),
 } as unknown as SlickGrid;
 
 const paginationServiceStub = {
-  goToFirstPage: jest.fn(),
-  goToLastPage: jest.fn(),
+  goToFirstPage: vi.fn(),
+  goToLastPage: vi.fn(),
 } as unknown as PaginationService;
 
 const treeDataServiceStub = {
-  convertFlatParentChildToTreeDataset: jest.fn(),
-  init: jest.fn(),
-  convertFlatParentChildToTreeDatasetAndSort: jest.fn(),
-  dispose: jest.fn(),
-  handleOnCellClick: jest.fn(),
-  toggleTreeDataCollapse: jest.fn(),
+  convertFlatParentChildToTreeDataset: vi.fn(),
+  init: vi.fn(),
+  convertFlatParentChildToTreeDatasetAndSort: vi.fn(),
+  dispose: vi.fn(),
+  handleOnCellClick: vi.fn(),
+  toggleTreeDataCollapse: vi.fn(),
 } as unknown as TreeDataService;
 
 describe('Grid Service', () => {
@@ -106,7 +106,7 @@ describe('Grid Service', () => {
   const sharedService = new SharedService();
   const mockGridOptions = { enableAutoResize: true } as GridOption;
 
-  jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+  vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
     service = new GridService(gridStateServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub, treeDataServiceStub);
@@ -114,7 +114,7 @@ describe('Grid Service', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create the service', () => {
@@ -122,7 +122,7 @@ describe('Grid Service', () => {
   });
 
   it('should dispose of the service', () => {
-    const disposeSpy = jest.spyOn(mockRowSelectionModel, 'dispose');
+    const disposeSpy = vi.spyOn(mockRowSelectionModel, 'dispose');
 
     service.highlightRow(0, 10);
     service.dispose();
@@ -138,7 +138,7 @@ describe('Grid Service', () => {
   describe('getAllColumnDefinitions method', () => {
     it('should call "allColumns" GETTER ', () => {
       const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      const getSpy = jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const getSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
 
       const output = service.getAllColumnDefinitions();
 
@@ -150,7 +150,7 @@ describe('Grid Service', () => {
   describe('getVisibleColumnDefinitions method', () => {
     it('should call "visibleColumns" GETTER ', () => {
       const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      const getSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(mockColumns);
+      const getSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(mockColumns);
 
       const output = service.getVisibleColumnDefinitions();
 
@@ -161,7 +161,7 @@ describe('Grid Service', () => {
 
   describe('upsertItem methods', () => {
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should throw an error when 1st argument for the item object is missing', () => {
@@ -174,9 +174,9 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "addItem" when calling "upsertItem" with the item not being found in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
-      const addSpy = jest.spyOn(service, 'addItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      const addSpy = vi.spyOn(service, 'addItem');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const upsertRow = service.upsertItem(mockItem, { position: 'top', scrollRowIntoView: false });
 
@@ -190,10 +190,10 @@ describe('Grid Service', () => {
     it('should expect the service to call the DataView "addItem" when calling "upsertItem" with an item and the option "position" set to "bottom"', () => {
       const expectationNewRowPosition = 1000;
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(undefined as any).mockReturnValueOnce(expectationNewRowPosition);
-      const addSpy = jest.spyOn(dataviewStub, 'addItem');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(undefined as any).mockReturnValueOnce(expectationNewRowPosition);
+      const addSpy = vi.spyOn(dataviewStub, 'addItem');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const upsertRow = service.upsertItem(mockItem, { position: 'bottom' });
 
@@ -206,12 +206,12 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "updateItem" multiple times when calling "upsertItems" with the items found in the grid', () => {
       const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(1);
-      const serviceUpsertSpy = jest.spyOn(service, 'upsertItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(1);
+      const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const upsertRows = service.upsertItems(mockItems, { highlightRow: true });
 
@@ -229,14 +229,14 @@ describe('Grid Service', () => {
 
     it('should expect the service to call both "addItem" and "updateItem" when calling "upsertItems" with first item found but second not found', () => {
       const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any).mockReturnValueOnce(undefined as any).mockReturnValueOnce(15).mockReturnValueOnce(15);
-      const serviceUpsertSpy = jest.spyOn(service, 'upsertItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const selectSpy = jest.spyOn(service, 'setSelectedRows');
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any).mockReturnValueOnce(undefined as any).mockReturnValueOnce(15).mockReturnValueOnce(15);
+      const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const selectSpy = vi.spyOn(service, 'setSelectedRows');
 
       const upsertRows = service.upsertItems(mockItems, { selectRow: true });
 
@@ -256,13 +256,13 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "upsertItem" when calling "upsertItems" with a single item object and without triggering an event', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(1);
-      const serviceUpsertSpy = jest.spyOn(service, 'upsertItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const selectSpy = jest.spyOn(service, 'setSelectedRow');
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(1);
+      const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const selectSpy = vi.spyOn(service, 'setSelectedRow');
 
       const upsertRows = service.upsertItems(mockItem, { highlightRow: true, resortGrid: true, selectRow: false, triggerEvent: false });
 
@@ -280,13 +280,13 @@ describe('Grid Service', () => {
 
     it('should expect the row to be selected when calling "upsertItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById');
-      const serviceUpsertSpy = jest.spyOn(service, 'upsertItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const selectSpy = jest.spyOn(service, 'setSelectedRows');
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById');
+      const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const selectSpy = vi.spyOn(service, 'setSelectedRows');
 
       service.upsertItems([mockItem], { selectRow: true });
 
@@ -311,10 +311,10 @@ describe('Grid Service', () => {
 
     it('should call the "upsertItemById" method and expect it to call the "addItem" with default boolean flags', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
-      const serviceAddItemSpy = jest.spyOn(service, 'addItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      const serviceAddItemSpy = vi.spyOn(service, 'addItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.upsertItemById(0, mockItem);
 
@@ -327,10 +327,10 @@ describe('Grid Service', () => {
 
     it('should call the "upsertItemById" method and expect it to call the "addItem" with different boolean flags provided as arguments', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
-      const serviceAddItemSpy = jest.spyOn(service, 'addItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      const serviceAddItemSpy = vi.spyOn(service, 'addItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.upsertItemById(0, mockItem, { highlightRow: false, resortGrid: true, selectRow: true, triggerEvent: false });
 
@@ -343,11 +343,11 @@ describe('Grid Service', () => {
 
     it('should call the "upsertItemById" method and expect it to call the "updateItem" when the item already exist in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      const serviceAddItemSpy = jest.spyOn(service, 'addItem');
-      const serviceUpdateSpy = jest.spyOn(service, 'updateItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      const serviceAddItemSpy = vi.spyOn(service, 'addItem');
+      const serviceUpdateSpy = vi.spyOn(service, 'updateItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.upsertItemById(0, mockItem, { highlightRow: true });
 
@@ -362,7 +362,7 @@ describe('Grid Service', () => {
 
   describe('updateItem methods', () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should throw an error when 1st argument for the item object is missing', () => {
@@ -375,11 +375,11 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "updateItemById" when calling "updateItem"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
-      const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const updateSpy = jest.spyOn(service, 'updateItemById');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
+      const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const updateSpy = vi.spyOn(service, 'updateItemById');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.updateItem(mockItem, { highlightRow: true });
 
@@ -393,12 +393,12 @@ describe('Grid Service', () => {
 
     it('should be able to update an item that exist in the dataview even when it is not showing in the grid (filtered from the grid) but will not highlight/selectRow since it is not in showing in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined);
-      const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const updateRowSpy = jest.spyOn(gridStub, 'updateRow');
-      const selectSpy = jest.spyOn(service, 'setSelectedRows');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined);
+      const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const updateRowSpy = vi.spyOn(gridStub, 'updateRow');
+      const selectSpy = vi.spyOn(service, 'setSelectedRows');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.updateItemById(0, mockItem, { highlightRow: true, selectRow: true });
 
@@ -412,10 +412,10 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "updateItemById" when calling "updateItem" and setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
-      const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
+      const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.updateItemById(0, mockItem, { selectRow: true });
 
@@ -427,13 +427,13 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "updateItem" when calling "updateItems" with a single item which is not an array', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById');
-      const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById');
-      const serviceUpdateSpy = jest.spyOn(service, 'updateItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById');
+      const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById');
+      const serviceUpdateSpy = vi.spyOn(service, 'updateItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.updateItems(mockItem, { highlightRow: true, selectRow: false, triggerEvent: true });
 
@@ -449,13 +449,13 @@ describe('Grid Service', () => {
 
     it('should expect the row to be selected when calling "updateItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
-      const updateSpy = jest.spyOn(dataviewStub, 'updateItems');
-      const selectSpy = jest.spyOn(service, 'setSelectedRows');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      const updateSpy = vi.spyOn(dataviewStub, 'updateItems');
+      const selectSpy = vi.spyOn(service, 'setSelectedRows');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.updateItems([mockItem], { highlightRow: true, selectRow: true });
 
@@ -472,14 +472,14 @@ describe('Grid Service', () => {
       const mockItemId = 72;
       const mockRowNumber = 8;
       const mockItem = { id: mockItemId, user: { firstName: 'John', lastName: 'Doe' } };
-      const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockRowNumber);
-      const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockRowNumber);
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
-      const updateByIdSpy = jest.spyOn(service, 'updateItemById');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockRowNumber);
+      const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockRowNumber);
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
+      const updateByIdSpy = vi.spyOn(service, 'updateItemById');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.updateItem(mockItem, { highlightRow: false, selectRow: true, scrollRowIntoView: true, triggerEvent: true });
 
@@ -495,12 +495,12 @@ describe('Grid Service', () => {
     });
 
     it('should expect the service to call the DataView "updateItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, datasetIdPropertyName: 'customId' });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, datasetIdPropertyName: 'customId' });
       const mockItem = { customId: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.customId);
-      const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.customId);
-      const updateSpy = jest.spyOn(service, 'updateItemById');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.customId);
+      const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.customId);
+      const updateSpy = vi.spyOn(service, 'updateItemById');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.updateItem(mockItem);
 
@@ -511,7 +511,7 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
 
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should throw an error when calling "updateItemById" without a valid "id"', () => {
@@ -520,7 +520,7 @@ describe('Grid Service', () => {
     });
 
     it('should throw an error when calling "updateItemById" with an invalid/undefined item', () => {
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
       expect(() => service.updateItemById(5, undefined)).toThrow('[Slickgrid-Universal] The item to update in the grid was not found with id: 5');
     });
 
@@ -531,24 +531,24 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" and not finding the item in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
       expect(() => service.updateItemById(5, mockItem, { skipError: true })).not.toThrow('[Slickgrid-Universal] The item to update in the grid was not found with id: 5');
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.updateItem(null as any)).toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
 
       // reset mock
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.updateItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
 
       // reset mock
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
     });
 
     it('should invalidate and rerender the tree dataset when grid option "enableTreeData" is set when calling "updateItem"', () => {
@@ -557,15 +557,15 @@ describe('Grid Service', () => {
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockUpdatedItem] }];
       const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
 
-      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
-      const updateSpy = jest.spyOn(dataviewStub, 'updateItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
+      vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
+      const updateSpy = vi.spyOn(dataviewStub, 'updateItem');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset');
 
       service.updateItem(mockUpdatedItem);
 
@@ -582,15 +582,15 @@ describe('Grid Service', () => {
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockUpdatedItem] }];
       const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
 
-      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
-      const updateSpy = jest.spyOn(dataviewStub, 'updateItems');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
+      vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
+      const updateSpy = vi.spyOn(dataviewStub, 'updateItems');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset');
 
       service.updateItems([mockUpdatedItem]);
 
@@ -604,65 +604,65 @@ describe('Grid Service', () => {
 
   describe('addItem methods', () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should throw an error when 1st argument for the item object is missing', () => {
-      jest.spyOn(gridStub, 'getData').mockReturnValueOnce(undefined as any);
+      vi.spyOn(gridStub, 'getData').mockReturnValueOnce(undefined as any);
       expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
       expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     });
 
     it('should throw an error when 1st argument for the item object is missing or "id" is missing', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
       expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
       expect(() => service.addItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing or "id" is missing', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
       expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
       expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
       expect(() => service.addItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
       expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
     });
 
     it('should throw an error when addItem and a position is provided when used with Tree Data', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true } as GridOption);
       expect(() => service.addItem({ id: 0, user: 'John' }, { position: 'top' })).toThrow('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.');
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({}); // reset mock
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({}); // reset mock
     });
 
     it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
       mockGridOptions.datasetIdPropertyName = 'customId';
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
       const mockItem = { customId: 0, user: { firstName: 'John', lastName: 'Doe' } };
 
       // datasetIdPropertyName: 'customId'
-      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
-      const selectSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const addSpy = vi.spyOn(dataviewStub, 'insertItem');
+      const selectSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItem(mockItem);
 
@@ -672,15 +672,15 @@ describe('Grid Service', () => {
       expect(scrollSpy).toHaveBeenCalledWith(0);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
     });
 
     it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
-      const selectSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const addSpy = vi.spyOn(dataviewStub, 'insertItem');
+      const selectSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItem(mockItem);
 
@@ -693,11 +693,11 @@ describe('Grid Service', () => {
 
     it('should expect the row to be selected when calling "addItem" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
-      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
-      const selectSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      const addSpy = vi.spyOn(dataviewStub, 'insertItem');
+      const selectSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItem(mockItem, { selectRow: true });
 
@@ -710,10 +710,10 @@ describe('Grid Service', () => {
     it('should expect the service to call the DataView "addItem" when calling "addItem" with an item and the option "position" set to "bottom"', () => {
       const expectationNewRowPosition = 1000;
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
-      const addSpy = jest.spyOn(dataviewStub, 'addItem');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
+      const addSpy = vi.spyOn(dataviewStub, 'addItem');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItem(mockItem, { position: 'bottom' });
 
@@ -726,12 +726,12 @@ describe('Grid Service', () => {
     it('should expect the service to call the DataView "insertItem" and go to first page when using local Pagination and calling "addItem" when the insert position is set to "top"', () => {
       const expectationNewRowPosition = 1000;
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enablePagination: true } as GridOption);
-      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const firstPageSpy = jest.spyOn(paginationServiceStub, 'goToFirstPage');
-      const lastPageSpy = jest.spyOn(paginationServiceStub, 'goToLastPage');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enablePagination: true } as GridOption);
+      const addSpy = vi.spyOn(dataviewStub, 'insertItem');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const firstPageSpy = vi.spyOn(paginationServiceStub, 'goToFirstPage');
+      const lastPageSpy = vi.spyOn(paginationServiceStub, 'goToLastPage');
 
       service.addItem(mockItem, { position: 'top' });
 
@@ -743,19 +743,19 @@ describe('Grid Service', () => {
 
       delete mockGridOptions.datasetIdPropertyName;
       delete mockGridOptions.enablePagination;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should expect the service to call the DataView "insertItem" and go to last page when using local Pagination and calling "addItem" when the insert position is set to "bottom"', () => {
       const expectationNewRowPosition = 1000;
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enablePagination: true } as GridOption);
-      const addSpy = jest.spyOn(dataviewStub, 'addItem');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const firstPageSpy = jest.spyOn(paginationServiceStub, 'goToFirstPage');
-      const lastPageSpy = jest.spyOn(paginationServiceStub, 'goToLastPage');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enablePagination: true } as GridOption);
+      const addSpy = vi.spyOn(dataviewStub, 'addItem');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const firstPageSpy = vi.spyOn(paginationServiceStub, 'goToFirstPage');
+      const lastPageSpy = vi.spyOn(paginationServiceStub, 'goToLastPage');
 
       service.addItem(mockItem, { position: 'bottom' });
 
@@ -768,17 +768,17 @@ describe('Grid Service', () => {
 
       delete mockGridOptions.datasetIdPropertyName;
       delete mockGridOptions.enablePagination;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should expect to call the DataView "insertItems" once when calling the service "addItems" with an array of items and no position is provided (defaults to insert "top")', () => {
       const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(0).mockReturnValueOnce(1);
-      const insertItemsSpy = jest.spyOn(dataviewStub, 'insertItems');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(0).mockReturnValueOnce(1);
+      const insertItemsSpy = vi.spyOn(dataviewStub, 'insertItems');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItems(mockItems);
 
@@ -795,14 +795,14 @@ describe('Grid Service', () => {
       const expectationNewRowPosition1 = 1000;
       const expectationNewRowPosition2 = 1001;
       const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      jest.spyOn(dataviewStub, 'getRowById')
+      vi.spyOn(dataviewStub, 'getRowById')
         .mockReturnValueOnce(expectationNewRowPosition1)
         .mockReturnValueOnce(expectationNewRowPosition2);
-      const addItemsSpy = jest.spyOn(dataviewStub, 'addItems');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const addItemsSpy = vi.spyOn(dataviewStub, 'addItems');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItems(mockItems, { position: 'bottom' });
 
@@ -817,11 +817,11 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "addItem" when calling "addItems" with a single item which is not an array', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const serviceAddSpy = jest.spyOn(service, 'addItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const serviceAddSpy = vi.spyOn(service, 'addItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItems(mockItem);
 
@@ -835,12 +835,12 @@ describe('Grid Service', () => {
 
     it('should add a single item by calling "addItems" method and expect to call a grid resort but without highlighting neither triggering an event', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const serviceAddSpy = jest.spyOn(service, 'addItem');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const resortSpy = jest.spyOn(dataviewStub, 'reSort');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const serviceAddSpy = vi.spyOn(service, 'addItem');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const resortSpy = vi.spyOn(dataviewStub, 'reSort');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItems(mockItem, { highlightRow: false, selectRow: false, resortGrid: true, triggerEvent: false });
 
@@ -855,13 +855,13 @@ describe('Grid Service', () => {
 
     it('should add a single item by calling "addItems" method and expect to call a grid resort & highlight but without triggering an event', () => {
       const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      const insertItemsSpy = jest.spyOn(dataviewStub, 'insertItems');
-      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const resortSpy = jest.spyOn(dataviewStub, 'reSort');
-      const getRowByIdSpy = jest.spyOn(dataviewStub, 'getRowById');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const insertItemsSpy = vi.spyOn(dataviewStub, 'insertItems');
+      const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const resortSpy = vi.spyOn(dataviewStub, 'reSort');
+      const getRowByIdSpy = vi.spyOn(dataviewStub, 'getRowById');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItems(mockItems, { highlightRow: true, selectRow: false, resortGrid: true, triggerEvent: false });
 
@@ -877,13 +877,13 @@ describe('Grid Service', () => {
 
     it('should expect the row to be selected when calling "addItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
-      const insertSpy = jest.spyOn(dataviewStub, 'insertItems');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const selectSpy = jest.spyOn(service, 'setSelectedRows');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      const insertSpy = vi.spyOn(dataviewStub, 'insertItems');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const selectSpy = vi.spyOn(service, 'setSelectedRows');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItems([mockItem], { selectRow: true });
 
@@ -897,16 +897,16 @@ describe('Grid Service', () => {
 
     it('should expect the row to be selected when calling "addItems" with an item wich is not an array when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
         enableRowSelection: true,
         selectRow: true
       } as GridOption);
-      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const selectSpy = jest.spyOn(service, 'setSelectedRow');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const addSpy = vi.spyOn(dataviewStub, 'insertItem');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const selectSpy = vi.spyOn(service, 'setSelectedRow');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItems(mockItem, { selectRow: true });
 
@@ -919,16 +919,16 @@ describe('Grid Service', () => {
     });
 
     it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, datasetIdPropertyName: 'customId' });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, datasetIdPropertyName: 'customId' });
       const mockItem = { customId: 0, user: { firstName: 'John', lastName: 'Doe' } };
 
       // datasetIdPropertyName: 'customId'
-      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const selectSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const addSpy = vi.spyOn(dataviewStub, 'insertItem');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const selectSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.addItem(mockItem);
 
@@ -940,7 +940,7 @@ describe('Grid Service', () => {
       expect(scrollSpy).toHaveBeenCalledWith(0);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should invalidate and rerender the tree dataset when grid option "enableTreeData" is set when calling "addItem"', () => {
@@ -949,17 +949,17 @@ describe('Grid Service', () => {
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
       const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
 
-      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
-      jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
-      const addSpy = jest.spyOn(dataviewStub, 'addItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
+      vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
+      const addSpy = vi.spyOn(dataviewStub, 'addItem');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
 
       service.addItem(mockItem);
 
@@ -977,17 +977,17 @@ describe('Grid Service', () => {
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
       const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
 
-      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
-      jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
-      const addSpy = jest.spyOn(dataviewStub, 'addItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
+      vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
+      const addSpy = vi.spyOn(dataviewStub, 'addItem');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
 
       service.addItem(mockItem, { scrollRowIntoView: false });
 
@@ -1005,17 +1005,17 @@ describe('Grid Service', () => {
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
       const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
 
-      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
-      jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
-      const addSpy = jest.spyOn(dataviewStub, 'addItems');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
+      vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
+      const addSpy = vi.spyOn(dataviewStub, 'addItems');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
 
       service.addItems([mockItem]);
 
@@ -1033,17 +1033,17 @@ describe('Grid Service', () => {
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
       const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
 
-      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
-      jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
-      const addSpy = jest.spyOn(dataviewStub, 'addItems');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
-      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
+      vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
+      const addSpy = vi.spyOn(dataviewStub, 'addItems');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset');
+      const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
 
       service.addItems([mockItem], { scrollRowIntoView: false });
 
@@ -1056,23 +1056,23 @@ describe('Grid Service', () => {
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.addItem(null as any)).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
       expect(() => service.addItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
       expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
   });
 
@@ -1099,7 +1099,7 @@ describe('Grid Service', () => {
 
     it('should expect the service to call "deleteItemById" method when calling "deleteItem" with an item', () => {
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
-      const deleteByIdSpy = jest.spyOn(service, 'deleteItemById');
+      const deleteByIdSpy = vi.spyOn(service, 'deleteItemById');
 
       const output = service.deleteItem(mockItem);
 
@@ -1109,8 +1109,8 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the DataView "deleteItem" when calling "deleteItem" with an item', () => {
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
-      const deleteSpy = jest.spyOn(dataviewStub, 'deleteItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const deleteSpy = vi.spyOn(dataviewStub, 'deleteItem');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItemById(mockItem.id);
 
@@ -1121,9 +1121,9 @@ describe('Grid Service', () => {
     });
 
     it('should remove any row selection when the grid option "enableCheckboxSelector" is enabled', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableCheckboxSelector: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableCheckboxSelector: true } as GridOption);
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
-      const selectionSpy = jest.spyOn(service, 'setSelectedRows');
+      const selectionSpy = vi.spyOn(service, 'setSelectedRows');
 
       service.deleteItemById(mockItem.id);
 
@@ -1131,9 +1131,9 @@ describe('Grid Service', () => {
     });
 
     it('should remove any row selection when the grid option "enableRowSelection" is enabled', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableRowSelection: true } as GridOption);
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
-      const selectionSpy = jest.spyOn(service, 'setSelectedRows');
+      const selectionSpy = vi.spyOn(service, 'setSelectedRows');
 
       service.deleteItemById(mockItem.id);
 
@@ -1142,10 +1142,10 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the DataView "deleteItems" once with array of item Ids when calling "deleteItems" with an array of items', () => {
       const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      const deleteItemsSpy = jest.spyOn(dataviewStub, 'deleteItems');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const deleteItemsSpy = vi.spyOn(dataviewStub, 'deleteItems');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItems(mockItems);
 
@@ -1159,10 +1159,10 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "deleteItem" when calling "deleteItems" with a single item which is not an array', () => {
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
-      const serviceDeleteSpy = jest.spyOn(service, 'deleteItem');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const serviceDeleteSpy = vi.spyOn(service, 'deleteItem');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItems(mockItem);
 
@@ -1176,10 +1176,10 @@ describe('Grid Service', () => {
 
     it('should delete a single item by calling "deleteItems" method without triggering an event', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const serviceDeleteSpy = jest.spyOn(service, 'deleteItem');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const serviceDeleteSpy = vi.spyOn(service, 'deleteItem');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItems(mockItem, { triggerEvent: false });
 
@@ -1193,10 +1193,10 @@ describe('Grid Service', () => {
 
     it('should delete multiple items by calling "deleteItems" method and expect to trigger a single an event', () => {
       const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      const deleteItemsSpy = jest.spyOn(dataviewStub, 'deleteItems');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const deleteItemsSpy = vi.spyOn(dataviewStub, 'deleteItems');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItems(mockItems, { triggerEvent: true });
 
@@ -1209,10 +1209,10 @@ describe('Grid Service', () => {
     });
 
     it('should delete a single item by calling "deleteItemByIds" method without triggering an event', () => {
-      const serviceDeleteSpy = jest.spyOn(service, 'deleteItemById');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const serviceDeleteSpy = vi.spyOn(service, 'deleteItemById');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItemByIds([3], { triggerEvent: false });
 
@@ -1225,11 +1225,11 @@ describe('Grid Service', () => {
     });
 
     it('should delete a single item by calling "deleteItemByIds" method and expect to trigger a single an event', () => {
-      const serviceDeleteSpy = jest.spyOn(service, 'deleteItemById');
-      const dataviewDeleteSpy = jest.spyOn(dataviewStub, 'deleteItem');
-      const beginUpdateSpy = jest.spyOn(dataviewStub, 'beginUpdate');
-      const endUpdateSpy = jest.spyOn(dataviewStub, 'endUpdate');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const serviceDeleteSpy = vi.spyOn(service, 'deleteItemById');
+      const dataviewDeleteSpy = vi.spyOn(dataviewStub, 'deleteItem');
+      const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
+      const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItemByIds([0, 5], { triggerEvent: true });
 
@@ -1250,10 +1250,10 @@ describe('Grid Service', () => {
     });
 
     it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, datasetIdPropertyName: 'customId' });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, datasetIdPropertyName: 'customId' });
       const mockItem = { customId: 4, user: { firstName: 'John', lastName: 'Doe' } };
-      const deleteSpy = jest.spyOn(dataviewStub, 'deleteItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const deleteSpy = vi.spyOn(dataviewStub, 'deleteItem');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.deleteItemById(mockItem.customId);
 
@@ -1262,34 +1262,34 @@ describe('Grid Service', () => {
       expect(deleteSpy).toHaveBeenCalledWith(mockItem.customId);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemDeleted`, mockItem.customId);
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.deleteItem(null as any)).toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
       expect(() => service.deleteItem({ user: 'John' })).toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
       expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
   });
 
   describe('clearAllFiltersAndSorts method', () => {
     it('should clear sorting & filters via the Sort & Filter Services, while the clear sort is specifically not triggering any sort event', () => {
-      const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
-      const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
+      const sortSpy = vi.spyOn(sortServiceStub, 'clearSorting');
+      const filterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
 
       service.clearAllFiltersAndSorts();
 
@@ -1302,11 +1302,11 @@ describe('Grid Service', () => {
     const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
 
     it('should call "clearPinning" and expect SlickGrid "setOptions" and "setColumns" to be called with frozen options being reset', () => {
-      const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
-      const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-      jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+      const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+      const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
 
       service.clearPinning();
 
@@ -1316,8 +1316,8 @@ describe('Grid Service', () => {
 
     it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is an empty object', () => {
       const mockPinning = {};
-      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      const clearPinningSpy = vi.spyOn(service, 'clearPinning');
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
 
       service.setPinning(mockPinning);
 
@@ -1326,8 +1326,8 @@ describe('Grid Service', () => {
 
     it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is null', () => {
       const mockPinning = null;
-      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      const clearPinningSpy = vi.spyOn(service, 'clearPinning');
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
 
       service.setPinning(mockPinning as any);
 
@@ -1336,10 +1336,10 @@ describe('Grid Service', () => {
 
     it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" also be called', () => {
       const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
-      const autosizeColumnsSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const gridOptionSetterSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+      const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
 
       service.setPinning(mockPinning);
 
@@ -1350,10 +1350,10 @@ describe('Grid Service', () => {
 
     it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" not being called when passing False as 2nd argument', () => {
       const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
-      const autosizeColumnsSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const gridOptionSetterSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+      const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
 
       service.setPinning(mockPinning, false);
 
@@ -1369,7 +1369,7 @@ describe('Grid Service', () => {
       expect(() => service.getColumnFromEventArguments({} as CellArgs))
         .toThrow('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
 
-      gridStub.getColumns = jest.fn(); // put it back as a valid mock for later tests
+      gridStub.getColumns = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should throw an error when slickgrid getDataItem method is not available', () => {
@@ -1377,7 +1377,7 @@ describe('Grid Service', () => {
       expect(() => service.getColumnFromEventArguments({} as CellArgs))
         .toThrow('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
 
-      gridStub.getDataItem = jest.fn(); // put it back as a valid mock for later tests
+      gridStub.getDataItem = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should return an object including all extra properties', () => {
@@ -1385,8 +1385,8 @@ describe('Grid Service', () => {
       const mockItem = { id: 3, user: { firstName: 'John', lastName: 'Doe' } };
       const args = { row: 3, cell: 1, grid: gridStub } as CellArgs;
       const mockOutput = { row: 3, cell: 1, columnDef: mockColumns[1], dataContext: mockItem, dataView: dataviewStub, grid: gridStub } as OnEventArgs;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
 
       const output = service.getColumnFromEventArguments(args);
 
@@ -1398,13 +1398,13 @@ describe('Grid Service', () => {
     it('should throw an error when slickgrid "getDataItem" method is not available', () => {
       gridStub.getDataItem = undefined as any;
       expect(() => service.getDataItemByRowNumber(0)).toThrow(`We could not find SlickGrid Grid object or it's "getDataItem" method`);
-      gridStub.getDataItem = jest.fn(); // put it back as a valid mock for later tests
+      gridStub.getDataItem = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should call the grid "getDataItem" method and return that output', () => {
       const rowNumber = 2;
       const mockItem = { id: 3, user: { firstName: 'John', lastName: 'Doe' } };
-      const spy = jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      const spy = vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
 
       const output = service.getDataItemByRowNumber(rowNumber);
 
@@ -1415,7 +1415,7 @@ describe('Grid Service', () => {
 
   describe('getDataItemByRowIndex method', () => {
     afterEach(() => {
-      gridStub.getDataItem = jest.fn(); // put it back as a valid mock for later tests
+      gridStub.getDataItem = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should throw an error when the grid "getDataItem" method is not available', () => {
@@ -1426,7 +1426,7 @@ describe('Grid Service', () => {
 
     it('should return data item object when method is called', () => {
       const mockColumn = { id: 'field2', field: 'field2', width: 150, rowClass: 'red' } as Column;
-      const spy = jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockColumn);
+      const spy = vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockColumn);
 
       const output = service.getDataItemByRowIndex(0);
 
@@ -1437,7 +1437,7 @@ describe('Grid Service', () => {
 
   describe('getDataItemByRowIndexes method', () => {
     afterEach(() => {
-      gridStub.getDataItem = jest.fn(); // put it back as a valid mock for later tests
+      gridStub.getDataItem = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should throw an error when the grid "getDataItem" method is not available', () => {
@@ -1448,7 +1448,7 @@ describe('Grid Service', () => {
 
     it('should return data item object when method is called', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const spy = jest.spyOn(gridStub, 'getDataItem').mockReturnValueOnce(mockColumns[0]).mockReturnValueOnce(mockColumns[2]);
+      const spy = vi.spyOn(gridStub, 'getDataItem').mockReturnValueOnce(mockColumns[0]).mockReturnValueOnce(mockColumns[2]);
 
       const output = service.getDataItemByRowIndexes([0, 2]);
 
@@ -1459,7 +1459,7 @@ describe('Grid Service', () => {
 
   describe('getSelectedRows method', () => {
     afterEach(() => {
-      gridStub.getSelectedRows = jest.fn(); // put it back as a valid mock for later tests
+      gridStub.getSelectedRows = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should throw an error when the grid "getSelectedRows" method is not available', () => {
@@ -1469,7 +1469,7 @@ describe('Grid Service', () => {
     });
 
     it('should return selected row indexes', () => {
-      const spy = jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([0, 1]);
+      const spy = vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([0, 1]);
       const output = service.getSelectedRows();
 
       expect(spy).toHaveBeenCalled();
@@ -1479,7 +1479,7 @@ describe('Grid Service', () => {
 
   describe('getSelectedRowsDataItem method', () => {
     afterEach(() => {
-      gridStub.getSelectedRows = jest.fn(); // put it back as a valid mock for later tests
+      gridStub.getSelectedRows = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should throw an error when the grid "getSelectedRows" method is not available', () => {
@@ -1490,8 +1490,8 @@ describe('Grid Service', () => {
 
     it('should return selected row indexes', () => {
       const mockSelectedColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      const gridSpy = jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([0, 2]);
-      const serviceSpy = jest.spyOn(service, 'getDataItemByRowIndexes').mockReturnValue(mockSelectedColumns);
+      const gridSpy = vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([0, 2]);
+      const serviceSpy = vi.spyOn(service, 'getDataItemByRowIndexes').mockReturnValue(mockSelectedColumns);
 
       const output = service.getSelectedRowsDataItem();
 
@@ -1504,7 +1504,7 @@ describe('Grid Service', () => {
   describe('hideColumnById method', () => {
     it('should return -1 when the column id is not found in the list of loaded column definitions', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
       const output = service.hideColumnById('xyz');
 
@@ -1514,11 +1514,11 @@ describe('Grid Service', () => {
     it('should set new columns minus the column to hide and it should keep new set as the new "visibleColumns"', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
-      const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+      const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.hideColumnById('field2');
 
@@ -1532,11 +1532,11 @@ describe('Grid Service', () => {
     it('should set new columns minus the column to hide but without triggering an event when set to False', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
-      const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+      const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.hideColumnById('field2', { triggerEvent: false });
 
@@ -1549,11 +1549,11 @@ describe('Grid Service', () => {
     it('should set new columns minus the column to hide but without resize the columns when "autoResizeColumns" is set to False', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
-      const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+      const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.hideColumnById('field2', { autoResizeColumns: false });
 
@@ -1566,11 +1566,11 @@ describe('Grid Service', () => {
     it('should set new columns minus the column to hide AND also hide the column from the column picker when "hideFromColumnPicker" is set to False', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
       service.hideColumnById('field2', { hideFromColumnPicker: true });
 
@@ -1583,11 +1583,11 @@ describe('Grid Service', () => {
     it('should set new columns minus the column to hide AND also hide the column from the column picker when "hideFromColumnPicker" is set to False', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
       service.hideColumnById('field2', { autoResizeColumns: false, hideFromGridMenu: true });
 
@@ -1601,10 +1601,10 @@ describe('Grid Service', () => {
   describe('hideColumnByIds method', () => {
     it('should loop through the Ids provided and call hideColumnById on each of them with same options', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const hideByIdSpy = jest.spyOn(service, 'hideColumnById');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
 
       service.hideColumnByIds(['field2', 'field3']);
 
@@ -1612,15 +1612,15 @@ describe('Grid Service', () => {
       expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
       expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
       expect(autoSizeSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: expect.toBeArray() });
+      expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: expect.any(Array) });
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options BUT not auto size columns neither trigger when both are disabled', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const hideByIdSpy = jest.spyOn(service, 'hideColumnById');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
 
       service.hideColumnByIds(['field2', 'field3'], { autoResizeColumns: false, triggerEvent: false });
 
@@ -1633,8 +1633,8 @@ describe('Grid Service', () => {
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options and hide from column picker when "hideFromColumnPicker" is enabled', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const hideByIdSpy = jest.spyOn(service, 'hideColumnById');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
 
       service.hideColumnByIds(['field2', 'field3'], { hideFromColumnPicker: true });
 
@@ -1645,8 +1645,8 @@ describe('Grid Service', () => {
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options and hide from column picker when "hideFromColumnPicker" is enabled', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const hideByIdSpy = jest.spyOn(service, 'hideColumnById');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
 
       service.hideColumnByIds(['field2', 'field3'], { hideFromGridMenu: true });
 
@@ -1658,7 +1658,7 @@ describe('Grid Service', () => {
 
   describe('setSelectedRow method', () => {
     it('should select the row with index provided', () => {
-      const spy = jest.spyOn(gridStub, 'setSelectedRows');
+      const spy = vi.spyOn(gridStub, 'setSelectedRows');
       service.setSelectedRow(2);
       expect(spy).toHaveBeenCalledWith([2]);
     });
@@ -1666,7 +1666,7 @@ describe('Grid Service', () => {
 
   describe('setSelectedRows method', () => {
     it('should select the row with index provided', () => {
-      const spy = jest.spyOn(gridStub, 'setSelectedRows');
+      const spy = vi.spyOn(gridStub, 'setSelectedRows');
       service.setSelectedRows([0, 2, 5]);
       expect(spy).toHaveBeenCalledWith([0, 2, 5]);
     });
@@ -1674,7 +1674,7 @@ describe('Grid Service', () => {
 
   describe('renderGrid method', () => {
     it('should invalidate the grid and call render after', () => {
-      const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
+      const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
 
       service.renderGrid();
 
@@ -1686,14 +1686,14 @@ describe('Grid Service', () => {
   describe('resetGrid method', () => {
     it('should call a reset and expect a few grid methods to be called', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
-      const allColumnSpy = jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setColSpy = jest.spyOn(gridStub, 'setColumns');
-      const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
-      const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
-      const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
-      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
+      const allColumnSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+      const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+      const gridStateSpy = vi.spyOn(gridStateServiceStub, 'resetColumns');
+      const filterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
+      const sortSpy = vi.spyOn(sortServiceStub, 'clearSorting');
+      const clearPinningSpy = vi.spyOn(service, 'clearPinning');
 
       service.resetGrid();
 
@@ -1708,13 +1708,13 @@ describe('Grid Service', () => {
 
     it('should call a reset and expect the grid "resetColumns" method to be called with the column definitions provided to the method', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
-      const allColumnSpy = jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-      const setColSpy = jest.spyOn(gridStub, 'setColumns');
-      const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
-      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
-      const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
-      const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
+      const allColumnSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+      const gridStateSpy = vi.spyOn(gridStateServiceStub, 'resetColumns');
+      const clearPinningSpy = vi.spyOn(service, 'clearPinning');
+      const filterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
+      const sortSpy = vi.spyOn(sortServiceStub, 'clearSorting');
 
       service.resetGrid(mockColumns);
 

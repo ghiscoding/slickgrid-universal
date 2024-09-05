@@ -1,14 +1,14 @@
-import 'jest-extended';
+import { describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type { EditController } from '../../interfaces';
 import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore';
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 describe('SlickCore file', () => {
@@ -58,7 +58,7 @@ describe('SlickCore file', () => {
 
     it('should call isDefaultPrevented() and expect truthy when event propagation is stopped on a native event by calling preventDefault()', () => {
       const evt = new Event('click');
-      const evtSpy = jest.spyOn(evt, 'preventDefault');
+      const evtSpy = vi.spyOn(evt, 'preventDefault');
       const ed = new SlickEventData(evt);
 
       expect(ed.defaultPrevented).toBeFalsy();
@@ -93,8 +93,8 @@ describe('SlickCore file', () => {
 
   describe('SlickEvent class', () => {
     it('should be able to subscribe to an event and call unsubscribe() and expect 1 subscriber to be dropped', () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const onClick = new SlickEvent();
       onClick.subscribe(spy1);
       onClick.subscribe(spy2);
@@ -106,12 +106,12 @@ describe('SlickCore file', () => {
     });
 
     it('should be able to call notify on SlickEventData and ignore any previous value', () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const ed = new SlickEventData();
       const onClick = new SlickEvent('onClick');
       const scope = { onClick };
-      const resetValSpy = jest.spyOn(ed, 'resetReturnValue');
+      const resetValSpy = vi.spyOn(ed, 'resetReturnValue');
       onClick.subscribe(spy1);
       onClick.subscribe(spy2);
 
@@ -124,8 +124,8 @@ describe('SlickCore file', () => {
     });
 
     it('should be able to subscribe to an event, call notify() and all subscribers to receive what was sent', () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const ed = new SlickEventData();
       const onClick = new SlickEvent();
       onClick.subscribe(spy1);
@@ -148,8 +148,8 @@ describe('SlickCore file', () => {
     });
 
     it('should be able to mix a PubSub with regular SlickEvent subscribe and expect both to be triggered by the SlickEvent call notify()', () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const ed = new SlickEventData();
       const onClick = new SlickEvent('onClick', pubSubServiceStub);
       onClick.subscribe(spy1);
@@ -167,7 +167,7 @@ describe('SlickCore file', () => {
       const ed = new SlickEventData();
       const onClick = new SlickEvent('onClick');
       const scope = { onClick };
-      const setPubSubSpy = jest.spyOn(onClick, 'setPubSubService');
+      const setPubSubSpy = vi.spyOn(onClick, 'setPubSubService');
 
       Utils.addSlickEventPubSubWhenDefined(pubSubServiceStub, scope);
       onClick.notify({ hello: 'world' }, ed);
@@ -193,8 +193,8 @@ describe('SlickCore file', () => {
 
   describe('SlickEventHandler class', () => {
     it('should be able to subscribe to multiple events and call unsubscribe() a single event', () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const eventHandler = new SlickEventHandler();
       const onClick = new SlickEvent();
       const onDblClick = new SlickEvent();
@@ -211,8 +211,8 @@ describe('SlickCore file', () => {
     });
 
     it('should return same amount of handlers when calling unsubscribe() on an event that is not found', () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const eventHandler = new SlickEventHandler();
       const onClick = new SlickEvent();
       const onDblClick = new SlickEvent();
@@ -229,8 +229,8 @@ describe('SlickCore file', () => {
     });
 
     it('should be able to subscribe to multiple events and expect no more event handlers when calling unsubscribeAll()', () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const eventHandler = new SlickEventHandler();
       const onClick = new SlickEvent();
       const onDblClick = new SlickEvent();
@@ -359,8 +359,8 @@ describe('SlickCore file', () => {
 
   describe('SlickEditorLock class', () => {
     it('should activate an EditController and expect isActive() to be truthy', () => {
-      const commitSpy = jest.fn();
-      const cancelSpy = jest.fn();
+      const commitSpy = vi.fn();
+      const cancelSpy = vi.fn();
       const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
 
       const elock = new SlickEditorLock();
@@ -371,10 +371,10 @@ describe('SlickCore file', () => {
     });
 
     it('should throw when trying to call activate() with a second EditController', () => {
-      const commitSpy = jest.fn();
-      const cancelSpy = jest.fn();
-      const commit2Spy = jest.fn();
-      const cancel2Spy = jest.fn();
+      const commitSpy = vi.fn();
+      const cancelSpy = vi.fn();
+      const commit2Spy = vi.fn();
+      const cancel2Spy = vi.fn();
       const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
       const ec2 = { commitCurrentEdit: commit2Spy, cancelCurrentEdit: cancel2Spy, } as EditController;
 
@@ -385,7 +385,7 @@ describe('SlickCore file', () => {
     });
 
     it('should throw when trying to call activate() with an EditController that forgot to implement commitCurrentEdit() method', () => {
-      const cancelSpy = jest.fn();
+      const cancelSpy = vi.fn();
       const ec = { cancelCurrentEdit: cancelSpy, } as any;
 
       const elock = new SlickEditorLock();
@@ -393,7 +393,7 @@ describe('SlickCore file', () => {
     });
 
     it('should throw when trying to call activate() with an EditController that forgot to implement cancelCurrentEdit() method', () => {
-      const commitSpy = jest.fn();
+      const commitSpy = vi.fn();
       const ec = { commitCurrentEdit: commitSpy, } as any;
 
       const elock = new SlickEditorLock();
@@ -401,8 +401,8 @@ describe('SlickCore file', () => {
     });
 
     it('should deactivate an EditController and expect isActive() to be falsy', () => {
-      const commitSpy = jest.fn();
-      const cancelSpy = jest.fn();
+      const commitSpy = vi.fn();
+      const cancelSpy = vi.fn();
       const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
 
       const elock = new SlickEditorLock();
@@ -415,10 +415,10 @@ describe('SlickCore file', () => {
     });
 
     it('should throw when trying to deactivate an EditController that does not equal to the currently active EditController', () => {
-      const commitSpy = jest.fn();
-      const cancelSpy = jest.fn();
-      const commit2Spy = jest.fn();
-      const cancel2Spy = jest.fn();
+      const commitSpy = vi.fn();
+      const cancelSpy = vi.fn();
+      const commit2Spy = vi.fn();
+      const cancel2Spy = vi.fn();
       const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
       const ec2 = { commitCurrentEdit: commit2Spy, cancelCurrentEdit: cancel2Spy, } as EditController;
 
@@ -429,8 +429,8 @@ describe('SlickCore file', () => {
     });
 
     it('should expect active EditController.commitCurrentEdit() being called when calling commitCurrentEdit() after it was activated', () => {
-      const commitSpy = jest.fn().mockReturnValue(true);
-      const cancelSpy = jest.fn().mockReturnValue(true);
+      const commitSpy = vi.fn().mockReturnValue(true);
+      const cancelSpy = vi.fn().mockReturnValue(true);
       const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
 
       const elock = new SlickEditorLock();
@@ -440,12 +440,12 @@ describe('SlickCore file', () => {
       expect(elock.isActive()).toBeTruthy();
       expect(commitSpy).toHaveBeenCalled();
       expect(cancelSpy).not.toHaveBeenCalled();
-      expect(committed).toBeTrue();
+      expect(committed).toBe(true);
     });
 
     it('should expect active EditController.commitCurrentEdit() being called when calling commitCurrentEdit() after it was activated', () => {
-      const commitSpy = jest.fn().mockReturnValue(true);
-      const cancelSpy = jest.fn().mockReturnValue(true);
+      const commitSpy = vi.fn().mockReturnValue(true);
+      const cancelSpy = vi.fn().mockReturnValue(true);
       const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
 
       const elock = new SlickEditorLock();
@@ -455,7 +455,7 @@ describe('SlickCore file', () => {
       expect(elock.isActive()).toBeTruthy();
       expect(cancelSpy).toHaveBeenCalled();
       expect(commitSpy).not.toHaveBeenCalled();
-      expect(cancelled).toBeTrue();
+      expect(cancelled).toBe(true);
     });
   });
 
@@ -516,7 +516,7 @@ describe('SlickCore file', () => {
 
       it('should return client rect height when called without a 2nd argument value', () => {
         const div = document.createElement('div');
-        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ height: 120 } as DOMRect);
+        vi.spyOn(div, 'getBoundingClientRect').mockReturnValue({ height: 120 } as DOMRect);
 
         const result = Utils.height(div);
 
@@ -525,7 +525,7 @@ describe('SlickCore file', () => {
 
       it('should apply height to element when called with a 2nd argument value', () => {
         const div = document.createElement('div');
-        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ height: 120 } as DOMRect);
+        vi.spyOn(div, 'getBoundingClientRect').mockReturnValue({ height: 120 } as DOMRect);
 
         Utils.height(div, 130);
 
@@ -541,7 +541,7 @@ describe('SlickCore file', () => {
 
       it('should return client rect width when called without a 2nd argument value', () => {
         const div = document.createElement('div');
-        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ width: 120 } as DOMRect);
+        vi.spyOn(div, 'getBoundingClientRect').mockReturnValue({ width: 120 } as DOMRect);
 
         const result = Utils.width(div);
 
@@ -550,7 +550,7 @@ describe('SlickCore file', () => {
 
       it('should apply width to element when called with a 2nd argument value', () => {
         const div = document.createElement('div');
-        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ width: 120 } as DOMRect);
+        vi.spyOn(div, 'getBoundingClientRect').mockReturnValue({ width: 120 } as DOMRect);
 
         Utils.width(div, 130);
 
@@ -637,7 +637,7 @@ describe('SlickCore file', () => {
 
     describe('setStyleSize() function', () => {
       it('should execute value function when value is a function', () => {
-        const mockFn = jest.fn().mockReturnValue(110);
+        const mockFn = vi.fn().mockReturnValue(110);
         const div = document.createElement('div');
         Utils.setStyleSize(div, 'width', mockFn);
 

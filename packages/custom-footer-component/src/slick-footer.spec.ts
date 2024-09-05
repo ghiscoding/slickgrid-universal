@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CustomFooterOption, type GridOption, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
@@ -19,7 +19,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getUID: () => 'slickgrid_123456',
   onSelectedRowsChanged: new SlickEvent(),
-  registerPlugin: jest.fn(),
+  registerPlugin: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('Slick-Footer Component', () => {
@@ -50,7 +50,7 @@ describe('Slick-Footer Component', () => {
   describe('Integration Tests', () => {
     afterEach(() => {
       // clear all the spyOn mocks to not influence next test
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       component.dispose();
     });
 
@@ -231,7 +231,7 @@ describe('Slick-Footer Component', () => {
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
       const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
 
-      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(component.eventHandler).toEqual(expect.any(Object));
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('initial left footer text');
@@ -248,7 +248,7 @@ describe('Slick-Footer Component', () => {
       const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
       const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.right-footer.metrics') as HTMLSpanElement;
 
-      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(component.eventHandler).toEqual(expect.any(Object));
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
@@ -270,7 +270,7 @@ describe('Slick-Footer Component', () => {
       const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
       const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.right-footer.metrics') as HTMLSpanElement;
 
-      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(component.eventHandler).toEqual(expect.any(Object));
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
@@ -297,7 +297,7 @@ describe('Slick-Footer Component', () => {
       const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
       const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.right-footer.metrics') as HTMLSpanElement;
 
-      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(component.eventHandler).toEqual(expect.any(Object));
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
@@ -356,7 +356,7 @@ describe('Slick-Footer Component', () => {
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
       const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.right-footer') as HTMLSpanElement;
 
-      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(component.eventHandler).toEqual(expect.any(Object));
       expect(footerContainerElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(rightFooterElm.innerHTML).toBe('initial right footer text');
@@ -373,7 +373,7 @@ describe('Slick-Footer Component', () => {
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
       const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.right-footer') as HTMLSpanElement;
 
-      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(component.eventHandler).toEqual(expect.any(Object));
       expect(footerContainerElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(rightFooterElm.innerHTML).toBe('custom right footer text');

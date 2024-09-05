@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import GraphqlQueryBuilder from '../graphqlQueryBuilder';
 
 function removeSpaces(textS) {

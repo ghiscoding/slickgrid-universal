@@ -1,52 +1,52 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
 import { type SlickDataView, SlickEvent, type SlickGrid, SlickGroup } from '../../core/index';
-import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 const gridOptionMock = {
   enablePagination: true,
   backendServiceApi: {
     service: undefined,
-    preProcess: jest.fn(),
-    process: jest.fn(),
-    postProcess: jest.fn(),
+    preProcess: vi.fn(),
+    process: vi.fn(),
+    postProcess: vi.fn(),
   },
 } as unknown as GridOption;
 
 const dataViewStub = {
-  collapseGroup: jest.fn(),
-  expandGroup: jest.fn(),
-  setRefreshHints: jest.fn(),
-  getFilteredItemCount: jest.fn(),
-  getItemCount: jest.fn(),
-  getItemMetadata: jest.fn(),
-  getLength: jest.fn(),
-  refresh: jest.fn(),
-  reSort: jest.fn(),
-  sort: jest.fn(),
-  setItems: jest.fn(),
+  collapseGroup: vi.fn(),
+  expandGroup: vi.fn(),
+  setRefreshHints: vi.fn(),
+  getFilteredItemCount: vi.fn(),
+  getItemCount: vi.fn(),
+  getItemMetadata: vi.fn(),
+  getLength: vi.fn(),
+  refresh: vi.fn(),
+  reSort: vi.fn(),
+  sort: vi.fn(),
+  setItems: vi.fn(),
   onRowCountChanged: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  autosizeColumns: jest.fn(),
-  getActiveCell: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getColumns: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getActiveCell: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getColumns: vi.fn(),
   getData: () => dataViewStub as SlickDataView,
-  getDataItem: jest.fn(),
+  getDataItem: vi.fn(),
   getOptions: () => gridOptionMock,
-  getRenderedRange: jest.fn(),
-  getSortColumns: jest.fn(),
-  invalidate: jest.fn(),
-  onLocalSortChanged: jest.fn(),
-  render: jest.fn(),
-  setColumns: jest.fn(),
-  setOptions: jest.fn(),
-  setSortColumns: jest.fn(),
+  getRenderedRange: vi.fn(),
+  getSortColumns: vi.fn(),
+  invalidate: vi.fn(),
+  onLocalSortChanged: vi.fn(),
+  render: vi.fn(),
+  setColumns: vi.fn(),
+  setOptions: vi.fn(),
+  setSortColumns: vi.fn(),
   onClick: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   onSort: new SlickEvent(),
@@ -74,7 +74,7 @@ describe('GroupItemMetadataProvider Service', () => {
   });
 
   it('should expect event handler to unsubscribeAll when disposing the service', () => {
-    const eventSpy = jest.spyOn(service.eventHandler, 'unsubscribeAll');
+    const eventSpy = vi.spyOn(service.eventHandler, 'unsubscribeAll');
     service.dispose();
     expect(eventSpy).toHaveBeenCalled();
   });
@@ -93,8 +93,8 @@ describe('GroupItemMetadataProvider Service', () => {
       toggleExpandedCssClass: 'expanded',
       toggleCollapsedCssClass: 'collapsed',
       enableExpandCollapse: true,
-      groupFormatter: expect.toBeFunction(),
-      totalsFormatter: expect.toBeFunction(),
+      groupFormatter: expect.any(Function),
+      totalsFormatter: expect.any(Function),
       includeHeaderTotals: false
     });
   });
@@ -264,24 +264,24 @@ describe('GroupItemMetadataProvider Service', () => {
     const mockRange = { top: 10, bottom: 25 } as any;
 
     beforeEach(() => {
-      jest.spyOn(gridStub, 'getRenderedRange').mockReturnValue(mockRange);
-      refreshHintSpy = jest.spyOn(dataViewStub, 'setRefreshHints');
-      collapseGroupSpy = jest.spyOn(dataViewStub, 'collapseGroup');
-      expandGroupSpy = jest.spyOn(dataViewStub, 'expandGroup');
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue(mockRange);
+      refreshHintSpy = vi.spyOn(dataViewStub, 'setRefreshHints');
+      collapseGroupSpy = vi.spyOn(dataViewStub, 'collapseGroup');
+      expandGroupSpy = vi.spyOn(dataViewStub, 'expandGroup');
 
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(group);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(group);
       const targetElm = document.createElement('div');
       targetElm.className = 'slick-group-toggle';
       clickEvent = new Event('click');
       Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: targetElm });
-      Object.defineProperty(clickEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
-      Object.defineProperty(clickEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
-      preventDefaultSpy = jest.spyOn(clickEvent, 'preventDefault');
-      stopPropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
+      Object.defineProperty(clickEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      Object.defineProperty(clickEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      preventDefaultSpy = vi.spyOn(clickEvent, 'preventDefault');
+      stopPropagationSpy = vi.spyOn(clickEvent, 'stopImmediatePropagation');
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should expect call the DataView expand of the Group when original Group is collapsed', () => {
@@ -327,25 +327,25 @@ describe('GroupItemMetadataProvider Service', () => {
     const mockRange = { top: 10, bottom: 25 } as any;
 
     beforeEach(() => {
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(mockActiveCell);
-      jest.spyOn(gridStub, 'getRenderedRange').mockReturnValue(mockRange);
-      refreshHintSpy = jest.spyOn(dataViewStub, 'setRefreshHints');
-      collapseGroupSpy = jest.spyOn(dataViewStub, 'collapseGroup');
-      expandGroupSpy = jest.spyOn(dataViewStub, 'expandGroup');
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(mockActiveCell);
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue(mockRange);
+      refreshHintSpy = vi.spyOn(dataViewStub, 'setRefreshHints');
+      collapseGroupSpy = vi.spyOn(dataViewStub, 'collapseGroup');
+      expandGroupSpy = vi.spyOn(dataViewStub, 'expandGroup');
 
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(group);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(group);
       const targetElm = document.createElement('div');
       targetElm.className = 'slick-group-toggle';
       keyDownEvent = new Event('keydown');
       Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: ' ' });
-      Object.defineProperty(keyDownEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
-      Object.defineProperty(keyDownEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
-      preventDefaultSpy = jest.spyOn(keyDownEvent, 'preventDefault');
-      stopPropagationSpy = jest.spyOn(keyDownEvent, 'stopImmediatePropagation');
+      Object.defineProperty(keyDownEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      Object.defineProperty(keyDownEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      preventDefaultSpy = vi.spyOn(keyDownEvent, 'preventDefault');
+      stopPropagationSpy = vi.spyOn(keyDownEvent, 'stopImmediatePropagation');
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should expect call the DataView expand of the Group when original Group is collapsed', () => {

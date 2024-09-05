@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { DelimiterType, FileType } from '../../enums/index';
@@ -15,52 +15,52 @@ const containerId = 'demo-container';
 
 const excelExportServiceStub = {
   className: 'ExcelExportService',
-  exportToExcel: jest.fn(),
+  exportToExcel: vi.fn(),
 } as unknown as ExcelExportService;
 
 const textExportServiceStub = {
   className: 'TextExportService',
-  exportToFile: jest.fn(),
+  exportToFile: vi.fn(),
 } as unknown as TextExportService;
 
 const filterServiceStub = {
-  clearFilters: jest.fn(),
+  clearFilters: vi.fn(),
 } as unknown as FilterService;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  subscribeEvent: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  subscribeEvent: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 const sortServiceStub = {
-  clearSorting: jest.fn(),
+  clearSorting: vi.fn(),
 } as unknown as SortService;
 
 const dataViewStub = {
-  refresh: jest.fn(),
+  refresh: vi.fn(),
 } as unknown as SlickDataView;
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  autosizeColumns: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getColumns: jest.fn(),
-  getContainerNode: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getColumns: vi.fn(),
+  getContainerNode: vi.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
-  getOptions: jest.fn(),
-  getSelectedRows: jest.fn(),
+  getOptions: vi.fn(),
+  getSelectedRows: vi.fn(),
   getUID: () => gridUid,
-  registerPlugin: jest.fn(),
-  setColumns: jest.fn(),
-  setHeaderRowVisibility: jest.fn(),
-  setSelectedRows: jest.fn(),
-  setTopPanelVisibility: jest.fn(),
-  setPreHeaderPanelVisibility: jest.fn(),
-  setOptions: jest.fn(),
-  scrollColumnIntoView: jest.fn(),
+  registerPlugin: vi.fn(),
+  setColumns: vi.fn(),
+  setHeaderRowVisibility: vi.fn(),
+  setSelectedRows: vi.fn(),
+  setTopPanelVisibility: vi.fn(),
+  setPreHeaderPanelVisibility: vi.fn(),
+  setOptions: vi.fn(),
+  scrollColumnIntoView: vi.fn(),
   onBeforeDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
@@ -86,7 +86,7 @@ const template =
 
 describe('GridMenuControl', () => {
   let control: SlickGridMenu;
-  const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+  const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
   const columnsMock: Column[] = [
     { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
     { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
@@ -116,7 +116,7 @@ describe('GridMenuControl', () => {
     hideForceFitButton: false,
     hideSyncResizeButton: true,
     hideToggleDarkModeCommand: true,
-    onExtensionRegistered: jest.fn(),
+    onExtensionRegistered: vi.fn(),
     onCommand: () => { },
     onColumnsChanged: () => { },
     onAfterMenuShow: () => { },
@@ -129,12 +129,12 @@ describe('GridMenuControl', () => {
     enableTranslate: true,
     backendServiceApi: {
       service: {
-        buildQuery: jest.fn(),
+        buildQuery: vi.fn(),
       },
-      internalPostProcess: jest.fn(),
-      preProcess: jest.fn(),
-      process: jest.fn(),
-      postProcess: jest.fn(),
+      internalPostProcess: vi.fn(),
+      preProcess: vi.fn(),
+      process: vi.fn(),
+      postProcess: vi.fn(),
     },
     gridMenu: gridMenuOptionsMock,
     pagination: {
@@ -147,7 +147,7 @@ describe('GridMenuControl', () => {
   let div;
 
   describe('with I18N Service', () => {
-    const consoleErrorSpy = jest.spyOn(global.console, 'error').mockReturnValue();
+    const consoleErrorSpy = vi.spyOn(global.console, 'error').mockReturnValue();
 
     beforeEach(() => {
       div = document.createElement('div');
@@ -158,15 +158,15 @@ describe('GridMenuControl', () => {
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
 
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-      jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
 
       control = new SlickGridMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
       translateService.use('en');
@@ -175,7 +175,7 @@ describe('GridMenuControl', () => {
     afterEach(() => {
       control?.eventHandler.unsubscribeAll();
       control?.dispose();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     describe('registered control', () => {
@@ -191,7 +191,7 @@ describe('GridMenuControl', () => {
         gridMenuOptionsMock.onBeforeMenuShow = undefined as any;
         control?.eventHandler.unsubscribeAll();
         gridOptionsMock.gridMenu = gridMenuOptionsMock;
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         control.dispose();
       });
 
@@ -201,10 +201,10 @@ describe('GridMenuControl', () => {
 
       it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
         const mockRowSelection = [0, 3, 5];
-        jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
-        const setSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
+        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
+        const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
         gridOptionsMock.enableRowSelection = true;
         control.columns = columnsMock;
@@ -223,9 +223,9 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and then expect it to hide when clicking anywhere in the DOM body', () => {
         const mockRowSelection = [0, 3, 5];
-        jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
+        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
         gridOptionsMock.enableRowSelection = true;
         gridOptionsMock.showHeaderRow = true;
@@ -252,9 +252,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        const readjustSpy = jest.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.frozenColumn = 0;
         control.columns = columnsMock;
@@ -276,9 +276,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        const readjustSpy = jest.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.frozenColumn = 0;
         control.columns = columnsMock;
@@ -295,8 +295,8 @@ describe('GridMenuControl', () => {
       });
 
       it('should expect the Grid Menu to change from the Left side container to the Right side when changing from a regular to a frozen grid via "setOptions"', () => {
-        const recreateSpy = jest.spyOn(control, 'recreateGridMenu');
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        const recreateSpy = vi.spyOn(control, 'recreateGridMenu');
+        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
 
         control.initEventHandlers();
         gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 2 } }, new SlickEventData(), gridStub);
@@ -307,9 +307,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        const readjustSpy = jest.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
         control.columns = columnsMock;
@@ -329,9 +329,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called from default option when it is not provided', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        const readjustSpy = jest.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = null as any;
         control.columns = columnsMock;
@@ -351,7 +351,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu and expect its minWidth and height to be overriden when provided as grid menu options', () => {
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.contentMinWidth = 200;
         gridOptionsMock.gridMenu!.height = 300;
@@ -365,7 +365,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Grid Menu', () => {
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
 
         gridOptionsMock.darkMode = true;
         gridOptionsMock.gridMenu!.contentMinWidth = 200;
@@ -381,8 +381,8 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on left when defined', () => {
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        const repositionSpy = jest.spyOn(control, 'repositionMenu');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const repositionSpy = vi.spyOn(control, 'repositionMenu');
 
         control.init();
         const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
@@ -395,13 +395,13 @@ describe('GridMenuControl', () => {
         const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
 
         expect(gridMenuElm.style.display).toBe('block');
-        expect(gridMenuElm.classList.contains('dropleft')).toBeTrue();
+        expect(gridMenuElm.classList.contains('dropleft')).toBe(true);
         expect(repositionSpy).toHaveBeenCalledTimes(1);
       });
 
       it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on right when defined', () => {
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        const repositionSpy = jest.spyOn(control, 'repositionMenu');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const repositionSpy = vi.spyOn(control, 'repositionMenu');
 
         control.init();
         const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
@@ -414,13 +414,13 @@ describe('GridMenuControl', () => {
         const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
 
         expect(gridMenuElm.style.display).toBe('block');
-        expect(gridMenuElm.classList.contains('dropright')).toBeTrue();
+        expect(gridMenuElm.classList.contains('dropright')).toBe(true);
         expect(repositionSpy).toHaveBeenCalledTimes(1);
       });
 
       it('should open the Grid Menu and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
         gridOptionsMock.forceFitColumns = true;
@@ -442,8 +442,8 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu and expect "Sync Resize" to be checked when "hideSyncResizeButton" is false', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
         gridOptionsMock.syncColumnCellResize = true;
@@ -465,10 +465,10 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu and expect "onColumnsChanged" to be called when defined', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const onColChangedMock = jest.fn();
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const onColChangedMock = vi.fn();
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.onColumnsChanged = onColChangedMock;
         control.columns = columnsMock;
@@ -494,11 +494,11 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the grid menu via its hamburger menu and click on "Force Fit Columns" checkbox and expect "setOptions" and "setColumns" to be called with previous visible columns', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any as any).mockReturnValue(1);
-        jest.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
-        const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
-        const setColumnSpy = jest.spyOn(gridStub, 'setColumns');
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any as any).mockReturnValue(1);
+        vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
+        const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
+        const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
 
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
         gridOptionsMock.gridMenu!.forceFitTitle = 'Custom Force Fit';
@@ -521,10 +521,10 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the grid menu via its hamburger menu and click on "syncresize" checkbox and expect "setOptions" to be called with "syncColumnCellResize" property', () => {
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
-        jest.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
-        const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
+        const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
 
         gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
         gridOptionsMock.gridMenu!.syncResizeTitle = 'Custom Resize Title';
@@ -560,7 +560,7 @@ describe('GridMenuControl', () => {
 
       it('should NOT show the Grid Menu when user defines the callback "onBeforeMenuShow" which returns False', () => {
         gridOptionsMock.gridMenu!.menuUsabilityOverride = () => true;
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         gridOptionsMock.gridMenu!.onBeforeMenuShow = () => false;
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
         gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
@@ -596,9 +596,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should execute "onAfterMenuShow" callback when defined', () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         gridOptionsMock.gridMenu!.onAfterMenuShow = () => true;
-        const onAfterSpy = jest.spyOn(gridOptionsMock.gridMenu!, 'onAfterMenuShow');
+        const onAfterSpy = vi.spyOn(gridOptionsMock.gridMenu!, 'onAfterMenuShow');
         control.columns = columnsMock;
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
@@ -619,7 +619,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should NOT close the Grid Menu by calling "hideMenu" when user defines the callback "onMenuClose" which returns False', () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         gridOptionsMock.gridMenu!.onMenuClose = () => false;
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
@@ -646,7 +646,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should close the Grid Menu by calling "hideMenu" when user defines the callback "onMenuClose" which returns True', () => {
-        const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
+        const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
 
         gridOptionsMock.gridMenu!.onMenuClose = () => true;
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
@@ -671,8 +671,8 @@ describe('GridMenuControl', () => {
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
         gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
         gridOptionsMock.enableAutoSizeColumns = true;
-        const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+        const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
         control.columns = columnsMock;
         control.init();
@@ -681,14 +681,14 @@ describe('GridMenuControl', () => {
         const forceFitElm = control.menuElement!.querySelector('#slickgrid_124343-gridmenu-colpicker-forcefit') as HTMLInputElement;
         const inputSyncElm = control.menuElement!.querySelector('#slickgrid_124343-gridmenu-colpicker-syncresize') as HTMLInputElement;
         const pickerField1Elm = document.querySelector('input[type="checkbox"][data-columnid="field1"]') as HTMLInputElement;
-        expect(pickerField1Elm.checked).toBeTrue();
+        expect(pickerField1Elm.checked).toBe(true);
         pickerField1Elm.checked = false;
         pickerField1Elm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         expect(control.menuElement!.style.display).toBe('block');
         expect(forceFitElm).toBeTruthy();
         expect(inputSyncElm).toBeTruthy();
-        expect(pickerField1Elm.checked).toBeFalse();
+        expect(pickerField1Elm.checked).toBe(false);
 
         control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
         expect(control.menuElement).toBeFalsy();
@@ -696,9 +696,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should add a custom Grid Menu item and expect the "action" and "onCommand" callbacks to be called when command is clicked in the list', () => {
-        const helpFnMock = jest.fn();
-        const onCommandMock = jest.fn();
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const helpFnMock = vi.fn();
+        const onCommandMock = vi.fn();
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', action: helpFnMock }];
         gridOptionsMock.gridMenu!.onCommand = onCommandMock;
@@ -723,8 +723,8 @@ describe('GridMenuControl', () => {
       });
 
       it('should add a custom Grid Menu item and NOT expect the "action" and "onCommand" callbacks to be called when item is "disabled"', () => {
-        const helpFnMock = jest.fn();
-        const onCommandMock = jest.fn();
+        const helpFnMock = vi.fn();
+        const onCommandMock = vi.fn();
 
         gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', action: helpFnMock, disabled: true }];
         gridOptionsMock.gridMenu!.onCommand = onCommandMock;
@@ -738,12 +738,12 @@ describe('GridMenuControl', () => {
 
         expect(helpFnMock).not.toHaveBeenCalled();
         expect(onCommandMock).not.toHaveBeenCalled();
-        expect(helpCommandElm.classList.contains('slick-menu-item-disabled')).toBeTrue();
+        expect(helpCommandElm.classList.contains('slick-menu-item-disabled')).toBe(true);
       });
 
       it('should add a custom Grid Menu item and NOT expect the "action" and "onCommand" callbacks to be called when item "itemUsabilityOverride" callback returns False', () => {
-        const helpFnMock = jest.fn();
-        const onCommandMock = jest.fn();
+        const helpFnMock = vi.fn();
+        const onCommandMock = vi.fn();
 
         gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', action: helpFnMock, itemUsabilityOverride: () => false }];
         gridOptionsMock.gridMenu!.onCommand = onCommandMock;
@@ -760,8 +760,8 @@ describe('GridMenuControl', () => {
       });
 
       it('should add a custom Grid Menu item and expect the "action" and "onCommand" callbacks to be called when command is clicked in the list and its "itemUsabilityOverride" callback returns True', () => {
-        const helpFnMock = jest.fn();
-        const onCommandMock = jest.fn();
+        const helpFnMock = vi.fn();
+        const onCommandMock = vi.fn();
 
         gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', action: helpFnMock, itemUsabilityOverride: () => true }];
         gridOptionsMock.gridMenu!.onCommand = onCommandMock;
@@ -777,7 +777,7 @@ describe('GridMenuControl', () => {
         expect(onCommandMock).toHaveBeenCalledWith(clickEvent, {
           grid: gridStub,
           command: 'help',
-          item: { command: 'help', title: 'Help', action: helpFnMock, disabled: false, itemUsabilityOverride: expect.toBeFunction(), },
+          item: { command: 'help', title: 'Help', action: helpFnMock, disabled: false, itemUsabilityOverride: expect.any(Function), },
           allColumns: columnsMock,
           visibleColumns: columnsMock
         });
@@ -791,7 +791,7 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const helpCommandElm = control.menuElement!.querySelector('.slick-menu-item[data-command=help]') as HTMLInputElement;
 
-        expect(helpCommandElm.classList.contains('slick-menu-item-hidden')).toBeTrue();
+        expect(helpCommandElm.classList.contains('slick-menu-item-hidden')).toBe(true);
       });
 
       it('should add a custom Grid Menu item and expect item to NOT be created in the DOM list when "itemVisibilityOverride" callback returns False', () => {
@@ -813,7 +813,7 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const helpCommandElm = control.menuElement!.querySelector('.slick-menu-item[data-command=help]') as HTMLInputElement;
 
-        expect(helpCommandElm.classList.contains('slick-menu-item-disabled')).toBeTrue();
+        expect(helpCommandElm.classList.contains('slick-menu-item-disabled')).toBe(true);
       });
 
       it('should add a custom Grid Menu "divider" item object and expect a divider to be created', () => {
@@ -824,7 +824,7 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const helpCommandElm = control.menuElement!.querySelector('.slick-menu-item[data-command=divider]') as HTMLInputElement;
 
-        expect(helpCommandElm.classList.contains('slick-menu-item-divider')).toBeTrue();
+        expect(helpCommandElm.classList.contains('slick-menu-item-divider')).toBe(true);
       });
 
       it('should add a custom Grid Menu "divider" string and expect a divider to be created', () => {
@@ -835,7 +835,7 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const helpCommandElm = control.menuElement!.querySelector('.slick-menu-item') as HTMLInputElement;
 
-        expect(helpCommandElm.classList.contains('slick-menu-item-divider')).toBeTrue();
+        expect(helpCommandElm.classList.contains('slick-menu-item-divider')).toBe(true);
       });
 
       it('should add a custom Grid Menu item with "cssClass" and expect all classes to be added to the item in the DOM', () => {
@@ -846,9 +846,9 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const helpCommandElm = control.menuElement!.querySelector('.slick-menu-item[data-command=help]') as HTMLInputElement;
 
-        expect(helpCommandElm.classList.contains('slick-menu-item')).toBeTrue();
-        expect(helpCommandElm.classList.contains('text-danger')).toBeTrue();
-        expect(helpCommandElm.classList.contains('red')).toBeTrue();
+        expect(helpCommandElm.classList.contains('slick-menu-item')).toBe(true);
+        expect(helpCommandElm.classList.contains('text-danger')).toBe(true);
+        expect(helpCommandElm.classList.contains('red')).toBe(true);
         expect(helpCommandElm.className).toBe('slick-menu-item text-danger red');
       });
 
@@ -863,9 +863,9 @@ describe('GridMenuControl', () => {
         const helpTextElm = helpCommandElm.querySelector('.slick-menu-content') as HTMLInputElement;
 
         expect(helpTextElm.textContent).toBe('Help');
-        expect(helpIconElm.classList.contains('slick-menu-icon')).toBeTrue();
-        expect(helpIconElm.classList.contains('mdi')).toBeTrue();
-        expect(helpIconElm.classList.contains('mdi-close')).toBeTrue();
+        expect(helpIconElm.classList.contains('slick-menu-icon')).toBe(true);
+        expect(helpIconElm.classList.contains('mdi')).toBe(true);
+        expect(helpIconElm.classList.contains('mdi-close')).toBe(true);
         expect(helpIconElm.className).toBe('slick-menu-icon mdi mdi-close');
       });
 
@@ -890,14 +890,14 @@ describe('GridMenuControl', () => {
         const helpTextElm = helpCommandElm.querySelector('.slick-menu-content') as HTMLInputElement;
 
         expect(helpTextElm.textContent).toBe('Help');
-        expect(helpTextElm.classList.contains('red')).toBeTrue();
-        expect(helpTextElm.classList.contains('bold')).toBeTrue();
+        expect(helpTextElm.classList.contains('red')).toBe(true);
+        expect(helpTextElm.classList.contains('bold')).toBe(true);
         expect(helpTextElm.className).toBe('slick-menu-content red bold');
       });
 
       it('should be able to recreate the Grid Menu', () => {
-        const deleteSpy = jest.spyOn(control, 'deleteMenu');
-        const initSpy = jest.spyOn(control, 'init');
+        const deleteSpy = vi.spyOn(control, 'deleteMenu');
+        const initSpy = vi.spyOn(control, 'init');
 
         control.recreateGridMenu();
 
@@ -907,7 +907,7 @@ describe('GridMenuControl', () => {
 
       describe('with sub-menus', () => {
         let mockCommandItems: any[] = [];
-        const actionMock = jest.fn();
+        const actionMock = vi.fn();
 
         beforeEach(() => {
           mockCommandItems = [
@@ -932,7 +932,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should create a Grid Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
-          const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
+          const disposeSubMenuSpy = vi.spyOn(control, 'disposeSubMenus');
           Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
           gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
@@ -991,7 +991,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
-          const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
+          const disposeSubMenuSpy = vi.spyOn(control, 'disposeSubMenus');
           Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
           gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
@@ -1062,7 +1062,7 @@ describe('GridMenuControl', () => {
           const menuItem = document.createElement('div');
           menuItem.className = 'slick-menu-item';
           menuItem.style.top = '465px';
-          jest.spyOn(menuItem, 'getBoundingClientRect').mockReturnValue({ top: 465, left: 25 } as any);
+          vi.spyOn(menuItem, 'getBoundingClientRect').mockReturnValue({ top: 465, left: 25 } as any);
           Object.defineProperty(menuItem, 'target', { writable: true, configurable: true, value: menuItem });
           subMenuElm.className = 'slick-submenu';
           Object.defineProperty(divEvent, 'target', { writable: true, configurable: true, value: subMenuElm });
@@ -1083,7 +1083,7 @@ describe('GridMenuControl', () => {
         });
 
         afterEach(() => {
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         });
 
         it('should expect an empty "commandItems" array when both Filter & Sort are disabled', () => {
@@ -1094,7 +1094,7 @@ describe('GridMenuControl', () => {
 
         it('should expect menu related to "Unfreeze Columns/Rows"', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, hideToggleDarkModeCommand: true, } } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
@@ -1104,8 +1104,8 @@ describe('GridMenuControl', () => {
 
         it('should expect all menu related to Filter when "enableFilering" is set', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1122,8 +1122,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideToggleFilterCommand: true, hideRefreshDatasetCommand: true, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1138,8 +1138,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleDarkModeCommand: true, hideRefreshDatasetCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1155,8 +1155,8 @@ describe('GridMenuControl', () => {
               hideClearAllFiltersCommand: true, hideToggleFilterCommand: true, hideToggleDarkModeCommand: false, hideRefreshDatasetCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1171,8 +1171,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleDarkModeCommand: true, hideToggleFilterCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1183,8 +1183,8 @@ describe('GridMenuControl', () => {
 
         it('should have the "toggle-preheader" menu command when "showPreHeaderPanel" is set', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1199,8 +1199,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideTogglePreHeaderCommand: true, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1209,8 +1209,8 @@ describe('GridMenuControl', () => {
 
         it('should have the "clear-sorting" menu command when "enableSorting" is set', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1225,8 +1225,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllSortingCommand: true, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1239,8 +1239,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1255,8 +1255,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1269,8 +1269,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1285,8 +1285,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1301,8 +1301,8 @@ describe('GridMenuControl', () => {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
             }
           } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
@@ -1312,18 +1312,18 @@ describe('GridMenuControl', () => {
 
       describe('executeGridMenuInternalCustomCommands method', () => {
         beforeEach(() => {
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-          jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-          jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+          vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
         });
 
         it('should call "clearFrozenColumns" when the command triggered is "clear-pinning"', () => {
-          const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
-          const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+          const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+          const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+          const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, } } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.init();
@@ -1338,12 +1338,12 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "clearFilters" and dataview refresh when the command triggered is "clear-filter"', () => {
-          const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
-          const refreshSpy = jest.spyOn(SharedService.prototype.dataView, 'refresh');
-          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+          const filterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
+          const refreshSpy = vi.spyOn(SharedService.prototype.dataView, 'refresh');
+          const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.init();
@@ -1358,12 +1358,12 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "clearSorting" and dataview refresh when the command triggered is "clear-sorting"', () => {
-          const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
-          const refreshSpy = jest.spyOn(SharedService.prototype.dataView, 'refresh');
-          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+          const sortSpy = vi.spyOn(sortServiceStub, 'clearSorting');
+          const refreshSpy = vi.spyOn(SharedService.prototype.dataView, 'refresh');
+          const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.init();
@@ -1379,9 +1379,9 @@ describe('GridMenuControl', () => {
 
         it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
 
           control.init();
           control.columns = columnsMock;
@@ -1394,9 +1394,9 @@ describe('GridMenuControl', () => {
 
         it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportCsvCommand: false, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
 
           control.init();
           control.columns = columnsMock;
@@ -1409,9 +1409,9 @@ describe('GridMenuControl', () => {
 
         it('should call "exportToFile" with Text Delimited and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportTextDelimitedCommand: false, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
 
           control.init();
           control.columns = columnsMock;
@@ -1423,11 +1423,11 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
-          const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
+          const excelExportSpy = vi.spyOn(excelExportServiceStub, 'exportToExcel');
           const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([excelExportServiceStub]);
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([excelExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.init();
@@ -1440,11 +1440,11 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
-          const exportSpy = jest.spyOn(textExportServiceStub, 'exportToFile');
+          const exportSpy = vi.spyOn(textExportServiceStub, 'exportToFile');
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([textExportServiceStub]);
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([textExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.init();
@@ -1457,11 +1457,11 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
-          const exportSpy = jest.spyOn(textExportServiceStub, 'exportToFile');
+          const exportSpy = vi.spyOn(textExportServiceStub, 'exportToFile');
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportTextDelimitedCommand: false } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([textExportServiceStub]);
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([textExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.init();
@@ -1475,8 +1475,8 @@ describe('GridMenuControl', () => {
 
         it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideToggleDarkModeCommand: false } } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.columns = columnsMock;
@@ -1489,11 +1489,11 @@ describe('GridMenuControl', () => {
 
         it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter"', () => {
           let copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: false, hideToggleFilterCommand: false } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
-          const scrollSpy = jest.spyOn(gridStub, 'scrollColumnIntoView');
-          const setColumnSpy = jest.spyOn(gridStub, 'setColumns');
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
+          const scrollSpy = vi.spyOn(gridStub, 'scrollColumnIntoView');
+          const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
 
           control.init();
           control.columns = columnsMock;
@@ -1506,8 +1506,8 @@ describe('GridMenuControl', () => {
           expect(setColumnSpy).toHaveBeenCalledTimes(1);
 
           copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, hideToggleFilterCommand: false } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-filter]')!.dispatchEvent(clickEvent);
 
@@ -1517,9 +1517,9 @@ describe('GridMenuControl', () => {
 
         it('should call the grid "setPreHeaderPanelVisibility" method when the command triggered is "toggle-preheader"', () => {
           let copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, hideTogglePreHeaderCommand: false } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          const gridSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setPreHeaderPanelVisibility');
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          const gridSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setPreHeaderPanelVisibility');
 
           control.init();
           control.columns = columnsMock;
@@ -1530,8 +1530,8 @@ describe('GridMenuControl', () => {
           expect(gridSpy).toHaveBeenCalledWith(false);
 
           copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: false, hideTogglePreHeaderCommand: false } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-preheader]')!.dispatchEvent(clickEvent);
 
@@ -1539,10 +1539,10 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "refreshBackendDataset" method when the command triggered is "refresh-dataset"', () => {
-          const refreshSpy = jest.spyOn(extensionUtility, 'refreshBackendDataset');
+          const refreshSpy = vi.spyOn(extensionUtility, 'refreshBackendDataset');
           const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, hideHeaderRowAfterPageLoad: false, hideRefreshDatasetCommand: false, } as unknown as GridOption;
-          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
           control.init();
           control.columns = columnsMock;
@@ -1567,8 +1567,8 @@ describe('GridMenuControl', () => {
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
         ];
-        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValueOnce(0).mockReturnValueOnce(1);
-        const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValueOnce(0).mockReturnValueOnce(1);
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
 
         control.columns = columnsUnorderedMock;
         control.initEventHandlers();
@@ -1593,22 +1593,22 @@ describe('GridMenuControl', () => {
       div = document.createElement('div');
       div.innerHTML = template;
       document.body.appendChild(div);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     });
 
     it('should translate the column picker header titles', () => {
-      const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
-      const utilitySpy = jest.spyOn(extensionUtility, 'getPickerTitleOutputString');
-      const translateSpy = jest.spyOn(extensionUtility, 'translateItems');
-      jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      const utilitySpy = vi.spyOn(extensionUtility, 'getPickerTitleOutputString');
+      const translateSpy = vi.spyOn(extensionUtility, 'translateItems');
+      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
 
       translateService.use('fr');
       gridOptionsMock.gridMenu!.hideForceFitButton = false;
       gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
       gridOptionsMock.syncColumnCellResize = true;
       gridOptionsMock.forceFitColumns = true;
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       control.columns = columnsMock;
       control.initEventHandlers();

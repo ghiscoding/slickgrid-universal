@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { MaxAggregator } from '../maxAggregator';
 
 describe('maxAggregator', () => {

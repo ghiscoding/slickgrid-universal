@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 const mock = () => {
   let storage: any = {};
   return {
@@ -28,12 +30,12 @@ Object.defineProperty(window, 'getComputedStyle', {
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 });

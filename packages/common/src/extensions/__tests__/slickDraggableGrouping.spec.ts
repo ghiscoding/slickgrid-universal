@@ -1,31 +1,24 @@
-const sortableMock = {
-  el: undefined,
-  options: {} as SortableOptions,
-  constructor: jest.fn(),
-  create: (el, options) => {
-    sortableMock.el = el;
-    sortableMock.options = {
-      ...(options || {}),
-      onAdd: jest.fn(),
-      onEnd: jest.fn(),
-      onStart: jest.fn(),
-      onUpdate: jest.fn(),
-    };
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-    return {
-      el,
-      options,
-      destroy: jest.fn(),
-      toArray: jest.fn(),
-    };
-  },
-  utils: {
-    clone: (el) => el.cloneNode(true),
-  },
-};
-jest.mock('sortablejs', () => sortableMock);
+vi.mock('sortablejs', () => ({
+  default: {
+    el: undefined,
+    options: {} as SortableOptions,
+    constructor: vi.fn(),
+    create: (el, options) => {
+      return {
+        el,
+        options,
+        destroy: vi.fn(),
+        toArray: vi.fn(),
+      };
+    },
+    utils: {
+      clone: (el) => el.cloneNode(true),
+    },
+  }
+}));
 
-import 'jest-extended';
 import { type SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
@@ -62,30 +55,30 @@ const gridOptionsMock = {
 } as unknown as GridOption;
 
 const dataViewStub = {
-  collapseAllGroups: jest.fn(),
-  expandAllGroups: jest.fn(),
-  setGrouping: jest.fn(),
+  collapseAllGroups: vi.fn(),
+  expandAllGroups: vi.fn(),
+  setGrouping: vi.fn(),
 };
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  getCellNode: jest.fn(),
-  getCellFromEvent: jest.fn(),
-  getColumns: jest.fn(),
-  getContainerNode: jest.fn(),
-  getHeaderColumn: jest.fn(),
-  getOptions: jest.fn(),
-  getPreHeaderPanel: jest.fn(),
-  getTopHeaderPanel: jest.fn(),
+  getCellNode: vi.fn(),
+  getCellFromEvent: vi.fn(),
+  getColumns: vi.fn(),
+  getContainerNode: vi.fn(),
+  getHeaderColumn: vi.fn(),
+  getOptions: vi.fn(),
+  getPreHeaderPanel: vi.fn(),
+  getTopHeaderPanel: vi.fn(),
   getData: () => dataViewStub,
   getEditorLock: () => getEditorLockMock,
   getUID: () => GRID_UID,
-  invalidate: jest.fn(),
-  registerPlugin: jest.fn(),
-  updateColumnHeader: jest.fn(),
+  invalidate: vi.fn(),
+  registerPlugin: vi.fn(),
+  updateColumnHeader: vi.fn(),
   onColumnsReordered: new SlickEvent(),
   onHeaderCellRendered: new SlickEvent(),
   onHeaderMouseEnter: new SlickEvent(),
@@ -143,11 +136,11 @@ describe('Draggable Grouping Plugin', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-    jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(dropzoneElm);
+    vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(dropzoneElm);
     plugin = new SlickDraggableGrouping(extensionUtility, eventPubSubService, sharedService);
   });
 
@@ -163,7 +156,7 @@ describe('Draggable Grouping Plugin', () => {
   });
 
   it('should create and dispose of the plugin', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
+    const disposeSpy = vi.spyOn(plugin, 'dispose');
     expect(plugin).toBeTruthy();
 
     plugin.dispose();
@@ -187,7 +180,7 @@ describe('Draggable Grouping Plugin', () => {
   });
 
   it('should initialize the Draggable Grouping and expect optional "Toggle All" button text with translated value when provided to the plugin with "toggleAllButtonTextKey"', () => {
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, toggleAllButtonTextKey: 'TOGGLE_ALL_GROUPS' });
 
@@ -199,7 +192,7 @@ describe('Draggable Grouping Plugin', () => {
   });
 
   it('should initialize the Draggable Grouping and expect optional "Toggle All" button tooltip with translated value when provided to the plugin with "toggleAllPlaceholderText"', () => {
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, toggleAllPlaceholderTextKey: 'TOGGLE_ALL_GROUPS' });
 
@@ -211,7 +204,7 @@ describe('Draggable Grouping Plugin', () => {
   });
 
   it('should initialize the Draggable Grouping and expect optional "Toggle All" button text with translated value when provided to the plugin with "toggleAllButtonTextKey"', () => {
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, dropPlaceHolderTextKey: 'GROUP_BY' });
 
@@ -223,10 +216,10 @@ describe('Draggable Grouping Plugin', () => {
   });
 
   it('should add an icon beside each column title when "groupIconCssClass" is provided', () => {
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, groupIconCssClass: 'mdi mdi-drag' });
-    const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+    const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
     gridStub.onHeaderCellRendered.notify({ column: mockColumns[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
     const groupableElm = headerDiv.querySelector('.slick-column-groupable') as HTMLSpanElement;
 
@@ -242,11 +235,11 @@ describe('Draggable Grouping Plugin', () => {
     let headerColumnDiv4: HTMLDivElement;
     let mockHeaderLeftDiv1: HTMLDivElement;
     let mockHeaderLeftDiv2: HTMLDivElement;
-    const setColumnsSpy = jest.fn();
-    const setColumnResizeSpy = jest.fn();
-    const getColumnIndexSpy = jest.fn();
-    const triggerSpy = jest.fn();
-    const setGroupingSpy = jest.spyOn(dataViewStub, 'setGrouping');
+    const setColumnsSpy = vi.fn();
+    const setColumnResizeSpy = vi.fn();
+    const getColumnIndexSpy = vi.fn();
+    const triggerSpy = vi.fn();
+    const setGroupingSpy = vi.spyOn(dataViewStub, 'setGrouping');
 
     beforeEach(() => {
       mockDivPaneContainer1 = document.createElement('div');
@@ -274,13 +267,13 @@ describe('Draggable Grouping Plugin', () => {
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should execute the "onStart" and "onAdd" callbacks of Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
       const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-      jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+      vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -310,7 +303,7 @@ describe('Draggable Grouping Plugin', () => {
     it('should execute the "onEnd" callback of Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
       const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-      jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue([]);
+      vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue([]);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -357,10 +350,10 @@ describe('Draggable Grouping Plugin', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setColumns(mockColumns);
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
-      jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+      vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
       getColumnIndexSpy.mockReturnValue(2);
       const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-      jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+      vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -405,8 +398,8 @@ describe('Draggable Grouping Plugin', () => {
         let onGroupChangedCallbackSpy: any;
 
         beforeEach(() => {
-          onGroupChangedCallbackSpy = jest.fn();
-          groupChangedSpy = jest.spyOn(plugin.onGroupChanged, 'notify');
+          onGroupChangedCallbackSpy = vi.fn();
+          groupChangedSpy = vi.spyOn(plugin.onGroupChanged, 'notify');
           mockHeaderColumnDiv1 = document.createElement('div');
           mockHeaderColumnDiv1.className = 'slick-dropped-grouping';
           mockHeaderColumnDiv1.id = 'age';
@@ -426,9 +419,9 @@ describe('Draggable Grouping Plugin', () => {
           plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close', onGroupChanged: onGroupChangedCallbackSpy });
           plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
 
-          jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
+          vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-          jest.spyOn(plugin.droppableInstance!, 'toArray').mockReturnValue(['age', 'medals']);
+          vi.spyOn(plugin.droppableInstance!, 'toArray').mockReturnValue(['age', 'medals']);
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
           plugin.droppableInstance?.options.onUpdate!({ item: mockDivPaneContainer1, clone: mockDivPaneContainer1.cloneNode(true) } as any);
@@ -436,7 +429,7 @@ describe('Draggable Grouping Plugin', () => {
 
         afterEach(() => {
           plugin.dispose();
-          jest.clearAllMocks();
+          vi.clearAllMocks();
         });
 
         it('should call sortable "update" from setupColumnDropbox and expect "updateGroupBy" to be called with a sort-group', () => {
@@ -445,7 +438,7 @@ describe('Draggable Grouping Plugin', () => {
           const onGroupChangedArgs = {
             caller: 'sort-group',
             groupColumns: [{
-              aggregators: expect.toBeArray(),
+              aggregators: expect.any(Array),
               formatter: mockColumns[2].grouping!.formatter,
               getter: 'age',
               collapsed: false,
@@ -455,7 +448,7 @@ describe('Draggable Grouping Plugin', () => {
           expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), onGroupChangedArgs);
           expect(groupChangedSpy).toHaveBeenCalledWith(onGroupChangedArgs);
 
-          jest.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
           plugin.setDroppedGroups('age');
         });
 
@@ -471,8 +464,8 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should use the Toggle All and expect classes to be toggled and DataView to call necessary method', () => {
-          const dvExpandSpy = jest.spyOn(dataViewStub, 'expandAllGroups');
-          const dvCollapseSpy = jest.spyOn(dataViewStub, 'collapseAllGroups');
+          const dvExpandSpy = vi.spyOn(dataViewStub, 'expandAllGroups');
+          const dvCollapseSpy = vi.spyOn(dataViewStub, 'collapseAllGroups');
           let toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
           const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon') as HTMLDivElement;
           const clickEvent = new Event('click');
@@ -498,7 +491,7 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should clear all grouping when that action is called from Context Menu, it must be also cleared in the Draggable Grouping preheader', () => {
-          const clearGroupSpy = jest.spyOn(plugin, 'clearDroppedGroups');
+          const clearGroupSpy = vi.spyOn(plugin, 'clearDroppedGroups');
           eventPubSubService.publish('onContextMenuClearGrouping');
           expect(clearGroupSpy).toHaveBeenCalled();
         });
@@ -528,7 +521,7 @@ describe('Draggable Grouping Plugin', () => {
         let mockHeaderColumnDiv2: HTMLDivElement;
 
         beforeEach(() => {
-          groupChangedSpy = jest.spyOn(plugin.onGroupChanged, 'notify');
+          groupChangedSpy = vi.spyOn(plugin.onGroupChanged, 'notify');
           mockHeaderColumnDiv1 = document.createElement('div');
           mockHeaderColumnDiv1.className = 'slick-dropped-grouping';
           mockHeaderColumnDiv1.id = 'age';
@@ -548,7 +541,7 @@ describe('Draggable Grouping Plugin', () => {
 
         afterEach(() => {
           plugin.dispose();
-          jest.clearAllMocks();
+          vi.clearAllMocks();
         });
 
         it('should ', () => {
@@ -558,7 +551,7 @@ describe('Draggable Grouping Plugin', () => {
         it('should not expect any sort icons displayed when "hideGroupSortIcons" is set to True', () => {
           plugin.init(gridStub, { ...addonOptions, hideGroupSortIcons: true });
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -577,10 +570,10 @@ describe('Draggable Grouping Plugin', () => {
         it('should not expect any sort icons displayed when the Column is not Sortable', () => {
           const mockColumnsCopy = deepCopy(mockColumns);
           mockColumnsCopy[2].sortable = false; // change age column to not sortable
-          jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumnsCopy);
+          vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumnsCopy);
           plugin.init(gridStub, { ...addonOptions });
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumnsCopy, getColumnIndexSpy, GRID_UID, triggerSpy);
-          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age']);
+          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age']);
 
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -595,11 +588,11 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should toggle ascending/descending order when original sort is ascending then user clicked the sorting icon twice', () => {
-          const onGroupChangedCallbackSpy = jest.fn();
+          const onGroupChangedCallbackSpy = vi.fn();
           plugin.init(gridStub, { ...addonOptions, onGroupChanged: onGroupChangedCallbackSpy });
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
-          const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
+          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
 
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -619,7 +612,7 @@ describe('Draggable Grouping Plugin', () => {
           groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
           let groupBySortDescIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-desc-icon') as HTMLDivElement;
 
-          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(groupBySortAscIconElm).toBeFalsy();
           expect(groupBySortDescIconElm).toBeTruthy();
@@ -628,21 +621,21 @@ describe('Draggable Grouping Plugin', () => {
           groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
           groupBySortDescIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-desc-icon') as HTMLDivElement;
 
-          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(groupBySortAscIconElm).toBeTruthy();
           expect(groupBySortDescIconElm).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
-          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.toBeArray(), });
-          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.toBeArray(), });
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array), });
+          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array), });
         });
 
         it('should toggle ascending/descending order with different icons when original sort is ascending then user clicked the sorting icon twice', () => {
-          const onGroupChangedCallbackSpy = jest.fn();
+          const onGroupChangedCallbackSpy = vi.fn();
           plugin.init(gridStub, { ...addonOptions, sortAscIconCssClass: 'mdi mdi-arrow-up', sortDescIconCssClass: 'mdi mdi-arrow-down', onGroupChanged: onGroupChangedCallbackSpy });
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
-          const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
+          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
 
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -660,7 +653,7 @@ describe('Draggable Grouping Plugin', () => {
           groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
           let groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
 
-          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
           expect(groupBySortAscIconElm).toBeFalsy();
           expect(groupBySortDescIconElm).toBeTruthy();
 
@@ -668,12 +661,12 @@ describe('Draggable Grouping Plugin', () => {
           groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
           groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
 
-          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
           expect(groupBySortAscIconElm).toBeTruthy();
           expect(groupBySortDescIconElm).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
-          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.toBeArray(), });
-          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.toBeArray(), });
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array), });
+          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array), });
 
           const sortResult1 = mockColumns[2].grouping!.comparer!({ value: 'John', count: 0 }, { value: 'Jane', count: 1 });
           expect(sortResult1).toBe(SortDirectionNumber.asc);
@@ -688,7 +681,7 @@ describe('Draggable Grouping Plugin', () => {
       beforeEach(() => {
         gridOptionsMock.frozenColumn = 2;
         setColumnsSpy.mockClear();
-        jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+        vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
         getColumnIndexSpy
           .mockReturnValueOnce(0)
           .mockReturnValueOnce(1)
@@ -701,8 +694,8 @@ describe('Draggable Grouping Plugin', () => {
         plugin.init(gridStub, { ...addonOptions });
         plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
         const fn = plugin.setupColumnReorder(gridStub, [mockHeaderLeftDiv1, mockHeaderLeftDiv2], {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-        jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['firstName', 'lastName', 'age']);
-        jest.spyOn(fn.sortableRightInstance, 'toArray').mockReturnValue(['gender']);
+        vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['firstName', 'lastName', 'age']);
+        vi.spyOn(fn.sortableRightInstance, 'toArray').mockReturnValue(['gender']);
 
         fn.sortableLeftInstance!.options.onStart!({} as any);
         plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);

@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+
 import type { EditCommand, Formatter, GridOption } from '../../interfaces/index';
 import { SharedService } from '../../services/shared.service';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
@@ -7,51 +9,51 @@ import { SlickEvent, SlickEventData, type SlickGrid, type SlickRange } from '../
 import { Editors } from '../../editors';
 
 const getEditorLockMock = {
-  isActive: jest.fn(),
-  commitCurrentEdit: jest.fn(),
+  isActive: vi.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  getData: jest.fn(),
-  getOptions: jest.fn(),
-  getSelectionModel: jest.fn(),
-  getActiveCell: jest.fn(),
-  getCellEditor: jest.fn(),
+  getData: vi.fn(),
+  getOptions: vi.fn(),
+  getSelectionModel: vi.fn(),
+  getActiveCell: vi.fn(),
+  getCellEditor: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  focus: jest.fn(),
-  registerPlugin: jest.fn(),
-  setSelectionModel: jest.fn(),
+  focus: vi.fn(),
+  registerPlugin: vi.fn(),
+  setSelectionModel: vi.fn(),
   onKeyDown: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockCellExternalCopyManager = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  dispose: jest.fn(),
-  getHeaderValueForColumn: jest.fn(),
-  getDataItemValueForColumn: jest.fn(),
-  setDataItemValueForColumn: jest.fn(),
+  constructor: vi.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
+  getHeaderValueForColumn: vi.fn(),
+  getDataItemValueForColumn: vi.fn(),
+  setDataItemValueForColumn: vi.fn(),
   onCopyCells: new SlickEvent(),
   onCopyCancelled: new SlickEvent(),
   onPasteCells: new SlickEvent(),
 } as unknown as SlickCellExternalCopyManager;
 
 const mockCellSelectionModel = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  dispose: jest.fn(),
-  getSelectedRanges: jest.fn(),
-  setSelectedRanges: jest.fn(),
-  getSelectedRows: jest.fn(),
-  setSelectedRows: jest.fn(),
+  constructor: vi.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
+  getSelectedRanges: vi.fn(),
+  setSelectedRanges: vi.fn(),
+  getSelectedRows: vi.fn(),
+  setSelectedRows: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickCellSelectionModel;
 
-jest.mock('../slickCellSelectionModel', () => ({
-  SlickCellSelectionModel: jest.fn().mockImplementation(() => mockCellSelectionModel),
+vi.mock('../slickCellSelectionModel', () => ({
+  SlickCellSelectionModel: vi.fn().mockImplementation(() => mockCellSelectionModel),
 }));
-jest.mock('../slickCellExternalCopyManager', () => ({
-  SlickCellExternalCopyManager: jest.fn().mockImplementation(() => mockCellExternalCopyManager),
+vi.mock('../slickCellExternalCopyManager', () => ({
+  SlickCellExternalCopyManager: vi.fn().mockImplementation(() => mockCellExternalCopyManager),
 }));
 
 describe('CellExcelCopyManager', () => {
@@ -66,7 +68,7 @@ describe('CellExcelCopyManager', () => {
     editable: true,
     enableCheckboxSelector: true,
     excelCopyBufferOptions: {
-      onExtensionRegistered: jest.fn(),
+      onExtensionRegistered: vi.fn(),
       onCopyCells: mockEventCallback,
       onCopyCancelled: mockEventCallback,
       onPasteCells: mockEventCallback,
@@ -78,7 +80,7 @@ describe('CellExcelCopyManager', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create the plugin', () => {
@@ -97,12 +99,12 @@ describe('CellExcelCopyManager', () => {
         serializedValue: 'serialize',
         prevSerializedValue: 'previous'
       };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
     });
 
     it('should initialize CellExcelCopyManager', () => {
-      const setSelectionSpy = jest.spyOn(gridStub, 'setSelectionModel');
-      const cellExternalCopyInitSpy = jest.spyOn(mockCellExternalCopyManager, 'init');
+      const setSelectionSpy = vi.spyOn(gridStub, 'setSelectionModel');
+      const cellExternalCopyInitSpy = vi.spyOn(mockCellExternalCopyManager, 'init');
 
       plugin.init(gridStub);
 
@@ -122,10 +124,10 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should call internal event handler subscribe and expect the "onCopyCells" option to be called when addon notify is called', () => {
-      const handlerSpy = jest.spyOn(plugin.eventHandler, 'subscribe');
-      const mockOnCopy = jest.fn();
-      const mockOnCopyCancel = jest.fn();
-      const mockOnPasteCell = jest.fn();
+      const handlerSpy = vi.spyOn(plugin.eventHandler, 'subscribe');
+      const mockOnCopy = vi.fn();
+      const mockOnCopyCancel = vi.fn();
+      const mockOnPasteCell = vi.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
       mockCellExternalCopyManager.onCopyCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
@@ -141,10 +143,10 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should call internal event handler subscribe and expect the "onCopyCancelled" option to be called when addon notify is called', () => {
-      const handlerSpy = jest.spyOn(plugin.eventHandler, 'subscribe');
-      const mockOnCopy = jest.fn();
-      const mockOnCopyCancel = jest.fn();
-      const mockOnPasteCell = jest.fn();
+      const handlerSpy = vi.spyOn(plugin.eventHandler, 'subscribe');
+      const mockOnCopy = vi.fn();
+      const mockOnCopyCancel = vi.fn();
+      const mockOnPasteCell = vi.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
       mockCellExternalCopyManager.onCopyCancelled.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
@@ -160,10 +162,10 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should call internal event handler subscribe and expect the "onPasteCells" option to be called when addon notify is called', () => {
-      const handlerSpy = jest.spyOn(plugin.eventHandler, 'subscribe');
-      const mockOnCopy = jest.fn();
-      const mockOnCopyCancel = jest.fn();
-      const mockOnPasteCell = jest.fn();
+      const handlerSpy = vi.spyOn(plugin.eventHandler, 'subscribe');
+      const mockOnCopy = vi.fn();
+      const mockOnCopyCancel = vi.fn();
+      const mockOnPasteCell = vi.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
       mockCellExternalCopyManager.onPasteCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
@@ -194,7 +196,7 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
       const undoRedoBuffer = plugin.undoRedoBuffer;
 
-      const spy = jest.spyOn(queueCallback, 'execute');
+      const spy = vi.spyOn(queueCallback, 'execute');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
 
       expect(spy).toHaveBeenCalled();
@@ -204,7 +206,7 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
       const undoRedoBuffer = plugin.undoRedoBuffer;
 
-      const spy = jest.spyOn(queueCallback, 'undo');
+      const spy = vi.spyOn(queueCallback, 'undo');
       undoRedoBuffer.undo();
 
       expect(spy).not.toHaveBeenCalled();
@@ -214,7 +216,7 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
       const undoRedoBuffer = plugin.undoRedoBuffer;
 
-      const spy = jest.spyOn(queueCallback, 'undo');
+      const spy = vi.spyOn(queueCallback, 'undo');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       undoRedoBuffer.undo();
 
@@ -225,7 +227,7 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
       const undoRedoBuffer = plugin.undoRedoBuffer;
 
-      const spy = jest.spyOn(queueCallback, 'execute');
+      const spy = vi.spyOn(queueCallback, 'execute');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       undoRedoBuffer.redo();
 
@@ -236,7 +238,7 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
       const undoRedoBuffer = plugin.undoRedoBuffer;
 
-      const spy = jest.spyOn(queueCallback, 'execute');
+      const spy = vi.spyOn(queueCallback, 'execute');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       undoRedoBuffer.undo();
       undoRedoBuffer.redo();
@@ -252,7 +254,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should call a redo when Ctrl+Shift+Z keyboard event occurs', () => {
       plugin.init(gridStub);
-      const spy = jest.spyOn(queueCallback, 'execute');
+      const spy = vi.spyOn(queueCallback, 'execute');
 
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
@@ -269,7 +271,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should call a undo when Ctrl+Z keyboard event occurs', () => {
       plugin.init(gridStub);
-      const spy = jest.spyOn(queueCallback, 'undo');
+      const spy = vi.spyOn(queueCallback, 'undo');
 
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
@@ -287,7 +289,7 @@ describe('CellExcelCopyManager', () => {
   describe('addonOptions callbacks', () => {
     it('should expect "queueAndExecuteCommand" to be called after calling "clipboardCommandHandler" callback', () => {
       plugin.init(gridStub);
-      const spy = jest.spyOn(plugin.undoRedoBuffer, 'queueAndExecuteCommand');
+      const spy = vi.spyOn(plugin.undoRedoBuffer, 'queueAndExecuteCommand');
 
       plugin.addonOptions!.clipboardCommandHandler!(queueCallback);
 
@@ -296,9 +298,9 @@ describe('CellExcelCopyManager', () => {
 
     it('should expect "addItem" method to be called after calling "newRowCreator" callback', () => {
       plugin.init(gridStub);
-      const mockGetData = { addItem: jest.fn() };
-      const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData as any);
-      const addItemSpy = jest.spyOn(mockGetData, 'addItem');
+      const mockGetData = { addItem: vi.fn() };
+      const getDataSpy = vi.spyOn(gridStub, 'getData').mockReturnValue(mockGetData as any);
+      const addItemSpy = vi.spyOn(mockGetData, 'addItem');
 
       plugin.addonOptions!.newRowCreator!(2);
 
@@ -311,9 +313,9 @@ describe('CellExcelCopyManager', () => {
       const expectedColumnName = 'mySuperSpecialId';
       gridOptionsMock.datasetIdPropertyName = expectedColumnName;
       plugin.init(gridStub);
-      const mockGetData = { addItem: jest.fn() };
-      const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData as any);
-      const addItemSpy = jest.spyOn(mockGetData, 'addItem');
+      const mockGetData = { addItem: vi.fn() };
+      const getDataSpy = vi.spyOn(gridStub, 'getData').mockReturnValue(mockGetData as any);
+      const addItemSpy = vi.spyOn(mockGetData, 'addItem');
 
       plugin.addonOptions!.newRowCreator!(2);
 
@@ -330,7 +332,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should expect a sanitized formatted and empty output after calling "dataItemColumnValueExtractor" callback', () => {
       gridOptionsMock.textExportOptions = { sanitizeDataExport: true };
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
       const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: null }, { id: 'lastName', field: 'lastName', exportWithFormatter: true, formatter: myBoldFormatter });
@@ -340,7 +342,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should expect a sanitized formatted output after calling "dataItemColumnValueExtractor" callback', () => {
       gridOptionsMock.textExportOptions = { sanitizeDataExport: true };
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
       const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
@@ -350,7 +352,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should expect a sanitized formatted output, from a Custom Formatter, after calling "dataItemColumnValueExtractor" callback', () => {
       gridOptionsMock.textExportOptions = { sanitizeDataExport: true };
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
       const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
@@ -359,10 +361,10 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should return null when calling "dataItemColumnValueExtractor" callback with editable and editor, which is active on the current cell', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
-      (gridStub.getCellEditor as jest.Mock).mockReturnValue({});
-      (gridStub.getActiveCell as jest.Mock).mockReturnValue({ row: 6, cell: 6 });
+      (gridStub.getCellEditor as Mock).mockReturnValue({});
+      (gridStub.getActiveCell as Mock).mockReturnValue({ row: 6, cell: 6 });
 
       const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, editor: { model: Editors.text }, formatter: myBoldFormatter }, 6, 6);
 
@@ -370,7 +372,7 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should forward provided row and cell to formatter when calling "dataItemColumnValueExtractor"', () => {
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
       const rowCellFormatter: Formatter = (row, cell) => `${row}:${cell}`;
@@ -381,7 +383,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should format output even if not editable and an editor is configured but a formatter is defined', () => {
       gridOptionsMock.editable = false;
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
       const rowCellFormatter: Formatter = (row, cell) => `${row}:${cell}`;

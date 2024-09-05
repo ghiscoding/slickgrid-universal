@@ -3,7 +3,7 @@ import { isDefined } from '@slickgrid-universal/utils';
 import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, SlickRange, type SlickGrid } from '../core/index';
 import type { SelectionModel } from '../enums/index';
 import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index';
-import { SlickCellRangeSelector } from './index';
+import { SlickCellRangeSelector } from './slickCellRangeSelector';
 
 export interface CellSelectionModelOption {
   selectActiveCell?: boolean;

@@ -1,13 +1,15 @@
+import { describe, expect, it, vi } from 'vitest';
+
 import type { SlickGrid } from '../../core/index';
 import type { Column } from '../../interfaces/index';
 import { maskFormatter } from '../maskFormatter';
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  focus: jest.fn(),
-  getActiveCell: jest.fn(),
-  getOptions: jest.fn(),
-  getColumns: jest.fn(),
+  focus: vi.fn(),
+  getActiveCell: vi.fn(),
+  getOptions: vi.fn(),
+  getColumns: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('the ArrayObjectToCsv Formatter', () => {
@@ -81,7 +83,7 @@ describe('the ArrayObjectToCsv Formatter', () => {
   it('should wrap the formatter output in a span element when "allowDocumentFragmentUsage" grid option is disabled', () => {
     const params = { mask: '(000) 000-0000' };
     const inputValue = '123456789013';
-    jest.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ preventDocumentFragmentUsage: true });
+    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ preventDocumentFragmentUsage: true });
 
     const result = maskFormatter(0, 0, inputValue, { field: 'user', params } as Column, {}, gridStub);
 

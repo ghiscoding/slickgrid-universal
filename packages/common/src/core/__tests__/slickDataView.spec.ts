@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
+
 import { Aggregators } from '../../aggregators';
 import { SortDirectionNumber } from '../../enums';
 import type { GridOption, Grouping } from '../../interfaces';
@@ -151,7 +153,7 @@ describe('SlickDatView core file', () => {
       });
 
       test('delete an item from the items array', () => {
-        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const refreshSpy = vi.spyOn(dv, 'refresh');
         const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
 
         dv.setItems(items);
@@ -174,7 +176,7 @@ describe('SlickDatView core file', () => {
       });
 
       test('delete an item from the items array', () => {
-        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const refreshSpy = vi.spyOn(dv, 'refresh');
         const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
 
         dv.setItems(items);
@@ -279,7 +281,7 @@ describe('SlickDatView core file', () => {
       });
 
       test('delete an item from the items array in bulk', () => {
-        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const refreshSpy = vi.spyOn(dv, 'refresh');
         const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
 
         dv.setItems(items);
@@ -397,7 +399,7 @@ describe('SlickDatView core file', () => {
     it('should call updateItems, without batch, and expect a refresh to be called', () => {
       const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
       const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
 
       dv.setItems(items); // original items list
 
@@ -418,7 +420,7 @@ describe('SlickDatView core file', () => {
     it('should batch updateItems and expect a refresh to be called', () => {
       const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
       const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
 
       dv.setItems(items); // original items list
 
@@ -441,7 +443,7 @@ describe('SlickDatView core file', () => {
     it('should batch updateItems and expect a refresh to be called', () => {
       const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
       const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
 
       dv.setItems(items); // original items list
 
@@ -480,7 +482,7 @@ describe('SlickDatView core file', () => {
     it('should call insertItem() at a defined index location', () => {
       const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
       const newItem = { id: 2, name: 'Smith', age: 30 };
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
 
       dv.setItems(items);
       dv.insertItem(1, newItem);
@@ -520,7 +522,7 @@ describe('SlickDatView core file', () => {
         { id: 2, firstName: 'Jane', lastName: 'Doe' },
       ];
       dv = new SlickDataView({});
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
       dv.setItems(mockData);
 
       dv.setGrouping({
@@ -562,7 +564,7 @@ describe('SlickDatView core file', () => {
         { id: 2, firstName: 'Jane', lastName: 'Doe' },
       ];
       dv = new SlickDataView({});
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
       dv.setItems(mockData);
 
       const agg = new Aggregators.Count('lastName');
@@ -611,7 +613,7 @@ describe('SlickDatView core file', () => {
         { id: 3, firstName: 'Bob', lastName: 'Smith' },
       ];
       dv = new SlickDataView({});
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
 
       dv.setGrouping({
@@ -713,7 +715,7 @@ describe('SlickDatView core file', () => {
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
       ];
       dv = new SlickDataView({});
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
 
       const agg1 = new Aggregators.Count('lastName');
@@ -797,7 +799,7 @@ describe('SlickDatView core file', () => {
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
       ];
       dv = new SlickDataView({});
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
 
       const agg1 = new Aggregators.Count('lastName');
@@ -878,7 +880,7 @@ describe('SlickDatView core file', () => {
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
       ];
       dv = new SlickDataView({});
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
 
       const agg1 = new Aggregators.Count('lastName');
@@ -1022,7 +1024,7 @@ describe('SlickDatView core file', () => {
       ];
       dv = new SlickDataView({});
       dv.setItems([...mockData]);
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
 
       const agg1 = new Aggregators.Count('lastName');
       const agg2 = new Aggregators.Sum('age');
@@ -1129,7 +1131,7 @@ describe('SlickDatView core file', () => {
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
       ];
       dv = new SlickDataView({});
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
 
       const agg1 = new Aggregators.Count('lastName');
@@ -1251,7 +1253,7 @@ describe('SlickDatView core file', () => {
   describe('Sorting', () => {
     afterEach(() => {
       dv.destroy();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     describe('sortedAddItem()', () => {
@@ -1264,12 +1266,12 @@ describe('SlickDatView core file', () => {
       });
 
       it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
-        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const refreshSpy = vi.spyOn(dv, 'refresh');
         const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
         const newItem = { id: 2, name: 'Bob', age: 30 };
         // const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
         const comparer = (a, b) => a.id === b.id ? 0 : (a.id > b.id ? 1 : -1);
-        const sortSpy = jest.spyOn(dv, 'sort');
+        const sortSpy = vi.spyOn(dv, 'sort');
 
         dv.setItems(items);
         dv.sort(comparer, true);
@@ -1353,11 +1355,11 @@ describe('SlickDatView core file', () => {
       });
 
       it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
-        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const refreshSpy = vi.spyOn(dv, 'refresh');
         const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
         const updatedItem = { id: 1, name: 'Bob', age: 30 };
         const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
-        const sortSpy = jest.spyOn(dv, 'sort');
+        const sortSpy = vi.spyOn(dv, 'sort');
 
         dv.setItems(items);
         dv.sort(comparer, true);
@@ -1404,11 +1406,11 @@ describe('SlickDatView core file', () => {
   describe('Filtering', () => {
     afterEach(() => {
       dv.destroy();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should be able to set a filter and expect items to be filtered', () => {
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
 
       const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
       const filter = (item) => item.id >= 2;
@@ -1423,7 +1425,7 @@ describe('SlickDatView core file', () => {
     });
 
     it('should be able to set a filter with Pagination and expect items to be filtered on first page', () => {
-      const refreshSpy = jest.spyOn(dv, 'refresh');
+      const refreshSpy = vi.spyOn(dv, 'refresh');
 
       const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
       const filter = (item) => item.id >= 2;
@@ -1491,7 +1493,7 @@ describe('SlickDatView core file', () => {
   describe('Pagination', () => {
     afterEach(() => {
       dv.destroy();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should be able to set a filter with Pagination and expect items to be filtered on 2nd page', () => {
@@ -1499,7 +1501,7 @@ describe('SlickDatView core file', () => {
       const filter = (item) => item.id >= 2;
 
       dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
-      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
       dv.setItems(items);
       dv.setFilter(filter);
       dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 1 });
@@ -1518,7 +1520,7 @@ describe('SlickDatView core file', () => {
       const filter = (item) => item.id >= 2;
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
-      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
       dv.setItems(items);
       dv.setFilter(filter);
       dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 1 });
@@ -1541,9 +1543,9 @@ describe('SlickDatView core file', () => {
       function myFilter(item) { return item.id >= 2; }
 
       dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
-      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
-      const onRowCountChangeSpy = jest.spyOn(dv.onRowCountChanged, 'notify');
-      const onRowsChangeSpy = jest.spyOn(dv.onRowsChanged, 'notify');
+      const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onRowCountChangeSpy = vi.spyOn(dv.onRowCountChanged, 'notify');
+      const onRowsChangeSpy = vi.spyOn(dv.onRowsChanged, 'notify');
       dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 10 });
       dv.setItems(items);
       dv.setRefreshHints({ isFilterNarrowing: true });
@@ -1591,9 +1593,9 @@ describe('SlickDatView core file', () => {
       function myFilter(item) { return item.id >= 2; }
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
-      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
-      const onRowCountChangeSpy = jest.spyOn(dv.onRowCountChanged, 'notify');
-      const onRowsChangeSpy = jest.spyOn(dv.onRowsChanged, 'notify');
+      const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onRowCountChangeSpy = vi.spyOn(dv.onRowCountChanged, 'notify');
+      const onRowsChangeSpy = vi.spyOn(dv.onRowsChanged, 'notify');
       dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 10 });
       dv.setItems(items);
       dv.setRefreshHints({ isFilterNarrowing: true });
@@ -1649,7 +1651,7 @@ describe('SlickDatView core file', () => {
 
     afterEach(() => {
       dv.destroy();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should throw when calling syncGridSelection() and selection model is undefined', () => {
@@ -1729,8 +1731,8 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      const setSelectedRowSpy = jest.spyOn(grid, 'setSelectedRows');
-      const onSelectedRowIdsSpy = jest.spyOn(dv.onSelectedRowIdsChanged, 'notify');
+      const setSelectedRowSpy = vi.spyOn(grid, 'setSelectedRows');
+      const onSelectedRowIdsSpy = vi.spyOn(dv.onSelectedRowIdsChanged, 'notify');
       grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
       dv.setItems(items);
       dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
@@ -1765,8 +1767,8 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      const setSelectedRowSpy = jest.spyOn(grid, 'setSelectedRows');
-      const onSelectedRowIdsSpy = jest.spyOn(dv.onSelectedRowIdsChanged, 'notify');
+      const setSelectedRowSpy = vi.spyOn(grid, 'setSelectedRows');
+      const onSelectedRowIdsSpy = vi.spyOn(dv.onSelectedRowIdsChanged, 'notify');
       grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
       dv.setItems(items);
       dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
@@ -1822,7 +1824,7 @@ describe('SlickDatView core file', () => {
 
     afterEach(() => {
       dv.destroy();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onRowsOrCountChanged event is triggered', () => {
@@ -1830,7 +1832,7 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+      const setCssStyleSpy = vi.spyOn(grid, 'setCellCssStyles');
 
       dv.setItems(items);
       grid.setCellCssStyles('age_greater30_highlight', hash);
@@ -1845,7 +1847,7 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+      const setCssStyleSpy = vi.spyOn(grid, 'setCellCssStyles');
 
       dv.setItems(items);
       grid.setCellCssStyles('age_greater30_highlight', hash);
@@ -1860,8 +1862,8 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      const unsubscribeCellCssStyleSpy = jest.spyOn(grid.onCellCssStylesChanged, 'unsubscribe');
-      const unsubscribeRowOrCountSpy = jest.spyOn(dv.onRowsOrCountChanged, 'unsubscribe');
+      const unsubscribeCellCssStyleSpy = vi.spyOn(grid.onCellCssStylesChanged, 'unsubscribe');
+      const unsubscribeRowOrCountSpy = vi.spyOn(dv.onRowsOrCountChanged, 'unsubscribe');
 
       dv.setItems(items);
       grid.setCellCssStyles('age_greater30_highlight', hash);

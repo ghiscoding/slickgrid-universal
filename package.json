@@ -42,15 +42,15 @@
     "serve:vite": "pnpm -r --filter=./examples/vite-demo-vanilla-bundle dev",
     "lint": "eslint --cache .",
     "lint:no-cache": "eslint .",
-    "test": "jest --runInBand --coverage=true --config ./test/jest.config.ts",
-    "test:ci": "jest --runInBand --coverage=true --ci --config ./test/jest.config.ts",
-    "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.ts",
+    "test": "vitest --config ./test/vitest.config.mts",
+    "test:ci": "vitest --coverage --config ./test/vitest.config.mts",
+    "test:watch": "vitest --watch --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit"
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
-    "devDependencies": "The dev deps 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Jest unit tests."
+    "devDependencies": "The dev deps 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Vitest unit tests."
   },
   "engines": {
     "node": "^18.0.0 || >=20.0.0"
@@ -61,13 +61,12 @@
     "@commitlint/cli": "^19.4.1",
     "@commitlint/config-conventional": "^19.4.1",
     "@formkit/tempo": "^0.1.2",
-    "@jest/types": "^29.6.3",
     "@lerna-lite/cli": "^3.9.0",
     "@lerna-lite/publish": "^3.9.0",
     "@lerna-lite/run": "^3.9.0",
     "@lerna-lite/watch": "^3.9.0",
-    "@types/jest": "^29.5.12",
     "@types/node": "^22.5.1",
+    "@vitest/coverage-v8": "^2.0.5",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cross-env": "^7.0.3",
     "cypress": "^13.14.1",
@@ -76,12 +75,11 @@
     "eslint": "^9.9.1",
     "eslint-plugin-cypress": "^3.5.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jest": "^28.8.1",
     "eslint-plugin-n": "^17.10.2",
+    "eslint-plugin-vitest": "^0.5.4",
     "globals": "^15.9.0",
+    "happy-dom": "^15.7.2",
     "husky": "^9.1.5",
-    "jest": "^30.0.0-alpha.6",
-    "jest-cli": "^30.0.0-alpha.6",
     "jest-extended": "^4.0.2",
     "jsdom": "^25.0.0",
     "jsdom-global": "^3.0.2",
@@ -91,10 +89,9 @@
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
     "sortablejs": "^1.15.2",
-    "ts-jest": "^29.2.5",
-    "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.3.0",
+    "vitest": "^2.0.5",
     "whatwg-fetch": "^3.6.20"
   },
   "pnpm": {

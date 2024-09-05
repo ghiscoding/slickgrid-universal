@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type { Column, GridOption } from '../../interfaces/index';
@@ -11,14 +12,14 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 
 const gridStub = {
-  getCellNode: jest.fn(),
-  getCellFromEvent: jest.fn(),
-  getColumns: jest.fn(),
-  getOptions: jest.fn(),
+  getCellNode: vi.fn(),
+  getCellFromEvent: vi.fn(),
+  getColumns: vi.fn(),
+  getOptions: vi.fn(),
   getUID: () => 'slickgrid12345',
-  registerPlugin: jest.fn(),
-  setColumns: jest.fn(),
-  updateColumnHeader: jest.fn(),
+  registerPlugin: vi.fn(),
+  setColumns: vi.fn(),
+  updateColumnHeader: vi.fn(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onHeaderCellRendered: new SlickEvent(),
   onHeaderMouseEnter: new SlickEvent(),
@@ -26,10 +27,10 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 const headerMock = {
@@ -62,7 +63,7 @@ describe('HeaderButton Plugin', () => {
   const gridOptionsMock = {
     enableHeaderButton: true,
     headerButton: {
-      onExtensionRegistered: jest.fn(),
+      onExtensionRegistered: vi.fn(),
       onCommand: mockEventCallback
     }
   } as GridOption;
@@ -72,8 +73,8 @@ describe('HeaderButton Plugin', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     plugin = new SlickHeaderButtons(extensionUtility, pubSubServiceStub, sharedService);
   });
 
@@ -107,7 +108,7 @@ describe('HeaderButton Plugin', () => {
 
   describe('plugins - Header Button', () => {
     beforeEach(() => {
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       columnsMock[0].header!.buttons![1] = undefined as any;
       columnsMock[0].header!.buttons![1] = {
         cssClass: 'mdi mdi-lightbulb-on',
@@ -124,7 +125,7 @@ describe('HeaderButton Plugin', () => {
       plugin.init();
       columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => undefined as any;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Buttons which are visible (only 1x)
@@ -143,7 +144,7 @@ describe('HeaderButton Plugin', () => {
       plugin.init();
       columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => false;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Buttons which are visible (only 1x)
@@ -160,7 +161,7 @@ describe('HeaderButton Plugin', () => {
       columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => true;
       columnsMock[0].header!.buttons![1].itemUsabilityOverride = () => true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Buttons which are visible (2x buttons)
@@ -178,7 +179,7 @@ describe('HeaderButton Plugin', () => {
       columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => true;
       columnsMock[0].header!.buttons![1].itemUsabilityOverride = () => false;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Buttons which are visible (2x buttons)
@@ -196,7 +197,7 @@ describe('HeaderButton Plugin', () => {
       columnsMock[0].header!.buttons![1].itemVisibilityOverride = undefined as any;
       columnsMock[0].header!.buttons![1].disabled = true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Buttons which are visible (2x buttons)
@@ -214,7 +215,7 @@ describe('HeaderButton Plugin', () => {
       columnsMock[0].header!.buttons![1].itemVisibilityOverride = undefined as any;
       columnsMock[0].header!.buttons![1].showOnHover = true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Buttons which are visible (2x buttons)
@@ -224,7 +225,7 @@ describe('HeaderButton Plugin', () => {
     });
 
     it('should populate 2x Header Buttons and a 2nd button and a "handler" callback to be executed when defined', () => {
-      const handlerMock = jest.fn();
+      const handlerMock = vi.fn();
       const headerDiv = document.createElement('div');
       headerDiv.className = 'slick-header-column';
 
@@ -232,7 +233,7 @@ describe('HeaderButton Plugin', () => {
       plugin.init();
       columnsMock[0].header!.buttons![1].handler = handlerMock;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -244,7 +245,7 @@ describe('HeaderButton Plugin', () => {
     });
 
     it('should populate 2x Header Buttons and a 2nd button and expect the button click handler & action callback to be executed when defined', () => {
-      const actionMock = jest.fn();
+      const actionMock = vi.fn();
       const headerDiv = document.createElement('div');
       headerDiv.className = 'slick-header-column';
 
@@ -252,7 +253,7 @@ describe('HeaderButton Plugin', () => {
       plugin.init();
       columnsMock[0].header!.buttons![1].action = actionMock;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -264,8 +265,8 @@ describe('HeaderButton Plugin', () => {
     });
 
     it('should populate 2x Header Buttons and a 2nd button and expect the "onCommand" handler to be executed when defined', () => {
-      const onCommandMock = jest.fn();
-      const updateColSpy = jest.spyOn(gridStub, 'updateColumnHeader');
+      const onCommandMock = vi.fn();
+      const updateColSpy = vi.spyOn(gridStub, 'updateColumnHeader');
       const headerDiv = document.createElement('div');
       headerDiv.className = 'slick-header-column';
 
@@ -273,7 +274,7 @@ describe('HeaderButton Plugin', () => {
       plugin.init();
       plugin.addonOptions.onCommand = onCommandMock;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -296,7 +297,7 @@ describe('HeaderButton Plugin', () => {
       delete columnsMock[0].header!.buttons![1].showOnHover;
       columnsMock[0].header!.buttons![1].disabled = true;
 
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Buttons which are visible (2x buttons)

@@ -8,7 +8,7 @@
 
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/main.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
 [![Cypress](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/p5zxx6&style=flat&logo=cypress&label=Cypress%20(E2E))](https://cloud.cypress.io/projects/p5zxx6/runs)
-[![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
+[![Vitest](https://img.shields.io/badge/tested%20with-vitest-fcc72b.svg?logo=vitest)](https://vitest.dev/)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Documentation
@@ -54,8 +54,8 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 
 The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also being used to run E2E tests with [Cypress](https://www.cypress.io/) for testing all UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid code duplication. Dark Mode is also shown in some examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more infos.
 
-### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has close to **100%** Unit Test Coverage, ~5,000 Jest unit tests and also ~700 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 600 tests), the goal is to test everything and offer peace of mind that all the code and PR changes are fully tested and that we have tests to as much as possible.
+### Fully Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
+Slickgrid-Universal has close to **100%** Unit Test Coverage, ~5,000 Vitest unit tests and also ~700 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 600 tests), the goal is to test everything and offer peace of mind that all the code and PR changes are fully tested and that we have tests to as much as possible.
 
 ### Available Public Packages
 
@@ -111,21 +111,21 @@ pnpm run dev
 
 3. Build (bundle)
 
-You also need to run a full build in order to run the Jest unit tests
+You also need to run a full build in order to run the Vitest unit tests
 
 ```bash
 pnpm run bundle
 ```
 
 ### Tests
-You must go through Installation Steps 1-3 prior to running the Jest unit tests OR steps 1-2 when running Cypress E2E tests.
+You must go through Installation Steps 1-3 prior to running the Vitest unit tests OR steps 1-2 when running Cypress E2E tests.
 
-#### Jest Unit Tests
-To run all unit tests (with Jest), you can run one of the following commands (make sure that steps 1-3 were executed prior to running this command)
+#### Vitest Unit Tests
+To run all unit tests (with Vitest), you can run one of the following commands (make sure that steps 1-3 were executed prior to running this command)
 ```bash
 pnpm run test
 
-# or run Jest in watch mode
+# or run Vitest in watch mode
 pnpm run test:watch
 ```
 

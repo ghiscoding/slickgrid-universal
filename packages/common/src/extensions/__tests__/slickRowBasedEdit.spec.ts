@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type {
@@ -49,34 +50,34 @@ const mockColumns = [
 ] as Column[];
 
 const gridStubBlueprint = {
-  getData: jest.fn().mockReturnValue({
-    getItemMetadata: jest.fn(),
-    getRowByItem: jest.fn(),
-    getRowById: jest.fn(),
+  getData: vi.fn().mockReturnValue({
+    getItemMetadata: vi.fn(),
+    getRowByItem: vi.fn(),
+    getRowById: vi.fn(),
   }),
-  setCellCssStyles: jest.fn(),
-  removeCellCssStyles: jest.fn(),
-  getCellNode: jest.fn(),
-  getCellFromEvent: jest.fn(),
-  getOptions: jest.fn(),
-  getViewport: jest.fn().mockReturnValue({ top: 0, bottom: 0 }),
-  invalidateRows: jest.fn(),
-  setOptions: jest.fn(),
-  registerPlugin: jest.fn(),
+  setCellCssStyles: vi.fn(),
+  removeCellCssStyles: vi.fn(),
+  getCellNode: vi.fn(),
+  getCellFromEvent: vi.fn(),
+  getOptions: vi.fn(),
+  getViewport: vi.fn().mockReturnValue({ top: 0, bottom: 0 }),
+  invalidateRows: vi.fn(),
+  setOptions: vi.fn(),
+  registerPlugin: vi.fn(),
   onSetOptions: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
-  getEditController: jest.fn().mockReturnValue({
-    commitCurrentEdit: jest.fn(),
-    cancelCurrentEdit: jest.fn(),
+  getEditController: vi.fn().mockReturnValue({
+    commitCurrentEdit: vi.fn(),
+    cancelCurrentEdit: vi.fn(),
   }),
-  getCellEditor: jest.fn().mockReturnValue({}),
-  getActiveCell: jest.fn().mockReturnValue({ row: 0, cell: 0 }),
-  setColumns: jest.fn().mockImplementation((columns) => {
+  getCellEditor: vi.fn().mockReturnValue({}),
+  getActiveCell: vi.fn().mockReturnValue({ row: 0, cell: 0 }),
+  setColumns: vi.fn().mockImplementation((columns) => {
     (gridStubBlueprint as any).columns = columns;
   }),
-  invalidate: jest.fn(),
-  render: jest.fn(),
-  getColumns: jest.fn().mockImplementation(() => (gridStubBlueprint as any).columns || []),
+  invalidate: vi.fn(),
+  render: vi.fn(),
+  getColumns: vi.fn().mockImplementation(() => (gridStubBlueprint as any).columns || []),
 } as unknown as SlickGrid;
 
 const extensionUtilityStub = {
@@ -84,15 +85,15 @@ const extensionUtilityStub = {
 } as ExtensionUtility;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  subscribeEvent: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  subscribeEvent: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 type MockedSlickGrid = SlickGrid & {
-  [K in keyof SlickGrid]: jest.Mock<any, any>;
+  [K in keyof SlickGrid]: Mock;
 };
 
 describe('Row Based Edit Plugin', () => {
@@ -107,17 +108,17 @@ describe('Row Based Edit Plugin', () => {
       columns: [...mockColumns],
     } as unknown as MockedSlickGrid;
     gridService = new GridService(_any, _any, _any, _any, _any, _any, _any);
-    jest.spyOn(gridService, 'getAllColumnDefinitions').mockReturnValue(mockColumns);
+    vi.spyOn(gridService, 'getAllColumnDefinitions').mockReturnValue(mockColumns);
     plugin = new SlickRowBasedEdit(extensionUtilityStub, pubSubServiceStub, addonOptions);
     (plugin as any)._eventHandler = {
-      subscribe: jest.fn(),
-      unsubscribeAll: jest.fn(),
+      subscribe: vi.fn(),
+      unsubscribeAll: vi.fn(),
     };
 
     // add a getter eventHandler to the gridStub
     Object.defineProperty(gridStub, 'eventHandler', {
-      get: jest.fn(() => (plugin as any)._eventHandler),
-      set: jest.fn(),
+      get: vi.fn(() => (plugin as any)._eventHandler),
+      set: vi.fn(),
       enumerable: true,
       configurable: true,
     });
@@ -147,7 +148,7 @@ describe('Row Based Edit Plugin', () => {
 
     plugin.init(gridStub, gridService);
 
-    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as jest.Mock<any, any>).mock.calls[0][1] as (
+    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as Mock<any>).mock.calls[0][1] as (
       e: Event,
       args: OnBeforeEditCellEventArgs
     ) => boolean;
@@ -171,7 +172,7 @@ describe('Row Based Edit Plugin', () => {
   });
 
   it('should warn the user when autoEdit is not set or false and turn it on', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockReturnValue();
+    const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
     gridStub.getOptions.mockReturnValue({
       enableCellNavigation: true,
       editable: true,
@@ -195,7 +196,7 @@ describe('Row Based Edit Plugin', () => {
 
   describe('when running the overriden edit command handler', () => {
     it('should run original command handler first when running override edit command handler', () => {
-      const editCommandHandlerSpy = jest.fn();
+      const editCommandHandlerSpy = vi.fn();
       gridStub.getOptions.mockReturnValue({
         ...optionsMock,
         editCommandHandler: editCommandHandlerSpy,
@@ -207,7 +208,7 @@ describe('Row Based Edit Plugin', () => {
     });
 
     it('should early exit if no matching column found', () => {
-      const editCommandHandlerSpy = jest.fn();
+      const editCommandHandlerSpy = vi.fn();
       gridStub.getOptions.mockReturnValue({
         ...optionsMock,
         editCommandHandler: editCommandHandlerSpy,
@@ -230,7 +231,7 @@ describe('Row Based Edit Plugin', () => {
     });
 
     it('should handle prev and current serialized values as arrays', () => {
-      const editCommandHandlerSpy = jest.fn();
+      const editCommandHandlerSpy = vi.fn();
       gridStub.getOptions.mockReturnValue({
         ...optionsMock,
         editCommandHandler: editCommandHandlerSpy,
@@ -262,7 +263,7 @@ describe('Row Based Edit Plugin', () => {
     };
 
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it("should override the enableExcelCopyBuffer's before paste cell handler if the plugin is turned on", () => {
@@ -285,7 +286,7 @@ describe('Row Based Edit Plugin', () => {
 
       plugin.init(gridStub, gridService);
 
-      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)[0] as GridOption;
+      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)![0] as GridOption;
 
       const result = call.excelCopyBufferOptions!.onBeforePasteCell!.bind({
         existingBeforePasteCellHandler: () => false,
@@ -303,7 +304,7 @@ describe('Row Based Edit Plugin', () => {
 
       plugin.init(gridStub, gridService);
 
-      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)[0] as GridOption;
+      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)![0] as GridOption;
 
       gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
       plugin.rowBasedEditCommandHandler(fakeItem, { id: 'test-column' } as Column, {} as EditCommand);
@@ -323,7 +324,7 @@ describe('Row Based Edit Plugin', () => {
 
       plugin.init(gridStub, gridService);
 
-      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)[0] as GridOption;
+      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)![0] as GridOption;
 
       const result = call.excelCopyBufferOptions!.onBeforePasteCell!.bind({
         existingBeforePasteCellHandler: () => false,
@@ -347,7 +348,7 @@ describe('Row Based Edit Plugin', () => {
     gridStub.getOptions.mockReturnValue(optionsMock);
     const fakeItem = { id: 'test' };
     gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
-    const previousGetItemMetadataSpy = jest.fn();
+    const previousGetItemMetadataSpy = vi.fn();
     gridStub.getData().getItemMetadata = previousGetItemMetadataSpy;
     plugin.init(gridStub, gridService);
 
@@ -390,9 +391,9 @@ describe('Row Based Edit Plugin', () => {
     gridStub.onSetOptions = 'onSetOptions' as any;
     plugin.init(gridStub, gridService);
 
-    const call = (plugin.eventHandler.subscribe as jest.Mock<any, any>).mock.calls.find(
+    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find(
       (c) => c[0] === 'onSetOptions'
-    )[1] as (_e: Event, args: OnSetOptionsEventArgs) => void;
+    )![1] as (_e: Event, args: OnSetOptionsEventArgs) => void;
 
     call(
       {} as Event,
@@ -426,9 +427,9 @@ describe('Row Based Edit Plugin', () => {
       } as EditCommand
     );
 
-    const call = (plugin.eventHandler.subscribe as jest.Mock<any, any>).mock.calls.find(
+    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find(
       (c) => c[0] === 'onRowsOrCountChanged'
-    )[1] as () => void;
+    )![1] as () => void;
 
     call();
 
@@ -509,7 +510,7 @@ describe('Row Based Edit Plugin', () => {
     });
 
     it('should publish an onPluginColumnsChanged event when creating the plugin', () => {
-      const spy = jest.spyOn(pubSubServiceStub, 'publish');
+      const spy = vi.spyOn(pubSubServiceStub, 'publish');
       const options = { ...addonOptions, editable: false };
       const cols = [...mockColumns];
       plugin.create(cols, options);
@@ -521,13 +522,13 @@ describe('Row Based Edit Plugin', () => {
   describe('the actions column', () => {
     function arrange(addonOptions?: RowBasedEditOptions) {
       const gridService = {
-        deleteItem: jest.fn(),
-        getAllColumnDefinitions: jest.fn().mockReturnValue(mockColumns),
+        deleteItem: vi.fn(),
+        getAllColumnDefinitions: vi.fn().mockReturnValue(mockColumns),
       } as unknown as GridService;
       plugin = new SlickRowBasedEdit(extensionUtilityStub, pubSubServiceStub, addonOptions);
       (plugin as any)._eventHandler = {
-        subscribe: jest.fn(),
-        unsubscribeAll: jest.fn(),
+        subscribe: vi.fn(),
+        unsubscribeAll: vi.fn(),
       };
       plugin.init(gridStub, gridService);
       const actionColumn = plugin.getColumnDefinition();
@@ -536,7 +537,7 @@ describe('Row Based Edit Plugin', () => {
         getRowById: () => 0,
       });
 
-      const confirmSpy = jest.fn().mockReturnValue(false);
+      const confirmSpy = vi.fn().mockReturnValue(false);
       window.confirm = confirmSpy;
 
       return {
@@ -633,7 +634,7 @@ describe('Row Based Edit Plugin', () => {
     });
 
     it('should call an optionally registered onBeforeEditMode callback clicking the edit button', () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const { onCellClick } = arrange({ onBeforeEditMode: () => spy() });
       const fakeItem = { id: 'test' };
 
@@ -766,7 +767,7 @@ describe('Row Based Edit Plugin', () => {
     it('should undo row edits', () => {
       const { onCellClick } = arrange();
       const fakeItem = { id: 'test' };
-      const undoSpy = jest.fn();
+      const undoSpy = vi.fn();
 
       plugin.rowBasedEditCommandHandler(
         fakeItem,

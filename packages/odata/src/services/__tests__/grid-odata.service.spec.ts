@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import {
   type BackendService,
   CaseType,
@@ -26,16 +27,16 @@ const DEFAULT_PAGE_SIZE = 20;
 let gridOptionMock: GridOption;
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getScrollbarDimensions: jest.fn(),
-  getColumns: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getScrollbarDimensions: vi.fn(),
+  getColumns: vi.fn(),
   getOptions: () => gridOptionMock,
-  setColumns: jest.fn(),
-  registerPlugin: jest.fn(),
-  setSelectedRows: jest.fn(),
-  setSortColumns: jest.fn(),
-  scrollTo: jest.fn(),
+  setColumns: vi.fn(),
+  registerPlugin: vi.fn(),
+  setSelectedRows: vi.fn(),
+  setSortColumns: vi.fn(),
+  scrollTo: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('GridOdataService', () => {
@@ -64,15 +65,15 @@ describe('GridOdataService', () => {
       defaultFilterRangeOperator: OperatorType.rangeInclusive,
       backendServiceApi: {
         service: service as BackendService,
-        preProcess: jest.fn(),
-        process: jest.fn(),
-        postProcess: jest.fn(),
+        preProcess: vi.fn(),
+        process: vi.fn(),
+        postProcess: vi.fn(),
       }
     } as unknown as GridOption;
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create the service', () => {
@@ -88,7 +89,7 @@ describe('GridOdataService', () => {
 
     it('should get the column definitions from "getColumns"', () => {
       const columns = [{ id: 'field4', field: 'field4', width: 50 }, { id: 'field2', field: 'field2', width: 50 }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
 
@@ -99,7 +100,7 @@ describe('GridOdataService', () => {
 
   describe('buildQuery method', () => {
     beforeEach(() => {
-      jest.resetAllMocks();
+      vi.resetAllMocks();
     });
 
     it('should return a simple query with default $top paginations', () => {
@@ -118,7 +119,7 @@ describe('GridOdataService', () => {
         { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true },
         { id: 'field3', field: 'field3', fields: ['field4', 'field5', 'field6'], width: 100, excludeFieldFromQuery: true }
       ];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, undefined, gridStub);
       const query = service.buildQuery();
@@ -129,7 +130,7 @@ describe('GridOdataService', () => {
     it('should return a simple query with pagination $top and $skip when using "updatePagination" method', () => {
       const expectation = `$top=20&$skip=40`;
       const columns = [];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -141,7 +142,7 @@ describe('GridOdataService', () => {
     it('should be able to provide "orderBy" through the "init" and see the query string include the sorting', () => {
       const expectation = `$top=20&$skip=40&$orderby=Name desc`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ orderBy: 'Name desc' }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -153,7 +154,7 @@ describe('GridOdataService', () => {
     it('should be able to provide "orderBy" through the "updateOptions" and see the query string include the sorting', () => {
       const expectation = `$top=20&$skip=40&$orderby=Name desc`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -166,7 +167,7 @@ describe('GridOdataService', () => {
     it('should be able to provide "filter" through the "init" and see the query string include the filter', () => {
       const expectation = `$top=20&$skip=40&$filter=(IsActive eq true)`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ filterBy: `IsActive eq true` }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -178,7 +179,7 @@ describe('GridOdataService', () => {
     it('should be able to provide "filter" through the "updateOptions" and see the query string include the filter', () => {
       const expectation = `$top=20&$skip=40&$filter=(IsActive eq true)`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
       service.updatePagination(3, 20);
@@ -196,7 +197,7 @@ describe('GridOdataService', () => {
       it('should not add a "$top" option when "enablePagination" is set to False', () => {
         const expectation = '';
         const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init(null as any, undefined, gridStub);
         const query = service.buildQuery();
@@ -207,7 +208,7 @@ describe('GridOdataService', () => {
       it('should not do anything when calling "updatePagination" method with "enablePagination" set to False', () => {
         const expectation = '';
         const columns = [];
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init(null as any, paginationOptions, gridStub);
         service.updatePagination(3, 20);
@@ -219,7 +220,7 @@ describe('GridOdataService', () => {
       it('should be able to provide "filter" through the "init" and see the query string include the filter but without pagination querying when "enablePagination" is set to False', () => {
         const expectation = `$filter=(IsActive eq true)`;
         const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init({ filterBy: `IsActive eq true` }, paginationOptions, gridStub);
         const query = service.buildQuery();
@@ -230,7 +231,7 @@ describe('GridOdataService', () => {
       it('should be able to provide "filter" through the "updateOptions" and see the query string include the filter but without pagination querying when "enablePagination" is set to False', () => {
         const expectation = `$filter=(IsActive eq true)`;
         const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init(null as any, paginationOptions, gridStub);
         service.updatePagination(3, 20);
@@ -244,7 +245,7 @@ describe('GridOdataService', () => {
 
   describe('clearFilters method', () => {
     it('should call "updateOptions" to clear all filters', () => {
-      const spy = jest.spyOn(service, 'updateFilters');
+      const spy = vi.spyOn(service, 'updateFilters');
       service.clearFilters();
       expect(spy).toHaveBeenCalledWith([]);
     });
@@ -252,7 +253,7 @@ describe('GridOdataService', () => {
 
   describe('clearSorters method', () => {
     it('should call "updateOptions" to clear all sorting', () => {
-      const spy = jest.spyOn(service, 'updateSorters');
+      const spy = vi.spyOn(service, 'updateSorters');
       service.clearSorters();
       expect(spy).toHaveBeenCalledWith([]);
     });
@@ -264,8 +265,8 @@ describe('GridOdataService', () => {
     });
 
     it('should reset the pagination options with default pagination', () => {
-      const spy = jest.spyOn(service.odataService, 'updateOptions');
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      const spy = vi.spyOn(service.odataService, 'updateOptions');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(null as any, paginationOptions);
       service.resetPaginationOptions();
@@ -289,8 +290,8 @@ describe('GridOdataService', () => {
 
     it('should return a query with the new filter', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female')`;
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
-      const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
+      const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as ColumnFilter;
       const mockFilterChangedArgs = {
@@ -316,8 +317,8 @@ describe('GridOdataService', () => {
 
     it('should return a query with a new filter when previous filters exists', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female' and endswith(FirstName, 'John'))`;
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
-      const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
+      const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
       const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as ColumnFilter;
@@ -353,8 +354,8 @@ describe('GridOdataService', () => {
 
       it('should return a query with the new filter but without pagination when "enablePagination" is set to False', () => {
         const expectation = `$filter=(Gender eq 'female')`;
-        const querySpy = jest.spyOn(service.odataService, 'buildQuery');
-        const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
+        const querySpy = vi.spyOn(service.odataService, 'buildQuery');
+        const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as ColumnFilter;
         const mockFilterChangedArgs = {
@@ -380,8 +381,8 @@ describe('GridOdataService', () => {
 
       it('should return a query with a new filter when previous filters exists when "enablePagination" is set to False', () => {
         const expectation = `$filter=(Gender eq 'female' and startswith(FirstName, 'John'))`;
-        const querySpy = jest.spyOn(service.odataService, 'buildQuery');
-        const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
+        const querySpy = vi.spyOn(service.odataService, 'buildQuery');
+        const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
         const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
@@ -414,7 +415,7 @@ describe('GridOdataService', () => {
   describe('processOnPaginationChanged method', () => {
     it('should return a query with the new pagination', () => {
       const expectation = `$top=20&$skip=40`;
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
 
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.processOnPaginationChanged(null as any, { newPage: 3, pageSize: 20 });
@@ -427,7 +428,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
       const expectation = `$top=10&$skip=20`;
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
 
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.processOnPaginationChanged(null as any, { newPage: 3 } as any);
@@ -440,7 +441,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with the new pagination and use default pagination size when not provided as argument', () => {
       const expectation = `$top=20&$skip=${DEFAULT_PAGE_SIZE * 2}`;
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
 
       service.init(serviceOptions, undefined, gridStub);
       const query = service.processOnPaginationChanged(null as any, { newPage: 3 } as any);
@@ -454,7 +455,7 @@ describe('GridOdataService', () => {
     it('should return a query without pagination when "enablePagination" is set to False', () => {
       gridOptionMock.enablePagination = false;
       const expectation = '';
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
 
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.processOnPaginationChanged(null as any, { newPage: 3, pageSize: 20 });
@@ -469,7 +470,7 @@ describe('GridOdataService', () => {
   describe('processOnSortChanged method', () => {
     it('should return a query with the new sorting when using single sort', () => {
       const expectation = `$top=10&$orderby=Gender desc`;
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockSortChangedArgs = { columnId: 'gender', sortCol: mockColumn, sortAsc: false, multiColumnSort: false } as ColumnSort;
 
@@ -482,7 +483,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with the multiple new sorting when using multiColumnSort', () => {
       const expectation = `$top=10&$orderby=Gender desc,FirstName asc`;
-      const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+      const querySpy = vi.spyOn(service.odataService, 'buildQuery');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
       const mockColumnSort = { columnId: 'gender', sortCol: mockColumn, sortAsc: false } as ColumnSort;
@@ -503,7 +504,7 @@ describe('GridOdataService', () => {
 
       it('should return a query with the new sorting when using single sort and without pagintion when "enablePagination" is set to False', () => {
         const expectation = `$orderby=Gender desc`;
-        const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+        const querySpy = vi.spyOn(service.odataService, 'buildQuery');
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockSortChangedArgs = { columnId: 'gender', sortCol: mockColumn, sortAsc: false, multiColumnSort: false } as ColumnSort;
 
@@ -516,7 +517,7 @@ describe('GridOdataService', () => {
 
       it('should return a query with the multiple new sorting when using multiColumnSort and without pagintion when "enablePagination" is set to False', () => {
         const expectation = `$orderby=Gender desc,FirstName asc`;
-        const querySpy = jest.spyOn(service.odataService, 'buildQuery');
+        const querySpy = vi.spyOn(service.odataService, 'buildQuery');
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
         const mockColumnSort = { columnId: 'gender', sortCol: mockColumn, sortAsc: false } as ColumnSort;
@@ -535,7 +536,7 @@ describe('GridOdataService', () => {
   describe('updateFilters method', () => {
     beforeEach(() => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
     it('should throw an error when filter columnId is not found to be part of the column definitions', () => {
@@ -1297,7 +1298,7 @@ describe('GridOdataService', () => {
     beforeEach(() => {
       serviceOptions.version = 4;
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
     it('should return a query with a date showing as Date as per OData 4 requirement', () => {
@@ -1502,7 +1503,7 @@ describe('GridOdataService', () => {
   describe('updateSorters method', () => {
     beforeEach(() => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
     it('should return a query with the multiple new sorting when using multiColumnSort', () => {
@@ -1684,7 +1685,7 @@ describe('GridOdataService', () => {
 
   describe('presets', () => {
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should return a query when using presets sorters array', () => {
@@ -1705,7 +1706,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with a filter with range of numbers when the preset is a filter range with 2 dots (..) separator', () => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Duration ge 4 and Duration le 88)`;
       const presetFilters = [{ columnId: 'duration', searchTerms: ['4..88'] }] as CurrentFilter[];
 
@@ -1726,10 +1727,10 @@ describe('GridOdataService', () => {
 
       // remove "Gender" column from `getColumns` (to simulate hidden field)
       mockColumnsCopy.splice(1, 1);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumnsCopy);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumnsCopy);
 
       // but still pass all columns to the service init
-      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
 
       service.init(serviceOptions, paginationOptions, gridStub, sharedService);
       service.updateFilters(presetFilters, true);
@@ -1742,7 +1743,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with a filter with range of numbers with decimals when the preset is a filter range with 2 dots (..) separator and range ends with a fraction', () => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Duration ge 0.5 and Duration le 0.88)`;
       const presetFilters = [
         { columnId: 'duration', searchTerms: ['0.5...88'] },
@@ -1759,7 +1760,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with a filter with range of numbers when the preset is a filter range with 2 searchTerms', () => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Duration ge 4 and Duration le 88)`;
       const presetFilters = [
         { columnId: 'duration', searchTerms: [4, 88], operator: 'RangeInclusive' },
@@ -1776,7 +1777,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with a filter with range of dates when the preset is a filter range with 2 dots (..) separator', () => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'finish', field: 'finish', type: FieldType.date }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Finish ge DateTime'2001-01-01T00:00:00Z' and Finish le DateTime'2001-01-31T00:00:00Z')`;
       const presetFilters = [
         { columnId: 'finish', searchTerms: ['2001-01-01..2001-01-31'] },
@@ -1793,7 +1794,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with a filter with range of dates when the preset is a filter range with 2 searchTerms', () => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'finish', field: 'finish', type: FieldType.date }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Finish ge DateTime'2001-01-01T00:00:00Z' and Finish le DateTime'2001-01-31T00:00:00Z')`;
       const presetFilters = [
         { columnId: 'finish', searchTerms: ['2001-01-01', '2001-01-31'], operator: 'RangeInclusive' },
@@ -1810,7 +1811,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with a filter with range of dates inclusive when the preset is a filter range with 2 searchTerms without an operator', () => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'finish', field: 'finish', type: FieldType.date }];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Finish ge DateTime'2001-01-01T00:00:00Z' and Finish le DateTime'2001-01-31T00:00:00Z')`;
       const presetFilters = [
         { columnId: 'finish', searchTerms: ['2001-01-01', '2001-01-31'] },
@@ -1848,7 +1849,7 @@ describe('GridOdataService', () => {
 
       it('should return a query with a filter with range of numbers when the preset is a filter range with 2 dots (..) separator but without pagination when "enablePagination" is set to False', () => {
         const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
         const expectation = `$filter=(Duration ge 4 and Duration le 88)`;
         const presetFilters = [
           { columnId: 'duration', searchTerms: ['4..88'] },
@@ -2020,7 +2021,7 @@ describe('GridOdataService', () => {
 
     it('should flatten navigation fields when oData version is not specified', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
@@ -2035,7 +2036,7 @@ describe('GridOdataService', () => {
 
     it('should not flatten navigation fields when "enableExpand" is not set', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.enableExpand = false;
       service.init(serviceOptions, paginationOptions, gridStub);
 
@@ -2050,7 +2051,7 @@ describe('GridOdataService', () => {
 
     it('should flatten navigation fields when oData version is v2', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 2;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -2066,7 +2067,7 @@ describe('GridOdataService', () => {
 
     it('should flatten navigation fields when oData version is v3', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 3;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -2082,7 +2083,7 @@ describe('GridOdataService', () => {
 
     it('should flatten navigation fields when oData version is v4', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 4;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -2098,7 +2099,7 @@ describe('GridOdataService', () => {
 
     it('should flatten navigation fields within navigations', () => {
       const columns = [{ id: 'id1', field: 'nav/subnav/fld1' }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 4;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -2113,7 +2114,7 @@ describe('GridOdataService', () => {
 
     it('should not flatten non navigation fields', () => {
       const columns = [{ id: 'id1', field: 'complex_obj' }];
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 4;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
