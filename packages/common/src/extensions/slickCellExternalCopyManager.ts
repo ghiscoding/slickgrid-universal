@@ -8,7 +8,7 @@ import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type
 const CLEAR_COPY_SELECTION_DELAY = 2000;
 const CLIPBOARD_PASTE_DELAY = 100;
 
-/* istanbul ignore next */
+/* v8 ignore next */
 const noop = () => { };
 
 /*

@@ -1027,7 +1027,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   protected compileFilterCSPSafe(items: TData[], args: any): TData[] {
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (typeof this.filterCSPSafe !== 'function') {
       return [];
     }
@@ -1132,7 +1132,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   protected compileFilterWithCachingCSPSafe(items: TData[], args: any, filterCache: any[]): TData[] {
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (typeof this.filterCSPSafe !== 'function') {
       return [];
     }
@@ -1159,7 +1159,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected setFunctionName(fn: any, fnName: string): void {
     try {
       Object.defineProperty(fn, 'name', { writable: true, value: fnName });
-    } catch (err) /* istanbul ignore next */ {
+    } catch (err) /* v8 ignore next*/ {
       fn.name = fnName;
     }
   }
@@ -1321,7 +1321,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     // if the current page is no longer valid, go to last page and recalc
     // we suffer a performance penalty here, but the main loop (recalc) remains highly optimized
-    /* istanbul ignore if - not sure how this could occur */
+    /* v8 ignore next 4 - not sure how this could occur */
     if (this.pagesize && this.totalRows < this.pagenum * this.pagesize) {
       this.pagenum = Math.max(0, Math.ceil(this.totalRows / this.pagesize) - 1);
       diff = this.recalc(this.items);
@@ -1380,7 +1380,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     /** @param {Array} rowIds */
     const setSelectedRowIds = (rowIds: DataIdType[] | false) => {
-      /* istanbul ignore if */
+      /* v8 ignore next 3 */
       if (rowIds === false) {
         this.selectedRowIds = [];
       } else {
@@ -1435,7 +1435,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
         inHandler = true;
         const overwrite = (typeof args.added === 'undefined');
 
-        /* istanbul ignore if */
+        /* v8 ignore next 3 */
         if (overwrite) {
           setSelectedRowIds(args.ids);
         } else {
@@ -1543,7 +1543,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
   */
   getAllSelectedFilteredItems<T extends TData>(): T[] {
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (!Array.isArray(this.selectedRowIds)) {
       return [];
     }
