@@ -35,6 +35,12 @@ importers:
       '@lerna-lite/watch':
         specifier: ^3.9.0
         version: 3.9.0(@lerna-lite/publish@3.9.0)(@lerna-lite/run@3.9.0)(typescript@5.5.4)
+      '@slickgrid-universal/common':
+        specifier: workspace:^
+        version: link:packages/common
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:^
+        version: link:packages/event-pub-sub
       '@types/node':
         specifier: ^22.5.1
         version: 22.5.1

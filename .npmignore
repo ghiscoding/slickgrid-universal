@@ -21,7 +21,7 @@ tsconfig.tsbuildinfo
 **/website
 **/node_modules
 **/coverage
-**/jest-coverage
+**/vitest-coverage
 **/*.tgz
 **/junit.xml
 **/test-report.xml
