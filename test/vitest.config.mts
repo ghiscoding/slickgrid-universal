@@ -12,7 +12,7 @@ export default defineConfig({
     fakeTimers: {
       toFake: [...configDefaults.fakeTimers.toFake, 'queueMicrotask']
     },
-    // pool: 'threads',
+    pool: 'threads',
     globalSetup: './test/vitest-global-setup.ts',
     setupFiles: ['./test/vitest-pretest.ts', './test/vitest-global-mocks.ts'],
     watch: false,
@@ -20,7 +20,6 @@ export default defineConfig({
       include: ['packages/**/*.ts'],
       exclude: [
         ...configDefaults.exclude,
-        '**/__mocks__/**',
         '**/__tests__/**',
         '**/enums/**',
         '**/interfaces/**',
@@ -37,6 +36,5 @@ export default defineConfig({
       reportsDirectory: 'test/vitest-coverage',
       reportOnFailure: true,
     },
-
   },
 });
