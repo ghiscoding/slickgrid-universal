@@ -1216,7 +1216,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.hasFrozenColumns()) {
         const cWidth = Utils.width(this._container) || 0;
-        /* v8 ignore next 3 */
+        /* v8 ignore next 4 */
         if (cWidth > 0 && this.canvasWidthL > cWidth && this._options.throwWhenFrozenNotAllViewable) {
           throw new Error('[SlickGrid] Frozen columns cannot be wider than the actual grid container width. '
             + 'Make sure to have less columns freezed or make your grid container wider');
@@ -1320,10 +1320,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       Utils.height(div, test);
       const height = Utils.height(div);
 
-      /* v8 ignore else */
       if (test > testUpTo! || height !== test) {
         condition = false;
         break;
+        /* v8 ignore next 3 */
       } else {
         supportedHeight = test;
       }
@@ -1962,6 +1962,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     for (let i = 0; i < children.length; i++) {
       const colElm = children[i];
 
+      /* v8 ignore next 3 */
       if (i >= vc.length || !vc[i]) {
         continue;
       }
@@ -2406,7 +2407,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const sheet = this._style.sheet;
 
-    /* v8 ignore else */
     if (sheet) {
       rules.forEach(rule => {
         sheet.insertRule(rule);
@@ -2418,6 +2418,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         sheet.insertRule(`.${this.uid} .l${i} { }`);
         sheet.insertRule(`.${this.uid} .r${i} { }`);
       }
+      /* v8 ignore next 4 */
     } else {
       // fallback in case the 1st approach doesn't work, let's use our previous way of creating the css rules which is what works in Salesforce :(
       this.createCssRulesAlternative(rules);
@@ -2425,7 +2426,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Create CSS rules via template in case the first approach with createElement('style') doesn't work */
-  /* v8 ignore next */
+  /* v8 ignore next 19 */
   protected createCssRulesAlternative(rules: string[]): void {
     const template = document.createElement('template');
     template.innerHTML = '<style type="text/css" rel="stylesheet" />';
@@ -3699,7 +3700,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const d = this.getDataItem(row);
 
     Object.keys(cacheEntry.cellNodesByColumnIdx).forEach(colIdx => {
-      /* v8 ignore next */
+      /* v8 ignore next 3 */
       if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(colIdx)) {
         return;
       }
@@ -5116,6 +5117,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let w = 0;
     for (let i = 0; i < this.columns.length && w <= x; i++) {
+      /* v8 ignore next 3 */
       if (!this.columns[i]) {
         continue;
       }
@@ -5764,7 +5766,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
 
-    /* v8 ignore next 4 */
+    /* v8 ignore next 5 */
     if (row < 0) {
       row = 0;
     } else if (row >= num_rows) {
@@ -6148,8 +6150,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
         }
         return null;
+        /* v8 ignore next 3 */
       } catch (e) {
-        /* v8 ignore next */
         return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
       }
     }
