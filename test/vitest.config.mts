@@ -30,10 +30,12 @@ export default defineConfig({
         '**/salesforce-global-grid-options.ts',
         '**/interfaces.ts',
         '**/enums.index.ts',
-        '**/index.ts'
+        '**/index.ts',
+        '**/*.spec.ts',
       ],
       provider: 'v8',
-      reportsDirectory: 'test/vitest-coverage'
+      reportsDirectory: 'test/vitest-coverage',
+      reportOnFailure: true,
     },
 
   },

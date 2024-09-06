@@ -20,7 +20,7 @@ const isArray = function isArray(arr: any) {
   if (typeof Array.isArray === 'function') {
     return Array.isArray(arr);
   }
-  /* v8 ignore next */
+  /* v8 ignore next 2 */
   return toStr.call(arr) === '[object Array]';
 };
 

@@ -425,7 +425,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         }
       }
     } catch (e) {
-      /* do nothing */
+      /* v8 ignore next - do nothing */
     }
   }
 
