@@ -83,9 +83,6 @@ importers:
       jest-extended:
         specifier: ^4.0.2
         version: 4.0.2
-      jsdom:
-        specifier: ^25.0.0
-        version: 25.0.0
       jsdom-global:
         specifier: ^3.0.2
         version: 3.0.2(jsdom@25.0.0)
