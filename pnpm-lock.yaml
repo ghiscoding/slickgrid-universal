@@ -214,8 +214,8 @@ importers:
   packages/common:
     dependencies:
       '@excel-builder-vanilla/types':
-        specifier: ^3.0.3
-        version: 3.0.3
+        specifier: ^3.0.4
+        version: 3.0.4
       '@formkit/tempo':
         specifier: ^0.1.2
         version: 0.1.2
@@ -336,8 +336,8 @@ importers:
         specifier: workspace:~
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^3.0.5
-        version: 3.0.5
+        specifier: ^3.0.6
+        version: 3.0.6
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
@@ -1054,8 +1054,8 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     dev: true
 
-  /@excel-builder-vanilla/types@3.0.3:
-    resolution: {integrity: sha512-zrIV6x+CjeoFAbYjpxGyrb0dJXmAq+QUOZa3/Y6O3KO4brf+HbVrtjUHkFqiaJnu5jFSgBhM3GrohNiOrd9RnQ==}
+  /@excel-builder-vanilla/types@3.0.4:
+    resolution: {integrity: sha512-Gb9c+xjnOi/T5TBBfMxCrUSTOAX1y399iwGEujrlF8jug3QlKAEk18hSL9tMFEBzhB+zNzmR204CfmIPg9MPPQ==}
     dependencies:
       fflate: 0.8.2
     dev: false
@@ -4031,8 +4031,8 @@ packages:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
     dev: true
 
-  /excel-builder-vanilla@3.0.5:
-    resolution: {integrity: sha512-BAK+VuiW6CtKPuZMX7aOeErjIudPOQkckXK3FyI1ee90OuFWJfsA6paMHYInNdLtY/hnQ4cej7ZNFYgH38+5eA==}
+  /excel-builder-vanilla@3.0.6:
+    resolution: {integrity: sha512-WV+I1DgJ30TfqhjqEJZsp9G2wpSm+N/4Wk+EmP552NzW4wjGYq4bjw59jddetbrFyaCNBxXVcyOK2ae8z6zfaQ==}
     dependencies:
       fflate: 0.8.2
     dev: false

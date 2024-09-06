@@ -51,7 +51,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "excel-builder-vanilla": "^3.0.5"
+    "excel-builder-vanilla": "^3.0.6"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~"
