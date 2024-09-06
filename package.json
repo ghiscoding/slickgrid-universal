@@ -65,8 +65,6 @@
     "@lerna-lite/publish": "^3.9.0",
     "@lerna-lite/run": "^3.9.0",
     "@lerna-lite/watch": "^3.9.0",
-    "@slickgrid-universal/common": "workspace:^",
-    "@slickgrid-universal/event-pub-sub": "workspace:^",
     "@types/node": "^22.5.1",
     "@vitest/coverage-v8": "^2.0.5",
     "conventional-changelog-conventionalcommits": "^7.0.2",
