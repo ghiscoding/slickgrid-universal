@@ -63,16 +63,6 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: Cache TypeScript and Vitest
-        uses: actions/cache@v3
-        with:
-          path: |
-            packages/*/lib
-            packages/*/tsconfig.tsbuildinfo
-            node_modules/.vitest
-          key: vitest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
-          restore-keys: vitest-${{ matrix.platform }}-${{ matrix.node }}-
-
       - name: TSC Full Bundle (all Bundler types)
         run: pnpm bundle
 

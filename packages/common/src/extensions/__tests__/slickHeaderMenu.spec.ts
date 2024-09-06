@@ -851,6 +851,10 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
+        // const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
+        // vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnDefinitions);
+        // vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValueOnce(originalColumnDefinitions);
+        vi.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -871,7 +875,7 @@ describe('HeaderMenu Plugin', () => {
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, enableMouseWheelScrollHandler: true }, false, true);
-        expect(setColSpy).toHaveBeenCalledWith(columnsMock);
+        expect(setColSpy).toHaveBeenCalledWith(columnsMock.slice(0, 2));
       });
 
       it('should expect menu to show and "onBeforeMenuShow" callback to run when defined', () => {
