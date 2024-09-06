@@ -214,8 +214,8 @@ importers:
   packages/common:
     dependencies:
       '@excel-builder-vanilla/types':
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^3.0.7
+        version: 3.0.7
       '@formkit/tempo':
         specifier: ^0.1.2
         version: 0.1.2
@@ -1054,8 +1054,8 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     dev: true
 
-  /@excel-builder-vanilla/types@3.0.4:
-    resolution: {integrity: sha512-Gb9c+xjnOi/T5TBBfMxCrUSTOAX1y399iwGEujrlF8jug3QlKAEk18hSL9tMFEBzhB+zNzmR204CfmIPg9MPPQ==}
+  /@excel-builder-vanilla/types@3.0.7:
+    resolution: {integrity: sha512-WDvLaT5eHAQUHnOXFoMSfse3ePWZMros9TEbmG468iXm0Qmrft9bTIHUWo+VtLhJWVEx6XHN6LJHbpZ43EmPjw==}
     dependencies:
       fflate: 0.8.2
     dev: false
