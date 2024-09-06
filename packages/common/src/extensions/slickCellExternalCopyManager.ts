@@ -280,7 +280,15 @@ export class SlickCellExternalCopyManager {
 
     // ignore new rows if we don't have a "newRowCreator"
     if ((availableRows < destH) && typeof this._addonOptions.newRowCreator === 'function') {
-      this._addonOptions.newRowCreator(destH - availableRows);
+      const rowsToAdd = destH - availableRows;
+      const rowsBeforePaste = this._dataWrapper.getDataLength();
+      this._addonOptions.newRowCreator(rowsToAdd);
+      const rowsAfterPaste = this._dataWrapper.getDataLength();
+
+      if (rowsAfterPaste !== rowsBeforePaste + rowsToAdd) {
+        console.warn(`[Slickgrid-Universal] The "newRowCreator" did not add the correct amount of rows, it should add "${rowsToAdd}" rows but it added "${rowsAfterPaste - rowsBeforePaste}" rows`);
+      }
+
       this._grid.render();
     }
 
