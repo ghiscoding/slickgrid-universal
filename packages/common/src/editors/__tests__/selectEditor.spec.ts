@@ -99,7 +99,7 @@ describe('SelectEditor', () => {
       }
     }));
 
-    it('should throw an error when collection is not a valid array', () => ((done: any) => {
+    it('should throw an error when collection is not a valid array', () => new Promise((done: any) => {
       try {
         mockColumn.editor!.collection = { hello: 'world' } as any;
         editor = new SelectEditor(editorArguments, true);
@@ -109,7 +109,7 @@ describe('SelectEditor', () => {
       }
     }));
 
-    it('should throw an error when collection is not a valid value/label pair array', () => ((done: any) => {
+    it('should throw an error when collection is not a valid value/label pair array', () => new Promise((done: any) => {
       try {
         mockColumn.editor!.collection = [{ hello: 'world' }];
         editor = new SelectEditor(editorArguments, true);
@@ -119,7 +119,7 @@ describe('SelectEditor', () => {
       }
     }));
 
-    it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', () => ((done: any) => {
+    it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', () => new Promise((done: any) => {
       try {
         translateService = undefined as any;
         mockColumn.editor!.enableTranslateLabel = true;
