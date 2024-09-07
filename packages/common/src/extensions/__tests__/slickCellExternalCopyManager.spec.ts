@@ -651,7 +651,9 @@ describe('CellExternalCopyManager', () => {
           .mockReturnValueOnce([new SlickRange(0, 1, 2, 2)])
           .mockReturnValueOnce(null as any);
 
+        let clipCommand;
         const clipboardCommandHandler = (cmd) => {
+          clipCommand = cmd;
           cmd.execute();
         };
         plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, newRowCreator: mockNewRowCreator, onPasteCells: mockOnPasteCells });
@@ -678,6 +680,10 @@ describe('CellExternalCopyManager', () => {
         expect(getActiveCellSpy).toHaveBeenCalled();
         expect(mockNewRowCreator).toHaveBeenCalled();
         expect(getDataItemSpy).toHaveBeenCalled();
+
+        clipCommand.undo();
+
+        expect(mockOnPasteCells).toHaveBeenCalledWith(new SlickEventData(), { ranges: [{ fromCell: 0, fromRow: 3, toCell: 1, toRow: 3 }] });
       });
 
       it('should warn if no new rows have been added via newRowCreator', () => {
