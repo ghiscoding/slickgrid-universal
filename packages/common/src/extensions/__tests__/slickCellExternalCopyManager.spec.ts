@@ -91,6 +91,7 @@ const Editors = {
 };
 
 describe('CellExternalCopyManager', () => {
+  const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
   const lastNameElm = document.createElement('div');
   lastNameElm.textContent = 'Last Name';
   const mockEventCallback = () => { };
@@ -683,7 +684,6 @@ describe('CellExternalCopyManager', () => {
         const mockNewRowCreator = vi.fn((_count: number) => {
           // user forgot to add rows
         });
-        const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
         const mockOnPasteCells = vi.fn();
         vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
         const clipboardCommandHandler = (cmd) => {
