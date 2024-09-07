@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { SharedService } from '../shared.service';
 import type { Column, CurrentPagination, GridOption } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
@@ -5,19 +7,19 @@ import type { SlickDataView, SlickGrid } from '../../core';
 import type { SlickGroupItemMetadataProvider } from '../../extensions';
 
 const dataviewStub = {
-  onRowCountChanged: jest.fn(),
-  onRowsChanged: jest.fn(),
+  onRowCountChanged: vi.fn(),
+  onRowsChanged: vi.fn(),
 } as unknown as SlickDataView;
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getOptions: jest.fn(),
-  getColumns: jest.fn(),
-  setColumns: jest.fn(),
-  onColumnsReordered: jest.fn(),
-  onColumnsResized: jest.fn(),
-  registerPlugin: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getOptions: vi.fn(),
+  getColumns: vi.fn(),
+  setColumns: vi.fn(),
+  onColumnsReordered: vi.fn(),
+  onColumnsResized: vi.fn(),
+  registerPlugin: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('Shared Service', () => {
@@ -41,7 +43,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "allColumns" GETTER and return all columns', () => {
-    const spy = jest.spyOn(service, 'allColumns', 'get').mockReturnValue(mockColumns);
+    const spy = vi.spyOn(service, 'allColumns', 'get').mockReturnValue(mockColumns);
 
     const columns = service.allColumns;
 
@@ -50,8 +52,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "allColumns" SETTER and expect GETTER to return the same', () => {
-    const getSpy = jest.spyOn(service, 'allColumns', 'get');
-    const setSpy = jest.spyOn(service, 'allColumns', 'set');
+    const getSpy = vi.spyOn(service, 'allColumns', 'get');
+    const setSpy = vi.spyOn(service, 'allColumns', 'set');
 
     service.allColumns = mockColumns;
     const columns = service.allColumns;
@@ -67,7 +69,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "columnDefinitions" GETTER and expect columns array returned', () => {
-    const columnSpy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    const columnSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
     service.slickGrid = gridStub;
     const columns = service.columnDefinitions;
@@ -78,7 +80,7 @@ describe('Shared Service', () => {
 
   it('should call "currentPagination" GETTER and return the currentPagination object', () => {
     const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
-    const spy = jest.spyOn(service, 'currentPagination', 'get').mockReturnValue(expectedResult);
+    const spy = vi.spyOn(service, 'currentPagination', 'get').mockReturnValue(expectedResult);
 
     const output = service.currentPagination;
 
@@ -88,8 +90,8 @@ describe('Shared Service', () => {
 
   it('should call "currentPagination" SETTER and expect GETTER to return the same', () => {
     const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
-    const getSpy = jest.spyOn(service, 'currentPagination', 'get');
-    const setSpy = jest.spyOn(service, 'currentPagination', 'set');
+    const getSpy = vi.spyOn(service, 'currentPagination', 'get');
+    const setSpy = vi.spyOn(service, 'currentPagination', 'set');
 
     service.currentPagination = expectedResult;
     const output = service.currentPagination;
@@ -100,7 +102,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "dataView" GETTER and return a dataView', () => {
-    const spy = jest.spyOn(service, 'dataView', 'get').mockReturnValue(dataviewStub);
+    const spy = vi.spyOn(service, 'dataView', 'get').mockReturnValue(dataviewStub);
 
     const ouput = service.dataView;
 
@@ -109,8 +111,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "dataView" SETTER and expect GETTER to return the same', () => {
-    const getSpy = jest.spyOn(service, 'dataView', 'get');
-    const setSpy = jest.spyOn(service, 'dataView', 'set');
+    const getSpy = vi.spyOn(service, 'dataView', 'get');
+    const setSpy = vi.spyOn(service, 'dataView', 'set');
 
     service.dataView = dataviewStub;
     const output = service.dataView;
@@ -121,7 +123,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "grid" GETTER and return the grid object', () => {
-    const spy = jest.spyOn(service, 'slickGrid', 'get').mockReturnValue(gridStub);
+    const spy = vi.spyOn(service, 'slickGrid', 'get').mockReturnValue(gridStub);
 
     const output = service.slickGrid;
 
@@ -130,8 +132,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "grid" SETTER and expect GETTER to return the same', () => {
-    const getSpy = jest.spyOn(service, 'slickGrid', 'get');
-    const setSpy = jest.spyOn(service, 'slickGrid', 'set');
+    const getSpy = vi.spyOn(service, 'slickGrid', 'get');
+    const setSpy = vi.spyOn(service, 'slickGrid', 'set');
 
     service.slickGrid = gridStub;
     const output = service.slickGrid;
@@ -147,7 +149,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "gridOptions" GETTER and return all options', () => {
-    const spy = jest.spyOn(service, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
+    const spy = vi.spyOn(service, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
 
     const options = service.gridOptions;
 
@@ -156,7 +158,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "gridOptions" GETTER and expect options array returned', () => {
-    const spy = jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    const spy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
     service.slickGrid = gridStub;
     const options = service.gridOptions;
@@ -166,8 +168,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "gridOptions" SETTER and expect options array returned', () => {
-    const getSpy = jest.spyOn(service, 'gridOptions', 'get');
-    const setSpy = jest.spyOn(service, 'gridOptions', 'set');
+    const getSpy = vi.spyOn(service, 'gridOptions', 'get');
+    const setSpy = vi.spyOn(service, 'gridOptions', 'set');
 
     service.gridOptions = mockGridOptions;
     const output = service.gridOptions;
@@ -178,7 +180,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "groupItemMetadataProvider" GETTER and return metadata', () => {
-    const spy = jest.spyOn(service, 'groupItemMetadataProvider', 'get').mockReturnValue(mockColumns as unknown as SlickGroupItemMetadataProvider);
+    const spy = vi.spyOn(service, 'groupItemMetadataProvider', 'get').mockReturnValue(mockColumns as unknown as SlickGroupItemMetadataProvider);
 
     const output = service.groupItemMetadataProvider;
 
@@ -187,8 +189,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "groupItemMetadataProvider" SETTER and expect GETTER to return the same', () => {
-    const getSpy = jest.spyOn(service, 'groupItemMetadataProvider', 'get');
-    const setSpy = jest.spyOn(service, 'groupItemMetadataProvider', 'set');
+    const getSpy = vi.spyOn(service, 'groupItemMetadataProvider', 'get');
+    const setSpy = vi.spyOn(service, 'groupItemMetadataProvider', 'set');
 
     service.groupItemMetadataProvider = mockColumns as unknown as SlickGroupItemMetadataProvider;
     const output = service.groupItemMetadataProvider;
@@ -226,7 +228,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "visibleColumns" GETTER and return all columns', () => {
-    const spy = jest.spyOn(service, 'visibleColumns', 'get').mockReturnValue(mockColumns);
+    const spy = vi.spyOn(service, 'visibleColumns', 'get').mockReturnValue(mockColumns);
 
     const columns = service.visibleColumns;
 
@@ -235,8 +237,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "visibleColumns" SETTER and expect GETTER to return the same', () => {
-    const getSpy = jest.spyOn(service, 'visibleColumns', 'get');
-    const setSpy = jest.spyOn(service, 'visibleColumns', 'set');
+    const getSpy = vi.spyOn(service, 'visibleColumns', 'get');
+    const setSpy = vi.spyOn(service, 'visibleColumns', 'set');
 
     service.visibleColumns = mockColumns;
     const columns = service.visibleColumns;
@@ -247,7 +249,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "hierarchicalDataset" GETTER and return a hierarchical dataset', () => {
-    const spy = jest.spyOn(service, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchicalDataset);
+    const spy = vi.spyOn(service, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchicalDataset);
 
     const columns = service.hierarchicalDataset;
 
@@ -256,8 +258,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "hierarchicalDataset" SETTER and expect GETTER to return the same', () => {
-    const getSpy = jest.spyOn(service, 'hierarchicalDataset', 'get');
-    const setSpy = jest.spyOn(service, 'hierarchicalDataset', 'set');
+    const getSpy = vi.spyOn(service, 'hierarchicalDataset', 'get');
+    const setSpy = vi.spyOn(service, 'hierarchicalDataset', 'set');
 
     service.hierarchicalDataset = mockHierarchicalDataset;
     const columns = service.hierarchicalDataset;
@@ -280,7 +282,7 @@ describe('Shared Service', () => {
   it('should call "externalRegisteredResources" GETTER and return all columns', () => {
     // @ts-ignore:2511
     const mockRegisteredResources = [new ExcelExportService()];
-    const spy = jest.spyOn(service, 'externalRegisteredResources', 'get').mockReturnValue(mockRegisteredResources);
+    const spy = vi.spyOn(service, 'externalRegisteredResources', 'get').mockReturnValue(mockRegisteredResources);
 
     const columns = service.externalRegisteredResources;
 
@@ -291,8 +293,8 @@ describe('Shared Service', () => {
   it('should call "externalRegisteredResources" SETTER and expect GETTER to return the same', () => {
     // @ts-ignore:2511
     const mockRegisteredResources = [new ExcelExportService()];
-    const getSpy = jest.spyOn(service, 'externalRegisteredResources', 'get');
-    const setSpy = jest.spyOn(service, 'externalRegisteredResources', 'set');
+    const getSpy = vi.spyOn(service, 'externalRegisteredResources', 'get');
+    const setSpy = vi.spyOn(service, 'externalRegisteredResources', 'set');
 
     service.externalRegisteredResources = mockRegisteredResources;
     const columns = service.externalRegisteredResources;

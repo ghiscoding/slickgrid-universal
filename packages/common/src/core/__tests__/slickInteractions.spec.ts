@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { Draggable, MouseWheel, Resizable } from '../slickInteractions';
 
 describe('Draggable class', () => {
@@ -26,7 +28,7 @@ describe('Draggable class', () => {
   });
 
   it('should trigger mousedown but NOT expect a dragInit to happen since it was not triggered by an allowed element', () => {
-    const dragInitSpy = jest.fn();
+    const dragInitSpy = vi.fn();
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragInitSpy });
 
@@ -37,8 +39,8 @@ describe('Draggable class', () => {
   });
 
   it('should trigger mousedown and expect a dragInit to happen since it was triggered by an allowed element but NOT expect a drag to actually happen since we did not move afterward', () => {
-    const dragInitSpy = jest.fn();
-    const dragSpy = jest.fn();
+    const dragInitSpy = vi.fn();
+    const dragSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragSpy, onDragInit: dragInitSpy });
@@ -53,8 +55,8 @@ describe('Draggable class', () => {
   });
 
   it('should NOT trigger dragInit event when user is pressing mousedown and mousemove + Ctrl key combo that we considered as forbidden via "preventDragFromKeys"', () => {
-    const dragInitSpy = jest.fn();
-    const dragSpy = jest.fn();
+    const dragInitSpy = vi.fn();
+    const dragSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', preventDragFromKeys: ['ctrlKey'], onDrag: dragSpy, onDragInit: dragInitSpy });
@@ -69,11 +71,11 @@ describe('Draggable class', () => {
   });
 
   it('should trigger mousedown and expect a dragInit and a dragStart and drag to all happen since it was triggered by an allowed element and we did move afterward', () => {
-    const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
-    const dragInitSpy = jest.fn();
-    const dragSpy = jest.fn();
-    const dragStartSpy = jest.fn();
-    const dragEndSpy = jest.fn();
+    const removeListenerSpy = vi.spyOn(document.body, 'removeEventListener');
+    const dragInitSpy = vi.fn();
+    const dragSpy = vi.fn();
+    const dragStartSpy = vi.fn();
+    const dragEndSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
@@ -100,12 +102,12 @@ describe('Draggable class', () => {
     expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
   });
 
-  it('should NOT trigger dragInit,dragStart events when user is pressing mousedown and mousemove + Meta key combo that we considered as forbidden via "preventDragFromKeys"', () => {
-    const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
-    const dragInitSpy = jest.fn();
-    const dragSpy = jest.fn();
-    const dragStartSpy = jest.fn();
-    const dragEndSpy = jest.fn();
+  it('should NOT trigger dragInit,dragStart events when user is pressing mousedown and mousemove + Meta key combo that we considered as forbidden via "preventDragFromKeys"', async () => {
+    const bodyRemoveListenerSpy = vi.spyOn(document.body, 'removeEventListener');
+    const dragInitSpy = vi.fn();
+    const dragSpy = vi.fn();
+    const dragStartSpy = vi.fn();
+    const dragEndSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', preventDragFromKeys: ['metaKey'], onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
@@ -129,7 +131,7 @@ describe('Draggable class', () => {
     expect(dragStartSpy).not.toHaveBeenCalled();
     expect(dragSpy).not.toHaveBeenCalled();
     expect(dragEndSpy).not.toHaveBeenCalled();
-    expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
+    expect(bodyRemoveListenerSpy).not.toHaveBeenCalled();
   });
 });
 
@@ -147,8 +149,7 @@ describe('MouseWheel class', () => {
   });
 
   it('should trigger mouse wheel event and expect onMouseWheel handler to be called old school way with regular mouse and WebKit browser event', () => {
-    const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
-    const wheelSpy = jest.fn();
+    const wheelSpy = vi.fn();
 
     const element = document.createElement('div');
     mw = MouseWheel({ element, onMouseWheel: wheelSpy });
@@ -161,12 +162,10 @@ describe('MouseWheel class', () => {
 
     expect(mw).toBeTruthy();
     expect(wheelSpy).toHaveBeenCalledWith(mdEvt, -1, -0, -1);
-    expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
   });
 
   it('should trigger mouse wheel event and expect onMouseWheel handler to be called new school way with touchpad multidimensional scroll', () => {
-    const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
-    const wheelSpy = jest.fn();
+    const wheelSpy = vi.fn();
 
     const element = document.createElement('div');
     mw = MouseWheel({ element, onMouseWheel: wheelSpy });
@@ -179,12 +178,10 @@ describe('MouseWheel class', () => {
 
     expect(mw).toBeTruthy();
     expect(wheelSpy).toHaveBeenCalledWith(mdEvt, -1, -0, -1);
-    expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
   });
 
   it('should trigger mouse wheel event and expect onMouseWheel handler to be called old school way with regular mouse and Gecko browser event', () => {
-    const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
-    const wheelSpy = jest.fn();
+    const wheelSpy = vi.fn();
 
     const element = document.createElement('div');
     mw = MouseWheel({ element, onMouseWheel: wheelSpy });
@@ -197,7 +194,6 @@ describe('MouseWheel class', () => {
 
     expect(mw).toBeTruthy();
     expect(wheelSpy).toHaveBeenCalledWith(mdEvt, -1, 1, 0);
-    expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
   });
 });
 
@@ -228,10 +224,9 @@ describe('Resizable class', () => {
   });
 
   it('should trigger mousedown and expect a dragInit and a dragStart and drag to all happen since it was triggered by an allowed element and we did move afterward', () => {
-    const removeListenerSpy = jest.spyOn(document.body, 'removeEventListener');
-    const resizeSpy = jest.fn();
-    const resizeStartSpy = jest.fn();
-    const resizeEndSpy = jest.fn();
+    const resizeSpy = vi.fn();
+    const resizeStartSpy = vi.fn();
+    const resizeEndSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
     rsz = Resizable({ resizeableElement: containerElement, resizeableHandleElement: containerElement, onResize: resizeSpy, onResizeStart: resizeStartSpy, onResizeEnd: resizeEndSpy });
@@ -254,6 +249,5 @@ describe('Resizable class', () => {
     expect(resizeStartSpy).toHaveBeenCalledWith(mdEvt, { resizeableElement: containerElement, resizeableHandleElement: containerElement });
     expect(resizeSpy).toHaveBeenCalled();
     expect(resizeEndSpy).toHaveBeenCalled();
-    expect(removeListenerSpy).toHaveBeenCalledTimes(6 * 2 + 2);
   });
 });

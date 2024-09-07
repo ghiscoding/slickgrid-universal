@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum';
 import { numericSortComparer } from '../numericSortComparer';
 import type { Column } from '../../interfaces/column.interface';

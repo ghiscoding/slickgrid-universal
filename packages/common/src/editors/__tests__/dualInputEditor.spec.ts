@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { Editors } from '../index';
 import { DualInputEditor } from '../dualInputEditor';
 import type { Column, ColumnEditorDualInput, Editor, EditorArguments, GridOption } from '../../interfaces/index';
@@ -5,13 +7,13 @@ import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index
 
 const containerId = 'demo-container';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
-  refresh: jest.fn(),
+  refresh: vi.fn(),
 } as unknown as SlickDataView;
 
 const gridOptionMock = {
@@ -21,17 +23,17 @@ const gridOptionMock = {
 } as GridOption;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  focus: jest.fn(),
-  getActiveCell: jest.fn(),
-  getColumns: jest.fn(),
+  focus: vi.fn(),
+  getActiveCell: vi.fn(),
+  getColumns: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getHeaderRowColumn: jest.fn(),
+  getHeaderRowColumn: vi.fn(),
   getOptions: () => gridOptionMock,
-  render: jest.fn(),
+  render: vi.fn(),
   onValidationError: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
@@ -56,8 +58,8 @@ describe('DualInputEditor', () => {
       column: mockColumn,
       item: mockItemData,
       event: null as any,
-      cancelChanges: jest.fn(),
-      commitChanges: jest.fn(),
+      cancelChanges: vi.fn(),
+      commitChanges: vi.fn(),
       container: divContainer,
       columnMetaData: null,
       dataView: dataViewStub,
@@ -67,23 +69,23 @@ describe('DualInputEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', (done) => {
+    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
       try {
         editor = new DualInputEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
       }
-    });
+    }));
 
-    it('should throw an error when initialize the editor without the requires params leftInput/rightInput', (done) => {
+    it('should throw an error when initialize the editor without the requires params leftInput/rightInput', () => new Promise((done: any) => {
       try {
         editor = new DualInputEditor({ grid: gridStub } as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput"`);
         done();
       }
-    });
+    }));
   });
 
   describe('with valid Editor instance', () => {
@@ -205,7 +207,7 @@ describe('DualInputEditor', () => {
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
-      const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
+      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
 
       editor = new DualInputEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
@@ -219,7 +221,7 @@ describe('DualInputEditor', () => {
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
-      const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
+      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
 
       editor = new DualInputEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
@@ -366,7 +368,7 @@ describe('DualInputEditor', () => {
 
         mockItemData = { id: 1, range: '1-22', from: 22, to: 78, isActive: true };
         editor = new DualInputEditor(editorArguments);
-        const validateSpy = jest.spyOn(editor, 'validate');
+        const validateSpy = vi.spyOn(editor, 'validate');
 
         editor.setValues([4, 5]);
         editor.applyValue(mockItemData, { id: 1, range: '1-22', from: 4, to: 5 });
@@ -503,13 +505,13 @@ describe('DualInputEditor', () => {
 
     describe('save method', () => {
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should call "getEditorLock" method when "hasAutoCommitEdit" is enabled', () => {
         mockItemData = { id: 1, range: '3-32', from: 3, to: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new DualInputEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -522,7 +524,7 @@ describe('DualInputEditor', () => {
       it('should call "commitChanges" method when "hasAutoCommitEdit" is disabled', () => {
         mockItemData = { id: 1, range: '3-32', from: 3, to: 32, isActive: true };
         gridOptionMock.autoCommitEdit = false;
-        const spy = jest.spyOn(editorArguments, 'commitChanges');
+        const spy = vi.spyOn(editorArguments, 'commitChanges');
 
         editor = new DualInputEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -535,7 +537,7 @@ describe('DualInputEditor', () => {
       // it('should not call anything when the input value is not a valid float number', () => {
       //   mockItemData = { id: 1, range: null, from: null, to: null, isActive: true };
       //   gridOptionMock.autoCommitEdit = true;
-      //   const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+      //   const spy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
       //   editor = new DualInputEditor(editorArguments);
       //   editor.loadValue(mockItemData);
@@ -548,17 +550,17 @@ describe('DualInputEditor', () => {
       it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the left input event "focusout" is triggered', () => {
         mockItemData = { id: 1, range: '3-32', from: 3, to: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spyGetEditor = jest.spyOn(gridStub, 'getEditorLock');
-        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spyGetEditor = vi.spyOn(gridStub, 'getEditorLock');
+        const spyCommit = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new DualInputEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.setValues([2, 35]);
-        const spySave = jest.spyOn(editor, 'save');
+        const spySave = vi.spyOn(editor, 'save');
         const editorLeftElm = editor.editorDomElement.leftInput;
 
         editorLeftElm.dispatchEvent(new (window.window as any).Event('focusout'));
-        jest.runAllTimers(); // fast-forward timer
+        vi.runAllTimers(); // fast-forward timer
 
         expect(spyGetEditor).toHaveBeenCalled();
         expect(spyCommit).toHaveBeenCalled();
@@ -568,17 +570,17 @@ describe('DualInputEditor', () => {
       it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the right input event "focusout" is triggered', () => {
         mockItemData = { id: 1, range: '3-32', from: 3, to: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spyGetEditor = jest.spyOn(gridStub, 'getEditorLock');
-        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spyGetEditor = vi.spyOn(gridStub, 'getEditorLock');
+        const spyCommit = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new DualInputEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.setValues([2, 35]);
-        const spySave = jest.spyOn(editor, 'save');
+        const spySave = vi.spyOn(editor, 'save');
         const editorRightElm = editor.editorDomElement.rightInput;
 
         editorRightElm.dispatchEvent(new (window.window as any).Event('focusout'));
-        jest.runAllTimers(); // fast-forward timer
+        vi.runAllTimers(); // fast-forward timer
 
         expect(spyGetEditor).toHaveBeenCalled();
         expect(spyCommit).toHaveBeenCalled();
@@ -589,7 +591,7 @@ describe('DualInputEditor', () => {
     describe('validate method', () => {
       it('should set isValueSaveCalled to true when grid object triggered an "onValidationError"', () => {
         editor = new DualInputEditor(editorArguments);
-        jest.spyOn(editor.eventHandler, 'subscribe');
+        vi.spyOn(editor.eventHandler, 'subscribe');
 
         expect(editor.eventHandler).toBeTruthy();
         expect(editor.isValueSaveCalled).toBe(false);
@@ -854,18 +856,18 @@ describe('DualInputEditor', () => {
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
 
       editor = new DualInputEditor(editorArguments);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -875,17 +877,17 @@ describe('DualInputEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled with empty value set in the form values when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
 
       editor = new DualInputEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -903,11 +905,11 @@ describe('DualInputEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.compositeEditorOptions = {
@@ -916,7 +918,7 @@ describe('DualInputEditor', () => {
 
       editor = new DualInputEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -933,13 +935,13 @@ describe('DualInputEditor', () => {
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered from the left input and expect the new value showing up in its "formValues" object', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.autoCommitEdit = true;
@@ -950,7 +952,7 @@ describe('DualInputEditor', () => {
       editor.setValues([4, 5]);
       editor.editorDomElement.leftInput.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.advanceTimersByTime(50);
+      vi.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
@@ -961,13 +963,13 @@ describe('DualInputEditor', () => {
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered from the right input and expect the new value showing up in its "formValues" object', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.autoCommitEdit = true;
@@ -978,7 +980,7 @@ describe('DualInputEditor', () => {
       editor.setValues([4, 5]);
       editor.editorDomElement.rightInput.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.advanceTimersByTime(50);
+      vi.advanceTimersByTime(50);
       editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();

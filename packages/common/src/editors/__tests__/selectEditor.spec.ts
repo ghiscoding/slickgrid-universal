@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
@@ -16,7 +18,7 @@ const containerId = 'demo-container';
 const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
-  refresh: jest.fn(),
+  refresh: vi.fn(),
 } as unknown as SlickDataView;
 
 const gridOptionMock = {
@@ -26,19 +28,19 @@ const gridOptionMock = {
 } as unknown as GridOption;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  focus: jest.fn(),
-  getActiveCell: jest.fn(),
-  getColumns: jest.fn(),
+  focus: vi.fn(),
+  getActiveCell: vi.fn(),
+  getColumns: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getHeaderRowColumn: jest.fn(),
+  getHeaderRowColumn: vi.fn(),
   getOptions: () => gridOptionMock,
-  navigateNext: jest.fn(),
-  navigatePrev: jest.fn(),
-  render: jest.fn(),
+  navigateNext: vi.fn(),
+  navigatePrev: vi.fn(),
+  render: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
   sanitizeHtmlString: (str) => str,
@@ -67,8 +69,8 @@ describe('SelectEditor', () => {
       column: mockColumn,
       item: mockItemData,
       event: null as any,
-      cancelChanges: jest.fn(),
-      commitChanges: jest.fn(),
+      cancelChanges: vi.fn(),
+      commitChanges: vi.fn(),
       container: divContainer,
       columnMetaData: null as any,
       dataView: dataViewStub,
@@ -78,16 +80,16 @@ describe('SelectEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', (done) => {
+    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
       try {
         editor = new SelectEditor(null as any, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
       }
-    });
+    }));
 
-    it('should throw an error when there is no collection provided in the editor property', (done) => {
+    it('should throw an error when there is no collection provided in the editor property', () => new Promise((done: any) => {
       try {
         mockColumn.editor!.collection = undefined;
         editor = new SelectEditor(editorArguments, true);
@@ -95,9 +97,9 @@ describe('SelectEditor', () => {
         expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.`);
         done();
       }
-    });
+    }));
 
-    it('should throw an error when collection is not a valid array', (done) => {
+    it('should throw an error when collection is not a valid array', () => new Promise((done: any) => {
       try {
         mockColumn.editor!.collection = { hello: 'world' } as any;
         editor = new SelectEditor(editorArguments, true);
@@ -105,9 +107,9 @@ describe('SelectEditor', () => {
         expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
         done();
       }
-    });
+    }));
 
-    it('should throw an error when collection is not a valid value/label pair array', (done) => {
+    it('should throw an error when collection is not a valid value/label pair array', () => new Promise((done: any) => {
       try {
         mockColumn.editor!.collection = [{ hello: 'world' }];
         editor = new SelectEditor(editorArguments, true);
@@ -115,9 +117,9 @@ describe('SelectEditor', () => {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
         done();
       }
-    });
+    }));
 
-    it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', (done) => {
+    it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', () => new Promise((done: any) => {
       try {
         translateService = undefined as any;
         mockColumn.editor!.enableTranslateLabel = true;
@@ -127,7 +129,7 @@ describe('SelectEditor', () => {
         expect(e.toString()).toContain(`[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`);
         done();
       }
-    });
+    }));
   });
 
   describe('with valid Editor instance', () => {
@@ -163,7 +165,7 @@ describe('SelectEditor', () => {
       gridOptionMock.translater = translateService;
 
       editor = new SelectEditor(editorArguments, true);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.destroy();
       editor.init();
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
@@ -341,7 +343,7 @@ describe('SelectEditor', () => {
 
       it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call MultipleSelect "refreshOptions" setter method', () => {
         editor = new SelectEditor(editorArguments, true);
-        const refreshSpy = jest.spyOn(editor.msInstance!, 'refreshOptions');
+        const refreshSpy = vi.spyOn(editor.msInstance!, 'refreshOptions');
         editor.changeEditorOption('filter', true);
 
         expect(refreshSpy).toHaveBeenCalledWith({ ...editor.editorElmOptions, filter: true });
@@ -569,13 +571,13 @@ describe('SelectEditor', () => {
     describe('save method', () => {
       afterEach(() => {
         editor.destroy();
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should call "getEditorLock" method when "hasAutoCommitEdit" is enabled', () => {
         mockItemData = { id: 1, gender: 'male', isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
@@ -587,10 +589,10 @@ describe('SelectEditor', () => {
       it('should call "save" and "getEditorLock" method when "hasAutoCommitEdit" is enabled and we are destroying the editor without it being saved yet', () => {
         mockItemData = { id: 1, gender: 'male', isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const lockSpy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const lockSpy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new SelectEditor(editorArguments, true);
-        const saveSpy = jest.spyOn(editor, 'save');
+        const saveSpy = vi.spyOn(editor, 'save');
 
         editor.loadValue(mockItemData);
         editor.destroy();
@@ -605,7 +607,7 @@ describe('SelectEditor', () => {
         gridOptionMock.autoCommitEdit = true;
 
         editor = new SelectEditor(editorArguments, true);
-        const saveSpy = jest.spyOn(editor, 'save');
+        const saveSpy = vi.spyOn(editor, 'save');
 
         editor.loadValue(mockItemData);
         editor.msInstance?.close();
@@ -620,7 +622,7 @@ describe('SelectEditor', () => {
         gridOptionMock.autoCommitEdit = false;
 
         editor = new SelectEditor(editorArguments, true);
-        const saveSpy = jest.spyOn(editor, 'save');
+        const saveSpy = vi.spyOn(editor, 'save');
 
         editor.loadValue(mockItemData);
         editor.msInstance?.close();
@@ -635,8 +637,8 @@ describe('SelectEditor', () => {
         gridOptionMock.autoCommitEdit = false;
 
         editor = new SelectEditor(editorArguments, true);
-        const cancelSpy = jest.spyOn(editor, 'cancel');
-        const saveSpy = jest.spyOn(editor, 'save');
+        const cancelSpy = vi.spyOn(editor, 'cancel');
+        const saveSpy = vi.spyOn(editor, 'save');
 
         editor.loadValue(mockItemData);
         editor.msInstance?.close('key.escape');
@@ -651,8 +653,8 @@ describe('SelectEditor', () => {
         gridOptionMock.autoCommitEdit = false;
 
         editor = new SelectEditor(editorArguments, true);
-        const cancelSpy = jest.spyOn(editor, 'cancel');
-        const saveSpy = jest.spyOn(editor, 'save');
+        const cancelSpy = vi.spyOn(editor, 'cancel');
+        const saveSpy = vi.spyOn(editor, 'save');
 
         editor.loadValue(mockItemData);
         editor.msInstance?.close('body.click');
@@ -665,7 +667,7 @@ describe('SelectEditor', () => {
       it('should not call "commitCurrentEdit" when "hasAutoCommitEdit" is disabled', () => {
         mockItemData = { id: 1, gender: 'male', isActive: true };
         gridOptionMock.autoCommitEdit = false;
-        const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
@@ -935,13 +937,13 @@ describe('SelectEditor', () => {
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       editor = new SelectEditor(editorArguments, true);
@@ -957,13 +959,13 @@ describe('SelectEditor', () => {
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
 
       editor = new SelectEditor(editorArguments, true);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -973,17 +975,17 @@ describe('SelectEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled with empty value set in the form values when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
 
       editor = new SelectEditor(editorArguments, true);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
 
@@ -1000,11 +1002,11 @@ describe('SelectEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.compositeEditorOptions = {
@@ -1013,7 +1015,7 @@ describe('SelectEditor', () => {
 
       editor = new SelectEditor(editorArguments, true);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
 
@@ -1030,11 +1032,11 @@ describe('SelectEditor', () => {
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.autoCommitEdit = true;
@@ -1060,8 +1062,8 @@ describe('SelectEditor', () => {
     describe('collectionOverride callback option', () => {
       it('should create the editor and expect a different collection outputed when using the override', () => {
         const activeCellMock = { row: 0, cell: 0 };
-        jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-        const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+        const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
           getReturnValue: () => false
         } as any);
         mockColumn.editor = {

@@ -1,10 +1,12 @@
+import { describe, expect, it, vi } from 'vitest';
+
 import type { Column, GridOption } from '../../interfaces/index';
 import { dollarColoredFormatter } from '../dollarColoredFormatter';
 import type { SlickGrid } from '../../core/index';
 
 describe('the DollarColored Formatter', () => {
   const gridStub = {
-    getOptions: jest.fn()
+    getOptions: vi.fn()
   } as unknown as SlickGrid;
 
   it('should return an empty string when no value is provided', () => {

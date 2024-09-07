@@ -6,9 +6,7 @@
       "dom"
     ],
     "types": [
-      "jest",
-      "node",
-      "cypress-real-events"
+      "node"
     ],
     "allowJs": true,
     "skipLibCheck": true,

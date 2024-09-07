@@ -1,7 +1,9 @@
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+
 // mocked modules
-jest.mock('@slickgrid-universal/utils', () => ({
-  ...(jest.requireActual('@slickgrid-universal/utils') as any),
-  getOffset: jest.fn(),
+vi.mock('@slickgrid-universal/utils', async (importOriginal) => ({
+  ...await importOriginal() as any,
+  getOffset: vi.fn(),
 }));
 
 import { Editors } from '../index';
@@ -17,7 +19,7 @@ const containerId = 'demo-container';
 const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
-  refresh: jest.fn(),
+  refresh: vi.fn(),
 } as unknown as SlickDataView;
 
 let gridOptionMock = {
@@ -28,19 +30,19 @@ let gridOptionMock = {
 } as unknown as GridOption;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  focus: jest.fn(),
-  getActiveCell: jest.fn(),
-  getColumns: jest.fn(),
+  focus: vi.fn(),
+  getActiveCell: vi.fn(),
+  getColumns: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getHeaderRowColumn: jest.fn(),
+  getHeaderRowColumn: vi.fn(),
   getOptions: () => gridOptionMock,
-  navigateNext: jest.fn(),
-  navigatePrev: jest.fn(),
-  render: jest.fn(),
+  navigateNext: vi.fn(),
+  navigatePrev: vi.fn(),
+  render: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -72,8 +74,8 @@ describe('LongTextEditor', () => {
       column: mockColumn,
       item: mockItemData,
       event: null as any,
-      cancelChanges: jest.fn(),
-      commitChanges: jest.fn(),
+      cancelChanges: vi.fn(),
+      commitChanges: vi.fn(),
       container: divContainer,
       columnMetaData: null,
       dataView: dataViewStub,
@@ -86,18 +88,18 @@ describe('LongTextEditor', () => {
       translater: null as any,
       editorTypingDebounce: 0,
     };
-    (getOffset as jest.Mock).mockReturnValue({ top: 0, left: 0, right: 0, bottom: 0 });
+    (getOffset as Mock).mockReturnValue({ top: 0, left: 0, right: 0, bottom: 0 });
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', (done) => {
+    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
       try {
         editor = new LongTextEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
       }
-    });
+    }));
   });
 
   describe('with valid Editor instance', () => {
@@ -114,7 +116,7 @@ describe('LongTextEditor', () => {
     });
 
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should initialize the editor', () => {
@@ -409,13 +411,13 @@ describe('LongTextEditor', () => {
 
     describe('save method', () => {
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should call "getEditorLock" method when "hasAutoCommitEdit" is enabled', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -434,8 +436,8 @@ describe('LongTextEditor', () => {
           }
           return { valid: true, msg: '' };
         };
-        const commitCurrentSpy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
-        const commitChangeSpy = jest.spyOn(editorArguments, 'commitChanges');
+        const commitCurrentSpy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const commitChangeSpy = vi.spyOn(editorArguments, 'commitChanges');
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -449,7 +451,7 @@ describe('LongTextEditor', () => {
       it('should call "commitChanges" method when "hasAutoCommitEdit" is disabled', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = false;
-        const spy = jest.spyOn(editorArguments, 'commitChanges');
+        const spy = vi.spyOn(editorArguments, 'commitChanges');
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -463,7 +465,7 @@ describe('LongTextEditor', () => {
         mockItemData = { id: 1, title: '', isActive: true };
         mockColumn.editor!.required = true;
         gridOptionMock.autoCommitEdit = true;
-        const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -476,18 +478,18 @@ describe('LongTextEditor', () => {
 
     describe('handleKeyDown private method', () => {
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should call the "save" method when the Ctrl+ENTER combination event is triggered', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spyCommit = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.setValue('task 2');
-        const spySave = jest.spyOn(editor, 'save');
+        const spySave = vi.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
@@ -504,12 +506,12 @@ describe('LongTextEditor', () => {
       it('should call the "save" method when the Ctrl+s combination event is triggered', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spyCommit = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.setValue('task 2');
-        const spySave = jest.spyOn(editor, 'save');
+        const spySave = vi.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
@@ -526,12 +528,12 @@ describe('LongTextEditor', () => {
       it('should call the "save" method when the Ctrl+S (uppercase S) combination event is triggered', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spyCommit = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.setValue('task 2');
-        const spySave = jest.spyOn(editor, 'save');
+        const spySave = vi.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
@@ -548,7 +550,7 @@ describe('LongTextEditor', () => {
       it('should call the "cancel" method when the Escape keydown event is triggered', () => {
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
-        const spyCancel = jest.spyOn(editor, 'cancel');
+        const spyCancel = vi.spyOn(editor, 'cancel');
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
@@ -563,7 +565,7 @@ describe('LongTextEditor', () => {
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
         const editorElm = editor.editorDomElement;
-        const spyNavigate = jest.spyOn(gridStub, 'navigatePrev');
+        const spyNavigate = vi.spyOn(gridStub, 'navigatePrev');
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
           key: 'Tab',
@@ -579,7 +581,7 @@ describe('LongTextEditor', () => {
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
         const editorElm = editor.editorDomElement;
-        const spyNavigate = jest.spyOn(gridStub, 'navigateNext');
+        const spyNavigate = vi.spyOn(gridStub, 'navigateNext');
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
           key: 'Tab',
@@ -594,14 +596,14 @@ describe('LongTextEditor', () => {
 
     describe('on button clicked events', () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should call "save" method when the save button is clicked', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         editor = new LongTextEditor(editorArguments);
-        const spySave = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spySave = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor.loadValue(mockItemData);
         const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
@@ -617,7 +619,7 @@ describe('LongTextEditor', () => {
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
-        const spyCancel = jest.spyOn(editorArguments, 'cancelChanges');
+        const spyCancel = vi.spyOn(editorArguments, 'cancelChanges');
 
         const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
         const buttonCancelElm = editorFooterElm.querySelector('.btn-default') as HTMLButtonElement;
@@ -820,7 +822,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should assume editor to positioned on the right & bottom of the cell when there is enough room', () => {
-        (getOffset as jest.Mock).mockReturnValueOnce({ top: 100, left: 200 }); // mock cell position
+        (getOffset as Mock).mockReturnValueOnce({ top: 100, left: 200 }); // mock cell position
 
         editor = new LongTextEditor(editorArguments);
         const editorElm = document.body.querySelector('.slick-large-editor-text') as HTMLDivElement;
@@ -830,7 +832,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should assume editor to positioned on the right of the cell when there is NOT enough room on the left', () => {
-        (getOffset as jest.Mock).mockReturnValueOnce({ top: 100, left: 900 }); // mock cell position that will be over max of 1024px
+        (getOffset as Mock).mockReturnValueOnce({ top: 100, left: 900 }); // mock cell position that will be over max of 1024px
 
         editor = new LongTextEditor(editorArguments);
         const editorElm = document.body.querySelector('.slick-large-editor-text') as HTMLDivElement;
@@ -840,7 +842,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should assume editor to positioned on the top of the cell when there is NOT enough room on the bottom', () => {
-        (getOffset as jest.Mock).mockReturnValueOnce({ top: 550, left: 200 }); // mock cell position that will be over max of 600px
+        (getOffset as Mock).mockReturnValueOnce({ top: 550, left: 200 }); // mock cell position that will be over max of 600px
 
         editor = new LongTextEditor(editorArguments);
         const editorElm = document.body.querySelector('.slick-large-editor-text') as HTMLDivElement;
@@ -860,13 +862,13 @@ describe('LongTextEditor', () => {
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       editor = new LongTextEditor(editorArguments);
@@ -881,13 +883,13 @@ describe('LongTextEditor', () => {
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
 
       editor = new LongTextEditor(editorArguments);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -897,17 +899,17 @@ describe('LongTextEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled with empty value set in the form values when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
 
       editor = new LongTextEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -923,11 +925,11 @@ describe('LongTextEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false and also expect "onBeforeComposite" to not be called because the value is blank', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.compositeEditorOptions = {
@@ -936,7 +938,7 @@ describe('LongTextEditor', () => {
 
       editor = new LongTextEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -949,8 +951,8 @@ describe('LongTextEditor', () => {
 
     it('should call "disable" method and expect the DOM element to become disabled and have an empty formValues be passed in the onCompositeEditorChange event', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.compositeEditorOptions = {
@@ -972,13 +974,13 @@ describe('LongTextEditor', () => {
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.autoCommitEdit = true;
@@ -990,7 +992,7 @@ describe('LongTextEditor', () => {
       editorElm.value = 'task 2';
       editorElm.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.advanceTimersByTime(50);
+      vi.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });

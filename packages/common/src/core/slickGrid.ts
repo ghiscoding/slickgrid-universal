@@ -642,7 +642,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.updateColumnProps();
 
     // validate loaded JavaScript modules against requested options
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (this._options.enableColumnReorder && (!Sortable || !Sortable.create)) {
       throw new Error('SlickGrid requires Sortable.js module to be loaded');
     }
@@ -1216,7 +1216,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.hasFrozenColumns()) {
         const cWidth = Utils.width(this._container) || 0;
-        /* istanbul ignore if */
+        /* v8 ignore next 4 */
         if (cWidth > 0 && this.canvasWidthL > cWidth && this._options.throwWhenFrozenNotAllViewable) {
           throw new Error('[SlickGrid] Frozen columns cannot be wider than the actual grid container width. '
             + 'Make sure to have less columns freezed or make your grid container wider');
@@ -1302,7 +1302,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     target.forEach((el) => {
       el.setAttribute('unselectable', 'on');
       (el.style as any).mozUserSelect = 'none';
-      /* istanbul ignore next */
+      /* v8 ignore next */
       this._bindingEventService.bind(el, 'selectstart', () => false);
     });
   }
@@ -1320,10 +1320,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       Utils.height(div, test);
       const height = Utils.height(div);
 
-      /* istanbul ignore else */
       if (test > testUpTo! || height !== test) {
         condition = false;
         break;
+        /* v8 ignore next 3 */
       } else {
         supportedHeight = test;
       }
@@ -1925,7 +1925,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setupColumnResize(): void {
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (typeof Resizable === 'undefined') {
       throw new Error(`SlickResizable is undefined, make sure to import "slick.interactions.js"`);
     }
@@ -1962,6 +1962,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     for (let i = 0; i < children.length; i++) {
       const colElm = children[i];
 
+      /* v8 ignore next 3 */
       if (i >= vc.length || !vc[i]) {
         continue;
       }
@@ -2406,7 +2407,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const sheet = this._style.sheet;
 
-    /* istanbul ignore else */
     if (sheet) {
       rules.forEach(rule => {
         sheet.insertRule(rule);
@@ -2418,6 +2418,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         sheet.insertRule(`.${this.uid} .l${i} { }`);
         sheet.insertRule(`.${this.uid} .r${i} { }`);
       }
+      /* v8 ignore next 4 */
     } else {
       // fallback in case the 1st approach doesn't work, let's use our previous way of creating the css rules which is what works in Salesforce :(
       this.createCssRulesAlternative(rules);
@@ -2425,7 +2426,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Create CSS rules via template in case the first approach with createElement('style') doesn't work */
-  /* istanbul ignore next */
+  /* v8 ignore next 19 */
   protected createCssRulesAlternative(rules: string[]): void {
     const template = document.createElement('template');
     template.innerHTML = '<style type="text/css" rel="stylesheet" />';
@@ -2463,7 +2464,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
 
-      /* istanbul ignore if */
+      /* v8 ignore next 3 */
       if (!this.stylesheet) {
         throw new Error('SlickGrid Cannot find stylesheet.');
       }
@@ -2675,7 +2676,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         shrinkLeeway -= shrinkSize;
         widths[i] -= shrinkSize;
       }
-      /* istanbul ignore if - avoid infinite loop */
+      /* v8 ignore next 3 - avoid infinite loop */
       if (prevTotal <= total) {
         break;
       }
@@ -2700,7 +2701,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         total += growSize;
         widths[i] += (total <= availWidth ? growSize : 0);
       }
-      /* istanbul ignore if - avoid infinite loop */
+      /* v8 ignore next 3 - avoid infinite loop */
       if (prevTotal >= total) {
         break;
       }
@@ -3600,7 +3601,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
     }
 
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (!cacheEntry.rowNode) {
       cacheEntry.rowNode = [];
     }
@@ -3699,7 +3700,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const d = this.getDataItem(row);
 
     Object.keys(cacheEntry.cellNodesByColumnIdx).forEach(colIdx => {
-      /* istanbul ignore next */
+      /* v8 ignore next 3 */
       if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(colIdx)) {
         return;
       }
@@ -4082,7 +4083,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const cellsToRemove: number[] = [];
     Object.keys(cacheEntry.cellNodesByColumnIdx).forEach(cellNodeIdx => {
       // I really hate it when people mess with Array.prototype.
-      /* istanbul ignore if */
+      /* v8 ignore next 3 */
       if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(cellNodeIdx)) {
         return;
       }
@@ -5116,6 +5117,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let w = 0;
     for (let i = 0; i < this.columns.length && w <= x; i++) {
+      /* v8 ignore next 3 */
       if (!this.columns[i]) {
         continue;
       }
@@ -5764,7 +5766,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
 
-    /* istanbul ignore next 4 */
+    /* v8 ignore next 5 */
     if (row < 0) {
       row = 0;
     } else if (row >= num_rows) {
@@ -5834,7 +5836,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected gotoRight(row: number, cell: number, _posX?: number): { row: number; cell: number; posX: number; } | null {
-    /* istanbul ignore if */
+    /* v8 ignore next 3 */
     if (cell >= this.columns.length) {
       return null;
     }
@@ -6148,8 +6150,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
         }
         return null;
+        /* v8 ignore next 3 */
       } catch (e) {
-        /* istanbul ignore next */
         return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
       }
     }

@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import 'jest-extended';
 
 import type { Column, DragRowMove, GridOption } from '../../interfaces/index';
 import { SlickRowMoveManager } from '../slickRowMoveManager';
@@ -8,8 +8,8 @@ import { SlickEvent, type SlickGrid } from '../../core/index';
 const GRID_UID = 'slickgrid_12345';
 
 const addVanillaEventPropagation = function (event, target?: HTMLElement) {
-  Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
-  Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
+  Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+  Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   if (target) {
     Object.defineProperty(event, 'target', { writable: true, configurable: true, value: target });
   }
@@ -23,34 +23,34 @@ const mockGridOptions = {
 } as GridOption;
 
 const getEditorLockMock = {
-  cancelCurrentEdit: jest.fn(),
-  commitCurrentEdit: jest.fn(),
-  isActive: jest.fn(),
+  cancelCurrentEdit: vi.fn(),
+  commitCurrentEdit: vi.fn(),
+  isActive: vi.fn(),
 };
 
 const gridStub = {
-  canCellBeActive: jest.fn(),
-  getActiveCell: jest.fn(),
-  getActiveCanvasNode: jest.fn(),
-  getCanvasNode: jest.fn(),
-  getCellFromEvent: jest.fn(),
-  getCellFromPoint: jest.fn(),
-  getCellNode: jest.fn(),
-  getCellNodeBox: jest.fn(),
-  getColumns: jest.fn(),
-  getDataItem: jest.fn(),
-  getDataLength: jest.fn(),
-  getSelectedRows: jest.fn(),
+  canCellBeActive: vi.fn(),
+  getActiveCell: vi.fn(),
+  getActiveCanvasNode: vi.fn(),
+  getCanvasNode: vi.fn(),
+  getCellFromEvent: vi.fn(),
+  getCellFromPoint: vi.fn(),
+  getCellNode: vi.fn(),
+  getCellNodeBox: vi.fn(),
+  getColumns: vi.fn(),
+  getDataItem: vi.fn(),
+  getDataLength: vi.fn(),
+  getSelectedRows: vi.fn(),
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
-  focus: jest.fn(),
-  registerPlugin: jest.fn(),
-  setActiveCell: jest.fn(),
-  setSelectedRows: jest.fn(),
-  scrollCellIntoView: jest.fn(),
-  scrollRowIntoView: jest.fn(),
-  unregisterPlugin: jest.fn(),
+  focus: vi.fn(),
+  registerPlugin: vi.fn(),
+  setActiveCell: vi.fn(),
+  setSelectedRows: vi.fn(),
+  scrollCellIntoView: vi.fn(),
+  scrollRowIntoView: vi.fn(),
+  unregisterPlugin: vi.fn(),
   onDrag: new SlickEvent(),
   onDragInit: new SlickEvent(),
   onDragEnd: new SlickEvent(),
@@ -58,10 +58,10 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 describe('SlickRowMoveManager Plugin', () => {
@@ -94,21 +94,21 @@ describe('SlickRowMoveManager Plugin', () => {
   Object.defineProperty(canvasTR, 'clientHeight', { writable: true, configurable: true, value: 14 });
   Object.defineProperty(canvasTL, 'clientWidth', { writable: true, configurable: true, value: 32 });
   Object.defineProperty(canvasTR, 'clientWidth', { writable: true, configurable: true, value: 33 });
-  jest.spyOn(gridStub, 'getCanvasNode').mockReturnValue(canvasTL);
+  vi.spyOn(gridStub, 'getCanvasNode').mockReturnValue(canvasTL);
 
   beforeEach(() => {
     plugin = new SlickRowMoveManager(pubSubServiceStub);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     plugin?.dispose();
     mockGridOptions.frozenColumn = -1;
     mockGridOptions.frozenRow = -1;
     mockGridOptions.frozenBottom = false;
     mockGridOptions.multiSelect = true;
     mockGridOptions.rowHeight = 25;
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
 
   it('should create the plugin', () => {
@@ -137,7 +137,7 @@ describe('SlickRowMoveManager Plugin', () => {
   });
 
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
-    const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+    const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
     const rowMoveColumnMock = {
       excludeFromColumnPicker: true,
       excludeFromExport: true,
@@ -145,7 +145,7 @@ describe('SlickRowMoveManager Plugin', () => {
       excludeFromHeaderMenu: true,
       excludeFromQuery: true,
       field: 'move-id',
-      formatter: expect.toBeFunction(),
+      formatter: expect.any(Function),
       id: 'move-id',
       name: '',
       behavior: 'selectAndMove',
@@ -157,7 +157,7 @@ describe('SlickRowMoveManager Plugin', () => {
     plugin.create(mockColumns, { rowMoveManager: { columnId: 'move-id' } });
 
     expect(plugin).toBeTruthy();
-    expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', { columns: expect.arrayContaining([{ ...rowMoveColumnMock, formatter: expect.toBeFunction() }]), pluginName: 'RowMoveManager' });
+    expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', { columns: expect.arrayContaining([{ ...rowMoveColumnMock, formatter: expect.any(Function) }]), pluginName: 'RowMoveManager' });
     expect(mockColumns[0]).toEqual(rowMoveColumnMock);
   });
 
@@ -194,7 +194,7 @@ describe('SlickRowMoveManager Plugin', () => {
       excludeFromHeaderMenu: true,
       excludeFromQuery: true,
       field: 'move-id',
-      formatter: expect.toBeFunction(),
+      formatter: expect.any(Function),
       id: 'move-id',
       name: '',
       reorderable: false,
@@ -249,7 +249,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
-    const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     gridStub.onDragInit.notify({
       count: 1, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3, proxy: document.createElement('div'), guide: document.createElement('div'), row: 2, rows: [2],
     } as unknown as DragRowMove, mouseEvent);
@@ -262,7 +262,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
-    const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
       row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
@@ -278,22 +278,22 @@ describe('SlickRowMoveManager Plugin', () => {
   });
 
   it('should create the plugin and trigger "dragStart" and "dragEnd" events, expect new row being moved when different and expect dragEnd to remove guide/proxy/shadow and finally onMoveRows to publish event and callback to be called', () => {
-    const mockOnMoveRows = jest.fn();
+    const mockOnMoveRows = vi.fn();
     const mockNewMovedRow = 0;
     const mockSlickRow = document.createElement('div');
     mockSlickRow.className = 'slick-row';
-    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
-    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
-    jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
-    const setSelectRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
+    const setSelectRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
     plugin.init(gridStub, { hideRowMoveShadow: false, onMoveRows: mockOnMoveRows });
-    const onMoveRowNotifySpy = jest.spyOn(plugin.onMoveRows, 'notify');
+    const onMoveRowNotifySpy = vi.spyOn(plugin.onMoveRows, 'notify');
 
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
-    const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
       row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
@@ -322,15 +322,15 @@ describe('SlickRowMoveManager Plugin', () => {
     const mockNewMovedRow = 0;
     const mockSlickRow = document.createElement('div');
     mockSlickRow.className = 'slick-row';
-    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
 
     plugin.init(gridStub, { cancelEditOnDrag: true });
-    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
-    const cancelEditorSpy = jest.spyOn(gridStub.getEditorLock(), 'cancelCurrentEdit');
+    vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+    const cancelEditorSpy = vi.spyOn(gridStub.getEditorLock(), 'cancelCurrentEdit');
 
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
-    const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       canMove: true, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
       row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
@@ -346,14 +346,14 @@ describe('SlickRowMoveManager Plugin', () => {
     const mockNewMovedRow = 0;
     const mockSlickRow = document.createElement('div');
     mockSlickRow.className = 'slick-row';
-    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
 
     plugin.init(gridStub, { cancelEditOnDrag: true });
-    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+    vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
 
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
-    const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       canMove: true, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
       row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
@@ -365,24 +365,24 @@ describe('SlickRowMoveManager Plugin', () => {
   });
 
   it('should create the plugin and trigger "dragStart" and "drag" events, expect new row being moved', () => {
-    const mockOnBeforeMoveRows = jest.fn();
+    const mockOnBeforeMoveRows = vi.fn();
     const mockNewMovedRow = 0;
     const mockSlickRow = document.createElement('div');
     mockSlickRow.className = 'slick-row';
-    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
-    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
-    jest.spyOn(gridStub, 'getDataLength').mockReturnValue(5);
-    jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
-    const setSelectRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
+    vi.spyOn(gridStub, 'getDataLength').mockReturnValue(5);
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
+    const setSelectRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
     plugin.init(gridStub, { hideRowMoveShadow: false, onBeforeMoveRows: mockOnBeforeMoveRows });
     plugin.usabilityOverride(() => true);
-    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
+    vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
 
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
-    const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
       row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
@@ -407,30 +407,30 @@ describe('SlickRowMoveManager Plugin', () => {
     expect(mockArgs.selectionProxy.style.top).toBe('7px');
     expect(mockArgs.clonedSlickRow.style.display).toBe('block');
     expect(mockArgs.clonedSlickRow.style.top).toBe('6px');
-    expect(mockArgs.canMove).toBeTrue();
+    expect(mockArgs.canMove).toBe(true);
     expect(mockOnBeforeMoveRows).toHaveBeenCalled();
     expect(mockArgs.guide.style.top).toBe('0px');
   });
 
   it('should create the plugin and trigger "dragStart" and "drag" events, expect new row to not be to moved when "onBeforeMoveRows" returns false', () => {
-    const mockOnBeforeMoveRows = jest.fn();
+    const mockOnBeforeMoveRows = vi.fn();
     const mockNewMovedRow = 0;
     const mockSlickRow = document.createElement('div');
     mockSlickRow.className = 'slick-row';
-    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
-    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
-    jest.spyOn(gridStub, 'getDataLength').mockReturnValue(5);
-    jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
-    const setSelectRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
+    vi.spyOn(gridStub, 'getDataLength').mockReturnValue(5);
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
+    const setSelectRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
     plugin.init(gridStub, { hideRowMoveShadow: false, onBeforeMoveRows: mockOnBeforeMoveRows });
     plugin.usabilityOverride(() => true);
-    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
+    vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
 
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
-    const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
       row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
@@ -456,7 +456,7 @@ describe('SlickRowMoveManager Plugin', () => {
     expect(mockArgs.selectionProxy.style.top).toBe('7px');
     expect(mockArgs.clonedSlickRow.style.display).toBe('block');
     expect(mockArgs.clonedSlickRow.style.top).toBe('6px');
-    expect(mockArgs.canMove).toBeFalse();
+    expect(mockArgs.canMove).toBe(false);
     expect(mockArgs.guide.style.top).toBe('-1000px');
   });
 

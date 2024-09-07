@@ -1,10 +1,12 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { Column, GridOption } from '../../interfaces/index';
 import { treeExportFormatter } from '../treeExportFormatter';
 import type { SlickGrid } from '../../core';
 
 const gridStub = {
-  getData: jest.fn(),
-  getOptions: jest.fn(),
+  getData: vi.fn(),
+  getOptions: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('Tree Export Formatter', () => {
@@ -24,7 +26,7 @@ describe('Tree Export Formatter', () => {
     mockGridOptions = {
       treeDataOptions: { levelPropName: 'indent' }
     } as GridOption;
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
 
   it('should throw an error when oarams are mmissing', () => {

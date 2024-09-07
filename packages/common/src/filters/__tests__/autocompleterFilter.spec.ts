@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of, type Subject } from 'rxjs';
 
 import { Filters } from '../index';
@@ -10,7 +11,7 @@ import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import type { SlickGrid } from '../../core/index';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const containerId = 'demo-container';
 
@@ -25,9 +26,9 @@ const gridOptionMock = {
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
   sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
@@ -48,7 +49,7 @@ describe('AutocompleterFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
       id: 'gender', field: 'gender', filterable: true,
@@ -59,7 +60,7 @@ describe('AutocompleterFilter', () => {
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
@@ -68,14 +69,14 @@ describe('AutocompleterFilter', () => {
 
   afterEach(() => {
     filter.destroy();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should throw an error when trying to call init without any arguments', () => {
     expect(() => filter.init(null as any)).toThrow('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
-  it('should throw an error when there is no collection provided in the filter property', (done) => {
+  it('should throw an error when there is no collection provided in the filter property', () => new Promise((done: any) => {
     try {
       mockColumn.filter.collection = undefined;
       filter.init(filterArguments);
@@ -83,7 +84,7 @@ describe('AutocompleterFilter', () => {
       expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.`);
       done();
     }
-  });
+  }));
 
   it('should initialize the filter', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
@@ -127,7 +128,7 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered and triggerOnEveryKeyStroke is enabled', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
 
@@ -149,7 +150,7 @@ describe('AutocompleterFilter', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = true;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues('    abc ');
@@ -168,7 +169,7 @@ describe('AutocompleterFilter', () => {
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter.enableTrimWhiteSpace = true;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues('    abc ');
@@ -187,7 +188,7 @@ describe('AutocompleterFilter', () => {
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter.enableTrimWhiteSpace = true;
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues('xyz', 'NE', true);
@@ -200,7 +201,7 @@ describe('AutocompleterFilter', () => {
   it('should trigger the callback method when user types something in the input and triggerOnEveryKeyStroke is enabled', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
@@ -236,7 +237,7 @@ describe('AutocompleterFilter', () => {
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -251,16 +252,16 @@ describe('AutocompleterFilter', () => {
 
   it('should expect "clear" method be called when input "blur" event is triggered', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
-    const clearSpy = jest.spyOn(filter, 'clear');
+    const clearSpy = vi.spyOn(filter, 'clear');
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
 
     filterElm.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
 
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     expect(clearSpy).toHaveBeenCalled();
     expect(filterElm.value).toBe('');
@@ -269,7 +270,7 @@ describe('AutocompleterFilter', () => {
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -283,7 +284,7 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should create the filter with a default search term when using "collectionAsync" as a Promise and triggerOnEveryKeyStroke is enabled', async () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collectionAsync = Promise.resolve(mockCollection);
     mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
@@ -294,7 +295,7 @@ describe('AutocompleterFilter', () => {
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
 
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
     const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
@@ -304,9 +305,9 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should add custom render callback and expect it to be called when a search is triggered', async () => {
-    const renderSpy = jest.spyOn(filter, 'renderDomElement');
+    const renderSpy = vi.spyOn(filter, 'renderDomElement');
     const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
-    const callbackMock = jest.fn().mockReturnValue(mockDataResponse);
+    const callbackMock = vi.fn().mockReturnValue(mockDataResponse);
 
     mockColumn.filter = {
       filterOptions: {
@@ -323,7 +324,7 @@ describe('AutocompleterFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
     filterElm.focus();
 
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     expect(filter.filterDomElement.classList.contains('slick-autocomplete-loading')).toBe(true);
     expect(callbackMock).toHaveBeenCalledWith('female');
@@ -345,7 +346,7 @@ describe('AutocompleterFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
     filterElm.focus();
 
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
     const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
@@ -371,14 +372,14 @@ describe('AutocompleterFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
     filterElm.focus();
 
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const autocompleteElm = document.body.querySelector('.slick-autocomplete') as HTMLDivElement;
     expect(autocompleteElm.classList.contains('slick-dark-mode')).toBeTruthy();
   });
 
   it('should create the filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client and triggerOnEveryKeyStroke is enabled', async () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
     mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
@@ -389,7 +390,7 @@ describe('AutocompleterFilter', () => {
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
 
-    jest.runAllTimers(); // fast-forward time
+    vi.runAllTimers(); // fast-forward time
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
     const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
@@ -399,7 +400,7 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should create the filter with a default search term when using "collectionAsync" is a Fetch Promise and triggerOnEveryKeyStroke is enabled', async () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
 
     http.status = 200;
@@ -416,7 +417,7 @@ describe('AutocompleterFilter', () => {
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
 
-    jest.runAllTimers(); // fast-forward time
+    vi.runAllTimers(); // fast-forward time
 
     const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
@@ -572,7 +573,7 @@ describe('AutocompleterFilter', () => {
 
   describe('handleSelect method', () => {
     it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
-      const spy = jest.spyOn(filter, 'handleSelect');
+      const spy = vi.spyOn(filter, 'handleSelect');
 
       mockColumn.filter.collection = [];
       mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
@@ -583,7 +584,7 @@ describe('AutocompleterFilter', () => {
     });
 
     it('should expect the "handleSelect" method to be called when the callback method is triggered', () => {
-      const spy = jest.spyOn(filter, 'handleSelect');
+      const spy = vi.spyOn(filter, 'handleSelect');
 
       mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       filter.init(filterArguments);
@@ -593,7 +594,7 @@ describe('AutocompleterFilter', () => {
     });
 
     it('should initialize the filter with filterOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
-      const spy = jest.spyOn(filter, 'handleSelect');
+      const spy = vi.spyOn(filter, 'handleSelect');
 
       mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
@@ -604,7 +605,7 @@ describe('AutocompleterFilter', () => {
     });
 
     it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
-      const renderSpy = jest.spyOn(filter, 'renderDomElement');
+      const renderSpy = vi.spyOn(filter, 'renderDomElement');
       const newCollection = [{ value: 'val1', label: 'label1' }, { value: 'val2', label: 'label2' }];
       const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
 
@@ -618,14 +619,14 @@ describe('AutocompleterFilter', () => {
       mockColumn.filter.collection = newCollection;
       mockColumn.filter.collection.push({ value: 'val3', label: 'label3' });
 
-      jest.runAllTimers(); // fast-forward timer
+      vi.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(3);
       expect(renderSpy).toHaveBeenCalledWith(newCollection);
     });
 
     it('should trigger a re-render of the DOM element when collection changes', async () => {
-      const renderSpy = jest.spyOn(filter, 'renderDomElement');
+      const renderSpy = vi.spyOn(filter, 'renderDomElement');
       const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
 
       mockColumn.filter = {
@@ -637,7 +638,7 @@ describe('AutocompleterFilter', () => {
       await filter.init(filterArguments);
       mockColumn.filter.collection!.push({ value: 'other', label: 'other' });
 
-      jest.runAllTimers(); // fast-forward timer
+      vi.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(2);
       expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter.collection);
@@ -662,7 +663,7 @@ describe('AutocompleterFilter', () => {
       filterElm.focus();
       filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true }));
 
-      jest.runAllTimers(); // fast-forward timer
+      vi.runAllTimers(); // fast-forward timer
 
       const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.autocomplete-custom-four-corners');
       expect(filter.filterDomElement).toBeTruthy();
@@ -672,7 +673,7 @@ describe('AutocompleterFilter', () => {
       expect(autocompleteListElms[0].innerHTML).toContain(mockTemplateString);
     });
 
-    it('should throw an error when "collectionAsync" Promise does not return a valid array', (done) => {
+    it('should throw an error when "collectionAsync" Promise does not return a valid array', () => new Promise((done: any) => {
       const promise = Promise.resolve({ hello: 'world' });
       mockColumn.filter.collectionAsync = promise;
       mockColumn.filter.filterOptions = { showOnFocus: true } as AutocompleterOption;
@@ -680,7 +681,7 @@ describe('AutocompleterFilter', () => {
         expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
         done();
       });
-    });
+    }));
   });
 
   describe('AutocompleterFilter using RxJS Observables', () => {
@@ -700,7 +701,7 @@ describe('AutocompleterFilter', () => {
       divContainer = document.createElement('div');
       divContainer.innerHTML = template;
       document.body.appendChild(divContainer);
-      spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+      spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
       mockColumn = {
         id: 'gender', field: 'gender', filterable: true,
@@ -711,7 +712,7 @@ describe('AutocompleterFilter', () => {
       filterArguments = {
         grid: gridStub,
         columnDef: mockColumn,
-        callback: jest.fn(),
+        callback: vi.fn(),
         filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
       };
 
@@ -720,11 +721,11 @@ describe('AutocompleterFilter', () => {
 
     afterEach(() => {
       filter.destroy();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should create the filter with a default search term when using "collectionAsync" as an Observable and triggerOnEveryKeyStroke is enabled', async () => {
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
       mockColumn.filter.collectionAsync = of(['male', 'female']);
       mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
@@ -737,7 +738,7 @@ describe('AutocompleterFilter', () => {
       filterElm.focus();
       filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', bubbles: true, cancelable: true }));
 
-      jest.runAllTimers(); // fast-forward time
+      vi.runAllTimers(); // fast-forward time
 
       const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
       const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
@@ -765,7 +766,7 @@ describe('AutocompleterFilter', () => {
       mockCollection.push('other');
       (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection);
 
-      jest.runAllTimers(); // fast-forward time
+      vi.runAllTimers(); // fast-forward time
 
       const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
       const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
@@ -787,7 +788,7 @@ describe('AutocompleterFilter', () => {
       };
 
       await filter.init(filterArguments);
-      jest.runAllTimers(); // fast-forward time
+      vi.runAllTimers(); // fast-forward time
 
       const filterCollection = filter.collection as any[];
 
@@ -797,12 +798,12 @@ describe('AutocompleterFilter', () => {
       expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
     });
 
-    it('should throw an error when "collectionAsync" Observable does not return a valid array', (done) => {
+    it('should throw an error when "collectionAsync" Observable does not return a valid array', () => new Promise((done: any) => {
       mockColumn.filter.collectionAsync = of({ hello: 'world' });
       filter.init(filterArguments).catch((e) => {
         expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
         done();
       });
-    });
+    }));
   });
 });

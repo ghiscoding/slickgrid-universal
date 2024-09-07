@@ -1,7 +1,11 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { InputFilter } from '../inputFilter';
 import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 import type { SlickGrid } from '../../core/index';
+
+vi.useFakeTimers();
 
 const containerId = 'demo-container';
 
@@ -15,9 +19,9 @@ const gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('InputFilter', () => {
@@ -31,13 +35,13 @@ describe('InputFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.input, operator: 'EQ' } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
@@ -84,7 +88,7 @@ describe('InputFilter', () => {
     });
 
     it('should call "setValues" and expect that value to be in the callback when triggered', () => {
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
 
       filter.init(filterArguments);
       filter.setValues('abc');
@@ -99,7 +103,7 @@ describe('InputFilter', () => {
     });
 
     it('should call "setValues" and expect that value to be in the callback when triggered by ENTER key', () => {
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
 
       filter.init(filterArguments);
       filter.setValues('abc');
@@ -117,7 +121,7 @@ describe('InputFilter', () => {
 
     it('should call "setValues" with an operator and with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options', () => {
       gridOptionMock.enableFilterTrimWhiteSpace = true;
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
 
       filter.init(filterArguments);
       filter.setValues('    abc ', 'EQ');
@@ -134,7 +138,7 @@ describe('InputFilter', () => {
     it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableTrimWhiteSpace" is enabled in the column filter', () => {
       gridOptionMock.enableFilterTrimWhiteSpace = false;
       mockColumn.filter!.enableTrimWhiteSpace = true;
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
 
       filter.init(filterArguments);
       filter.setValues('    abc ');
@@ -161,7 +165,7 @@ describe('InputFilter', () => {
     });
 
     it('should be able to call "setValues" and call an event trigger', () => {
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
       filter.init(filterArguments);
       filter.setValues('9', '>', true);
       const filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
@@ -212,7 +216,7 @@ describe('InputFilter', () => {
   });
 
   it('should trigger the callback method when user types something in the input', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
@@ -224,8 +228,8 @@ describe('InputFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
   });
 
-  it('should trigger the callback method with a delay when "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+  it('should trigger the callback method with a delay when "filterTypingDebounce" is set in grid options and user types something in the input', () => {
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     gridOptionMock.filterTypingDebounce = 2;
 
     filter.init(filterArguments);
@@ -235,14 +239,13 @@ describe('InputFilter', () => {
     filterElm.value = 'a';
     filterElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
-    setTimeout(() => {
-      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
-      done();
-    }, 2);
+    vi.advanceTimersByTime(2);
+
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
   });
 
-  it('should trigger the callback method with a delay when BackendService is used with a "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+  it('should trigger the callback method with a delay when BackendService is used with a "filterTypingDebounce" is set in grid options and user types something in the input', () => {
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     gridOptionMock.defaultBackendServiceFilterTypingDebounce = 2;
     gridOptionMock.backendServiceApi = {
       service: {}
@@ -255,10 +258,9 @@ describe('InputFilter', () => {
     filterElm.value = 'a';
     filterElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
-    setTimeout(() => {
-      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
-      done();
-    }, 2);
+    vi.advanceTimersByTime(2);
+
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {
@@ -282,7 +284,7 @@ describe('InputFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -296,7 +298,7 @@ describe('InputFilter', () => {
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);

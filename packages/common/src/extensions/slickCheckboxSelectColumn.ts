@@ -13,7 +13,7 @@ const CHECK_ICON = 'mdi-icon-check';
 const UNCHECK_ICON = 'mdi-icon-uncheck';
 
 export class SlickCheckboxSelectColumn<T = any> {
-  pluginName: 'CheckboxSelectColumn' = 'CheckboxSelectColumn' as const;
+  pluginName = 'CheckboxSelectColumn' as const;
   protected _defaults = {
     columnId: '_checkbox_selector',
     cssClass: null,

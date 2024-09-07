@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
 
@@ -13,7 +15,7 @@ const containerId = 'demo-container';
 const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
-  refresh: jest.fn(),
+  refresh: vi.fn(),
 } as unknown as SlickDataView;
 
 const gridOptionMock = {
@@ -23,18 +25,18 @@ const gridOptionMock = {
 } as unknown as GridOption;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  focus: jest.fn(),
+  focus: vi.fn(),
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
+  getColumns: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getHeaderRowColumn: jest.fn(),
-  navigateNext: jest.fn(),
-  navigatePrev: jest.fn(),
-  render: jest.fn(),
+  getHeaderRowColumn: vi.fn(),
+  navigateNext: vi.fn(),
+  navigatePrev: vi.fn(),
+  render: vi.fn(),
   sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
@@ -58,8 +60,8 @@ describe('SingleSelectEditor', () => {
       column: mockColumn,
       item: mockItemData,
       event: null as any,
-      cancelChanges: jest.fn(),
-      commitChanges: jest.fn(),
+      cancelChanges: vi.fn(),
+      commitChanges: vi.fn(),
       container: divContainer,
       columnMetaData: null,
       dataView: dataViewStub,

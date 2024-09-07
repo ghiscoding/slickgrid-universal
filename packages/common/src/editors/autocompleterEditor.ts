@@ -458,7 +458,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   }
 
   // this function should be protected but for unit tests purposes we'll make it public until a better solution is found
-  // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
+  // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Vitest
   handleSelect(item: AutocompleteSearchItem): boolean {
     if (item !== undefined) {
       const event = null; // TODO do we need the event?

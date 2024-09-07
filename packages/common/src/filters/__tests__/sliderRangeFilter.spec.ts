@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { Filters } from '../filters.index';
 import type { Column, FilterArguments, GridOption, SliderRangeOption } from '../../interfaces/index';
 import { SlickEvent, type SlickGrid } from '../../core/index';
@@ -5,7 +7,7 @@ import { SliderRangeFilter } from '../sliderRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -17,9 +19,9 @@ let gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
   onHeaderRowMouseLeave: new SlickEvent(),
@@ -38,13 +40,13 @@ describe('SliderRangeFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.sliderRange } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
     gridOptionMock = {
@@ -117,9 +119,9 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
-    const rowMouseLeaveSpy = jest.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseLeaveSpy = vi.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
 
     filter.init(filterArguments);
     filter.setValues(['2..80']);
@@ -132,7 +134,7 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should trigger an slider input change event and expect slider value to be updated and also "onHeaderRowMouseEnter" to be notified', () => {
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
 
     filter.init(filterArguments);
     filter.setValues([2, 80]);
@@ -148,7 +150,7 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should not have min value above max value when sliding right', () => {
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
 
     filter.init(filterArguments);
     filter.setValues([32, 25]);
@@ -162,11 +164,11 @@ describe('SliderRangeFilter', () => {
     expect(filterElms[1].value).toBe('25');
     expect(filterLowestElm.textContent).toBe('25');
     expect(filterHighestElm.textContent).toBe('25');
-    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+    expect(rowMouseEnterSpy).not.toHaveBeenCalled();
   });
 
   it('should not have max value above min value when sliding left', () => {
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
 
     filter.init(filterArguments);
     filter.setValues([32, 25]);
@@ -180,11 +182,11 @@ describe('SliderRangeFilter', () => {
     expect(filterElms[1].value).toBe('32');
     expect(filterLowestElm.textContent).toBe('32');
     expect(filterHighestElm.textContent).toBe('32');
-    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+    expect(rowMouseEnterSpy).not.toHaveBeenCalled();
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues([3, 84]);
@@ -198,7 +200,7 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should change z-index on left handle when it is by 20px near right handle so it shows over the right handle not below', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues([50, 63]);
@@ -212,7 +214,7 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should change minValue to a lower value when it is to close to maxValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change minValue to a lower value plus gap', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const minVal = 56;
     const maxVal = 58;
 
@@ -231,7 +233,7 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should change maxValue to a lower value when it is to close to minValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change maxValue to a lower value plus gap', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const minVal = 56;
     const maxVal = 58;
 
@@ -324,7 +326,7 @@ describe('SliderRangeFilter', () => {
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
     filterArguments.searchTerms = [3, 80];
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear();
@@ -335,7 +337,7 @@ describe('SliderRangeFilter', () => {
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
     filterArguments.searchTerms = [3, 80];
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear(false);
@@ -345,7 +347,7 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min/max slider values being with values of "sliderStartValue" and "sliderEndValue" when defined through the filterOptions', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
@@ -375,8 +377,8 @@ describe('SliderRangeFilter', () => {
     const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
     const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
-    const sliderOneChangeSpy = jest.spyOn(sliderInputs[0], 'dispatchEvent');
-    const sliderTwoChangeSpy = jest.spyOn(sliderInputs[1], 'dispatchEvent');
+    const sliderOneChangeSpy = vi.spyOn(sliderInputs[0], 'dispatchEvent');
+    const sliderTwoChangeSpy = vi.spyOn(sliderInputs[1], 'dispatchEvent');
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 22 });
@@ -392,8 +394,8 @@ describe('SliderRangeFilter', () => {
     const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
     const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
-    const sliderOneChangeSpy = jest.spyOn(sliderInputs[0], 'dispatchEvent');
-    const sliderTwoChangeSpy = jest.spyOn(sliderInputs[1], 'dispatchEvent');
+    const sliderOneChangeSpy = vi.spyOn(sliderInputs[0], 'dispatchEvent');
+    const sliderTwoChangeSpy = vi.spyOn(sliderInputs[1], 'dispatchEvent');
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 56 });

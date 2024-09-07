@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 
@@ -152,7 +152,7 @@ describe('Service/Utilies', () => {
       expect(wrappedOutput).toEqual(notPromise);
     });
 
-    it('should throw a CancelledException when calling the "cancel" method on the wrapped cancellable promise', (done) => {
+    it('should throw a CancelledException when calling the "cancel" method on the wrapped cancellable promise', () => new Promise((done: any) => {
       const promise = new Promise((resolve) => resolve(true));
       const wrappedPromise = cancellablePromise(promise);
 
@@ -161,18 +161,18 @@ describe('Service/Utilies', () => {
         done();
       });
       const output = wrappedPromise.cancel();
-      expect(output).toBeTrue();
-    });
+      expect(output).toBe(true);
+    }));
 
-    it('should execute Promise as regular when it is not cancelled', (done) => {
+    it('should execute Promise as regular when it is not cancelled', () => new Promise((done: any) => {
       const promise = new Promise((resolve) => resolve(true));
       const wrappedPromise = cancellablePromise(promise);
 
       wrappedPromise.promise.then((output) => {
-        expect(output).toBeTrue();
+        expect(output).toBe(true);
         done();
       });
-    });
+    }));
   });
 
   describe('castObservableToPromise method', () => {
@@ -665,7 +665,7 @@ describe('Service/Utilies', () => {
 
   describe('isColumnDateType() method', () => {
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should return True when FieldType.date is provided', () => {
@@ -1150,8 +1150,8 @@ describe('Service/Utilies', () => {
     });
 
     it('should be able to unsubscribe all PubSub events or anything that has an unsubscribe method', () => {
-      const mockUnsubscribe1 = jest.fn();
-      const mockUnsubscribe2 = jest.fn();
+      const mockUnsubscribe1 = vi.fn();
+      const mockUnsubscribe2 = vi.fn();
       const mockSubscription1 = { unsubscribe: mockUnsubscribe1 };
       const mockSubscription2 = { unsubscribe: mockUnsubscribe2 };
       const mockSubscriptions = [mockSubscription1, mockSubscription2];

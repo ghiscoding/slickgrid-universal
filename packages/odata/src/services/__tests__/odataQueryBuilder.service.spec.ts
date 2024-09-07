@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CaseType } from '@slickgrid-universal/common';
 
 import { OdataQueryBuilderService } from '../odataQueryBuilder.service';
@@ -10,7 +11,7 @@ describe('OdataService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create the service', () => {

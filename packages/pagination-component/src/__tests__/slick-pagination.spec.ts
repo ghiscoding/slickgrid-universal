@@ -1,17 +1,20 @@
+import { afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { type GridOption, type PaginationService, SharedService, type SlickGrid, } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { TranslateServiceStub } from '../../../../test/translateServiceStub';
 import { SlickPaginationComponent } from '../slick-pagination.component';
 
+vi.useFakeTimers();
+
 function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\r\n\s{2,}/g, '');
 }
 
 const gridStub = {
-  getOptions: jest.fn(),
+  getOptions: vi.fn(),
   getUID: () => 'slickgrid_123456',
-  registerPlugin: jest.fn(),
+  registerPlugin: vi.fn(),
 } as unknown as SlickGrid;
 
 const mockGridOptions = { enableTranslate: false } as GridOption;
@@ -36,16 +39,16 @@ const basicPaginationServiceStub = {
   totalItems: 95,
   availablePageSizes: [5, 10, 15, 20],
   isCursorBased: false,
-  pageInfoTotalItems: jest.fn(),
-  getFullPagination: jest.fn(),
-  goToFirstPage: jest.fn(),
-  goToLastPage: jest.fn(),
-  goToNextPage: jest.fn(),
-  goToPreviousPage: jest.fn(),
-  goToPageNumber: jest.fn(),
-  changeItemPerPage: jest.fn(),
-  dispose: jest.fn(),
-  init: jest.fn(),
+  pageInfoTotalItems: vi.fn(),
+  getFullPagination: vi.fn(),
+  goToFirstPage: vi.fn(),
+  goToLastPage: vi.fn(),
+  goToNextPage: vi.fn(),
+  goToPreviousPage: vi.fn(),
+  goToPageNumber: vi.fn(),
+  changeItemPerPage: vi.fn(),
+  dispose: vi.fn(),
+  init: vi.fn(),
 } as unknown as PaginationService;
 
 const paginationServiceStubWithCursor = {
@@ -55,12 +58,12 @@ const paginationServiceStubWithCursor = {
 
 [basicPaginationServiceStub, paginationServiceStubWithCursor].forEach(stub => {
 
-  Object.defineProperty(stub, 'dataFrom', { get: jest.fn(() => mockFullPagination.dataFrom), set: jest.fn() });
-  Object.defineProperty(stub, 'dataTo', { get: jest.fn(() => mockFullPagination.dataTo), set: jest.fn() });
-  Object.defineProperty(stub, 'pageCount', { get: jest.fn(() => mockFullPagination.pageCount), set: jest.fn() });
-  Object.defineProperty(stub, 'pageNumber', { get: jest.fn(() => mockFullPagination.pageNumber), set: jest.fn() });
-  Object.defineProperty(stub, 'itemsPerPage', { get: jest.fn(() => mockFullPagination.pageSize), set: jest.fn() });
-  Object.defineProperty(stub, 'totalItems', { get: jest.fn(() => mockFullPagination.totalItems), set: jest.fn() });
+  Object.defineProperty(stub, 'dataFrom', { get: vi.fn(() => mockFullPagination.dataFrom), set: vi.fn() });
+  Object.defineProperty(stub, 'dataTo', { get: vi.fn(() => mockFullPagination.dataTo), set: vi.fn() });
+  Object.defineProperty(stub, 'pageCount', { get: vi.fn(() => mockFullPagination.pageCount), set: vi.fn() });
+  Object.defineProperty(stub, 'pageNumber', { get: vi.fn(() => mockFullPagination.pageNumber), set: vi.fn() });
+  Object.defineProperty(stub, 'itemsPerPage', { get: vi.fn(() => mockFullPagination.pageSize), set: vi.fn() });
+  Object.defineProperty(stub, 'totalItems', { get: vi.fn(() => mockFullPagination.totalItems), set: vi.fn() });
 });
 
 describe('Slick-Pagination Component', () => {
@@ -90,9 +93,9 @@ describe('Slick-Pagination Component', () => {
       });
 
       beforeEach(() => {
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        jest.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination);
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
+        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        vi.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
         div = document.createElement('div');
         document.body.appendChild(div);
         sharedService = new SharedService();
@@ -105,7 +108,7 @@ describe('Slick-Pagination Component', () => {
 
       afterEach(() => {
         // clear all the spyOn mocks to not influence next test
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         component.dispose();
       });
 
@@ -132,15 +135,15 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should call changeToFirstPage() from the View and expect the pagination service to be called with correct method', () => {
-        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToFirstPage');
+        const spy = vi.spyOn(paginationServiceStub as PaginationService, 'goToFirstPage');
 
         const button = document.querySelector('.icon-seek-first') as HTMLAnchorElement;
         button.click();
         mockFullPagination.pageNumber = 1;
         mockFullPagination.dataFrom = 1;
         mockFullPagination.dataTo = 10;
-        jest.spyOn(paginationServiceStub as PaginationService, 'dataFrom', 'get').mockReturnValue(mockFullPagination.dataFrom);
-        jest.spyOn(paginationServiceStub as PaginationService, 'dataTo', 'get').mockReturnValue(mockFullPagination.dataTo);
+        vi.spyOn(paginationServiceStub as PaginationService, 'dataFrom', 'get').mockReturnValue(mockFullPagination.dataFrom);
+        vi.spyOn(paginationServiceStub as PaginationService, 'dataTo', 'get').mockReturnValue(mockFullPagination.dataTo);
 
 
         const itemFrom = document.querySelector('.item-from') as HTMLInputElement;
@@ -164,7 +167,7 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should change the page number and expect the pagination service to go to that page (except for cursor based pagination)', () => {
-        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToPageNumber');
+        const spy = vi.spyOn(paginationServiceStub as PaginationService, 'goToPageNumber');
 
         const newPageNumber = 3;
         const input = document.querySelector('input.page-number') as HTMLInputElement;
@@ -188,7 +191,7 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should call changeToNextPage() from the View and expect the pagination service to be called with correct method', () => {
-        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToNextPage');
+        const spy = vi.spyOn(paginationServiceStub as PaginationService, 'goToNextPage');
 
         const button = document.querySelector('.icon-seek-next') as HTMLAnchorElement;
         button.click();
@@ -198,7 +201,7 @@ describe('Slick-Pagination Component', () => {
 
       it('should call changeToPreviousPage() from the View and expect the pagination service to be called with correct method', () => {
         mockFullPagination.pageNumber = 2;
-        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToPreviousPage');
+        const spy = vi.spyOn(paginationServiceStub as PaginationService, 'goToPreviousPage');
 
         const button = document.querySelector('.icon-seek-prev') as HTMLAnchorElement;
         button.click();
@@ -207,7 +210,7 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should call changeToLastPage() from the View and expect the pagination service to be called with correct method', () => {
-        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'goToLastPage');
+        const spy = vi.spyOn(paginationServiceStub as PaginationService, 'goToLastPage');
 
         const button = document.querySelector('.icon-seek-end') as HTMLAnchorElement;
         button.click();
@@ -216,7 +219,7 @@ describe('Slick-Pagination Component', () => {
       });
 
       it('should change the changeItemPerPage select dropdown and expect the pagination service call a change', () => {
-        const spy = jest.spyOn(paginationServiceStub as PaginationService, 'changeItemPerPage');
+        const spy = vi.spyOn(paginationServiceStub as PaginationService, 'changeItemPerPage');
 
         const newItemsPerPage = 10;
         const select = document.querySelector('select') as HTMLSelectElement;
@@ -268,8 +271,8 @@ describe('Slick-Pagination Component', () => {
       });
 
       test(`when "onPaginationSetCursorBased" event is triggered then expect pagination to be recreated`, () => {
-        const disposeSpy = jest.spyOn(component, 'dispose');
-        const renderPagSpy = jest.spyOn(component, 'renderPagination');
+        const disposeSpy = vi.spyOn(component, 'dispose');
+        const renderPagSpy = vi.spyOn(component, 'renderPagination');
 
         mockFullPagination.pageNumber = 1;
         mockFullPagination.pageCount = 10;
@@ -314,9 +317,9 @@ describe('with different i18n locale', () => {
 
   beforeEach(() => {
     mockGridOptions.enableTranslate = true;
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
-    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination2);
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
+    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    vi.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination2);
     div = document.createElement('div');
     document.body.appendChild(div);
     sharedService = new SharedService();
@@ -333,20 +336,19 @@ describe('with different i18n locale', () => {
       .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
   });
 
-  it('should create a the Slick-Pagination component in the DOM and expect different locale when changed', (done) => {
+  it('should create a the Slick-Pagination component in the DOM and expect different locale when changed', () => {
     translateService.use('fr');
     eventPubSubService.publish('onLanguageChange', 'fr');
 
-    setTimeout(() => {
-      const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
-      const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
-      expect(translateService.getCurrentLanguage()).toBe('fr');
-      expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
-      expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
-      expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
-      expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">de</span> `);
-      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">éléments</span> `);
-      done();
-    }, 50);
+    vi.advanceTimersByTime(50);
+
+    const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
+    const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
+    expect(translateService.getCurrentLanguage()).toBe('fr');
+    expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
+    expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
+    expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
+    expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">de</span> `);
+    expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">éléments</span> `);
   });
 });

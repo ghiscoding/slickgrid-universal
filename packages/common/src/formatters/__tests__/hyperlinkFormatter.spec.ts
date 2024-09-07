@@ -1,16 +1,18 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { Column } from '../../interfaces/index';
 import { hyperlinkFormatter } from '../hyperlinkFormatter';
 import type { SlickGrid } from '../../core/index';
 
 const gridStub = {
-  getData: jest.fn(),
-  getOptions: jest.fn(),
+  getData: vi.fn(),
+  getOptions: vi.fn(),
   sanitizeHtmlString: (str) => str
 } as unknown as SlickGrid;
 
 describe('the Hyperlink Formatter', () => {
   beforeEach(() => {
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
   });
 
   it('should return empty string when value is not an hyperlink and is empty', () => {

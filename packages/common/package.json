@@ -66,7 +66,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@excel-builder-vanilla/types": "^3.0.3",
+    "@excel-builder-vanilla/types": "^3.0.7",
     "@formkit/tempo": "^0.1.2",
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/event-pub-sub": "workspace:~",
@@ -75,7 +75,7 @@
     "@types/trusted-types": "^2.0.7",
     "autocompleter": "^9.3.2",
     "dequal": "^2.0.3",
-    "multiple-select-vanilla": "^3.3.2",
+    "multiple-select-vanilla": "^3.3.3",
     "sortablejs": "^1.15.2",
     "un-flatten-tree": "^2.0.12",
     "vanilla-calendar-pro": "^2.9.10"

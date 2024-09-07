@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import {
   type Column,
   type CompositeEditorOpenDetailOption,
@@ -15,6 +15,8 @@ import {
 import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
+
+vi.useFakeTimers();
 
 const gridOptionsMock = {
   editable: true,
@@ -43,78 +45,78 @@ const gridOptionsMock = {
 } as GridOption;
 
 const dataViewStub = {
-  getAllSelectedIds: jest.fn(),
-  getAllSelectedFilteredIds: jest.fn(),
-  getAllSelectedFilteredItems: jest.fn(),
-  getItem: jest.fn(),
-  getItemById: jest.fn(),
-  getItemCount: jest.fn(),
-  getItems: jest.fn(),
-  getLength: jest.fn(),
-  mapIdsToRows: jest.fn(),
-  mapRowsToIds: jest.fn(),
-  refresh: jest.fn(),
-  sort: jest.fn(),
-  reSort: jest.fn(),
-  setItems: jest.fn(),
-  updateItem: jest.fn(),
+  getAllSelectedIds: vi.fn(),
+  getAllSelectedFilteredIds: vi.fn(),
+  getAllSelectedFilteredItems: vi.fn(),
+  getItem: vi.fn(),
+  getItemById: vi.fn(),
+  getItemCount: vi.fn(),
+  getItems: vi.fn(),
+  getLength: vi.fn(),
+  mapIdsToRows: vi.fn(),
+  mapRowsToIds: vi.fn(),
+  refresh: vi.fn(),
+  sort: vi.fn(),
+  reSort: vi.fn(),
+  setItems: vi.fn(),
+  updateItem: vi.fn(),
 } as unknown as SlickDataView;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
-  isActive: jest.fn(),
+  commitCurrentEdit: vi.fn(),
+  isActive: vi.fn(),
 };
 
 const getEditControllerMock = {
-  cancelCurrentEdit: jest.fn(),
-  commitCurrentEdit: jest.fn(),
+  cancelCurrentEdit: vi.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridServiceStub = {
-  addItem: jest.fn(),
-  updateItems: jest.fn(),
+  addItem: vi.fn(),
+  updateItems: vi.fn(),
 } as unknown as GridService;
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  autosizeColumns: jest.fn(),
-  editActiveCell: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getActiveCell: jest.fn(),
-  getCellNode: jest.fn(),
-  getCellEditor: jest.fn(),
-  getData: jest.fn(),
-  getDataItem: jest.fn(),
+  autosizeColumns: vi.fn(),
+  editActiveCell: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getActiveCell: vi.fn(),
+  getCellNode: vi.fn(),
+  getCellEditor: vi.fn(),
+  getData: vi.fn(),
+  getDataItem: vi.fn(),
   getEditController: () => getEditControllerMock,
-  getSelectedRows: jest.fn(),
-  getSelectionModel: jest.fn(),
+  getSelectedRows: vi.fn(),
+  getSelectionModel: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getOptions: jest.fn(),
+  getOptions: vi.fn(),
   getUID: () => 'slickgrid_123456',
-  getColumns: jest.fn(),
-  getSortColumns: jest.fn(),
-  invalidate: jest.fn(),
-  onLocalSortChanged: jest.fn(),
+  getColumns: vi.fn(),
+  getSortColumns: vi.fn(),
+  invalidate: vi.fn(),
+  onLocalSortChanged: vi.fn(),
   onAddNewRow: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
   onClick: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-  render: jest.fn(),
-  setActiveCell: jest.fn(),
-  setSelectedRows: jest.fn(),
-  setActiveRow: jest.fn(),
-  setSortColumns: jest.fn(),
+  render: vi.fn(),
+  setActiveCell: vi.fn(),
+  setSelectedRows: vi.fn(),
+  setActiveRow: vi.fn(),
+  setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
 
 const rowSelectionModelStub = {
   pluginName: 'RowSelectionModel',
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-  getSelectedRanges: jest.fn(),
-  setSelectedRanges: jest.fn(),
-  getSelectedRows: jest.fn(),
-  setSelectedRows: jest.fn(),
+  constructor: vi.fn(),
+  init: vi.fn(),
+  destroy: vi.fn(),
+  getSelectedRanges: vi.fn(),
+  setSelectedRanges: vi.fn(),
+  getSelectedRows: vi.fn(),
+  setSelectedRows: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 
@@ -152,24 +154,24 @@ describe('CompositeEditorService', () => {
 
   describe('Integration Tests', () => {
     beforeEach(() => {
-      jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
-      jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 0, cell: 0 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(document.createElement('div'));
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      jest.spyOn(dataViewStub, 'getLength').mockReturnValue(50);
+      vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+      vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 0, cell: 0 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(document.createElement('div'));
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      vi.spyOn(dataViewStub, 'getLength').mockReturnValue(50);
     });
 
     afterEach(() => {
       // clear all the spyOn mocks to not influence next test
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       component?.dispose();
       gridOptionsMock.enableCellNavigation = true;
     });
 
-    it('should throw an error when trying to call "init()" method without finding GridService from the ContainerService', (done) => {
+    it('should throw an error when trying to call "init()" method without finding GridService from the ContainerService', () => new Promise((done: any) => {
       try {
         container.registerInstance('GridService', null);
         component = new SlickCompositeEditorComponent();
@@ -178,12 +180,12 @@ describe('CompositeEditorService', () => {
         expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the GridService is not being loaded properly, make sure the Container Service is properly implemented.');
         done();
       }
-    });
+    }));
 
-    it('should throw an error when "enableTranslateLabel" is set without a valid Translater Service', (done) => {
+    it('should throw an error when "enableTranslateLabel" is set without a valid Translater Service', () => new Promise((done: any) => {
       try {
         const newGridOptions = { ...gridOptionsMock, enableTranslate: true };
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
 
         translateService = undefined as any;
         component = new SlickCompositeEditorComponent();
@@ -192,137 +194,130 @@ describe('CompositeEditorService', () => {
         expect(e.toString()).toContain(`[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`);
         done();
       }
-    });
+    }));
 
-    it('should throw an error when the Grid Option flag "enableAddRow" is not enabled', (done) => {
+    it('should throw an error when the Grid Option flag "enableAddRow" is not enabled', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const newGridOptions = { ...gridOptionsMock, enableAddRow: false };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
 
-      const mockOnError = jest.fn();
+      const mockOnError = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', modalType: 'create', onError: mockOnError } as CompositeEditorOpenDetailOption;
-      const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+      const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
-        component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when cloning/creating a new item.', });
-        done();
-      });
+      vi.runAllTimers();
+
+      component.openDetails(mockModalOptions);
+      expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when cloning/creating a new item.', });
     });
 
-    it('should throw an error when trying to edit a row that does not return any data context', (done) => {
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(null);
+    it('should throw an error when trying to edit a row that does not return any data context', () => {
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(null);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
 
-      const mockOnError = jest.fn();
+      const mockOnError = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', onError: mockOnError } as CompositeEditorOpenDetailOption;
-      const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+      const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
-        component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.', });
-        done();
-      });
+      vi.runAllTimers();
+
+      component.openDetails(mockModalOptions);
+      expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.', });
     });
 
-    it('should throw an error when the Grid Option flag "enableCellNavigation" is not enabled', (done) => {
+    it('should throw an error when the Grid Option flag "enableCellNavigation" is not enabled', () => {
       const newGridOptions = { ...gridOptionsMock, enableCellNavigation: false };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
 
-      const mockOnError = jest.fn();
+      const mockOnError = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
-      const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+      const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
-        component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.' });
-        done();
-      });
+      vi.runAllTimers();
+
+      component.openDetails(mockModalOptions);
+      expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.' });
     });
 
-    it('should show an error in console log when using default onError and the Grid Option flag "enableCellNavigation" is not enabled', (done) => {
-      const consoleSpy = jest.spyOn(global.console, 'log').mockReturnValue();
+    it('should show an error in console log when using default onError and the Grid Option flag "enableCellNavigation" is not enabled', () => {
+      const consoleSpy = vi.spyOn(global.console, 'log').mockReturnValue();
       const newGridOptions = { ...gridOptionsMock, enableCellNavigation: false };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
 
       const mockModalOptions = { headerTitle: 'Details' } as CompositeEditorOpenDetailOption;
 
-      setTimeout(() => {
-        component.openDetails(mockModalOptions);
-        expect(consoleSpy).toHaveBeenCalledWith('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.');
-        done();
-      });
+      vi.runAllTimers();
+
+      component.openDetails(mockModalOptions);
+      expect(consoleSpy).toHaveBeenCalledWith('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.');
     });
 
-    it('should throw an error when there are no rows or active cell selected', (done) => {
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(null as any);
+    it('should throw an error when there are no rows or active cell selected', () => {
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(null as any);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
-      const mockOnError = jest.fn();
+      const mockOnError = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
-      const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+      const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
-        component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit or clone operation.' });
-        done();
-      });
+      vi.runAllTimers();
+
+      component.openDetails(mockModalOptions);
+      expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit or clone operation.' });
     });
 
-    it('should throw an error when grid is not editable (readonly)', (done) => {
+    it('should throw an error when grid is not editable (readonly)', () => {
       const newGridOptions = { ...gridOptionsMock, editable: false };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
-      const mockOnError = jest.fn();
+      const mockOnError = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
-      const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+      const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
-        component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.', });
-        done();
-      });
+      vi.runAllTimers();
+
+      component.openDetails(mockModalOptions);
+      expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.', });
     });
 
-    it('should throw an error when there are no Editors found in the column definitions', (done) => {
+    it('should throw an error when there are no Editors found in the column definitions', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([
         { id: 'field1', field: 'field1', width: 100, nameKey: 'FIELD_1' },
         { id: 'field2', field: 'field2', width: 75 }
       ]);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
-      const mockOnError = jest.fn();
+      const mockOnError = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', onError: mockOnError } as CompositeEditorOpenDetailOption;
-      const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+      const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-      setTimeout(() => {
-        component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'NO_EDITOR_FOUND', message: 'We could not find any Editor in your Column Definition' });
-        done();
-      });
+      vi.runAllTimers();
+
+      component.openDetails(mockModalOptions);
+      expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'NO_EDITOR_FOUND', message: 'We could not find any Editor in your Column Definition' });
     });
 
     it('should not create neither render the component when isActive() returns True & commitCurrentEdit() returns false', () => {
-      jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
-      jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
+      vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+      vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -338,7 +333,7 @@ describe('CompositeEditorService', () => {
     it('should make sure Slick-Composite-Editor is being created and rendered with 1 column layout & also expect column name html to be rendered as well', () => {
       columnsMock[2].name = '<span class="mdi mdi-alert-circle" title="tooltip text"></span> Field 3'; // add tooltip
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -382,8 +377,8 @@ describe('CompositeEditorService', () => {
         { id: 'lastName', field: 'lastName', width: 100, name: 'Last Name', editorClass: Editors.text, editor: { model: Editors.text, compositeEditorFormOrder: 1, } },
         { id: 'firstName', field: 'firstName', width: 100, name: 'First Name', editorClass: Editors.text, editor: { model: Editors.text, compositeEditorFormOrder: 0, } },
       ] as Column[];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(sortedColumnsMock);
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(sortedColumnsMock);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -404,23 +399,23 @@ describe('CompositeEditorService', () => {
       expect(compositeBodyElm).toBeTruthy();
 
       // it shouldn't have the order it was added in the column definitions array
-      expect(itemDetailsContainerElm[0].classList.contains('editor-age')).toBeFalse();
-      expect(itemDetailsContainerElm[1].classList.contains('editor-middleName')).toBeFalse();
-      expect(itemDetailsContainerElm[2].classList.contains('editor-lastName')).toBeFalse();
-      expect(itemDetailsContainerElm[3].classList.contains('editor-firstName')).toBeFalse();
+      expect(itemDetailsContainerElm[0].classList.contains('editor-age')).toBe(false);
+      expect(itemDetailsContainerElm[1].classList.contains('editor-middleName')).toBe(false);
+      expect(itemDetailsContainerElm[2].classList.contains('editor-lastName')).toBe(false);
+      expect(itemDetailsContainerElm[3].classList.contains('editor-firstName')).toBe(false);
 
       // but it should have the order it was defined by `compositeEditorFormOrder` sort order
-      expect(itemDetailsContainerElm[0].classList.contains('editor-firstName')).toBeTrue();
-      expect(itemDetailsContainerElm[1].classList.contains('editor-lastName')).toBeTrue();
-      expect(itemDetailsContainerElm[2].classList.contains('editor-age')).toBeTrue();
-      expect(itemDetailsContainerElm[3].classList.contains('editor-middleName')).toBeTrue();
+      expect(itemDetailsContainerElm[0].classList.contains('editor-firstName')).toBe(true);
+      expect(itemDetailsContainerElm[1].classList.contains('editor-lastName')).toBe(true);
+      expect(itemDetailsContainerElm[2].classList.contains('editor-age')).toBe(true);
+      expect(itemDetailsContainerElm[3].classList.contains('editor-middleName')).toBe(true);
     });
 
     it('should make sure Slick-Composite-Editor is being created and rendered with 2 columns layout when having more than 8 but less than 15 column definitions', () => {
       const copyColumnsMock: Column[] = createNewColumDefinitions(8);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -448,9 +443,9 @@ describe('CompositeEditorService', () => {
 
     it('should make sure Slick-Composite-Editor is being created and rendered with 3 columns layout when having more than 15 column definitions', () => {
       const copyColumnsMock: Column[] = createNewColumDefinitions(15);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -479,10 +474,10 @@ describe('CompositeEditorService', () => {
     it('should add Dark Mode CSS classes to the modal when option is enabled in grid options', () => {
       const newGridOptions = { ...gridOptionsMock, darkMode: true } as GridOption;
       const copyColumnsMock: Column[] = createNewColumDefinitions(15);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -499,9 +494,9 @@ describe('CompositeEditorService', () => {
 
     it('should activate next available cell with an Editor when current active cell does not have an Editor', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 4, cell: 1 }); // column index 1 has no Editor
-      const setActiveSpy = jest.spyOn(gridStub, 'setActiveCell');
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 4, cell: 1 }); // column index 1 has no Editor
+      const setActiveSpy = vi.spyOn(gridStub, 'setActiveCell');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -517,7 +512,7 @@ describe('CompositeEditorService', () => {
 
     it('should be able to dispose the component', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -536,7 +531,7 @@ describe('CompositeEditorService', () => {
 
     it('should dispose the component when clicking in the backdrop outside the modal window when using the options "backdrop: null"', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -554,8 +549,8 @@ describe('CompositeEditorService', () => {
 
     it('should execute "onBeforeOpen" callback before opening the composite modal window', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      const mockOnBeforeCallback = jest.fn();
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      const mockOnBeforeCallback = vi.fn();
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -570,8 +565,8 @@ describe('CompositeEditorService', () => {
 
     it('should execute "onRendered" callback after creating & rendering the composite modal window', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      const mockOnRenderedCallback = jest.fn();
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      const mockOnRenderedCallback = vi.fn();
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -584,19 +579,20 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm).toBeTruthy();
     });
 
-    it('should execute "onClose" callback when user confirms the closing of the modal when "onClose" callback is defined', (done) => {
+    it('should execute "onClose" callback when user confirms the closing of the modal when "onClose" callback is defined', async () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55, field2: 'Test' };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const cancelSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
-      const mockOnClose = jest.fn();
+      const mockOnClose = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', onClose: mockOnClose } as CompositeEditorOpenDetailOption;
-      const spyOnClose = jest.spyOn(mockModalOptions, 'onClose').mockReturnValue(Promise.resolve(true));
+      const spyOnClose = vi.spyOn(mockModalOptions, 'onClose');
+      (spyOnClose as Mock).mockReturnValue(Promise.resolve(true));
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
-      component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+      component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
       gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct, formValues: { productName: 'test' }, editors: {}, grid: gridStub });
 
       const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
@@ -610,31 +606,31 @@ describe('CompositeEditorService', () => {
       const productNameLabelElm = productNameDetailContainerElm.querySelector('.item-details-label.editor-productName') as HTMLSelectElement;
       compositeFooterCancelBtnElm.click();
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(productNameLabelElm.textContent).toBe('Product');
-        expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
-        expect(compositeFooterCancelBtnElm).toBeTruthy();
-        expect(spyOnClose).toHaveBeenCalled();
-        expect(getEditSpy).toHaveBeenCalledTimes(2);
-        expect(cancelSpy).toHaveBeenCalledTimes(1);
-        done();
-      });
+      await new Promise(process.nextTick);
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(productNameLabelElm.textContent).toBe('Product');
+      expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
+      expect(compositeFooterCancelBtnElm).toBeTruthy();
+      expect(spyOnClose).toHaveBeenCalled();
+      expect(getEditSpy).toHaveBeenCalledTimes(2);
+      expect(cancelSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should NOT execute "onClose" callback when user confirms the closing of the modal when "onClose" callback is defined', (done) => {
+    it('should NOT execute "onClose" callback when user confirms the closing of the modal when "onClose" callback is defined', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      const cancelSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
-      const mockOnClose = jest.fn();
+      const mockOnClose = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', onClose: mockOnClose } as CompositeEditorOpenDetailOption;
-      const spyOnClose = jest.spyOn(mockModalOptions, 'onClose').mockReturnValue(Promise.resolve(false));
+      const spyOnClose = vi.spyOn(mockModalOptions, 'onClose');
+      (spyOnClose as Mock).mockReturnValue(Promise.resolve(false));
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
@@ -651,26 +647,25 @@ describe('CompositeEditorService', () => {
       const productNameLabelElm = productNameDetailContainerElm.querySelector('.item-details-label.editor-productName') as HTMLSelectElement;
       compositeFooterCancelBtnElm.click();
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.eventHandler).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(productNameLabelElm.textContent).toBe('Product');
-        expect(productNameDetailCellElm.classList.contains('modified')).toBe(false); // false since formValues: fieldX doesn't exist
-        expect(compositeFooterCancelBtnElm).toBeTruthy();
-        expect(spyOnClose).toHaveBeenCalled();
-        expect(cancelSpy).not.toHaveBeenCalled();
-        done();
-      });
+      vi.runAllTimers();
+
+      expect(component).toBeTruthy();
+      expect(component.eventHandler).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(productNameLabelElm.textContent).toBe('Product');
+      expect(productNameDetailCellElm.classList.contains('modified')).toBe(false); // false since formValues: fieldX doesn't exist
+      expect(compositeFooterCancelBtnElm).toBeTruthy();
+      expect(spyOnClose).toHaveBeenCalled();
+      expect(cancelSpy).not.toHaveBeenCalled();
     });
 
     it('should pass a Header Title that has to be parsed from the dataContext object', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -691,8 +686,8 @@ describe('CompositeEditorService', () => {
     });
 
     it('should execute "cancelCurrentEdit" when the "Esc" key is typed', () => {
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const cancelSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -712,9 +707,9 @@ describe('CompositeEditorService', () => {
     });
 
     it('should execute "validate" on current Editor when the "Tab" key is typed', () => {
-      const currentEditorMock = { validate: jest.fn() };
-      const getEditCellSpy = jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-      const validateSpy = jest.spyOn(currentEditorMock, 'validate');
+      const currentEditorMock = { validate: vi.fn() };
+      const getEditCellSpy = vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      const validateSpy = vi.spyOn(currentEditorMock, 'validate');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -734,8 +729,8 @@ describe('CompositeEditorService', () => {
     });
 
     it('should execute "cancelCurrentEdit" when the "Cancel" button is clicked', () => {
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const cancelSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -757,8 +752,8 @@ describe('CompositeEditorService', () => {
     });
 
     it('should execute "cancelCurrentEdit" when the "Close" button is clicked even with option "showCloseButtonOutside" is enabled', () => {
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const closeSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const closeSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -777,8 +772,8 @@ describe('CompositeEditorService', () => {
     });
 
     it('should execute "commitCurrentEdit" when the "Save" button is clicked', () => {
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const saveSpy = jest.spyOn(gridStub.getEditController() as any, 'commitCurrentEdit');
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const saveSpy = vi.spyOn(gridStub.getEditController() as any, 'commitCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -798,35 +793,35 @@ describe('CompositeEditorService', () => {
 
     describe('clone modal type', () => {
       beforeEach(() => {
-        jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([]);
-        jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([]);
+        vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([]);
+        vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([]);
       });
 
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should add a new cloned item in the grid and leave the selected row be to cloned untouched when the "Clone" button is clicked', () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: jest.fn() };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
-        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
+        const currentEditorMock = { validate: vi.fn() };
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
+        vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        const gridSrvAddItemSpy = vi.spyOn(gridServiceStub, 'addItem');
 
-        const mockOnClose = jest.fn();
+        const mockOnClose = vi.fn();
         const mockModalOptions = { headerTitle: 'Details', modalType: 'clone', insertNewId: 3, onClose: mockOnClose } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+        component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
         gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct2, formValues: { productName: 'Product Cloned' }, editors: {}, grid: gridStub });
-        const disposeSpy = jest.spyOn(component, 'dispose');
+        const disposeSpy = vi.spyOn(component, 'dispose');
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
@@ -860,25 +855,25 @@ describe('CompositeEditorService', () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: jest.fn() };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct1); // find existing item
-        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
+        const currentEditorMock = { validate: vi.fn() };
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct1); // find existing item
+        vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        const gridSrvAddItemSpy = vi.spyOn(gridServiceStub, 'addItem');
 
-        const mockOnClose = jest.fn();
-        const mockOnError = jest.fn();
+        const mockOnClose = vi.fn();
+        const mockOnError = vi.fn();
         const mockModalOptions = { headerTitle: 'Details', modalType: 'clone', insertNewId: 222, onClose: mockOnClose, onError: mockOnError } as CompositeEditorOpenDetailOption;
-        const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+        const spyOnError = vi.spyOn(mockModalOptions, 'onError');
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+        component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
         gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct2, formValues: { productName: 'Product Cloned' }, editors: {}, grid: gridStub });
-        const disposeSpy = jest.spyOn(component, 'dispose');
+        const disposeSpy = vi.spyOn(component, 'dispose');
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
@@ -907,29 +902,29 @@ describe('CompositeEditorService', () => {
         expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ITEM_ALREADY_EXIST', message: 'The item object which you are trying to add already exist with the same Id:: 222' });
       });
 
-      it('should handle saving and grid changes when "Clone" save button is clicked and user provides a custom "onSave" async function', (done) => {
+      it('should handle saving and grid changes when "Clone" save button is clicked and user provides a custom "onSave" async function', async () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: jest.fn() };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
-        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-        const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
+        const currentEditorMock = { validate: vi.fn() };
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
+        vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+        const gridSrvAddItemSpy = vi.spyOn(gridServiceStub, 'addItem');
 
-        const mockOnSave = jest.fn();
+        const mockOnSave = vi.fn();
         mockOnSave.mockResolvedValue(Promise.resolve(true));
         const mockModalOptions = { headerTitle: 'Details', modalType: 'clone', insertNewId: 3, onSave: mockOnSave } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+        component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
         gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct2, formValues: { productName: 'Product Cloned' }, editors: {}, grid: gridStub });
-        const disposeSpy = jest.spyOn(component, 'dispose');
+        const disposeSpy = vi.spyOn(component, 'dispose');
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
@@ -947,49 +942,48 @@ describe('CompositeEditorService', () => {
         expect(compositeFooterSaveBtnElm.disabled).toBeTruthy();
         expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeTruthy();
 
-        setTimeout(() => {
-          expect(component).toBeTruthy();
-          expect(component.constructor).toBeDefined();
-          expect(compositeContainerElm).toBeTruthy();
-          expect(compositeHeaderElm).toBeTruthy();
-          expect(compositeTitleElm).toBeTruthy();
-          expect(compositeTitleElm.textContent).toBe('Details');
-          expect(productNameLabelElm.textContent).toBe('Product');
-          expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
-          expect(compositeFooterCancelBtnElm).toBeTruthy();
-          expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockProduct2, id: 3, productName: 'Product Cloned' }, undefined);
-          expect(disposeSpy).toHaveBeenCalled();
-          expect(validationSummaryElm.style.display).toBe('none');
-          expect(validationSummaryElm.textContent).toBe('');
-          expect(cancelCommitSpy).toHaveBeenCalled();
-          expect(mockOnSave).toHaveBeenCalledWith({ productName: 'Product Cloned' }, { gridRowIndexes: [], dataContextIds: [] }, { ...mockProduct2, id: 3, productName: 'Product Cloned' });
-          done();
-        });
+        await new Promise(process.nextTick);
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(productNameLabelElm.textContent).toBe('Product');
+        expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
+        expect(compositeFooterCancelBtnElm).toBeTruthy();
+        expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockProduct2, id: 3, productName: 'Product Cloned' }, undefined);
+        expect(disposeSpy).toHaveBeenCalled();
+        expect(validationSummaryElm.style.display).toBe('none');
+        expect(validationSummaryElm.textContent).toBe('');
+        expect(cancelCommitSpy).toHaveBeenCalled();
+        expect(mockOnSave).toHaveBeenCalledWith({ productName: 'Product Cloned' }, { gridRowIndexes: [], dataContextIds: [] }, { ...mockProduct2, id: 3, productName: 'Product Cloned' });
       });
 
-      it('should show a validation summary when clicking "Clone" save button and the custom "onSave" async function throws an error', (done) => {
+      it('should show a validation summary when clicking "Clone" save button and the custom "onSave" async function throws an error', async () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: jest.fn() };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
-        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-        const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
+        const currentEditorMock = { validate: vi.fn() };
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
+        vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+        const gridSrvAddItemSpy = vi.spyOn(gridServiceStub, 'addItem');
 
-        const mockOnSave = jest.fn();
+        const mockOnSave = vi.fn();
         mockOnSave.mockResolvedValue(Promise.reject(new Error('some error')));
         const mockModalOptions = { headerTitle: 'Details', modalType: 'clone', insertNewId: 3, onSave: mockOnSave } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+        component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
         gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct2, formValues: { productName: 'Product Cloned' }, editors: {}, grid: gridStub });
-        const disposeSpy = jest.spyOn(component, 'dispose');
+        const disposeSpy = vi.spyOn(component, 'dispose');
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
@@ -1007,39 +1001,38 @@ describe('CompositeEditorService', () => {
         expect(compositeFooterSaveBtnElm.disabled).toBeTruthy();
         expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeTruthy();
 
-        setTimeout(() => {
-          expect(component).toBeTruthy();
-          expect(component.constructor).toBeDefined();
-          expect(compositeContainerElm).toBeTruthy();
-          expect(compositeHeaderElm).toBeTruthy();
-          expect(compositeTitleElm).toBeTruthy();
-          expect(compositeTitleElm.textContent).toBe('Details');
-          expect(productNameLabelElm.textContent).toBe('Product');
-          expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
-          expect(compositeFooterCancelBtnElm).toBeTruthy();
-          expect(gridSrvAddItemSpy).not.toHaveBeenCalled();
-          expect(disposeSpy).not.toHaveBeenCalled();
-          expect(validationSummaryElm.style.display).toBe('block');
-          expect(validationSummaryElm.textContent).toBe('some error');
-          expect(cancelCommitSpy).not.toHaveBeenCalled();
-          done();
-        });
+        await new Promise(process.nextTick);
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(productNameLabelElm.textContent).toBe('Product');
+        expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
+        expect(compositeFooterCancelBtnElm).toBeTruthy();
+        expect(gridSrvAddItemSpy).not.toHaveBeenCalled();
+        expect(disposeSpy).not.toHaveBeenCalled();
+        expect(validationSummaryElm.style.display).toBe('block');
+        expect(validationSummaryElm.textContent).toBe('some error');
+        expect(cancelCommitSpy).not.toHaveBeenCalled();
       });
     });
 
     describe('create item', () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
-      it('should execute "onAddNewRow" callback when triggered by a new item', (done) => {
+      it('should execute "onAddNewRow" callback when triggered by a new item', () => {
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
         const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
         const mockProduct2 = { address: { zip: 345678 }, product: { name: 'Product DEF', price: 22.33 } };
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        jest.spyOn(dataViewStub, 'getItemCount').mockReturnValue(1);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
-        const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(1);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        const gridSrvAddItemSpy = vi.spyOn(gridServiceStub, 'addItem');
         (getEditControllerMock as any).commitCurrentEdit = () => {
           gridStub.onAddNewRow.notify({ grid: gridStub, item: mockProduct2, column: columnsMock[0] });
           return true;
@@ -1049,7 +1042,7 @@ describe('CompositeEditorService', () => {
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+        component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
@@ -1065,28 +1058,27 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
-          expect(component).toBeTruthy();
-          expect(component.constructor).toBeDefined();
-          expect(compositeContainerElm).toBeTruthy();
-          expect(compositeHeaderElm).toBeTruthy();
-          expect(compositeTitleElm).toBeTruthy();
-          expect(compositeTitleElm.textContent).toBe('Details');
-          expect(productNameLabelElm.textContent).toBe('Product');
-          expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
-          expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockProduct2, id: 2 }, undefined);
-          done();
-        });
+        vi.runAllTimers();
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(productNameLabelElm.textContent).toBe('Product');
+        expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
+        expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockProduct2, id: 2 }, undefined);
       });
 
       it('should expect the first element to be reset when "showResetButtonOnEachEditor" is enabled and first input reset button is clicked', () => {
-        const mockReset1 = jest.fn();
-        const mockReset2 = jest.fn();
+        const mockReset1 = vi.fn();
+        const mockReset2 = vi.fn();
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
         const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55, field3: 'foo' };
         const mockProduct2 = { address: { zip: 345678 }, product: { name: 'Product DEF', price: 22.33 }, field3: 'foo' };
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
 
         const mockModalOptions = {
           headerTitle: 'Details', modalType: 'create', showResetButtonOnEachEditor: true, resetEditorButtonCssClass: 'mdi mdi-refresh'
@@ -1095,8 +1087,8 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
         component.editors = {
-          productName: { setValue: jest.fn(), reset: mockReset1, isValueTouched: () => true } as unknown as Editor,
-          field3: { setValue: jest.fn(), reset: mockReset2, isValueTouched: () => true } as unknown as Editor,
+          productName: { setValue: vi.fn(), reset: mockReset1, isValueTouched: () => true } as unknown as Editor,
+          field3: { setValue: vi.fn(), reset: mockReset2, isValueTouched: () => true } as unknown as Editor,
         }; // return True for value changed
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
@@ -1132,21 +1124,21 @@ describe('CompositeEditorService', () => {
       });
 
       it('should expect the form to be reset when "showFormResetButton" is enabled and button is clicked', () => {
-        const mockReset1 = jest.fn();
-        const mockReset2 = jest.fn();
+        const mockReset1 = vi.fn();
+        const mockReset2 = vi.fn();
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
         const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55, field3: 'foo' };
         const mockProduct2 = { address: { zip: 345678 }, product: { name: 'Product DEF', price: 22.33 }, field3: 'foo' };
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
 
         const mockModalOptions = { headerTitle: 'Details', modalType: 'create', showFormResetButton: true } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
         component.editors = {
-          productName: { setValue: jest.fn(), reset: mockReset1, isValueTouched: () => true } as unknown as Editor,
-          field3: { setValue: jest.fn(), reset: mockReset2, isValueTouched: () => true } as unknown as Editor,
+          productName: { setValue: vi.fn(), reset: mockReset1, isValueTouched: () => true } as unknown as Editor,
+          field3: { setValue: vi.fn(), reset: mockReset2, isValueTouched: () => true } as unknown as Editor,
         }; // return True for value changed
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
@@ -1177,26 +1169,26 @@ describe('CompositeEditorService', () => {
         expect(component.formValues).toEqual({});
       });
 
-      it('should handle Create saving and grid changes when save button is clicked and user provides a custom "onSave" async function and datacontext is was triggered by onAddNewRow', (done) => {
+      it('should handle Create saving and grid changes when save button is clicked and user provides a custom "onSave" async function and datacontext is was triggered by onAddNewRow', () => {
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
         const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
         const mockNewProduct2 = { address: { zip: 345678 }, product: { name: 'Product DEF', price: 22.33 } };
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockNewProduct2);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
-        const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockNewProduct2);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        const gridSrvAddItemSpy = vi.spyOn(gridServiceStub, 'addItem');
         (getEditControllerMock as any).commitCurrentEdit = () => {
           gridStub.onAddNewRow.notify({ grid: gridStub, item: mockNewProduct2, column: columnsMock[0] });
           return true;
         };
-        const mockCreateOnSave = jest.fn();
+        const mockCreateOnSave = vi.fn();
         mockCreateOnSave.mockResolvedValue(Promise.resolve(true));
 
         const mockModalOptions = { headerTitle: 'Details', modalType: 'create', insertNewId: 3, onSave: mockCreateOnSave } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+        component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
@@ -1212,46 +1204,45 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
-          expect(component).toBeTruthy();
-          expect(component.constructor).toBeDefined();
-          expect(compositeContainerElm).toBeTruthy();
-          expect(compositeHeaderElm).toBeTruthy();
-          expect(compositeTitleElm).toBeTruthy();
-          expect(compositeTitleElm.textContent).toBe('Details');
-          expect(productNameLabelElm.textContent).toBe('Product');
-          expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
-          expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockNewProduct2, id: 3 }, undefined);
-          expect(mockCreateOnSave).toHaveBeenCalledWith({ productName: 'test' }, { gridRowIndexes: [], dataContextIds: [] }, { ...mockNewProduct2, id: 3 });
-          done();
-        });
+        vi.runAllTimers();
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(productNameLabelElm.textContent).toBe('Product');
+        expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
+        expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockNewProduct2, id: 3 }, undefined);
+        expect(mockCreateOnSave).toHaveBeenCalledWith({ productName: 'test' }, { gridRowIndexes: [], dataContextIds: [] }, { ...mockNewProduct2, id: 3 });
       });
     });
 
     describe('edit item', () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
-      it('should handle Edit saving and grid changes when save button is clicked and user provides a custom "onSave" async function', (done) => {
+      it('should handle Edit saving and grid changes when save button is clicked and user provides a custom "onSave" async function', () => {
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
         const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
         const mockNewProduct2 = { address: { zip: 345678 }, product: { name: 'Product DEF', price: 22.33 } };
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockNewProduct2);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockNewProduct2);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         (getEditControllerMock as any).commitCurrentEdit = () => {
           gridStub.onAddNewRow.notify({ grid: gridStub, item: mockNewProduct2, column: columnsMock[0] });
           return true;
         };
-        const mockEditOnSave = jest.fn();
+        const mockEditOnSave = vi.fn();
         mockEditOnSave.mockResolvedValue(Promise.resolve(true));
 
         const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', insertNewId: 3, onSave: mockEditOnSave } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        component.editors = { productName: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
+        component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
@@ -1267,18 +1258,17 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
-          expect(component).toBeTruthy();
-          expect(component.constructor).toBeDefined();
-          expect(compositeContainerElm).toBeTruthy();
-          expect(compositeHeaderElm).toBeTruthy();
-          expect(compositeTitleElm).toBeTruthy();
-          expect(compositeTitleElm.textContent).toBe('Details');
-          expect(productNameLabelElm.textContent).toBe('Product');
-          expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
-          expect(mockEditOnSave).toHaveBeenCalledWith({ productName: 'test' }, { gridRowIndexes: [], dataContextIds: [] }, { ...mockNewProduct2, id: 3 });
-          done();
-        });
+        vi.runAllTimers();
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(productNameLabelElm.textContent).toBe('Product');
+        expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
+        expect(mockEditOnSave).toHaveBeenCalledWith({ productName: 'test' }, { gridRowIndexes: [], dataContextIds: [] }, { ...mockNewProduct2, id: 3 });
       });
     });
 
@@ -1289,10 +1279,10 @@ describe('CompositeEditorService', () => {
       });
 
       it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" to change dynamically any of the form input value', () => {
-        const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
+        const mockEditor = { setValue: vi.fn(), disable: vi.fn(), } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        const setValueSpy = jest.spyOn(mockEditor, 'setValue');
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        const setValueSpy = vi.spyOn(mockEditor, 'setValue');
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1322,10 +1312,10 @@ describe('CompositeEditorService', () => {
       });
 
       it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" and call setValue without triggering event when 4th argument is False', () => {
-        const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
+        const mockEditor = { setValue: vi.fn(), disable: vi.fn(), } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        const setValueSpy = jest.spyOn(mockEditor, 'setValue');
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        const setValueSpy = vi.spyOn(mockEditor, 'setValue');
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1343,10 +1333,10 @@ describe('CompositeEditorService', () => {
       });
 
       it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on a disabled field and expect the field to be modified but empty', () => {
-        const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
+        const mockEditor = { setValue: vi.fn(), disable: vi.fn(), } as unknown as Editor;
         mockEditor.disabled = true;
         const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1374,10 +1364,10 @@ describe('CompositeEditorService', () => {
       });
 
       it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on a disabled field and expect the field to be empty and not modified when "excludeDisabledFieldFormValues" grid option is set to True', () => {
-        const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
+        const mockEditor = { setValue: vi.fn(), disable: vi.fn(), } as unknown as Editor;
         mockEditor.disabled = true;
         const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
         gridOptionsMock.compositeEditorOptions!.excludeDisabledFieldFormValues = true;
 
         component = new SlickCompositeEditorComponent();
@@ -1405,14 +1395,14 @@ describe('CompositeEditorService', () => {
         expect(component.formValues).toEqual({ field3: '' });
       });
 
-      it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on an invalid Editor of the Form would thrown an error', (done) => {
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on an invalid Editor of the Form would thrown an error', () => new Promise((done: any) => {
         const mockEditor = {
-          changeEditorOption: jest.fn(),
-          disable: jest.fn(),
-          setValue: jest.fn(),
+          changeEditorOption: vi.fn(),
+          disable: vi.fn(),
+          setValue: vi.fn(),
         } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1425,17 +1415,17 @@ describe('CompositeEditorService', () => {
           expect(e.toString()).toContain(`Composite Editor with column id "field4" not found`);
           done();
         }
-      });
+      }));
 
       it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on an invalid Editor BUT not throw an error when user want to skip the error', () => {
         const mockEditor = {
-          changeEditorOption: jest.fn(),
-          disable: jest.fn(),
-          setValue: jest.fn(),
+          changeEditorOption: vi.fn(),
+          disable: vi.fn(),
+          setValue: vi.fn(),
         } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        const setValueSpy = jest.spyOn(mockEditor, 'setValue');
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        const setValueSpy = vi.spyOn(mockEditor, 'setValue');
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1448,10 +1438,10 @@ describe('CompositeEditorService', () => {
       });
 
       it('should make sure Slick-Composite-Editor is being created and then call "disableFormInput" to disable the field', () => {
-        const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
+        const mockEditor = { setValue: vi.fn(), disable: vi.fn(), } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        const disableSpy = jest.spyOn(mockEditor, 'disable');
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        const disableSpy = vi.spyOn(mockEditor, 'disable');
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1479,12 +1469,12 @@ describe('CompositeEditorService', () => {
 
       it('should make sure Slick-Composite-Editor is being created and then call "changeFormEditorOption" on a Editor of the Form and expect it to call the Editor "changeEditorOption" method', () => {
         const mockEditor = {
-          changeEditorOption: jest.fn(),
-          disable: jest.fn(),
-          setValue: jest.fn(),
+          changeEditorOption: vi.fn(),
+          disable: vi.fn(),
+          setValue: vi.fn(),
         } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, producName: 'Product ABC', price: 12.55 };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1507,14 +1497,14 @@ describe('CompositeEditorService', () => {
         expect(mockEditor.changeEditorOption).toHaveBeenCalledWith('minDate', 'today');
       });
 
-      it('should make sure Slick-Composite-Editor is being created and then call "changeFormEditorOption" on an invalid Editor of the Form would thrown an error', (done) => {
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormEditorOption" on an invalid Editor of the Form would thrown an error', () => new Promise((done: any) => {
         const mockEditor = {
-          changeEditorOption: jest.fn(),
-          disable: jest.fn(),
-          setValue: jest.fn(),
+          changeEditorOption: vi.fn(),
+          disable: vi.fn(),
+          setValue: vi.fn(),
         } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1527,13 +1517,13 @@ describe('CompositeEditorService', () => {
           expect(e.toString()).toContain(`Editor with column id "field4" not found OR the Editor does not support "changeEditorOption"`);
           done();
         }
-      });
+      }));
 
       it('should make sure Slick-Composite-Editor is being created and then call "disableFormInput" by passing False as 2nd argument to enable the field', () => {
-        const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
+        const mockEditor = { setValue: vi.fn(), disable: vi.fn(), } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        const disableSpy = jest.spyOn(mockEditor, 'disable');
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        const disableSpy = vi.spyOn(mockEditor, 'disable');
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1562,46 +1552,44 @@ describe('CompositeEditorService', () => {
     describe('with Row Selections and Mass Selection Change', () => {
       beforeEach(() => {
         const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, };
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
       });
 
       afterEach(() => {
         component?.dispose();
       });
 
-      it('should throw an error when trying to edit a row that does not return any data context', (done) => {
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([]);
+      it('should throw an error when trying to edit a row that does not return any data context', () => {
+        vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([]);
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
 
-        const mockOnError = jest.fn();
+        const mockOnError = vi.fn();
         const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection', onError: mockOnError } as CompositeEditorOpenDetailOption;
-        const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+        const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-        setTimeout(() => {
-          component.openDetails(mockModalOptions);
-          expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).' });
-          done();
-        });
+        vi.runAllTimers();
+
+        component.openDetails(mockModalOptions);
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).' });
       });
 
-      it('should expect that any error that are not defined as the built-in errors to still be caught then sent to the "onError"', (done) => {
-        (gridStub.getColumns as jest.Mock).mockImplementation(() => { throw new Error('some error'); });
-        const mockOnError = jest.fn();
+      it('should expect that any error that are not defined as the built-in errors to still be caught then sent to the "onError"', () => {
+        (gridStub.getColumns as Mock).mockImplementation(() => { throw new Error('some error'); });
+        const mockOnError = vi.fn();
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection', onError: mockOnError } as CompositeEditorOpenDetailOption;
-        const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+        const spyOnError = vi.spyOn(mockModalOptions, 'onError');
 
-        setTimeout(() => {
-          component.openDetails(mockModalOptions);
-          expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: `some error`, message: `some error` });
-          done();
-        });
+        vi.runAllTimers();
+
+        component.openDetails(mockModalOptions);
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: `some error`, message: `some error` });
       });
 
       it('should expect to have a header title & modal type representing "mass-update" when using "auto-mass" type and there are not row selected', () => {
@@ -1623,8 +1611,8 @@ describe('CompositeEditorService', () => {
 
       it('should expect to have a header title & modal type representing "mass-selection" when using "auto-mass" type and having some row(s) selected', () => {
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([222]);
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct]);
+        vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([222]);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct]);
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1645,9 +1633,9 @@ describe('CompositeEditorService', () => {
       it('should activate next available cell with an Editor when current active cell does not have an Editor', () => {
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
         columnsMock[2].editor = { massUpdate: true };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 4, cell: 1 }); // column index 1 has no Editor
-        const setActiveSpy = jest.spyOn(gridStub, 'setActiveCell');
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 4, cell: 1 }); // column index 1 has no Editor
+        const setActiveSpy = vi.spyOn(gridStub, 'setActiveCell');
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1661,26 +1649,26 @@ describe('CompositeEditorService', () => {
         expect(compositeContainerElm).toBeTruthy();
       });
 
-      it('should throw an error when no rows are selected', (done) => {
+      it('should throw an error when no rows are selected', async () => {
         const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        const currentEditorMock = { validate: jest.fn() };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-        jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-        jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-        const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
-        const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
-        const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
+        const currentEditorMock = { validate: vi.fn() };
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+        vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
+        const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+        const setActiveRowSpy = vi.spyOn(gridStub, 'setActiveRow');
+        const clearSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+        const updateItemsSpy = vi.spyOn(gridServiceStub, 'updateItems');
 
-        const mockOnError = jest.fn();
+        const mockOnError = vi.fn();
         const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection', onError: mockOnError } as CompositeEditorOpenDetailOption;
+        const spyOnError = vi.spyOn(mockModalOptions, 'onError');
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        const spyOnError = jest.spyOn(mockModalOptions, 'onError');
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1695,46 +1683,46 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
-          expect(component).toBeTruthy();
-          expect(component.constructor).toBeDefined();
-          expect(compositeContainerElm).toBeTruthy();
-          expect(compositeHeaderElm).toBeTruthy();
-          expect(compositeTitleElm).toBeTruthy();
-          expect(compositeTitleElm.textContent).toBe('Details');
-          expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
-          expect(compositeFooterSaveBtnElm).toBeTruthy();
-          expect(cancelCommitSpy).not.toHaveBeenCalled();
-          expect(setActiveRowSpy).not.toHaveBeenCalled();
-          expect(updateItemsSpy).not.toHaveBeenCalled();
-          expect(validationSummaryElm.style.display).toBe('none');
-          expect(validationSummaryElm.textContent).toBe('');
-          expect(clearSelectionSpy).not.toHaveBeenCalled();
-          expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
-          done();
-        });
+        vi.runAllTimers();
+        await new Promise(process.nextTick);
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+        expect(compositeFooterSaveBtnElm).toBeTruthy();
+        expect(cancelCommitSpy).not.toHaveBeenCalled();
+        expect(setActiveRowSpy).not.toHaveBeenCalled();
+        expect(updateItemsSpy).not.toHaveBeenCalled();
+        expect(validationSummaryElm.style.display).toBe('none');
+        expect(validationSummaryElm.textContent).toBe('');
+        expect(clearSelectionSpy).not.toHaveBeenCalled();
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
       });
 
-      it('should handle saving and grid changes when "Mass Selection" save button is clicked', (done) => {
+      it('should handle saving and grid changes when "Mass Selection" save button is clicked', () => {
         const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        const currentEditorMock = { validate: jest.fn() };
-        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-        jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-        jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
-        const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-        const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
-        const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
-        const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
+        const currentEditorMock = { validate: vi.fn() };
+        vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+        vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
+        const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+        const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+        const setActiveRowSpy = vi.spyOn(gridStub, 'setActiveRow');
+        const clearSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+        const updateItemsSpy = vi.spyOn(gridServiceStub, 'updateItems');
 
         const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection' } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
-        const disposeSpy = jest.spyOn(component, 'dispose');
+        const disposeSpy = vi.spyOn(component, 'dispose');
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1749,24 +1737,23 @@ describe('CompositeEditorService', () => {
 
         compositeFooterSaveBtnElm.click();
 
-        setTimeout(() => {
-          expect(component).toBeTruthy();
-          expect(component.constructor).toBeDefined();
-          expect(compositeContainerElm).toBeTruthy();
-          expect(compositeHeaderElm).toBeTruthy();
-          expect(compositeTitleElm).toBeTruthy();
-          expect(compositeTitleElm.textContent).toBe('Details');
-          expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
-          expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
-          expect(cancelCommitSpy).toHaveBeenCalled();
-          expect(setActiveRowSpy).toHaveBeenCalledWith(0);
-          expect(getEditSpy).toHaveBeenCalledTimes(2);
-          expect(validationSummaryElm.style.display).toBe('none');
-          expect(validationSummaryElm.textContent).toBe('');
-          expect(clearSelectionSpy).toHaveBeenCalled();
-          expect(disposeSpy).toHaveBeenCalled();
-          done();
-        });
+        vi.runAllTimers();
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+        expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
+        expect(cancelCommitSpy).toHaveBeenCalled();
+        expect(setActiveRowSpy).toHaveBeenCalledWith(0);
+        expect(getEditSpy).toHaveBeenCalledTimes(2);
+        expect(validationSummaryElm.style.display).toBe('none');
+        expect(validationSummaryElm.textContent).toBe('');
+        expect(clearSelectionSpy).toHaveBeenCalled();
+        expect(disposeSpy).toHaveBeenCalled();
       });
     });
   });
@@ -1774,31 +1761,31 @@ describe('CompositeEditorService', () => {
   describe('with Mass Update', () => {
     beforeEach(() => {
       const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       component?.dispose();
     });
 
-    it('should handle saving and grid changes when "Mass Update" save button is clicked', (done) => {
+    it('should handle saving and grid changes when "Mass Update" save button is clicked', () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: jest.fn() };
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
-      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-      jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-      jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
-      const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+      const currentEditorMock = { validate: vi.fn() };
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+      vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const setActiveCellSpy = vi.spyOn(gridStub, 'setActiveCell');
+      const clearSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const setItemsSpy = vi.spyOn(dataViewStub, 'setItems');
 
-      const mockOnClose = jest.fn();
+      const mockOnClose = vi.fn();
       const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onClose: mockOnClose } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -1817,41 +1804,40 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
-        expect(getEditSpy).toHaveBeenCalledTimes(2);
-        expect(setItemsSpy).toHaveBeenCalledWith([{ ...mockProduct1, field3: 'test' }, { ...mockProduct2, field3: 'test' }], undefined);
-        expect(cancelCommitSpy).toHaveBeenCalled();
-        expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
-        expect(validationSummaryElm.style.display).toBe('none');
-        expect(validationSummaryElm.textContent).toBe('');
-        expect(clearSelectionSpy).toHaveBeenCalled();
-        done();
-      });
+      vi.runAllTimers();
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+      expect(getEditSpy).toHaveBeenCalledTimes(2);
+      expect(setItemsSpy).toHaveBeenCalledWith([{ ...mockProduct1, field3: 'test' }, { ...mockProduct2, field3: 'test' }], undefined);
+      expect(cancelCommitSpy).toHaveBeenCalled();
+      expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(validationSummaryElm.style.display).toBe('none');
+      expect(validationSummaryElm.textContent).toBe('');
+      expect(clearSelectionSpy).toHaveBeenCalled();
     });
 
-    it('should handle saving and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', (done) => {
+    it('should handle saving and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', async () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: jest.fn() };
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
-      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-      jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-      jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
-      const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+      const currentEditorMock = { validate: vi.fn() };
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+      vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const setActiveCellSpy = vi.spyOn(gridStub, 'setActiveCell');
+      const clearSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const setItemsSpy = vi.spyOn(dataViewStub, 'setItems');
 
-      const mockOnSave = jest.fn();
+      const mockOnSave = vi.fn();
       mockOnSave.mockResolvedValue(Promise.resolve(true));
       const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave, shouldClearRowSelectionAfterMassAction: false } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
@@ -1871,42 +1857,41 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
-        expect(getEditSpy).toHaveBeenCalledTimes(2);
-        expect(mockOnSave).toHaveBeenCalledWith({ field3: 'test' }, { gridRowIndexes: [0], dataContextIds: [222] }, undefined);
-        expect(setItemsSpy).toHaveBeenCalled();
-        expect(cancelCommitSpy).toHaveBeenCalled();
-        expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
-        expect(validationSummaryElm.style.display).toBe('none');
-        expect(validationSummaryElm.textContent).toBe('');
-        expect(clearSelectionSpy).not.toHaveBeenCalled(); // shouldClearRowSelectionAfterMassAction is false
-        done();
-      });
+      await new Promise(process.nextTick);
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+      expect(getEditSpy).toHaveBeenCalledTimes(2);
+      expect(mockOnSave).toHaveBeenCalledWith({ field3: 'test' }, { gridRowIndexes: [0], dataContextIds: [222] }, undefined);
+      expect(setItemsSpy).toHaveBeenCalled();
+      expect(cancelCommitSpy).toHaveBeenCalled();
+      expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(validationSummaryElm.style.display).toBe('none');
+      expect(validationSummaryElm.textContent).toBe('');
+      expect(clearSelectionSpy).not.toHaveBeenCalled(); // shouldClearRowSelectionAfterMassAction is false
     });
 
-    it('should handle saving and expect a dataset preview of the change when "shouldPreviewMassChangeDataset" is enabled and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', (done) => {
+    it('should handle saving and expect a dataset preview of the change when "shouldPreviewMassChangeDataset" is enabled and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', async () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: jest.fn() };
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
-      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-      jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-      jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
-      const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+      const currentEditorMock = { validate: vi.fn() };
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+      vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const setActiveCellSpy = vi.spyOn(gridStub, 'setActiveCell');
+      const clearSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const setItemsSpy = vi.spyOn(dataViewStub, 'setItems');
 
-      const mockOnSave = jest.fn();
+      const mockOnSave = vi.fn();
       mockOnSave.mockResolvedValue(Promise.resolve(true));
       const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave, shouldClearRowSelectionAfterMassAction: false, shouldPreviewMassChangeDataset: true } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
@@ -1926,42 +1911,41 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
-        expect(getEditSpy).toHaveBeenCalledTimes(2);
-        expect(mockOnSave).toHaveBeenCalledWith(
-          { field3: 'test' },
-          { gridRowIndexes: [0], dataContextIds: [222] },
-          [{ address: { zip: 123456 }, field3: 'test', id: 222, product: { name: 'Product ABC', price: 12.55 } }, { address: { zip: 789123 }, field3: 'test', id: 333, product: { name: 'Product XYZ', price: 33.44 } }]
-        );
-        expect(setItemsSpy).toHaveBeenCalled();
-        expect(cancelCommitSpy).toHaveBeenCalled();
-        expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
-        expect(validationSummaryElm.style.display).toBe('none');
-        expect(validationSummaryElm.textContent).toBe('');
-        expect(clearSelectionSpy).not.toHaveBeenCalled(); // shouldClearRowSelectionAfterMassAction is false
-        done();
-      });
+      await new Promise(process.nextTick);
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+      expect(getEditSpy).toHaveBeenCalledTimes(2);
+      expect(mockOnSave).toHaveBeenCalledWith(
+        { field3: 'test' },
+        { gridRowIndexes: [0], dataContextIds: [222] },
+        [{ address: { zip: 123456 }, field3: 'test', id: 222, product: { name: 'Product ABC', price: 12.55 } }, { address: { zip: 789123 }, field3: 'test', id: 333, product: { name: 'Product XYZ', price: 33.44 } }]
+      );
+      expect(setItemsSpy).toHaveBeenCalled();
+      expect(cancelCommitSpy).toHaveBeenCalled();
+      expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(validationSummaryElm.style.display).toBe('none');
+      expect(validationSummaryElm.textContent).toBe('');
+      expect(clearSelectionSpy).not.toHaveBeenCalled(); // shouldClearRowSelectionAfterMassAction is false
     });
 
-    it('should show a validation summary when clicking "Mass Update" save button and the custom "onSave" async function throws an error', (done) => {
+    it('should show a validation summary when clicking "Mass Update" save button and the custom "onSave" async function throws an error', async () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: jest.fn() };
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
-      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-      jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-      jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const currentEditorMock = { validate: vi.fn() };
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+      vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+      const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
-      const mockOnSave = jest.fn();
+      const mockOnSave = vi.fn();
       mockOnSave.mockResolvedValue(Promise.reject(new Error('some error')));
       const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
@@ -1983,21 +1967,20 @@ describe('CompositeEditorService', () => {
       expect(compositeFooterSaveBtnElm.disabled).toBeTruthy();
       expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeTruthy();
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
-        expect(validationSummaryElm.style.display).toBe('block');
-        expect(validationSummaryElm.textContent).toBe('some error');
-        expect(compositeFooterSaveBtnElm.disabled).toBeFalsy();
-        expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeFalsy();
-        expect(cancelCommitSpy).not.toHaveBeenCalled();
-        done();
-      });
+      await new Promise(process.nextTick);
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+      expect(validationSummaryElm.style.display).toBe('block');
+      expect(validationSummaryElm.textContent).toBe('some error');
+      expect(compositeFooterSaveBtnElm.disabled).toBeFalsy();
+      expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeFalsy();
+      expect(cancelCommitSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -2010,20 +1993,20 @@ describe('CompositeEditorService', () => {
       container.registerInstance('TranslaterService', translateService);
 
       const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, enableTranslate: true };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       component?.dispose();
     });
 
     it('should have translate text when opening Composite Editor when calling a Create New Item', () => {
       const newGridOptions = { ...gridOptionsMock, enableAddRow: true, enableTranslate: true };
       const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
 
       const mockModalOptions = { headerTitle: 'Details', modalType: 'create' } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
@@ -2056,8 +2039,8 @@ describe('CompositeEditorService', () => {
     it('should have translate text when opening Composite Editor when cloning an Item', () => {
       const newGridOptions = { ...gridOptionsMock, enableAddRow: true, enableTranslate: true };
       const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
 
       const mockModalOptions = { headerTitle: 'Details', modalType: 'clone' } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
@@ -2086,19 +2069,19 @@ describe('CompositeEditorService', () => {
       expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Cloner');
     });
 
-    it('should have translated text when handling a saving of grid changes when "Mass Selection" save button is clicked', (done) => {
+    it('should have translated text when handling a saving of grid changes when "Mass Selection" save button is clicked', () => {
       const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-      const currentEditorMock = { validate: jest.fn() };
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-      jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-      jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-      jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
-      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
-      const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
-      const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
+      const currentEditorMock = { validate: vi.fn() };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+      vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+      vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
+      const getEditSpy = vi.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = vi.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
+      const setActiveRowSpy = vi.spyOn(gridStub, 'setActiveRow');
+      const updateItemsSpy = vi.spyOn(gridServiceStub, 'updateItems');
 
       const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection' } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
@@ -2119,35 +2102,34 @@ describe('CompositeEditorService', () => {
 
       compositeFooterSaveBtnElm.click();
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
-        expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
-        expect(compositeFooterCancelBtnElm.ariaLabel).toBe('Annuler');
-        expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour la sélection');
-        expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Mettre à jour la sélection');
-        expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
-        expect(cancelCommitSpy).toHaveBeenCalled();
-        expect(setActiveRowSpy).toHaveBeenCalledWith(0);
-        expect(getEditSpy).toHaveBeenCalledTimes(2);
-        done();
-      });
+      vi.runAllTimers();
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
+      expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
+      expect(compositeFooterCancelBtnElm.ariaLabel).toBe('Annuler');
+      expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour la sélection');
+      expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Mettre à jour la sélection');
+      expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
+      expect(cancelCommitSpy).toHaveBeenCalled();
+      expect(setActiveRowSpy).toHaveBeenCalledWith(0);
+      expect(getEditSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should have translated text when handling a saving of grid changes when "Mass Update" save button is clicked', (done) => {
+    it('should have translated text when handling a saving of grid changes when "Mass Update" save button is clicked', () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: jest.fn() };
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
-      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
-      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
-      jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
-      jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
+      const currentEditorMock = { validate: vi.fn() };
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      vi.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
+      vi.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
 
       const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update' } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
@@ -2164,18 +2146,17 @@ describe('CompositeEditorService', () => {
       const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
       const compositeFooterSaveBtnElm = compositeFooterElm.querySelector('.btn-save') as HTMLSelectElement;
 
-      setTimeout(() => {
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
-        expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
-        expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour en masse');
-        done();
-      });
+      vi.runAllTimers();
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
+      expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
+      expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour en masse');
     });
   });
 });

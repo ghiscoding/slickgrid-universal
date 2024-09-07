@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { SharedService } from '@slickgrid-universal/common';
 
 import { UniversalContainerService } from '../universalContainer.service';

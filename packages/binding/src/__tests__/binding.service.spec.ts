@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BindingService } from '../binding.service';
 
@@ -13,11 +13,11 @@ describe('Binding Service', () => {
 
   afterEach(() => {
     div.remove();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should add a binding for an input and call a value change and expect a mocked object to have the reflected value', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
     elm.className = 'custom-class';
@@ -35,7 +35,7 @@ describe('Binding Service', () => {
   });
 
   it('should add a binding for an input type number and call a value change and expect a mocked object to have the reflected value AND parsed as a number', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
     elm.type = 'number';
@@ -54,7 +54,7 @@ describe('Binding Service', () => {
   });
 
   it('should return same input value when object property is not found', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm1 = document.createElement('input');
     const elm2 = document.createElement('span');
@@ -75,7 +75,7 @@ describe('Binding Service', () => {
   });
 
   it('should add a binding for a mocked object and expect the value to be reflected in the element input value', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
     elm.className = 'custom-class';
@@ -90,9 +90,9 @@ describe('Binding Service', () => {
   });
 
   it('should unbind an event from an element', () => {
-    const mockElm = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockCallback = jest.fn();
-    const removeEventSpy = jest.spyOn(mockElm, 'removeEventListener');
+    const mockElm = { addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as HTMLElement;
+    const mockCallback = vi.fn();
+    const removeEventSpy = vi.spyOn(mockElm, 'removeEventListener');
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
     div.appendChild(elm);
@@ -106,8 +106,8 @@ describe('Binding Service', () => {
   });
 
   it('should call unbindAll and expect a single unbind element being called', () => {
-    const mockElm = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
-    const removeEventSpy = jest.spyOn(mockElm, 'removeEventListener');
+    const mockElm = { addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as HTMLElement;
+    const removeEventSpy = vi.spyOn(mockElm, 'removeEventListener');
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
     div.appendChild(elm);
@@ -117,6 +117,6 @@ describe('Binding Service', () => {
     service.unbindAll();
 
     expect(service.property).toBe('name');
-    expect(removeEventSpy).toHaveBeenCalledWith('keyup', expect.toBeFunction(), undefined);
+    expect(removeEventSpy).toHaveBeenCalledWith('keyup', expect.any(Function), undefined);
   });
 });

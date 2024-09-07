@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { of, throwError } from 'rxjs';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
@@ -26,6 +26,8 @@ import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler,
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
+vi.useFakeTimers();
+
 const DOM_ELEMENT_ID = 'row-detail123';
 
 function initSetWithValues(values: any[]) {
@@ -39,9 +41,9 @@ const gridOptionMock = {
   enablePagination: true,
   backendServiceApi: {
     service: undefined,
-    preProcess: jest.fn(),
-    process: jest.fn(),
-    postProcess: jest.fn(),
+    preProcess: vi.fn(),
+    process: vi.fn(),
+    postProcess: vi.fn(),
   },
   gridMenu: {
     commandItems: [{
@@ -62,50 +64,50 @@ const gridOptionMock = {
 } as unknown as GridOption;
 
 const dataViewStub = {
-  getIdxById: jest.fn(),
-  getItemById: jest.fn(),
-  getItems: jest.fn(),
-  refresh: jest.fn(),
-  reSort: jest.fn(),
-  setFilter: jest.fn(),
-  setFilterArgs: jest.fn(),
-  sort: jest.fn(),
+  getIdxById: vi.fn(),
+  getItemById: vi.fn(),
+  getItems: vi.fn(),
+  refresh: vi.fn(),
+  reSort: vi.fn(),
+  setFilter: vi.fn(),
+  setFilterArgs: vi.fn(),
+  sort: vi.fn(),
 } as unknown as SlickDataView;
 
 const backendServiceStub = {
-  buildQuery: jest.fn(),
-  clearFilters: jest.fn(),
-  getCurrentFilters: jest.fn(),
-  getCurrentPagination: jest.fn(),
-  updateFilters: jest.fn(),
+  buildQuery: vi.fn(),
+  clearFilters: vi.fn(),
+  getCurrentFilters: vi.fn(),
+  getCurrentPagination: vi.fn(),
+  updateFilters: vi.fn(),
   processOnFilterChanged: () => 'backend query',
 } as unknown as BackendService;
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  getColumnIndex: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getColumnIndex: vi.fn(),
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
+  getColumns: vi.fn(),
   getData: () => dataViewStub,
-  getHeaderRowColumn: jest.fn(),
-  getSortColumns: jest.fn(),
-  invalidate: jest.fn(),
-  onLocalSortChanged: jest.fn(),
+  getHeaderRowColumn: vi.fn(),
+  getSortColumns: vi.fn(),
+  invalidate: vi.fn(),
+  onLocalSortChanged: vi.fn(),
   onSort: new SlickEvent(),
   onBeforeHeaderRowCellDestroy: new SlickEvent(),
   onHeaderRowCellRendered: new SlickEvent(),
-  render: jest.fn(),
-  setColumns: jest.fn(),
-  setHeaderRowVisibility: jest.fn(),
-  setSortColumns: jest.fn(),
-  setOptions: jest.fn(),
+  render: vi.fn(),
+  setColumns: vi.fn(),
+  setHeaderRowVisibility: vi.fn(),
+  setSortColumns: vi.fn(),
+  setOptions: vi.fn(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 describe('FilterService', () => {
@@ -133,12 +135,12 @@ describe('FilterService', () => {
     const filterFactory = new FilterFactory(slickgridConfig, translateService, collectionService);
     service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService, rxjsResourceStub);
     slickgridEventHandler = service.eventHandler;
-    jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(div);
+    vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(div);
   });
 
   afterEach(() => {
     delete gridOptionMock.backendServiceApi;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     service.dispose();
   });
 
@@ -147,7 +149,7 @@ describe('FilterService', () => {
   });
 
   it('should dispose of the event handler', () => {
-    const spy = jest.spyOn(slickgridEventHandler, 'unsubscribeAll');
+    const spy = vi.spyOn(slickgridEventHandler, 'unsubscribeAll');
     service.dispose();
     expect(spy).toHaveBeenCalled();
   });
@@ -157,7 +159,7 @@ describe('FilterService', () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(jest.fn())),
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
     });
 
@@ -173,12 +175,12 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new SlickEventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
-      const destroySpy = jest.spyOn(filterMetadataArray[0], 'destroy');
+      const destroySpy = vi.spyOn(filterMetadataArray[0], 'destroy');
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
-      expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
+      expect(filterMetadataArray[0].searchTerms).toEqual([]);
 
       gridStub.onBeforeHeaderRowCellDestroy.notify(mockArgs as any, new SlickEventData(), gridStub);
       expect(destroySpy).toHaveBeenCalled();
@@ -199,7 +201,7 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new SlickEventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
-      const destroySpy = jest.spyOn(filterMetadataArray[0], 'destroy');
+      const destroySpy = vi.spyOn(filterMetadataArray[0], 'destroy');
 
       expect(service.isFilterFirstRender).toBe(false);
       expect(columnFilters).toEqual({
@@ -207,14 +209,13 @@ describe('FilterService', () => {
       });
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof SingleSelectFilter).toBeTruthy();
-      expect(filterMetadataArray[0]).toContainEntry(['searchTerms', [true]]);
+      expect(filterMetadataArray[0].searchTerms).toEqual([true]);
 
       gridStub.onBeforeHeaderRowCellDestroy.notify(mockArgs as any, new SlickEventData(), gridStub);
       expect(destroySpy).toHaveBeenCalled();
     });
 
-    it('should call "onBackendFilterChange" when "onSearchChange" event is triggered', (done) => {
-      const expectationCurrentFilters = [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }] as CurrentFilter[];
+    it('should call "onBackendFilterChange" when "onSearchChange" event is triggered', async () => {
       const mockColumn = {
         id: 'isActive', field: 'isActive', filterable: true,
         filter: {
@@ -230,10 +231,10 @@ describe('FilterService', () => {
         searchTerms: ['John'],
         grid: gridStub
       };
-      const mockHeaderArgs = { grid: gridStub, column: mockColumn, node: document.getElementById(DOM_ELEMENT_ID), };
-      const spyCurrentFilters = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentFilters').mockReturnValue(expectationCurrentFilters);
-      const spyBackendChange = jest.spyOn(service, 'onBackendFilterChange');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      (vi.spyOn(backendServiceStub, 'getCurrentFilters') as Mock).mockReturnValue([{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
+      const mockHeaderArgs = { grid: gridStub, column: mockColumn, node: document.getElementById(DOM_ELEMENT_ID) };
+      const spyBackendChange = vi.spyOn(service, 'onBackendFilterChange');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
@@ -241,12 +242,12 @@ describe('FilterService', () => {
       service.onSearchChange!.notify(mockSearchArgs, new SlickEventData(), gridStub);
 
       expect(spyBackendChange).toHaveBeenCalledWith(expect.anything(), mockSearchArgs);
-      setTimeout(() => {
-        expect(spyCurrentFilters).toHaveBeenCalled();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
-        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
-        done();
-      });
+
+      await new Promise(process.nextTick);
+
+      expect(gridOptionMock.backendServiceApi!.service.getCurrentFilters).toHaveBeenCalled();
+      expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
+      expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
     });
   });
 
@@ -267,19 +268,19 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new SlickEventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
-      const destroySpy = jest.spyOn(filterMetadataArray[0], 'destroy');
+      const destroySpy = vi.spyOn(filterMetadataArray[0], 'destroy');
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
-      expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
+      expect(filterMetadataArray[0].searchTerms).toEqual([]);
 
       gridStub.onBeforeHeaderRowCellDestroy.notify(mockArgs as any, new SlickEventData(), gridStub);
       expect(destroySpy).toHaveBeenCalled();
     });
 
-    it('should call "onFilterChanged" when "onSearchChange" event is triggered', (done) => {
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+    it('should call "onFilterChanged" when "onSearchChange" event is triggered', async () => {
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const mockArgs = {
         clearFilterTriggered: false,
         shouldTriggerQuery: true,
@@ -294,15 +295,14 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       service.onSearchChange!.notify(mockArgs as any, new SlickEventData(), gridStub);
 
-      setTimeout(() => {
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, []);
-        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
-        done();
-      });
+      await new Promise(process.nextTick);
+
+      expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, []);
+      expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
     });
 
-    it('should call "onFilterChanged" with column filter when both onHeaderRowCellRendered" and "onSearchChange" events are triggered', (done) => {
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+    it('should call "onFilterChanged" with column filter when both onHeaderRowCellRendered" and "onSearchChange" events are triggered', async () => {
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const mockColumn = {
         id: 'firstName', field: 'firstName', filterable: true,
         filter: {
@@ -329,11 +329,10 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs as any, new SlickEventData(), gridStub);
       service.onSearchChange!.notify(mockSearchArgs, new SlickEventData(), gridStub);
 
-      setTimeout(() => {
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
-        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
-        done();
-      });
+      await new Promise(process.nextTick);
+
+      expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
+      expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
     });
   });
 
@@ -349,38 +348,37 @@ describe('FilterService', () => {
       sharedService.allColumns = [mockColumn];
     });
 
-    it('should execute the search callback normally when a input change event is triggered and searchTerms are defined', (done) => {
+    it('should execute the search callback normally when a input change event is triggered and searchTerms are defined', async () => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], targetSelector: '', type: FieldType.string };
-      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
-      const spyEmit = jest.spyOn(service, 'emitFilterChanged');
+      const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
+      const spyEmit = vi.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new SlickEventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
-      setTimeout(() => {
-        expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
-        expect(spySearchChange).toHaveBeenCalledWith({
-          clearFilterTriggered: undefined,
-          shouldTriggerQuery: true,
-          columnId: 'firstName',
-          columnDef: mockColumn,
-          columnFilters: { firstName: expectationColumnFilter },
-          operator: 'EQ',
-          searchTerms: ['John'],
-          parsedSearchTerms: ['John'],
-          grid: gridStub,
-          target: null,
-        }, expect.anything());
-        expect(spyEmit).toHaveBeenCalledWith('local');
-        done();
-      });
+      await new Promise(process.nextTick);
+
+      expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
+      expect(spySearchChange).toHaveBeenCalledWith({
+        clearFilterTriggered: undefined,
+        shouldTriggerQuery: true,
+        columnId: 'firstName',
+        columnDef: mockColumn,
+        columnFilters: { firstName: expectationColumnFilter },
+        operator: 'EQ',
+        searchTerms: ['John'],
+        parsedSearchTerms: ['John'],
+        grid: gridStub,
+        target: null,
+      }, expect.anything());
+      expect(spyEmit).toHaveBeenCalledWith('local');
     });
 
     it('should execute the callback normally when a input change event is triggered and the searchTerm comes from this event.target', () => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], targetSelector: '', type: FieldType.string };
-      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
+      const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
       sharedService.allColumns = [mockColumn];
 
       service.init(gridStub);
@@ -417,7 +415,7 @@ describe('FilterService', () => {
 
     it('should NOT delete the column filters entry (from column filter object) even when searchTerms is empty when user set `emptySearchTermReturnAllValues` to False', () => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: [''], parsedSearchTerms: [''], targetSelector: 'div.some-classes', type: FieldType.string };
-      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
+      const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
       sharedService.allColumns = [mockColumn];
 
       service.init(gridStub);
@@ -474,7 +472,7 @@ describe('FilterService', () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(jest.fn())),
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
       // we must use 3 separate Filters because we aren't loading the Framework and so our Filters are not transient (as defined in lib config)
       mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true, filter: { model: Filters.input } } as Column;
@@ -499,10 +497,10 @@ describe('FilterService', () => {
       it('should clear the filter by passing a column id as argument on a backend grid', async () => {
         const filterExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], targetSelector: '', type: FieldType.string };
         const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
-        const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
-        const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
-        const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyClear = vi.spyOn(service.getFiltersMetadata()[0], 'clear');
+        const spyFilterChange = vi.spyOn(service, 'onBackendFilterChange');
+        const spyEmitter = vi.spyOn(service, 'emitFilterChanged');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         await service.clearFilterByColumnId(newEvent, 'firstName');
@@ -521,10 +519,10 @@ describe('FilterService', () => {
         const filterFirstExpectation = { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], targetSelector: '', type: FieldType.string };
         const filterLastExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], targetSelector: '', type: FieldType.string };
         const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
-        const spyClear = jest.spyOn(service.getFiltersMetadata()[2], 'clear');
-        const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
-        const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyClear = vi.spyOn(service.getFiltersMetadata()[2], 'clear');
+        const spyFilterChange = vi.spyOn(service, 'onBackendFilterChange');
+        const spyEmitter = vi.spyOn(service, 'emitFilterChanged');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         await service.clearFilterByColumnId(newEvent, 'age');
@@ -546,16 +544,16 @@ describe('FilterService', () => {
           { id: 'field1', field: 'field1', width: 100, filter: { searchTerms: ['John'] } },
           { id: 'field2', field: 'field2', width: 100 }
         ];
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-        jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
       });
 
       it('should clear all the Filters when the query response is a string', async () => {
         gridOptionMock.backendServiceApi!.service.processOnFilterChanged = () => 'filter query string';
-        const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
-        const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
-        const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
-        const spyProcess = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
+        const spyClear = vi.spyOn(service.getFiltersMetadata()[0], 'clear');
+        const spyFilterChange = vi.spyOn(service, 'onBackendFilterChange');
+        const spyEmitter = vi.spyOn(service, 'emitFilterChanged');
+        const spyProcess = vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         await service.clearFilters();
@@ -569,14 +567,14 @@ describe('FilterService', () => {
         expect(sharedService.columnDefinitions[0].filter!.searchTerms).toBeUndefined();
       });
 
-      it('should execute the "onError" method when the Promise throws an error', (done) => {
+      it('should execute the "onError" method when the Promise throws an error', async () => {
         const errorExpected = 'promise error';
         gridOptionMock.backendServiceApi!.process = () => Promise.reject(errorExpected);
-        gridOptionMock.backendServiceApi!.onError = () => jest.fn();
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
-        const updateFilterSpy = jest.spyOn(service, 'updateFilters');
-        jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
+        gridOptionMock.backendServiceApi!.onError = () => vi.fn();
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const spyOnError = vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
+        const updateFilterSpy = vi.spyOn(service, 'updateFilters');
+        vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
         // get previous filters before calling the query that will fail
         const previousFilters = service.getPreviousFilters();
@@ -584,33 +582,31 @@ describe('FilterService', () => {
         service.clearFilters();
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
-          expect(spyOnError).toHaveBeenCalledWith(errorExpected);
-          expect(updateFilterSpy).toHaveBeenCalledWith(previousFilters, false, false, false);
-          done();
-        });
+        await new Promise(process.nextTick);
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
+        expect(spyOnError).toHaveBeenCalledWith(errorExpected);
+        expect(updateFilterSpy).toHaveBeenCalledWith(previousFilters, false, false, false);
       });
 
-      it('should execute the "onError" method when the Observable throws an error', (done) => {
+      it('should execute the "onError" method when the Observable throws an error', async () => {
         const errorExpected = 'observable error';
-        const spyProcess = jest.fn();
+        const spyProcess = vi.fn();
         gridOptionMock.backendServiceApi!.process = () => of(spyProcess);
-        gridOptionMock.backendServiceApi!.onError = () => jest.fn();
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
-        jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
+        gridOptionMock.backendServiceApi!.onError = () => vi.fn();
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const spyOnError = vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
+        vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
 
         backendUtilityService.addRxJsResource(rxjsResourceStub);
         service.addRxJsResource(rxjsResourceStub);
         service.clearFilters();
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
-          expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
-          expect(spyOnError).toHaveBeenCalledWith(errorExpected);
-          done();
-        });
+        await new Promise(process.nextTick);
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
+        expect(spyOnError).toHaveBeenCalledWith(errorExpected);
       });
     });
   });
@@ -638,9 +634,9 @@ describe('FilterService', () => {
 
     describe('clearFilterByColumnId method', () => {
       it('should clear the filter by passing a column id as argument on a local grid', async () => {
-        const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
-        const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyClear = vi.spyOn(service.getFiltersMetadata()[0], 'clear');
+        const spyEmitter = vi.spyOn(service, 'emitFilterChanged');
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         await service.clearFilterByColumnId(newEvent, 'firstName');
@@ -660,7 +656,7 @@ describe('FilterService', () => {
     let mockItem1;
 
     beforeEach(() => {
-      jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
       mockItem1 = { firstName: 'John', lastName: 'Doe', fullName: 'John Doe', age: 26, address: { zip: 123456 } };
     });
 
@@ -676,7 +672,7 @@ describe('FilterService', () => {
           }
         }
       } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
@@ -698,7 +694,7 @@ describe('FilterService', () => {
           }
         }
       } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
@@ -711,7 +707,7 @@ describe('FilterService', () => {
     it('should execute "getParsedSearchTermsByFieldType" once if the first "customLocalFilter" is executed without parsedSearchTerms at the beginning', () => {
       const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
       const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, type: FieldType.string } } as ColumnFilters;
@@ -724,7 +720,7 @@ describe('FilterService', () => {
     it('should return True (nothing to filter, all rows will be returned) when there are no column definition found', () => {
       const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
@@ -737,7 +733,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is the same as the searchTerms', () => {
       const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
@@ -751,7 +747,7 @@ describe('FilterService', () => {
       const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       sharedService.allColumns = [mockColumn1];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
@@ -763,7 +759,7 @@ describe('FilterService', () => {
 
     it('should return True when the searchTerms is an empty array', () => {
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [], type: FieldType.string } } as ColumnFilters;
@@ -774,7 +770,7 @@ describe('FilterService', () => {
 
     it('should return True when the searchTerms is equal to the operator', () => {
       const mockColumn1 = { id: 'age', field: 'age', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilters = { age: { columnDef: mockColumn1, columnId: 'age', operator: '<=', searchTerms: ['<='], type: FieldType.string } } as ColumnFilters;
@@ -786,7 +782,7 @@ describe('FilterService', () => {
     it('should return False when input value from datacontext is not equal to the searchTerms', () => {
       const searchTerms = ['Johnny'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -802,7 +798,7 @@ describe('FilterService', () => {
       const searchTerms = ['Johnny'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       sharedService.allColumns = [mockColumn1];
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -817,7 +813,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is a number and searchTerms is also a number', () => {
       const searchTerms = [26];
       const mockColumn1 = { id: 'age', field: 'age', filterable: true, type: FieldType.number } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
@@ -832,7 +828,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is a number, "filterSearchType" is a FieldType number and finally searchTerms is also a number', () => {
       const searchTerms = [26];
       const mockColumn1 = { id: 'age', field: 'age', filterable: true, filterSearchType: FieldType.number } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
@@ -847,7 +843,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is equal to startsWith substring', () => {
       const searchTerms = ['Jo*'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -862,7 +858,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is equal to startsWith (1x)char + endsWith (1x)char', () => {
       const searchTerms = ['J*n'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -877,7 +873,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is equal to startsWith substring + endsWith substring', () => {
       const searchTerms = ['Jo*hn'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -892,7 +888,7 @@ describe('FilterService', () => {
     it('should return False when input value from datacontext does NOT equal both startsWith substring + endsWith substring', () => {
       const searchTerms = ['J*nee'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -908,7 +904,7 @@ describe('FilterService', () => {
       const searchTerms = ['Jo'];
       const operator = 'a*';
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
@@ -921,7 +917,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is equal to startsWith substring when having (*) as the last character in the searchTerms', () => {
       const searchTerms = ['Jo*'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -936,7 +932,7 @@ describe('FilterService', () => {
     it('should return False when input value has special char "*" substring but "autoParseInputFilterOperator" is set to false so the text "Jo*" will not be found', () => {
       const searchTerms = ['Jo*'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true, autoParseInputFilterOperator: false } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -951,7 +947,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is equal to endsWith substring', () => {
       const searchTerms = ['*hn'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -966,7 +962,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is equal to endsWith substring when using Operator endsWith', () => {
       const searchTerms = ['*hn'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -981,8 +977,8 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext is IN searchTerms', () => {
       const customFirstNameFormatter = (_row: number, _cell: number, _value: any, _columnDef: any, dataContext: any) => dataContext.fullName.split(' ')[0];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true, formatter: customFirstNameFormatter, params: { useFormatterOuputToFilter: true } } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'IN', searchTerms: ['Jane', 'John'], type: FieldType.string } } as ColumnFilters;
@@ -994,7 +990,7 @@ describe('FilterService', () => {
     it('should return True when input value from datacontext contains an operator ">=" and its value is greater than 10', () => {
       const searchTerms = ['>=10'];
       const mockColumn1 = { id: 'age', field: 'age', filterable: true, autoParseInputFilterOperator: false } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
@@ -1009,7 +1005,7 @@ describe('FilterService', () => {
     it('should return False, since firstname is filled, when input value from datacontext contains an operator "<>" and its value is an empty string', () => {
       const searchTerms = ['<> '];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
@@ -1024,7 +1020,7 @@ describe('FilterService', () => {
     it('should return False when input value from datacontext contains an operator >= and its value is greater than 10 substring but "autoParseInputFilterOperator" is set to false', () => {
       const searchTerms = ['>=10'];
       const mockColumn1 = { id: 'age', field: 'age', filterable: true, autoParseInputFilterOperator: false } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
@@ -1039,8 +1035,8 @@ describe('FilterService', () => {
     it('should return True when input value is a complex object searchTerms value is found following the dot notation', () => {
       const searchTerms = [123456];
       const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'number');
@@ -1054,8 +1050,8 @@ describe('FilterService', () => {
       gridOptionMock.enableRowDetailView = true;
       const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
       const mockItem2 = { __isPadding: true, __parent: mockItem1 };
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } } as ColumnFilters;
@@ -1069,8 +1065,8 @@ describe('FilterService', () => {
       gridOptionMock.enableRowDetailView = true;
       const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
       const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } } as ColumnFilters;
@@ -1081,8 +1077,8 @@ describe('FilterService', () => {
 
     it('should execute "queryFieldNameGetterFn()" callback and return True when input value matches the full name', () => {
       const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John Doe'], parsedSearchTerms: ['John Doe'], type: FieldType.string } } as ColumnFilters;
@@ -1093,8 +1089,8 @@ describe('FilterService', () => {
 
     it('should execute "queryFieldNameGetterFn()" callback and return False when input value is not fullName but just the firstName', () => {
       const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: FieldType.string } } as ColumnFilters;
@@ -1105,8 +1101,8 @@ describe('FilterService', () => {
 
     it('should execute "queryFieldNameGetterFn()" callback and return False when input value is not fullName but just the lastName', () => {
       const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], type: FieldType.string } } as ColumnFilters;
@@ -1120,37 +1116,37 @@ describe('FilterService', () => {
     beforeEach(() => {
       gridOptionMock.backendServiceApi = {
         service: backendServiceStub,
-        preProcess: jest.fn(),
-        process: jest.fn(),
-        postProcess: jest.fn(),
+        preProcess: vi.fn(),
+        process: vi.fn(),
+        postProcess: vi.fn(),
       };
     });
 
-    it('should throw an error when grid argument is undefined', (done) => {
+    it('should throw an error when grid argument is undefined', () => new Promise((done: any) => {
       service.onBackendFilterChange(undefined as any, undefined as any).catch((error) => {
         expect(error.message).toContain(`Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function`);
         done();
       });
-    });
+    }));
 
-    it('should throw an error when grid argument is an empty object', (done) => {
+    it('should throw an error when grid argument is an empty object', () => new Promise((done: any) => {
       service.onBackendFilterChange(undefined as any, {} as any).catch((error) => {
         expect(error.message).toContain(`Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function`);
         done();
       });
-    });
+    }));
 
-    it('should throw an error when backendServiceApi is undefined', (done) => {
+    it('should throw an error when backendServiceApi is undefined', () => new Promise((done: any) => {
       gridOptionMock.backendServiceApi = undefined;
 
       service.onBackendFilterChange(undefined as any, { grid: gridStub } as any).catch((error) => {
         expect(error.message).toContain(`BackendServiceApi requires at least a "process" function and a "service" defined`);
         done();
       });
-    });
+    }));
 
     it('should execute "preProcess" method when it is defined', () => {
-      const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'preProcess');
+      const spy = vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'preProcess');
 
       service.init(gridStub);
       service.onBackendFilterChange(undefined as any, { grid: gridStub } as any);
@@ -1161,7 +1157,7 @@ describe('FilterService', () => {
 
   describe('populateColumnFilterSearchTermPresets method', () => {
     beforeEach(() => {
-      gridStub.getColumns = jest.fn();
+      gridStub.getColumns = vi.fn();
       gridOptionMock.presets = {
         filters: [{ columnId: 'gender', searchTerms: ['male'], operator: 'EQ' }],
         sorters: [{ columnId: 'name', direction: 'asc' }],
@@ -1170,11 +1166,11 @@ describe('FilterService', () => {
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should return an empty array when column definitions returns nothing as well', () => {
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
       const output = service.populateColumnFilterSearchTermPresets(undefined as any);
@@ -1183,7 +1179,7 @@ describe('FilterService', () => {
     });
 
     it('should populate presets and remove column definitions searchTerms to be replaced by the presets values', () => {
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue([
         { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ', searchTerms: ['John'] } },
         { id: 'gender', field: 'gender' }
       ]);
@@ -1204,7 +1200,7 @@ describe('FilterService', () => {
         sorters: [{ columnId: 'name', direction: 'asc' }],
         pagination: { pageNumber: 2, pageSize: 20 }
       };
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue([
         { id: 'name', field: 'name' },
         { id: 'gender', field: 'gender', filter: { model: Filters.input, operator: 'EQ', searchTerms: ['male'] } }
       ]);
@@ -1225,7 +1221,7 @@ describe('FilterService', () => {
         sorters: [{ columnId: 'name', direction: 'asc' }],
         pagination: { pageNumber: 2, pageSize: 20 }
       };
-      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+      const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue([
         { id: 'name', field: 'name' },
         { id: 'gender', field: 'gender' }
       ]);
@@ -1240,16 +1236,16 @@ describe('FilterService', () => {
       ]);
     });
 
-    it('should pre-filter the tree dataset when the grid is a Tree Data View & dataset is empty', (done) => {
-      const spyRefresh = jest.spyOn(dataViewStub, 'refresh');
-      const spyPreFilter = jest.spyOn(service, 'preFilterTreeData');
-      const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+    it('should pre-filter the tree dataset when the grid is a Tree Data View & dataset is empty', () => {
+      const spyRefresh = vi.spyOn(dataViewStub, 'refresh');
+      const spyPreFilter = vi.spyOn(service, 'preFilterTreeData');
+      const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([
         { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
         { id: 'gender', field: 'gender' },
         { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=' } }
       ]);
       const mockFlatDataset = [{ id: 0, name: 'John', gender: 'male', size: 170 }, { id: 1, name: 'Jane', gender: 'female', size: 150 }];
-      jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockFlatDataset);
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockFlatDataset);
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
       gridOptionMock.presets = {
@@ -1259,31 +1255,30 @@ describe('FilterService', () => {
       const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets!.filters as any);
 
       expect(spyRefresh).not.toHaveBeenCalled();
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
 
-      setTimeout(() => {
-        expect(spyGetCols).toHaveBeenCalled();
-        expect(spyPreFilter).toHaveBeenCalled();
-        expect(spyRefresh).toHaveBeenCalled();
-        expect(output).toEqual([
-          { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
-          { id: 'gender', field: 'gender', },
-          { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=', searchTerms: [20] } },
-        ]);
-        done();
-      });
+      vi.runAllTimers();
+
+      expect(spyGetCols).toHaveBeenCalled();
+      expect(spyPreFilter).toHaveBeenCalled();
+      expect(spyRefresh).toHaveBeenCalled();
+      expect(output).toEqual([
+        { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
+        { id: 'gender', field: 'gender', },
+        { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=', searchTerms: [20] } },
+      ]);
     });
 
     it('should pre-filter the tree dataset when the grid is a Tree Data View & dataset is filled', () => {
-      const spyRefresh = jest.spyOn(dataViewStub, 'refresh');
-      const spyPreFilter = jest.spyOn(service, 'preFilterTreeData');
-      const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+      const spyRefresh = vi.spyOn(dataViewStub, 'refresh');
+      const spyPreFilter = vi.spyOn(service, 'preFilterTreeData');
+      const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([
         { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
         { id: 'gender', field: 'gender' },
         { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=' } }
       ]);
       const mockFlatDataset = [{ id: 0, name: 'John', gender: 'male', size: 170 }, { id: 1, name: 'Jane', gender: 'female', size: 150 }];
-      jest.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
       gridOptionMock.presets = {
@@ -1337,8 +1332,8 @@ describe('FilterService', () => {
     });
 
     it('should call "clearFilters" without triggering a clear event but trigger an "emitFilterChanged" local when using "bindLocalOnFilter" and also expect filters to be set in ColumnFilters', async () => {
-      const clearSpy = jest.spyOn(service, 'clearFilters');
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
+      const clearSpy = vi.spyOn(service, 'clearFilters');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -1355,8 +1350,8 @@ describe('FilterService', () => {
     });
 
     it('should call "resetToPreviousSearchFilters" when "onBeforeSearchChange" event is prevented from bubbling and "resetFilterSearchValueAfterOnBeforeCancellation" is set to true', async () => {
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish').mockReturnValue(false);
-      const resetPrevSpy = jest.spyOn(service, 'resetToPreviousSearchFilters');
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish').mockReturnValue(false);
+      const resetPrevSpy = vi.spyOn(service, 'resetToPreviousSearchFilters');
 
       gridOptionMock.resetFilterSearchValueAfterOnBeforeCancellation = true;
       service.init(gridStub);
@@ -1365,14 +1360,14 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new SlickEventData(), gridStub);
       await service.updateFilters(mockNewFilters, false, false, true);
 
-      expect(pubSubSpy).toHaveBeenCalledWith('onBeforeSearchChange', expect.toBeObject());
+      expect(pubSubSpy).toHaveBeenCalledWith('onBeforeSearchChange', expect.any(Object));
       expect(resetPrevSpy).toHaveBeenCalled();
-      jest.spyOn(pubSubServiceStub, 'publish').mockReturnValue(true);
+      vi.spyOn(pubSubServiceStub, 'publish').mockReturnValue(true);
     });
 
     it('should expect filters to be set in ColumnFilters when using "bindLocalOnFilter" without triggering a filter changed event when 2nd flag argument is set to false', async () => {
-      const clearSpy = jest.spyOn(service, 'clearFilters');
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
+      const clearSpy = vi.spyOn(service, 'clearFilters');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -1392,13 +1387,13 @@ describe('FilterService', () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(jest.fn())),
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
-      const clearSpy = jest.spyOn(service, 'clearFilters');
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const backendUpdateSpy = jest.spyOn(backendServiceStub, 'updateFilters');
-      const backendProcessSpy = jest.spyOn(backendServiceStub, 'processOnFilterChanged');
-      const refreshBackendSpy = jest.spyOn(backendUtilityService, 'refreshBackendDataset');
+      const clearSpy = vi.spyOn(service, 'clearFilters');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const backendUpdateSpy = vi.spyOn(backendServiceStub, 'updateFilters');
+      const backendProcessSpy = vi.spyOn(backendServiceStub, 'processOnFilterChanged');
+      const refreshBackendSpy = vi.spyOn(backendUtilityService, 'refreshBackendDataset');
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
@@ -1422,13 +1417,13 @@ describe('FilterService', () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(jest.fn())),
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
-      const clearSpy = jest.spyOn(service, 'clearFilters');
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const backendUpdateSpy = jest.spyOn(backendServiceStub, 'updateFilters');
-      const backendProcessSpy = jest.spyOn(backendServiceStub, 'processOnFilterChanged');
-      const refreshBackendSpy = jest.spyOn(backendUtilityService, 'refreshBackendDataset');
+      const clearSpy = vi.spyOn(service, 'clearFilters');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const backendUpdateSpy = vi.spyOn(backendServiceStub, 'updateFilters');
+      const backendProcessSpy = vi.spyOn(backendServiceStub, 'processOnFilterChanged');
+      const refreshBackendSpy = vi.spyOn(backendUtilityService, 'refreshBackendDataset');
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
@@ -1448,9 +1443,9 @@ describe('FilterService', () => {
     });
 
     it('should expect filters to be set in ColumnFilters and also expect onSearchChange to be called when last argument is set to True', async () => {
-      const clearSpy = jest.spyOn(service, 'clearFilters');
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
+      const clearSpy = vi.spyOn(service, 'clearFilters');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
 
       gridOptionMock.enableTreeData = true;
       service.init(gridStub);
@@ -1478,9 +1473,9 @@ describe('FilterService', () => {
     });
 
     it('should expect filters to be set in ColumnFilters and also expect onSearchChange to be called when "enableTreeData" is set', async () => {
-      const clearSpy = jest.spyOn(service, 'clearFilters');
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
+      const clearSpy = vi.spyOn(service, 'clearFilters');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
 
       gridOptionMock.enableTreeData = true;
       service.init(gridStub);
@@ -1529,9 +1524,9 @@ describe('FilterService', () => {
       const expectation = {
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
       };
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const setFilterArgsSpy = jest.spyOn(dataViewStub, 'setFilterArgs');
-      const refreshSpy = jest.spyOn(dataViewStub, 'refresh');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const setFilterArgsSpy = vi.spyOn(dataViewStub, 'setFilterArgs');
+      const refreshSpy = vi.spyOn(dataViewStub, 'refresh');
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new SlickEventData(), gridStub);
@@ -1550,9 +1545,9 @@ describe('FilterService', () => {
       const expectation = {
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: FieldType.string },
       };
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const setFilterArgsSpy = jest.spyOn(dataViewStub, 'setFilterArgs');
-      const refreshSpy = jest.spyOn(dataViewStub, 'refresh');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const setFilterArgsSpy = vi.spyOn(dataViewStub, 'setFilterArgs');
+      const refreshSpy = vi.spyOn(dataViewStub, 'refresh');
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
       mockArgs1.column.filter = { emptySearchTermReturnAllValues: false };
@@ -1577,12 +1572,12 @@ describe('FilterService', () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(jest.fn())),
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const backendUpdateSpy = jest.spyOn(backendServiceStub, 'updateFilters');
-      const backendProcessSpy = jest.spyOn(backendServiceStub, 'processOnFilterChanged');
-      const refreshBackendSpy = jest.spyOn(backendUtilityService, 'refreshBackendDataset');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const backendUpdateSpy = vi.spyOn(backendServiceStub, 'updateFilters');
+      const backendProcessSpy = vi.spyOn(backendServiceStub, 'processOnFilterChanged');
+      const refreshBackendSpy = vi.spyOn(backendUtilityService, 'refreshBackendDataset');
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
@@ -1604,12 +1599,12 @@ describe('FilterService', () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(jest.fn())),
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
-      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
-      const backendUpdateSpy = jest.spyOn(backendServiceStub, 'updateFilters');
-      const backendProcessSpy = jest.spyOn(backendServiceStub, 'processOnFilterChanged');
-      const refreshBackendSpy = jest.spyOn(backendUtilityService, 'refreshBackendDataset');
+      const emitSpy = vi.spyOn(service, 'emitFilterChanged');
+      const backendUpdateSpy = vi.spyOn(backendServiceStub, 'updateFilters');
+      const backendProcessSpy = vi.spyOn(backendServiceStub, 'processOnFilterChanged');
+      const refreshBackendSpy = vi.spyOn(backendUtilityService, 'refreshBackendDataset');
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
@@ -1636,11 +1631,11 @@ describe('FilterService', () => {
         { id: 'field1', field: 'field1', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } },
         { id: 'field2', field: 'field2', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } }
       ];
-      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
-      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality();
@@ -1664,11 +1659,11 @@ describe('FilterService', () => {
         { id: 'field1', field: 'field1', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } },
         { id: 'field2', field: 'field2', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } }
       ];
-      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
-      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
@@ -1689,10 +1684,10 @@ describe('FilterService', () => {
       gridOptionMock.showHeaderRow = true;
 
       const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
-      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
@@ -1711,10 +1706,10 @@ describe('FilterService', () => {
 
     it('should toggle the Filter Functionality from the Grid Options & toggle the Header Filter row', () => {
       const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
-      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.toggleFilterFunctionality();
@@ -1732,7 +1727,7 @@ describe('FilterService', () => {
     });
 
     it('should toggle the Header Filter Row (to disabled when previously enabled)', () => {
-      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
 
       service.init(gridStub);
       service.toggleHeaderFilterRow();
@@ -1742,8 +1737,8 @@ describe('FilterService', () => {
 
     it('should toggle the Header Filter Row and expect to call "setColumns" when changing to enabled when previously disabled', () => {
       gridOptionMock.showHeaderRow = false;
-      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+      const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
       service.init(gridStub);
       service.toggleHeaderFilterRow();
@@ -1756,7 +1751,7 @@ describe('FilterService', () => {
   describe('setSortColumnIcons method', () => {
     it('should set the sorting icon by calling "setSortColumns" on the grid object', () => {
       const mockSortColumns = [{ columnId: 'duration', sortAsc: true }];
-      const spy = jest.spyOn(gridStub, 'setSortColumns');
+      const spy = vi.spyOn(gridStub, 'setSortColumns');
 
       service.init(gridStub);
       service.setSortColumnIcons(mockSortColumns);
@@ -1855,18 +1850,18 @@ describe('FilterService', () => {
     beforeEach(() => {
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should expect "setSortColumns" to have been called after init', () => {
-      const spySetSortCols = jest.spyOn(gridStub, 'setSortColumns');
+      const spySetSortCols = vi.spyOn(gridStub, 'setSortColumns');
       service.init(gridStub);
 
       expect(spySetSortCols).toHaveBeenCalledWith([{ columnId: 'file', sortAsc: true }]);
     });
 
     it('should create a filter and its metadata when "onHeaderRowCellRendered" event is triggered', () => {
-      const spySetSortCols = jest.spyOn(gridStub, 'setSortColumns');
+      const spySetSortCols = vi.spyOn(gridStub, 'setSortColumns');
       const mockArgs = {
         grid: gridStub,
         column: { id: 'firstName', field: 'firstName', filterable: true } as Column,
@@ -1883,7 +1878,7 @@ describe('FilterService', () => {
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
-      expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
+      expect(filterMetadataArray[0].searchTerms).toEqual([]);
     });
 
     describe('bindLocalOnFilter method', () => {
@@ -1897,7 +1892,7 @@ describe('FilterService', () => {
       let mockArgs3;
 
       beforeEach(() => {
-        gridStub.getColumns = jest.fn();
+        gridStub.getColumns = vi.fn();
         gridOptionMock.backendServiceApi = undefined;
         gridOptionMock.presets = {
           treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] }
@@ -1945,20 +1940,20 @@ describe('FilterService', () => {
         mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
         mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
         mockArgs3 = { grid: gridStub, column: mockColumn3, node: document.getElementById(DOM_ELEMENT_ID) };
-        jest.spyOn(dataViewStub, 'getItems').mockReturnValue(dataset);
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2, mockColumn3]);
+        vi.spyOn(dataViewStub, 'getItems').mockReturnValue(dataset);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2, mockColumn3]);
         sharedService.allColumns = [mockColumn1, mockColumn2, mockColumn3];
-        jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(datasetHierarchical);
+        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(datasetHierarchical);
       });
 
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should return True when item is found and its parent is not collapsed', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: false })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: false })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -1981,9 +1976,9 @@ describe('FilterService', () => {
       });
 
       it('should return True when item is found and its parent is not collapsed', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: false })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: false })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2011,9 +2006,9 @@ describe('FilterService', () => {
       });
 
       it('should return False when item is found BUT its parent is collapsed', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: true })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: true })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2036,9 +2031,9 @@ describe('FilterService', () => {
       });
 
       it('should return False even when using "autoRecalcTotalsOnFilterChange" and item is found BUT its parent is collapsed', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: true })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: true })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2062,9 +2057,9 @@ describe('FilterService', () => {
       });
 
       it('should return False when item is not found in the dataset', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2087,9 +2082,9 @@ describe('FilterService', () => {
       });
 
       it('should return False also when called by "updateSingleFilter" and when item is not found in the dataset', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2114,9 +2109,9 @@ describe('FilterService', () => {
       // -- excludeChildrenWhenFilteringTree -- //
 
       it('should return True (file is included) when item is not found BUT its parent passes the filter criteria AND "excludeChildrenWhenFilteringTree" is disabled', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2140,9 +2135,9 @@ describe('FilterService', () => {
       });
 
       it('should return False (file is excluded) when item is not found EVEN when its parent passes the filter criteria because "excludeChildrenWhenFilteringTree" is enabled', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2166,9 +2161,9 @@ describe('FilterService', () => {
       });
 
       it('should return True (file is included) when item is not found BUT its parent passes the filter criteria with "autoApproveParentItemWhenTreeColumnIsValid" and when "excludeChildrenWhenFilteringTree" is disabled', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -2195,9 +2190,9 @@ describe('FilterService', () => {
       });
 
       it('should return False (file is not included) when Parent item is not valid and is tagged as "filteredParents: false" when "excludeChildrenWhenFilteringTree" is disabled', async () => {
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 

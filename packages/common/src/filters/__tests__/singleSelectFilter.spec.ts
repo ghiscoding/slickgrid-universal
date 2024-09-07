@@ -1,5 +1,4 @@
-// import 3rd party lib multiple-select for the tests
-import 'multiple-select-vanilla';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Filters } from '../filters.index';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
@@ -8,7 +7,7 @@ import { SingleSelectFilter } from '../singleSelectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import type { SlickGrid } from '../../core/index';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const containerId = 'demo-container';
 
@@ -22,9 +21,9 @@ const gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('SelectFilter', () => {
@@ -43,7 +42,7 @@ describe('SelectFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
       id: 'gender', field: 'gender', filterable: true,
@@ -56,7 +55,7 @@ describe('SelectFilter', () => {
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
@@ -92,7 +91,7 @@ describe('SelectFilter', () => {
   });
 
   it('should trigger single select change event and expect the callback to be called when we select a single search term from dropdown list', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
@@ -124,7 +123,7 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
@@ -155,7 +154,7 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
-    jest.runAllTimers(); // fast-forward timer
+    vi.runAllTimers(); // fast-forward timer
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);

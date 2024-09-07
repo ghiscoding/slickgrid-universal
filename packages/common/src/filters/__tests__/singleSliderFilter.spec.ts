@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { Filters } from '../filters.index';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { SingleSliderFilter } from '../singleSliderFilter';
@@ -5,7 +7,7 @@ import { SlickEvent, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -17,9 +19,9 @@ const gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
   onHeaderRowMouseLeave: new SlickEvent(),
@@ -38,13 +40,13 @@ describe('SingleSliderFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.slider } };
     filterArgs = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
@@ -76,9 +78,9 @@ describe('SingleSliderFilter', () => {
   });
 
   it('should call "setValues" and expect that value, converted as a number, to be in the callback when triggered', () => {
-    const callbackSpy = jest.spyOn(filterArgs, 'callback');
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
-    const rowMouseLeaveSpy = jest.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseLeaveSpy = vi.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
 
     filter.init(filterArgs);
     filter.setValues(['2']);
@@ -91,7 +93,7 @@ describe('SingleSliderFilter', () => {
   });
 
   it('should trigger an slider input change event and expect slider value to be updated and also "onHeaderRowMouseEnter" to be notified', () => {
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
 
     filter.init(filterArgs);
     filter.setValues(['2']);
@@ -104,7 +106,7 @@ describe('SingleSliderFilter', () => {
   });
 
   it('should call "setValues" and expect that value, converted as a number, to be in the callback when triggered', () => {
-    const callbackSpy = jest.spyOn(filterArgs, 'callback');
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
 
     filter.init(filterArgs);
     filter.setValues(3);
@@ -200,7 +202,7 @@ describe('SingleSliderFilter', () => {
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
     filterArgs.searchTerms = [3];
-    const callbackSpy = jest.spyOn(filterArgs, 'callback');
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
 
     filter.init(filterArgs);
     filter.clear();
@@ -211,7 +213,7 @@ describe('SingleSliderFilter', () => {
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
     filterArgs.searchTerms = [3];
-    const callbackSpy = jest.spyOn(filterArgs, 'callback');
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
 
     filter.init(filterArgs);
     filter.clear(false);
@@ -221,7 +223,7 @@ describe('SingleSliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
-    const callbackSpy = jest.spyOn(filterArgs, 'callback');
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
     mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
@@ -251,7 +253,7 @@ describe('SingleSliderFilter', () => {
     const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
     const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
-    const sliderRightChangeSpy = jest.spyOn(sliderInputs[0], 'dispatchEvent');
+    const sliderRightChangeSpy = vi.spyOn(sliderInputs[0], 'dispatchEvent');
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 56 });

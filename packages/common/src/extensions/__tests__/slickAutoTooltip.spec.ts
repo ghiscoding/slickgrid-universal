@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { AutoTooltipOption, Column } from '../../interfaces/index';
 import { SharedService } from '../../services/shared.service';
 import { SlickAutoTooltip } from '../slickAutoTooltip';
@@ -11,10 +13,10 @@ const addonOptions: AutoTooltipOption = {
 };
 
 const gridStub = {
-  getCellNode: jest.fn(),
-  getCellFromEvent: jest.fn(),
-  getOptions: jest.fn(),
-  registerPlugin: jest.fn(),
+  getCellNode: vi.fn(),
+  getCellFromEvent: vi.fn(),
+  getOptions: vi.fn(),
+  registerPlugin: vi.fn(),
   onHeaderMouseEnter: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -53,7 +55,7 @@ describe('AutoTooltip Plugin', () => {
 
   describe('plugins - autotooltips - header', () => {
     beforeEach(() => {
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     });
 
     afterEach(() => {
@@ -65,8 +67,8 @@ describe('AutoTooltip Plugin', () => {
       const mockNodeElm = document.createElement('div');
       mockNodeElm.title = '';
       mockNodeElm.textContent = 'some text';
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 150 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 100 });
 
@@ -79,8 +81,8 @@ describe('AutoTooltip Plugin', () => {
       const mockNodeElm = document.createElement('div');
       mockNodeElm.title = '';
       mockNodeElm.textContent = 'some text';
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 150 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 100 });
 
@@ -94,7 +96,7 @@ describe('AutoTooltip Plugin', () => {
 
   describe('plugins - autotooltips - max tooltip', () => {
     beforeEach(() => {
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     });
 
     afterEach(() => {
@@ -105,8 +107,8 @@ describe('AutoTooltip Plugin', () => {
       const mockNodeElm = document.createElement('div');
       mockNodeElm.title = '';
       mockNodeElm.textContent = 'some text';
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 150 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 100 });
 
@@ -119,8 +121,8 @@ describe('AutoTooltip Plugin', () => {
       const mockNodeElm = document.createElement('div');
       mockNodeElm.title = '';
       mockNodeElm.textContent = 'my super very long text';
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 140 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 175 });
 
@@ -138,8 +140,8 @@ describe('AutoTooltip Plugin', () => {
       mockHeaderElm.textContent = 'my super very long text';
       mockNodeElm.appendChild(mockHeaderElm);
       mockHeaderElm.appendChild(mockHeaderColElm);
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 175 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 50 });
 
@@ -160,8 +162,8 @@ describe('AutoTooltip Plugin', () => {
       mockHeaderElm.textContent = 'short text';
       mockNodeElm.appendChild(mockHeaderElm);
       mockHeaderElm.appendChild(mockHeaderColElm);
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 144 });
       Object.defineProperty(mockHeaderColElm, 'clientWidth', { writable: true, configurable: true, value: 130 });
 
@@ -183,8 +185,8 @@ describe('AutoTooltip Plugin', () => {
       mockHeaderElm.textContent = 'short text';
       mockNodeElm.appendChild(mockHeaderElm);
       mockHeaderElm.appendChild(mockHeaderColElm);
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 144 });
       Object.defineProperty(mockHeaderColElm, 'clientWidth', { writable: true, configurable: true, value: 130 });
 
@@ -205,8 +207,8 @@ describe('AutoTooltip Plugin', () => {
       mockHeaderElm.textContent = 'Long header creates tooltip';
       mockNodeElm.appendChild(mockHeaderElm);
       mockHeaderElm.appendChild(mockHeaderColElm);
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
-      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ row: 1, cell: 2 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockNodeElm);
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 140 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 175 });
       Object.defineProperty(mockHeaderColElm, 'clientWidth', { writable: true, configurable: true, value: 50 });

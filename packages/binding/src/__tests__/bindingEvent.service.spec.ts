@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { BindingEventService } from '../bindingEvent.service';
 
 describe('BindingEvent Service', () => {
@@ -14,13 +16,13 @@ describe('BindingEvent Service', () => {
     div.remove();
     service.unbindAll();
     service?.dispose();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be able to bind an event with listener to an element', () => {
-    const mockElm = { addEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockCallback = jest.fn();
-    const addEventSpy = jest.spyOn(mockElm, 'addEventListener');
+    const mockElm = { addEventListener: vi.fn() } as unknown as HTMLElement;
+    const mockCallback = vi.fn();
+    const addEventSpy = vi.spyOn(mockElm, 'addEventListener');
     const elm = document.createElement('input');
     div.appendChild(elm);
 
@@ -31,10 +33,10 @@ describe('BindingEvent Service', () => {
   });
 
   it('should be able to bind and unbindByEventName an event', () => {
-    const mockElm = { addEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockCallback = jest.fn();
-    const unbindSpy = jest.spyOn(service, 'unbind');
-    const addEventSpy = jest.spyOn(mockElm, 'addEventListener');
+    const mockElm = { addEventListener: vi.fn() } as unknown as HTMLElement;
+    const mockCallback = vi.fn();
+    const unbindSpy = vi.spyOn(service, 'unbind');
+    const addEventSpy = vi.spyOn(mockElm, 'addEventListener');
     const elm = document.createElement('input');
     div.appendChild(elm);
 
@@ -47,9 +49,9 @@ describe('BindingEvent Service', () => {
   });
 
   it('should be able to bind an event with listener and options to an element', () => {
-    const mockElm = { addEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockCallback = jest.fn();
-    const addEventSpy = jest.spyOn(mockElm, 'addEventListener');
+    const mockElm = { addEventListener: vi.fn() } as unknown as HTMLElement;
+    const mockCallback = vi.fn();
+    const addEventSpy = vi.spyOn(mockElm, 'addEventListener');
     const elm = document.createElement('input');
     div.appendChild(elm);
 
@@ -60,7 +62,7 @@ describe('BindingEvent Service', () => {
   });
 
   it('should be able to bind an event with single listener and options to multiple elements', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const elm1 = document.createElement('input');
     const elm2 = document.createElement('input');
     elm1.className = 'custom-class';
@@ -69,8 +71,8 @@ describe('BindingEvent Service', () => {
     div.appendChild(elm2);
 
     const btns = div.querySelectorAll('.custom-class');
-    const addEventSpy1 = jest.spyOn(btns[0], 'addEventListener');
-    const addEventSpy2 = jest.spyOn(btns[1], 'addEventListener');
+    const addEventSpy1 = vi.spyOn(btns[0], 'addEventListener');
+    const addEventSpy2 = vi.spyOn(btns[1], 'addEventListener');
     service.bind(btns, 'click', mockCallback, { capture: true, passive: true });
 
     expect(service.boundedEvents.length).toBe(2);
@@ -79,9 +81,9 @@ describe('BindingEvent Service', () => {
   });
 
   it('should call unbindAll and expect as many removeEventListener be called', () => {
-    const mockElm = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockCallback1 = jest.fn();
-    const mockCallback2 = jest.fn();
+    const mockElm = { addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as HTMLElement;
+    const mockCallback1 = vi.fn();
+    const mockCallback2 = vi.fn();
 
     service = new BindingEventService();
     service.bind(mockElm, 'keyup', mockCallback1);
@@ -98,12 +100,12 @@ describe('BindingEvent Service', () => {
   });
 
   it('should call unbindAll with a single group name and expect that group listeners to be removed but others kept', () => {
-    const mockElm1 = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockCallback1 = jest.fn();
-    const mockCallback2 = jest.fn();
-    const mockCallback3 = jest.fn();
-    const mockCallback4 = jest.fn();
-    const mockCallback5 = jest.fn();
+    const mockElm1 = { addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as HTMLElement;
+    const mockCallback1 = vi.fn();
+    const mockCallback2 = vi.fn();
+    const mockCallback3 = vi.fn();
+    const mockCallback4 = vi.fn();
+    const mockCallback5 = vi.fn();
 
     service = new BindingEventService();
     service.bind(mockElm1, 'keyup', mockCallback1, false, 'wonderful');
@@ -130,11 +132,11 @@ describe('BindingEvent Service', () => {
   });
 
   it('should call unbindAll with a multiple group names and expect those group listeners to be removed but others kept', () => {
-    const mockElm1 = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockCallback1 = jest.fn();
-    const mockCallback2 = jest.fn();
-    const mockCallback3 = jest.fn();
-    const mockCallback4 = jest.fn();
+    const mockElm1 = { addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as HTMLElement;
+    const mockCallback1 = vi.fn();
+    const mockCallback2 = vi.fn();
+    const mockCallback3 = vi.fn();
+    const mockCallback4 = vi.fn();
 
     service = new BindingEventService();
     service.bind(mockElm1, 'keyup', mockCallback1, false, 'wonderful');

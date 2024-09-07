@@ -1,7 +1,7 @@
 import eslint from '@eslint/js';
 import cypress from 'eslint-plugin-cypress/flat';
 import globals from 'globals';
-import jest from 'eslint-plugin-jest';
+import vitest from 'eslint-plugin-vitest';
 import n from 'eslint-plugin-n';
 import tseslint from 'typescript-eslint';
 
@@ -20,7 +20,7 @@ export default tseslint.config(
     ],
     plugins: {
       cypress,
-      jest,
+      vitest,
       n
     },
     files: ['**/*.ts'],

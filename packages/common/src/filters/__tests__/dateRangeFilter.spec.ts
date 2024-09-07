@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type VanillaCalendar from 'vanilla-calendar-pro';
 
 import { FieldType } from '../../enums/index';
@@ -20,9 +20,9 @@ let gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
   sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
@@ -40,13 +40,13 @@ describe('DateRangeFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = { id: 'finish', field: 'finish', type: FieldType.dateIso, filterable: true, filter: { model: Filters.dateRange, operator: 'RangeInclusive' } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
     gridOptionMock = {
@@ -85,7 +85,7 @@ describe('DateRangeFilter', () => {
 
   it('should hide the DOM element when the "hide" method is called', () => {
     filter.init(filterArguments);
-    const spy = jest.spyOn(filter.calendarInstance!, 'hide');
+    const spy = vi.spyOn(filter.calendarInstance!, 'hide');
     const inputElm = document.body.querySelector('input.date-picker') as HTMLInputElement;
     inputElm.dispatchEvent(new MouseEvent('click'));
     const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
@@ -97,7 +97,7 @@ describe('DateRangeFilter', () => {
 
   it('should show the DOM element when the "show" method is called', () => {
     filter.init(filterArguments);
-    const spy = jest.spyOn(filter.calendarInstance!, 'show');
+    const spy = vi.spyOn(filter.calendarInstance!, 'show');
     filter.show();
     const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
 
@@ -152,13 +152,13 @@ describe('DateRangeFilter', () => {
 
   it('should trigger input change event and expect the callback to be called with the date provided in the input', () => {
     mockColumn.filter!.operator = 'RangeInclusive';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const selectedDates = ['2001-01-02', '2001-01-13'];
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('div.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -172,8 +172,8 @@ describe('DateRangeFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     filterInputElm.value = '2001-01-02T16:02:02.239Z';
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new Event('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new Event('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: vi.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(0);
@@ -182,13 +182,13 @@ describe('DateRangeFilter', () => {
 
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the date provided in the input', () => {
     mockColumn.filter!.operator = 'RangeExclusive';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const selectedDates = ['2001-01-02', '2001-01-13'];
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -199,8 +199,8 @@ describe('DateRangeFilter', () => {
   it('should clear picker when pressing Backspace key', () => {
     filterArguments.searchTerms = ['2001-01-02', '2001-01-13'];
     mockColumn.filter!.operator = 'RangeInclusive';
-    const clearSpy = jest.spyOn(filter, 'clear');
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const clearSpy = vi.spyOn(filter, 'clear');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.show();
@@ -220,14 +220,14 @@ describe('DateRangeFilter', () => {
     const selectedDates = ['2001-01-02', '2001-01-13'];
     filterArguments.searchTerms = ['2001-01-02', '2001-01-13'];
     mockColumn.filter!.operator = 'RangeInclusive';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -239,14 +239,14 @@ describe('DateRangeFilter', () => {
     const selectedDates = ['2001-01-01', '2001-01-02', '2001-01-03'];
     filterArguments.searchTerms = ['2001-01-01..2001-01-03'];
     mockColumn.filter!.operator = 'RangeInclusive';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
@@ -274,7 +274,7 @@ describe('DateRangeFilter', () => {
     const selectedDates = ['2001-01-01', '2001-01-02', '2001-01-03'];
     filterArguments.searchTerms = ['2001-01-01', '2001-01-03'];
     mockColumn.filter!.operator = 'RangeInclusive';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.show();
@@ -285,8 +285,8 @@ describe('DateRangeFilter', () => {
     filter.show();
 
     filterInputElm.focus();
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -299,7 +299,7 @@ describe('DateRangeFilter', () => {
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
     filterArguments.searchTerms = ['2001-01-01', '2001-01-03'];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear();
@@ -313,7 +313,7 @@ describe('DateRangeFilter', () => {
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
     filterArguments.searchTerms = ['2001-01-01', '2001-01-31'];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear(false);
@@ -328,14 +328,14 @@ describe('DateRangeFilter', () => {
   it('should have a value with date & time in the picker when "enableTime" option is set and we trigger a change', () => {
     mockColumn.outputType = FieldType.dateTimeIsoAmPm;
     mockColumn.filter!.operator = '>';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const selectedDates = ['2001-01-02', '2001-01-13'];
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     filterInputElm.value = '2001-01-02 — 2001-01-13';
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
@@ -352,14 +352,14 @@ describe('DateRangeFilter', () => {
     };
     mockColumn.outputType = FieldType.dateTimeIsoAmPm;
     mockColumn.filter!.operator = '>';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const selectedDates = ['2001-01-02', '2001-01-13'];
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('div.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     filterInputElm.value = '2001-01-02 — 2001-01-13';
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -374,7 +374,7 @@ describe('DateRangeFilter', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z'];
     mockColumn.filter!.operator = '<=';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     const selectedDates = ['2001-01-02', '2001-01-13'];
 
     filter.init(filterArguments);
@@ -382,8 +382,8 @@ describe('DateRangeFilter', () => {
 
     filterInputElm.focus();
     filterInputElm.value = '2001-01-02 — 2001-01-13';
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: vi.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);

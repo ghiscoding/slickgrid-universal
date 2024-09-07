@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { AvgAggregator } from '../avgAggregator';
 import type { GroupTotals } from '../../interfaces';
 

@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { BindingHelper } from '../binding.helper';
 
 describe('Binding Helper', () => {
@@ -13,11 +15,11 @@ describe('Binding Helper', () => {
   afterEach(() => {
     div.remove();
     helper.dispose();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should add a binding for an input and call a value change and expect a mocked object to have the reflected value', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
     elm.className = 'custom-class';
@@ -35,7 +37,7 @@ describe('Binding Helper', () => {
   });
 
   it('should add 2 equal bindings for an input when calling "addElementBinding" twice with same arguments', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
     elm.className = 'custom-class';
@@ -115,7 +117,7 @@ describe('Binding Helper', () => {
   });
 
   it('should add event handler and expect callback to be called', () => {
-    const mockCallback = jest.fn();
+    const mockCallback = vi.fn();
     const elm = document.createElement('button');
     elm.className = 'grid123 icon-first';
     div.appendChild(elm);

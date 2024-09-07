@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { FieldType, OperatorType } from '../../enums/index';
 import type { Column, FilterArguments, GridOption, SliderOption } from '../../interfaces/index';
 import { Filters } from '../index';
@@ -5,8 +7,9 @@ import { CompoundSliderFilter } from '../compoundSliderFilter';
 import { SlickEvent, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
+vi.useFakeTimers();
+
 const containerId = 'demo-container';
-jest.useFakeTimers();
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -23,9 +26,9 @@ let gridOptionMock = {
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
   onHeaderRowMouseLeave: new SlickEvent(),
@@ -44,13 +47,13 @@ describe('CompoundSliderFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.compoundSlider } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
     gridOptionMock = {
@@ -106,9 +109,9 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be converted to number and in the callback when triggered', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
-    const rowMouseLeaveSpy = jest.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseLeaveSpy = vi.spyOn(gridStub.onHeaderRowMouseLeave, 'notify');
     const filterArgs = { ...filterArguments, operator: '>', grid: gridStub } as FilterArguments;
 
     filter.init(filterArgs);
@@ -122,7 +125,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger an slider input change event and expect slider value to be updated and also "onHeaderRowMouseEnter" to be notified', () => {
-    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
     const filterArgs = { ...filterArguments, operator: '>', grid: gridStub } as FilterArguments;
 
     filter.init(filterArgs);
@@ -136,7 +139,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should call "setValues" with "operator" set in the filter arguments and expect that value, converted as a string, to be in the callback when triggered', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '<=', grid: gridStub } as FilterArguments;
 
     filter.init(filterArgs);
@@ -150,7 +153,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger an operator change event and expect the callback to be called with the searchTerms and operator defined', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues(9);
@@ -164,7 +167,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
@@ -177,7 +180,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should change operator dropdown without a value entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
@@ -189,7 +192,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should be able to call "setValues" with a value, converted as a number, and an extra operator and expect it to be set as new operator', () => {
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues(['9'], OperatorType.greaterThanOrEqual);
@@ -213,7 +216,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should be able to call "setValues" and call an event trigger', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
     filter.init(filterArguments);
     filter.setValues(9, '>=', true);
     const filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
@@ -290,8 +293,8 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArgs);
     filter.clear();
@@ -301,8 +304,8 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArgs);
     filter.clear(false);
@@ -312,8 +315,8 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub, } as FilterArguments;
-    const callbackSpy = jest.spyOn(filterArguments, 'callback');
     mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
@@ -343,7 +346,7 @@ describe('CompoundSliderFilter', () => {
     const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
     const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
-    const sliderRightChangeSpy = jest.spyOn(sliderInputs[0], 'dispatchEvent');
+    const sliderRightChangeSpy = vi.spyOn(sliderInputs[0], 'dispatchEvent');
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 56 });

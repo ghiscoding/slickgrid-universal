@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { CloneAggregator } from '../cloneAggregator';
 
 describe('CloneAggregator', () => {
@@ -48,7 +50,9 @@ describe('CloneAggregator', () => {
   });
 
   describe('Tree Aggregator', () => {
-    aggregator = new CloneAggregator('title');
-    expect(() => aggregator.init({}, true)).toThrow('[Slickgrid-Universal] CloneAggregator is not currently supported for use with Tree Data');
+    it('throws when CloneAggregator is used with Tree Aggregator', () => {
+      aggregator = new CloneAggregator('title');
+      expect(() => aggregator.init({}, true)).toThrow('[Slickgrid-Universal] CloneAggregator is not currently supported for use with Tree Data');
+    });
   });
 });

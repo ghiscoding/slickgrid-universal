@@ -8,13 +8,13 @@
       "problemMatcher": []
     },
     {
-      "label": "Run Jest Unit Tests (watch)",
+      "label": "Run Vitest Unit Tests (watch)",
       "type": "shell",
       "command": "pnpm test:watch",
       "problemMatcher": []
     },
     {
-      "label": "Run Jest Test Coverage",
+      "label": "Run Vitest Test Coverage",
       "type": "shell",
       "command": "pnpm test",
       "problemMatcher": []

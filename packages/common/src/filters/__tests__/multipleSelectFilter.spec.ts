@@ -1,5 +1,4 @@
-// import 3rd party lib multiple-select for the tests
-import 'multiple-select-vanilla';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Filters } from '../filters.index';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
@@ -20,9 +19,9 @@ const gridOptionMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getColumns: vi.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('SelectFilter', () => {
@@ -41,7 +40,7 @@ describe('SelectFilter', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
       id: 'gender', field: 'gender', filterable: true,
@@ -54,7 +53,7 @@ describe('SelectFilter', () => {
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn(),
+      callback: vi.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
@@ -74,6 +73,6 @@ describe('SelectFilter', () => {
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
     expect(filter.isMultipleSelect).toBe(true);
-    expect(filter.columnDef.filter!.emptySearchTermReturnAllValues).toBeFalse();
+    expect(filter.columnDef.filter!.emptySearchTermReturnAllValues).toBe(false);
   });
 });

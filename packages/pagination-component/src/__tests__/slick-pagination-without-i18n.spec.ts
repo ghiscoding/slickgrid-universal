@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type GridOption, type Locale, type PaginationService, SharedService, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
@@ -9,9 +10,9 @@ function removeExtraSpaces(text: string) {
 }
 
 const gridStub = {
-  getOptions: jest.fn(),
+  getOptions: vi.fn(),
   getUID: () => 'slickgrid_123456',
-  registerPlugin: jest.fn(),
+  registerPlugin: vi.fn(),
 } as unknown as SlickGrid;
 
 const mockLocales = {
@@ -42,20 +43,20 @@ const paginationServiceStub = {
   pageSize: 5,
   totalItems: 95,
   availablePageSizes: [5, 10, 15, 20],
-  pageInfoTotalItems: jest.fn(),
-  getFullPagination: jest.fn(),
-  goToFirstPage: jest.fn(),
-  goToLastPage: jest.fn(),
-  goToNextPage: jest.fn(),
-  goToPreviousPage: jest.fn(),
-  goToPageNumber: jest.fn(),
-  changeItemPerPage: jest.fn(),
-  dispose: jest.fn(),
-  init: jest.fn(),
+  pageInfoTotalItems: vi.fn(),
+  getFullPagination: vi.fn(),
+  goToFirstPage: vi.fn(),
+  goToLastPage: vi.fn(),
+  goToNextPage: vi.fn(),
+  goToPreviousPage: vi.fn(),
+  goToPageNumber: vi.fn(),
+  changeItemPerPage: vi.fn(),
+  dispose: vi.fn(),
+  init: vi.fn(),
 } as unknown as PaginationService;
-Object.defineProperty(paginationServiceStub, 'dataFrom', { get: jest.fn(() => mockFullPagination.dataFrom), set: jest.fn() });
-Object.defineProperty(paginationServiceStub, 'dataTo', { get: jest.fn(() => mockFullPagination.dataTo), set: jest.fn() });
-Object.defineProperty(paginationServiceStub, 'itemsPerPage', { get: jest.fn(() => mockFullPagination.pageSize), set: jest.fn() });
+Object.defineProperty(paginationServiceStub, 'dataFrom', { get: vi.fn(() => mockFullPagination.dataFrom), set: vi.fn() });
+Object.defineProperty(paginationServiceStub, 'dataTo', { get: vi.fn(() => mockFullPagination.dataTo), set: vi.fn() });
+Object.defineProperty(paginationServiceStub, 'itemsPerPage', { get: vi.fn(() => mockFullPagination.pageSize), set: vi.fn() });
 
 describe('Slick-Pagination Component', () => {
   let component: SlickPaginationComponent;
@@ -65,8 +66,8 @@ describe('Slick-Pagination Component', () => {
   let translateService: TranslateServiceStub;
 
   beforeEach(() => {
-    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
+    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    vi.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
     div = document.createElement('div');
     document.body.appendChild(div);
     sharedService = new SharedService();
@@ -77,14 +78,14 @@ describe('Slick-Pagination Component', () => {
   describe('Integration Tests', () => {
     afterEach(() => {
       // clear all the spyOn mocks to not influence next test
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
-    it('should throw an error when "enableTranslate" is set and I18N Service is not provided', (done) => {
+    it('should throw an error when "enableTranslate" is set and I18N Service is not provided', () => new Promise((done: any) => {
       try {
         mockGridOptions.enableTranslate = true;
         translateService = undefined as any;
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
 
         component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);
         component.renderPagination(div);
@@ -92,11 +93,11 @@ describe('Slick-Pagination Component', () => {
         expect(e.toString()).toContain('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
         done();
       }
-    });
+    }));
 
     it('should have defined locale and expect new text in the UI', () => {
       mockGridOptions.locales = mockLocales;
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
 
       component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);
       component.renderPagination(div);

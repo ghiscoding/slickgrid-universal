@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
 
@@ -17,12 +19,12 @@ const gridOptionsMock = {
   enableTranslate: true,
   backendServiceApi: {
     service: {
-      buildQuery: jest.fn(),
+      buildQuery: vi.fn(),
     },
-    internalPostProcess: jest.fn(),
-    preProcess: jest.fn(),
-    process: jest.fn(),
-    postProcess: jest.fn(),
+    internalPostProcess: vi.fn(),
+    preProcess: vi.fn(),
+    process: vi.fn(),
+    postProcess: vi.fn(),
   },
   cellMenu: {
     autoAdjustDrop: true,
@@ -33,7 +35,7 @@ const gridOptionsMock = {
     maxHeight: 'none',
     maxWidth: 'none',
     width: 175,
-    onExtensionRegistered: jest.fn(),
+    onExtensionRegistered: vi.fn(),
     onCommand: () => { },
     onAfterMenuShow: () => { },
     onBeforeMenuShow: () => { },
@@ -50,36 +52,36 @@ const gridOptionsMock = {
 } as unknown as GridOption;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  getCellNode: jest.fn(),
-  getCellFromEvent: jest.fn(),
-  getColumns: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getContainerNode: jest.fn(),
-  getDataItem: jest.fn(),
+  autosizeColumns: vi.fn(),
+  getCellNode: vi.fn(),
+  getCellFromEvent: vi.fn(),
+  getColumns: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getContainerNode: vi.fn(),
+  getDataItem: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getGridPosition: jest.fn(),
+  getGridPosition: vi.fn(),
   getOptions: () => gridOptionsMock,
   getUID: () => 'slickgrid12345',
-  registerPlugin: jest.fn(),
-  setColumns: jest.fn(),
-  setOptions: jest.fn(),
-  setSortColumns: jest.fn(),
-  updateColumnHeader: jest.fn(),
+  registerPlugin: vi.fn(),
+  setColumns: vi.fn(),
+  setOptions: vi.fn(),
+  setSortColumns: vi.fn(),
+  updateColumnHeader: vi.fn(),
   onClick: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 
 const commandItemsMock = [
@@ -147,12 +149,12 @@ describe('CellMenu Plugin', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
-    jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-    jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
-    jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+    vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     plugin = new SlickCellMenu(extensionUtility, pubSubServiceStub, sharedService);
   });
 
@@ -200,10 +202,10 @@ describe('CellMenu Plugin', () => {
     beforeEach(() => {
       slickCellElm = document.createElement('div');
       slickCellElm.className = 'slick-cell';
-      eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       eventData.target = slickCellElm;
 
-      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       columnsMock[3].cellMenu!.commandItems = deepCopy(commandItemsMock);
       delete (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action;
       delete (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride;
@@ -212,21 +214,21 @@ describe('CellMenu Plugin', () => {
       cellMenuDiv.className = 'slick-header-column';
       gridContainerDiv = document.createElement('div');
       gridContainerDiv.className = 'slickgrid-container';
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
-      jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
-      jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 3, row: 1 });
-      jest.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 33 });
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
+      vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 3, row: 1 });
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 33 });
     });
 
     afterEach(() => {
       plugin.dispose();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should open the Cell Menu and then expect it to hide when clicking anywhere in the DOM body', () => {
-      const hideMenuSpy = jest.spyOn(plugin, 'hideMenu');
-      const closeSpy = jest.spyOn(plugin, 'closeMenu');
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      const hideMenuSpy = vi.spyOn(plugin, 'hideMenu');
+      const closeSpy = vi.spyOn(plugin, 'closeMenu');
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
 
       plugin.dispose();
       plugin.init();
@@ -249,7 +251,7 @@ describe('CellMenu Plugin', () => {
     });
 
     it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Cell Menu', () => {
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, darkMode: true });
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, darkMode: true });
 
       plugin.dispose();
       plugin.init();
@@ -261,7 +263,7 @@ describe('CellMenu Plugin', () => {
     });
 
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {
-      jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
+      vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
       plugin.dispose();
       plugin.init({ autoAdjustDrop: true, autoAlignSide: true, dropDirection: 'top', dropSide: 'left' });
 
@@ -541,7 +543,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu element and expect menu to hide when Close button is clicked', () => {
-        const closeSpy = jest.spyOn(plugin, 'closeMenu');
+        const closeSpy = vi.spyOn(plugin, 'closeMenu');
 
         plugin.dispose();
         plugin.init();
@@ -558,8 +560,8 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu element then call "closeMenu" and expect "hideMenu" NOT to be called when "onBeforeMenuClose" returns false', () => {
-        const onBeforeSpy = jest.fn().mockReturnValue(false);
-        const hideSpy = jest.spyOn(plugin, 'hideMenu');
+        const onBeforeSpy = vi.fn().mockReturnValue(false);
+        const hideSpy = vi.spyOn(plugin, 'hideMenu');
 
         plugin.dispose();
         plugin.init({ onBeforeMenuClose: onBeforeSpy });
@@ -575,8 +577,8 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should not create a Cell Menu element then call "closeMenu" and expect "hideMenu" to be called when "onBeforeMenuClose" returns true', () => {
-        const onBeforeSpy = jest.fn().mockReturnValue(true);
-        const hideSpy = jest.spyOn(plugin, 'hideMenu');
+        const onBeforeSpy = vi.fn().mockReturnValue(true);
+        const hideSpy = vi.spyOn(plugin, 'hideMenu');
 
         plugin.dispose();
         plugin.init({ onBeforeMenuClose: onBeforeSpy });
@@ -591,7 +593,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should NOT create a Cell Menu element then call "closeMenu" and expect "hideMenu" NOT to be called when "onBeforeMenuShow" returns false', () => {
-        const onBeforeSpy = jest.fn().mockReturnValue(false);
+        const onBeforeSpy = vi.fn().mockReturnValue(false);
 
         plugin.dispose();
         plugin.init({ onBeforeMenuShow: onBeforeSpy });
@@ -604,8 +606,8 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu element then call "closeMenu" and expect "hideMenu" NOT to be called when "onBeforeMenuShow" returns true', () => {
-        const onBeforeSpy = jest.fn().mockReturnValue(true);
-        const onAfterSpy = jest.fn().mockReturnValue(false);
+        const onBeforeSpy = vi.fn().mockReturnValue(true);
+        const onAfterSpy = vi.fn().mockReturnValue(false);
 
         plugin.dispose();
         plugin.init({ onBeforeMenuClose: () => true, onBeforeMenuShow: onBeforeSpy, onAfterMenuShow: onAfterSpy });
@@ -620,9 +622,9 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
-        const actionMock = jest.fn();
-        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
-        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        const actionMock = vi.fn();
+        const disposeSubMenuSpy = vi.spyOn(plugin, 'disposeSubMenus');
+        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
         plugin.dispose();
@@ -671,9 +673,9 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
-        const actionMock = jest.fn();
-        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
-        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        const actionMock = vi.fn();
+        const disposeSubMenuSpy = vi.spyOn(plugin, 'disposeSubMenus');
+        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
         plugin.dispose();
@@ -722,7 +724,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu and expect the button click handler & "action" callback to be executed when defined', () => {
-        const actionMock = jest.fn();
+        const actionMock = vi.fn();
 
         plugin.dispose();
         plugin.init();
@@ -738,7 +740,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu and expect the "onCommand" handler to be executed when defined', () => {
-        const onCommandMock = jest.fn();
+        const onCommandMock = vi.fn();
 
         plugin.dispose();
         plugin.init();
@@ -769,7 +771,7 @@ describe('CellMenu Plugin', () => {
         columnsMock[4].cellMenu!.optionItems = deepCopy(optionItemsMock);
         delete (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride;
         delete (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride;
-        jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 4, row: 1 });
+        vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 4, row: 1 });
       });
 
       it('should not populate and automatically return when the Cell Menu item "optionItems" array of the cell menu is undefined', () => {
@@ -1025,7 +1027,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu element and expect menu to hide when Close button is clicked', () => {
-        const closeSpy = jest.spyOn(plugin, 'closeMenu');
+        const closeSpy = vi.spyOn(plugin, 'closeMenu');
 
         plugin.dispose();
         plugin.init();
@@ -1042,8 +1044,8 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu item with options sub-menu items and expect sub-menu list to show in the DOM element when sub-menu is clicked', () => {
-        const actionMock = jest.fn();
-        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        const actionMock = vi.fn();
+        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
 
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
@@ -1070,8 +1072,8 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu and expect the button click handler & "action" callback to be executed when defined', () => {
-        const actionMock = jest.fn();
-        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        const actionMock = vi.fn();
+        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
 
         plugin.dispose();
         plugin.init();
@@ -1087,8 +1089,8 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu and expect the "onOptionSelected" handler to be executed when defined', () => {
-        const onOptionSelectedMock = jest.fn();
-        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        const onOptionSelectedMock = vi.fn();
+        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
 
         plugin.dispose();
         plugin.init({ onOptionSelected: onOptionSelectedMock });
@@ -1104,8 +1106,8 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu and NOT expect the "onOptionSelected" handler to be executed when "commitCurrentEdit" returns false', () => {
-        const onOptionSelectedMock = jest.fn();
-        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(false);
+        const onOptionSelectedMock = vi.fn();
+        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(false);
 
         plugin.dispose();
         plugin.init();

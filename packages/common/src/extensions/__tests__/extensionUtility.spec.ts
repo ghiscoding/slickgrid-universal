@@ -1,3 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { Column, GridOption, MenuCommandItem } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -6,17 +8,17 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import type { SlickGrid } from '../../core';
 
 const gridStub = {
-  getOptions: jest.fn(),
-  setColumns: jest.fn(),
-  setOptions: jest.fn(),
-  registerPlugin: jest.fn(),
+  getOptions: vi.fn(),
+  setColumns: vi.fn(),
+  setOptions: vi.fn(),
+  registerPlugin: vi.fn(),
 } as unknown as SlickGrid;
 
 const backendUtilityServiceStub = {
-  executeBackendProcessesCallback: jest.fn(),
-  executeBackendCallback: jest.fn(),
-  onBackendError: jest.fn(),
-  refreshBackendDataset: jest.fn(),
+  executeBackendProcessesCallback: vi.fn(),
+  executeBackendCallback: vi.fn(),
+  onBackendError: vi.fn(),
+  refreshBackendDataset: vi.fn(),
 } as unknown as BackendUtilityService;
 
 describe('extensionUtility', () => {
@@ -35,7 +37,7 @@ describe('extensionUtility', () => {
     describe('getPickerTitleOutputString method', () => {
       it('should translate titleKey when there is one', () => {
         const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         const output = utility.getPickerTitleOutputString('columnTitle', 'gridMenu');
 
@@ -44,7 +46,7 @@ describe('extensionUtility', () => {
 
       it('should return undefined when the given property is not found', () => {
         const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true } } as GridOption;
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         const output = utility.getPickerTitleOutputString('unknown', 'gridMenu');
 
@@ -57,17 +59,17 @@ describe('extensionUtility', () => {
 
       beforeEach(() => {
         gridOptionsMock = { enableTranslate: true, enableGridMenu: true } as GridOption;
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       });
 
       it('should call refresh of backend when method is called', () => {
-        const refreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
+        const refreshSpy = vi.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
         utility.refreshBackendDataset();
         expect(refreshSpy).toHaveBeenCalledWith(gridOptionsMock);
       });
 
       it('should call refresh of backend when method is called', () => {
-        const refreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
+        const refreshSpy = vi.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
         utility.refreshBackendDataset({ enablePagination: true });
         expect(refreshSpy).toHaveBeenCalledWith({ ...gridOptionsMock, enablePagination: true });
       });
@@ -134,19 +136,19 @@ describe('extensionUtility', () => {
 
       beforeEach(() => {
         gridOptionsMock = { frozenColumn: 1 } as GridOption;
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        jest.spyOn(SharedService.prototype, 'frozenVisibleColumnId', 'get').mockReturnValue('field2');
+        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'frozenVisibleColumnId', 'get').mockReturnValue('field2');
       });
 
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should increase "frozenColumn" from 0 to 1 when showing a column that was previously hidden and its index is lower or equal to provided argument of frozenColumnIndex', () => {
         const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
         const visibleColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
-        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+        const setOptionSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setOptions');
 
         utility.readjustFrozenColumnIndexWhenNeeded(0, allColumns, visibleColumns);
 
@@ -156,7 +158,7 @@ describe('extensionUtility', () => {
       it('should keep "frozenColumn" at 1 when showing a column that was previously hidden and its index is greater than provided argument of frozenColumnIndex', () => {
         const allColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
         const visibleColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
-        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+        const setOptionSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setOptions');
 
         utility.readjustFrozenColumnIndexWhenNeeded(1, allColumns, visibleColumns);
 
@@ -166,7 +168,7 @@ describe('extensionUtility', () => {
       it('should decrease "frozenColumn" from 1 to 0 when hiding a column that was previously shown and its index is lower or equal to provided argument of frozenColumnIndex', () => {
         const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
         const visibleColumns = [{ id: 'field2' }] as Column[];
-        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+        const setOptionSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setOptions');
 
         utility.readjustFrozenColumnIndexWhenNeeded(1, allColumns, visibleColumns);
 
@@ -176,7 +178,7 @@ describe('extensionUtility', () => {
       it('should keep "frozenColumn" at 1 when hiding a column that was previously hidden and its index is greater than provided argument of frozenColumnIndex', () => {
         const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
         const visibleColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
-        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+        const setOptionSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setOptions');
 
         utility.readjustFrozenColumnIndexWhenNeeded(1, allColumns, visibleColumns);
 
@@ -186,7 +188,7 @@ describe('extensionUtility', () => {
       it('should not change "frozenColumn" when showing a column that was not found in the visibleColumns columns array', () => {
         const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
         const visibleColumns = [{ id: 'field1' }, { field: 'field2' }] as unknown as Column[];
-        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+        const setOptionSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setOptions');
 
         utility.readjustFrozenColumnIndexWhenNeeded(0, allColumns, visibleColumns);
 
@@ -203,7 +205,7 @@ describe('extensionUtility', () => {
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
       const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
-      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
       expect(() => utility.getPickerTitleOutputString('columnTitle', 'gridMenu')).toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
     });
@@ -211,21 +213,21 @@ describe('extensionUtility', () => {
     describe('translateWhenEnabledAndServiceExist method', () => {
       it('should use the Locales Constants when found', () => {
         const gridOptionsMock = { enableTranslate: false, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' } } as GridOption;
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'TEXT_COMMANDS');
         expect(output).toBe('Commands');
       });
 
       it('should return the same key passed as argument when not found in the Locales Constants', () => {
         const gridOptionsMock = { enableTranslate: false, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' } } as GridOption;
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'NOT_EXIST');
         expect(output).toBe('NOT_EXIST');
       });
 
       it('should return the same text when provided as the 3rd argument', () => {
         const gridOptionsMock = { enableTranslate: false, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' } } as GridOption;
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'NOT_EXIST', 'last argument wins');
         expect(output).toBe('last argument wins');
       });

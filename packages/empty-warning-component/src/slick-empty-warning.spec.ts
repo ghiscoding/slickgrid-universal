@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createDomElement, type EmptyWarning, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
 
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
@@ -22,7 +23,7 @@ const gridStub = {
   getGridPosition: () => mockGridOptions,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
-  registerPlugin: jest.fn(),
+  registerPlugin: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('Slick-Empty-Warning Component', () => {
@@ -62,7 +63,7 @@ describe('Slick-Empty-Warning Component', () => {
   describe('Integration Tests', () => {
     afterEach(() => {
       // clear all the spyOn mocks to not influence next test
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       component.dispose();
     });
 
@@ -258,7 +259,7 @@ describe('Slick-Empty-Warning Component', () => {
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "rightViewportMarginLeft" is set', () => {
       mockGridOptions.frozenColumn = -1;
       (mockGridOptions.emptyDataWarning as EmptyWarning).rightViewportMarginLeft = '40%';
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);

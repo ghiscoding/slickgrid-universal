@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
@@ -9,13 +9,13 @@ import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index
 
 const containerId = 'demo-container';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
-  refresh: jest.fn(),
+  refresh: vi.fn(),
 } as unknown as SlickDataView;
 
 let gridOptionMock = {
@@ -24,18 +24,18 @@ let gridOptionMock = {
 } as GridOption;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  focus: jest.fn(),
-  getActiveCell: jest.fn(),
+  focus: vi.fn(),
+  getActiveCell: vi.fn(),
   getOptions: () => gridOptionMock,
-  getColumns: jest.fn(),
+  getColumns: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getHeaderRowColumn: jest.fn(),
-  render: jest.fn(),
+  getHeaderRowColumn: vi.fn(),
+  render: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
   sanitizeHtmlString: (str) => str,
@@ -62,8 +62,8 @@ describe('AutocompleterEditor', () => {
       column: mockColumn,
       item: mockItemData,
       event: null as any,
-      cancelChanges: jest.fn(),
-      commitChanges: jest.fn(),
+      cancelChanges: vi.fn(),
+      commitChanges: vi.fn(),
       container: divContainer,
       columnMetaData: null,
       dataView: dataViewStub,
@@ -77,14 +77,14 @@ describe('AutocompleterEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', (done) => {
+    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
       try {
         editor = new AutocompleterEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
       }
-    });
+    }));
   });
 
   describe('with valid Editor instance', () => {
@@ -118,7 +118,7 @@ describe('AutocompleterEditor', () => {
       mockColumn.editor!.collectionAsync = promise;
 
       editor = new AutocompleterEditor(editorArguments);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.destroy();
       editor.init();
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
@@ -198,7 +198,7 @@ describe('AutocompleterEditor', () => {
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
-      const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
+      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
@@ -211,7 +211,7 @@ describe('AutocompleterEditor', () => {
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
-      const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
+      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
@@ -278,7 +278,7 @@ describe('AutocompleterEditor', () => {
     it('should call "focus()" method and expect the DOM element to be focused and selected', () => {
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = editor.editorDomElement;
-      const spy = jest.spyOn(editorElm, 'focus');
+      const spy = vi.spyOn(editorElm, 'focus');
       editor.focus();
 
       expect(gridStub.focus).toHaveBeenCalled();
@@ -446,7 +446,7 @@ describe('AutocompleterEditor', () => {
     describe('save method', () => {
       it('should call "getEditorLock" when "hasAutoCommitEdit" is enabled after calling "save()" method', () => {
         gridOptionMock.autoCommitEdit = true;
-        const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+        const spy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new AutocompleterEditor(editorArguments);
         editor.setValue('a');
@@ -457,7 +457,7 @@ describe('AutocompleterEditor', () => {
 
       it('should call "commitChanges" when "hasAutoCommitEdit" is disabled after calling "save()" method', () => {
         gridOptionMock.autoCommitEdit = false;
-        const spy = jest.spyOn(editorArguments, 'commitChanges');
+        const spy = vi.spyOn(editorArguments, 'commitChanges');
 
         editor = new AutocompleterEditor(editorArguments);
         editor.setValue('a');
@@ -603,13 +603,13 @@ describe('AutocompleterEditor', () => {
 
     describe('handleSelect method', () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
         editor = new AutocompleterEditor(editorArguments);
-        const setValueSpy = jest.spyOn(editor, 'setValue');
-        const saveSpy = jest.spyOn(editor, 'save');
+        const setValueSpy = vi.spyOn(editor, 'setValue');
+        const saveSpy = vi.spyOn(editor, 'save');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
 
         expect(setValueSpy).toHaveBeenCalled();
@@ -624,7 +624,7 @@ describe('AutocompleterEditor', () => {
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
-        const saveSpy = jest.spyOn(editor, 'save');
+        const saveSpy = vi.spyOn(editor, 'save');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
 
         // expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
@@ -639,10 +639,10 @@ describe('AutocompleterEditor', () => {
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
-        const focusSpy = jest.spyOn(editor, 'focus');
-        const saveSpy = jest.spyOn(editor, 'save');
+        const focusSpy = vi.spyOn(editor, 'focus');
+        const saveSpy = vi.spyOn(editor, 'save');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
-        jest.runAllTimers(); // fast-forward timer
+        vi.runAllTimers(); // fast-forward timer
 
         // expect(handleSelectSpy).toHaveBeenCalledWith({ item: 'fem' });
         expect(saveSpy).toHaveBeenCalled();
@@ -652,14 +652,14 @@ describe('AutocompleterEditor', () => {
 
       it('should expect the "onSelect" method to be called when defined and the callback method is triggered when user provide his own filterOptions', () => {
         gridOptionMock.autoCommitEdit = true;
-        const mockOnSelect = jest.fn();
+        const mockOnSelect = vi.fn();
         const activeCellMock = { row: 1, cell: 0 };
-        jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         mockColumn.editor!.editorOptions = { minLength: 3, onSelectItem: mockOnSelect } as AutocompleterOption;
 
         editor = new AutocompleterEditor(editorArguments);
-        jest.spyOn(editor, 'save');
-        jest.spyOn(editor, 'handleSelect');
+        vi.spyOn(editor, 'save');
+        vi.spyOn(editor, 'handleSelect');
         editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
 
         // expect(saveSpy).toHaveBeenCalled();
@@ -689,7 +689,7 @@ describe('AutocompleterEditor', () => {
         editorElm.focus();
         editorElm.dispatchEvent(event);
 
-        jest.runAllTimers(); // fast-forward timer
+        vi.runAllTimers(); // fast-forward timer
 
         const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.autocomplete-custom-four-corners');
         expect(editor.editorDomElement).toBeTruthy();
@@ -702,7 +702,7 @@ describe('AutocompleterEditor', () => {
 
     it('should call "clear" method and expect the DOM element to become blank & untouched', () => {
       editor = new AutocompleterEditor(editorArguments);
-      const saveSpy = jest.spyOn(editor, 'save');
+      const saveSpy = vi.spyOn(editor, 'save');
       editor.loadValue({ ...mockItemData, gender: 'male' });
       editor.show();
       editor.clear();
@@ -725,7 +725,7 @@ describe('AutocompleterEditor', () => {
       editorElm.focus();
       editorElm.dispatchEvent(event);
 
-      jest.runAllTimers(); // fast-forward timer
+      vi.runAllTimers(); // fast-forward timer
 
       const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
       expect(autocompleteListElms.length).toBe(2);
@@ -740,7 +740,7 @@ describe('AutocompleterEditor', () => {
         editorOptions: { showOnFocus: true } as AutocompleterOption
       };
       editor = new AutocompleterEditor(editorArguments);
-      const clearSpy = jest.spyOn(editor, 'clear');
+      const clearSpy = vi.spyOn(editor, 'clear');
 
       const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLButtonElement;
       clearBtnElm.dispatchEvent(new Event('click'));
@@ -764,7 +764,7 @@ describe('AutocompleterEditor', () => {
       editorElm.focus();
       editorElm.dispatchEvent(event);
 
-      jest.runAllTimers(); // fast-forward timer
+      vi.runAllTimers(); // fast-forward timer
 
       const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
       expect(autocompleteListElms.length).toBe(2);
@@ -789,7 +789,7 @@ describe('AutocompleterEditor', () => {
       editorElm.focus();
       editorElm.dispatchEvent(event);
 
-      jest.runAllTimers(); // fast-forward timer
+      vi.runAllTimers(); // fast-forward timer
 
       const autocompleteElm = document.body.querySelector('.slick-autocomplete') as HTMLDivElement;
       expect(autocompleteElm.classList.contains('slick-dark-mode')).toBeTruthy();
@@ -805,13 +805,13 @@ describe('AutocompleterEditor', () => {
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       editor = new AutocompleterEditor(editorArguments);
@@ -826,13 +826,13 @@ describe('AutocompleterEditor', () => {
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
 
       editor = new AutocompleterEditor(editorArguments);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -842,17 +842,17 @@ describe('AutocompleterEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled with empty value set in the form values when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
 
       editor = new AutocompleterEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -868,11 +868,11 @@ describe('AutocompleterEditor', () => {
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false and also expect "onBeforeComposite" to not be called because the value is blank', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.compositeEditorOptions = {
@@ -881,7 +881,7 @@ describe('AutocompleterEditor', () => {
 
       editor = new AutocompleterEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const disableSpy = jest.spyOn(editor, 'disable');
+      const disableSpy = vi.spyOn(editor, 'disable');
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
@@ -894,8 +894,8 @@ describe('AutocompleterEditor', () => {
 
     it('should call "disable" method and expect the DOM element to become disabled and have an empty formValues be passed in the onCompositeEditorChange event', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.compositeEditorOptions = {
@@ -918,8 +918,8 @@ describe('AutocompleterEditor', () => {
 
     it('should call "reset" method and expect the DOM element to become blank & untouched and have an empty formValues be passed in the onCompositeEditorChange event', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.compositeEditorOptions = {
@@ -942,11 +942,11 @@ describe('AutocompleterEditor', () => {
 
     it('should expect "setValue" to have been called and also "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+      const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
       } as any);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+      const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
       } as any);
       gridOptionMock.autoCommitEdit = true;
@@ -954,7 +954,7 @@ describe('AutocompleterEditor', () => {
       mockItemData = { id: 123, gender: 'female', isActive: true };
 
       editor = new AutocompleterEditor(editorArguments);
-      const spySetValue = jest.spyOn(editor, 'setValue');
+      const spySetValue = vi.spyOn(editor, 'setValue');
       const output = editor.handleSelect(mockItemData.gender);
 
       expect(output).toBe(false);
@@ -970,8 +970,8 @@ describe('AutocompleterEditor', () => {
     describe('collectionOverride callback option', () => {
       it('should create the editor and expect a different collection outputed when using the override', () => {
         const activeCellMock = { row: 0, cell: 0 };
-        jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-        const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+        const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
           getReturnValue: () => false
         } as any);
         mockColumn.editor = {

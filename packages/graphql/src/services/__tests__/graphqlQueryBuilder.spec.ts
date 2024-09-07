@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import GraphqlQueryBuilder from '../graphqlQueryBuilder';
 
 function removeSpaces(textS) {
@@ -143,7 +145,7 @@ describe('GraphqlQueryBuilder', () => {
     const expectation = 'inventory(toy:"jack in the box") { id }';
     const childsToy = { toy: 'jack in the box', getState: () => { } };
 
-    childsToy.getState(); // for istanbul(coverage) to say all fn was called
+    childsToy.getState(); // for v8 coverage to get all fn be called
     const itemQuery = new GraphqlQueryBuilder('inventory', childsToy);
     itemQuery.find('id');
 
@@ -154,7 +156,7 @@ describe('GraphqlQueryBuilder', () => {
     const expectation = 'inventory(toy:"jack in the box") { id }';
     const childsToy = { toy: 'jack in the box', utils: { getState: () => { } } };
 
-    childsToy.utils.getState(); // for istanbul(coverage) to say all fn was called
+    childsToy.utils.getState(); // for v8 coverage to get all fn be called
     const itemQuery = new GraphqlQueryBuilder('inventory', childsToy);
     itemQuery.find('id');
 

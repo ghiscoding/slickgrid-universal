@@ -217,7 +217,7 @@ export class SlickRowBasedEdit {
       const serializedValue = serializedValues[index];
 
       if (prevSerializedValue !== serializedValue || serializedValue === '') {
-        /* istanbul ignore next */
+        /* v8 ignore next */
         const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns?.[index] : column;
 
         if (!finalColumn) {
@@ -285,7 +285,7 @@ export class SlickRowBasedEdit {
     const row = this._grid.getData().getRowByItem(item);
     if (
       (row !== undefined && targetRow?.editCommands && targetRow.editCommands.length) ||
-      /* istanbul ignore next */
+      /* v8 ignore next */
       SlickGlobalEditorLock.cancelCurrentEdit()
     ) {
       while (targetRow!.editCommands.length > 0) {

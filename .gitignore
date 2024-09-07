@@ -47,11 +47,9 @@ dist-demo
 website
 
 # Tests Report & Coverage
-.jest-cache
 **/node_modules
 **/coverage
-**/.jest-cache
-**/jest-coverage
+**/vitest-coverage
 **/cypress-report
 **/dist
 **/*.tgz

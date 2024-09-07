@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+
 import { autoAddEditorFormatterToColumnsWithEditor, exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities';
 import { FieldType } from '../../enums/index';
 import { Editors } from '../../editors/index';
@@ -8,7 +10,7 @@ import { type SlickGrid } from '../../core/index';
 
 describe('formatterUtilities', () => {
   const gridStub = {
-    getOptions: jest.fn()
+    getOptions: vi.fn()
   } as unknown as SlickGrid;
 
   describe('autoAddEditorFormatterToColumnsWithEditor', () => {
@@ -90,7 +92,7 @@ describe('formatterUtilities', () => {
 
     it('should return a formatted Date when calling the Formatter function', () => {
       const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
-      const gridSpy = jest.spyOn(gridStub, 'getOptions');
+      const gridSpy = vi.spyOn(gridStub, 'getOptions');
 
       const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
 
@@ -101,7 +103,7 @@ describe('formatterUtilities', () => {
     it('should return a formatted Date with a different separator when changing setting the "dateSeparator" in "formatterOptions"', () => {
       const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
       const gridOptions = { formatterOptions: { dateSeparator: '.' } } as GridOption;
-      const gridSpy = (gridStub.getOptions as jest.Mock).mockReturnValue(gridOptions);
+      const gridSpy = (gridStub.getOptions as Mock).mockReturnValue(gridOptions);
 
       const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
 

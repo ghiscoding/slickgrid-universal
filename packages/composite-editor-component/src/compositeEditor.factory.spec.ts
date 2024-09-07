@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type Column,
   type CompositeEditorOption,
@@ -11,57 +12,59 @@ import {
 
 import { SlickCompositeEditor } from './compositeEditor.factory';
 
+vi.useFakeTimers();
+
 const dataViewStub = {
-  getItem: jest.fn(),
-  getItemById: jest.fn(),
-  getItemCount: jest.fn(),
-  getItems: jest.fn(),
-  getLength: jest.fn(),
-  refresh: jest.fn(),
-  sort: jest.fn(),
-  reSort: jest.fn(),
-  setItems: jest.fn(),
-  updateItem: jest.fn(),
+  getItem: vi.fn(),
+  getItemById: vi.fn(),
+  getItemCount: vi.fn(),
+  getItems: vi.fn(),
+  getLength: vi.fn(),
+  refresh: vi.fn(),
+  sort: vi.fn(),
+  reSort: vi.fn(),
+  setItems: vi.fn(),
+  updateItem: vi.fn(),
 } as unknown as SlickDataView;
 
 const getEditorLockMock = {
-  commitCurrentEdit: jest.fn(),
-  isActive: jest.fn(),
+  commitCurrentEdit: vi.fn(),
+  isActive: vi.fn(),
 };
 const getEditControllerMock = {
-  cancelCurrentEdit: jest.fn(),
-  commitCurrentEdit: jest.fn(),
+  cancelCurrentEdit: vi.fn(),
+  commitCurrentEdit: vi.fn(),
 };
 
 const gridStub = {
-  autosizeColumns: jest.fn(),
-  editActiveCell: jest.fn(),
-  focus: jest.fn(),
-  getColumnIndex: jest.fn(),
-  getActiveCell: jest.fn(),
-  getCellNode: jest.fn(),
-  getCellEditor: jest.fn(),
-  getData: jest.fn(),
-  getDataItem: jest.fn(),
+  autosizeColumns: vi.fn(),
+  editActiveCell: vi.fn(),
+  focus: vi.fn(),
+  getColumnIndex: vi.fn(),
+  getActiveCell: vi.fn(),
+  getCellNode: vi.fn(),
+  getCellEditor: vi.fn(),
+  getData: vi.fn(),
+  getDataItem: vi.fn(),
   getEditController: () => getEditControllerMock,
-  getSelectedRows: jest.fn(),
-  getSelectionModel: jest.fn(),
+  getSelectedRows: vi.fn(),
+  getSelectionModel: vi.fn(),
   getEditorLock: () => getEditorLockMock,
-  getOptions: jest.fn(),
+  getOptions: vi.fn(),
   getUID: () => 'slickgrid_123456',
-  getColumns: jest.fn(),
-  getSortColumns: jest.fn(),
-  invalidate: jest.fn(),
-  onLocalSortChanged: jest.fn(),
+  getColumns: vi.fn(),
+  getSortColumns: vi.fn(),
+  invalidate: vi.fn(),
+  onLocalSortChanged: vi.fn(),
   onAddNewRow: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
   onClick: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-  render: jest.fn(),
-  setActiveCell: jest.fn(),
-  setSelectedRows: jest.fn(),
-  setActiveRow: jest.fn(),
-  setSortColumns: jest.fn(),
+  render: vi.fn(),
+  setActiveCell: vi.fn(),
+  setSelectedRows: vi.fn(),
+  setActiveRow: vi.fn(),
+  setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
 
 const columnsMock: Column[] = [
@@ -113,10 +116,10 @@ describe('Composite Editor Factory', () => {
   let containers;
 
   beforeEach(() => {
-    cancelChangeMock = jest.fn();
-    commitChangeMock = jest.fn();
-    destroyMock = jest.fn();
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+    cancelChangeMock = vi.fn();
+    commitChangeMock = vi.fn();
+    destroyMock = vi.fn();
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
     textEditorArgs = {
       column: columnsMock[0],
@@ -140,19 +143,18 @@ describe('Composite Editor Factory', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
-  it('should focus on first Editor input after initialization', (done) => {
+  it('should focus on first Editor input after initialization', () => {
     const output = new factory(textEditorArgs);
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
 
-    setTimeout(() => {
-      expect(document.activeElement).not.toBeUndefined();
-      done();
-    }, 1);
+    vi.advanceTimersByTime(1);
+
+    expect(document.activeElement).not.toBeUndefined();
   });
 
   it('should be able to call the cancelChanges & commitChanges function to test the noop function after initialization', () => {
@@ -167,10 +169,11 @@ describe('Composite Editor Factory', () => {
   });
 
   it('should instantiate the factory and expect "destroy" to be called when asked for', () => {
-    const compOptDestroySpy = jest.spyOn(compositeOptions, 'destroy');
+    const compOptDestroySpy = vi.spyOn(compositeOptions, 'destroy');
 
+    factory = new (SlickCompositeEditor as any)(columnsMock, containers, compositeOptions);
     const output = new factory(textEditorArgs);
-    const ctxDestroySpy = jest.spyOn(output, 'destroy');
+    const ctxDestroySpy = vi.spyOn(output, 'destroy');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -183,7 +186,7 @@ describe('Composite Editor Factory', () => {
 
   it('should instantiate the factory and expect "focus" to be called when asked for', () => {
     const output = new factory(textEditorArgs);
-    const editorFocusSpy = jest.spyOn(output, 'focus');
+    const editorFocusSpy = vi.spyOn(output, 'focus');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -195,35 +198,35 @@ describe('Composite Editor Factory', () => {
 
   it('should instantiate the factory and expect "isValueChanged" to be called and return False when Editor returns False', () => {
     const output = new factory(textEditorArgs);
-    const editorIsValueChangedSpy = jest.spyOn(output, 'isValueChanged');
-    jest.spyOn(output.getEditors()[0], 'isValueChanged').mockReturnValue(false);
+    const editorIsValueChangedSpy = vi.spyOn(output, 'isValueChanged');
+    vi.spyOn(output.getEditors()[0], 'isValueChanged').mockReturnValue(false);
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
     expect(typeof output.isValueChanged).toBe('function');
     const isChanged = output.isValueChanged();
 
-    expect(isChanged).toBeFalse();
+    expect(isChanged).toBe(false);
     expect(editorIsValueChangedSpy).toHaveBeenCalled();
   });
 
   it('should instantiate the factory and expect "isValueChanged" to be called and return True when Editor returns True', () => {
     const output = new factory(textEditorArgs);
-    const editorIsValueChangedSpy = jest.spyOn(output, 'isValueChanged');
-    jest.spyOn(output.getEditors()[0], 'isValueChanged').mockReturnValue(true);
+    const editorIsValueChangedSpy = vi.spyOn(output, 'isValueChanged');
+    vi.spyOn(output.getEditors()[0], 'isValueChanged').mockReturnValue(true);
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
     expect(typeof output.isValueChanged).toBe('function');
     const isChanged = output.isValueChanged();
 
-    expect(isChanged).toBeTrue();
+    expect(isChanged).toBe(true);
     expect(editorIsValueChangedSpy).toHaveBeenCalled();
   });
 
   it('should instantiate the factory and expect "serializeValue" to be called when asked for', () => {
     const output = new factory(textEditorArgs);
-    const editorSerializeValueSpy = jest.spyOn(output, 'serializeValue');
+    const editorSerializeValueSpy = vi.spyOn(output, 'serializeValue');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -235,7 +238,7 @@ describe('Composite Editor Factory', () => {
 
   it('should instantiate the factory and expect "applyValue" to be called when asked for', () => {
     const output = new factory(textEditorArgs);
-    const editorApplyValueSpy = jest.spyOn(output, 'applyValue');
+    const editorApplyValueSpy = vi.spyOn(output, 'applyValue');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -248,7 +251,7 @@ describe('Composite Editor Factory', () => {
   it('should instantiate the factory and expect "loadValue" to be called when asked for', () => {
     const valueMock = 25;
     const output = new factory(textEditorArgs);
-    const editorLoadValueSpy = jest.spyOn(output, 'loadValue');
+    const editorLoadValueSpy = vi.spyOn(output, 'loadValue');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -260,7 +263,7 @@ describe('Composite Editor Factory', () => {
 
   it('should instantiate the factory and expect "hide" to be called when asked for', () => {
     const output = new factory(textEditorArgs);
-    const editorHideSpy = jest.spyOn(output, 'hide');
+    const editorHideSpy = vi.spyOn(output, 'hide');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -272,7 +275,7 @@ describe('Composite Editor Factory', () => {
 
   it('should instantiate the factory and expect "show" to be called when asked for', () => {
     const output = new factory(textEditorArgs);
-    const editorShowSpy = jest.spyOn(output, 'show');
+    const editorShowSpy = vi.spyOn(output, 'show');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -285,7 +288,7 @@ describe('Composite Editor Factory', () => {
   it('should instantiate the factory and expect "position" to be called when asked for', () => {
     const newPositionMock = { top: 10, bottom: 15, left: 20, right: 25 };
     const output = new factory(textEditorArgs);
-    const editorPositionSpy = jest.spyOn(output, 'position');
+    const editorPositionSpy = vi.spyOn(output, 'position');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -315,9 +318,9 @@ describe('Composite Editor Factory', () => {
     document.body.appendChild(modalElm);
 
     const output = new factory(textEditorArgs);
-    const editorValidateSpy = jest.spyOn(output, 'validate');
+    const editorValidateSpy = vi.spyOn(output, 'validate');
     for (const editor of output.getEditors()) {
-      jest.spyOn(editor, 'validate').mockReturnValue({ valid: true, msg: '' });
+      vi.spyOn(editor, 'validate').mockReturnValue({ valid: true, msg: '' });
     }
 
     expect(factory).toBeTruthy();
@@ -351,14 +354,14 @@ describe('Composite Editor Factory', () => {
     document.body.appendChild(modalElm);
 
     const output = new factory(textEditorArgs);
-    const editorValidateSpy = jest.spyOn(output, 'validate');
+    const editorValidateSpy = vi.spyOn(output, 'validate');
     let editorIdx = 0;
     for (const editor of output.getEditors()) {
       // make 1st editor invalid, everything else as valid
       if (editorIdx++ === 0) {
-        jest.spyOn(editor, 'validate').mockReturnValue({ valid: false, msg: 'invalid product' });
+        vi.spyOn(editor, 'validate').mockReturnValue({ valid: false, msg: 'invalid product' });
       } else {
-        jest.spyOn(editor, 'validate').mockReturnValue({ valid: true, msg: '' });
+        vi.spyOn(editor, 'validate').mockReturnValue({ valid: true, msg: '' });
       }
     }
 

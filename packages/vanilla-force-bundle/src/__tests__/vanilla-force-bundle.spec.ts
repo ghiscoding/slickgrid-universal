@@ -1,4 +1,4 @@
-import 'jest-extended';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type BackendUtilityService,
   type Column,
@@ -36,219 +36,224 @@ import { TranslateServiceStub } from '../../../../test/translateServiceStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
 
+vi.useFakeTimers();
+
 const extensionServiceStub = {
-  addRxJsResource: jest.fn(),
-  bindDifferentExtensions: jest.fn(),
-  createExtensionsBeforeGridCreation: jest.fn(),
-  dispose: jest.fn(),
-  renderColumnHeaders: jest.fn(),
-  translateAllExtensions: jest.fn(),
-  translateCellMenu: jest.fn(),
-  translateColumnHeaders: jest.fn(),
-  translateColumnPicker: jest.fn(),
-  translateContextMenu: jest.fn(),
-  translateGridMenu: jest.fn(),
-  translateHeaderMenu: jest.fn(),
+  addRxJsResource: vi.fn(),
+  bindDifferentExtensions: vi.fn(),
+  createExtensionsBeforeGridCreation: vi.fn(),
+  dispose: vi.fn(),
+  renderColumnHeaders: vi.fn(),
+  translateAllExtensions: vi.fn(),
+  translateCellMenu: vi.fn(),
+  translateColumnHeaders: vi.fn(),
+  translateColumnPicker: vi.fn(),
+  translateContextMenu: vi.fn(),
+  translateGridMenu: vi.fn(),
+  translateHeaderMenu: vi.fn(),
 } as unknown as ExtensionService;
-Object.defineProperty(extensionServiceStub, 'extensionList', { get: jest.fn(() => { }), set: jest.fn(), configurable: true });
+Object.defineProperty(extensionServiceStub, 'extensionList', { get: vi.fn(() => { }), set: vi.fn(), configurable: true });
 
 const mockExtensionUtility = {
-  translateItems: jest.fn(),
+  translateItems: vi.fn(),
 } as unknown as ExtensionUtility;
 
 const groupingAndColspanServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
-  translateGroupingAndColSpan: jest.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
+  translateGroupingAndColSpan: vi.fn(),
 } as unknown as GroupingAndColspanService;
 
 const backendUtilityServiceStub = {
-  addRxJsResource: jest.fn(),
-  executeBackendProcessesCallback: jest.fn(),
-  executeBackendCallback: jest.fn(),
-  onBackendError: jest.fn(),
-  refreshBackendDataset: jest.fn(),
+  addRxJsResource: vi.fn(),
+  executeBackendProcessesCallback: vi.fn(),
+  executeBackendCallback: vi.fn(),
+  onBackendError: vi.fn(),
+  refreshBackendDataset: vi.fn(),
 } as unknown as BackendUtilityService;
 
 
 const collectionServiceStub = {
-  filterCollection: jest.fn(),
-  singleFilterCollection: jest.fn(),
-  sortCollection: jest.fn(),
+  filterCollection: vi.fn(),
+  singleFilterCollection: vi.fn(),
+  sortCollection: vi.fn(),
 } as unknown as CollectionService;
 
 const filterServiceStub = {
-  addRxJsResource: jest.fn(),
-  clearFilters: jest.fn(),
-  dispose: jest.fn(),
-  init: jest.fn(),
-  bindBackendOnFilter: jest.fn(),
-  bindLocalOnFilter: jest.fn(),
-  bindLocalOnSort: jest.fn(),
-  bindBackendOnSort: jest.fn(),
-  populateColumnFilterSearchTermPresets: jest.fn(),
-  refreshTreeDataFilters: jest.fn(),
-  getColumnFilters: jest.fn(),
+  addRxJsResource: vi.fn(),
+  clearFilters: vi.fn(),
+  dispose: vi.fn(),
+  init: vi.fn(),
+  bindBackendOnFilter: vi.fn(),
+  bindLocalOnFilter: vi.fn(),
+  bindLocalOnSort: vi.fn(),
+  bindBackendOnSort: vi.fn(),
+  populateColumnFilterSearchTermPresets: vi.fn(),
+  refreshTreeDataFilters: vi.fn(),
+  getColumnFilters: vi.fn(),
 } as unknown as FilterService;
 
 const gridEventServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
-  bindOnBeforeEditCell: jest.fn(),
-  bindOnCellChange: jest.fn(),
-  bindOnClick: jest.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
+  bindOnBeforeEditCell: vi.fn(),
+  bindOnCellChange: vi.fn(),
+  bindOnClick: vi.fn(),
 } as unknown as GridEventService;
 
 const gridServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
 } as unknown as GridService;
 
 const gridStateServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
-  getAssociatedGridColumns: jest.fn(),
-  getCurrentGridState: jest.fn(),
-  needToPreserveRowSelection: jest.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
+  getAssociatedGridColumns: vi.fn(),
+  getCurrentGridState: vi.fn(),
+  needToPreserveRowSelection: vi.fn(),
 } as unknown as GridStateService;
 
 const paginationServiceStub = {
   totalItems: 0,
-  addRxJsResource: jest.fn(),
-  init: jest.fn(),
-  dispose: jest.fn(),
-  getFullPagination: jest.fn(),
-  updateTotalItems: jest.fn(),
+  addRxJsResource: vi.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
+  getFullPagination: vi.fn(),
+  updateTotalItems: vi.fn(),
 } as unknown as PaginationService;
 
 const resizerServiceStub = {
-  dispose: jest.fn(),
-  init: jest.fn(),
-  resizeGrid: jest.fn(),
-  resizeColumnsByCellContent: jest.fn(),
+  dispose: vi.fn(),
+  init: vi.fn(),
+  resizeGrid: vi.fn(),
+  resizeColumnsByCellContent: vi.fn(),
 } as unknown as ResizerService;
 
 Object.defineProperty(paginationServiceStub, 'totalItems', {
-  get: jest.fn(() => 0),
-  set: jest.fn()
+  get: vi.fn(() => 0),
+  set: vi.fn()
 });
 
 const sortServiceStub = {
-  addRxJsResource: jest.fn(),
-  bindBackendOnSort: jest.fn(),
-  bindLocalOnSort: jest.fn(),
-  dispose: jest.fn(),
-  loadGridSorters: jest.fn(),
-  processTreeDataInitialSort: jest.fn(),
-  sortHierarchicalDataset: jest.fn(),
+  addRxJsResource: vi.fn(),
+  bindBackendOnSort: vi.fn(),
+  bindLocalOnSort: vi.fn(),
+  dispose: vi.fn(),
+  loadGridSorters: vi.fn(),
+  processTreeDataInitialSort: vi.fn(),
+  sortHierarchicalDataset: vi.fn(),
 } as unknown as SortService;
 
 const treeDataServiceStub = {
-  init: jest.fn(),
-  convertFlatParentChildToTreeDataset: jest.fn(),
-  convertFlatParentChildToTreeDatasetAndSort: jest.fn(),
-  dispose: jest.fn(),
-  handleOnCellClick: jest.fn(),
-  sortHierarchicalDataset: jest.fn(),
-  toggleTreeDataCollapse: jest.fn(),
+  init: vi.fn(),
+  convertFlatParentChildToTreeDataset: vi.fn(),
+  convertFlatParentChildToTreeDatasetAndSort: vi.fn(),
+  dispose: vi.fn(),
+  handleOnCellClick: vi.fn(),
+  sortHierarchicalDataset: vi.fn(),
+  toggleTreeDataCollapse: vi.fn(),
 } as unknown as TreeDataService;
 
 const mockDataView = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-  beginUpdate: jest.fn(),
-  endUpdate: jest.fn(),
-  getFilteredItemCount: jest.fn(),
-  getItem: jest.fn(),
-  getItemCount: jest.fn(),
-  getItems: jest.fn(),
-  getItemMetadata: jest.fn(),
-  getLength: jest.fn(),
-  getPagingInfo: jest.fn(),
-  mapIdsToRows: jest.fn(),
-  mapRowsToIds: jest.fn(),
+  constructor: vi.fn(),
+  init: vi.fn(),
+  destroy: vi.fn(),
+  beginUpdate: vi.fn(),
+  endUpdate: vi.fn(),
+  getFilteredItemCount: vi.fn(),
+  getItem: vi.fn(),
+  getItemCount: vi.fn(),
+  getItems: vi.fn(),
+  getItemMetadata: vi.fn(),
+  getLength: vi.fn(),
+  getPagingInfo: vi.fn(),
+  mapIdsToRows: vi.fn(),
+  mapRowsToIds: vi.fn(),
   onRowsChanged: new MockSlickEvent<OnRowsChangedEventArgs>(),
   onRowCountChanged: new MockSlickEvent<OnRowCountChangedEventArgs>(),
   onSetItemsCalled: new MockSlickEvent<OnSetItemsCalledEventArgs>(),
-  reSort: jest.fn(),
-  setItems: jest.fn(),
-  syncGridSelection: jest.fn(),
+  reSort: vi.fn(),
+  setItems: vi.fn(),
+  syncGridSelection: vi.fn(),
 } as unknown as SlickDataView;
 
 const mockSlickEventHandler = {
   handlers: [],
-  notify: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
+  notify: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+  unsubscribeAll: vi.fn(),
 } as unknown as SlickEventHandler;
 
 const mockGetEditorLock = {
   isActive: () => true,
-  commitCurrentEdit: jest.fn(),
+  commitCurrentEdit: vi.fn(),
 } as unknown as SlickEditorLock;
 
 const mockGrid = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
-  autosizeColumns: jest.fn(),
-  destroy: jest.fn(),
-  init: jest.fn(),
-  invalidate: jest.fn(),
-  getActiveCellNode: jest.fn(),
-  getColumns: jest.fn(),
-  getCellEditor: jest.fn(),
+  autosizeColumns: vi.fn(),
+  destroy: vi.fn(),
+  init: vi.fn(),
+  invalidate: vi.fn(),
+  getActiveCellNode: vi.fn(),
+  getColumns: vi.fn(),
+  getCellEditor: vi.fn(),
   getEditorLock: () => mockGetEditorLock,
   getUID: () => 'slickgrid_12345',
-  getContainerNode: jest.fn(),
-  getGridPosition: jest.fn(),
-  getOptions: jest.fn(),
-  getSelectionModel: jest.fn(),
-  getScrollbarDimensions: jest.fn(),
-  updateRow: jest.fn(),
-  render: jest.fn(),
-  registerPlugin: jest.fn(),
-  reRenderColumns: jest.fn(),
-  resizeCanvas: jest.fn(),
-  setColumns: jest.fn(),
-  setHeaderRowVisibility: jest.fn(),
-  setOptions: jest.fn(),
-  setSelectedRows: jest.fn(),
+  getContainerNode: vi.fn(),
+  getGridPosition: vi.fn(),
+  getOptions: vi.fn(),
+  getSelectionModel: vi.fn(),
+  getScrollbarDimensions: vi.fn(),
+  updateRow: vi.fn(),
+  render: vi.fn(),
+  registerPlugin: vi.fn(),
+  reRenderColumns: vi.fn(),
+  resizeCanvas: vi.fn(),
+  setColumns: vi.fn(),
+  setHeaderRowVisibility: vi.fn(),
+  setOptions: vi.fn(),
+  setSelectedRows: vi.fn(),
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
   onSetOptions: new MockSlickEvent(),
-  onRendered: jest.fn(),
-  onScroll: jest.fn(),
+  onRendered: vi.fn(),
+  onScroll: vi.fn(),
   onDataviewCreated: new MockSlickEvent(),
 } as unknown as SlickGrid;
 
 const mockSlickCustomTooltip = {
-  init: jest.fn(),
+  init: vi.fn(),
 } as unknown as SlickCustomTooltip;
 
-jest.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
-  SlickCustomTooltip: jest.fn().mockImplementation(() => mockSlickCustomTooltip),
+vi.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
+  SlickCustomTooltip: vi.fn().mockImplementation(() => mockSlickCustomTooltip),
 }));
 
 const mockTextExportService = {
-  init: jest.fn(),
+  init: vi.fn(),
 } as unknown as TextExportService;
 
-jest.mock('@slickgrid-universal/text-export', () => ({
-  TextExportService: jest.fn().mockImplementation(() => mockTextExportService),
+vi.mock('@slickgrid-universal/text-export', () => ({
+  TextExportService: vi.fn().mockImplementation(() => mockTextExportService),
 }));
 
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
 
-jest.mock('@slickgrid-universal/common', () => ({
-  ...(jest.requireActual('@slickgrid-universal/common') as any),
-  autoAddEditorFormatterToColumnsWithEditor: jest.fn(),
-  SlickGrid: jest.fn().mockImplementation(() => mockGrid),
-  SlickEventHandler: jest.fn().mockImplementation(() => mockSlickEventHandler),
-  SlickDataView: jest.fn().mockImplementation(() => mockDataView),
-}));
+vi.mock('@slickgrid-universal/common', async (importOriginal) => {
+  const actual = await importOriginal() as any;
+  return {
+    ...actual,
+    autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
+    SlickGrid: vi.fn().mockImplementation(() => mockGrid),
+    SlickEventHandler: vi.fn().mockImplementation(() => mockSlickEventHandler),
+    SlickDataView: vi.fn().mockImplementation(() => mockDataView),
+  };
+});
 
 describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () => {
   let component: VanillaForceGridBundle;
@@ -284,7 +289,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     eventPubSubService = new EventPubSubService(divContainer);
-    jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
+    vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
     dataset = [];
 
     component = new VanillaForceGridBundle(
@@ -325,7 +330,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   it('should create a grid and expect multiple event published', () => {
-    const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
+    const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
     component.initialization(divContainer, slickEventHandler);
     const instances = component.instances;
@@ -343,12 +348,12 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
   describe('initialization method', () => {
     afterEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('should initialize the grid with a fixed height when provided in the grid options', () => {
       const fixedHeight = 100;
-      const resizerSpy = jest.spyOn(resizerServiceStub, 'resizeGrid');
+      const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
       component.gridOptions = { gridHeight: fixedHeight };
       component.initialization(divContainer, slickEventHandler);
@@ -358,7 +363,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
     it('should initialize the grid with a fixed height when provided in the grid options', () => {
       const fixedHeight = 100;
-      const resizerSpy = jest.spyOn(resizerServiceStub, 'resizeGrid');
+      const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
       component.gridOptions = { gridHeight: fixedHeight };
       component.initialization(divContainer, slickEventHandler);
@@ -368,7 +373,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
     it('should initialize the grid with a fixed width when provided in the grid options', () => {
       const fixedWidth = 255;
-      const resizerSpy = jest.spyOn(resizerServiceStub, 'resizeGrid');
+      const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
       component.gridOptions = { gridWidth: fixedWidth };
       component.initialization(divContainer, slickEventHandler);
@@ -377,7 +382,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     it('should initialize the grid with autoResize enabled and without height/width then expect a "gridResize" to be called for auto-resizing', () => {
-      const resizerSpy = jest.spyOn(resizerServiceStub, 'resizeGrid');
+      const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
       component.gridOptions = { enableAutoResize: true };
       component.initialization(divContainer, slickEventHandler);
@@ -387,20 +392,20 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('options changed', () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
         sharedService.gridOptions = gridOptions;
       });
 
       afterEach(() => {
-        mockGrid.getOptions = jest.fn();
-        jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
+        mockGrid.getOptions = vi.fn();
+        vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
       });
 
       it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
         mockGrid.getOptions = () => null as any;
-        const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
-        const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+        const setOptionSpy = vi.spyOn(mockGrid, 'setOptions');
+        const sharedOptionSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
@@ -415,8 +420,8 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should merge grid options with global options and expect bottom padding to be calculated', () => {
         mockGrid.getOptions = () => null as any;
-        const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
-        const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+        const setOptionSpy = vi.spyOn(mockGrid, 'setOptions');
+        const sharedOptionSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
@@ -431,7 +436,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should merge paginationOptions when some already exist', () => {
         const mockPagination = { pageSize: 2, pageSizes: [] };
-        const paginationSrvSpy = jest.spyOn(paginationServiceStub, 'updateTotalItems');
+        const paginationSrvSpy = vi.spyOn(paginationServiceStub, 'updateTotalItems');
 
         component.paginationOptions = mockPagination;
 
@@ -441,7 +446,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should set brand new paginationOptions when none previously exist', () => {
         const mockPagination = { pageSize: 2, pageSizes: [], totalItems: 1 };
-        const paginationSrvSpy = jest.spyOn(paginationServiceStub, 'updateTotalItems');
+        const paginationSrvSpy = vi.spyOn(paginationServiceStub, 'updateTotalItems');
 
         component.paginationOptions = undefined;
         component.paginationOptions = mockPagination;
@@ -453,13 +458,13 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('flag checks', () => {
       afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         // component.dispose();
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
-        const spy = jest.spyOn(groupingAndColspanServiceStub, 'init');
+        const spy = vi.spyOn(groupingAndColspanServiceStub, 'init');
 
         component.gridOptions = { createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -469,7 +474,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call "translateColumnHeaders" from ExtensionService when "enableTranslate" is set', () => {
-        const spy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
+        const spy = vi.spyOn(extensionServiceStub, 'translateColumnHeaders');
 
         component.gridOptions = { enableTranslate: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -496,10 +501,10 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
         const rxjsMock = new RxJsResourceStub();
-        const backendUtilitySpy = jest.spyOn(backendUtilityServiceStub, 'addRxJsResource');
-        const filterServiceSpy = jest.spyOn(filterServiceStub, 'addRxJsResource');
-        const sortServiceSpy = jest.spyOn(sortServiceStub, 'addRxJsResource');
-        const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');
+        const backendUtilitySpy = vi.spyOn(backendUtilityServiceStub, 'addRxJsResource');
+        const filterServiceSpy = vi.spyOn(filterServiceStub, 'addRxJsResource');
+        const sortServiceSpy = vi.spyOn(sortServiceStub, 'addRxJsResource');
+        const paginationServiceSpy = vi.spyOn(paginationServiceStub, 'addRxJsResource');
 
         component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
         component.registerExternalResources([rxjsMock], true);
@@ -514,7 +519,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should destroy customElement and its DOM element when requested', () => {
-        const spy = jest.spyOn(component, 'emptyGridContainerElm');
+        const spy = vi.spyOn(component, 'emptyGridContainerElm');
 
         component.initialization(divContainer, slickEventHandler);
         component.dispose(true);
@@ -523,7 +528,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should bind local filter when "enableFiltering" is set', () => {
-        const bindLocalSpy = jest.spyOn(filterServiceStub, 'bindLocalOnFilter');
+        const bindLocalSpy = vi.spyOn(filterServiceStub, 'bindLocalOnFilter');
 
         component.gridOptions = { enableFiltering: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -532,7 +537,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should bind local sort when "enableSorting" is set', () => {
-        const bindLocalSpy = jest.spyOn(sortServiceStub, 'bindLocalOnSort');
+        const bindLocalSpy = vi.spyOn(sortServiceStub, 'bindLocalOnSort');
 
         component.gridOptions = { enableSorting: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -540,13 +545,13 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
       });
 
-      it('should refresh a local grid and change pagination options pagination when a preset for it is defined in grid options', (done) => {
+      it('should refresh a local grid and change pagination options pagination when a preset for it is defined in grid options', () => {
         const expectedPageNumber = 2;
         const expectedTotalItems = 2;
-        const refreshSpy = jest.spyOn(component, 'refreshGridData');
+        const refreshSpy = vi.spyOn(component, 'refreshGridData');
 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
-        jest.spyOn(mockDataView, 'getItems').mockReturnValueOnce(mockData);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValueOnce(mockData);
         component.gridOptions = {
           enablePagination: true,
           presets: { pagination: { pageSize: 2, pageNumber: expectedPageNumber } }
@@ -557,20 +562,19 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        setTimeout(() => {
-          expect(component.paginationOptions!.pageSize).toBe(2);
-          expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
-          expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
-          expect(refreshSpy).toHaveBeenCalledWith(mockData);
-          done();
-        });
+        vi.runAllTimers();
+
+        expect(component.paginationOptions!.pageSize).toBe(2);
+        expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
+        expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
+        expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
-      it('should refresh a local grid defined and change pagination options pagination when a preset is defined in grid options and total rows is different when Filters are applied', (done) => {
+      it('should refresh a local grid defined and change pagination options pagination when a preset is defined in grid options and total rows is different when Filters are applied', () => {
         const expectedPageNumber = 3;
         const expectedTotalItems = 15;
-        const refreshSpy = jest.spyOn(component, 'refreshGridData');
-        const getPagingSpy = jest.spyOn(mockDataView, 'getPagingInfo').mockReturnValue({ pageNum: 1, totalRows: expectedTotalItems, pageSize: 10, totalPages: 15, dataView: mockDataView });
+        const refreshSpy = vi.spyOn(component, 'refreshGridData');
+        const getPagingSpy = vi.spyOn(mockDataView, 'getPagingInfo').mockReturnValue({ pageNum: 1, totalRows: expectedTotalItems, pageSize: 10, totalPages: 15, dataView: mockDataView });
 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         component.gridOptions = {
@@ -583,25 +587,24 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        setTimeout(() => {
-          expect(getPagingSpy).toHaveBeenCalled();
-          expect(component.paginationOptions!.pageSize).toBe(10);
-          expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
-          expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
-          expect(refreshSpy).toHaveBeenCalledWith(mockData);
-          done();
-        });
+        vi.runAllTimers();
+
+        expect(getPagingSpy).toHaveBeenCalled();
+        expect(component.paginationOptions!.pageSize).toBe(10);
+        expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
+        expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
+        expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
     });
 
     describe('setHeaderRowVisibility grid method', () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should show the header row when "showHeaderRow" is called with argument True', () => {
-        const setHeaderRowSpy = jest.spyOn(mockGrid, 'setHeaderRowVisibility');
-        const setColumnSpy = jest.spyOn(mockGrid, 'setColumns');
+        const setHeaderRowSpy = vi.spyOn(mockGrid, 'setHeaderRowVisibility');
+        const setColumnSpy = vi.spyOn(mockGrid, 'setColumns');
 
         component.initialization(divContainer, slickEventHandler);
         component.showHeaderRow(true);
@@ -611,8 +614,8 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should show the header row when "showHeaderRow" is called with argument False', () => {
-        const setHeaderRowSpy = jest.spyOn(mockGrid, 'setHeaderRowVisibility');
-        const setColumnSpy = jest.spyOn(mockGrid, 'setColumns');
+        const setHeaderRowSpy = vi.spyOn(mockGrid, 'setHeaderRowVisibility');
+        const setColumnSpy = vi.spyOn(mockGrid, 'setColumns');
 
         component.initialization(divContainer, slickEventHandler);
         component.showHeaderRow(false);
@@ -625,15 +628,15 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     describe('Tree Data View', () => {
       afterEach(() => {
         component.dispose();
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it('should change flat dataset and expect "convertFlatParentChildToTreeDatasetAndSort" being called with other methods', () => {
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
-        const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-        const treeConvertAndSortSpy = jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
-        const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
+        const hierarchicalSpy = vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
+        const treeConvertAndSortSpy = vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
+        const refreshTreeSpy = vi.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
         component.gridOptions = {
           enableTreeData: true, treeDataOptions: {
