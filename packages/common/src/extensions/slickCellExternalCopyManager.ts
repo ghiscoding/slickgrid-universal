@@ -276,7 +276,6 @@ export class SlickCellExternalCopyManager {
       destW = selectedRange.toCell - selectedRange.fromCell + 1;
     }
     const availableRows = this._dataWrapper.getDataLength() - activeRow;
-    let addRows = 0;
 
     // ignore new rows if we don't have a "newRowCreator"
     if ((availableRows < destH) && typeof this._addonOptions.newRowCreator === 'function') {
@@ -410,15 +409,6 @@ export class SlickCellExternalCopyManager {
         this.onPasteCells.notify({ ranges: [bRange] });
         if (typeof this._addonOptions.onPasteCells === 'function') {
           this._addonOptions.onPasteCells(new SlickEventData(), { ranges: [bRange] });
-        }
-
-        if (addRows > 1) {
-          const data = this._dataWrapper.getDataItems();
-          for (; addRows > 1; addRows--) {
-            data.splice(data.length - 1, 1);
-          }
-          this._dataWrapper.setDataItems(data);
-          this._grid.render();
         }
       }
     };
