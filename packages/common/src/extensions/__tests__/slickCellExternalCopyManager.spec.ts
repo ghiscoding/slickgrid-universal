@@ -639,7 +639,7 @@ describe('CellExternalCopyManager', () => {
         let nextAddNewRowId = 0;
         const mockNewRowCreator = vi.fn((count: number) => {
           for (let i = 0; i < count; i++) {
-            gridStub.getData<SlickDataView>().addItem({
+            gridStub.getData<any[]>().push({
               id: nextAddNewRowId--
             });
           }
