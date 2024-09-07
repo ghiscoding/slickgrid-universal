@@ -24,6 +24,7 @@ const returnValueStub = vi.fn();
 
 const dataViewStub = {
   destroy: vi.fn(),
+  addItem: vi.fn(),
   getItem: vi.fn(),
   getItems: vi.fn(),
   getItemCount: vi.fn(),
@@ -635,17 +636,21 @@ describe('CellExternalCopyManager', () => {
       });
 
       it('should Copy, Paste and run Execute clip command', () => {
-        const mockNewRowCreator = vi.fn();
+        let nextAddNewRowId = 0;
+        const mockNewRowCreator = vi.fn((count: number) => {
+          for (let i = 0; i < count; i++) {
+            gridStub.getData<SlickDataView>().addItem({
+              id: nextAddNewRowId--
+            });
+          }
+        });
         const mockOnPasteCells = vi.fn();
-        const renderSpy = vi.spyOn(gridStub, 'render');
-        const setDataSpy = vi.spyOn(gridStub, 'setData');
+        const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
         vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
           .mockReturnValueOnce([new SlickRange(0, 1, 2, 2)])
           .mockReturnValueOnce(null as any);
 
-        let clipCommand;
         const clipboardCommandHandler = (cmd) => {
-          clipCommand = cmd;
           cmd.execute();
         };
         plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, newRowCreator: mockNewRowCreator, onPasteCells: mockOnPasteCells });
@@ -658,7 +663,6 @@ describe('CellExternalCopyManager', () => {
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlCopyEvent, gridStub);
 
         const getActiveCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 3 });
-        // vi.spyOn(gridStub, 'getDataLength').mockReturnValueOnce(2).mockReturnValueOnce(2).mockReturnValueOnce(3);
         const keyDownCtrlPasteEvent = new Event('keydown');
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         Object.defineProperty(keyDownCtrlPasteEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -671,15 +675,46 @@ describe('CellExternalCopyManager', () => {
         vi.advanceTimersByTime(2);
 
         expect(getActiveCellSpy).toHaveBeenCalled();
-        expect(renderSpy).toHaveBeenCalled();
-        expect(setDataSpy).toHaveBeenCalledWith([{ firstName: 'John', lastName: 'Doe', age: 30 }, { firstName: 'Jane', lastName: 'Doe' }, {}, {}]);
         expect(mockNewRowCreator).toHaveBeenCalled();
+        expect(getDataItemSpy).toHaveBeenCalled();
+      });
 
-        clipCommand.undo();
+      it('should warn if no new rows have been added via newRowCreator', () => {
+        const mockNewRowCreator = vi.fn((_count: number) => {
+          // user forgot to add rows
+        });
+        const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+        const mockOnPasteCells = vi.fn();
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
+        const clipboardCommandHandler = (cmd) => {
+          cmd.execute();
+        };
+        const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
+        plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, newRowCreator: mockNewRowCreator, onPasteCells: mockOnPasteCells });
 
-        expect(gridStub.setData).toHaveBeenCalledWith([{ firstName: 'John', lastName: 'Doe', age: 30 }, { firstName: 'Jane', lastName: 'Doe' }]);
-        expect(gridStub.render).toHaveBeenCalled();
-        expect(mockOnPasteCells).toHaveBeenCalledWith(expect.any(Object), { ranges: [new SlickRange(3, 0, 3, 1)] });
+        const keyDownCtrlCopyEvent = new Event('keydown');
+        Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+        Object.defineProperty(keyDownCtrlCopyEvent, 'key', { writable: true, configurable: true, value: 'c' });
+        Object.defineProperty(keyDownCtrlCopyEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+        Object.defineProperty(keyDownCtrlCopyEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+        gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlCopyEvent, gridStub);
+
+        const getActiveCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 3 });
+        const keyDownCtrlPasteEvent = new Event('keydown');
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        Object.defineProperty(keyDownCtrlPasteEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+        Object.defineProperty(keyDownCtrlPasteEvent, 'key', { writable: true, configurable: true, value: 'v' });
+        Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+        Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+        gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
+        document.querySelector('textarea')!.value = `Doe\tserialized output`;
+
+        vi.advanceTimersByTime(2);
+
+        expect(getActiveCellSpy).toHaveBeenCalled();
+        expect(mockNewRowCreator).toHaveBeenCalled();
+        expect(getDataItemSpy).toHaveBeenCalled();
+        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('newRowCreator'));
       });
 
       it('should copy selection but skip hidden column and then use window.clipboard when exist and Paste is performed', () => {
