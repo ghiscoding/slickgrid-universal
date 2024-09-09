@@ -43,9 +43,9 @@
     "lint": "eslint --cache .",
     "lint:no-cache": "eslint .",
     "test": "vitest --config ./test/vitest.config.mts",
-    "test:coverage": "vitest --coverage --config ./test/vitest.config.mts",
-    "test:watch": "vitest --watch --config ./test/vitest.config.mts",
-    "test:ui": "vitest --ui --watch --config ./test/vitest.config.mts",
+    "test:coverage": "vitest --no-watch --coverage --config ./test/vitest.config.mts",
+    "test:watch": "vitest --config ./test/vitest.config.mts",
+    "test:ui": "vitest --ui --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit"
   },
@@ -67,8 +67,8 @@
     "@lerna-lite/run": "^3.9.0",
     "@lerna-lite/watch": "^3.9.0",
     "@types/node": "^22.5.1",
-    "@vitest/coverage-v8": "^2.0.5",
-    "@vitest/ui": "^2.0.5",
+    "@vitest/coverage-v8": "^2.1.0-beta.7",
+    "@vitest/ui": "^2.1.0-beta.7",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cross-env": "^7.0.3",
     "cypress": "^13.14.1",
@@ -93,7 +93,7 @@
     "sortablejs": "^1.15.2",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.3.0",
-    "vitest": "^2.0.5",
+    "vitest": "^2.1.0-beta.7",
     "whatwg-fetch": "^3.6.20"
   },
   "pnpm": {

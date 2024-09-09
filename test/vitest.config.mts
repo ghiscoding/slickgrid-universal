@@ -32,6 +32,5 @@ export default defineConfig({
     globalSetup: './test/vitest-global-setup.ts',
     setupFiles: ['./test/vitest-pretest.ts', './test/vitest-global-mocks.ts'],
     testTimeout: 60000,
-    watch: false,
   },
 });
