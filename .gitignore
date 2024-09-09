@@ -23,6 +23,8 @@
 
 # misc
 .eslintcache
+.jest-cache
+jest-coverage
 .sass-cache
 /connect.lock
 /coverage
