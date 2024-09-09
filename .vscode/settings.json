@@ -4,5 +4,5 @@
     "typescript"
   ],
   "typescript.format.semicolons": "insert",
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "vitest.rootConfig": "./test/vitest.config.mts"
 }

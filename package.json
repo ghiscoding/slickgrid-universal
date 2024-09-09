@@ -45,6 +45,7 @@
     "test": "vitest --config ./test/vitest.config.mts",
     "test:coverage": "vitest --coverage --config ./test/vitest.config.mts",
     "test:watch": "vitest --watch --config ./test/vitest.config.mts",
+    "test:ui": "vitest --ui --watch --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit"
   },
@@ -67,6 +68,7 @@
     "@lerna-lite/watch": "^3.9.0",
     "@types/node": "^22.5.1",
     "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/ui": "^2.0.5",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cross-env": "^7.0.3",
     "cypress": "^13.14.1",
@@ -81,6 +83,7 @@
     "happy-dom": "^15.7.2",
     "husky": "^9.1.5",
     "jest-extended": "^4.0.2",
+    "jsdom": "^25.0.0",
     "jsdom-global": "^3.0.2",
     "npm-run-all2": "^6.2.2",
     "pnpm": "^8.15.9",
