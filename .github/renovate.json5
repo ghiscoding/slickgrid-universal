@@ -27,5 +27,5 @@
   ignoreDeps: [
     'node',
   ],
-  schedule: ['on friday'],
+  schedule: ['every 2 weeks on friday'],
 }
