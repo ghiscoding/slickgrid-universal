@@ -17,6 +17,8 @@
 ### Live Demo
 [Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
 
+Also available in Stackblitz (Codeflow) below, this can also be used to provide an issue repro.
+
 [![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/ghiscoding/slickgrid-universal)
 
 ### Description
