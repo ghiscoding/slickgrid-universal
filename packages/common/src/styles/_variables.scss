@@ -74,8 +74,8 @@ $slick-navbar-default-link-hover-color:	                    $slick-gray-dark !de
 $slick-text-color:             			                        $slick-gray-dark !default;
 $slick-table-background:                                    transparent !default;
 $slick-scrollbar-color:                                     #c1c1c1 #f1f1f1 !default;
-$slick-hover-header-color:                                  $slick-text-color;
-$slick-sorting-header-color:                                #333;
+$slick-hover-header-color:                                  $slick-text-color !default;
+$slick-sorting-header-color:                                #333 !default;
 $slick-placeholder-color:                                   #c9c9c9 !default;
 
 /* cell */
@@ -256,8 +256,8 @@ $slick-autocomplete-tpl4-top-right-font-weight:             bold !default;
 $slick-autocomplete-tpl4-top-right-max-width:               100px !default;
 
 /* Sorting */
-$slick-icon-sort-desc-icon-svg-path:                        "M16.707 13.293a.999.999 0 0 0-1.414 0L13 15.586V8a1 1 0 1 0-2 0v7.586l-2.293-2.293a.999.999 0 1 0-1.414 1.414L12 19.414l4.707-4.707a.999.999 0 0 0 0-1.414Z";
-$slick-icon-sort-asc-icon-svg-path:                         "M13 5.586l-4.707 4.707a.999.999 0 1 0 1.414 1.414L12 9.414V17a1 1 0 1 0 2 0V9.414l2.293 2.293a.997.997 0 0 0 1.414 0a.999.999 0 0 0 0-1.414Z";
+$slick-icon-sort-desc-icon-svg-path:                        "M16.707 13.293a.999.999 0 0 0-1.414 0L13 15.586V8a1 1 0 1 0-2 0v7.586l-2.293-2.293a.999.999 0 1 0-1.414 1.414L12 19.414l4.707-4.707a.999.999 0 0 0 0-1.414Z" !default;
+$slick-icon-sort-asc-icon-svg-path:                         "M13 5.586l-4.707 4.707a.999.999 0 1 0 1.414 1.414L12 9.414V17a1 1 0 1 0 2 0V9.414l2.293 2.293a.997.997 0 0 0 1.414 0a.999.999 0 0 0 0-1.414Z" !default;
 $slick-icon-sort-color:                                     $slick-primary-color !default;
 $slick-icon-sort-font-size:                                 23px !default;
 $slick-icon-sort-position-right:                            3px !default;
@@ -279,8 +279,8 @@ $slick-group-totals-formatter-font-size:                    14px !default;
 $slick-detail-view-icon-color:                              $slick-primary-color !default;
 $slick-detail-view-icon-color-hover:                        darken($slick-detail-view-icon-color, 10%) !default;
 $slick-detail-view-icon-opacity-hover:                      1 !default;
-$slick-detail-view-icon-collapse-svg-path:                  "M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z";
-$slick-detail-view-icon-expand-svg-path:                    "M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z";
+$slick-detail-view-icon-collapse-svg-path:                  "M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" !default;
+$slick-detail-view-icon-expand-svg-path:                    "M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" !default;
 $slick-detail-view-icon-font-size:                          18px !default;
 $slick-detail-view-container-bgcolor:                       #f7f7f7 !default;
 $slick-detail-view-container-border:                        1px solid #c0c0c0 !default;
@@ -447,7 +447,7 @@ $slick-header-menu-button-margin-right:                     3px !default;
 $slick-header-menu-display:                                 none !default; /* can be none or inline-block */
 
 /* Checkbox Selector / Row Selection */
-$slick-checkbox-icon-color:                                      $slick-primary-color !default;
+$slick-checkbox-icon-color:                                 $slick-primary-color !default;
 $slick-checkbox-icon-border:                                none !default;
 $slick-checkbox-icon-border-radius:                         none !default;
 $slick-checkbox-icon-container-bg-color:                    transparent !default;
@@ -958,15 +958,15 @@ $slick-empty-data-warning-z-index:                          10 !default;
 // -----------
 
 // add a few Dark Mode SASS variables, just the basic vars
-$slick-dark-primary-color:                                lighten($primary-color, 15%);
-$slick-dark-base-dark-text-color:                         #d4d4d4;
-$slick-dark-base-dark-menu-bg-color:                      #252525;
-$slick-dark-base-dark-menu-border-color:                  #505050;
-$slick-dark-base-dark-menu-item-border-color:             #5a5a5a;
-$slick-dark-base-dark-menu-item-hover-color:              #363b40;
-$slick-dark-base-dark-invalid-color:                      #ea868f;
-$slick-dark-highlight-color:                              $slick-dark-primary-color;
-$slick-dark-text-color:                                   #d4d4d4;
+$slick-dark-primary-color:                                lighten($primary-color, 15%) !default;
+$slick-dark-base-dark-text-color:                         #d4d4d4 !default;
+$slick-dark-base-dark-menu-bg-color:                      #252525 !default;
+$slick-dark-base-dark-menu-border-color:                  #505050 !default;
+$slick-dark-base-dark-menu-item-border-color:             #5a5a5a !default;
+$slick-dark-base-dark-menu-item-hover-color:              #363b40 !default;
+$slick-dark-base-dark-invalid-color:                      #ea868f !default;
+$slick-dark-highlight-color:                              $slick-dark-primary-color !default;
+$slick-dark-text-color:                                   #d4d4d4 !default;
 
 .ms-dark-mode,
 .ms-drop.ms-dark-mode,
