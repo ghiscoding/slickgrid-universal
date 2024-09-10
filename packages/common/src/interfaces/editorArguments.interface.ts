@@ -40,6 +40,9 @@ export interface EditorArguments {
   /** Cancel changes callback method that will execute after user cancels an edit */
   cancelChanges: () => void;
 
-  /** Commit changes callback method that will execute after user commits the changes */
-  commitChanges: () => void;
+  /**
+   * Commit changes callback method that will execute after user commits the changes
+   * @param {Boolean} [navigateCellDown] - by default the `autoCommit` will navigate to next cell down (unless `autoCommitEdit` is enabled if so do nothing)
+   */
+  commitChanges: (navigateCellDown?: boolean) => void;
 }
