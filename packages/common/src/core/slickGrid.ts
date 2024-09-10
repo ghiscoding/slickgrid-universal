@@ -5523,12 +5523,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  protected commitEditAndSetFocus(): void {
+  protected commitEditAndSetFocus(navigateCellDown = true): void {
     // if the commit fails, it would do so due to a validation error
     // if so, do not steal the focus from the editor
     if (this.getEditorLock()?.commitCurrentEdit()) {
       this.setFocus();
-      if (this._options.autoEdit && !this._options.autoCommitEdit) {
+      if (this._options.autoEdit && !this._options.autoCommitEdit && navigateCellDown) {
         this.navigateDown();
       }
     }

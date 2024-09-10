@@ -368,7 +368,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();
     } else {
-      this.args.commitChanges();
+      const navigateDown = this._lastInputKeyEvent?.key !== 'Enter';
+      this.args.commitChanges(navigateDown);
     }
   }
 
@@ -461,7 +462,6 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Vitest
   handleSelect(item: AutocompleteSearchItem): boolean {
     if (item !== undefined) {
-      const event = null; // TODO do we need the event?
       const selectedItem = item;
       this._currentValue = selectedItem;
       this._isValueTouched = true;
@@ -475,7 +475,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       this.setValue(itemLabel);
 
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
       } else {
         this.save();
       }

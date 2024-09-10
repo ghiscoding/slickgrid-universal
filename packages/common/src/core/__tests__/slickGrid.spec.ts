@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 
-import { CheckboxEditor, InputEditor, LongTextEditor } from '../../editors';
+import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
 import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand } from '../../interfaces';
 import { SlickEventData, SlickGlobalEditorLock } from '../slickCore';
@@ -4642,6 +4642,34 @@ describe('SlickGrid core file', () => {
         grid.updateCell(0, 1);
 
         expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
+      });
+
+      it('should call navigateDown() when calling save() on default editor', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const currentEditor = grid.getCellEditor() as Editor;
+        currentEditor.save!();
+
+        expect(navigateDownSpy).not.toHaveBeenCalled();
+      });
+
+      it('should NOT call navigateDown() when calling save() on an AutoCompleterEditor that disabled navigate down', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: AutocompleterEditor }] as Column[];
+        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(AutocompleterEditor as any, true);
+        const currentEditor = grid.getCellEditor() as Editor;
+        currentEditor.save!();
+
+        expect(navigateDownSpy).not.toHaveBeenCalled();
       });
     });
 

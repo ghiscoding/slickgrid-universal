@@ -455,15 +455,36 @@ describe('AutocompleterEditor', () => {
         expect(spy).toHaveBeenCalled();
       });
 
-      it('should call "commitChanges" when "hasAutoCommitEdit" is disabled after calling "save()" method', () => {
+      it('should call "commitChanges" with false when calling "save()" method and the last event is the ENTER key', () => {
         gridOptionMock.autoCommitEdit = false;
         const spy = vi.spyOn(editorArguments, 'commitChanges');
 
         editor = new AutocompleterEditor(editorArguments);
         editor.setValue('a');
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+        const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
+        editorElm.focus();
+        editorElm.dispatchEvent(event);
+
         editor.save();
 
-        expect(spy).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalledWith(false);
+      });
+
+      it('should call "commitChanges" with true when calling "save()" method and the last event is NOT the ENTER key', () => {
+        gridOptionMock.autoCommitEdit = false;
+        const spy = vi.spyOn(editorArguments, 'commitChanges');
+
+        editor = new AutocompleterEditor(editorArguments);
+        editor.setValue('a');
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
+        const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
+        editorElm.focus();
+        editorElm.dispatchEvent(event);
+
+        editor.save();
+
+        expect(spy).toHaveBeenCalledWith(true);
       });
     });
 
