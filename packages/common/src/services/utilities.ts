@@ -205,12 +205,12 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
       if (!(childrenPropName in p)) {
         p[childrenPropName] = [];
       }
-      const existIdx = p[childrenPropName]?.findIndex((x: any) => x.id === item.id);
-      if (existIdx < 0) {
-        p[childrenPropName].push(item);
-      } else {
+      const existIdx = p[childrenPropName]?.findIndex((x: any) => x[identifierPropName] === item[identifierPropName]);
+      if (existIdx >= 0) {
         // replace existing one when already exists (probably equal to the same item in the end)
         p[childrenPropName][existIdx] = item;
+      } else {
+        p[childrenPropName].push(item);
       }
       if (p[collapsedPropName] === undefined) {
         p[collapsedPropName] = options?.initiallyCollapsed ?? false;
