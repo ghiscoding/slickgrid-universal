@@ -203,6 +203,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Dispose of the Slick Row Detail View */
   dispose(): void {
     this._eventHandler?.unsubscribeAll();
+    this._expandedRows.clear();
+    this._rowIdsOutOfViewport.clear();
   }
 
   create(columnDefinitions: Column[], gridOptions: GridOption): UniversalRowDetailView | null {
