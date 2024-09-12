@@ -17,6 +17,8 @@ import type { TranslateService } from '../translate.service';
 import './example07.scss';
 import '../material-styles.scss';
 
+const NB_ITEMS = 500;
+
 export default class Example07 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
@@ -51,7 +53,7 @@ export default class Example07 {
 
   async attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(500);
+    this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector(`.grid7`) as HTMLDivElement;
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
@@ -272,7 +274,7 @@ export default class Example07 {
           }),
 
           // OR a regular collection load
-          // collection: Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
+          // collection: Array.from(Array(NB_ITEMS).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
