@@ -222,11 +222,13 @@ export class SelectEditor implements Editor {
    * The current selected values (multiple select) from the collection
    */
   get currentValues(): any[] | null {
-    const selectedValues = this._msInstance?.getSelects() ?? [];
+    const selectedValuesSet = new Set();
+    (this._msInstance?.getSelects('value') ?? [])
+      .forEach(x => selectedValuesSet.add(x.toString()));
 
     // collection of strings, just return the filtered string that are equals
     if (this.collection.every(x => typeof x === 'number' || typeof x === 'string')) {
-      return this.collection.filter((c: SelectOption) => selectedValues?.some(val => `${val}` === c?.toString()));
+      return this.collection.filter((c: SelectOption) => selectedValuesSet.has(c?.toString()));
     }
 
     // collection of label/value pair
@@ -234,7 +236,7 @@ export class SelectEditor implements Editor {
     const isIncludingPrefixSuffix = this.collectionOptions?.includePrefixSuffixToSelectedValues ?? false;
 
     return this.collection
-      .filter(c => selectedValues.some(val => `${val}` === c?.[this.valueName]?.toString()))
+      .filter(c => selectedValuesSet.has(c?.[this.valueName]?.toString()))
       .map(c => {
         const labelText = c[this.valueName];
         let prefixText = c[this.labelPrefixName] || '';
