@@ -1159,6 +1159,15 @@ describe('SlickGrid core file', () => {
 
       expect(rowSelectSpy).toHaveBeenCalled();
     });
+
+    it('should clear previous selection model when calling setSelectionModel() with a different model', () => {
+      const cellSelectionModel = new SlickCellSelectionModel();
+
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, darkMode: true });
+      cellSelectionModel.init(grid);
+
+      expect(cellSelectionModel.cellRangeSelector.addonOptions.selectionCss).toBe('2px solid white');
+    });
   });
 
   describe('Node Getters', () => {

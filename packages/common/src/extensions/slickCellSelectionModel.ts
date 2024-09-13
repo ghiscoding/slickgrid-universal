@@ -32,7 +32,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     this._eventHandler = new SlickEventHandler();
 
     this._selector = (options === undefined || options.cellRangeSelector === undefined)
-      ? new SlickCellRangeSelector({ selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? "white" : "black"}` } as CSSStyleDeclaration })
+      ? new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration })
       : options.cellRangeSelector;
 
     this._addonOptions = options;
@@ -52,6 +52,10 @@ export class SlickCellSelectionModel implements SelectionModel {
 
   init(grid: SlickGrid): void {
     this._grid = grid;
+    if (this._addonOptions === undefined || this._addonOptions.cellRangeSelector === undefined) {
+      this._selector = new SlickCellRangeSelector({ selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? "white" : "black"}` } as CSSStyleDeclaration })
+    }
+
     if (grid.hasDataView()) {
       this._dataView = grid.getData<CustomDataView | SlickDataView>();
     }
