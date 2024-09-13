@@ -573,6 +573,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Initializes the grid. */
   init(): void {
+    if (document.body.style.zoom && document.body.style.zoom !== '100%') {
+      console.warn(
+        '[Slickgrid-Universal] Zoom level other than 100% is not supported by the library and will give subpar experience. ' +
+        'SlickGrid relies on the `rowHeight` grid option to do row positioning & calculation and when zoom is not 100% then calculation becomes all offset.'
+      );
+    }
     this.finishInitialization();
   }
 
@@ -5161,7 +5167,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number} row - grid row number
    */
   getFrozenRowOffset(row: number): number {
-    // let offset = ( hasFrozenRows ) ? ( this._options.frozenBottom ) ? ( row >= actualFrozenRow ) ? ( h < viewportTopH ) ? ( actualFrozenRow * this._options.rowHeight ) : h : 0 : ( row >= actualFrozenRow ) ? frozenRowsHeight : 0 : 0; // WTF?
     let offset = 0;
     if (this.hasFrozenRows) {
       if (this._options.frozenBottom) {

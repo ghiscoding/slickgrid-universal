@@ -88,6 +88,42 @@ describe('SlickGrid core file', () => {
     expect(grid.getPubSubService()).toEqual(pubSubServiceStub);
   });
 
+  it('should display a console warning when body zoom level is different than 100%', () => {
+    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+
+    document.body.style.zoom = '90%';
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+  });
+
+  it('should not display a console warning when body zoom level is 100%', () => {
+    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+
+    document.body.style.zoom = '100%';
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+  });
+
+  it('should not display a console warning when body zoom is not defined', () => {
+    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+
+    document.body.style.zoom = '';
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+  });
+
   it('should be able to instantiate SlickGrid and get columns', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
