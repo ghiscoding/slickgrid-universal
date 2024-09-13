@@ -44,7 +44,7 @@ export class InputEditor implements Editor {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
-    this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
+    this.gridOptions = args.grid?.getOptions() as GridOption;
     this._bindEventService = new BindingEventService();
     this.inputType = inputType;
     this.init();
