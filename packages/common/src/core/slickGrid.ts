@@ -2921,8 +2921,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const selectedRowsSet = new Set(this.getSelectedRows());
       const previousSelectedRowsSet = new Set(previousSelectedRows);
 
-      const newSelectedAdditions = [...selectedRowsSet].filter(i => !previousSelectedRowsSet.has(i));
-      const newSelectedDeletions = [...previousSelectedRowsSet].filter(i => !selectedRowsSet.has(i));
+      const newSelectedAdditions = Array.from(selectedRowsSet).filter(i => !previousSelectedRowsSet.has(i));
+      const newSelectedDeletions = Array.from(previousSelectedRowsSet).filter(i => !selectedRowsSet.has(i));
 
       this.triggerEvent(this.onSelectedRowsChanged, {
         rows: this.getSelectedRows(),
