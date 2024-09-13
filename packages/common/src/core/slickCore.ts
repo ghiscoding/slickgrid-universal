@@ -361,7 +361,7 @@ export class SlickRange {
     else {
       return `(${this.fromRow}:${this.fromCell} - ${this.toRow}:${this.toCell})`;
     }
-  };
+  }
 }
 
 
@@ -470,7 +470,7 @@ export class SlickGroup extends SlickNonDataItem {
       this.count === group.count &&
       this.collapsed === group.collapsed &&
       this.title === group.title;
-  };
+  }
 }
 
 /**
@@ -525,7 +525,7 @@ export class SlickEditorLock {
    */
   isActive(editController?: EditController): boolean {
     return (editController ? this.activeEditController === editController : this.activeEditController !== null);
-  };
+  }
 
   /**
    * Sets the specified edit controller as the active edit controller (acquire edit lock).
@@ -547,7 +547,7 @@ export class SlickEditorLock {
       throw new Error('SlickEditorLock.activate: editController must implement .cancelCurrentEdit()');
     }
     this.activeEditController = editController;
-  };
+  }
 
   /**
    * Unsets the specified edit controller as the active edit controller (release edit lock).
@@ -563,7 +563,7 @@ export class SlickEditorLock {
       throw new Error('SlickEditorLock.deactivate: specified editController is not the currently active one');
     }
     this.activeEditController = null;
-  };
+  }
 
   /**
    * Attempts to commit the current edit by calling "commitCurrentEdit" method on the active edit
@@ -575,7 +575,7 @@ export class SlickEditorLock {
    */
   commitCurrentEdit(): boolean {
     return (this.activeEditController ? this.activeEditController.commitCurrentEdit() : true);
-  };
+  }
 
   /**
    * Attempts to cancel the current edit by calling "cancelCurrentEdit" method on the active edit
@@ -586,7 +586,7 @@ export class SlickEditorLock {
    */
   cancelCurrentEdit(): boolean {
     return (this.activeEditController ? this.activeEditController.cancelCurrentEdit() : true);
-  };
+  }
 }
 
 export class Utils {

@@ -128,4 +128,4 @@ export function extend<T = any>(...args: any[]): T {
 
   // Return the modified object
   return target;
-};
+}

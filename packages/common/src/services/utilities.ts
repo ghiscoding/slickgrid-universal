@@ -193,7 +193,10 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
   // make them accessible by guid on this map
   const all: any = {};
 
-  inputArray.forEach((item: any) => all[item[identifierPropName]] = item);
+  inputArray.forEach((item: any) => {
+    all[item[identifierPropName]] = item;
+    delete item[childrenPropName];
+  });
 
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
@@ -205,13 +208,7 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
       if (!(childrenPropName in p)) {
         p[childrenPropName] = [];
       }
-      const existIdx = p[childrenPropName]?.findIndex((x: any) => x[identifierPropName] === item[identifierPropName]);
-      if (existIdx >= 0) {
-        // replace existing one when already exists (probably equal to the same item in the end)
-        p[childrenPropName][existIdx] = item;
-      } else {
-        p[childrenPropName].push(item);
-      }
+      p[childrenPropName].push(item);
       if (p[collapsedPropName] === undefined) {
         p[collapsedPropName] = options?.initiallyCollapsed ?? false;
       }
