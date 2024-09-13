@@ -32,7 +32,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     this._eventHandler = new SlickEventHandler();
 
     this._selector = (options === undefined || options.cellRangeSelector === undefined)
-      ? new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration })
+      ? new SlickCellRangeSelector({ selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? "white" : "black"}` } as CSSStyleDeclaration })
       : options.cellRangeSelector;
 
     this._addonOptions = options;
