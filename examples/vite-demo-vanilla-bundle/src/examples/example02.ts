@@ -295,6 +295,8 @@ export default class Example02 {
   }
 
   groupByDuration() {
+    // you need to manually add the sort icon(s) in UI
+    this.sgb?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
     this.sgb?.dataView?.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
@@ -306,9 +308,6 @@ export default class Example02 {
       aggregateCollapsed: false,
       lazyTotalsCalculation: true
     } as Grouping);
-
-    // you need to manually add the sort icon(s) in UI
-    this.sgb?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
@@ -329,7 +328,9 @@ export default class Example02 {
   }
 
   groupByDurationEffortDriven() {
-    this.sgb?.slickGrid?.setSortColumns([]);
+    // you need to manually add the sort icon(s) in UI
+    const sortColumns = [{ columnId: 'duration', sortAsc: true }, { columnId: 'effortDriven', sortAsc: true }];
+    this.sgb?.slickGrid?.setSortColumns(sortColumns);
     this.sgb?.dataView?.setGrouping([
       {
         getter: 'duration',
@@ -352,15 +353,17 @@ export default class Example02 {
         lazyTotalsCalculation: true
       }
     ] as Grouping[]);
-
-    // you need to manually add the sort icon(s) in UI
-    const sortColumns = [{ columnId: 'duration', sortAsc: true }, { columnId: 'effortDriven', sortAsc: true }];
-    this.sgb?.slickGrid?.setSortColumns(sortColumns);
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
   groupByDurationEffortDrivenPercent() {
-    this.sgb?.slickGrid?.setSortColumns([]);
+    // you need to manually add the sort icon(s) in UI
+    const sortColumns = [
+      { columnId: 'duration', sortAsc: true },
+      { columnId: 'effortDriven', sortAsc: true },
+      { columnId: 'percentComplete', sortAsc: true }
+    ];
+    this.sgb?.slickGrid?.setSortColumns(sortColumns);
     this.sgb?.dataView?.setGrouping([
       {
         getter: 'duration',
@@ -392,14 +395,6 @@ export default class Example02 {
         lazyTotalsCalculation: true
       }
     ] as Grouping[]);
-
-    // you need to manually add the sort icon(s) in UI
-    const sortColumns = [
-      { columnId: 'duration', sortAsc: true },
-      { columnId: 'effortDriven', sortAsc: true },
-      { columnId: 'percentComplete', sortAsc: true }
-    ];
-    this.sgb?.slickGrid?.setSortColumns(sortColumns);
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 }
