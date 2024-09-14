@@ -247,6 +247,7 @@ const mockGrid = {
   getContainerNode: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
+  getRenderedRange: vi.fn(),
   getSelectionModel: vi.fn(),
   getScrollbarDimensions: vi.fn(),
   updateRow: vi.fn(),
@@ -1806,6 +1807,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should update each row and re-render the grid when filtering and DataView "onRowsChanged" event is triggered', () => {
         const renderSpy = vi.spyOn(mockGrid, 'render');
         const updateRowSpy = vi.spyOn(mockGrid, 'updateRow');
+        vi.spyOn(mockGrid, 'getRenderedRange').mockReturnValue({ bottom: 10, top: 0, leftPx: 0, rightPx: 890 });
 
         component.gridOptions = { enableFiltering: true };
         component.initialization(divContainer, slickEventHandler);

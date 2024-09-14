@@ -416,9 +416,11 @@ export default class Example03 {
     this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
   }
 
-  clearGrouping() {
+  clearGrouping(invalidateRows = true) {
     this.draggableGroupingPlugin?.clearDroppedGroups();
-    this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
+    if (invalidateRows) {
+      this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
+    }
   }
 
   collapseAllGroups() {
@@ -436,28 +438,23 @@ export default class Example03 {
     });
   }
 
-  groupByDuration() {
-    this.clearGrouping();
+  groupByDurationOrderByCount(sortedByCount = false) {
+    this.durationOrderByCount = sortedByCount;
+    this.clearGrouping(false);
+
     if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showTopHeader();
       this.draggableGroupingPlugin.setDroppedGroups('duration');
+
+      // you need to manually add the sort icon(s) in UI
+      const sortColumns = sortedByCount ? [] : [{ columnId: 'duration', sortAsc: true }];
+      this.sgb?.slickGrid?.setSortColumns(sortColumns);
       this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
     }
   }
 
-  groupByDurationOrderByCount(sortedByCount = false) {
-    this.durationOrderByCount = sortedByCount;
-    this.clearGrouping();
-    this.groupByDuration();
-
-    // you need to manually add the sort icon(s) in UI
-    const sortColumns = sortedByCount ? [] : [{ columnId: 'duration', sortAsc: true }];
-    this.sgb?.slickGrid?.setSortColumns(sortColumns);
-    this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
-  }
-
   groupByDurationEffortDriven() {
-    this.clearGrouping();
+    this.clearGrouping(false);
     if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showTopHeader();
       this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
