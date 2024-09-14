@@ -831,12 +831,16 @@ export class SlickVanillaGridBundle<TData = any> {
         }
       });
 
-      // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
-      // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
       if (gridOptions?.enableFiltering && !gridOptions.enableRowDetailView) {
-        this._eventHandler.subscribe(dataView.onRowsChanged, (_e, args) => {
-          if (args?.rows && Array.isArray(args.rows)) {
-            args.rows.forEach((row: number) => grid.updateRow(row));
+        this._eventHandler.subscribe(dataView.onRowsChanged, (_e, { calledOnRowCountChanged, rows }) => {
+          // filtering data with local dataset will not always show correctly unless we call this updateRow/render
+          // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
+          // see commit: https://github.com/ghiscoding/aurelia-slickgrid/commit/8c503a4d45fba11cbd8d8cc467fae8d177cc4f60
+          if (!calledOnRowCountChanged && Array.isArray(rows)) {
+            const ranges = grid.getRenderedRange();
+            rows
+              .filter(row => row >= ranges.top && row <= ranges.bottom)
+              .forEach((row: number) => grid.updateRow(row));
             grid.render();
           }
         });
