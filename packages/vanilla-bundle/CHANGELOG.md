@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
+
+### Performance Improvements
+
+* don't invalidate grid rows more than once, fixes [#1678](https://github.com/ghiscoding/slickgrid-universal/issues/1678) ([a5b9647](https://github.com/ghiscoding/slickgrid-universal/commit/a5b964748ac4f33aca222c03ccce9e3699320cb1)) - by @ghiscoding
+
 ## [5.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.0...v5.6.1) (2024-08-31)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

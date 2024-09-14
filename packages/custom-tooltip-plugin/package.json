@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/custom-tooltip-plugin",
-  "version": "5.6.1",
+  "version": "5.7.0",
   "description": "A plugin to add Custom Tooltip when hovering a cell, it subscribes to the cell",
   "main": "./dist/cjs/index.js",
   "types": "./dist/types/index.d.ts",

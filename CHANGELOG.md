@@ -4,6 +4,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
+
+### Features
+
+* add warning if necessary rows aren't added ([6471248](https://github.com/ghiscoding/slickgrid-universal/commit/6471248fa3cb70c93a938eb878c34232561d55ff)) - by @zewa666
+* matching border color for range selector in darkmode ([aec04ed](https://github.com/ghiscoding/slickgrid-universal/commit/aec04ed1e5fa286552c4c60b4f09ce8d3ba65f36)) - by @zewa666
+* switch darkmode inside init ([908e7aa](https://github.com/ghiscoding/slickgrid-universal/commit/908e7aa77dd1cfbd049238052a4e9d7e2a04828a)) - by @zewa666
+
+### Bug Fixes
+
+* composite editor wrong selector ([77b89c6](https://github.com/ghiscoding/slickgrid-universal/commit/77b89c685110a74a051c7aab054700763a209342)) - by @zewa666
+* **core:** Autocomplete Editor shouldn't navigate down twice on enter ([4f9eb36](https://github.com/ghiscoding/slickgrid-universal/commit/4f9eb369793ef62794d032f6eb69cd32e38ea747)) - by @ghiscoding
+* **deps:** update dependency @faker-js/faker to v9 ([5e9ffb2](https://github.com/ghiscoding/slickgrid-universal/commit/5e9ffb26cca80e267c1f25f0b93839a8b7aea6b1)) - by @renovate-bot
+* do not create empty object rows, use newRowCreator instead ([a170560](https://github.com/ghiscoding/slickgrid-universal/commit/a170560a2543b57ad8b975ca8fbfe9d005c49e61)) - by @zewa666
+* **Eslint:** Fix eslint errors ([a842223](https://github.com/ghiscoding/slickgrid-universal/commit/a842223b5111b95a031b53baafcee397ba0186d5)) - by @
+* **styling:** add missing `!default` to a few SASS variables ([6779947](https://github.com/ghiscoding/slickgrid-universal/commit/6779947c18759609c4fa9977cd88d79d9058f126)) - by @ghiscoding-SE
+* **TreeData:** identifier is not always "id' when unflattening ([78653f9](https://github.com/ghiscoding/slickgrid-universal/commit/78653f9ff2807a53b0622e35b86ad35bd53e345f)) - by @ghiscoding-SE
+* **TreeData:** Reset the childrens prop when unflattening dataset in case it is being reused ([cf70729](https://github.com/ghiscoding/slickgrid-universal/commit/cf70729b62318a3b6997b20b3ae692266d075df1)) - by @
+
+### Performance Improvements
+
+* don't invalidate grid rows more than once, fixes [#1678](https://github.com/ghiscoding/slickgrid-universal/issues/1678) ([a5b9647](https://github.com/ghiscoding/slickgrid-universal/commit/a5b964748ac4f33aca222c03ccce9e3699320cb1)) - by @ghiscoding
+* **RowDetail:** use Set to improve perf with Row Detail ([5abfd41](https://github.com/ghiscoding/slickgrid-universal/commit/5abfd41cf54ddad6f2298a803e1603a27dd1d189)) - by @ghiscoding
+* use Set to improve perf when read current values ([56dfe92](https://github.com/ghiscoding/slickgrid-universal/commit/56dfe927cae76d7a109659a506b213109d3c11ff)), closes [#1670](https://github.com/ghiscoding/slickgrid-universal/issues/1670) - by @ghiscoding
+
 ## [5.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.0...v5.6.1) (2024-08-31)
 
 ### Bug Fixes

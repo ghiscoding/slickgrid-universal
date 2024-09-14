@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
+
+### Performance Improvements
+
+* **RowDetail:** use Set to improve perf with Row Detail ([5abfd41](https://github.com/ghiscoding/slickgrid-universal/commit/5abfd41cf54ddad6f2298a803e1603a27dd1d189)) - by @ghiscoding
+
 ## [5.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.0...v5.6.1) (2024-08-31)
 
 **Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin

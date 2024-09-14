@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
+
+### Bug Fixes
+
+* **deps:** update dependency @faker-js/faker to v9 ([5e9ffb2](https://github.com/ghiscoding/slickgrid-universal/commit/5e9ffb26cca80e267c1f25f0b93839a8b7aea6b1)) - by @renovate-bot
+
+### Performance Improvements
+
+* use Set to improve perf when read current values ([56dfe92](https://github.com/ghiscoding/slickgrid-universal/commit/56dfe927cae76d7a109659a506b213109d3c11ff)), closes [#1670](https://github.com/ghiscoding/slickgrid-universal/issues/1670) - by @ghiscoding
+
 ## [5.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.0...v5.6.1) (2024-08-31)
 
 **Note:** Version bump only for package slickgrid-universal-vite-demo
