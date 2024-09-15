@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type { Column, GridOption, BackendService } from '../../interfaces/index';
@@ -15,16 +15,19 @@ vi.mock('../utilities', async (importOriginal) => ({
   unflattenParentChildArrayToTree: vi.fn(),
 }));
 
+const unflattenActual = (await vi.importActual<any>('../utilities')).unflattenParentChildArrayToTree;
+
 vi.useFakeTimers();
 
-const gridOptionsMock = {
+const gridOptionsMock: GridOption = {
   multiColumnSort: false,
   enableFiltering: true,
   enableTreeData: true,
   treeDataOptions: {
-    columnId: 'file'
+    columnId: 'file',
+    childrenPropName: 'files'
   }
-} as unknown as GridOption;
+};
 
 const backendServiceStub = {
   buildQuery: vi.fn(),
@@ -97,6 +100,7 @@ describe('TreeData Service', () => {
     service = new TreeDataService(mockPubSub, sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
     vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+    (unflattenParentChildArrayToTree as Mock).mockImplementationOnce(unflattenActual);
   });
 
   afterEach(() => {
@@ -181,7 +185,7 @@ describe('TreeData Service', () => {
 
   it('should return hierarchical dataset when defined', () => {
     const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
-    vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
+    vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce(mockHierarchical);
     expect(service.datasetHierarchical).toEqual(mockHierarchical);
   });
 
@@ -265,7 +269,10 @@ describe('TreeData Service', () => {
       mockRowData.__collapsed = true;
       vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
       const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
-      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue([mockRowData]);
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get')
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData]);
       const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
       const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
 
@@ -316,22 +323,22 @@ describe('TreeData Service', () => {
       vi.clearAllMocks();
       mockFlatDataset = [
         { id: 0, file: 'TXT', size: 5.8, __hasChildren: true, __treeLevel: 0 },
-        { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1 },
-        { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1 },
+        { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1, __parentId: 0 },
+        { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1, __parentId: 0 },
         { id: 4, file: 'MP3', size: 3.4, __hasChildren: true, __treeLevel: 0 },
-        { id: 5, file: 'relaxation.mp3', size: 3.4, __treeLevel: 1 }
+        { id: 5, file: 'relaxation.mp3', size: 3.4, __treeLevel: 1, __parentId: 4 }
       ];
       mockHierarchical = [
         { id: 0, file: 'TXT', files: [{ id: 1, file: 'myFile.txt', size: 0.5, }, { id: 2, file: 'myMusic.txt', size: 5.3, }] },
         { id: 4, file: 'MP3', files: [{ id: 5, file: 'relaxation.mp3', size: 3.4, }] }
       ];
-      gridOptionsMock.treeDataOptions = { columnId: 'file' };
+      gridOptionsMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
+      (unflattenParentChildArrayToTree as Mock).mockImplementationOnce(unflattenActual);
     });
 
     it('should collapse all items when calling the method with collapsing True', async () => {
       const dataGetItemsSpy = vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
       vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(mockFlatDataset.length);
-      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
       const beginUpdateSpy = vi.spyOn(dataViewStub, 'beginUpdate');
       const endUpdateSpy = vi.spyOn(dataViewStub, 'endUpdate');
       const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
@@ -344,12 +351,30 @@ describe('TreeData Service', () => {
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-collapse', previousFullToggleType: 'full-collapse', toggledItems: null, });
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
-      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
-      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
-      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('TXT');
-      expect(SharedService.prototype.hierarchicalDataset![0].__collapsed).toBe(true);
-      expect(SharedService.prototype.hierarchicalDataset![1].file).toBe('MP3');
-      expect(SharedService.prototype.hierarchicalDataset![1].__collapsed).toBe(true);
+      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, {
+        id: 0, file: 'TXT', size: 5.8, __collapsed: true, __hasChildren: true, __treeLevel: 0,
+        files: [
+          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1, },
+          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1, },
+        ],
+      });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, {
+        id: 4, file: 'MP3', size: 3.4, __collapsed: true, __hasChildren: true, __treeLevel: 0,
+        files: [{ id: 5, file: 'relaxation.mp3', size: 3.4, __parentId: 4, __treeLevel: 1, },],
+      });
+      expect(sharedService.hierarchicalDataset).toEqual([
+        {
+          id: 0, file: 'TXT', size: 5.8, __collapsed: true, __hasChildren: true, __treeLevel: 0,
+          files: [
+            { id: 1, file: 'myFile.txt', size: 0.5, __parentId: 0, __treeLevel: 1, },
+            { id: 2, file: 'myMusic.txt', size: 5.3, __parentId: 0, __treeLevel: 1, }
+          ],
+        },
+        {
+          id: 4, file: 'MP3', size: 3.4, __collapsed: true, __hasChildren: true, __treeLevel: 0,
+          files: [{ id: 5, file: 'relaxation.mp3', size: 3.4, __parentId: 4, __treeLevel: 1 }],
+        }
+      ]);
       expect(service.getItemCount(0)).toBe(2); // get count by tree level 0
       expect(service.getItemCount(1)).toBe(3);
       expect(service.getItemCount()).toBe(5); // get full count of all tree
@@ -372,8 +397,17 @@ describe('TreeData Service', () => {
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
-      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { customCollapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
-      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { customCollapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, {
+        customCollapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0,
+        files: [
+          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1, },
+          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1, },
+        ],
+      });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, {
+        customCollapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0,
+        files: [{ file: 'relaxation.mp3', id: 5, size: 3.4, __parentId: 4, __treeLevel: 1, },],
+      });
       expect(endUpdateSpy).toHaveBeenCalled();
     });
 
@@ -391,8 +425,17 @@ describe('TreeData Service', () => {
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null, });
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
-      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: false, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
-      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: false, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, {
+        __collapsed: false, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0,
+        files: [
+          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1, },
+          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1, },
+        ],
+      });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, {
+        __collapsed: false, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0,
+        files: [{ file: 'relaxation.mp3', id: 5, size: 3.4, __parentId: 4, __treeLevel: 1, },],
+      });
       expect(endUpdateSpy).toHaveBeenCalled();
     });
 
@@ -400,7 +443,7 @@ describe('TreeData Service', () => {
       it('should execute the method and expect a full toggle or items', () => {
         const dataGetItemsSpy = vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockFlatDataset[3]);
-        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
+        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce(mockHierarchical);
         const beginUpdateSpy = vi.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = vi.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
@@ -419,7 +462,7 @@ describe('TreeData Service', () => {
       it('should execute the method but without calling "getItems" to skip doing a full toggle of items', () => {
         const dataGetItemsSpy = vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockFlatDataset[3]);
-        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
+        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce(mockHierarchical);
         const beginUpdateSpy = vi.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = vi.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
@@ -438,7 +481,7 @@ describe('TreeData Service', () => {
       it('should execute the method and also trigger an event when specified', () => {
         const dataGetItemsSpy = vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockFlatDataset[3]);
-        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
+        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce(mockHierarchical);
         const beginUpdateSpy = vi.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = vi.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
@@ -459,7 +502,7 @@ describe('TreeData Service', () => {
     describe('dynamicallyToggleItemState method', () => {
       it('should execute the method and also trigger an event by default', () => {
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockFlatDataset[3]);
-        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
+        vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce(mockHierarchical);
         const beginUpdateSpy = vi.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = vi.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
@@ -580,8 +623,9 @@ describe('TreeData Service', () => {
 
       // 2nd test, if we toggled all items to be collapsed, we should expect the unflatten to be called with updated `initiallyCollapsed` flag
       await service.toggleTreeDataCollapse(true);
-      service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
-      expect(unflattenParentChildArrayToTree).toHaveBeenNthCalledWith(2, mockFlatDataset, {
+      const result2 = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
+      expect(result2).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      expect(unflattenParentChildArrayToTree).toHaveBeenNthCalledWith(3, mockFlatDataset, { // 3rd call because toggleTreeDataCollapse() made the 2nd call
         columnId: 'file',
         identifierPropName: 'id',
         initiallyCollapsed: true, // changed to True
