@@ -27,7 +27,7 @@ This package is simply a bridge, a facade, to make it possible to use RxJS witho
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page.
 
 ### Usage
-In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below and of course install RxJS itself (this package requires [RxJS 7](https://github.com/ReactiveX/RxJS)).
+In order to use the Service, you will need to register it in your grid options via the `externalResources` as shown below and of course install RxJS itself (this package requires [RxJS 7](https://github.com/ReactiveX/RxJS)).
 
 ##### ViewModel
 ```ts

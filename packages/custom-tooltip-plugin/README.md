@@ -20,7 +20,7 @@ To specify a tooltip when hovering a cell, extend the column definition like so:
 Available plugin options (same options are available in both column definition and/or grid options)
 
 #### Register the plugin
-In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown in the Example 2 below.
+In order to use the Service, you will need to register it in your grid options via the `externalResources` as shown in the Example 2 below.
 
 ##### Example 1  - via Column Definition
 ```ts

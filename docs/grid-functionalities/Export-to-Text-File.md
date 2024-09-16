@@ -11,7 +11,7 @@ You can Export to File in 2 formats (csv/txt), the following formats are current
 - Export to CSV format (`.csv`)
 - Export to Text file (`.txt`) with a delimiter of your choice (Tab delimited is a good one to use)
 
-**NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/text-export` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
+**NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/text-export` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)

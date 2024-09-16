@@ -13,7 +13,7 @@
 ## Excel Export Service
 #### @slickgrid-universal/excel-export
 
-Simple Export to Excel Service that allows to exporting as `.xls` or `.xlsx`.
+Simple Export to Excel Service, which requires [`excel-builder-vanilla`](https://github.com/ghiscoding/excel-builder-vanilla) external dependency, which allows exporting your grid data as `.xls` or `.xlsx` files.
 
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
@@ -28,7 +28,7 @@ Follow the instruction provided in the main [README](https://github.com/ghiscodi
 You can also use nearly all Excel-Builder-Vanilla options, see their [Excel-Builder-Vanilla - Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/) and also take a look at Slickgrid-Universal [Excel Export - Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/grid-functionalities/export-to-excel) on how to use both.
 
 ### Usage
-In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below.
+In order to use the Service, you will need to register it in your grid options via the `externalResources` as shown below.
 
 ##### ViewModel
 ```ts
@@ -38,10 +38,13 @@ export class MyExample {
   initializeGrid {
     this.gridOptions = {
       enableExcelExport: true,
+      // you need to register it as an external resource
+      externalResources: [new ExcelExportService()],
+
+      // set any options
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      externalResources: [new ExcelExportService()],
     }
   }
 }

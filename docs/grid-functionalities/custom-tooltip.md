@@ -21,7 +21,7 @@ A plugin to add Custom Tooltip when hovering a cell, it subscribes to the cell `
 The `customTooltip` is defined in the Column Definition OR Grid Options (the first found will have priority over the second)
 To specify a tooltip when hovering a cell
 
-**NOTE:** this is an opt-in plugin, you must import the necessary plugin from `@slickgrid-universal/custom-tooltip-plugin` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
+**NOTE:** this is an opt-in plugin, you must import the necessary plugin from `@slickgrid-universal/custom-tooltip-plugin` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example16) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example16.ts)
