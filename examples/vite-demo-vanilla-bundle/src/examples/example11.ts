@@ -175,7 +175,7 @@ export default class Example11 {
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true },
+        editor: { model: Editors.date, massUpdate: true, disabled: false, readOnly: false },
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 80,
@@ -293,7 +293,7 @@ export default class Example11 {
             }
           } else if ((event.target as HTMLElement).classList.contains('mdi-check-underline')) {
             this.slickerGridInstance?.gridService.updateItem({ ...dataContext, completed: true });
-            alert(`The "${dataContext.title}" is now Completed`);
+            alert(`The "${dataContext.start}" is now Completed`);
           }
         }
       },
