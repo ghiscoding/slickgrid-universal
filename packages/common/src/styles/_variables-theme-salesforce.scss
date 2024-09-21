@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 /**
  * This is a bare version of "slickgrid-theme-salesforce.scss",
  * A few files were removed and aren't included in this styling theme (while they are in original theme)
@@ -69,7 +71,7 @@ $slick-menu-title-font-size:                                  17px !default;
 $slick-icon-group-color:                                      $slick-primary-color !default;
 $slick-filled-filter-color:                                   $slick-primary-color-dark !default;
 $slick-filled-filter-border:                                  1px solid #{$slick-primary-color} !default;
-$slick-filled-filter-box-shadow:                              inset 0 0 0 1px #{lighten($slick-primary-color, 30%)} !default;
+$slick-filled-filter-box-shadow:                              inset 0 0 0 1px #{color.adjust($slick-primary-color, $lightness: 30%)} !default;
 $slick-filled-filter-font-weight:                             bold !default;
 $slick-draggable-group-drop-border-top:                       0px !default;
 $slick-draggable-group-drop-width:                            100% !default;
@@ -115,7 +117,7 @@ $slick-editor-modal-title-text-align:                         center !default;
 $slick-large-editor-button-border-radius:                     3px !default;
 $slick-slider-filter-runnable-track-bgcolor:                  #ECEBEA !default;
 $slick-row-selected-color:                                    #ECEBEA !default;
-$slick-row-highlight-background-color:                        lighten($slick-highlight-color, 50%) !default;
+$slick-row-highlight-background-color:                        color.adjust($slick-highlight-color, $lightness: 50%) !default;
 $slick-row-mouse-hover-color:                                 #f3f2f2 !default;
 $slick-row-mouse-hover-box-shadow:                            0 0 0 2px #dddbda !default;
 $slick-pagination-icon-color:                                 $slick-primary-color !default;

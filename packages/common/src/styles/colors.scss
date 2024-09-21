@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 @import './svg-utilities';
 
 /* icon/text colors */
@@ -66,28 +68,28 @@ $text-color-sf-primary-dark: #004487 !default;
 .text-color-sf-primary { color: var(--text-color-sf-primary, $text-color-sf-primary); }
 .text-color-sf-primary-dark { color: var(--text-color-sf-primary-dark, $text-color-sf-primary-dark); }
 
-.text-color-primary-light { color: lighten($text-color-primary, $text-color-lighten-percentage); }
-.text-color-primary-dark { color: darken($text-color-primary, $text-color-darken-percentage); }
-.text-color-secondary-light { color: lighten($text-color-secondary, $text-color-lighten-percentage); }
-.text-color-secondary-dark { color: darken($text-color-secondary, $text-color-darken-percentage); }
-.text-color-success-light { color: lighten($text-color-success, $text-color-lighten-percentage); }
-.text-color-success-dark { color: darken($text-color-success, $text-color-darken-percentage); }
-.text-color-danger-light { color: lighten($text-color-danger, $text-color-lighten-percentage); }
-.text-color-danger-dark { color: darken($text-color-danger, $text-color-darken-percentage); }
-.text-color-warning-light { color: lighten($text-color-warning, $text-color-lighten-percentage); }
-.text-color-warning-dark { color: darken($text-color-warning, $text-color-darken-percentage); }
-.text-color-info-light { color: lighten($text-color-info, $text-color-lighten-percentage); }
-.text-color-info-dark { color: darken($text-color-info, $text-color-darken-percentage); }
-.text-color-body-light { color: lighten($text-color-body, $text-color-lighten-percentage); }
-.text-color-body-dark { color: darken($text-color-body, $text-color-darken-percentage); }
-.text-color-muted-light { color: lighten($text-color-muted, $text-color-lighten-percentage); }
-.text-color-muted-dark { color: darken($text-color-muted, $text-color-darken-percentage); }
-.text-color-alt-warning-light { color: lighten($text-color-alt-warning, $text-color-lighten-percentage); }
-.text-color-alt-warning-dark { color: darken($text-color-alt-warning, $text-color-darken-percentage); }
-.text-color-alt-default-light { color: lighten($text-color-alt-default, $text-color-lighten-percentage); }
-.text-color-alt-default-dark { color: darken($text-color-alt-default, $text-color-darken-percentage); }
-.text-color-alt-danger-light { color: lighten($text-color-alt-danger, $text-color-lighten-percentage); }
-.text-color-alt-danger-dark { color: darken($text-color-alt-danger, $text-color-darken-percentage); }
-.text-color-alt-success-light { color: lighten($text-color-alt-success, $text-color-lighten-percentage); }
-.text-color-alt-success-dark { color: darken($text-color-alt-success, $text-color-darken-percentage); }
-.text-color-se-secondary-light { color: lighten($text-color-se-secondary, $text-color-lighten-percentage); }
+.text-color-primary-light { color: color.adjust($text-color-primary, $lightness: $text-color-lighten-percentage); }
+.text-color-primary-dark { color: color.adjust($text-color-primary, $lightness: -$text-color-darken-percentage); }
+.text-color-secondary-light { color: color.adjust($text-color-secondary, $lightness: $text-color-lighten-percentage); }
+.text-color-secondary-dark { color: color.adjust($text-color-secondary, $lightness: -$text-color-darken-percentage); }
+.text-color-success-light { color: color.adjust($text-color-success, $lightness: $text-color-lighten-percentage); }
+.text-color-success-dark { color: color.adjust($text-color-success, $lightness: -$text-color-darken-percentage); }
+.text-color-danger-light { color: color.adjust($text-color-danger, $lightness: $text-color-lighten-percentage); }
+.text-color-danger-dark { color: color.adjust($text-color-danger, $lightness: -$text-color-darken-percentage); }
+.text-color-warning-light { color: color.adjust($text-color-warning, $lightness: $text-color-lighten-percentage); }
+.text-color-warning-dark { color: color.adjust($text-color-warning, $lightness: -$text-color-darken-percentage); }
+.text-color-info-light { color: color.adjust($text-color-info, $lightness: $text-color-lighten-percentage); }
+.text-color-info-dark { color: color.adjust($text-color-info, $lightness: -$text-color-darken-percentage); }
+.text-color-body-light { color: color.adjust($text-color-body, $lightness: $text-color-lighten-percentage); }
+.text-color-body-dark { color: color.adjust($text-color-body, $lightness: -$text-color-darken-percentage); }
+.text-color-muted-light { color: color.adjust($text-color-muted, $lightness: $text-color-lighten-percentage); }
+.text-color-muted-dark { color: color.adjust($text-color-muted, $lightness: -$text-color-darken-percentage); }
+.text-color-alt-warning-light { color: color.adjust($text-color-alt-warning, $lightness: $text-color-lighten-percentage); }
+.text-color-alt-warning-dark { color: color.adjust($text-color-alt-warning, $lightness: -$text-color-darken-percentage); }
+.text-color-alt-default-light { color: color.adjust($text-color-alt-default, $lightness: $text-color-lighten-percentage); }
+.text-color-alt-default-dark { color: color.adjust($text-color-alt-default, $lightness: -$text-color-darken-percentage); }
+.text-color-alt-danger-light { color: color.adjust($text-color-alt-danger, $lightness: $text-color-lighten-percentage); }
+.text-color-alt-danger-dark { color: color.adjust($text-color-alt-danger, $lightness: -$text-color-darken-percentage); }
+.text-color-alt-success-light { color: color.adjust($text-color-alt-success, $lightness: $text-color-lighten-percentage); }
+.text-color-alt-success-dark { color: color.adjust($text-color-alt-success, $lightness: -$text-color-darken-percentage); }
+.text-color-se-secondary-light { color: color.adjust($text-color-se-secondary, $lightness: $text-color-lighten-percentage); }
