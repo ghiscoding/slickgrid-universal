@@ -39,6 +39,11 @@ prepareGrid() {
 }
 ```
 
+On top of the default ones provided by Vanilla-Calendar there are also:
+
+* hideClearButton (default: false): which toggles the visiblity of the clear button
+* allowInput (default: false): which determines whether you can directly enter a date in the input element
+
 #### Grid Option `defaultEditorOptions
 You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
 
