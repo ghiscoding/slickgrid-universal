@@ -175,7 +175,7 @@ export default class Example11 {
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, disabled: false, editorOptions: { allowInput: true } },
+        editor: { model: Editors.date, massUpdate: true, editorOptions: { allowInput: true } },
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 80,
