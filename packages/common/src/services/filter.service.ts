@@ -373,9 +373,8 @@ export class FilterService {
           } else {
             // otherwise execute built-in filter condition checks
             const conditionOptions = this.preProcessFilterConditionOnDataContext(item, searchColFilter, grid);
-
             if (typeof conditionOptions === 'boolean') {
-              return conditionOptions; // reaching here means that the value is not filtered out
+              return conditionOptions; // reaching this line means that the value is not being filtered out, return it right away
             }
 
             let parsedSearchTerms = searchColFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
@@ -389,7 +388,7 @@ export class FilterService {
               }
             }
 
-            // execute the filtering conditions check (all cell values vs search term(s))
+            // execute the filtering conditions check, comparing all cell values vs search term(s)
             if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
               return false;
             }
@@ -398,15 +397,13 @@ export class FilterService {
       }
     }
 
-    // if it reaches here, that means the row is valid and passed all filter
+    // reaching this line means that the row is valid and passes all filter conditions
     return true;
   }
 
   /**
-   * Loop through each form input search filter and parse their searchTerms,
-   * for example a CompoundDate Filter will be parsed as a Date object.
-   * Also if we are dealing with a text filter input,
-   * an operator can optionally be part of the filter itself and we need to extract it from there,
+   * Loop through each form input search filter and parse their searchTerms, for example a CompoundDate Filter will be parsed as a Date object.
+   * Also if we are dealing with a text filter input, an operator can optionally be part of the filter itself and we need to extract it from there,
    * for example a filter of "John*" will be analyzed as { operator: StartsWith, searchTerms: ['John'] }
    * @param inputSearchTerms - filter search terms
    * @param columnFilter - column filter object (the object properties represent each column id and the value is the filter metadata)
@@ -532,11 +529,10 @@ export class FilterService {
       }
     }
 
-    // when using localization (i18n), we should use the formatter output to search as the new cell value
+    // when using localization (i18n), the user might want to use the formatted output to do its filtering
     if (columnDef?.params?.useFormatterOuputToFilter === true) {
-      const dataView = grid.getData<SlickDataView>();
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-      const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item[idPropName]) : 0;
+      const rowIndex = (this._dataView && typeof this._dataView.getIdxById === 'function') ? this._dataView.getIdxById(item[idPropName]) : 0;
       const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
       cellValue = stripTags(formattedCellValue as string);
     }
