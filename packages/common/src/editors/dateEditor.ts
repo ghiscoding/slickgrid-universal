@@ -186,7 +186,7 @@ export class DateEditor implements Editor {
           title: this.columnEditor && this.columnEditor.title || '',
           className: inputCssClasses.replace(/\./g, ' '),
           dataset: { input: '', defaultdate: this.defaultDate },
-          readOnly: this.columnEditor.readOnly === false ? false : true,
+          readOnly: this.columnEditor.editorOptions?.allowEdit === true ? true : false,
         },
         this._editorInputGroupElm
       );
@@ -204,7 +204,7 @@ export class DateEditor implements Editor {
       }
 
       this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
-        if (this.columnEditor.readOnly !== false) {
+        if (this.columnEditor.editorOptions?.allowEdit !== true) {
           return;
         }
 
@@ -363,7 +363,8 @@ export class DateEditor implements Editor {
     const elmDateStr = this.getValue();
 
     const lastEventKey = this._lastInputKeyEvent?.key;
-    if (this.columnEditor.readOnly === false && this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
+    if (this.columnEditor.editorOptions?.allowEdit === true &&
+        this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
 

@@ -129,11 +129,6 @@ export interface ColumnEditor {
   required?: boolean;
 
   /**
-   * only applicable for dateEditors. If explicitely set to false, it will allow to enter a new date in the input field.
-   */
-  readOnly?: boolean;
-
-  /**
    * defaults to 'object', how do we want to serialize the editor value to the resulting dataContext object when using a complex object?
    * Currently only applies to Single/Multiple Select Editor.
    *
