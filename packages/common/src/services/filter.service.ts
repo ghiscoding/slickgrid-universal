@@ -366,9 +366,8 @@ export class FilterService {
 
           // user could provide a custom filter predicate on the column definition
           if (typeof columnFilterDef?.filterPredicate === 'function') {
-            const fpResult = columnFilterDef.filterPredicate(item, searchColFilter);
-            if (!fpResult) {
-              // only return on false, when row is filtered out and no further filter to be considered
+            // only return on false, when row is filtered out and no further filter to be considered
+            if (!columnFilterDef.filterPredicate(item, searchColFilter)) {
               return false;
             }
           } else {

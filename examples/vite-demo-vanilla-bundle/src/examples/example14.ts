@@ -167,22 +167,22 @@ export default class Example14 {
               const [_, endW, containSW, contain, containEndW, comboSW, comboEW, startW] = matches;
 
               if (endW) {
-                // example: "%001" ends with A
+                // example: "%10" ends with A
                 return cellValue.endsWith(endW.toLowerCase());
               } else if (containSW && contain) {
-                // example: "%Ti%001", contains A + ends with B
+                // example: "%ask%10", contains A + ends with B
                 return cellValue.startsWith(containSW.toLowerCase()) && cellValue.includes(contain.toLowerCase());
               } else if (contain && containEndW) {
-                // example: "%Ti%001", contains A + ends with B
+                // example: "%ask%10", contains A + ends with B
                 return cellValue.includes(contain) && cellValue.endsWith(containEndW.toLowerCase());
               } else if (contain && !containEndW) {
-                // example: "%Ti%", contains A anywhere
+                // example: "%ask%", contains A anywhere
                 return cellValue.includes(contain.toLowerCase());
               } else if (comboSW && comboEW) {
-                // example: "Ti%001", combo starts with A + ends with B
+                // example: "Tas%10", combo starts with A + ends with B
                 return cellValue.startsWith(comboSW.toLowerCase()) && cellValue.endsWith(comboEW.toLowerCase());
               } else if (startW) {
-                // example: "Ti%", starts with A
+                // example: "Tas%", starts with A
                 return cellValue.startsWith(startW.toLowerCase());
               }
               // anything else
