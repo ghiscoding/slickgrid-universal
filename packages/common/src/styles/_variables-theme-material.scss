@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 /**
  * This is a bare version of "slickgrid-theme-material.scss",
  * A few files were removed and aren't included in this styling theme (while they are in original theme)
@@ -24,7 +26,7 @@ $slick-header-text-color:                                   rgba(0, 0, 0, 0.87) 
 $slick-sorting-header-color:                                rgba(0, 0, 0, 0.87) !default;
 $slick-header-border-bottom:                                transparent !default;
 $slick-header-filter-row-border-bottom:                     1px solid #d0d0d0 !default;
-$slick-header-resizable-hover:                              2px solid lighten(#48c774, 15%) !default;
+$slick-header-resizable-hover:                              2px solid #{color.adjust(#48c774, $lightness: 15%)} !default;
 $slick-header-resizable-hover-border-bottom:                $slick-header-resizable-hover !default;
 $slick-header-resizable-hover-border-left:                  $slick-header-resizable-hover !default;
 $slick-header-resizable-hover-border-right:                 $slick-header-resizable-hover !default;
@@ -72,8 +74,8 @@ $slick-header-button-width:                                 18px !default;
 $slick-header-button-margin:                                -4px 0 100px 0 !default;
 $slick-header-menu-button-icon-color:                       $slick-icon-color !default;
 $slick-header-menu-display:                                 inline-block !default;
-$slick-compound-filter-operator-select-border:              1px solid #{lighten($slick-primary-color, 10%)} !default;
-$slick-compound-filter-text-color:                          darken($slick-primary-color, 20%) !default;
+$slick-compound-filter-operator-select-border:              1px solid #{color.adjust($slick-primary-color, $lightness: 10%)} !default;
+$slick-compound-filter-text-color:                          color.adjust($slick-primary-color, $lightness: -20%) !default;
 $slick-preheader-border-right:                              1px solid #e2e2e2 !default;
 $slick-row-move-plugin-cursor:                              grab !default;
 $slick-row-move-plugin-icon-color:                          $slick-icon-color !default;
@@ -124,7 +126,7 @@ $slick-dark-text-color:                                   #d4d4d4;
   --slick-icon-sort-color:                        #66bb6a;
   --slick-multiselect-icon-radio-color:           #66bb6a;
   --ms-checkbox-color:                            #66bb6a;
-  --ms-checkbox-hover-color:                      #{lighten(#49a54e, 13%)};
+  --ms-checkbox-hover-color:                      #{color.adjust(#49a54e, $lightness: 13%)};
   --ms-ok-button-text-color:                      #66bb6a;
-  --ms-ok-button-text-hover-color:                #{lighten(#66bb6a, 5%)};
+  --ms-ok-button-text-hover-color:                #{color.adjust(#66bb6a, $lightness: 5%)};
 }

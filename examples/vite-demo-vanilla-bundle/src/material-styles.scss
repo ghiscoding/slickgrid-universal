@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 /* make sure to add the @import the SlickGrid Material Theme AFTER the variables changes */
 // @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material-with-font.scss';
 // @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
@@ -6,6 +8,7 @@
   body.material-theme,
   body.material-theme .icon-checkbox-container {
     $dark-primary-color: #66bb6a;
+    $primary-color: #009530;
     $slick-primary-color: #009530;
     --text-color-primary: #009530;
     --slick-primary-color: #009530;
@@ -18,7 +21,7 @@
     --slick-cell-box-shadow: none;
     --slick-cell-active-box-shadow: inset 0 0 0 1px #aaaaaa;
     --slick-form-control-focus-border-color: #00c840;
-    --slick-form-control-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(53, 121, 154, 0.3);
+    --slick-form-control-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
     --slick-editor-focus-border-color: #00b93c;
     --slick-editor-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(#00a033, .3);
     --slick-multiselect-input-focus-border-color: #00c840;
@@ -26,8 +29,10 @@
     --slick-input-focus-border-color: #00c840;
     --slick-text-editor-focus-border-color: #00c840;
     --slick-slider-editor-focus-border-color: #00c840;
-    --slick-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(53, 121, 154, 0.3);
-    --slick-multiselect-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(53, 121, 154, 0.3);
+    --slick-slider-filter-focus-border-color: #00c840;
+    --input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
+    --slick-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
+    --slick-multiselect-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
     --slick-header-filter-row-border-bottom: 1px solid #d0d0d0;
     --slick-container-border-right: 1px solid #ccc;
     --slick-container-border-top: 1px solid #ccc;
@@ -59,6 +64,8 @@
     --slick-icon-group-color: var(--slick-primary-color);
     --slick-draggable-group-toggle-all-icon-color: var(--slick-primary-color);
     --slick-pagination-icon-color: #009530;
+    --slick-slider-filter-filled-track-color: #9ac49c;
+    --slick-slider-filter-focus-box-shadow: var(--slick-input-focus-box-shadow);
     --slick-slider-filter-thumb-border: 2px solid rgba(0, 149, 48, .68);
     --slick-slider-filter-thumb-active-bg-color: #fff;
     --slick-slider-filter-thumb-active-color: rgba(#02bf3e, .88);
@@ -68,7 +75,6 @@
     --slick-header-resizable-hover-border-left: 2px solid #83d9a0;
     --slick-header-resizable-hover-border-top: 2px solid #83d9a0;
     --slick-header-resizable-hover-border-right: 2px solid #83d9a0;
-    --slick-slider-filter-filled-track-color: #9ac49c;
     --ms-ok-button-text-color: #009530;
     --ms-select-all-text-color: #007c28;
     --slick-multiselect-icon-radio-border: none;
@@ -100,6 +106,9 @@
         font-weight: normal;
         border: 1px solid #55B876;
         box-shadow: none;
+        &.focus, &:focus {
+          box-shadow: var(--slick-input-focus-box-shadow);
+        }
       }
       .search-filter.filled .input-group-addon select {
         border-right: 0px;
@@ -158,9 +167,9 @@
       --slick-menu-item-hover-border: 1px solid #5a5a5a;
       --slick-submenu-box-shadow: none;
       --ms-checkbox-color: #66bb6a;
-      --ms-checkbox-hover-color: #{lighten(#49a54e, 13%)};
+      --ms-checkbox-hover-color: #{color.adjust(#49a54e, $lightness: 13%)};
       --ms-ok-button-text-color: #66bb6a;
-      --ms-ok-button-text-hover-color: #{lighten(#66bb6a, 5%)};
+      --ms-ok-button-text-hover-color: #{color.adjust(#66bb6a, $lightness: 5%)};
 
       .slick-headerrow {
         .search-filter.filled .input-group-addon.slider-value,

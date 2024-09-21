@@ -75,7 +75,7 @@
     "@types/trusted-types": "^2.0.7",
     "autocompleter": "^9.3.2",
     "dequal": "^2.0.3",
-    "multiple-select-vanilla": "^3.3.3",
+    "multiple-select-vanilla": "^3.3.4",
     "sortablejs": "^1.15.3",
     "un-flatten-tree": "^2.0.12",
     "vanilla-calendar-pro": "^2.9.10"
@@ -88,7 +88,7 @@
     "npm-run-all2": "^6.2.3",
     "postcss": "^8.4.47",
     "postcss-cli": "^11.0.0",
-    "sass": "^1.78.0"
+    "sass": "^1.79.3"
   },
   "engines": {
     "node": "^18.0.0 || >=20.0.0"

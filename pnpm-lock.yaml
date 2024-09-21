@@ -177,8 +177,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       multiple-select-vanilla:
-        specifier: ^3.3.3
-        version: 3.3.3
+        specifier: ^3.3.4
+        version: 3.3.4
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -196,14 +196,14 @@ importers:
         specifier: ^0.0.33
         version: 0.0.33
       sass:
-        specifier: ^1.77.8
-        version: 1.77.8
+        specifier: ^1.79.3
+        version: 1.79.3
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
       vite:
         specifier: ^5.4.2
-        version: 5.4.2(@types/node@22.5.1)(sass@1.77.8)
+        version: 5.4.2(@types/node@22.5.1)(sass@1.79.3)
 
   packages/binding:
     devDependencies:
@@ -241,8 +241,8 @@ importers:
         specifier: ^2.0.3
         version: 2.0.3
       multiple-select-vanilla:
-        specifier: ^3.3.3
-        version: 3.3.3
+        specifier: ^3.3.4
+        version: 3.3.4
       sortablejs:
         specifier: ^1.15.3
         version: 1.15.3
@@ -275,8 +275,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0(postcss@8.4.47)
       sass:
-        specifier: ^1.78.0
-        version: 1.78.0
+        specifier: ^1.79.3
+        version: 1.79.3
 
   packages/composite-editor-component:
     dependencies:
@@ -2890,6 +2890,13 @@ packages:
       fsevents: 2.3.3
     dev: true
 
+  /chokidar@4.0.0:
+    resolution: {integrity: sha512-mxIojEAQcuEvT/lyXq+jf/3cO/KoA6z4CeNDGGevTybECPOMFCnQy3OPahluUkbqgPNGw5Bi78UC7Po6Lhy+NA==}
+    engines: {node: '>= 14.16.0'}
+    dependencies:
+      readdirp: 4.0.1
+    dev: true
+
   /chownr@2.0.0:
     resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
     engines: {node: '>=10'}
@@ -3239,7 +3246,7 @@ packages:
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
     dependencies:
       mdn-data: 2.0.28
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
     dev: true
 
   /css-tree@2.3.1:
@@ -3247,7 +3254,7 @@ packages:
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
     dependencies:
       mdn-data: 2.0.30
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
     dev: true
 
   /css-what@6.1.0:
@@ -5605,7 +5612,7 @@ packages:
     dependencies:
       '@babel/parser': 7.25.6
       '@babel/types': 7.25.6
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
     dev: true
 
   /make-dir@4.0.0:
@@ -5805,8 +5812,8 @@ packages:
       minimatch: 9.0.5
     dev: true
 
-  /multiple-select-vanilla@3.3.3:
-    resolution: {integrity: sha512-SOcWuYEB3ISR3M3YohaDJgRH7Fe6nupcgp1UpefVTSvbLluzlyRaQxwQqMXFI3ePMkrX9ERY1uU3NZ9pmW//7A==}
+  /multiple-select-vanilla@3.3.4:
+    resolution: {integrity: sha512-NQuuoJqj+LY9JAhg94qvGIXPELKQpVlocuegxi1vhADvUnZSFbbgflcryO3CgcHII77zkWl82U0sFs8tLpBmlg==}
     dependencies:
       '@types/trusted-types': 2.0.7
     dev: false
@@ -6755,7 +6762,7 @@ packages:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.0.1
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
     dev: true
 
   /postcss@8.4.47:
@@ -6964,6 +6971,11 @@ packages:
       picomatch: 2.3.1
     dev: true
 
+  /readdirp@4.0.1:
+    resolution: {integrity: sha512-GkMg9uOTpIWWKbSsgwb5fA4EavTR+SG/PMPoAY8hkhHfEEY0/vqljY+XHqtDf2cr2IJtoNRDbrrEpZUiZCkYRw==}
+    engines: {node: '>= 14.16.0'}
+    dev: true
+
   /regexp.prototype.flags@1.5.2:
     resolution: {integrity: sha512-NcDiDkTLuPR+++OCKB0nWafEmhg/Da8aUPLPMQbK+bxKKCm1/S5he+AqYa4PlMCVBalb4/yxIRub6qkEx5yJbw==}
     engines: {node: '>= 0.4'}
@@ -7145,24 +7157,14 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
-  /sass@1.77.8:
-    resolution: {integrity: sha512-4UHg6prsrycW20fqLGPShtEvo/WyHRVRHwOP4DzkUrObWoWI05QBSfzU71TVB7PFaL104TwNaHpjlWXAZbQiNQ==}
+  /sass@1.79.3:
+    resolution: {integrity: sha512-m7dZxh0W9EZ3cw50Me5GOuYm/tVAJAn91SUnohLRo9cXBixGUOdvmryN+dXpwR831bhoY3Zv7rEFt85PUwTmzA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
-      chokidar: 3.6.0
+      chokidar: 4.0.0
       immutable: 4.3.5
-      source-map-js: 1.2.0
-    dev: true
-
-  /sass@1.78.0:
-    resolution: {integrity: sha512-AaIqGSrjo5lA2Yg7RvFZrlXDBCp3nV4XP73GrLGvdRWWwk+8H3l0SDvq/5bA4eF+0RFPLuWUk3E+P1U/YqnpsQ==}
-    engines: {node: '>=14.0.0'}
-    hasBin: true
-    dependencies:
-      chokidar: 3.6.0
-      immutable: 4.3.5
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
     dev: true
 
   /saxes@6.0.0:
@@ -7350,11 +7352,6 @@ packages:
 
   /sortablejs@1.15.3:
     resolution: {integrity: sha512-zdK3/kwwAK1cJgy1rwl1YtNTbRmc8qW/+vgXf75A7NHag5of4pyI6uK86ktmQETyWRH7IGaE73uZOOBcGxgqZg==}
-
-  /source-map-js@1.2.0:
-    resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
-    engines: {node: '>=0.10.0'}
-    dev: true
 
   /source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -8087,7 +8084,7 @@ packages:
       - terser
     dev: true
 
-  /vite@5.4.2(@types/node@22.5.1)(sass@1.77.8):
+  /vite@5.4.2(@types/node@22.5.1)(sass@1.79.3):
     resolution: {integrity: sha512-dDrQTRHp5C1fTFzcSaMxjk6vdpKvT+2/mIdE07Gw2ykehT49O0z/VHS3zZ8iV/Gh8BJJKHWOe5RjaNrW5xf/GA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -8122,7 +8119,7 @@ packages:
       esbuild: 0.21.5
       postcss: 8.4.41
       rollup: 4.21.0
-      sass: 1.77.8
+      sass: 1.79.3
     optionalDependencies:
       fsevents: 2.3.3
     dev: true

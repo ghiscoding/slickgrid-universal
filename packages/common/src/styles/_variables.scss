@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // import external lib CSS files (without the .css extension)
 @import 'vanilla-calendar-pro/build/vanilla-calendar.min';
 
@@ -13,9 +15,10 @@
 /* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
 /** extra styling when Bootstrap isn't provided */
 $primary-color:                                             #0d6efd !default;
-$input-focus-box-shadow:                                    inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .3) !default;
 $slick-highlight-color:                                     #fcfcfc !default;
+$slick-primary-color:                                       $primary-color !default;
 // Bootstrap 5 box-shadow
+$input-focus-box-shadow:                                    inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(color.adjust($slick-primary-color, $lightness: 3%), .3) !default;
 // $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
 
 $slick-border-color:                                        #dddddd !default;
@@ -23,7 +26,6 @@ $slick-font-size-base-value:                                14 !default;
 $slick-font-color:                                          #000 !default;
 $slick-font-size-base:          			                      $slick-font-size-base-value + 0px !default;
 $slick-font-family:                                         -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
-$slick-primary-color:                                       $primary-color !default;
 $slick-btn-default-bg-color:                                #fff !default;
 $slick-btn-default-border:                                  1px solid #dbdbdb !default;
 $slick-btn-default-border-color:                            #ccc !default;
@@ -33,16 +35,16 @@ $slick-button-primary-bg-color:                             $slick-primary-color
 $slick-button-primary-bg-color-disabled:                    #bebebe !default;
 $slick-button-primary-color:                                inherit !default;
 $slick-button-border-color:                                 #c7c7c7 !default;
-$slick-button-hover-border-color:                           darken($slick-button-border-color, 15%) !default;
+$slick-button-hover-border-color:                           color.adjust($slick-button-border-color, $lightness: -15%) !default;
 $slick-button-style-bg-color:                               #fff !default;
 $slick-filter-placeholder-font-family:                      'Segoe UI Symbol' !default;
 $slick-focus-color:                                         rgb(115, 179, 229) !default;
 $slick-date-picker-bg-color:                                #fff !default;
 
 $slick-form-control-bg-color:                               #fff !default;
-$slick-form-control-border:                                  1px solid #ccc !default;
-$slick-form-control-focus-border-color:                      lighten($slick-primary-color, 10%) !default;
-$slick-form-control-focus-box-shadow:                        $input-focus-box-shadow !default;
+$slick-form-control-border:                                 1px solid #ccc !default;
+$slick-form-control-focus-border-color:                     color.adjust($slick-primary-color, $lightness: 10%) !default;
+$slick-form-control-focus-box-shadow:                       $input-focus-box-shadow !default;
 
 $slick-input-group-addon-border:                            1px solid #ccc !default;
 $slick-input-group-addon-color:                             #555 !default;
@@ -51,7 +53,7 @@ $slick-input-group-btn-bg-color:                            #f9f9f9 !default;
 $slick-input-group-btn-hover-bg-color:                      #eee !default;
 $slick-input-group-btn-border:                              1px solid #ccc !default;
 $slick-input-group-append-bg-color:                         #eee !default;
-$slick-input-focus-border-color:                            lighten($slick-primary-color, 10%) !default;
+$slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 10%) !default;
 $slick-input-focus-box-shadow:                              $input-focus-box-shadow !default;
 
 /* Slickgrid container, including headers but excluding pagination */
@@ -92,8 +94,8 @@ $slick-cell-border-right:                                   1px transparent !def
 $slick-cell-border-bottom:                                  1px transparent !default;
 $slick-cell-border-left:                                    1px transparent !default;
 $slick-cell-even-background-color: 			                    #ffffff !default;
-$slick-cell-odd-background-color:                           darken($slick-grid-cell-color, 3%) !default; // for striping every second row
-$slick-cell-odd-active-background-color:                    darken($slick-grid-cell-color, 5%) !default;
+$slick-cell-odd-background-color:                           color.adjust($slick-grid-cell-color, $lightness: -3%) !default; // for striping every second row
+$slick-cell-odd-active-background-color:                    color.adjust($slick-grid-cell-color, $lightness: -5%) !default;
 $slick-cell-padding-top-bottom:                             5px !default;
 $slick-cell-padding-left-right:                             6px !default;
 $slick-cell-padding:                                        $slick-cell-padding-top-bottom $slick-cell-padding-left-right !default;
@@ -107,7 +109,7 @@ $slick-row-mouse-hover-color:                               #eff5fc !default;
 $slick-row-mouse-hover-box-shadow:                          none !default;
 $slick-row-mouse-hover-z-index:                             5 !default;
 $slick-row-selected-color:                                  #dae8f1 !default;
-$slick-row-highlight-background-color:                      darken($slick-row-selected-color, 5%) !default;
+$slick-row-highlight-background-color:                      color.adjust($slick-row-selected-color, $lightness: -5%) !default;
 $slick-row-highlight-fade-animation:                        1s linear !default;
 $slick-row-checkbox-selector-background:                    inherit !default;
 $slick-row-checkbox-selector-border:                        none !default;
@@ -132,8 +134,8 @@ $slick-header-border-right:                                 0 none !default;
 $slick-header-border-bottom:                                0 none !default;
 $slick-header-border-left:                                  0 none !default;
 $slick-header-column-height:                                calc(17px * #{$slick-header-row-count}) !default;  // header is calculated by rows to show
-$slick-header-column-background-active:                     darken($slick-grid-header-background, 5%) !default;
-$slick-header-column-background-hover:                      darken($slick-grid-header-background, 2%) !default;
+$slick-header-column-background-active:                     color.adjust($slick-grid-header-background, $lightness: -5%) !default;
+$slick-header-column-background-hover:                      color.adjust($slick-grid-header-background, $lightness: -2%) !default;
 $slick-header-column-sortable-background-hover:             #e0e0e0 !default;
 $slick-header-column-name-margin-right:                     0 !default;
 $slick-header-column-border-top:                            0 none !default;                      // header, column titles, that is without the Filters
@@ -191,7 +193,7 @@ $slick-icon-group-margin-right:                             2px !default;
 $slick-autocomplete-bg-color:	                              #ffffff !default;
 $slick-autocomplete-group-bg-color:	                        #eeeeee !default;
 $slick-autocomplete-border:	                                1px solid rgba(0, 0, 0, 0.15) !default;
-$slick-autocomplete-hover-bg-color:                         darken($slick-row-mouse-hover-color, 3%) !default;
+$slick-autocomplete-hover-bg-color:                         color.adjust($slick-row-mouse-hover-color, $lightness: -3%) !default;
 $slick-autocomplete-loading-input-bg-color:                 transparent !default;
 $slick-autocomplete-loading-icon-color:                     #777777 !default;
 $slick-autocomplete-loading-icon:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-autocomplete-loading-icon-color)}" viewBox="0 0 24 24"><path d="M16,13V11H21V13H16M14.83,7.76L17.66,4.93L19.07,6.34L16.24,9.17L14.83,7.76M11,16H13V21H11V16M11,3H13V8H11V3M4.93,17.66L7.76,14.83L9.17,16.24L6.34,19.07L4.93,17.66M4.93,6.34L6.34,4.93L9.17,7.76L7.76,9.17L4.93,6.34M8,13H3V11H8V13M19.07,17.66L17.66,19.07L14.83,16.24L16.24,14.83L19.07,17.66Z"></path></svg>') !default;
@@ -249,7 +251,7 @@ $slick-autocomplete-tpl4-top-left-font-size:                $slick-autocomplete-
 $slick-autocomplete-tpl4-top-left-font-style:               normal !default;
 $slick-autocomplete-tpl4-top-left-font-weight:              bold !default;
 $slick-autocomplete-tpl4-top-left-max-width:                $slick-autocomplete-tpl4-bottom-left-max-width !default;
-$slick-autocomplete-tpl4-top-right-text-color:              lighten($slick-primary-color, 7%) !default;
+$slick-autocomplete-tpl4-top-right-text-color:              color.adjust($slick-primary-color, $lightness: 7%) !default;
 $slick-autocomplete-tpl4-top-right-font-size:               calc(#{$slick-autocomplete-tpl4-font-size} - 1px) !default;
 $slick-autocomplete-tpl4-top-right-font-style:              normal !default;
 $slick-autocomplete-tpl4-top-right-font-weight:             bold !default;
@@ -277,7 +279,7 @@ $slick-group-totals-formatter-font-size:                    14px !default;
 
 /** Row Detail View Plugin */
 $slick-detail-view-icon-color:                              $slick-primary-color !default;
-$slick-detail-view-icon-color-hover:                        darken($slick-detail-view-icon-color, 10%) !default;
+$slick-detail-view-icon-color-hover:                        color.adjust($slick-detail-view-icon-color, $lightness: -10%) !default;
 $slick-detail-view-icon-opacity-hover:                      1 !default;
 $slick-detail-view-icon-collapse-svg-path:                  "M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" !default;
 $slick-detail-view-icon-expand-svg-path:                    "M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" !default;
@@ -289,11 +291,11 @@ $slick-detail-view-container-padding:                       10px !default;
 $slick-detail-view-container-z-index:                       10 !default;
 
 /** Row based edit plugin */
-$slick-row-based-edit-unsaved-cell-bgcolor:                #f3ed91 !default;
-$slick-row-based-edit-editmode-active-bgcolor:              darken($slick-grid-cell-color, 15%) !default;
-$slick-row-based-edit-editmode-active-hover-bgcolor:        darken($slick-grid-cell-color, 10%) !default;
-$slick-row-based-edit-editmode-bgcolor:                     darken($slick-grid-cell-color, 15%) !default;
-$slick-row-based-edit-editmode-hover-bgcolor:               darken($slick-grid-cell-color, 10%) !default;
+$slick-row-based-edit-unsaved-cell-bgcolor:                 #f3ed91 !default;
+$slick-row-based-edit-editmode-active-bgcolor:              color.adjust($slick-grid-cell-color, $lightness: -15%) !default;
+$slick-row-based-edit-editmode-active-hover-bgcolor:        color.adjust($slick-grid-cell-color, $lightness: -10%) !default;
+$slick-row-based-edit-editmode-bgcolor:                     color.adjust($slick-grid-cell-color, $lightness: -15%) !default;
+$slick-row-based-edit-editmode-hover-bgcolor:               color.adjust($slick-grid-cell-color, $lightness: -10%) !default;
 
 /* Excel copy plugin */
 $slick-copied-cell-bg-color-transition:                     rgba(0, 0, 255, 0.2) !default;
@@ -306,7 +308,7 @@ $slick-column-picker-border-radius:                         2px !default;
 $slick-column-picker-box-shadow:                            none !default;
 $slick-column-picker-close-btn-bg-color:                    #ffffff !default;
 $slick-column-picker-close-btn-color:                       #909090 !default;
-$slick-column-picker-close-btn-color-hover:                 darken($slick-column-picker-close-btn-color, 25%) !default;
+$slick-column-picker-close-btn-color-hover:                 color.adjust($slick-column-picker-close-btn-color, $lightness: -25%) !default;
 $slick-column-picker-close-btn-cursor:                      pointer !default;
 $slick-column-picker-close-btn-font-family:                 "Calibri Light", "Helvetica Neue", Arial, sans-serif !default;
 $slick-column-picker-close-btn-font-size:                   21px !default;
@@ -550,7 +552,7 @@ $slick-editor-modal-close-btn-top:                          10px !default;
 $slick-editor-modal-close-btn-border-left:                  1px solid #ced4da !default;
 $slick-editor-modal-close-btn-border-radius:                0 4px 4px 0 !default;
 $slick-editor-modal-close-btn-outside-color:                #dddddd !default;
-$slick-editor-modal-close-btn-outside-color-hover:          darken($slick-editor-modal-close-btn-outside-color, 10%) !default;
+$slick-editor-modal-close-btn-outside-color-hover:          color.adjust($slick-editor-modal-close-btn-outside-color, $lightness: -10%) !default;
 $slick-editor-modal-close-btn-outside-font-size:            30px !default;
 $slick-editor-modal-close-btn-outside-right:                -24px !default;
 $slick-editor-modal-close-btn-outside-top:                  -28px !default;
@@ -644,12 +646,12 @@ $slick-editor-modal-validation-summary-font-style:          italic !default;
 $slick-compound-filter-bgcolor:                             #ffffff !default;
 $slick-compound-filter-operator-select-font-family:         "Cascadia Mono", Consolas, "Lucida Console" !default; // use a monospace font so the operator descriptions are all aligned
 $slick-compound-filter-operator-select-font-size:           14px !important !default;
-$slick-compound-filter-operator-select-border:              1px solid #{lighten($slick-primary-color, 15%)} !default;
+$slick-compound-filter-operator-select-border:              1px solid #{color.adjust($slick-primary-color, $lightness: 15%)} !default;
 $slick-compound-filter-operator-select-width:               25px !default;
 $slick-compound-filter-operator-border-radius:              4px 0 0 4px !default;
 $slick-compound-filter-border-radius:                       0 4px 4px 0 !default;
 $slick-compound-filter-text-weight:                         bold !default;
-$slick-compound-filter-text-color:                          #{lighten($slick-primary-color, 15%)} !default;
+$slick-compound-filter-text-color:                          color.adjust($slick-primary-color, $lightness: 15%) !default;
 $slick-compound-filter-text-font-size:                      13px !default;
 $slick-compound-filter-text-padding:                        0 0 0 2px !default;
 
@@ -731,11 +733,11 @@ $slick-slider-filter-height:                                $slick-header-input-
 $slick-slider-filter-thumb-border-radius:                   50% !default;
 $slick-slider-filter-thumb-cursor:                          grab !default;
 $slick-slider-filter-thumb-border:                          2px solid rgba($slick-primary-color, .68) !default;
-$slick-slider-filter-thumb-color:                           lighten($slick-primary-color, 75%) !default; // #c9dbcb
+$slick-slider-filter-thumb-color:                           color.adjust($slick-primary-color, $lightness: 75%) !default; // #c9dbcb
 $slick-slider-filter-thumb-active-color:                    rgba($slick-primary-color, .88) !default; // #c9dbcb
 $slick-slider-filter-thumb-active-bg-color:                 #fff !default;
 $slick-slider-filter-thumb-active-border:                   2px solid #{$slick-slider-filter-thumb-active-color} !default; // #c9dbcb
-$slick-slider-filter-thumb-active-box-shadow:               0 0 0 2px rgba(lighten($slick-primary-color, 3%), .15) !default; // #c9dbcb
+$slick-slider-filter-thumb-active-box-shadow:               0 0 0 2px #{rgba(color.adjust($slick-primary-color, $lightness: 3%), .15)} !default; // #c9dbcb
 $slick-slider-filter-thumb-size:                            14px !default;
 $slick-slider-filter-thumb-height:                          calc(#{$slick-slider-filter-thumb-size} - 4px) !default;
 $slick-slider-filter-thumb-width:                           $slick-slider-filter-thumb-height !default;
@@ -775,7 +777,7 @@ $slick-multiselect-ok-button-border-radius:                 0 0 4px 4px !default
 $slick-multiselect-ok-button-border-width:                  1px 0 0 0 !default;
 $slick-multiselect-ok-button-font-weight:                   600 !default;
 $slick-multiselect-ok-button-text-color:                    $slick-primary-color !default;
-$slick-multiselect-ok-button-text-hover-color:              darken($slick-primary-color, 5%) !default;
+$slick-multiselect-ok-button-text-hover-color:              color.adjust($slick-primary-color, $lightness: -5%) !default;
 $slick-multiselect-ok-button-height:                        26px !default;
 $slick-multiselect-ok-button-width:                         100% !default;
 $slick-multiselect-ok-button-text-align:                    center !default;
@@ -788,7 +790,7 @@ $slick-multiselect-select-all-label-hover-bg-color:         $slick-multiselect-c
 $slick-multiselect-select-all-label-padding:                4px !default;
 $slick-multiselect-select-all-line-height:                  calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
 $slick-multiselect-select-all-padding:                      6px 10px !default;
-$slick-multiselect-select-all-text-color:                   darken($slick-primary-color, 5%) !default;
+$slick-multiselect-select-all-text-color:                   color.adjust($slick-primary-color, $lightness: -5%) !default;
 $slick-multiselect-select-all-text-hover-color:             transparent !default;
 
 // override some multiple-select SASS variables with our variables
@@ -933,7 +935,7 @@ $slick-tooltip-text-overflow:                               ellipsis !default;
 $slick-tooltip-white-space:                                 normal !default;
 $slick-tooltip-z-index:                                     9999 !default;
 // tooltip arrow
-$slick-tooltip-arrow-color:                                 darken($slick-tooltip-border-color, 5%) !default;
+$slick-tooltip-arrow-color:                                 color.adjust($slick-tooltip-border-color, $lightness: -5%) !default;
 $slick-tooltip-arrow-size:                                  8px !default;
 $slick-tooltip-down-arrow-top-margin:                       100% !default;
 $slick-tooltip-up-arrow-top-margin:                         -($slick-tooltip-arrow-size * 2) !default;
@@ -958,7 +960,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
 // -----------
 
 // add a few Dark Mode SASS variables, just the basic vars
-$slick-dark-primary-color:                                lighten($primary-color, 15%) !default;
+$slick-dark-primary-color:                                color.adjust($slick-primary-color, $lightness: 15%) !default;
 $slick-dark-base-dark-text-color:                         #d4d4d4 !default;
 $slick-dark-base-dark-menu-bg-color:                      #252525 !default;
 $slick-dark-base-dark-menu-border-color:                  #505050 !default;
@@ -1016,7 +1018,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-checkbox-opacity-hover:                         0.7;
   --slick-checkbox-icon-color:                            var(--slick-primary-color);
   --slick-checkbox-icon-bg-color:                         #444444;
-  --slick-checkbox-unchecked-color:                       #{lighten($primary-color, 10%)};
+  --slick-checkbox-unchecked-color:                       #{color.adjust($slick-primary-color, $lightness: 10%)};
   --slick-checkbox-unchecked-opacity:                     0.4;
   --slick-detail-view-icon-color:                         var(--slick-primary-color);
   --slick-detail-view-icon-color-hover:                   var(--slick-primary-color);
@@ -1168,7 +1170,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-button-primary-color:                           #bababa;
   --slick-button-style-bg-color:                          #252525;
   .text-color-primary {
-    --text-color-primary:                                 var(--slick-primary-color, #{lighten($primary-color, 15%)});
+    --text-color-primary:                                 var(--slick-primary-color, #{color.adjust($slick-primary-color, $lightness: 15%)});
   }
   .text-color-secondary {
     --text-color-secondary:                               rgba(222, 226, 230, 0.75);
