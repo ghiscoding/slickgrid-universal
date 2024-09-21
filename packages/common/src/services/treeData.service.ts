@@ -183,7 +183,7 @@ export class TreeDataService {
       // then we reapply only the ones that changed (provided as argument to the function)
       treeToggledItems.forEach(collapsedItem => {
         const item = this.dataView.getItemById(collapsedItem.itemId);
-        this.updateToggledItem(item, collapsedItem.isCollapsed);
+        this.updateToggledItem(item, collapsedItem.isCollapsed, true);
 
         if (shouldTriggerEvent) {
           const parentFoundIdx = this._currentToggledItems.findIndex(treeChange => treeChange.itemId === collapsedItem.itemId);
@@ -360,11 +360,16 @@ export class TreeDataService {
       this.dataView.beginUpdate(true);
 
       // toggle the collapsed flag but only when it's a parent item with children
-      (this.dataView.getItems() || []).forEach((item: any) => {
+      const flatDataItems = (this.dataView.getItems() || []);
+      flatDataItems.forEach((item: any) => {
         if (item[hasChildrenPropName]) {
-          this.updateToggledItem(item, collapsing);
+          this.updateToggledItem(item, collapsing, false);
         }
       });
+
+      // instead of finding each tree item and update their collapse flag one-by-one, we can simply recreate the tree dataset
+      // since the flat dataset already has collapse flag updated from previous step
+      this.sharedService.hierarchicalDataset = this.convertFlatParentChildToTreeDataset(flatDataItems, this.gridOptions);
 
       this.dataView.endUpdate();
       this.dataView.refresh();
@@ -437,7 +442,12 @@ export class TreeDataService {
     }
   }
 
-  protected updateToggledItem(item: any, isCollapsed: boolean): void {
+  /**
+   * Toggle an item in the flat dataset and update it in the grid.
+   * NOTE: We should update the Tree Data collapse status (shouldUpdateTree=true) ONLY when toggling 1 item at a time,
+   * however for toggle a batch (i.e. collapse all), we'll want to convert skip updating the tree but rather convert from flat to tree which is much quicker to execute.
+   */
+  protected updateToggledItem(item: any, isCollapsed: boolean, shouldUpdateTree: boolean): void {
     const dataViewIdIdentifier = this.gridOptions?.datasetIdPropertyName ?? 'id';
     const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
     const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
@@ -448,10 +458,12 @@ export class TreeDataService {
       this.dataView.updateItem(item[dataViewIdIdentifier], item);
 
       // also update the hierarchical tree item
-      const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[dataViewIdIdentifier] === item[dataViewIdIdentifier];
-      const treeItemFound = findItemInTreeStructure(this.sharedService.hierarchicalDataset || [], searchTreePredicate, childrenPropName);
-      if (treeItemFound) {
-        treeItemFound[collapsedPropName] = isCollapsed;
+      if (shouldUpdateTree) {
+        const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[dataViewIdIdentifier] === item[dataViewIdIdentifier];
+        const treeItemFound = findItemInTreeStructure(this.sharedService.hierarchicalDataset || [], searchTreePredicate, childrenPropName);
+        if (treeItemFound) {
+          treeItemFound[collapsedPropName] = isCollapsed;
+        }
       }
     }
   }
