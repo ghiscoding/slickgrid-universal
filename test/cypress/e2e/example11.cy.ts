@@ -22,20 +22,6 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('h3').should('contain', 'Example 11 - Batch Editing');
   });
 
-  it('should input values directly in input of datepicker', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`)
-      .click();
-
-    cy.get(`.input-group-editor`)
-      .focus()
-      .type('{backspace}'.repeat(10))
-      .type('1970-01-01')
-      .type('{enter}');
-
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`)
-      .should('contain', '1970-01-01');
-  })
-
   describe('built-in operators', () => {
     it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
       cy.get('[data-test="clear-storage-btn"]')
@@ -1099,6 +1085,22 @@ describe('Example 11 - Batch Editing', () => {
     it('should clear local storage before leaving', () => {
       cy.get('[data-test="clear-storage-btn"]')
         .click({ force: true });
+    });
+  });
+
+  describe('with Date Editor', () => {
+    it('should input values directly in input of datepicker', () => {
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`)
+        .click();
+
+      cy.get(`.input-group-editor`)
+        .focus()
+        .type('{backspace}'.repeat(10))
+        .type('1970-01-01')
+        .type('{enter}');
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`)
+        .should('contain', '1970-01-01');
     });
   });
 });
