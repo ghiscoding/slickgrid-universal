@@ -205,31 +205,20 @@ describe('DualInputEditor', () => {
       expect(editor.getValues()).toEqual({ from: 1, to: 22 });
     });
 
-    it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
-      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
+    ["ArrowLeft", "ArrowRight", "Home", "End"].forEach((key: string) => {
+      it(`should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using ${key} key`, () => {
+        const event = new (window.window as any).KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+        const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
 
-      editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
+        editor = new DualInputEditor(editorArguments);
+        const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
 
-      editor.focus();
-      editorElm.dispatchEvent(event);
+        editor.focus();
+        editorElm.dispatchEvent(event);
 
-      expect(gridStub.focus).toHaveBeenCalled();
-      expect(spyEvent).toHaveBeenCalled();
-    });
-
-    it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
-      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
-
-      editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
-
-      editor.focus();
-      editorElm.dispatchEvent(event);
-
-      expect(spyEvent).toHaveBeenCalled();
+        expect(gridStub.focus).toHaveBeenCalled();
+        expect(spyEvent).toHaveBeenCalled();
+      });
     });
 
     describe('isValueChanged method (and isValueTouched method will always true for all since we trigger events in all)', () => {

@@ -555,7 +555,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._bindEventService.bind(this._inputElm, 'focus', () => this._inputElm?.select());
     this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent & { target: HTMLInputElement; }) => {
       this._lastInputKeyEvent = event;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === "Home" || event.key === "End") {
         event.stopImmediatePropagation();
       }
 

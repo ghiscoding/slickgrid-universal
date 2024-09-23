@@ -159,7 +159,7 @@ export class DualInputEditor implements Editor {
       this._isRightValueTouched = true;
     }
     this._lastInputKeyEvent = event;
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab') {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === "Home" || event.key === "End" || event.key === 'Tab') {
       event.stopImmediatePropagation();
     }
   }
