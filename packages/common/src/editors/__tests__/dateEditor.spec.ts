@@ -147,15 +147,15 @@ describe('DateEditor', () => {
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
       editor.editorDomElement.dispatchEvent(event);
 
-      expect(editor.columnEditor.editorOptions?.allowEdit).toBeFalsy();
+      expect(editor.columnEditor.editorOptions?.allowInput).toBeFalsy();
       expect(editor.isValueTouched()).toBeFalsy();
     });
 
-    it('should stop propagation on allowEdit when hitting left or right arrow keys', () => {
+    it('should stop propagation on allowInput when hitting left or right arrow and home and end keys', () => {
       editor = new DateEditor({ ...editorArguments,
         column: { ...editorArguments.column,
           editor: { ...editorArguments.column.editor,
-            editorOptions: { ...editorArguments.column?.editor?.editorOptions, allowEdit: true }
+            editorOptions: { ...editorArguments.column?.editor?.editorOptions, allowInput: true }
            }}});
 
       let event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
@@ -300,7 +300,7 @@ describe('DateEditor', () => {
 
         editor = new DateEditor({...editorArguments,
           column: { ...mockColumn, editor: { ...editorArguments.column.editor, alwaysSaveOnEnterKey: true,
-            editorOptions: { ...editorArguments.column.editor?.editorOptions, allowEdit: true}
+            editorOptions: { ...editorArguments.column.editor?.editorOptions, allowInput: true}
            } }
         });
         const event = new KeyboardEvent('keydown', { key: 'Enter' });
