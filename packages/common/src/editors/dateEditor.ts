@@ -210,7 +210,7 @@ export class DateEditor implements Editor {
 
         this._isValueTouched = true;
         this._lastInputKeyEvent = event;
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight'  || event.key === "Home" || event.key === "End") {
           event.stopImmediatePropagation();
         }
       }) as EventListener);

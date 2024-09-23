@@ -167,6 +167,16 @@ describe('DateEditor', () => {
       propagationSpy = vi.spyOn(event, 'stopImmediatePropagation');
       editor.editorDomElement.dispatchEvent(event);
       expect(propagationSpy).toHaveBeenCalled();
+
+      event = new KeyboardEvent('keydown', { key: 'Home' });
+      propagationSpy = vi.spyOn(event, 'stopImmediatePropagation');
+      editor.editorDomElement.dispatchEvent(event);
+      expect(propagationSpy).toHaveBeenCalled();
+
+      event = new KeyboardEvent('keydown', { key: 'End' });
+      propagationSpy = vi.spyOn(event, 'stopImmediatePropagation');
+      editor.editorDomElement.dispatchEvent(event);
+      expect(propagationSpy).toHaveBeenCalled();
     });
 
     it('should have a placeholder when defined in its column definition', () => {

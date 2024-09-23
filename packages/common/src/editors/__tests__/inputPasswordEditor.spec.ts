@@ -178,33 +178,21 @@ describe('InputPasswordEditor', () => {
       expect(editor.getValue()).toBe('task 1');
     });
 
-    it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
-      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
+    ["ArrowLeft", "ArrowRight", "Home", "End"].forEach((key: string) => {
+      it(`should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using ${key} key`, () => {
+        const event = new (window.window as any).KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+        const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
 
-      editor = new InputPasswordEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
+        editor = new InputPasswordEditor(editorArguments);
+        const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
 
-      editor.focus();
-      editorElm.dispatchEvent(event);
+        editor.focus();
+        editorElm.dispatchEvent(event);
 
-      expect(gridStub.focus).toHaveBeenCalled();
-      expect(spyEvent).toHaveBeenCalled();
-      expect(editor.isValueTouched()).toBe(true);
-    });
-
-    it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
-      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
-
-      editor = new InputPasswordEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
-
-      editor.focus();
-      editorElm.dispatchEvent(event);
-
-      expect(gridStub.focus).toHaveBeenCalled();
-      expect(spyEvent).toHaveBeenCalled();
+        expect(gridStub.focus).toHaveBeenCalled();
+        expect(spyEvent).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
+      });
     });
 
     describe('isValueChanged method', () => {
