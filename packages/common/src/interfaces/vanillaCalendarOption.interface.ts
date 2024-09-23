@@ -12,4 +12,7 @@ export interface VanillaCalendarOption extends IPartialSettings {
 
   /** defaults to false, do we want to hide the clear date button? */
   hideClearButton?: boolean;
+
+  /** defaults to false, should keyboard entries be allowed in input field? */
+  allowInput?: boolean;
 }

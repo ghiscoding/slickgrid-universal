@@ -36,6 +36,7 @@ export class DateEditor implements Editor {
   protected _lastTriggeredByClearDate = false;
   protected _originalDate?: string;
   protected _pickerMergedOptions!: IOptions;
+  protected _lastInputKeyEvent?: KeyboardEvent;
   calendarInstance?: VanillaCalendar;
   defaultDate?: string;
   hasTimePicker = false;
@@ -185,7 +186,7 @@ export class DateEditor implements Editor {
           title: this.columnEditor && this.columnEditor.title || '',
           className: inputCssClasses.replace(/\./g, ' '),
           dataset: { input: '', defaultdate: this.defaultDate },
-          readOnly: true,
+          readOnly: this.columnEditor.editorOptions?.allowEdit === true ? true : false,
         },
         this._editorInputGroupElm
       );
@@ -201,6 +202,18 @@ export class DateEditor implements Editor {
           this.handleOnDateChange();
         });
       }
+
+      this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
+        if (this.columnEditor.editorOptions?.allowEdit !== true) {
+          return;
+        }
+
+        this._isValueTouched = true;
+        this._lastInputKeyEvent = event;
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+          event.stopImmediatePropagation();
+        }
+      }) as EventListener);
 
       queueMicrotask(() => {
         this.calendarInstance = new VanillaCalendar(this._inputElm, this._pickerMergedOptions);
@@ -348,6 +361,12 @@ export class DateEditor implements Editor {
   isValueChanged(): boolean {
     let isChanged = false;
     const elmDateStr = this.getValue();
+
+    const lastEventKey = this._lastInputKeyEvent?.key;
+    if (this.columnEditor.editorOptions?.allowEdit === true &&
+        this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
+      return true;
+    }
 
     if (this.columnDef) {
       isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && this._originalDate === '')) && (elmDateStr !== this._originalDate);

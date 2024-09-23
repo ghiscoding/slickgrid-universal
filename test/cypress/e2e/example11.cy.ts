@@ -1087,4 +1087,20 @@ describe('Example 11 - Batch Editing', () => {
         .click({ force: true });
     });
   });
+
+  describe('with Date Editor', () => {
+    it('should input values directly in input of datepicker', () => {
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`)
+        .click();
+
+      cy.get(`.input-group-editor`)
+        .focus()
+        .type('{backspace}'.repeat(10))
+        .type('1970-01-01')
+        .type('{enter}');
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`)
+        .should('contain', '1970-01-01');
+    });
+  });
 });

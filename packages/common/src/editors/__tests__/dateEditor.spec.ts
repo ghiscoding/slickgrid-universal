@@ -141,6 +141,34 @@ describe('DateEditor', () => {
       expect(showSpy).toHaveBeenCalled();
     });
 
+    it('should initialize the editor and add a keydown event listener that early exists by default', () => {
+      editor = new DateEditor(editorArguments);
+
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      editor.editorDomElement.dispatchEvent(event);
+
+      expect(editor.columnEditor.editorOptions?.allowEdit).toBeFalsy();
+      expect(editor.isValueTouched()).toBeFalsy();
+    });
+
+    it('should stop propagation on allowEdit when hitting left or right arrow keys', () => {
+      editor = new DateEditor({ ...editorArguments,
+        column: { ...editorArguments.column,
+          editor: { ...editorArguments.column.editor,
+            editorOptions: { ...editorArguments.column?.editor?.editorOptions, allowEdit: true }
+           }}});
+
+      let event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+      let propagationSpy = vi.spyOn(event, 'stopImmediatePropagation');
+      editor.editorDomElement.dispatchEvent(event);
+      expect(propagationSpy).toHaveBeenCalled();
+
+      event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+      propagationSpy = vi.spyOn(event, 'stopImmediatePropagation');
+      editor.editorDomElement.dispatchEvent(event);
+      expect(propagationSpy).toHaveBeenCalled();
+    });
+
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
       mockColumn.editor!.placeholder = testValue;
@@ -265,6 +293,23 @@ describe('DateEditor', () => {
 
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
+      });
+
+      it('should return True when the last key was enter and alwaysSaveOnEnterKey is active', () => {
+        mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
+
+        editor = new DateEditor({...editorArguments,
+          column: { ...mockColumn, editor: { ...editorArguments.column.editor, alwaysSaveOnEnterKey: true,
+            editorOptions: { ...editorArguments.column.editor?.editorOptions, allowEdit: true}
+           } }
+        });
+        const event = new KeyboardEvent('keydown', { key: 'Enter' });
+        vi.runAllTimers();
+
+        editor.editorDomElement.dispatchEvent(event);
+
+        expect(editor.isValueChanged()).toBe(true);
+
       });
 
       it('should return True when date is reset by the clear date button', () => {
