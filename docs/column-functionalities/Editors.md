@@ -415,7 +415,7 @@ changeToInputTextEditor(checked: boolean) {
     this.isInputTextEditor = checked;
 }
 
-handleOnBeforeEditCell(event: any) {
+handleOnBeforeEditCell(args: CustomEvent<OnBeforeEditCellEventArgs>) {
   const args = event?.detail?.args;
   const { grid, column } = args;
   column.editor.model = this.isInputTextEditor ? Editors.text : Editors.longText;
