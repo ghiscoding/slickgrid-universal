@@ -196,30 +196,19 @@ describe('AutocompleterEditor', () => {
       expect(editor.getValue()).toBe('male');
     });
 
-    it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
-      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
+    ["ArrowLeft", "ArrowRight", "Home", "End"].forEach((key: string) => {
+      it(`should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using ${key} key`, () => {
+        const event = new (window.window as any).KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+        const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
 
-      editor = new AutocompleterEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
+        editor = new AutocompleterEditor(editorArguments);
+        const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
 
-      editorElm.focus();
-      editorElm.dispatchEvent(event);
+        editorElm.focus();
+        editorElm.dispatchEvent(event);
 
-      expect(spyEvent).toHaveBeenCalled();
-    });
-
-    it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
-      const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
-
-      editor = new AutocompleterEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
-
-      editorElm.focus();
-      editorElm.dispatchEvent(event);
-
-      expect(spyEvent).toHaveBeenCalled();
+        expect(spyEvent).toHaveBeenCalled();
+      });
     });
 
     it('should render the DOM element with different key/value pair when user provide its own customStructure', () => {

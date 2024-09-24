@@ -115,7 +115,7 @@ export class InputEditor implements Editor {
     this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
       this._isValueTouched = true;
       this._lastInputKeyEvent = event;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === "Home" || event.key === "End") {
         event.stopImmediatePropagation();
       }
     }) as EventListener);
