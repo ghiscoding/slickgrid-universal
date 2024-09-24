@@ -11,7 +11,7 @@ import type {
 } from '../interfaces/index';
 import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index';
 import type { BackendUtilityService } from './backendUtility.service';
-import { getDescendantProperty, flattenToParentChildArray } from './utilities';
+import { getDescendantProperty, flattenToParentChildArray, isColumnDateType } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
@@ -414,7 +414,9 @@ export class SortService {
         // that happens because we just overwrote the entire dataset the DataView.refresh() doesn't detect a row count change so we trigger it manually
         this._dataView.onRowCountChanged.notify({ previous: this._dataView.getFilteredItemCount(), current: this._dataView.getLength(), itemCount: this._dataView.getItemCount(), dataView: this._dataView, callingOnRowsChanged: true });
       } else {
+        console.time('sort');
         dataView.sort(this.sortComparers.bind(this, sortColumns));
+        console.timeEnd('sort');
       }
 
       grid.invalidate();
@@ -476,10 +478,14 @@ export class SortService {
   sortComparer(sortColumn: ColumnSort, dataRow1: any, dataRow2: any, querySortField?: string): number | undefined {
     if (sortColumn?.sortCol) {
       const columnDef = sortColumn.sortCol;
+      const fieldType = columnDef.type || FieldType.string;
       const sortDirection = sortColumn.sortAsc ? SortDirectionNumber.asc : SortDirectionNumber.desc;
       let queryFieldName1 = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
+
+      if (this._gridOptions.preParseDateColumns && isColumnDateType(fieldType) && sortColumn?.columnId) {
+        queryFieldName1 = this._gridOptions.preParseDateColumns ? `__${sortColumn.columnId}` : `${sortColumn.columnId}`;
+      }
       let queryFieldName2 = queryFieldName1;
-      const fieldType = columnDef.type || FieldType.string;
 
       // if user provided a query field name getter callback, we need to get the name on each item independently
       if (typeof columnDef.queryFieldNameGetterFn === 'function') {

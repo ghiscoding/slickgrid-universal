@@ -116,8 +116,8 @@ export class CollectionService<T = any> {
               const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
               const objectProperty = sortBy.property;
               const fieldType = sortBy?.fieldType ?? columnDef?.type ?? FieldType.string;
-              const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow1[objectProperty as keyof T] || ' ') as string) : dataRow1[objectProperty as keyof T];
-              const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow2[objectProperty as keyof T] || ' ') as string) : dataRow2[objectProperty as keyof T];
+              const value1 = (enableTranslateLabel) ? this.translaterService?.translate?.((dataRow1[objectProperty as keyof T] || ' ') as string) : dataRow1[objectProperty as keyof T];
+              const value2 = (enableTranslateLabel) ? this.translaterService?.translate?.((dataRow2[objectProperty as keyof T] || ' ') as string) : dataRow2[objectProperty as keyof T];
 
               const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
               if (sortResult !== SortDirectionNumber.neutral) {

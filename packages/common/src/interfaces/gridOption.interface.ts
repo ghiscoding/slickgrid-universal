@@ -679,6 +679,15 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to "auto", extra top-header panel (on top of column header & pre-header) width, it could be a number (pixels) or a string ("100%" or "auto") */
   topHeaderPanelWidth?: number | string;
 
+  /**
+   * Pre-parse all dataset items from date string to `Date` object which will improve Sort considerably
+   * by parsing the dates only once and sort maybe as O(n2) instead of multiple times which is possibly O(log n2).
+   * We can enable this option via a string prefix, (i.e. if we set the option to "__", it will parse a "start" date string and assign it as a `Date` object to "__start"),
+   * if however the option is set to `true`, it will overwrite the same property (i.e. parse "start" date string and reassign it as a `Date` object to "start").
+   * NOTE: When setting this to `true`, it will overwrite the original date and make it a `Date` object, so make sure that your column definition `type` is taking this into consideration.
+   */
+  preParseDateColumns?: boolean | string;
+
   /** Do we want to preserve copied selection on paste? */
   preserveCopiedSelectionOnPaste?: boolean;
 
