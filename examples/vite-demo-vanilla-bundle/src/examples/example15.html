@@ -67,7 +67,7 @@
     </span>
     <label class="checkbox-inline control-label ml-2" for="enableCount">
       <input type="checkbox" id="enableCount" data-test="enable-count" checked.bind="isCountEnabled"
-             onclick.delegate="changeCountEnableFlag()">
+             onclick.delegate="changeCountEnableFlag(event.target.checked)">
       <span class="text-bold">Enable Count</span> (add to OData query)
     </label>
   </div>

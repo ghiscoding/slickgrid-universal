@@ -461,20 +461,20 @@ export default class Example09 {
   // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE
   // ---
 
-  changeCountEnableFlag() {
-    this.isCountEnabled = !this.isCountEnabled;
+  changeCountEnableFlag(checked: boolean) {
+    this.isCountEnabled = checked;
     this.resetOptions({ enableCount: this.isCountEnabled });
     return true;
   }
 
-  changeEnableSelectFlag() {
-    this.isSelectEnabled = !this.isSelectEnabled;
+  changeEnableSelectFlag(checked: boolean) {
+    this.isSelectEnabled = checked;
     this.resetOptions({ enableSelect: this.isSelectEnabled });
     return true;
   }
 
-  changeEnableExpandFlag() {
-    this.isExpandEnabled = !this.isExpandEnabled;
+  changeEnableExpandFlag(checked: boolean) {
+    this.isExpandEnabled = checked;
     this.resetOptions({ enableExpand: this.isExpandEnabled });
     return true;
   }
