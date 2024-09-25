@@ -77,7 +77,7 @@
   <label class="checkbox-inline control-label ml-3" for="excludeChildWhenFiltering">
     <input type="checkbox" id="excludeChildWhenFiltering" data-test="exclude-child-when-filtering"
            checked.bind="isExcludingChildWhenFiltering"
-           onclick.delegate="changeExcludeChildWhenFiltering()">
+           onclick.delegate="changeExcludeChildWhenFiltering(event.target.checked)">
     <span
           title="for example if we filter the word 'pop' and we exclude children, then only the folder 'pop' will show up without any content unless we uncheck this flag">
       Exclude Children when Filtering Tree
@@ -86,7 +86,7 @@
   <label class="checkbox-inline control-label ml-3" for="autoApproveParentItem">
     <input type="checkbox" id="autoApproveParentItem" data-test="auto-approve-parent-item"
            checked.bind="isAutoApproveParentItemWhenTreeColumnIsValid"
-           onclick.delegate="changeAutoApproveParentItem()">
+           onclick.delegate="changeAutoApproveParentItem(event.target.checked)">
     <span
           title="for example in this demo if we filter with 'music' and size '> 70' nothing will show up unless we have this flag enabled
           because none of the files have both criteria at the same time, however the column with the tree 'file' does pass the filter criteria 'music'
@@ -97,7 +97,7 @@
   <label class="checkbox-inline control-label ml-3" for="autoRecalcTotalsOnFilterChange">
     <input type="checkbox" id="autoRecalcTotalsOnFilterChange" data-test="auto-recalc-totals"
            checked.bind="isAutoRecalcTotalsOnFilterChange"
-           onclick.delegate="changeAutoRecalcTotalsOnFilterChange()">
+           onclick.delegate="changeAutoRecalcTotalsOnFilterChange(event.target.checked)">
     <span
           title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default.">
       auto-recalc Tree Data totals on filter changed

@@ -451,9 +451,9 @@ export default class Example15 {
   // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE
   // ---
 
-  changeCountEnableFlag() {
+  changeCountEnableFlag(checked: boolean) {
     this.displaySpinner(true);
-    this.isCountEnabled = !this.isCountEnabled;
+    this.isCountEnabled = checked;
     const odataService = this.gridOptions.backendServiceApi!.service;
     odataService.updateOptions({ enableCount: this.isCountEnabled } as OdataOption);
     odataService.clearFilters?.();

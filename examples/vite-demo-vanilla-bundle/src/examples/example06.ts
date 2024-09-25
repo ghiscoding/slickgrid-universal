@@ -171,16 +171,16 @@ export default class Example06 {
     };
   }
 
-  changeAutoApproveParentItem() {
-    this.isAutoApproveParentItemWhenTreeColumnIsValid = !this.isAutoApproveParentItemWhenTreeColumnIsValid;
+  changeAutoApproveParentItem(checked: boolean) {
+    this.isAutoApproveParentItemWhenTreeColumnIsValid = checked;
     this.gridOptions.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = this.isAutoApproveParentItemWhenTreeColumnIsValid;
     this.sgb.slickGrid?.setOptions(this.gridOptions);
     this.sgb.filterService.refreshTreeDataFilters();
     return true;
   }
 
-  changeAutoRecalcTotalsOnFilterChange() {
-    this.isAutoRecalcTotalsOnFilterChange = !this.isAutoRecalcTotalsOnFilterChange;
+  changeAutoRecalcTotalsOnFilterChange(checked: boolean) {
+    this.isAutoRecalcTotalsOnFilterChange = checked;
     this.gridOptions.treeDataOptions!.autoRecalcTotalsOnFilterChange = this.isAutoRecalcTotalsOnFilterChange;
     this.sgb.slickGrid?.setOptions(this.gridOptions);
 
@@ -190,8 +190,8 @@ export default class Example06 {
     return true;
   }
 
-  changeExcludeChildWhenFiltering() {
-    this.isExcludingChildWhenFiltering = !this.isExcludingChildWhenFiltering;
+  changeExcludeChildWhenFiltering(checked: boolean) {
+    this.isExcludingChildWhenFiltering = checked;
     this.gridOptions.treeDataOptions!.excludeChildrenWhenFilteringTree = this.isExcludingChildWhenFiltering;
     this.sgb.slickGrid?.setOptions(this.gridOptions);
     this.sgb.filterService.refreshTreeDataFilters();
