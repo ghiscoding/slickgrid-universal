@@ -132,7 +132,7 @@ export default class Example02 {
         filter: { model: Filters.compoundDate },
         sortable: true,
         type: FieldType.dateUsShort,
-        // formatter: Formatters.dateUs,
+        formatter: Formatters.dateUs,
         exportWithFormatter: true
       },
       {
@@ -143,8 +143,7 @@ export default class Example02 {
         filter: { model: Filters.compoundDate },
         sortable: true,
         type: FieldType.dateUsShort,
-        // outputType: FieldType.dateUs,
-        // formatter: Formatters.dateUs,
+        formatter: Formatters.dateUs,
       },
       {
         id: 'cost', name: 'Cost', field: 'cost',
@@ -252,7 +251,7 @@ export default class Example02 {
       rowTopOffsetRenderType: 'transform', // defaults: 'top'
 
       // you can improve Date sorting by pre-parsing date items to `Date` object (this avoid reparsing the same dates multiple times)
-      preParseDateColumns: '__',
+      preParseDateColumns: true, // '__',
     };
   }
 
@@ -262,7 +261,7 @@ export default class Example02 {
     for (let i = 0; i < rowCount; i++) {
       const randomYearShort = randomBetween(10, 35);
       const randomMonth = randomBetween(1, 12);
-      const randomDay = randomBetween(10, 28);
+      const randomDay = randomBetween(5, 28);
       const randomPercent = Math.round(Math.random() * 100);
       const randomCost = (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100;
 
@@ -274,7 +273,7 @@ export default class Example02 {
         percentComplete: randomPercent,
         percentCompleteNumber: randomPercent,
         start: `${randomMonth}/${randomDay}/${randomYearShort}`,
-        finish: `${randomMonth + 1}/${randomDay}/${randomYearShort}`,
+        finish: `${randomMonth === 12 ? randomMonth : randomMonth + 1}/${randomDay}/${randomYearShort}`,
         cost: i % 3 ? randomCost : randomCost !== null ? -randomCost : null,
         effortDriven: (i % 5 === 0)
       };

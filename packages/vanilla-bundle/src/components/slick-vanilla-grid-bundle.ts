@@ -19,7 +19,6 @@ import type {
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   type AutocompleterEditor,
-  FieldType,
   GlobalGridOptions,
   GridStateType,
   SlickGroupItemMetadataProvider,
@@ -46,12 +45,9 @@ import {
 
   // utilities
   emptyElement,
-  isColumnDateType,
-  mapTempoDateFormatWithFieldType,
   SlickEventHandler,
   SlickDataView,
   SlickGrid,
-  tryParseDate,
   unsubscribeAll,
 } from '@slickgrid-universal/common';
 import { extend } from '@slickgrid-universal/utils';
@@ -164,6 +160,10 @@ export class SlickVanillaGridBundle<TData = any> {
       data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
     }
 
+    if (this.slickGrid && this._gridOptions?.preParseDateColumns) {
+      this.collectionService.preParseDateItems(data, this.slickGrid);
+    }
+
     this.refreshGridData(data || []);
     this._currentDatasetLength = (newDataset || []).length;
 
@@ -173,8 +173,6 @@ export class SlickVanillaGridBundle<TData = any> {
       this.slickGrid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
-
-    this.preParseDateItemsWhenEnabled(data);
   }
 
   get datasetHierarchical(): any[] | undefined {
@@ -599,16 +597,19 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
+    inputDataset = inputDataset || [];
+    const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(inputDataset) : inputDataset;
+
+    if (this.slickGrid && this._gridOptions.preParseDateColumns) {
+      this.collectionService.preParseDateItems(inputDataset!, this.slickGrid);
+    }
+
     if (this.dataView) {
-      inputDataset = inputDataset || [];
-      const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(inputDataset) : inputDataset;
       this.dataView.beginUpdate();
       this.dataView.setItems(initialDataset, this._gridOptions.datasetIdPropertyName);
       this._currentDatasetLength = inputDataset.length;
       this.dataView.endUpdate();
     }
-
-    this.preParseDateItemsWhenEnabled(inputDataset!);
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
     // to stay selected, pass 'false' to the second arg
@@ -1050,33 +1051,6 @@ export class SlickVanillaGridBundle<TData = any> {
       change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
       gridState: this.gridStateService.getCurrentGridState()
     });
-  }
-
-  /** Pre-parse date items as `Date` object to improve Date Sort considerably */
-  protected preParseDateItemsWhenEnabled(items: TData[]): void {
-    if (this.gridOptions.preParseDateColumns) {
-      console.time('mutate');
-      this.columnDefinitions.forEach(col => {
-        const fieldType = col.type || FieldType.string;
-        const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
-        const strictParsing = dateFormat !== undefined;
-        if (isColumnDateType(fieldType)) {
-          // preparsing could be a boolean (reassign and overwrite same property)
-          // OR a prefix string to assign it into a new item property
-          const queryFieldName = typeof this.gridOptions.preParseDateColumns === 'string'
-            ? `${this.gridOptions.preParseDateColumns}${col.id}`
-            : `${col.id}`;
-          items.forEach((item: any) => {
-            const date = tryParseDate(item[col.id], dateFormat, strictParsing);
-            if (date) {
-              item[queryFieldName] = date;
-            }
-          });
-        }
-      });
-      console.timeEnd('mutate');
-      // console.log('data', items);
-    }
   }
 
   /**
