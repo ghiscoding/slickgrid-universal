@@ -106,19 +106,19 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 
 /** From a FieldType, return the associated date Formatter */
 export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
-  const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, true);
+  const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? FieldType.date;
-    const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, true);
+    const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
     const isParsingAsUtc = columnDef?.params?.parseDateAsUtc ?? false;
 
     const date = tryParseDate(value, inputDateFormat);
     let outputDate = value;
     if (date) {
-      let d = value;
+      let d = date;
       if (isParsingAsUtc) {
         d = toUtcDate(date);
       }

@@ -5,11 +5,18 @@ import { FieldType } from '../enums/index';
 /**
  * From a Date FieldType, return it's equivalent TempoJS format,
  * refer to TempoJS docs for the format tokens being used: https://tempo.formkit.com/#format
- * @param fieldType
- * @param withZeroPadding - should we include zero padding in format (e.g.: 03:04:54)
+ * @param {FieldType} fieldType
+ * @param { withZeroPadding: [boolean]; withDefaultIso8601: [boolean]; } [options] -
+ *   - withZeroPadding: should we include zero padding in format (e.g.: 03:04:54 instead of 3:4:54)
+ *   - withDefaultIso8601: should we use ISO8601 for `FieldType.date` or `FieldType.dateIso`
  */
-export function mapTempoDateFormatWithFieldType(fieldType: typeof FieldType[keyof typeof FieldType], withZeroPadding = false): string {
+export function mapTempoDateFormatWithFieldType(
+  fieldType: typeof FieldType[keyof typeof FieldType],
+  options?: { withZeroPadding?: boolean; withDefaultIso8601?: boolean; }
+): string {
   let map: string;
+  const withZeroPadding = options?.withZeroPadding ?? false;
+
   switch (fieldType) {
     case FieldType.dateTime:
     case FieldType.dateTimeIso:
@@ -106,7 +113,9 @@ export function mapTempoDateFormatWithFieldType(fieldType: typeof FieldType[keyo
     case FieldType.date:
     case FieldType.dateIso:
     default:
-      map = 'YYYY-MM-DD';
+      map = options?.withDefaultIso8601
+        ? 'ISO8601'
+        : 'YYYY-MM-DD';
       break;
   }
   return map;
