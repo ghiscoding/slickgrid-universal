@@ -7,6 +7,7 @@ import { executeDateFilterCondition, getFilterParsedDates } from './dateFilterCo
 import { executeObjectFilterCondition, getFilterParsedObjectResult } from './objectFilterCondition';
 import { executeStringFilterCondition, getFilterParsedText } from './stringFilterCondition';
 import { isCollectionOperator } from './filterUtilities';
+import { isColumnDateType } from '../services/utilities';
 
 /**
  * General variable types, just 5x types instead of the multiple FieldType.
@@ -81,37 +82,14 @@ export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] |
  * @returns generalType - general field type
  */
 export function getVarTypeOfByColumnFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralVariableDataType {
+  if (isColumnDateType(fieldType)) {
+    return 'date';
+  }
+
   // return general field type
   switch (fieldType) {
     case FieldType.boolean:
       return 'boolean';
-    case FieldType.date:
-    case FieldType.dateIso:
-    case FieldType.dateUtc:
-    case FieldType.dateTime:
-    case FieldType.dateTimeIso:
-    case FieldType.dateTimeIsoAmPm:
-    case FieldType.dateTimeIsoAM_PM:
-    case FieldType.dateTimeShortIso:
-    case FieldType.dateEuro:
-    case FieldType.dateEuroShort:
-    case FieldType.dateTimeShortEuro:
-    case FieldType.dateTimeEuro:
-    case FieldType.dateTimeEuroAmPm:
-    case FieldType.dateTimeEuroAM_PM:
-    case FieldType.dateTimeEuroShort:
-    case FieldType.dateTimeEuroShortAmPm:
-    case FieldType.dateTimeEuroShortAM_PM:
-    case FieldType.dateUs:
-    case FieldType.dateUsShort:
-    case FieldType.dateTimeShortUs:
-    case FieldType.dateTimeUs:
-    case FieldType.dateTimeUsAmPm:
-    case FieldType.dateTimeUsAM_PM:
-    case FieldType.dateTimeUsShort:
-    case FieldType.dateTimeUsShortAmPm:
-    case FieldType.dateTimeUsShortAM_PM:
-      return 'date';
     case FieldType.integer:
     case FieldType.float:
     case FieldType.number:
