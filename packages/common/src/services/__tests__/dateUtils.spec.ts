@@ -38,7 +38,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateEuroShort format with zero padding', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateEuroShort, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateEuroShort, { withZeroPadding: true });
       expect(output).toEqual('DD/MM/YY');
     });
 
@@ -53,7 +53,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateTimeShortEuro format with zero padding', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeShortEuro, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeShortEuro, { withZeroPadding: true });
       expect(output).toEqual('DD/MM/YYYY HH:mm');
     });
 
@@ -73,7 +73,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateTimeEuroShort format', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeEuroShort, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeEuroShort, { withZeroPadding: true });
       expect(output).toEqual('DD/MM/YY HH:mm:ss');
     });
 
@@ -83,7 +83,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateTimeEuroShortAmPm format with zero padding', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeEuroShortAmPm, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeEuroShortAmPm, { withZeroPadding: true });
       expect(output).toEqual('DD/MM/YY hh:mm:ss a');
     });
 
@@ -98,7 +98,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateUsShort format with zero padding', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateUsShort, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateUsShort, { withZeroPadding: true });
       expect(output).toEqual('MM/DD/YY');
     });
 
@@ -113,7 +113,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateTimeShortUs format with zero padding', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeShortUs, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeShortUs, { withZeroPadding: true });
       expect(output).toEqual('MM/DD/YYYY HH:mm');
     });
 
@@ -133,7 +133,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateTimeUsShort format with zero padding', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeUsShort, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeUsShort, { withZeroPadding: true });
       expect(output).toEqual('MM/DD/YY HH:mm:ss');
     });
 
@@ -143,11 +143,11 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a Date in dateTimeUsShortAmPm format with zero padding', () => {
-      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeUsShortAmPm, true);
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateTimeUsShortAmPm, { withZeroPadding: true });
       expect(output).toEqual('MM/DD/YY hh:mm:ss a');
     });
 
-    it('should return a Date in dateUtc format', () => {
+    it('should return a Date as ISO8601 when using dateUtc format', () => {
       const output = mapTempoDateFormatWithFieldType(FieldType.dateUtc);
       expect(output).toBe('ISO8601');
     });
@@ -157,6 +157,16 @@ describe('Service/Utilies', () => {
       const output2 = mapTempoDateFormatWithFieldType(FieldType.dateIso);
       expect(output1).toBe('YYYY-MM-DD');
       expect(output2).toBe('YYYY-MM-DD');
+    });
+
+    it('should return a Date as ISO8601 when enabling the option withDefaultIso8601 and providing FieldType.date as input format', () => {
+      const output = mapTempoDateFormatWithFieldType(FieldType.date, { withDefaultIso8601: true });
+      expect(output).toBe('ISO8601');
+    });
+
+    it('should return a Date as ISO8601 when enabling the option withDefaultIso8601 and providing FieldType.dateIso as input format', () => {
+      const output = mapTempoDateFormatWithFieldType(FieldType.dateIso, { withDefaultIso8601: true });
+      expect(output).toBe('ISO8601');
     });
   });
 
