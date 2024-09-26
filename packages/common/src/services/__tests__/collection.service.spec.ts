@@ -5,8 +5,7 @@ import { CollectionService } from '../collection.service';
 import { FieldType, FilterMultiplePassType, OperatorType, } from '../../enums/index';
 import type { CollectionFilterBy, CollectionSortBy, Column, GridOption, } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickGrid } from '../../core';
-import { tryParseDate } from '../dateUtils';
+import { type SlickGrid } from '../../core';
 
 const gridOptionMock: GridOption = {
   preParseDateColumns: true
