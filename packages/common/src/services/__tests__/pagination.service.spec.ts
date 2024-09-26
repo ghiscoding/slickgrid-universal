@@ -13,7 +13,10 @@ vi.useFakeTimers();
 const fnCallbacks = {};
 const mockPubSub = {
   publish: vi.fn(),
-  subscribe: (eventName, fn) => fnCallbacks[eventName] = fn,
+  subscribe: (eventName, fn) => {
+    const eventNames = Array.isArray(eventName) ? eventName : [eventName];
+    eventNames.forEach(eventName => fnCallbacks[eventName] = fn);
+  },
   unsubscribe: vi.fn(),
   unsubscribeAll: vi.fn(),
 };
