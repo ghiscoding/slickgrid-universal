@@ -142,8 +142,7 @@ export class PaginationService {
     }
 
     // Subscribe to Filter Clear & Changed and go back to page 1 when that happen
-    this._subscriptions.push(this.pubSubService.subscribe('onFilterChanged', () => this.resetPagination()));
-    this._subscriptions.push(this.pubSubService.subscribe('onFilterCleared', () => this.resetPagination()));
+    this._subscriptions.push(this.pubSubService.subscribe(['onFilterChanged', 'onFilterCleared'], () => this.resetPagination()));
 
     // when using Infinite Scroll (only), we also need to reset pagination when sorting
     if (backendServiceApi?.options?.infiniteScroll) {
@@ -153,8 +152,8 @@ export class PaginationService {
     // Subscribe to any dataview row count changed so that when Adding/Deleting item(s) through the DataView
     // that would trigger a refresh of the pagination numbers
     if (this.dataView) {
-      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>(`onItemAdded`, items => this.processOnItemAddedOrRemoved(items, true)));
-      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>(`onItemDeleted`, items => this.processOnItemAddedOrRemoved(items, false)));
+      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>('onItemAdded', items => this.processOnItemAddedOrRemoved(items, true)));
+      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>('onItemDeleted', items => this.processOnItemAddedOrRemoved(items, false)));
     }
 
     this.refreshPagination(false, false, true);

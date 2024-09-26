@@ -16,7 +16,7 @@ export interface BasePubSubService {
    * @param callback The callback to be invoked when the specified message is published.
    * @return possibly a Subscription
    */
-  subscribe<T = any>(_eventName: string | Function, _callback: (data: T) => void): EventSubscription | any;
+  subscribe<T = any>(_eventName: string | string[] | Function, _callback: (data: T) => void): EventSubscription | any;
 
   /**
    * Subscribes to a custom event message channel or message type.

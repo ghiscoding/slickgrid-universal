@@ -60,10 +60,11 @@ export class GroupingAndColspanService {
 
         // for both picker (columnPicker/gridMenu) we also need to re-create after hiding/showing columns
         this._subscriptions.push(
-          this.pubSubService.subscribe(`onColumnPickerColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles()),
+          this.pubSubService.subscribe(
+            ['onColumnPickerColumnsChanged', 'onGridMenuColumnsChanged', 'onGridMenuMenuClose'],
+            () => this.renderPreHeaderRowGroupingTitles()
+          ),
           this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0)),
-          this.pubSubService.subscribe(`onGridMenuColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles()),
-          this.pubSubService.subscribe(`onGridMenuMenuClose`, () => this.renderPreHeaderRowGroupingTitles()),
         );
 
         // we also need to re-create after a grid resize

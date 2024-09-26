@@ -120,17 +120,23 @@ export class EventPubSubService implements BasePubSubService {
    * @param callback The callback to be invoked when the specified message is published.
    * @return possibly a Subscription
    */
-  subscribe<T = any>(eventName: string, callback: (data: T) => void): Subscription {
-    const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
+  subscribe<T = any>(eventNames: string | string[], callback: (data: T) => void): Subscription {
+    eventNames = Array.isArray(eventNames) ? eventNames : [eventNames];
+    const subscriptions: Array<() => void> = [];
 
-    // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
-    // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
-    this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail as T));
-    this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
+    eventNames.forEach(eventName => {
+      const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
-    // return a subscription that we can unsubscribe
+      // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
+      // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
+      this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail as T));
+      this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
+      subscriptions.push(() => this.unsubscribe(eventNameByConvention, callback as never));
+    });
+
+    // return a subscription(s) that we can unsubscribed
     return {
-      unsubscribe: () => this.unsubscribe(eventNameByConvention, callback as never)
+      unsubscribe: () => subscriptions.forEach(unsub => unsub())
     };
   }
 
@@ -146,7 +152,7 @@ export class EventPubSubService implements BasePubSubService {
     this._elementSource.addEventListener(eventNameByConvention, listener);
     this._subscribedEvents.push({ name: eventNameByConvention, listener });
 
-    // return a subscription that we can unsubscribe
+    // return a subscription that we can unsubscribed
     return {
       unsubscribe: () => this.unsubscribe(eventNameByConvention, listener as never)
     };
