@@ -114,6 +114,7 @@ const backendUtilityServiceStub = {
 
 const collectionServiceStub = {
   filterCollection: vi.fn(),
+  preParseDateItems: vi.fn(),
   singleFilterCollection: vi.fn(),
   sortCollection: vi.fn(),
 } as unknown as CollectionService;
@@ -582,7 +583,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
-      it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set we udpated the dataset', () => {
+      it('should expect "autosizeColumns()" being called when "autoFitColumnsOnFirstLoad" is set we udpated the dataset', () => {
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
@@ -596,7 +597,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
-      it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
+      it('should expect "autosizeColumns()" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
@@ -610,7 +611,18 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
-      it('should expect "autosizeColumns" NOT being called when "autoFitColumnsOnFirstLoad" is not set and we are on first page load', () => {
+      it('should expect "preParseDateItems()" being called when "preParseDateColumns" is set and a dataset is reassigned', () => {
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        vi.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
+
+        component.gridOptions = { preParseDateColumns: true };
+        component.initialization(divContainer, slickEventHandler);
+        component.dataset = mockData;
+
+        expect(collectionServiceStub.preParseDateItems).toHaveBeenCalledTimes(2);
+      });
+
+      it('should expect "autosizeColumns()" NOT being called when "autoFitColumnsOnFirstLoad" is not set and we are on first page load', () => {
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];

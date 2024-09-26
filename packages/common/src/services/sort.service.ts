@@ -483,7 +483,7 @@ export class SortService {
       let queryFieldName1 = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
 
       if (this._gridOptions.preParseDateColumns && isColumnDateType(fieldType) && sortColumn?.columnId) {
-        queryFieldName1 = typeof this._gridOptions.preParseDateColumns === 'string' ? `__${sortColumn.columnId}` : `${sortColumn.columnId}`;
+        queryFieldName1 = typeof this._gridOptions.preParseDateColumns === 'string' ? `${this._gridOptions.preParseDateColumns}${sortColumn.columnId}` : `${sortColumn.columnId}`;
       }
       let queryFieldName2 = queryFieldName1;
 

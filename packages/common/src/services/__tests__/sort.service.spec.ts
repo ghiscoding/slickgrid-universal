@@ -818,14 +818,28 @@ describe('SortService', () => {
     let dataset = [];
 
     beforeEach(() => {
+      const mockColumns = [
+        { id: 'firstName', field: 'firstName', sortable: true },
+        { id: 'lastName', field: 'lastName', sortable: true },
+        { id: 'file', field: 'file', name: 'Files', sortable: true },
+        { id: 'updatedDate', field: 'updatedDate', name: 'updatedDate', sortable: true, type: FieldType.dateIso },
+      ] as Column[];
+
+      gridOptionMock.backendServiceApi = {
+        service: backendServiceStub,
+        process: () => new Promise((resolve) => resolve(vi.fn()))
+      };
+
       dataset = [
-        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
-        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
-        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
-        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
-        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
-        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
       ] as any;
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
     });
 
     afterEach(() => {
@@ -840,12 +854,12 @@ describe('SortService', () => {
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
-        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
-        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
-        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
-        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
-        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
-        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
       ]);
     });
 
@@ -858,12 +872,12 @@ describe('SortService', () => {
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
-        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
-        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
-        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
-        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
-        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
-        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
       ]);
     });
 
@@ -876,12 +890,12 @@ describe('SortService', () => {
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
-        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
-        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
-        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
-        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
-        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
-        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
       ]);
     });
 
@@ -894,12 +908,12 @@ describe('SortService', () => {
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
-        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
-        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
-        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
-        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
-        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
-        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
       ]);
     });
 
@@ -912,12 +926,12 @@ describe('SortService', () => {
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
-        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
-        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
-        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
-        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
-        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
-        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
       ]);
     });
 
@@ -930,12 +944,50 @@ describe('SortService', () => {
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
-        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
-        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
-        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
-        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
-        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
-        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
+      ]);
+    });
+
+    it('should sort the data by updatedDate column when "preParseDateColumns" is set to true', () => {
+      const mockSortedCols = [
+        { columnId: 'updatedDate', sortCol: { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }, sortAsc: true },
+      ] as ColumnSort[];
+
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionMock, preParseDateColumns: true });
+      service.bindLocalOnSort(gridStub);
+      dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
+
+      expect(dataset).toEqual([
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+      ]);
+    });
+
+    it('should sort the data by updatedDate column when "preParseDateColumns" is set to true', () => {
+      const mockSortedCols = [
+        { columnId: 'updatedDate', sortCol: { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }, sortAsc: true },
+      ] as ColumnSort[];
+
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionMock, preParseDateColumns: '_' });
+      service.bindLocalOnSort(gridStub);
+      dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
+
+      expect(dataset).toEqual([
+        { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 }, updatedDate: '2024-04-02', _updatedDate: '2024-04-01' },
+        { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 }, updatedDate: '2024-04-03', _updatedDate: '2024-04-02' },
+        { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 }, updatedDate: '2024-04-05', _updatedDate: '2024-04-03' },
+        { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 }, updatedDate: '2024-04-01', _updatedDate: '2024-04-05' },
+        { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 }, updatedDate: '2024-04-08', _updatedDate: '2024-04-06' },
+        { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 }, updatedDate: '2024-04-06', _updatedDate: '2024-04-08' },
       ]);
     });
   });
@@ -946,7 +998,6 @@ describe('SortService', () => {
     let mockNewSorters: CurrentSorter[];
 
     beforeEach(() => {
-      gridStub.getOptions = () => gridOptionMock;
       gridOptionMock.enableSorting = true;
       gridOptionMock.backendServiceApi = undefined;
       gridOptionMock.multiColumnSort = true;
@@ -959,6 +1010,7 @@ describe('SortService', () => {
       mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', sortable: true };
       gridStub.getColumns = vi.fn();
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2]);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
     });
 
     it('should throw an error when there are no sorters defined in the column definitions', () => new Promise((done: any) => {

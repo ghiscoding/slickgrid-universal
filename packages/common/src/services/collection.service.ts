@@ -14,6 +14,12 @@ import type { TranslaterService } from './translater.service';
 import type { SlickGrid } from '../core/slickGrid';
 import { isColumnDateType } from './utilities';
 
+type ParsingDateDetails = {
+  columnId: number | string;
+  dateFormat: string;
+  queryFieldName: string;
+};
+
 export class CollectionService<T = any> {
   constructor(protected readonly translaterService?: TranslaterService | undefined) { }
 
@@ -47,32 +53,21 @@ export class CollectionService<T = any> {
 
   /** Pre-parse date items as `Date` object to improve Date Sort considerably */
   preParseDateItems(items: any[], grid: SlickGrid): void {
-    const gridOptions = grid.getOptions();
     console.time('mutate');
 
-    const parsingProps: Array<{ columnId: number | string; dateFormat: string; queryFieldName: string; }> = [];
+    const parsingProps: ParsingDateDetails[] = [];
     grid.getColumns().forEach(col => {
-      const fieldType = col.type || FieldType.string;
-      const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
-      // const strictParsing = dateFormat !== undefined;
-      if (isColumnDateType(fieldType)) {
-        // preparsing could be a boolean (reassign and overwrite same property)
-        // OR a prefix string to assign it into a new item property
-        const queryFieldName = typeof gridOptions.preParseDateColumns === 'string'
-          ? `${gridOptions.preParseDateColumns}${col.id}`
-          : `${col.id}`;
+      const parseInfo = this.getParseDateInfo(col, grid);
 
-        // loop through all date columns only once and keep parsing info
-        parsingProps.push({ columnId: col.id, dateFormat, queryFieldName });
+      // loop through all date columns only once and keep parsing info
+      if (parseInfo) {
+        parsingProps.push(parseInfo);
       }
     });
 
     items.forEach(item => {
       parsingProps.forEach(({ columnId, dateFormat, queryFieldName }) => {
-        const date = tryParseDate(item[columnId], dateFormat, false);
-        if (date) {
-          item[queryFieldName] = date;
-        }
+        this.reassignDateWhenValid(item, columnId, dateFormat, queryFieldName);
       });
     });
 
@@ -80,20 +75,15 @@ export class CollectionService<T = any> {
     // console.log('data', items);
   }
 
-  parseSingleDateItem(item: any, col: Column, grid: SlickGrid): void {
-    const gridOptions = grid.getOptions();
-    const fieldType = col.type || FieldType.string;
-    const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
-    const strictParsing = dateFormat !== undefined;
-    // preparsing could be a boolean (reassign and overwrite same property)
-    // OR a prefix string to assign it into a new item property
-    const queryFieldName = typeof gridOptions.preParseDateColumns === 'string'
-      ? `${gridOptions.preParseDateColumns}${col.id}`
-      : `${col.id}`;
-    const date = tryParseDate(item[col.id], dateFormat, strictParsing);
-    if (date) {
-      item[queryFieldName] = date;
-    }
+  parseSingleDateItem(item: any, grid: SlickGrid): void {
+    grid.getColumns().forEach(col => {
+      const parseInfo = this.getParseDateInfo(col, grid);
+
+      // loop through all date columns only once and keep parsing info
+      if (parseInfo) {
+        this.reassignDateWhenValid(item, col.id, parseInfo.dateFormat, parseInfo.queryFieldName);
+      }
+    });
   }
 
   /**
@@ -213,5 +203,32 @@ export class CollectionService<T = any> {
       }
     }
     return sortedCollection;
+  }
+
+  // --
+  // protected functions
+  // -------------------
+
+  protected getParseDateInfo(col: Column, grid: SlickGrid): ParsingDateDetails | void {
+    const gridOptions = grid.getOptions();
+    const fieldType = col.type || FieldType.string;
+    const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
+
+    if (isColumnDateType(fieldType)) {
+      // preparsing could be a boolean (reassign and overwrite same property)
+      // OR a prefix string to assign it into a new item property
+      const queryFieldName = typeof gridOptions.preParseDateColumns === 'string'
+        ? `${gridOptions.preParseDateColumns}${col.id}`
+        : `${col.id}`;
+
+      return { columnId: col.id, dateFormat, queryFieldName };
+    }
+  }
+
+  protected reassignDateWhenValid(item: any, columnId: number | string, dateFormat: string, queryFieldName: string): void {
+    const date = tryParseDate(item[columnId], dateFormat, false);
+    if (date) {
+      item[queryFieldName] = date;
+    }
   }
 }
