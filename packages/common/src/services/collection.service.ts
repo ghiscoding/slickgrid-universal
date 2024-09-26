@@ -52,12 +52,12 @@ export class CollectionService<T = any> {
   }
 
   /** Pre-parse date items as `Date` object to improve Date Sort considerably */
-  preParseDateItems(items: any[], grid: SlickGrid): void {
+  preParseDateItems(items: any[], grid: SlickGrid, preParseDateColumns: boolean | string): void {
     console.time('mutate');
 
     const parsingProps: ParsingDateDetails[] = [];
     grid.getColumns().forEach(col => {
-      const parseInfo = this.getParseDateInfo(col, grid);
+      const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
 
       // loop through all date columns only once and keep parsing info
       if (parseInfo) {
@@ -75,9 +75,9 @@ export class CollectionService<T = any> {
     // console.log('data', items);
   }
 
-  parseSingleDateItem(item: any, grid: SlickGrid): void {
+  parseSingleDateItem(item: any, grid: SlickGrid, preParseDateColumns: boolean | string): void {
     grid.getColumns().forEach(col => {
-      const parseInfo = this.getParseDateInfo(col, grid);
+      const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
 
       // loop through all date columns only once and keep parsing info
       if (parseInfo) {
@@ -209,16 +209,15 @@ export class CollectionService<T = any> {
   // protected functions
   // -------------------
 
-  protected getParseDateInfo(col: Column, grid: SlickGrid): ParsingDateDetails | void {
-    const gridOptions = grid.getOptions();
+  protected getParseDateInfo(col: Column, preParseDateColumns: boolean | string): ParsingDateDetails | void {
     const fieldType = col.type || FieldType.string;
     const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
 
     if (isColumnDateType(fieldType)) {
       // preparsing could be a boolean (reassign and overwrite same property)
       // OR a prefix string to assign it into a new item property
-      const queryFieldName = typeof gridOptions.preParseDateColumns === 'string'
-        ? `${gridOptions.preParseDateColumns}${col.id}`
+      const queryFieldName = typeof preParseDateColumns === 'string'
+        ? `${preParseDateColumns}${col.id}`
         : `${col.id}`;
 
       return { columnId: col.id, dateFormat, queryFieldName };

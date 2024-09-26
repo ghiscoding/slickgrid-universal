@@ -161,7 +161,7 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     if (this.slickGrid && this._gridOptions?.preParseDateColumns) {
-      this.collectionService.preParseDateItems(data, this.slickGrid);
+      this.collectionService.preParseDateItems(data, this.slickGrid, this._gridOptions.preParseDateColumns);
     }
 
     this.refreshGridData(data || []);
@@ -601,7 +601,7 @@ export class SlickVanillaGridBundle<TData = any> {
     const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(inputDataset) : inputDataset;
 
     if (this.slickGrid && this._gridOptions.preParseDateColumns) {
-      this.collectionService.preParseDateItems(inputDataset!, this.slickGrid);
+      this.collectionService.preParseDateItems(inputDataset!, this.slickGrid, this._gridOptions.preParseDateColumns);
     }
 
     if (this.dataView) {

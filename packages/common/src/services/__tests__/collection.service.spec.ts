@@ -12,7 +12,7 @@ const gridOptionMock: GridOption = {
 };
 
 const gridStub: SlickGrid = {
-  getOptions: () => gridOptionMock,
+  getOptions: vi.fn(),
   getColumns: vi.fn(),
   setSortColumns: vi.fn(),
   setOptions: vi.fn(),
@@ -42,6 +42,7 @@ describe('CollectionService', () => {
       ] as any;
 
       stringCollection = ['John', 'Jane', 'Ava Luna', '', 'Bob', 'John', null, 'John Foo'] as any[];
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
     });
 
     afterEach(() => {
@@ -358,8 +359,8 @@ describe('CollectionService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columns);
     });
 
-    it('should read all rows and parse date string columns and reassign as Date object when calling preParseDateItems()', () => {
-      service.preParseDateItems(collection, gridStub);
+    it('should read all rows and parse date string columns and reassign as Date object when calling preParseDateItems() with preParseDateColumns set as true', () => {
+      service.preParseDateItems(collection, gridStub, true);
 
       expect(collection).toEqual([
         { firstName: 'John', lastName: 'Z', start: parse('2024-02-05', 'YYYY-MM-DD'), finish: parse('2024-04-01', 'YYYY-MM-DD') },
@@ -367,8 +368,17 @@ describe('CollectionService', () => {
       ]);
     });
 
+    it('should read all rows and parse date string columns and assign to new prop as Date object when calling preParseDateItems() with preParseDateColumns set as a string', () => {
+      service.preParseDateItems(collection, gridStub, '_');
+
+      expect(collection).toEqual([
+        { firstName: 'John', lastName: 'Z', start: '2024-02-05', finish: '2024-04-01', _start: parse('2024-02-05', 'YYYY-MM-DD'), _finish: parse('2024-04-01', 'YYYY-MM-DD') },
+        { firstName: 'Jane', lastName: 'Doe', start: '2024-05-02', finish: '2024-06-02', _start: parse('2024-05-02', 'YYYY-MM-DD'), _finish: parse('2024-06-02', 'YYYY-MM-DD') },
+      ]);
+    });
+
     it('should read a single row and parse date string columns and reassign as Date object when calling parseSingleDateItem()', () => {
-      service.parseSingleDateItem(collection[0], gridStub);
+      service.parseSingleDateItem(collection[0], gridStub, true);
 
       // text with only parsing/assigning first row
       expect(collection).toEqual([
