@@ -360,7 +360,7 @@ describe('CollectionService', () => {
     });
 
     it('should read all rows and parse date string columns and reassign as Date object when calling preParseDateItems() with preParseDateColumns set as true', () => {
-      service.preParseDateItems(collection, gridStub, true);
+      service.preParseByMutationDateItems(collection, gridStub, true);
 
       expect(collection).toEqual([
         { firstName: 'John', lastName: 'Z', start: parse('2024-02-05', 'YYYY-MM-DD'), finish: parse('2024-04-01', 'YYYY-MM-DD') },
@@ -369,7 +369,7 @@ describe('CollectionService', () => {
     });
 
     it('should read all rows and parse date string columns and assign to new prop as Date object when calling preParseDateItems() with preParseDateColumns set as a string', () => {
-      service.preParseDateItems(collection, gridStub, '_');
+      service.preParseByMutationDateItems(collection, gridStub, '_');
 
       expect(collection).toEqual([
         { firstName: 'John', lastName: 'Z', start: '2024-02-05', finish: '2024-04-01', _start: parse('2024-02-05', 'YYYY-MM-DD'), _finish: parse('2024-04-01', 'YYYY-MM-DD') },
