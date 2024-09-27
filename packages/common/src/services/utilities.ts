@@ -395,7 +395,7 @@ export function getColumnFieldType(columnDef: Column): typeof FieldType[keyof ty
 }
 
 /** Verify if the identified column is of type Date */
-export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldType]): boolean {
+export function isColumnDateType(fieldType?: typeof FieldType[keyof typeof FieldType]): boolean {
   switch (fieldType) {
     case FieldType.date:
     case FieldType.dateTime:

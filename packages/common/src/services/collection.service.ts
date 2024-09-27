@@ -52,7 +52,7 @@ export class CollectionService<T = any> {
   }
 
   /** Pre-parse date items as `Date` object to improve Date Sort considerably */
-  preParseDateItems(items: any[], grid: SlickGrid, preParseDateColumns: boolean | string): void {
+  preParseByMutationDateItems(items: any[], grid: SlickGrid, preParseDateColumns: boolean | string): void {
     console.time('mutate');
 
     const parsingProps: ParsingDateDetails[] = [];

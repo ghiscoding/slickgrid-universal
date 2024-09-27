@@ -114,7 +114,6 @@ const backendUtilityServiceStub = {
 
 const collectionServiceStub = {
   filterCollection: vi.fn(),
-  preParseDateItems: vi.fn(),
   singleFilterCollection: vi.fn(),
   sortCollection: vi.fn(),
 } as unknown as CollectionService;
@@ -609,17 +608,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(autosizeSpy).toHaveBeenCalledTimes(1);
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
-      });
-
-      it('should expect "preParseDateItems()" being called when "preParseDateColumns" is set and a dataset is reassigned', () => {
-        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
-        vi.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
-
-        component.gridOptions = { preParseDateColumns: true };
-        component.initialization(divContainer, slickEventHandler);
-        component.dataset = mockData;
-
-        expect(collectionServiceStub.preParseDateItems).toHaveBeenCalledTimes(2);
       });
 
       it('should expect "autosizeColumns()" NOT being called when "autoFitColumnsOnFirstLoad" is not set and we are on first page load', () => {

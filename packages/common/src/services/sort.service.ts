@@ -11,6 +11,7 @@ import type {
 } from '../interfaces/index';
 import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index';
 import type { BackendUtilityService } from './backendUtility.service';
+import type { CollectionService } from './collection.service';
 import { getDescendantProperty, flattenToParentChildArray, isColumnDateType } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { SharedService } from './shared.service';
@@ -25,7 +26,13 @@ export class SortService {
   protected _isBackendGrid = false;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(protected readonly sharedService: SharedService, protected readonly pubSubService: BasePubSubService, protected readonly backendUtilities?: BackendUtilityService | undefined, protected rxjs?: RxJsFacade | undefined) {
+  constructor(
+    protected readonly collectionService: CollectionService,
+    protected readonly sharedService: SharedService,
+    protected readonly pubSubService: BasePubSubService,
+    protected readonly backendUtilities?: BackendUtilityService | undefined,
+    protected rxjs?: RxJsFacade | undefined,
+  ) {
     this._eventHandler = new SlickEventHandler();
     if (this.rxjs) {
       this.httpCancelRequests$ = this.rxjs.createSubject<void>();
@@ -92,8 +99,8 @@ export class SortService {
   }
 
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort): void {
-    // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
-    // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
+    // multiSort and singleSort are not exactly the same, but we want to structure it the same so that the `for` loop works the same,
+    // and also to avoid having to rewrite the `for` loop in the sort, so we will make the singleSort an array of 1 object
     const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort)
       ? (args as MultiColumnSort).sortCols
       : new Array({
@@ -131,7 +138,7 @@ export class SortService {
         this.onLocalSortChanged(this._grid, sortedColsWithoutCurrent, true, true);
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
-        const isMultiSort = this._gridOptions?.multiColumnSort ?? false;
+        const isMultiSort = this._gridOptions.multiColumnSort || false;
         const sortOutput = isMultiSort ? sortedColsWithoutCurrent as unknown as MultiColumnSort : sortedColsWithoutCurrent[0] as unknown as SingleColumnSort;
         this._grid.onSort.notify(sortOutput);
       }
@@ -178,7 +185,7 @@ export class SortService {
           }
         }
       } else if (this._isBackendGrid) {
-        const backendService = this._gridOptions?.backendServiceApi?.service;
+        const backendService = this._gridOptions.backendServiceApi?.service;
         if (backendService?.clearSorters) {
           backendService.clearSorters();
         }
@@ -236,7 +243,7 @@ export class SortService {
    * @param sender
    */
   emitSortChanged(sender: EmitterType, currentLocalSorters?: CurrentSorter[]): void {
-    if (sender === EmitterType.remote && this._gridOptions?.backendServiceApi) {
+    if (sender === EmitterType.remote && this._gridOptions.backendServiceApi) {
       let currentSorters: CurrentSorter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
       if (backendService?.getCurrentSorters) {
@@ -321,7 +328,7 @@ export class SortService {
   /** Process the initial sort, typically it will sort ascending by the column that has the Tree Data unless user specifies a different initialSort */
   processTreeDataInitialSort(): void {
     // when a Tree Data view is defined, we must sort the data so that the UI works correctly
-    if (this._gridOptions?.enableTreeData && this._gridOptions.treeDataOptions) {
+    if (this._gridOptions.enableTreeData && this._gridOptions.treeDataOptions) {
       // first presort it once by tree level
       const treeDataOptions = this._gridOptions.treeDataOptions;
       const columnWithTreeData = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.columnId);
@@ -392,12 +399,19 @@ export class SortService {
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
   async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false): Promise<void> {
-    const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
-    const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
+    const datasetIdPropertyName = this._gridOptions.datasetIdPropertyName || 'id';
+    const isTreeDataEnabled = this._gridOptions.enableTreeData || false;
     const dataView = grid.getData<SlickDataView>();
     await this.pubSubService.publish('onBeforeSortChange', { sortColumns }, 0);
 
     if (grid && dataView) {
+      // when Date pre-parsing is enabled but not yet parsed, let's execute the Dates parsing
+      if (this._gridOptions.preParseDateColumns && !this.sharedService.isItemsDateParsed && sortColumns.some(c => isColumnDateType(c.sortCol?.type))) {
+        const items = this._dataView.getItems();
+        this.collectionService.preParseByMutationDateItems(items, this._grid, this._gridOptions.preParseDateColumns);
+        this.sharedService.isItemsDateParsed = true;
+      }
+
       if (forceReSort && !isTreeDataEnabled) {
         dataView.reSort();
       }
@@ -438,8 +452,8 @@ export class SortService {
    */
   sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, emitSortChanged = false): { hierarchical: T[]; flat: any[]; } {
     this.sortTreeData(hierarchicalDataset, sortColumns);
-    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
-    const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
+    const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName || 'id';
+    const treeDataOpt: TreeDataOption = this._gridOptions.treeDataOptions || { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
     const sortedFlatArray = flattenToParentChildArray(hierarchicalDataset, treeDataOptions);
 
@@ -449,7 +463,7 @@ export class SortService {
       sortColumns.forEach(sortCol => {
         this._currentLocalSorters.push({ columnId: sortCol.columnId, direction: sortCol.sortAsc ? 'ASC' : 'DESC' });
       });
-      const emitterType = this._gridOptions?.backendServiceApi ? EmitterType.remote : EmitterType.local;
+      const emitterType = this._gridOptions.backendServiceApi ? EmitterType.remote : EmitterType.local;
       this.emitSortChanged(emitterType);
     }
 
@@ -530,8 +544,7 @@ export class SortService {
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
   sortTreeChildren(treeArray: any[], sortColumn: ColumnSort, treeLevel: number): void {
-    const treeDataOptions = this._gridOptions?.treeDataOptions;
-    const childrenPropName = treeDataOptions?.childrenPropName ?? 'children';
+    const childrenPropName = this._gridOptions.treeDataOptions?.childrenPropName ?? 'children';
     treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     // when item has a child, we'll sort recursively
@@ -564,7 +577,7 @@ export class SortService {
     }
 
     if (Array.isArray(sorters)) {
-      const backendApi = this._gridOptions?.backendServiceApi;
+      const backendApi = this._gridOptions.backendServiceApi;
 
       if (backendApi) {
         const backendApiService = backendApi?.service;
@@ -618,14 +631,11 @@ export class SortService {
     });
 
     // loop through column definition to hide/show grid menu commands
-    const commandItems = this._gridOptions?.gridMenu?.commandItems;
+    const commandItems = this._gridOptions.gridMenu?.commandItems;
     if (commandItems) {
       commandItems.forEach((menuItem) => {
-        if (menuItem && typeof menuItem !== 'string') {
-          const menuCommand = menuItem.command;
-          if (menuCommand === 'clear-sorting') {
-            menuItem.hidden = isDisabling;
-          }
+        if (menuItem && typeof menuItem !== 'string' && menuItem.command === 'clear-sorting') {
+          menuItem.hidden = isDisabling;
         }
       });
     }

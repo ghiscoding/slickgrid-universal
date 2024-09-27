@@ -1,6 +1,7 @@
 import {
   Aggregators,
   type Column,
+  Editors,
   FieldType,
   Filters,
   FileType,
@@ -130,6 +131,7 @@ export default class Example02 {
         maxWidth: 130,
         filterable: true,
         filter: { model: Filters.compoundDate },
+        editor: { model: Editors.date },
         sortable: true,
         type: FieldType.dateUsShort,
         formatter: Formatters.dateUs,
@@ -141,6 +143,7 @@ export default class Example02 {
         maxWidth: 130,
         filterable: true,
         filter: { model: Filters.compoundDate },
+        editor: { model: Editors.date },
         sortable: true,
         type: FieldType.dateUsShort,
         formatter: Formatters.dateUs,
@@ -204,6 +207,9 @@ export default class Example02 {
         bottomPadding: 30,
         rightPadding: 50
       },
+      autoEdit: true,
+      editable: true,
+      enableCellNavigation: true,
       enableTextExport: true,
       enableFiltering: true,
       enableGrouping: true,
@@ -253,6 +259,10 @@ export default class Example02 {
       // you can improve Date sorting by pre-parsing date items to `Date` object (this avoid reparsing the same dates multiple times)
       preParseDateColumns: true, // '__',
     };
+  }
+
+  logItems() {
+    console.log(this.sgb.dataView?.getItems());
   }
 
   loadData(rowCount: number) {
