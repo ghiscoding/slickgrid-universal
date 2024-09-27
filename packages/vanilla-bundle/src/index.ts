@@ -27,5 +27,5 @@ export { BindingService };
 export { Aggregators, Editors, Enums, EventPubSubService, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities };
 export { SlickEmptyWarningComponent, SlickPaginationComponent, SlickVanillaGridBundle }; // export the custom components & interfaces
 export { Slicker };
-export * from './interfaces/index';
+export type * from './interfaces/index';
 export * from './services/index';

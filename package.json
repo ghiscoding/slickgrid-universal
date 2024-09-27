@@ -41,6 +41,7 @@
     "build:dev": "pnpm -r --filter=./examples/vite-demo-vanilla-bundle build:dev",
     "serve:vite": "pnpm -r --filter=./examples/vite-demo-vanilla-bundle dev",
     "lint": "eslint --cache .",
+    "lint:fix": "eslint --fix .",
     "lint:no-cache": "eslint .",
     "test": "vitest --config ./test/vitest.config.mts",
     "test:coverage": "vitest --no-watch --coverage --config ./test/vitest.config.mts",

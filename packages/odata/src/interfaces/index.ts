@@ -1,3 +1,3 @@
-export * from './odataOption.interface';
-export * from './odataServiceApi.interface';
-export * from './odataSortingOption.interface';
+export type * from './odataOption.interface';
+export type * from './odataServiceApi.interface';
+export type * from './odataSortingOption.interface';
