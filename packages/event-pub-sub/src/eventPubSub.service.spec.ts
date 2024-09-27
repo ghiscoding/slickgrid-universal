@@ -216,7 +216,37 @@ describe('EventPubSub Service', () => {
       expect(service.subscribedEvents.length).toBe(0);
     });
 
-    it('should unsubscribeAll events', () => {
+    it('should be able to provide an array of event to subscribe and be able to unsubscribeAll events', () => {
+      const removeEventSpy = vi.spyOn(divContainer, 'removeEventListener');
+      const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
+      const unsubscribeSpy = vi.spyOn(service, 'unsubscribe');
+      const mockCallback = vi.fn();
+
+      service.subscribe(['onClick', 'onDblClick'], mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
+
+      expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
+      expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
+      expect(service.subscribedEventNames).toEqual(['onClick', 'onDblClick']);
+      expect(service.subscribedEvents.length).toBe(2);
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
+
+      divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
+      divContainer.dispatchEvent(new CustomEvent('onDblClick', { detail: { name: 'Jane' } }));
+
+      expect(mockCallback).toHaveBeenCalledTimes(3);
+      expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
+      expect(mockCallback).toHaveBeenCalledWith({ name: 'Jane' });
+
+      service.unsubscribeAll();
+      expect(removeEventSpy).toHaveBeenCalledWith('onClick', mockCallback);
+      expect(removeEventSpy).toHaveBeenCalledWith('onDblClick', mockCallback);
+      expect(unsubscribeSpy).toHaveBeenCalledTimes(2);
+      expect(service.subscribedEvents.length).toBe(0);
+    });
+
+    it('should be able to subscribe to multiple event and be able to unsubscribeAll events', () => {
       const removeEventSpy = vi.spyOn(divContainer, 'removeEventListener');
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const unsubscribeSpy = vi.spyOn(service, 'unsubscribe');
@@ -233,6 +263,11 @@ describe('EventPubSub Service', () => {
       expect(service.subscribedEvents.length).toBe(2);
       expect(mockCallback).toHaveBeenCalledTimes(1);
       expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
+
+      divContainer.dispatchEvent(new CustomEvent('onDblClick', { detail: { name: 'Jane' } }));
+
+      expect(mockDblCallback).toHaveBeenCalledTimes(1);
+      expect(mockDblCallback).toHaveBeenCalledWith({ name: 'Jane' });
 
       service.unsubscribeAll();
       expect(removeEventSpy).toHaveBeenCalledWith('onClick', mockCallback);
