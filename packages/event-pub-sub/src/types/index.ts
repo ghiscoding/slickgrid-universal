@@ -1,3 +1,3 @@
-export * from './basePubSubService.interface';
+export type * from './basePubSubService.interface';
 export * from './eventNamingStyle.enum';
-export * from './eventSubscription.interface';
+export type * from './eventSubscription.interface';

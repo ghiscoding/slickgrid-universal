@@ -20,7 +20,7 @@ export * from './global-grid-options';
 
 export * from './core/index';
 export * from './enums/index';
-export * from './interfaces/index';
+export type * from './interfaces/index';
 export * from './aggregators/index';
 export * from './aggregators/aggregators.index';
 export * from './editors/index';
