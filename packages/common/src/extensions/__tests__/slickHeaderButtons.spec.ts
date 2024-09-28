@@ -71,9 +71,9 @@ describe('HeaderButton Plugin', () => {
   beforeEach(() => {
     backendUtilityService = new BackendUtilityService();
     sharedService = new SharedService();
+    sharedService.slickGrid = gridStub;
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     plugin = new SlickHeaderButtons(extensionUtility, pubSubServiceStub, sharedService);
   });
@@ -108,7 +108,7 @@ describe('HeaderButton Plugin', () => {
 
   describe('plugins - Header Button', () => {
     beforeEach(() => {
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       columnsMock[0].header!.buttons![1] = undefined as any;
       columnsMock[0].header!.buttons![1] = {
         cssClass: 'mdi mdi-lightbulb-on',

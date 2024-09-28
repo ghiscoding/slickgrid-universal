@@ -1,15 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SharedService } from '../shared.service';
-import type { Column, CurrentPagination, GridOption } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
-import type { SlickDataView, SlickGrid } from '../../core';
-import type { SlickGroupItemMetadataProvider } from '../../extensions';
-
-const dataviewStub = {
-  onRowCountChanged: vi.fn(),
-  onRowsChanged: vi.fn(),
-} as unknown as SlickDataView;
+import type { SlickGrid } from '../../core';
 
 const gridStub = {
   autosizeColumns: vi.fn(),
@@ -78,71 +72,6 @@ describe('Shared Service', () => {
     expect(columns).toEqual(mockColumns);
   });
 
-  it('should call "currentPagination" GETTER and return the currentPagination object', () => {
-    const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
-    const spy = vi.spyOn(service, 'currentPagination', 'get').mockReturnValue(expectedResult);
-
-    const output = service.currentPagination;
-
-    expect(spy).toHaveBeenCalled();
-    expect(output).toEqual(expectedResult);
-  });
-
-  it('should call "currentPagination" SETTER and expect GETTER to return the same', () => {
-    const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
-    const getSpy = vi.spyOn(service, 'currentPagination', 'get');
-    const setSpy = vi.spyOn(service, 'currentPagination', 'set');
-
-    service.currentPagination = expectedResult;
-    const output = service.currentPagination;
-
-    expect(getSpy).toHaveBeenCalled();
-    expect(setSpy).toHaveBeenCalled();
-    expect(output).toEqual(expectedResult);
-  });
-
-  it('should call "dataView" GETTER and return a dataView', () => {
-    const spy = vi.spyOn(service, 'dataView', 'get').mockReturnValue(dataviewStub);
-
-    const ouput = service.dataView;
-
-    expect(spy).toHaveBeenCalled();
-    expect(ouput).toEqual(dataviewStub);
-  });
-
-  it('should call "dataView" SETTER and expect GETTER to return the same', () => {
-    const getSpy = vi.spyOn(service, 'dataView', 'get');
-    const setSpy = vi.spyOn(service, 'dataView', 'set');
-
-    service.dataView = dataviewStub;
-    const output = service.dataView;
-
-    expect(getSpy).toHaveBeenCalled();
-    expect(setSpy).toHaveBeenCalled();
-    expect(output).toEqual(dataviewStub);
-  });
-
-  it('should call "grid" GETTER and return the grid object', () => {
-    const spy = vi.spyOn(service, 'slickGrid', 'get').mockReturnValue(gridStub);
-
-    const output = service.slickGrid;
-
-    expect(spy).toHaveBeenCalled();
-    expect(output).toEqual(gridStub);
-  });
-
-  it('should call "grid" SETTER and expect GETTER to return the same', () => {
-    const getSpy = vi.spyOn(service, 'slickGrid', 'get');
-    const setSpy = vi.spyOn(service, 'slickGrid', 'set');
-
-    service.slickGrid = gridStub;
-    const output = service.slickGrid;
-
-    expect(getSpy).toHaveBeenCalled();
-    expect(setSpy).toHaveBeenCalled();
-    expect(output).toEqual(gridStub);
-  });
-
   it('should call "gridOptions" GETTER and expect options to return empty object when Grid object does not exist', () => {
     const options = service.gridOptions;
     expect(options).toEqual({});
@@ -177,54 +106,6 @@ describe('Shared Service', () => {
     expect(getSpy).toHaveBeenCalled();
     expect(setSpy).toHaveBeenCalled();
     expect(output).toEqual(mockGridOptions);
-  });
-
-  it('should call "groupItemMetadataProvider" GETTER and return metadata', () => {
-    const spy = vi.spyOn(service, 'groupItemMetadataProvider', 'get').mockReturnValue(mockColumns as unknown as SlickGroupItemMetadataProvider);
-
-    const output = service.groupItemMetadataProvider;
-
-    expect(spy).toHaveBeenCalled();
-    expect(output).toEqual(mockColumns);
-  });
-
-  it('should call "groupItemMetadataProvider" SETTER and expect GETTER to return the same', () => {
-    const getSpy = vi.spyOn(service, 'groupItemMetadataProvider', 'get');
-    const setSpy = vi.spyOn(service, 'groupItemMetadataProvider', 'set');
-
-    service.groupItemMetadataProvider = mockColumns as unknown as SlickGroupItemMetadataProvider;
-    const output = service.groupItemMetadataProvider;
-
-    expect(getSpy).toHaveBeenCalled();
-    expect(setSpy).toHaveBeenCalled();
-    expect(output).toEqual(mockColumns);
-  });
-
-  it('should call "frozenVisibleColumnId" GETTER and expect a boolean value to be returned', () => {
-    const columnId = service.frozenVisibleColumnId;
-    expect(columnId).toEqual(undefined);
-  });
-
-  it('should call "frozenVisibleColumnId" GETTER and SETTER expect same value to be returned', () => {
-    service.frozenVisibleColumnId = 'field1';
-    expect(service.frozenVisibleColumnId).toEqual('field1');
-  });
-
-  it('should call "gridContainerElement" GETTER and SETTER expect same value to be returned', () => {
-    const divMock = document.createElement('div');
-    divMock.className = 'some-class';
-    service.gridContainerElement = divMock;
-    expect(service.gridContainerElement).toEqual(divMock);
-  });
-
-  it('should call "hasColumnsReordered" GETTER and expect a boolean value to be returned', () => {
-    const flag = service.hasColumnsReordered;
-    expect(flag).toEqual(false);
-  });
-
-  it('should call "hasColumnsReordered" GETTER and SETTER expect same value to be returned', () => {
-    service.hasColumnsReordered = true;
-    expect(service.hasColumnsReordered).toEqual(true);
   });
 
   it('should call "visibleColumns" GETTER and return all columns', () => {
@@ -267,16 +148,6 @@ describe('Shared Service', () => {
     expect(getSpy).toHaveBeenCalled();
     expect(setSpy).toHaveBeenCalled();
     expect(columns).toEqual(mockHierarchicalDataset);
-  });
-
-  it('should call "hideHeaderRowAfterPageLoad" GETTER and expect a boolean value to be returned', () => {
-    const flag = service.hideHeaderRowAfterPageLoad;
-    expect(flag).toEqual(false);
-  });
-
-  it('should call "hideHeaderRowAfterPageLoad" GETTER and SETTER expect same value to be returned', () => {
-    service.hideHeaderRowAfterPageLoad = true;
-    expect(service.hideHeaderRowAfterPageLoad).toEqual(true);
   });
 
   it('should call "externalRegisteredResources" GETTER and return all columns', () => {

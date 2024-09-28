@@ -195,6 +195,7 @@ describe('ExtensionService', () => {
       translateService = new TranslateServiceStub();
       translateService.use('fr');
       extensionUtility = new ExtensionUtility(sharedService, undefined, translateService);
+      sharedService.slickGrid = gridStub;
 
       service = new ExtensionService(
         extensionUtility,
@@ -231,9 +232,9 @@ describe('ExtensionService', () => {
     });
 
     it('should return "autosizeColumns" from the SharedService Grid object when "autoResizeColumns" method is called', () => {
-      const spy = vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       service.autoResizeColumns();
-      expect(spy).toHaveBeenCalled();
+      expect(gridStub.autosizeColumns).toHaveBeenCalled();
     });
 
     it('should return empty object when "extensionlList" GETTER is called', () => {
@@ -605,6 +606,10 @@ describe('ExtensionService', () => {
     });
 
     describe('createExtensionsBeforeGridCreation method', () => {
+      beforeEach(() => {
+        sharedService.slickGrid = gridStub;
+      });
+
       it('should call checkboxSelectorExtension create when "enableCheckboxSelector" is set in the grid options provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = { enableCheckboxSelector: true } as GridOption;
@@ -693,15 +698,14 @@ describe('ExtensionService', () => {
     it('should call hideColumn and expect "visibleColumns" to be updated accordingly', () => {
       const columnsMock = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       const updatedColumnsMock = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
-      const visibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
 
       service.hideColumn(columnsMock[1]);
 
-      expect(visibleSpy).toHaveBeenCalledWith(updatedColumnsMock);
+      expect(sharedService.visibleColumns).toEqual(updatedColumnsMock);
       expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock);
     });
 
@@ -821,12 +825,11 @@ describe('ExtensionService', () => {
         const columnsBeforeTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Bonjour', nameKey: 'HELLO' }] as Column[];
         vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
-        const columnSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsBeforeTranslateMock);
+        sharedService.allColumns = columnsBeforeTranslateMock;
         const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
 
         service.translateColumnHeaders();
 
-        expect(columnSpy).toHaveBeenCalled();
         expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, false);
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
       });
@@ -835,12 +838,11 @@ describe('ExtensionService', () => {
         const columnsBeforeTranslateMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
-        const columnSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsBeforeTranslateMock);
+        sharedService.allColumns = columnsBeforeTranslateMock;
         const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
 
         service.translateColumnHeaders('en');
 
-        expect(columnSpy).toHaveBeenCalled();
         expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, false);
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
       });
@@ -849,12 +851,11 @@ describe('ExtensionService', () => {
         const columnsBeforeTranslateMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         const colDefSpy = vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get');
-        const columnSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsBeforeTranslateMock);
+        sharedService.allColumns = columnsBeforeTranslateMock;
         const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
 
         service.translateColumnHeaders('en', columnsBeforeTranslateMock);
 
-        expect(columnSpy).toHaveBeenCalled();
         expect(colDefSpy).not.toHaveBeenCalled();
         expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, true);
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
@@ -869,7 +870,7 @@ describe('ExtensionService', () => {
 
       it('should call "setColumns" on the Shared Service with the Shared "columnDefinitions" when no arguments is provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        sharedService.slickGrid = gridStub;
         const colSpy = vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
         const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -884,7 +885,7 @@ describe('ExtensionService', () => {
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
           { id: 'field2', field: 'field2', nameKey: 'WORLD' }
         ] as Column[];
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        sharedService.slickGrid = gridStub;
         const allColsSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'set');
         const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -899,14 +900,12 @@ describe('ExtensionService', () => {
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' }
         ] as Column[];
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        const spyAllCols = vi.spyOn(SharedService.prototype, 'allColumns', 'set');
+        sharedService.slickGrid = gridStub;
         const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
 
         service.renderColumnHeaders(columnsMock);
 
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
-        expect(spyAllCols).not.toHaveBeenCalled();
       });
 
       it('should replace the Column Picker columns when plugin is enabled and method is called with new column definition collection provided as argument', () => {

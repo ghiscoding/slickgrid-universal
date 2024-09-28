@@ -93,7 +93,6 @@ describe('Slick-Pagination Component', () => {
       });
 
       beforeEach(() => {
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         vi.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
         div = document.createElement('div');
@@ -101,6 +100,7 @@ describe('Slick-Pagination Component', () => {
         sharedService = new SharedService();
         eventPubSubService = new EventPubSubService();
         translateService = new TranslateServiceStub();
+        sharedService.slickGrid = gridStub;
 
         component = new SlickPaginationComponent(paginationServiceStub as PaginationService, eventPubSubService, sharedService, translateService);
         component.renderPagination(div);
@@ -318,13 +318,13 @@ describe('with different i18n locale', () => {
   beforeEach(() => {
     mockGridOptions.enableTranslate = true;
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     vi.spyOn(paginationServiceStub as PaginationService, 'getFullPagination').mockReturnValue(mockFullPagination2);
     div = document.createElement('div');
     document.body.appendChild(div);
     sharedService = new SharedService();
     eventPubSubService = new EventPubSubService();
     translateService = new TranslateServiceStub();
+    sharedService.slickGrid = gridStub;
 
     component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);
     component.renderPagination(div);

@@ -157,12 +157,12 @@ describe('GridMenuControl', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
+      sharedService.dataView = dataViewStub;
+      sharedService.slickGrid = gridStub;
 
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      vi.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
       vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
@@ -296,7 +296,7 @@ describe('GridMenuControl', () => {
 
       it('should expect the Grid Menu to change from the Left side container to the Right side when changing from a regular to a frozen grid via "setOptions"', () => {
         const recreateSpy = vi.spyOn(control, 'recreateGridMenu');
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        sharedService.slickGrid = gridStub;
 
         control.initEventHandlers();
         gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 2 } }, new SlickEventData(), gridStub);
@@ -1339,7 +1339,7 @@ describe('GridMenuControl', () => {
 
         it('should call "clearFilters" and dataview refresh when the command triggered is "clear-filter"', () => {
           const filterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
-          const refreshSpy = vi.spyOn(SharedService.prototype.dataView, 'refresh');
+          const refreshSpy = vi.spyOn(sharedService.dataView, 'refresh');
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1359,7 +1359,7 @@ describe('GridMenuControl', () => {
 
         it('should call "clearSorting" and dataview refresh when the command triggered is "clear-sorting"', () => {
           const sortSpy = vi.spyOn(sortServiceStub, 'clearSorting');
-          const refreshSpy = vi.spyOn(SharedService.prototype.dataView, 'refresh');
+          const refreshSpy = vi.spyOn(sharedService.dataView, 'refresh');
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1519,7 +1519,6 @@ describe('GridMenuControl', () => {
           let copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, hideTogglePreHeaderCommand: false } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          const gridSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setPreHeaderPanelVisibility');
 
           control.init();
           control.columns = columnsMock;
@@ -1527,7 +1526,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-preheader]')!.dispatchEvent(clickEvent);
 
-          expect(gridSpy).toHaveBeenCalledWith(false);
+          expect(gridStub.setPreHeaderPanelVisibility).toHaveBeenCalledWith(false);
 
           copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: false, hideTogglePreHeaderCommand: false } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1535,7 +1534,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-preheader]')!.dispatchEvent(clickEvent);
 
-          expect(gridSpy).toHaveBeenCalledWith(true);
+          expect(gridStub.setPreHeaderPanelVisibility).toHaveBeenCalledWith(true);
         });
 
         it('should call "refreshBackendDataset" method when the command triggered is "refresh-dataset"', () => {
