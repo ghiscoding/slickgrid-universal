@@ -582,7 +582,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
-      it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set we udpated the dataset', () => {
+      it('should expect "autosizeColumns()" being called when "autoFitColumnsOnFirstLoad" is set we udpated the dataset', () => {
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
@@ -596,7 +596,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
-      it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
+      it('should expect "autosizeColumns()" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
@@ -610,7 +610,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
-      it('should expect "autosizeColumns" NOT being called when "autoFitColumnsOnFirstLoad" is not set and we are on first page load', () => {
+      it('should expect "autosizeColumns()" NOT being called when "autoFitColumnsOnFirstLoad" is not set and we are on first page load', () => {
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
@@ -857,7 +857,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         vi.advanceTimersByTime(5);
         await new Promise(process.nextTick);
 
-        expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[SlickGrid-Universal] The response body passed to collectionAsync was already read.'));
+        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to collectionAsync was already read.'));
       });
     });
 

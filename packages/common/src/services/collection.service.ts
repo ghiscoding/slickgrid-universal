@@ -8,8 +8,17 @@ import {
   SortDirectionNumber,
 } from './../enums/index';
 import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index';
+import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { TranslaterService } from './translater.service';
+import type { SlickGrid } from '../core/slickGrid';
+import { isColumnDateType } from './utilities';
+
+type ParsingDateDetails = {
+  columnId: number | string;
+  dateFormat: string;
+  queryFieldName: string;
+};
 
 export class CollectionService<T = any> {
   constructor(protected readonly translaterService?: TranslaterService | undefined) { }
@@ -40,6 +49,38 @@ export class CollectionService<T = any> {
     }
 
     return filteredCollection;
+  }
+
+  /** Pre-parse date items as `Date` object to improve Date Sort considerably */
+  preParseByMutationDateItems(items: any[], grid: SlickGrid, preParseDateColumns: boolean | string): void {
+    const parsingProps: ParsingDateDetails[] = [];
+    grid.getColumns().forEach(col => {
+      const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
+
+      // loop through all date columns only once and keep parsing info
+      if (parseInfo) {
+        parsingProps.push(parseInfo);
+      }
+    });
+
+    items.forEach(item => {
+      parsingProps.forEach(({ columnId, dateFormat, queryFieldName }) => {
+        this.reassignDateWhenValid(item, columnId, dateFormat, queryFieldName);
+      });
+    });
+  }
+
+  parseSingleDateItem(item: any, grid: SlickGrid, preParseDateColumns: boolean | string): void {
+    if (preParseDateColumns) {
+      grid.getColumns().forEach(col => {
+        const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
+
+        // loop through all date columns only once and keep parsing info
+        if (parseInfo) {
+          this.reassignDateWhenValid(item, col.id, parseInfo.dateFormat, parseInfo.queryFieldName);
+        }
+      });
+    }
   }
 
   /**
@@ -116,8 +157,8 @@ export class CollectionService<T = any> {
               const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
               const objectProperty = sortBy.property;
               const fieldType = sortBy?.fieldType ?? columnDef?.type ?? FieldType.string;
-              const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow1[objectProperty as keyof T] || ' ') as string) : dataRow1[objectProperty as keyof T];
-              const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow2[objectProperty as keyof T] || ' ') as string) : dataRow2[objectProperty as keyof T];
+              const value1 = (enableTranslateLabel) ? this.translaterService?.translate?.((dataRow1[objectProperty as keyof T] || ' ') as string) : dataRow1[objectProperty as keyof T];
+              const value2 = (enableTranslateLabel) ? this.translaterService?.translate?.((dataRow2[objectProperty as keyof T] || ' ') as string) : dataRow2[objectProperty as keyof T];
 
               const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
               if (sortResult !== SortDirectionNumber.neutral) {
@@ -159,5 +200,31 @@ export class CollectionService<T = any> {
       }
     }
     return sortedCollection;
+  }
+
+  // --
+  // protected functions
+  // -------------------
+
+  protected getParseDateInfo(col: Column, preParseDateColumns: boolean | string): ParsingDateDetails | void {
+    const fieldType = col.type || FieldType.string;
+    const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
+
+    if (isColumnDateType(fieldType) && preParseDateColumns) {
+      // preparsing could be a boolean (reassign and overwrite same property)
+      // OR a prefix string to assign it into a new item property
+      const queryFieldName = typeof preParseDateColumns === 'string'
+        ? `${preParseDateColumns}${col.id}`
+        : `${col.id}`;
+
+      return { columnId: col.id, dateFormat, queryFieldName };
+    }
+  }
+
+  protected reassignDateWhenValid(item: any, columnId: number | string, dateFormat: string, queryFieldName: string): void {
+    const date = tryParseDate(item[columnId], dateFormat, false);
+    if (date) {
+      item[queryFieldName] = date;
+    }
   }
 }

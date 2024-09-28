@@ -1,6 +1,7 @@
 import {
   Aggregators,
   type Column,
+  Editors,
   FieldType,
   Filters,
   FileType,
@@ -22,6 +23,10 @@ import '../material-styles.scss';
 
 const NB_ITEMS = 500;
 
+function randomBetween(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 export default class Example02 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
@@ -31,6 +36,7 @@ export default class Example02 {
   sgb: SlickVanillaGridBundle;
   excelExportService: ExcelExportService;
   loadingClass = '';
+  sortStart = 0;
 
   constructor() {
     this.excelExportService = new ExcelExportService();
@@ -44,6 +50,16 @@ export default class Example02 {
 
     this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforesort', () => {
+      // console.time('sort');
+      this.sortStart = window.performance.now();
+    });
+    this._bindingEventService.bind(gridContainerElm, 'onsortchanged', () => {
+      queueMicrotask(() => {
+        // console.timeEnd('sort');
+        console.log(`sort: ${window.performance.now() - this.sortStart} ms`); // use console for Cypress tests
+      });
+    });
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
@@ -126,9 +142,10 @@ export default class Example02 {
         maxWidth: 130,
         filterable: true,
         filter: { model: Filters.compoundDate },
+        editor: { model: Editors.date },
         sortable: true,
-        type: FieldType.dateIso,
-        formatter: Formatters.dateIso,
+        type: FieldType.dateUsShort,
+        formatter: Formatters.dateUs,
         exportWithFormatter: true
       },
       {
@@ -137,10 +154,10 @@ export default class Example02 {
         maxWidth: 130,
         filterable: true,
         filter: { model: Filters.compoundDate },
+        editor: { model: Editors.date },
         sortable: true,
-        type: FieldType.dateIso,
-        outputType: FieldType.dateIso,
-        formatter: Formatters.dateIso,
+        type: FieldType.dateUsShort,
+        formatter: Formatters.dateUs,
       },
       {
         id: 'cost', name: 'Cost', field: 'cost',
@@ -199,8 +216,11 @@ export default class Example02 {
     this.gridOptions = {
       autoResize: {
         bottomPadding: 30,
-        rightPadding: 30
+        rightPadding: 50
       },
+      autoEdit: true,
+      editable: true,
+      enableCellNavigation: true,
       enableTextExport: true,
       enableFiltering: true,
       enableGrouping: true,
@@ -245,17 +265,24 @@ export default class Example02 {
         hideLastUpdateTimestamp: false
       },
       // forceSyncScrolling: true,
-      rowTopOffsetRenderType: 'transform' // defaults: 'top'
+      rowTopOffsetRenderType: 'transform', // defaults: 'top'
+
+      // you can improve Date sorting by pre-parsing date items to `Date` object (this avoid reparsing the same dates multiple times)
+      preParseDateColumns: true, // '__',
     };
+  }
+
+  logItems() {
+    console.log(this.sgb.dataView?.getItems());
   }
 
   loadData(rowCount: number) {
     // mock a dataset
     const tmpArray: any[] = [];
     for (let i = 0; i < rowCount; i++) {
-      const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomYearShort = randomBetween(10, 35);
+      const randomMonth = randomBetween(1, 12);
+      const randomDay = randomBetween(5, 28);
       const randomPercent = Math.round(Math.random() * 100);
       const randomCost = (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100;
 
@@ -266,8 +293,8 @@ export default class Example02 {
         duration: Math.round(Math.random() * 100) + '',
         percentComplete: randomPercent,
         percentCompleteNumber: randomPercent,
-        start: new Date(randomYear, randomMonth, randomDay),
-        finish: new Date(randomYear, (randomMonth + 1), randomDay),
+        start: `${randomMonth}/${randomDay}/${randomYearShort}`,
+        finish: `${randomMonth === 12 ? randomMonth : randomMonth + 1}/${randomDay}/${randomYearShort}`,
         cost: i % 3 ? randomCost : randomCost !== null ? -randomCost : null,
         effortDriven: (i % 5 === 0)
       };

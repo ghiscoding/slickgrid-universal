@@ -83,7 +83,6 @@
     "globals": "^15.9.0",
     "happy-dom": "^15.7.4",
     "husky": "^9.1.6",
-    "jest-extended": "^4.0.2",
     "jsdom": "^25.0.1",
     "jsdom-global": "^3.0.2",
     "npm-run-all2": "^6.2.3",

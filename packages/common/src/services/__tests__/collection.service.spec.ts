@@ -1,9 +1,22 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { parse } from '@formkit/tempo';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CollectionService } from '../collection.service';
 import { FieldType, FilterMultiplePassType, OperatorType, } from '../../enums/index';
-import type { CollectionFilterBy, CollectionSortBy, Column, } from '../../interfaces/index';
+import type { CollectionFilterBy, CollectionSortBy, Column, GridOption, } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { type SlickGrid } from '../../core';
+
+const gridOptionMock: GridOption = {
+  preParseDateColumns: true
+};
+
+const gridStub: SlickGrid = {
+  getOptions: vi.fn(),
+  getColumns: vi.fn(),
+  setSortColumns: vi.fn(),
+  setOptions: vi.fn(),
+} as unknown as SlickGrid;
 
 describe('CollectionService', () => {
   let collection = [];
@@ -29,6 +42,7 @@ describe('CollectionService', () => {
       ] as any;
 
       stringCollection = ['John', 'Jane', 'Ava Luna', '', 'Bob', 'John', null, 'John Foo'] as any[];
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
     });
 
     afterEach(() => {
@@ -325,6 +339,52 @@ describe('CollectionService', () => {
 
       expect(() => service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: FieldType.string }, true))
         .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+    });
+  });
+
+  describe('Pre-Parse Dates', () => {
+    const columns: Column[] = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      { id: 'start', field: 'start', name: 'Start', type: FieldType.dateIso },
+      { id: 'finish', field: 'finish', name: 'Finish', type: FieldType.dateIso },
+    ];
+    let collection: any[] = [];
+
+    beforeEach(() => {
+      collection = [
+        { firstName: 'John', lastName: 'Z', start: '2024-02-05', finish: '2024-04-01' },
+        { firstName: 'Jane', lastName: 'Doe', start: '2024-05-02', finish: '2024-06-02' },
+      ];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columns);
+    });
+
+    it('should read all rows and parse date string columns and reassign as Date object when calling preParseDateItems() with preParseDateColumns set as true', () => {
+      service.preParseByMutationDateItems(collection, gridStub, true);
+
+      expect(collection).toEqual([
+        { firstName: 'John', lastName: 'Z', start: parse('2024-02-05', 'YYYY-MM-DD'), finish: parse('2024-04-01', 'YYYY-MM-DD') },
+        { firstName: 'Jane', lastName: 'Doe', start: parse('2024-05-02', 'YYYY-MM-DD'), finish: parse('2024-06-02', 'YYYY-MM-DD') },
+      ]);
+    });
+
+    it('should read all rows and parse date string columns and assign to new prop as Date object when calling preParseDateItems() with preParseDateColumns set as a string', () => {
+      service.preParseByMutationDateItems(collection, gridStub, '_');
+
+      expect(collection).toEqual([
+        { firstName: 'John', lastName: 'Z', start: '2024-02-05', finish: '2024-04-01', _start: parse('2024-02-05', 'YYYY-MM-DD'), _finish: parse('2024-04-01', 'YYYY-MM-DD') },
+        { firstName: 'Jane', lastName: 'Doe', start: '2024-05-02', finish: '2024-06-02', _start: parse('2024-05-02', 'YYYY-MM-DD'), _finish: parse('2024-06-02', 'YYYY-MM-DD') },
+      ]);
+    });
+
+    it('should read a single row and parse date string columns and reassign as Date object when calling parseSingleDateItem()', () => {
+      service.parseSingleDateItem(collection[0], gridStub, true);
+
+      // text with only parsing/assigning first row
+      expect(collection).toEqual([
+        { firstName: 'John', lastName: 'Z', start: parse('2024-02-05', 'YYYY-MM-DD'), finish: parse('2024-04-01', 'YYYY-MM-DD') },
+        { firstName: 'Jane', lastName: 'Doe', start: '2024-05-02', finish: '2024-06-02' },
+      ]);
     });
   });
 });

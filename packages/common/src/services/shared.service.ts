@@ -17,6 +17,8 @@ export class SharedService {
   protected _externalRegisteredResources!: any[];
   protected _frozenVisibleColumnId!: string | number;
 
+  isItemsDateParsed = false;
+
   // --
   // public
 

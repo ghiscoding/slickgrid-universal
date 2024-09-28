@@ -45,10 +45,10 @@ import {
 
   // utilities
   emptyElement,
-  unsubscribeAll,
   SlickEventHandler,
   SlickDataView,
   SlickGrid,
+  unsubscribeAll,
 } from '@slickgrid-universal/common';
 import { extend } from '@slickgrid-universal/utils';
 import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';
@@ -358,7 +358,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
     this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
-    this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService, this.backendUtilityService);
+    this.sortService = services?.sortService ?? new SortService(this.collectionService, this.sharedService, this._eventPubSubService, this.backendUtilityService);
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
@@ -593,9 +593,10 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
+    inputDataset = inputDataset || [];
+    const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(inputDataset) : inputDataset;
+
     if (this.dataView) {
-      inputDataset = inputDataset || [];
-      const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(inputDataset) : inputDataset;
       this.dataView.beginUpdate();
       this.dataView.setItems(initialDataset, this._gridOptions.datasetIdPropertyName);
       this._currentDatasetLength = inputDataset.length;
@@ -823,6 +824,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, this.dataView?.getItemCount() ?? 0);
       });
       this._eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {
+        this.sharedService.isItemsDateParsed = false;
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, args.itemCount);
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset

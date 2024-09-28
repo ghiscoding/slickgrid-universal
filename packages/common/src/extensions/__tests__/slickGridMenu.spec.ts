@@ -1389,7 +1389,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-excel]')!.dispatchEvent(clickEvent);
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.toInclude('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu.'));
+          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu.'));
         });
 
         it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
@@ -1404,7 +1404,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-csv]')!.dispatchEvent(clickEvent);
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.toInclude('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.'));
+          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.'));
         });
 
         it('should call "exportToFile" with Text Delimited and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
@@ -1419,7 +1419,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-text-delimited]')!.dispatchEvent(clickEvent);
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.toInclude('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.'));
+          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.'));
         });
 
         it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
