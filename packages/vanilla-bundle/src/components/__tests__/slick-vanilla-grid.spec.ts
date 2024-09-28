@@ -857,7 +857,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         vi.advanceTimersByTime(5);
         await new Promise(process.nextTick);
 
-        expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[SlickGrid-Universal] The response body passed to collectionAsync was already read.'));
+        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to collectionAsync was already read.'));
       });
     });
 

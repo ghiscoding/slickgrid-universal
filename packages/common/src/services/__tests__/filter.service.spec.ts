@@ -360,7 +360,7 @@ describe('FilterService', () => {
 
       await new Promise(process.nextTick);
 
-      expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
+      expect(service.getColumnFilters()).toEqual(expect.objectContaining({ firstName: expectationColumnFilter }));
       expect(spySearchChange).toHaveBeenCalledWith({
         clearFilterTriggered: undefined,
         shouldTriggerQuery: true,
@@ -389,7 +389,7 @@ describe('FilterService', () => {
       Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: 'John' } });
       service.getFiltersMetadata()[0].callback(mockEvent, { columnDef: mockColumn, operator: 'EQ', shouldTriggerQuery: true });
 
-      expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
+      expect(service.getColumnFilters()).toEqual(expect.objectContaining({ firstName: expectationColumnFilter }));
       expect(spySearchChange).toHaveBeenCalledWith({
         clearFilterTriggered: undefined,
         shouldTriggerQuery: true,
@@ -428,7 +428,7 @@ describe('FilterService', () => {
       Object.defineProperty(inputEvent, 'target', { writable: true, configurable: true, value: tmpDivElm });
       service.getFiltersMetadata()[0].callback(inputEvent, { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true, target: tmpDivElm } as any);
 
-      expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
+      expect(service.getColumnFilters()).toEqual(expect.objectContaining({ firstName: expectationColumnFilter }));
       expect(spySearchChange).toHaveBeenCalledWith({
         clearFilterTriggered: undefined,
         shouldTriggerQuery: true,

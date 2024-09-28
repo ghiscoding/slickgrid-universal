@@ -99,7 +99,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual([]);
       expect(result.isAsync).toBe(false);
-      expect(result.body).toInclude('return true;');
+      expect(result.body).toContain('return true;');
     });
 
     test('regular function with defined arguments and body', () => {
@@ -113,7 +113,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['input', 'args']);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         if (input.length > 1) {
           return true;
         }
@@ -132,7 +132,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['input', 'args']);
       expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         if (input.length > 1) {
           return true;
         }
@@ -146,7 +146,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['x']);
       expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         return async (y) => async (z) => z(x)(y)
       `));
     });
@@ -157,7 +157,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual([]);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         return { status: 200, body: "hello world" }
       `));
     });
@@ -168,7 +168,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual([]);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         return {status: 200, body: 'hello world'}
       `));
     });
@@ -185,7 +185,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['a', 'b', '...rest']);
       expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         let sum = a + b;
         for (const n of rest) {
           sum += n;
@@ -199,7 +199,7 @@ describe('Service/Utilies', () => {
       const result = getFunctionDetails(fn);
 
       expect(result.params).toEqual([]);
-      expect(result.body).toInclude('return true');
+      expect(result.body).toContain('return true');
     });
 
     test('one liner ES6 arrow function with arguments', () => {
@@ -208,7 +208,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['input']);
       expect(result.isAsync).toBe(false);
-      expect(result.body).toInclude('return input ? input.lenght > 1 : false');
+      expect(result.body).toContain('return input ? input.lenght > 1 : false');
     });
 
     test('ES6 arrow function written in TypeScript', () => {
@@ -222,7 +222,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['input', 'args']);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         if (input.length > 1) {
           return true;
         }
