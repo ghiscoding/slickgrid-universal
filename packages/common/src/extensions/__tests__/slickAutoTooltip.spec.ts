@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { AutoTooltipOption, Column } from '../../interfaces/index';
-import { SharedService } from '../../services/shared.service';
 import { SlickAutoTooltip } from '../slickAutoTooltip';
 import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 
@@ -54,10 +53,6 @@ describe('AutoTooltip Plugin', () => {
   });
 
   describe('plugins - autotooltips - header', () => {
-    beforeEach(() => {
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    });
-
     afterEach(() => {
       plugin.destroy();
       plugin.dispose();
@@ -95,10 +90,6 @@ describe('AutoTooltip Plugin', () => {
   });
 
   describe('plugins - autotooltips - max tooltip', () => {
-    beforeEach(() => {
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-    });
-
     afterEach(() => {
       plugin.dispose();
     });

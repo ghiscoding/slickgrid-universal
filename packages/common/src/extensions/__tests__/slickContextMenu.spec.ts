@@ -166,8 +166,9 @@ describe('ContextMenu Plugin', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    vi.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    sharedService.dataView = dataViewStub;
+    sharedService.slickGrid = gridStub;
+
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -223,8 +224,8 @@ describe('ContextMenu Plugin', () => {
       slickCellElm.className = 'slick-cell';
       eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       eventData.target = slickCellElm;
+      sharedService.slickGrid = gridStub;
 
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       gridOptionsMock.contextMenu!.commandItems = deepCopy(commandItemsMock);
       delete (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).action;
       delete (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride;
@@ -782,8 +783,8 @@ describe('ContextMenu Plugin', () => {
         slickCellElm.className = 'slick-cell';
         eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
         eventData.target = slickCellElm;
+        sharedService.slickGrid = gridStub;
 
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         gridOptionsMock.contextMenu!.commandItems = deepCopy(commandItemsMock);
         delete (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).action;
         delete (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride;
@@ -1176,7 +1177,6 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "setGrouping" from the DataView when Grouping is enabled and the command triggered is "clear-grouping"', () => {
-        const dataviewSpy = vi.spyOn(SharedService.prototype.dataView, 'setGrouping');
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1187,12 +1187,11 @@ describe('ContextMenu Plugin', () => {
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'clear-grouping') as MenuCommandItem;
         menuItemCommand.action!(new CustomEvent('change'), { command: 'clear-grouping', cell: 0, row: 0 } as any);
 
-        expect(dataviewSpy).toHaveBeenCalledWith([]);
+        expect(dataViewStub.setGrouping).toHaveBeenCalledWith([]);
         expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuClearGrouping');
       });
 
       it('should call "collapseAllGroups" from the DataView when Grouping is enabled and the command triggered is "collapse-all-groups"', () => {
-        const dataviewSpy = vi.spyOn(SharedService.prototype.dataView, 'collapseAllGroups');
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCollapseAllGroups: false } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1204,12 +1203,12 @@ describe('ContextMenu Plugin', () => {
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
         menuItemCommand.action!(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
 
-        expect(dataviewSpy).toHaveBeenCalledWith();
+        expect(dataViewStub.collapseAllGroups).toHaveBeenCalledWith();
         expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuCollapseAllGroups');
       });
 
       it('should call "collapseAllGroups" from the DataView when Tree Data is enabled and the command triggered is "collapse-all-groups"', () => {
-        vi.spyOn(SharedService.prototype.dataView, 'getItems').mockReturnValueOnce(columnsMock);
+        vi.spyOn(sharedService.dataView, 'getItems').mockReturnValueOnce(columnsMock);
         const treeDataSpy = vi.spyOn(treeDataServiceStub, 'toggleTreeDataCollapse');
         const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideCollapseAllGroups: false } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1224,7 +1223,6 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "expandAllGroups" from the DataView when Grouping is enabled and the command triggered is "expand-all-groups"', () => {
-        const dataviewSpy = vi.spyOn(SharedService.prototype.dataView, 'expandAllGroups');
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideExpandAllGroups: false } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1236,13 +1234,13 @@ describe('ContextMenu Plugin', () => {
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
         menuItemCommand.action!(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
 
-        expect(dataviewSpy).toHaveBeenCalledWith();
+        expect(dataViewStub.expandAllGroups).toHaveBeenCalledWith();
         expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuExpandAllGroups');
       });
 
       it('should call "expandAllGroups" from the DataView when Tree Data is enabled and the command triggered is "expand-all-groups"', () => {
         const treeDataSpy = vi.spyOn(treeDataServiceStub, 'toggleTreeDataCollapse');
-        vi.spyOn(SharedService.prototype.dataView, 'getItems').mockReturnValueOnce(columnsMock);
+        vi.spyOn(sharedService.dataView, 'getItems').mockReturnValueOnce(columnsMock);
         const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideExpandAllGroups: false } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();
@@ -1257,7 +1255,7 @@ describe('ContextMenu Plugin', () => {
       it('should expect "itemUsabilityOverride" callback on all the Grouping command to return False when there are NO Groups in the grid', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-        const dataviewSpy = vi.spyOn(SharedService.prototype.dataView, 'getGrouping').mockReturnValue([]);
+        const dataviewSpy = vi.spyOn(sharedService.dataView, 'getGrouping').mockReturnValue([]);
         plugin.dispose();
         plugin.init({ commandItems: [] });
 
@@ -1277,7 +1275,7 @@ describe('ContextMenu Plugin', () => {
       it('should expect "itemUsabilityOverride" callback on all the Grouping command to return True when there are Groups defined in the grid', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-        const dataviewSpy = vi.spyOn(SharedService.prototype.dataView, 'getGrouping').mockReturnValue([{ collapsed: true }]);
+        const dataviewSpy = vi.spyOn(sharedService.dataView, 'getGrouping').mockReturnValue([{ collapsed: true }]);
         plugin.dispose();
         plugin.init({ commandItems: [] });
 

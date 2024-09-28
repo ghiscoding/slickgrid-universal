@@ -149,7 +149,7 @@ describe('CellMenu Plugin', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    sharedService.slickGrid = gridStub;
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
@@ -205,7 +205,7 @@ describe('CellMenu Plugin', () => {
       eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       eventData.target = slickCellElm;
 
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       columnsMock[3].cellMenu!.commandItems = deepCopy(commandItemsMock);
       delete (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action;
       delete (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride;

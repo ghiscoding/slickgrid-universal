@@ -67,8 +67,8 @@ describe('ColumnPickerControl', () => {
     backendUtilityService = new BackendUtilityService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
+    sharedService.slickGrid = gridStub;
 
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));

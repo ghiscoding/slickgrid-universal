@@ -66,13 +66,13 @@ describe('Slick-Pagination Component', () => {
   let translateService: TranslateServiceStub;
 
   beforeEach(() => {
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     vi.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
     div = document.createElement('div');
     document.body.appendChild(div);
     sharedService = new SharedService();
     eventPubSubService = new EventPubSubService();
     translateService = new TranslateServiceStub();
+    sharedService.slickGrid = gridStub;
   });
 
   describe('Integration Tests', () => {

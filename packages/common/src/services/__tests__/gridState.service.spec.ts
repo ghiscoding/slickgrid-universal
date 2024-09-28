@@ -433,12 +433,11 @@ describe('GridStateService', () => {
       const gridOptionsMock = { enablePagination: true } as GridOption;
       const paginationMock = { pageNumber: 2, pageSize: 50 } as CurrentPagination;
       const gridSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      const sharedSpy = vi.spyOn(SharedService.prototype, 'currentPagination', 'get').mockReturnValue(paginationMock);
+      sharedService.currentPagination = paginationMock;
 
       const output = service.getCurrentPagination();
 
       expect(gridSpy).toHaveBeenCalled();
-      expect(sharedSpy).toHaveBeenCalled();
       expect(output).toBe(paginationMock);
     });
 

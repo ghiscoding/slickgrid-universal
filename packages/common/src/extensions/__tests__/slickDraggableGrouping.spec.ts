@@ -134,11 +134,11 @@ describe('Draggable Grouping Plugin', () => {
     eventPubSubService = new EventPubSubService();
     backendUtilityService = new BackendUtilityService();
     sharedService = new SharedService();
+    sharedService.slickGrid = gridStub;
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(dropzoneElm);
     plugin = new SlickDraggableGrouping(extensionUtility, eventPubSubService, sharedService);

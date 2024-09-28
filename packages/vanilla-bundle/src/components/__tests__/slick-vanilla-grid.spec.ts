@@ -401,15 +401,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
-    const sharedFrozenIndexSpy = vi.spyOn(SharedService.prototype, 'frozenVisibleColumnId', 'set');
     component.gridOptions.frozenColumn = 0;
     component.initialization(divContainer, slickEventHandler);
 
-    expect(sharedFrozenIndexSpy).toHaveBeenCalledWith('name');
+    expect(sharedService.frozenVisibleColumnId).toBe('name');
   });
 
   it('should update "visibleColumns" in the Shared Service when "onColumnsReordered" event is triggered', () => {
-    const sharedHasColumnsReorderedSpy = vi.spyOn(SharedService.prototype, 'hasColumnsReordered', 'set');
     const sharedVisibleColumnsSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
     const newVisibleColumns = [{ id: 'lastName', field: 'lastName' }, { id: 'fristName', field: 'fristName' }];
 
@@ -418,7 +416,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid });
 
     expect(component.eventHandler).toEqual(slickEventHandler);
-    expect(sharedHasColumnsReorderedSpy).toHaveBeenCalledWith(true);
+    expect(sharedService.hasColumnsReordered).toBe(true);
     expect(sharedVisibleColumnsSpy).toHaveBeenCalledWith(newVisibleColumns);
   });
 
@@ -863,7 +861,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('use grouping', () => {
       it('should load groupItemMetaProvider to the DataView when using "draggableGrouping" feature', () => {
-        const sharedMetaSpy = vi.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
         vi.spyOn(extensionServiceStub, 'extensionList', 'get').mockReturnValue({ draggableGrouping: { pluginName: 'DraggableGrouping' } } as unknown as ExtensionList<any>);
 
         component.gridOptions = { draggableGrouping: {} };
@@ -873,20 +870,16 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(Object.keys(extensions).length).toBe(1);
         expect(SlickDataView).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }, eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
-        expect(sharedMetaSpy).toHaveBeenCalledWith(expect.any(Object));
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
 
         component.dispose();
       });
 
       it('should load groupItemMetaProvider to the DataView when using "enableGrouping" feature', () => {
-        const sharedMetaSpy = vi.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
-
         component.gridOptions = { enableGrouping: true };
         component.initialization(divContainer, slickEventHandler);
 
         expect(SlickDataView).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }, eventPubSubService);
-        expect(sharedMetaSpy).toHaveBeenCalledWith(expect.any(Object));
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
 

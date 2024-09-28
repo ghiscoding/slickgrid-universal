@@ -104,7 +104,7 @@ const treeDataServiceStub = {
 describe('Grid Service', () => {
   let service: GridService;
   const sharedService = new SharedService();
-  const mockGridOptions = { enableAutoResize: true } as GridOption;
+  const mockGridOptions = {} as GridOption;
 
   vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
@@ -1304,7 +1304,7 @@ describe('Grid Service', () => {
     it('should call "clearPinning" and expect SlickGrid "setOptions" and "setColumns" to be called with frozen options being reset', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
       vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
 
@@ -1317,7 +1317,7 @@ describe('Grid Service', () => {
     it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is an empty object', () => {
       const mockPinning = {};
       const clearPinningSpy = vi.spyOn(service, 'clearPinning');
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
 
       service.setPinning(mockPinning);
 
@@ -1327,7 +1327,7 @@ describe('Grid Service', () => {
     it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is null', () => {
       const mockPinning = null;
       const clearPinningSpy = vi.spyOn(service, 'clearPinning');
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
 
       service.setPinning(mockPinning as any);
 
@@ -1336,7 +1336,7 @@ describe('Grid Service', () => {
 
     it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" also be called', () => {
       const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
@@ -1350,7 +1350,7 @@ describe('Grid Service', () => {
 
     it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" not being called when passing False as 2nd argument', () => {
       const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
@@ -1490,7 +1490,7 @@ describe('Grid Service', () => {
 
     it('should return selected row indexes', () => {
       const mockSelectedColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      const gridSpy = vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([0, 2]);
+      const gridSpy = vi.spyOn(sharedService.slickGrid, 'getSelectedRows').mockReturnValue([0, 2]);
       const serviceSpy = vi.spyOn(service, 'getDataItemByRowIndexes').mockReturnValue(mockSelectedColumns);
 
       const output = service.getSelectedRowsDataItem();

@@ -126,9 +126,9 @@ describe('HeaderMenu Plugin', () => {
   beforeEach(() => {
     backendUtilityService = new BackendUtilityService();
     sharedService = new SharedService();
+    sharedService.slickGrid = gridStub;
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
-    vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
@@ -177,7 +177,7 @@ describe('HeaderMenu Plugin', () => {
     let headersDiv: HTMLDivElement;
 
     beforeEach(() => {
-      vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      sharedService.slickGrid = gridStub;
       columnsMock[0].header!.menu!.commandItems![1] = undefined as any;
       columnsMock[0].header!.menu!.commandItems![1] = {
         cssClass: 'mdi mdi-lightbulb-on',
@@ -545,11 +545,11 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should call hideColumn and expect "visibleColumns" to be updated accordingly', () => {
+        sharedService.slickGrid = gridStub;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true, }
         });
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
@@ -573,7 +573,7 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true, }
         });
 
-        vi.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        sharedService.slickGrid = gridStub;
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
@@ -854,7 +854,7 @@ describe('HeaderMenu Plugin', () => {
         // const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
         // vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnDefinitions);
         // vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValueOnce(originalColumnDefinitions);
-        vi.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(true);
+        sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -882,7 +882,7 @@ describe('HeaderMenu Plugin', () => {
         const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
         vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(true);
+        sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: {
@@ -979,8 +979,8 @@ describe('HeaderMenu Plugin', () => {
             { title: 'Non-Blank Values', searchTerms: ['A'], operator: '>', iconCssClass: 'mdi mdi-filter-plus-outline', },
           ]
         };
-        vi.spyOn(SharedService.prototype.slickGrid, 'getColumns').mockReturnValueOnce(columnsMock);
-        vi.spyOn(SharedService.prototype.slickGrid, 'getColumnIndex').mockReturnValue(0);
+        vi.spyOn(sharedService.slickGrid, 'getColumns').mockReturnValueOnce(columnsMock);
+        vi.spyOn(sharedService.slickGrid, 'getColumnIndex').mockReturnValue(0);
         const setValueMock = vi.fn();
         const filterMock = { columnDef: columnsMock[0], setValues: setValueMock } as unknown as Filter;
         vi.spyOn(filterServiceStub, 'getFiltersMetadata').mockReturnValueOnce([filterMock]);
@@ -1028,8 +1028,8 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect only the "hide-column" command in the menu when "enableSorting" and "hideSortCommands" are set and also expect the command to execute necessary callback', () => {
-        vi.spyOn(SharedService.prototype.slickGrid, 'getColumnIndex').mockReturnValue(1);
-        vi.spyOn(SharedService.prototype.slickGrid, 'getColumns').mockReturnValue(columnsMock);
+        vi.spyOn(sharedService.slickGrid, 'getColumnIndex').mockReturnValue(1);
+        vi.spyOn(sharedService.slickGrid, 'getColumns').mockReturnValue(columnsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true, enableColumnResizeOnDoubleClick: false,
           headerMenu: { hideColumnHideCommand: false, hideSortCommands: true, }
@@ -1133,7 +1133,7 @@ describe('HeaderMenu Plugin', () => {
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
         vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(SharedService.prototype, 'hasColumnsReordered', 'get').mockReturnValue(false);
+        sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
@@ -1160,7 +1160,6 @@ describe('HeaderMenu Plugin', () => {
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = vi.spyOn(sortServiceStub, 'onBackendSortChanged');
-        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
@@ -1184,7 +1183,7 @@ describe('HeaderMenu Plugin', () => {
         expect(previousSortSpy).toHaveBeenCalled();
         mockSortedOuput[1].sortCol = { ...columnsMock[1], ...mockSortedOuput[1].sortCol }; // merge with column header menu
         expect(backendSortSpy).toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: mockSortedOuput, grid: gridStub });
-        expect(setSortSpy).toHaveBeenCalled();
+        expect(sharedService.slickGrid.setSortColumns).toHaveBeenCalled();
       });
 
       it('should trigger the command "sort-desc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {
@@ -1192,7 +1191,6 @@ describe('HeaderMenu Plugin', () => {
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = vi.spyOn(sortServiceStub, 'onBackendSortChanged');
-        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
@@ -1216,16 +1214,15 @@ describe('HeaderMenu Plugin', () => {
         expect(previousSortSpy).toHaveBeenCalled();
         mockSortedOuput[1].sortCol = { ...columnsMock[1], ...mockSortedOuput[1].sortCol }; // merge with column header menu
         expect(backendSortSpy).toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: mockSortedOuput, grid: gridStub });
-        expect(setSortSpy).toHaveBeenCalled();
+        expect(sharedService.slickGrid.setSortColumns).toHaveBeenCalled();
       });
 
       it('should trigger the command "sort-desc" and expect Sort Service to call "onLocalSortChanged" being called without the sorted column', () => {
-        vi.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
+        sharedService.dataView = dataViewStub;
         const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const localSortSpy = vi.spyOn(sortServiceStub, 'onLocalSortChanged');
-        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true, backendServiceApi: undefined,
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
@@ -1240,15 +1237,14 @@ describe('HeaderMenu Plugin', () => {
         mockSortedOuput[1].sortCol = { ...columnsMock[1], ...mockSortedOuput[1].sortCol }; // merge with column header menu
         expect(previousSortSpy).toHaveBeenCalled();
         expect(localSortSpy).toHaveBeenCalledWith(gridStub, mockSortedOuput);
-        expect(setSortSpy).toHaveBeenCalled();
+        expect(sharedService.slickGrid.setSortColumns).toHaveBeenCalled();
       });
 
       it('should trigger the command "sort-desc" and expect "onSort" event triggered when no DataView is provided', () => {
-        vi.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(undefined as any);
+        sharedService.dataView = undefined as any;
         const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
-        const setSortSpy = vi.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
         const gridSortSpy = vi.spyOn(gridStub.onSort, 'notify');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock, enableSorting: true, backendServiceApi: undefined,
@@ -1264,7 +1260,7 @@ describe('HeaderMenu Plugin', () => {
         mockSortedOuput[1].sortCol = { ...columnsMock[1], ...mockSortedOuput[1].sortCol }; // merge with column header menu
         expect(previousSortSpy).toHaveBeenCalled();
         expect(gridSortSpy).toHaveBeenCalledWith(mockSortedOuput);
-        expect(setSortSpy).toHaveBeenCalled();
+        expect(gridStub.setSortColumns).toHaveBeenCalled();
       });
     });
   });
