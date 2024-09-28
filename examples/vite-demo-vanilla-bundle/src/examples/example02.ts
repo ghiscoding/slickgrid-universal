@@ -36,6 +36,7 @@ export default class Example02 {
   sgb: SlickVanillaGridBundle;
   excelExportService: ExcelExportService;
   loadingClass = '';
+  sortStart = 0;
 
   constructor() {
     this.excelExportService = new ExcelExportService();
@@ -49,6 +50,16 @@ export default class Example02 {
 
     this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforesort', () => {
+      // console.time('sort');
+      this.sortStart = window.performance.now();
+    });
+    this._bindingEventService.bind(gridContainerElm, 'onsortchanged', () => {
+      queueMicrotask(() => {
+        // console.timeEnd('sort');
+        console.log(`sort: ${window.performance.now() - this.sortStart} ms`); // use console for Cypress tests
+      });
+    });
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
