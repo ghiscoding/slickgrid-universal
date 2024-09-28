@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
 
 import { EmitterType, FieldType, } from '../../enums/index';
@@ -69,6 +69,7 @@ const backendServiceStub = {
 
 const collectionServiceStub = {
   filterCollection: vi.fn(),
+  parseSingleDateItem: vi.fn(),
   preParseByMutationDateItems: vi.fn(),
   singleFilterCollection: vi.fn(),
   sortCollection: vi.fn(),
@@ -83,22 +84,18 @@ const gridStub = {
   getSortColumns: vi.fn(),
   invalidate: vi.fn(),
   onLocalSortChanged: vi.fn(),
+  onCellChange: new SlickEvent(),
   onSort: new SlickEvent(),
   render: vi.fn(),
   setColumns: vi.fn(),
+  setItems: vi.fn(),
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
 
-const pubSubServiceStub = {
-  publish: vi.fn(),
-  subscribe: vi.fn(),
-  unsubscribe: vi.fn(),
-  unsubscribeAll: vi.fn(),
-} as BasePubSubService;
-
 describe('SortService', () => {
   let backendUtilityService: BackendUtilityService;
+  let eventPubSubService: EventPubSubService;
   let sharedService: SharedService;
   let service: SortService;
   let rxjsResourceStub: RxJsResourceStub;
@@ -106,12 +103,14 @@ describe('SortService', () => {
 
   beforeEach(() => {
     backendUtilityService = new BackendUtilityService();
+    eventPubSubService = new EventPubSubService();
     sharedService = new SharedService();
     rxjsResourceStub = new RxJsResourceStub();
     sharedService.dataView = dataViewStub;
 
-    service = new SortService(collectionServiceStub, sharedService, pubSubServiceStub, backendUtilityService, rxjsResourceStub);
+    service = new SortService(collectionServiceStub, sharedService, eventPubSubService, backendUtilityService, rxjsResourceStub);
     slickgridEventHandler = service.eventHandler;
+    vi.spyOn(dataViewStub, 'getLength').mockReturnValue(100);
   });
 
   afterEach(() => {
@@ -280,7 +279,7 @@ describe('SortService', () => {
     });
 
     it('should clear the backend sorting by triggering a query event when method argument is undefined (default to true)', () => {
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spySetColumns = vi.spyOn(gridStub, 'setSortColumns');
       const spySortChanged = vi.spyOn(service, 'onBackendSortChanged');
 
@@ -294,7 +293,7 @@ describe('SortService', () => {
     });
 
     it('should clear the local sorting by triggering a query event when method argument is undefined (default to true)', () => {
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spySetColumns = vi.spyOn(gridStub, 'setSortColumns');
       const spySortChanged = vi.spyOn(service, 'onLocalSortChanged');
 
@@ -309,7 +308,7 @@ describe('SortService', () => {
     });
 
     it('should clear the backend sorting without triggering a query event when method argument is set to false', () => {
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spySetColumns = vi.spyOn(gridStub, 'setSortColumns');
       const spyClearSorters = vi.spyOn(backendServiceStub, 'clearSorters');
 
@@ -323,7 +322,7 @@ describe('SortService', () => {
     });
 
     it('should clear the local sorting without triggering a query event when method argument is set to false', () => {
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spySetColumns = vi.spyOn(gridStub, 'setSortColumns');
 
       service.bindLocalOnSort(gridStub);
@@ -355,37 +354,8 @@ describe('SortService', () => {
   });
 
   describe('bindLocalOnSort method', () => {
-    it('should expect "preParseByMutationDateItems()" being called when dataset has Date items not yet being parsed', async () => {
-      const mockColumns = [
-        { id: 'firstName', field: 'firstName' },
-        { id: 'lastName', field: 'lastName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
-      ] as Column[];
-      const mockData = [{ firstName: 'John', lastName: 'Doe', updatedDate: '2020-01-01' }, { firstName: 'Jane', lastName: 'Smith', updatedDate: '2020-02-02' }];
-      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
-      vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
-      sharedService.isItemsDateParsed = false;
-      gridOptionMock.preParseDateColumns = true;
-
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-      const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
-      const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
-      const mockSortedCols: ColumnSort[] = [
-        { columnId: 'updatedDate', sortAsc: true, sortCol: mockColumns[2] },
-      ];
-
-      service.bindLocalOnSort(gridStub);
-      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
-
-      await new Promise(process.nextTick);
-      expect(spyCurrentSort).toHaveBeenCalled();
-      expect(collectionServiceStub.preParseByMutationDateItems).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'updatedDate', direction: 'ASC' }]);
-      expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
-    });
-
-    it('should bind to "onLocalSortChanged" and expect some events being triggered when a single sort is called', async () => {
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+    it('should expect some events being triggered when a single sort is called', async () => {
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
       const mockSortedCol = { columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true } as ColumnSort;
@@ -400,8 +370,8 @@ describe('SortService', () => {
       expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, [mockSortedCol]);
     });
 
-    it('should bind to "onLocalSortChanged" and expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', async () => {
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+    it('should expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', async () => {
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
       const mockSortedCols: ColumnSort[] = [
@@ -415,6 +385,133 @@ describe('SortService', () => {
       await new Promise(process.nextTick);
       expect(spyCurrentSort).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }]);
+      expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+    });
+
+    it('should expect a console warning when dataset is larger than 5K items without pre-parsing enabled', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+      vi.spyOn(dataViewStub, 'getLength').mockReturnValueOnce(5001);
+      const mockColumns: Column[] = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+
+      service.bindLocalOnSort(gridStub);
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option'));
+    });
+
+    it('should expect a console warning when dataset is larger than 5K items without pre-parsing enabled', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+      vi.spyOn(dataViewStub, 'getLength').mockReturnValueOnce(5001);
+      const mockColumns: Column[] = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+
+      service.bindLocalOnSort(gridStub);
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option'));
+    });
+
+    it('should enable pre-parse and expect "preParseSingleDateItem()" being called when "grid.onCellChange" is called', async () => {
+      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
+      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
+      const parseSingleSpy = vi.spyOn(service, 'preParseSingleDateItem');
+      sharedService.isItemsDateParsed = false;
+      gridOptionMock.preParseDateColumns = true;
+
+      service.bindLocalOnSort(gridStub);
+      gridStub.onCellChange.notify({ grid: gridStub, item: mockData[0], row: 0, cell: 0, column: mockColumns[1] }, new SlickEventData(), gridStub);
+
+      expect(parseSingleSpy).toHaveBeenCalled();
+      expect(collectionServiceStub.parseSingleDateItem).toHaveBeenCalled();
+    });
+
+    it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemAdded" event is called', async () => {
+      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
+      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
+      const parseSingleSpy = vi.spyOn(service, 'preParseSingleDateItem');
+      sharedService.isItemsDateParsed = false;
+      gridOptionMock.preParseDateColumns = true;
+
+      service.bindLocalOnSort(gridStub);
+      eventPubSubService.publish('onItemAdded', mockData[0]);
+
+      expect(parseSingleSpy).toHaveBeenCalled();
+      expect(collectionServiceStub.parseSingleDateItem).toHaveBeenCalled();
+    });
+
+    it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemUpdated" event is called', async () => {
+      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
+      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
+      const parseSingleSpy = vi.spyOn(service, 'preParseSingleDateItem');
+      sharedService.isItemsDateParsed = false;
+      gridOptionMock.preParseDateColumns = true;
+
+      service.bindLocalOnSort(gridStub);
+      eventPubSubService.publish('onItemUpdated', mockData[0]);
+
+      expect(parseSingleSpy).toHaveBeenCalled();
+      expect(collectionServiceStub.parseSingleDateItem).toHaveBeenCalled();
+    });
+
+    it('should expect Collection Service "preParseByMutationDateItems()" to be called when calling "preParseAllDateItems()"', async () => {
+      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
+      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
+      sharedService.isItemsDateParsed = false;
+      gridOptionMock.preParseDateColumns = true;
+
+      service.bindLocalOnSort(gridStub);
+      service.preParseAllDateItems();
+
+      expect(collectionServiceStub.preParseByMutationDateItems).toHaveBeenCalled();
+    });
+
+    it('should expect Collection Service "parseSingleDateItem()" to be called when calling "preParseSingleDateItem()"', async () => {
+      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
+      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
+      sharedService.isItemsDateParsed = false;
+      gridOptionMock.preParseDateColumns = true;
+
+      service.bindLocalOnSort(gridStub);
+      service.preParseSingleDateItem(mockData[0]);
+
+      expect(collectionServiceStub.parseSingleDateItem).toHaveBeenCalled();
+    });
+
+    it('should enable pre-parse and expect "preParseByMutationDateItems()" being called when dataset has Date items not yet being parsed', async () => {
+      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
+      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
+      sharedService.isItemsDateParsed = false;
+      gridOptionMock.preParseDateColumns = true;
+
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
+      const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
+      const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
+      const mockSortedCols: ColumnSort[] = [{ columnId: 'updatedDate', sortAsc: true, sortCol: mockColumns[1] },];
+
+      service.bindLocalOnSort(gridStub);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
+
+      await new Promise(process.nextTick);
+      expect(spyCurrentSort).toHaveBeenCalled();
+      expect(collectionServiceStub.preParseByMutationDateItems).toHaveBeenCalled();
+      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'updatedDate', direction: 'ASC' }]);
       expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
     });
   });
@@ -436,7 +533,7 @@ describe('SortService', () => {
     it('should expect some events being triggered when a single sort is called', async () => {
       const mockColumn = { id: 'lastName', field: 'lastName', width: 100 } as Column;
       const expectedSortCol = { columnId: 'lastName', direction: 'ASC' } as CurrentSorter;
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyBackendCurrentSort = vi.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentSorters');
       (spyBackendCurrentSort as Mock).mockReturnValue([expectedSortCol]);
       const spyBackendProcessSort = vi.spyOn(gridOptionMock.backendServiceApi!.service, 'processOnSortChanged').mockReturnValue('backend query');
@@ -455,7 +552,7 @@ describe('SortService', () => {
 
     it('should expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', async () => {
       const expectedSortCols = [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }] as CurrentSorter[];
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyBackendCurrentSort = vi.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentSorters');
       (spyBackendCurrentSort as Mock).mockReturnValue(expectedSortCols);
       const spyBackendProcessSort = vi.spyOn(gridOptionMock.backendServiceApi!.service, 'processOnSortChanged');
@@ -480,7 +577,7 @@ describe('SortService', () => {
   describe('emitSortChanged method', () => {
     it('should have same current sort changed when it is passed as argument to the emitSortChanged method', async () => {
       const localSorterMock = { columnId: 'field1', direction: 'DESC' } as CurrentSorter;
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
       service.emitSortChanged(EmitterType.local, [localSorterMock]);
       const currentLocalSorters = service.getCurrentLocalSorters();
@@ -1144,7 +1241,7 @@ describe('SortService', () => {
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
 
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
       const spyUpdateSorting = vi.spyOn(service, 'updateSorting');
@@ -1172,7 +1269,7 @@ describe('SortService', () => {
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files', initialSort: { columnId: 'firstName', direction: 'DESC' } };
 
-      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
       const spyUpdateSorting = vi.spyOn(service, 'updateSorting');
@@ -1253,7 +1350,7 @@ describe('SortService', () => {
       });
 
       it('should sort the hierarchical dataset and expect event emitted when passing True as 3rd argument', () => {
-        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
         const sortTreeDataSpy = vi.spyOn(service, 'sortTreeData');
         const emitSortChangedSpy = vi.spyOn(service, 'emitSortChanged');
 
@@ -1271,7 +1368,7 @@ describe('SortService', () => {
         vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(dataset);
 
         const spySetItems = vi.spyOn(dataViewStub, 'setItems');
-        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
         const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
         const spyUpdateSorting = vi.spyOn(service, 'updateSorting');
 
@@ -1292,7 +1389,7 @@ describe('SortService', () => {
         vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(dataset);
 
         const spySetItems = vi.spyOn(dataViewStub, 'setItems');
-        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
         const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
         const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
         const spyUpdateSorting = vi.spyOn(service, 'updateSorting');

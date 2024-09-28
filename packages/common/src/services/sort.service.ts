@@ -18,10 +18,12 @@ import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
 import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
+const WARN_NO_PREPARSE_DATE_SIZE = 5000; // data size to warn user when pre-parse isn't enabled
+
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];
   protected _eventHandler: SlickEventHandler;
-  protected _dataView!: SlickDataView;
+  protected _dataView?: SlickDataView;
   protected _grid!: SlickGrid;
   protected _isBackendGrid = false;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
@@ -96,6 +98,35 @@ export class SortService {
 
     this.processTreeDataInitialSort();
     this._eventHandler.subscribe(grid.onSort, this.handleLocalOnSort.bind(this));
+
+    // when pre-parsing Dates is enabled and user is inserting/updating an item(s),
+    // we'll automatically run Date parsing for these items to keep sort in sync
+    if (this._gridOptions.preParseDateColumns) {
+      this._eventHandler.subscribe(grid.onCellChange, (_e, args) => this.preParseSingleDateItem(args.item));
+      this.pubSubService.subscribe(['onItemAdded', 'onItemUpdated'], (item) => this.preParseSingleDateItem(item));
+    } else if (this._dataView?.getLength() > WARN_NO_PREPARSE_DATE_SIZE && grid.getColumns().some(c => isColumnDateType(c.type))) {
+      console.warn(
+        '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
+        'for more info visit:: https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
+      );
+    }
+  }
+
+  /** when pre-parse is enabled, parse date strings and convert them to JS Date objects */
+  preParseSingleDateItem(item: any): void {
+    if (this._gridOptions.preParseDateColumns) {
+      const items = Array.isArray(item) ? item : [item];
+      items.forEach(itm => this.collectionService.parseSingleDateItem(itm, this._grid, this._gridOptions.preParseDateColumns!));
+    }
+  }
+
+  /** when pre-parse is enabled, parse date strings and convert them to JS Date objects */
+  preParseAllDateItems(): void {
+    if (this._gridOptions.preParseDateColumns) {
+      const items = this._dataView?.getItems() || [];
+      this.collectionService.preParseByMutationDateItems(items, this._grid, this._gridOptions.preParseDateColumns);
+      this.sharedService.isItemsDateParsed = true;
+    }
   }
 
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort): void {
@@ -407,16 +438,14 @@ export class SortService {
     if (grid && dataView) {
       // when Date pre-parsing is enabled but not yet parsed, let's execute the Dates parsing
       if (this._gridOptions.preParseDateColumns && !this.sharedService.isItemsDateParsed && sortColumns.some(c => isColumnDateType(c.sortCol?.type))) {
-        const items = this._dataView.getItems();
-        this.collectionService.preParseByMutationDateItems(items, this._grid, this._gridOptions.preParseDateColumns);
-        this.sharedService.isItemsDateParsed = true;
+        this.preParseAllDateItems();
       }
 
       if (forceReSort && !isTreeDataEnabled) {
         dataView.reSort();
       }
 
-      if (isTreeDataEnabled && this.sharedService && Array.isArray(this.sharedService.hierarchicalDataset)) {
+      if (isTreeDataEnabled && this._dataView && this.sharedService && Array.isArray(this.sharedService.hierarchicalDataset)) {
         const datasetSortResult = this.sortHierarchicalDataset(this.sharedService.hierarchicalDataset, sortColumns);
 
         // we could use the DataView sort but that would require re-sorting again (since the 2nd array that is currently in the DataView would have to be resorted against the 1st array that was sorting from tree sort)
@@ -428,9 +457,7 @@ export class SortService {
         // that happens because we just overwrote the entire dataset the DataView.refresh() doesn't detect a row count change so we trigger it manually
         this._dataView.onRowCountChanged.notify({ previous: this._dataView.getFilteredItemCount(), current: this._dataView.getLength(), itemCount: this._dataView.getItemCount(), dataView: this._dataView, callingOnRowsChanged: true });
       } else {
-        console.time('sort');
         dataView.sort(this.sortComparers.bind(this, sortColumns));
-        console.timeEnd('sort');
       }
 
       grid.invalidate();
