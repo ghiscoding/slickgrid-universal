@@ -268,7 +268,7 @@ export default class Example02 {
       rowTopOffsetRenderType: 'transform', // defaults: 'top'
 
       // you can improve Date sorting by pre-parsing date items to `Date` object (this avoid reparsing the same dates multiple times)
-      preParseDateColumns: true, // '__',
+      preParseDateColumns: '__', // or true
     };
   }
 
