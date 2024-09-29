@@ -1540,7 +1540,7 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   protected suggestDateParsingWhenHelpful(): void {
-    if (this.dataView && this.dataView.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE && this.slickGrid?.getColumns().some(c => isColumnDateType(c.type))) {
+    if (this.dataView && this.dataView.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE && !this.gridOptions.preParseDateColumns && this.slickGrid?.getColumns().some(c => isColumnDateType(c.type))) {
       console.warn(
         '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
         'for more info visit:: https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
