@@ -18,8 +18,6 @@ import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
 import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
-const WARN_NO_PREPARSE_DATE_SIZE = 5000; // data size to warn user when pre-parse isn't enabled
-
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];
   protected _eventHandler: SlickEventHandler;
@@ -104,11 +102,6 @@ export class SortService {
     if (this._gridOptions.preParseDateColumns) {
       this._eventHandler.subscribe(grid.onCellChange, (_e, args) => this.preParseSingleDateItem(args.item));
       this.pubSubService.subscribe(['onItemAdded', 'onItemUpdated'], (item) => this.preParseSingleDateItem(item));
-    } else if (this._dataView?.getLength() > WARN_NO_PREPARSE_DATE_SIZE && grid.getColumns().some(c => isColumnDateType(c.type))) {
-      console.warn(
-        '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
-        'for more info visit:: https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
-      );
     }
   }
 

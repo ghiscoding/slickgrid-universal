@@ -19,6 +19,7 @@ import {
   type ExtensionList,
   type ExtensionService,
   type ExtensionUtility,
+  FieldType,
   Filters,
   type FilterService,
   type Formatter,
@@ -519,6 +520,40 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       component.initialization(divContainer, slickEventHandler);
 
       expect(resizerSpy).toHaveBeenCalledWith();
+    });
+
+    it('should expect a console warning when grid is initialized with a dataset larger than 5K items without pre-parsing enabled', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+      vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(5001);
+      const mockColumns: Column[] = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ];
+      vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
+
+      component.gridOptions = { enableAutoResize: true };
+      component.initialization(divContainer, slickEventHandler);
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option'));
+    });
+
+    it('should expect a console warning when assigned dataset is larger than 5K items without pre-parsing enabled', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+      vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(0);
+      const mockColumns: Column[] = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ];
+      vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
+
+      component.gridOptions = { enableAutoResize: true };
+      component.initialization(divContainer, slickEventHandler);
+
+      // we'll do a fake dataset assignment of 5001 items
+      vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(5001);
+      component.dataset = [{ firstName: 'John', updatedDate: '2020-02-01' }];
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option'));
     });
 
     describe('autoAddCustomEditorFormatter grid option', () => {

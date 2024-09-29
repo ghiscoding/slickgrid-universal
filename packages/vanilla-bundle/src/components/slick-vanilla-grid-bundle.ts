@@ -45,6 +45,7 @@ import {
 
   // utilities
   emptyElement,
+  isColumnDateType,
   SlickEventHandler,
   SlickDataView,
   SlickGrid,
@@ -58,6 +59,8 @@ import { SlickPaginationComponent } from '@slickgrid-universal/pagination-compon
 
 import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
+
+const WARN_NO_PREPARSE_DATE_SIZE = 5000; // data size to warn user when pre-parse isn't enabled
 
 export class SlickVanillaGridBundle<TData = any> {
   protected _currentDatasetLength = 0;
@@ -169,6 +172,8 @@ export class SlickVanillaGridBundle<TData = any> {
       this.slickGrid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
+
+    this.suggestDateParsingWhenHelpful();
   }
 
   get datasetHierarchical(): any[] | undefined {
@@ -704,6 +709,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // all instances (SlickGrid, DataView & all Services)
     this._eventPubSubService.publish('onSlickerGridCreated', this.instances);
     this._isGridInitialized = true;
+    this.suggestDateParsingWhenHelpful();
   }
 
   hasBackendInfiniteScroll(): boolean {
@@ -1531,6 +1537,15 @@ export class SlickVanillaGridBundle<TData = any> {
       }
       return { ...column, editorClass: column.editor?.model };
     });
+  }
+
+  protected suggestDateParsingWhenHelpful(): void {
+    if (this.dataView && this.dataView.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE && !this.gridOptions.preParseDateColumns && this.slickGrid?.getColumns().some(c => isColumnDateType(c.type))) {
+      console.warn(
+        '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
+        'for more info visit:: https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
+      );
+    }
   }
 
   /**

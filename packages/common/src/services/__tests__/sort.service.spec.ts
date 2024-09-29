@@ -388,34 +388,6 @@ describe('SortService', () => {
       expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
     });
 
-    it('should expect a console warning when dataset is larger than 5K items without pre-parsing enabled', () => {
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
-      vi.spyOn(dataViewStub, 'getLength').mockReturnValueOnce(5001);
-      const mockColumns: Column[] = [
-        { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
-      ];
-      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
-
-      service.bindLocalOnSort(gridStub);
-
-      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option'));
-    });
-
-    it('should expect a console warning when dataset is larger than 5K items without pre-parsing enabled', () => {
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
-      vi.spyOn(dataViewStub, 'getLength').mockReturnValueOnce(5001);
-      const mockColumns: Column[] = [
-        { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
-      ];
-      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
-
-      service.bindLocalOnSort(gridStub);
-
-      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option'));
-    });
-
     it('should enable pre-parse and expect "preParseSingleDateItem()" being called when "grid.onCellChange" is called', async () => {
       const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
       const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
