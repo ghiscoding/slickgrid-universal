@@ -797,6 +797,9 @@ export interface GridOption<C extends Column = Column> {
   /** Do we want to show top panel row? */
   showTopPanel?: boolean;
 
+  /** silence any console warnings */
+  silenceWarnings?: boolean;
+
   /** Defaults to true, which leads to render a separate span for the number and styles it with css class <i>slick-sort-indicator-numbered</i> */
   sortColNumberInSeparateSpan?: boolean;
 
