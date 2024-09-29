@@ -4,6 +4,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.7.0...v5.8.0) (2024-09-29)
+
+### Features
+
+* allow overriding readOnly behavior of dateEditor ([d4da489](https://github.com/ghiscoding/slickgrid-universal/commit/d4da48923a9a60f9ecde787be31b2da14922866e)) - by @zewa666
+* home and end key stop propagation in editors ([d143820](https://github.com/ghiscoding/slickgrid-universal/commit/d143820f76b6d563f65728afbe8846e807918774)) - by @zewa666
+* **PubSub:** allow multiple subcribe events for a single callback ([6d39c2c](https://github.com/ghiscoding/slickgrid-universal/commit/6d39c2ceddaa93e72cfe6dff949b00598600c180)) - by @ghiscoding
+* update according to review; add unit tests ([eb176de](https://github.com/ghiscoding/slickgrid-universal/commit/eb176debd69b55ffd95cba8ec7198c821ecaddb2)) - by @zewa666
+
+### Bug Fixes
+
+* allowInput instead of allowEdit ([8318853](https://github.com/ghiscoding/slickgrid-universal/commit/83188534676a403f3edd548ff2f5dec2b0344c73)) - by @zewa666
+* Date parsing shouldn't fail & dateIso type should accept time ([a3e5a49](https://github.com/ghiscoding/slickgrid-universal/commit/a3e5a49cbc8d89bf1ea91f4cafa570740defa4f2)) - by @ghiscoding
+* **styling:** SASS deprecated `lighten` and `darken` methods ([a66506f](https://github.com/ghiscoding/slickgrid-universal/commit/a66506f93c2a51682bba7a5945022087726c1292)) - by @ghiscoding
+
+### Performance Improvements
+
+* improve Date Sorting by optionally pre-parsing date items ([6678139](https://github.com/ghiscoding/slickgrid-universal/commit/66781393b2aa139b8612bc9e92280165f39dc00f)) - by @ghiscoding
+* **treeData:** huge time decrease to expandAll/collapseAll tree grid ([98bd334](https://github.com/ghiscoding/slickgrid-universal/commit/98bd3341e5d089cedf79e09944b8ffc9c4c1a273)) - by @ghiscoding
+
 ## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
 
 ### Features

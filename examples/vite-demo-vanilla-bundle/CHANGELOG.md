@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.7.0...v5.8.0) (2024-09-29)
+
+### Features
+
+* allow overriding readOnly behavior of dateEditor ([d4da489](https://github.com/ghiscoding/slickgrid-universal/commit/d4da48923a9a60f9ecde787be31b2da14922866e)) - by @zewa666
+* update according to review; add unit tests ([eb176de](https://github.com/ghiscoding/slickgrid-universal/commit/eb176debd69b55ffd95cba8ec7198c821ecaddb2)) - by @zewa666
+
+### Bug Fixes
+
+* **styling:** SASS deprecated `lighten` and `darken` methods ([a66506f](https://github.com/ghiscoding/slickgrid-universal/commit/a66506f93c2a51682bba7a5945022087726c1292)) - by @ghiscoding
+
+### Performance Improvements
+
+* improve Date Sorting by optionally pre-parsing date items ([6678139](https://github.com/ghiscoding/slickgrid-universal/commit/66781393b2aa139b8612bc9e92280165f39dc00f)) - by @ghiscoding
+
 ## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
 
 ### Bug Fixes

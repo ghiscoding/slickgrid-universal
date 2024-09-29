@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.7.0...v5.8.0) (2024-09-29)
+
+### Features
+
+* **PubSub:** allow multiple subcribe events for a single callback ([6d39c2c](https://github.com/ghiscoding/slickgrid-universal/commit/6d39c2ceddaa93e72cfe6dff949b00598600c180)) - by @ghiscoding
+
 ## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
 
 **Note:** Version bump only for package @slickgrid-universal/event-pub-sub

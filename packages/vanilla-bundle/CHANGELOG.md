@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.7.0...v5.8.0) (2024-09-29)
+
+### Performance Improvements
+
+* improve Date Sorting by optionally pre-parsing date items ([6678139](https://github.com/ghiscoding/slickgrid-universal/commit/66781393b2aa139b8612bc9e92280165f39dc00f)) - by @ghiscoding
+
 ## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
 
 ### Performance Improvements
