@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 
-import type { Column, GridOption, SlickResizer, } from './../interfaces/index';
+import type { Column, GridOption, } from './../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
@@ -37,7 +37,6 @@ export class GroupingAndColspanService {
   /**
    * Initialize the Service
    * @param {object} grid
-   * @param {object} resizerPlugin
    */
   init(grid: SlickGrid): void {
     this._grid = grid;
@@ -51,27 +50,9 @@ export class GroupingAndColspanService {
           this.translateGroupingAndColSpan();
         }
 
-        this._eventHandler.subscribe(grid.onSort, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onAutosizeColumns, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
-
-        // for both picker (columnPicker/gridMenu) we also need to re-create after hiding/showing columns
-        this._subscriptions.push(
-          this.pubSubService.subscribe(
-            ['onColumnPickerColumnsChanged', 'onGridMenuColumnsChanged', 'onGridMenuMenuClose'],
-            () => this.renderPreHeaderRowGroupingTitles()
-          ),
-          this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0)),
-        );
-
-        // we also need to re-create after a grid resize
-        const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');
-        if (resizerPlugin?.onGridAfterResize) {
-          this._eventHandler.subscribe(resizerPlugin.onGridAfterResize, () => this.renderPreHeaderRowGroupingTitles());
-        }
 
         // and finally we need to re-create after user calls the Grid "setOptions" when changing from regular to frozen grid (and vice versa)
         this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {

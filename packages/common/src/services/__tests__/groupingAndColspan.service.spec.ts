@@ -167,18 +167,6 @@ describe('GroupingAndColspanService', () => {
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
     });
 
-    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onSort"', () => {
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      gridStub.onSort.notify({ columnId: 'lastName', sortAsc: true, sortCol: mockColumns[0] }, new SlickEventData(), gridStub);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-    });
-
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onAutosizeColumns"', () => {
       const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
@@ -199,103 +187,6 @@ describe('GroupingAndColspanService', () => {
       vi.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-    });
-
-    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsResized"', () => {
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      gridStub.onColumnsResized.notify({ triggeredByColumn: 'lastName', grid: gridStub }, new SlickEventData(), gridStub);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-    });
-
-    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsReordered"', () => {
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      gridStub.onColumnsReordered.notify({ impactedColumns: [], grid: gridStub }, new SlickEventData(), gridStub);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-    });
-
-    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a dataView "onColumnsResized"', () => {
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      dataViewStub.onRowCountChanged.notify({ previous: 1, current: 2, dataView: dataViewStub, callingOnRowsChanged: false, itemCount: 1 }, new SlickEventData(), gridStub);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenNthCalledWith(1, expect.any(Function), 75);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 0);
-    });
-
-    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid resize', () => {
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      resizerPluginStub.onGridAfterResize.notify({}, new SlickEventData(), gridStub);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-    });
-
-    it('should call the "renderPreHeaderRowGroupingTitles" after changing column visibility from column picker', () => {
-      const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      fnCallbacks['onColumnPickerColumnsChanged'](columnsMock);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2); // 1x for init, 1x for event
-      expect(divHeaderColumns.length).toBeGreaterThan(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-    });
-
-    it('should call the "renderPreHeaderRowGroupingTitles" after changing column visibility from grid menu', () => {
-      const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      fnCallbacks['onGridMenuColumnsChanged'](columnsMock);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2); // 1x for init, 1x for event
-      expect(divHeaderColumns.length).toBeGreaterThan(2);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-    });
-
-    it('should call the "renderPreHeaderRowGroupingTitles" after changing column visibility & closing the grid menu', () => {
-      const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      fnCallbacks['onGridMenuMenuClose'](columnsMock);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2); // 1x for init, 1x for event
-      expect(divHeaderColumns.length).toBeGreaterThan(2);
       expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
     });
@@ -365,20 +256,6 @@ describe('GroupingAndColspanService', () => {
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 0);
       expect(divHeaderColumns.length).toBeGreaterThan(2);
       expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
-    });
-
-    it('should  call the "renderPreHeaderRowGroupingTitles" when "onHeaderMenuHideColumns" is triggered', () => {
-      const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      fnCallbacks['onHeaderMenuHideColumns'](columnsMock);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(2); // 1x for init, 1x for event
-      expect(divHeaderColumns.length).toBeGreaterThan(2);
     });
   });
 });
