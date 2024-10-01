@@ -116,8 +116,8 @@ export class EventPubSubService implements BasePubSubService {
 
   /**
    * Subscribes to a message channel or message type.
-   * @param event The event channel or event data type.
-   * @param callback The callback to be invoked when the specified message is published.
+   * @param {String|String[]} event The event channel or event data type.
+   * @param {Function} callback The callback to be invoked when the specified message is published.
    * @return possibly a Subscription
    */
   subscribe<T = any>(eventNames: string | string[], callback: (data: T) => void): Subscription {
@@ -134,35 +134,35 @@ export class EventPubSubService implements BasePubSubService {
       subscriptions.push(() => this.unsubscribe(eventNameByConvention, callback as never));
     });
 
-    // return a subscription(s) that we can unsubscribed
+    // return a subscription(s) that we can later unsubscribe
     return {
       unsubscribe: () => subscriptions.forEach(unsub => unsub())
     };
   }
 
   /**
-   * Subscribes to a custom event message channel or message type.
+   * Subscribes to a message channel or message type.
    * This is similar to the "subscribe" except that the callback receives an event typed as CustomEventInit and the data will be inside its "event.detail"
-   * @param event The event channel or event data type.
-   * @param callback The callback to be invoked when the specified message is published.
-   * @return possibly a Subscription
+   * @param {String} event - the event name/message
+   * @param {Function} callback - The callback to be invoked when the specified message is published.
+   * @return {Subscription} possibly a Subscription
    */
   subscribeEvent<T = any>(eventName: string, listener: (event: CustomEventInit<T>) => void): Subscription {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.addEventListener(eventNameByConvention, listener);
     this._subscribedEvents.push({ name: eventNameByConvention, listener });
 
-    // return a subscription that we can unsubscribed
+    // return a subscription that we can later unsubscribe
     return {
       unsubscribe: () => this.unsubscribe(eventNameByConvention, listener as never)
     };
   }
 
   /**
-   * Unsubscribes a message name
-   * @param {String} event - the event name
-   * @param {*} listener - event listener callback
-   * @param {Boolean} shouldRemoveFromEventList - should we also remove the event from the subscriptions array?
+   * Unsubscribes a message or event name
+   * @param {String} event - the event name/message
+   * @param {Function} listener - event listener callback
+   * @param {Boolean} [shouldRemoveFromEventList] - should we also remove the event from the subscriptions array?
    * @return possibly a Subscription
    */
   unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList = true): void {
