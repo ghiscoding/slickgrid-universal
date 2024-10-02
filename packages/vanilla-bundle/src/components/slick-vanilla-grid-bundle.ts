@@ -380,7 +380,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.treeDataService);
     this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService, this.treeDataService);
-    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this._eventPubSubService);
+    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
