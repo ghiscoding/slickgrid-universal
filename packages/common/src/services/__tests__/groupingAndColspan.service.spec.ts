@@ -9,20 +9,6 @@ const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 
-const fnCallbacks = {};
-const mockPubSub = {
-  publish: vi.fn(),
-  subscribe: (eventName, fn) => {
-    const eventNames = Array.isArray(eventName) ? eventName : [eventName];
-    eventNames.forEach(eventName => fnCallbacks[eventName] = fn);
-  },
-  unsubscribe: vi.fn(),
-  unsubscribeAll: vi.fn(),
-};
-vi.mock('@slickgrid-universal/event-pub-sub', () => ({
-  BasePubSubService: () => mockPubSub
-}));
-
 const gridOptionMock = {
   createPreHeaderPanel: true,
   enablePagination: true,
@@ -97,7 +83,7 @@ describe('GroupingAndColspanService', () => {
     div.innerHTML = template;
     document.body.appendChild(div);
 
-    service = new GroupingAndColspanService(mockExtensionUtility, mockPubSub);
+    service = new GroupingAndColspanService(mockExtensionUtility);
     slickgridEventHandler = service.eventHandler;
   });
 
