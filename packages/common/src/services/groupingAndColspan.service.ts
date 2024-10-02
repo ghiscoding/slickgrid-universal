@@ -1,4 +1,4 @@
-import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 
 import type { Column, GridOption, } from './../interfaces/index';
@@ -10,7 +10,7 @@ export class GroupingAndColspanService {
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
 
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService) {
+  constructor(protected readonly extensionUtility: ExtensionUtility) {
     this._eventHandler = new SlickEventHandler();
   }
 
@@ -36,7 +36,7 @@ export class GroupingAndColspanService {
 
   /**
    * Initialize the Service
-   * @param {object} grid
+   * @param {SlickGrid} grid
    */
   init(grid: SlickGrid): void {
     this._grid = grid;
@@ -72,7 +72,6 @@ export class GroupingAndColspanService {
   dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
-    this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
