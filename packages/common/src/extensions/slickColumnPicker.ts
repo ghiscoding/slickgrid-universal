@@ -221,8 +221,15 @@ export class SlickColumnPicker {
   protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): void {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (this._menuElm) {
+      const availableWidth = window.innerWidth - (this._menuElm.getBoundingClientRect().right + targetEvent.pageX)
+      let leftPosition = 10
+
+      if (availableWidth < 0) {
+        leftPosition = leftPosition + 60 + Math.abs(availableWidth)
+      }
+
       this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
-      this._menuElm.style.left = `${targetEvent.pageX - 10}px`;
+      this._menuElm.style.left = `${targetEvent.pageX - leftPosition}px`;
       this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
       this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
       this._menuElm.style.display = 'block';
