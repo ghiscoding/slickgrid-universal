@@ -256,9 +256,6 @@ importers:
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
       cssnano:
         specifier: ^7.0.6
         version: 7.0.6(postcss@8.4.47)
