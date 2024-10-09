@@ -1,8 +1,8 @@
 
 import { strToU8, zip } from 'fflate';
-import { globSync } from 'glob';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import normalizePath from 'normalize-path';
+import { globSync } from 'tinyglobby';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs';
 

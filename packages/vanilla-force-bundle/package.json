@@ -71,8 +71,8 @@
   },
   "devDependencies": {
     "fflate": "^0.8.2",
-    "glob": "^10.4.5",
     "normalize-path": "^3.0.0",
+    "tinyglobby": "^0.2.9",
     "vite": "^5.4.8",
     "yargs": "^17.7.2"
   }
