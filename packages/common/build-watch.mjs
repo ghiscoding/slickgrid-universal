@@ -1,6 +1,6 @@
-import { exec } from 'child_process';
 import copyfiles from 'copyfiles';
-import path from 'path';
+import { exec } from 'node:child_process';
+import { basename } from 'node:path';
 
 /**
  * Special script used by the Watch in Development which will compile TypeScript files with tsc incremental and/or SASS files when changes occurs.
@@ -29,7 +29,7 @@ async function run() {
 
     // copy only the SASS file that changed
     for (const changedFile of changedFiles) {
-      const fileWithExtension = path.basename(changedFile);
+      const fileWithExtension = basename(changedFile);
       const relativeFile = `src/styles/${fileWithExtension}`;
       copyfiles(
         [relativeFile, 'dist/styles/sass'],
