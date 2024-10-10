@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GroupingAndColspanService } from '../groupingAndColspan.service';
+import { HeaderGroupingService } from '../headerGrouping.service';
 import type { Column, GridOption } from '../../interfaces/index';
 import type { ExtensionUtility } from '../../extensions/extensionUtility';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
@@ -74,8 +74,8 @@ const template =
     </div>
   </div>`;
 
-describe('GroupingAndColspanService', () => {
-  let service: GroupingAndColspanService;
+describe('HeaderGroupingService', () => {
+  let service: HeaderGroupingService;
   let slickgridEventHandler: SlickEventHandler;
 
   beforeEach(() => {
@@ -83,7 +83,7 @@ describe('GroupingAndColspanService', () => {
     div.innerHTML = template;
     document.body.appendChild(div);
 
-    service = new GroupingAndColspanService(mockExtensionUtility);
+    service = new HeaderGroupingService(mockExtensionUtility);
     slickgridEventHandler = service.eventHandler;
   });
 

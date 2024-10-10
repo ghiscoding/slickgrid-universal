@@ -5,7 +5,7 @@ import type { Column, GridOption, } from './../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
-export class GroupingAndColspanService {
+export class HeaderGroupingService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];

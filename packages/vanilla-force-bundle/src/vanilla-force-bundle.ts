@@ -10,7 +10,7 @@ import type {
   GridEventService,
   GridService,
   GridStateService,
-  GroupingAndColspanService,
+  HeaderGroupingService,
   PaginationService,
   ResizerService,
   RxJsFacade,
@@ -59,7 +59,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
       gridEventService?: GridEventService,
       gridService?: GridService,
       gridStateService?: GridStateService,
-      groupingAndColspanService?: GroupingAndColspanService,
+      headerGroupingService?: HeaderGroupingService,
       paginationService?: PaginationService,
       resizerService?: ResizerService,
       rxjs?: RxJsFacade,
@@ -127,7 +127,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if ((this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) || (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)) {
-      this._registeredResources.push(this.groupingService);
+      this._registeredResources.push(this.headerGroupingService);
     }
 
     // when using Tree Data View, register its Service
