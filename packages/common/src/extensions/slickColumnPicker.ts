@@ -233,6 +233,7 @@ export class SlickColumnPicker {
       this._menuElm.style.left = `${menuOffsetLeft}px`;
       this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
       this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
+      this._menuElm.style.display = 'block';
       this._menuElm.ariaExpanded = 'true';
       this._menuElm.appendChild(this._listElm);
     }
