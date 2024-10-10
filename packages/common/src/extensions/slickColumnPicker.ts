@@ -221,7 +221,7 @@ export class SlickColumnPicker {
   protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): void {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (this._menuElm) {
-      // auto-positioned menu left/right by available position
+      // auto-positioned menu left/right by available viewport space
       const gridPos = this.grid.getGridPosition();
       const menuWidth = this._menuElm.clientWidth || 0;
       let menuOffsetLeft = targetEvent.pageX || 0;
