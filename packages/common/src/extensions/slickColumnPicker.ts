@@ -201,7 +201,7 @@ export class SlickColumnPicker {
   /** Mouse header context handler when doing a right+click on any of the header column title */
   protected handleHeaderContextMenu(e: SlickEventData): void {
     e.preventDefault();
-    emptyElement(this._listElm);
+    emptyElement(this._menuElm);
     this._columnCheckboxes = [];
 
     this._menuElm = this.createPickerMenu();
@@ -221,8 +221,16 @@ export class SlickColumnPicker {
   protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): void {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (this._menuElm) {
+      // auto-positioned menu left/right by available viewport space
+      const gridPos = this.grid.getGridPosition();
+      const menuWidth = this._menuElm.clientWidth || 0;
+      let menuOffsetLeft = targetEvent.pageX || 0;
+      if (gridPos?.width && (menuOffsetLeft + menuWidth >= gridPos.width)) {
+        menuOffsetLeft = menuOffsetLeft - menuWidth;
+      }
+
       this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
-      this._menuElm.style.left = `${targetEvent.pageX - 10}px`;
+      this._menuElm.style.left = `${menuOffsetLeft}px`;
       this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
       this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
       this._menuElm.style.display = 'block';

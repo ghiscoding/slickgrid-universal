@@ -16,6 +16,7 @@ const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
+  getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getSelectedRows: vi.fn(),
   getUID: () => gridUid,
@@ -360,6 +361,26 @@ describe('ColumnPickerControl', () => {
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
 
       expect(control.menuElement?.classList.contains('slick-dark-mode')).toBeTruthy();
+    });
+
+    it('should reposition menu to the left when no available space on the right', () => {
+      vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ left: 50, top: 0, right: 0, bottom: 200, height: 22, width: 300, visible: true });
+      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+
+      control.init();
+
+      const groupElm = createDomElement('div', { className: 'slick-column-name' });
+      gridStub.onPreHeaderContextMenu.notify({ node: groupElm, grid: gridStub }, { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm, pageX: 305 } as any, gridStub);
+      vi.spyOn(control, 'createPickerMenu').mockImplementation(() => {
+        if (control.menuElement) {
+          Object.defineProperty(control.menuElement, 'clientWidth', { writable: true, value: 122 });
+          return control.menuElement;
+        }
+        return document.createElement('div');
+      });
+      gridStub.onPreHeaderContextMenu.notify({ node: groupElm, grid: gridStub }, { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm, pageX: 305 } as any, gridStub);
+      Object.defineProperty(control.menuElement, 'clientWidth', { writable: true, value: 122 });
+      expect(control.menuElement?.style.left).toBe('183px');
     });
 
     describe('onColumnsReordered event', () => {
