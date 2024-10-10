@@ -47,7 +47,7 @@ export class HeaderGroupingService {
       if (this._gridOptions.createPreHeaderPanel) {
         // if we use Translation, then we need to translate the first time
         if (this._gridOptions.enableTranslate) {
-          this.translateGroupingAndColSpan();
+          this.translateHeaderGrouping();
         }
 
         this._eventHandler.subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles());
@@ -139,7 +139,7 @@ export class HeaderGroupingService {
   }
 
   /** Translate Column Group texts and re-render them afterward. */
-  translateGroupingAndColSpan(): void {
+  translateHeaderGrouping(): void {
     const currentColumnDefinitions = this._grid.getColumns();
     this.extensionUtility.translateItems(currentColumnDefinitions, 'columnGroupKey', 'columnGroup');
     this._grid.setColumns(currentColumnDefinitions);

@@ -61,7 +61,7 @@ const mockExtensionUtility = {
 const headerGroupingServiceStub = {
   init: vi.fn(),
   dispose: vi.fn(),
-  translateGroupingAndColSpan: vi.fn(),
+  translateHeaderGrouping: vi.fn(),
 } as unknown as HeaderGroupingService;
 
 const backendUtilityServiceStub = {

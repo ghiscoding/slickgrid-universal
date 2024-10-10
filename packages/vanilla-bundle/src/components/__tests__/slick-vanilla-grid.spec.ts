@@ -92,7 +92,7 @@ const mockExtensionUtility = {
 const headerGroupingServiceStub = {
   init: vi.fn(),
   dispose: vi.fn(),
-  translateGroupingAndColSpan: vi.fn(),
+  translateHeaderGrouping: vi.fn(),
 } as unknown as HeaderGroupingService;
 
 const mockGraphqlService = {
@@ -1571,7 +1571,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should call multiple translate methods when locale changes', () => {
         const transExtensionSpy = vi.spyOn(extensionServiceStub, 'translateAllExtensions');
-        const transGroupingColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateGroupingAndColSpan');
+        const transGroupingColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateHeaderGrouping');
         const setHeaderRowSpy = vi.spyOn(mockGrid, 'setHeaderRowVisibility');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: false, enableDraggableGrouping: false, showCustomFooter: true } as unknown as GridOption;
@@ -1585,10 +1585,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(transExtensionSpy).toHaveBeenCalled();
       });
 
-      it('should call "setHeaderRowVisibility", "translateGroupingAndColSpan" and other methods when locale changes', () => {
+      it('should call "setHeaderRowVisibility", "translateHeaderGrouping" and other methods when locale changes', () => {
         component.columnDefinitions = [{ id: 'firstName', field: 'firstName', filterable: true }];
         const transExtensionSpy = vi.spyOn(extensionServiceStub, 'translateAllExtensions');
-        const transGroupingColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateGroupingAndColSpan');
+        const transGroupingColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateHeaderGrouping');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -1600,8 +1600,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(transExtensionSpy).toHaveBeenCalled();
       });
 
-      it('should call "translateGroupingAndColSpan" translate methods when locale changes and Column Grouping PreHeader are enabled', () => {
-        const groupColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateGroupingAndColSpan');
+      it('should call "translateHeaderGrouping" translate methods when locale changes and Column Grouping PreHeader are enabled', () => {
+        const groupColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateHeaderGrouping');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);

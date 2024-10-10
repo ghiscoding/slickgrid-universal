@@ -786,7 +786,7 @@ export class SlickVanillaGridBundle<TData = any> {
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions(args.language);
           if ((gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) || (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)) {
-            this.headerGroupingService.translateGroupingAndColSpan();
+            this.headerGroupingService.translateHeaderGrouping();
           }
         }
       })
