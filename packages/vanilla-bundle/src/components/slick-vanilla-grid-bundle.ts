@@ -33,7 +33,7 @@ import {
   GridEventService,
   GridService,
   GridStateService,
-  GroupingAndColspanService,
+  HeaderGroupingService,
   type Observable,
   PaginationService,
   ResizerService,
@@ -113,7 +113,7 @@ export class SlickVanillaGridBundle<TData = any> {
   gridEventService!: GridEventService;
   gridService!: GridService;
   gridStateService!: GridStateService;
-  groupingService!: GroupingAndColspanService;
+  headerGroupingService!: HeaderGroupingService;
   paginationService!: PaginationService;
   rxjs?: RxJsFacade;
   sharedService!: SharedService;
@@ -301,7 +301,7 @@ export class SlickVanillaGridBundle<TData = any> {
       gridEventService?: GridEventService,
       gridService?: GridService,
       gridStateService?: GridStateService,
-      groupingAndColspanService?: GroupingAndColspanService,
+      headerGroupingService?: HeaderGroupingService,
       paginationService?: PaginationService,
       resizerService?: ResizerService,
       rxjs?: RxJsFacade,
@@ -380,7 +380,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.treeDataService);
     this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService, this.treeDataService);
-    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility);
+    this.headerGroupingService = services?.headerGroupingService ?? new HeaderGroupingService(this.extensionUtility);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
@@ -397,7 +397,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.universalContainerService.registerInstance('GridEventService', this.gridEventService);
     this.universalContainerService.registerInstance('GridService', this.gridService);
     this.universalContainerService.registerInstance('GridStateService', this.gridStateService);
-    this.universalContainerService.registerInstance('GroupingAndColspanService', this.groupingService);
+    this.universalContainerService.registerInstance('HeaderGroupingService', this.headerGroupingService);
     this.universalContainerService.registerInstance('PaginationService', this.paginationService);
     this.universalContainerService.registerInstance('ResizerService', this.resizerService);
     this.universalContainerService.registerInstance('SharedService', this.sharedService);
@@ -426,7 +426,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.gridEventService?.dispose();
     this.gridService?.dispose();
     this.gridStateService?.dispose();
-    this.groupingService?.dispose();
+    this.headerGroupingService?.dispose();
     this.paginationService?.dispose();
     this.resizerService?.dispose();
     this.sortService?.dispose();
@@ -694,7 +694,8 @@ export class SlickVanillaGridBundle<TData = any> {
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
       gridService: this.gridService,
-      groupingService: this.groupingService,
+      groupingService: this.headerGroupingService,
+      headerGroupingService: this.headerGroupingService,
       extensionService: this.extensionService,
       extensionUtility: this.extensionUtility,
       paginationService: this.paginationService,
@@ -785,7 +786,7 @@ export class SlickVanillaGridBundle<TData = any> {
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions(args.language);
           if ((gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) || (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)) {
-            this.groupingService.translateGroupingAndColSpan();
+            this.headerGroupingService.translateHeaderGrouping();
           }
         }
       })
@@ -1459,7 +1460,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if ((this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) || (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)) {
-      this._registeredResources.push(this.groupingService);
+      this._registeredResources.push(this.headerGroupingService);
     }
 
     // when using Tree Data View, register its Service

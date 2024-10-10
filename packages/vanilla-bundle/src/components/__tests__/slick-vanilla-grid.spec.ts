@@ -29,7 +29,7 @@ import {
   type GridState,
   type GridStateService,
   GridStateType,
-  type GroupingAndColspanService,
+  type HeaderGroupingService,
   type OnRowCountChangedEventArgs,
   type OnRowsChangedEventArgs,
   type OnSetItemsCalledEventArgs,
@@ -89,11 +89,11 @@ const mockExtensionUtility = {
   translateItems: vi.fn(),
 } as unknown as ExtensionUtility;
 
-const groupingAndColspanServiceStub = {
+const headerGroupingServiceStub = {
   init: vi.fn(),
   dispose: vi.fn(),
-  translateGroupingAndColSpan: vi.fn(),
-} as unknown as GroupingAndColspanService;
+  translateHeaderGrouping: vi.fn(),
+} as unknown as HeaderGroupingService;
 
 const mockGraphqlService = {
   getDatasetName: vi.fn(),
@@ -337,7 +337,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         gridEventService: gridEventServiceStub,
         gridService: gridServiceStub,
         gridStateService: gridStateServiceStub,
-        groupingAndColspanService: groupingAndColspanServiceStub,
+        headerGroupingService: headerGroupingServiceStub,
         paginationService: paginationServiceStub,
         resizerService: resizerServiceStub,
         sharedService,
@@ -379,7 +379,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         gridEventService: gridEventServiceStub,
         gridService: gridServiceStub,
         gridStateService: gridStateServiceStub,
-        groupingAndColspanService: groupingAndColspanServiceStub,
+        headerGroupingService: headerGroupingServiceStub,
         paginationService: paginationServiceStub,
         resizerService: resizerServiceStub,
         sharedService,
@@ -1040,8 +1040,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
-      it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
-        const spy = vi.spyOn(groupingAndColspanServiceStub, 'init');
+      it('should initialize HeaderGroupingService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
+        const spy = vi.spyOn(headerGroupingServiceStub, 'init');
 
         component.gridOptions = { createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -1571,7 +1571,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should call multiple translate methods when locale changes', () => {
         const transExtensionSpy = vi.spyOn(extensionServiceStub, 'translateAllExtensions');
-        const transGroupingColSpanSpy = vi.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
+        const transGroupingColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateHeaderGrouping');
         const setHeaderRowSpy = vi.spyOn(mockGrid, 'setHeaderRowVisibility');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: false, enableDraggableGrouping: false, showCustomFooter: true } as unknown as GridOption;
@@ -1585,10 +1585,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(transExtensionSpy).toHaveBeenCalled();
       });
 
-      it('should call "setHeaderRowVisibility", "translateGroupingAndColSpan" and other methods when locale changes', () => {
+      it('should call "setHeaderRowVisibility", "translateHeaderGrouping" and other methods when locale changes', () => {
         component.columnDefinitions = [{ id: 'firstName', field: 'firstName', filterable: true }];
         const transExtensionSpy = vi.spyOn(extensionServiceStub, 'translateAllExtensions');
-        const transGroupingColSpanSpy = vi.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
+        const transGroupingColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateHeaderGrouping');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -1600,8 +1600,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(transExtensionSpy).toHaveBeenCalled();
       });
 
-      it('should call "translateGroupingAndColSpan" translate methods when locale changes and Column Grouping PreHeader are enabled', () => {
-        const groupColSpanSpy = vi.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
+      it('should call "translateHeaderGrouping" translate methods when locale changes and Column Grouping PreHeader are enabled', () => {
+        const groupColSpanSpy = vi.spyOn(headerGroupingServiceStub, 'translateHeaderGrouping');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -2385,7 +2385,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
         gridEventService: gridEventServiceStub,
         gridService: gridServiceStub,
         gridStateService: gridStateServiceStub,
-        groupingAndColspanService: groupingAndColspanServiceStub,
+        headerGroupingService: headerGroupingServiceStub,
         paginationService: paginationServiceStub,
         resizerService: resizerServiceStub,
         sharedService,
@@ -2449,7 +2449,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
         gridEventService: gridEventServiceStub,
         gridService: gridServiceStub,
         gridStateService: gridStateServiceStub,
-        groupingAndColspanService: groupingAndColspanServiceStub,
+        headerGroupingService: headerGroupingServiceStub,
         paginationService: paginationServiceStub,
         resizerService: resizerServiceStub,
         sharedService,

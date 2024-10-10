@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GroupingAndColspanService } from '../groupingAndColspan.service';
+import { HeaderGroupingService } from '../headerGrouping.service';
 import type { Column, GridOption } from '../../interfaces/index';
 import type { ExtensionUtility } from '../../extensions/extensionUtility';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
@@ -74,8 +74,8 @@ const template =
     </div>
   </div>`;
 
-describe('GroupingAndColspanService', () => {
-  let service: GroupingAndColspanService;
+describe('HeaderGroupingService', () => {
+  let service: HeaderGroupingService;
   let slickgridEventHandler: SlickEventHandler;
 
   beforeEach(() => {
@@ -83,7 +83,7 @@ describe('GroupingAndColspanService', () => {
     div.innerHTML = template;
     document.body.appendChild(div);
 
-    service = new GroupingAndColspanService(mockExtensionUtility);
+    service = new HeaderGroupingService(mockExtensionUtility);
     slickgridEventHandler = service.eventHandler;
   });
 
@@ -177,7 +177,7 @@ describe('GroupingAndColspanService', () => {
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
     });
 
-    it('should call the "renderPreHeaderRowGroupingTitles" after calling the "translateGroupingAndColSpan" method', () => {
+    it('should call the "renderPreHeaderRowGroupingTitles" after calling the "translateHeaderGrouping" method', () => {
       gridOptionMock.enableTranslate = true;
       const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
       const translateSpy = vi.spyOn(mockExtensionUtility, 'translateItems');
@@ -185,12 +185,12 @@ describe('GroupingAndColspanService', () => {
       const setColSpy = vi.spyOn(gridStub, 'setColumns');
 
       service.init(gridStub);
-      service.translateGroupingAndColSpan();
+      service.translateHeaderGrouping();
 
       expect(getColSpy).toHaveBeenCalled();
       expect(setColSpy).toHaveBeenCalled();
       expect(translateSpy).toHaveBeenCalled();
-      expect(renderSpy).toHaveBeenCalledTimes(2); // 1x by the init, 1x by translateGroupingAndColSpan
+      expect(renderSpy).toHaveBeenCalledTimes(2); // 1x by the init, 1x by translateHeaderGrouping
     });
 
     it('should render the pre-header row grouping title DOM element', () => {

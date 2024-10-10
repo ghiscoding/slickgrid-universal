@@ -10,7 +10,7 @@ export * from './filter.service';
 export * from './grid.service';
 export * from './gridEvent.service';
 export * from './gridState.service';
-export * from './groupingAndColspan.service';
+export * from './headerGrouping.service';
 export * from './pagination.service';
 export * from './resizer.service';
 export * from './rxjsFacade';

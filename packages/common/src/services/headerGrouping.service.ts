@@ -5,7 +5,7 @@ import type { Column, GridOption, } from './../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
-export class GroupingAndColspanService {
+export class HeaderGroupingService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
@@ -47,7 +47,7 @@ export class GroupingAndColspanService {
       if (this._gridOptions.createPreHeaderPanel) {
         // if we use Translation, then we need to translate the first time
         if (this._gridOptions.enableTranslate) {
-          this.translateGroupingAndColSpan();
+          this.translateHeaderGrouping();
         }
 
         this._eventHandler.subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles());
@@ -139,7 +139,7 @@ export class GroupingAndColspanService {
   }
 
   /** Translate Column Group texts and re-render them afterward. */
-  translateGroupingAndColSpan(): void {
+  translateHeaderGrouping(): void {
     const currentColumnDefinitions = this._grid.getColumns();
     this.extensionUtility.translateItems(currentColumnDefinitions, 'columnGroupKey', 'columnGroup');
     this._grid.setColumns(currentColumnDefinitions);

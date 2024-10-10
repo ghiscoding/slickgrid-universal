@@ -10,7 +10,7 @@ import {
   type GridOption,
   type GridService,
   type GridStateService,
-  type GroupingAndColspanService,
+  type HeaderGroupingService,
   type OnRowCountChangedEventArgs,
   type OnRowsChangedEventArgs,
   type OnSetItemsCalledEventArgs,
@@ -58,11 +58,11 @@ const mockExtensionUtility = {
   translateItems: vi.fn(),
 } as unknown as ExtensionUtility;
 
-const groupingAndColspanServiceStub = {
+const headerGroupingServiceStub = {
   init: vi.fn(),
   dispose: vi.fn(),
-  translateGroupingAndColSpan: vi.fn(),
-} as unknown as GroupingAndColspanService;
+  translateHeaderGrouping: vi.fn(),
+} as unknown as HeaderGroupingService;
 
 const backendUtilityServiceStub = {
   addRxJsResource: vi.fn(),
@@ -308,7 +308,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         gridEventService: gridEventServiceStub,
         gridService: gridServiceStub,
         gridStateService: gridStateServiceStub,
-        groupingAndColspanService: groupingAndColspanServiceStub,
+        headerGroupingService: headerGroupingServiceStub,
         paginationService: paginationServiceStub,
         resizerService: resizerServiceStub,
         sharedService,
@@ -463,8 +463,8 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
-      it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
-        const spy = vi.spyOn(groupingAndColspanServiceStub, 'init');
+      it('should initialize HeaderGroupingService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
+        const spy = vi.spyOn(headerGroupingServiceStub, 'init');
 
         component.gridOptions = { createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
