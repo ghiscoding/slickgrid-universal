@@ -1262,9 +1262,9 @@ export class SlickVanillaGridBundle<TData = any> {
    * @param {Boolean} shouldDisposePaginationService - when disposing the Pagination, do we also want to dispose of the Pagination Service? (defaults to True)
    */
   protected renderPagination(showPagination = true): void {
-    if (this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
-      this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translaterService);
-      this.slickPagination.renderPagination(this._gridParentContainerElm);
+    if (this.slickGrid && this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
+      this.slickPagination = new SlickPaginationComponent(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
+      this.slickPagination.render(this._gridParentContainerElm);
       this._isPaginationInitialized = true;
     } else if (!showPagination) {
       this.slickPagination?.dispose();

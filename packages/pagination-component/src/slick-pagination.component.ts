@@ -1,10 +1,10 @@
 import type {
   GridOption,
   Locale,
+  BasePaginationComponent,
   PaginationService,
   PubSubService,
   ServicePagination,
-  SharedService,
   SlickGrid,
   Subscription,
   TranslaterService,
@@ -12,12 +12,12 @@ import type {
 import { Constants, createDomElement, getTranslationPrefix } from '@slickgrid-universal/common';
 import { BindingEventService, BindingHelper } from '@slickgrid-universal/binding';
 
-export class SlickPaginationComponent {
+export class SlickPaginationComponent implements BasePaginationComponent {
   protected _bindingHelper: BindingHelper;
   protected _bindingEventService: BindingEventService;
   protected _paginationElement!: HTMLDivElement;
   protected _enableTranslate = false;
-  protected _gridParentContainerElm?: HTMLElement;
+  protected _gridContainerElm?: HTMLElement;
   protected _itemPerPageElm!: HTMLSelectElement;
   protected _spanInfoFromToElm!: HTMLSpanElement;
   protected _seekFirstElm!: HTMLLIElement;
@@ -37,7 +37,7 @@ export class SlickPaginationComponent {
   textOf = 'of';
   textPage = 'Page';
 
-  constructor(protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly translaterService?: TranslaterService | undefined) {
+  constructor(protected readonly grid: SlickGrid, protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService, protected readonly translaterService?: TranslaterService | undefined) {
     this._bindingHelper = new BindingHelper();
     this._bindingEventService = new BindingEventService();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
@@ -70,7 +70,7 @@ export class SlickPaginationComponent {
       }),
       this.pubSubService.subscribe('onPaginationSetCursorBased', () => {
         this.dispose(); // recreate pagination component, probably only used for GraphQL E2E tests
-        this.renderPagination(this._gridParentContainerElm!);
+        this.render(this._gridContainerElm!);
       })
     );
   }
@@ -102,12 +102,9 @@ export class SlickPaginationComponent {
     return this.paginationService.pageNumber;
   }
 
-  get grid(): SlickGrid {
-    return this.sharedService.slickGrid;
-  }
-
+  /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this.sharedService.gridOptions;
+    return this.grid?.getOptions() ?? {};
   }
 
   get gridUid(): string {
@@ -140,8 +137,8 @@ export class SlickPaginationComponent {
     this._paginationElement.remove();
   }
 
-  renderPagination(gridParentContainerElm: HTMLElement): void {
-    this._gridParentContainerElm = gridParentContainerElm;
+  render(containerElm: HTMLElement): void {
+    this._gridContainerElm = containerElm;
     const paginationElm = this.createPaginationContainer();
     const divNavContainerElm = createDomElement('div', { className: 'slick-pagination-nav' });
 
@@ -175,8 +172,8 @@ export class SlickPaginationComponent {
     paginationElm.appendChild(divNavContainerElm);
     paginationElm.appendChild(paginationSettingsElm);
     this._paginationElement.appendChild(paginationElm);
-    if (gridParentContainerElm?.appendChild && this._paginationElement) {
-      gridParentContainerElm.appendChild(this._paginationElement);
+    if (containerElm?.appendChild && this._paginationElement) {
+      containerElm.appendChild(this._paginationElement);
     }
 
     this.renderPageSizes();

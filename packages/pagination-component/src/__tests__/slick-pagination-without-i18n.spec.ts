@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type GridOption, type Locale, type PaginationService, SharedService, type SlickGrid } from '@slickgrid-universal/common';
+import { type GridOption, type Locale, type PaginationService, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { TranslateServiceStub } from '../../../../test/translateServiceStub';
@@ -62,17 +62,14 @@ describe('Slick-Pagination Component', () => {
   let component: SlickPaginationComponent;
   let div: HTMLDivElement;
   let eventPubSubService: EventPubSubService;
-  let sharedService: SharedService;
   let translateService: TranslateServiceStub;
 
   beforeEach(() => {
     vi.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
     div = document.createElement('div');
     document.body.appendChild(div);
-    sharedService = new SharedService();
     eventPubSubService = new EventPubSubService();
     translateService = new TranslateServiceStub();
-    sharedService.slickGrid = gridStub;
   });
 
   describe('Integration Tests', () => {
@@ -83,12 +80,11 @@ describe('Slick-Pagination Component', () => {
 
     it('should throw an error when "enableTranslate" is set and I18N Service is not provided', () => new Promise((done: any) => {
       try {
-        mockGridOptions.enableTranslate = true;
         translateService = undefined as any;
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, enableTranslate: true });
 
-        component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);
-        component.renderPagination(div);
+        component = new SlickPaginationComponent(gridStub, paginationServiceStub, eventPubSubService, translateService);
+        component.render(div);
       } catch (e) {
         expect(e.toString()).toContain('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
         done();
@@ -96,11 +92,10 @@ describe('Slick-Pagination Component', () => {
     }));
 
     it('should have defined locale and expect new text in the UI', () => {
-      mockGridOptions.locales = mockLocales;
-      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, locales: mockLocales });
 
-      component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);
-      component.renderPagination(div);
+      component = new SlickPaginationComponent(gridStub, paginationServiceStub, eventPubSubService, translateService);
+      component.render(div);
 
       const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
       const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
