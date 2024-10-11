@@ -132,7 +132,6 @@ export type * from './rowSelectionModelOption.interface';
 export type * from './searchColumnFilter.interface';
 export type * from './selectableOverrideCallback.interface';
 export type * from './selectOption.interface';
-export type * from './servicePagination.interface';
 export type * from './singleColumnSort.interface';
 export type * from './slickPlugin.interface';
 export type * from './slickRemoteModel.interface';

@@ -3,6 +3,7 @@ import type {
   BackendService,
   BackendServiceApi,
   BackendServiceOption,
+  BasePaginationComponent,
   Column,
   DataViewOption,
   ExtensionList,
@@ -12,7 +13,7 @@ import type {
   Pagination,
   RxJsFacade,
   SelectEditor,
-  ServicePagination,
+  PaginationMetadata,
   Subscription,
 } from '@slickgrid-universal/common';
 
@@ -114,6 +115,7 @@ export class SlickVanillaGridBundle<TData = any> {
   gridService!: GridService;
   gridStateService!: GridStateService;
   headerGroupingService!: HeaderGroupingService;
+  paginationComponent: BasePaginationComponent | undefined;
   paginationService!: PaginationService;
   rxjs?: RxJsFacade;
   sharedService!: SharedService;
@@ -125,7 +127,6 @@ export class SlickVanillaGridBundle<TData = any> {
   // components
   slickEmptyWarning: SlickEmptyWarningComponent | undefined;
   slickFooter: SlickFooterComponent | undefined;
-  slickPagination: SlickPaginationComponent | undefined;
 
   get backendService(): BackendService | undefined {
     return this.gridOptions.backendServiceApi?.service;
@@ -442,7 +443,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // dispose the Components
     this.slickFooter?.dispose();
     this.slickEmptyWarning?.dispose();
-    this.slickPagination?.dispose();
+    this.paginationComponent?.dispose();
 
     unsubscribeAll(this.subscriptions);
     this._eventPubSubService?.unsubscribeAll();
@@ -1036,7 +1037,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * On a Pagination changed, we will trigger a Grid State changed with the new pagination info
    * Also if we use Row Selection or the Checkbox Selector with a Backend Service (Odata, GraphQL), we need to reset any selection
    */
-  paginationChanged(pagination: ServicePagination): void {
+  paginationChanged(pagination: PaginationMetadata): void {
     const isSyncGridSelectionEnabled = this.gridStateService?.needToPreserveRowSelection() ?? false;
     if (this.slickGrid && !isSyncGridSelectionEnabled && this._gridOptions?.backendServiceApi && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
       this.slickGrid.setSelectedRows([]);
@@ -1239,7 +1240,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.paginationService.totalItems = this.totalItems;
       this.paginationService.init(this.slickGrid, paginationOptions, this.backendServiceApi);
       this.subscriptions.push(
-        this._eventPubSubService.subscribe<ServicePagination>('onPaginationChanged', paginationChanges => this.paginationChanged(paginationChanges)),
+        this._eventPubSubService.subscribe<PaginationMetadata>('onPaginationChanged', paginationChanges => this.paginationChanged(paginationChanges)),
         this._eventPubSubService.subscribe<{ visible: boolean; }>('onPaginationVisibilityChanged', visibility => {
           this.showPagination = visibility?.visible ?? false;
           if (this.gridOptions?.backendServiceApi) {
@@ -1263,11 +1264,12 @@ export class SlickVanillaGridBundle<TData = any> {
    */
   protected renderPagination(showPagination = true): void {
     if (this.slickGrid && this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
-      this.slickPagination = new SlickPaginationComponent(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
-      this.slickPagination.render(this._gridParentContainerElm);
+      const PaginationClass = this.gridOptions.customPaginationComponent ?? SlickPaginationComponent;
+      this.paginationComponent = new PaginationClass(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
+      this.paginationComponent!.render(this._gridParentContainerElm);
       this._isPaginationInitialized = true;
     } else if (!showPagination) {
-      this.slickPagination?.dispose();
+      this.paginationComponent?.dispose();
       this._isPaginationInitialized = false;
     }
   }
