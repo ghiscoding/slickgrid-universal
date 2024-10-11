@@ -51,7 +51,7 @@ export default class Example30 {
         id: 'title', name: 'Title', field: 'id', minWidth: 100,
         sortable: true,
         filterable: true,
-        formatter: (row, cell, val) => `Task ${val}`,
+        formatter: (_row, _cell, val) => `Task ${val}`,
         params: { useFormatterOuputToFilter: true }
       },
       {
