@@ -4,7 +4,7 @@ import type {
   BasePaginationComponent,
   PaginationService,
   PubSubService,
-  ServicePagination,
+  PaginationMetadata,
   SlickGrid,
   Subscription,
   TranslaterService,
@@ -25,7 +25,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   protected _seekNextElm!: HTMLLIElement;
   protected _seekEndElm!: HTMLLIElement;
   protected _subscriptions: Subscription[] = [];
-  currentPagination: ServicePagination;
+  currentPagination: PaginationMetadata;
   firstButtonClasses = '';
   lastButtonClasses = '';
   prevButtonClasses = '';
@@ -59,7 +59,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     // Anytime the pagination is initialized or has changes,
     // we'll copy the data into a local object so that we can add binding to this local object
     this._subscriptions.push(
-      this.pubSubService.subscribe<ServicePagination>('onPaginationRefreshed', paginationChanges => {
+      this.pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', paginationChanges => {
         for (const key of Object.keys(paginationChanges)) {
           (this.currentPagination as any)[key] = (paginationChanges as any)[key];
         }

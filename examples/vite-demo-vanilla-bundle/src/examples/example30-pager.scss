@@ -1,0 +1,51 @@
+@use 'sass:color';
+
+.custom-pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px;
+  font-size: 13px;
+
+  .custom-pagination-settings {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 30px;
+  }
+
+  .custom-pagination-nav {
+    display: flex;
+    align-items: center;
+
+    .page-item {
+      display: flex;
+      width: 26px;
+      justify-content: center;
+      margin: 0;
+      &.disabled .page-link {
+        color: rgb(180, 179, 179);
+      }
+    }
+
+    .page-number {
+      padding: 0 5px;
+      .page-number {
+        display: inline-flex;
+        justify-content: center;
+        width: 20px;
+      }
+    }
+
+    nav {
+      ul  {
+        display: flex;
+
+        .page-link {
+          color: rgb(0, 168, 53);
+          &:hover {
+            color: color.adjust(rgb(0, 168, 53), $lightness: -12%);
+          }
+        }
+      }
+    }
+  }
+}

@@ -18,7 +18,7 @@ export interface Pagination {
   totalItems?: number;
 }
 
-export abstract class BasePaginationComponent {
+export class BasePaginationComponent {
   constructor(
     _grid: SlickGrid,
     _paginationService: PaginationService,
@@ -29,4 +29,15 @@ export abstract class BasePaginationComponent {
   dispose(): void { }
 
   render(_containerElm: HTMLElement): void { }
+}
+
+export interface PaginationMetadata extends Pagination {
+  /** How many pages do we have in total to display the entire dataset? */
+  pageCount?: number;
+
+  /** Current From count (which displayed items are we starting from) */
+  dataFrom?: number;
+
+  /** Current To count (which displayed items are we ending to) */
+  dataTo?: number;
 }
