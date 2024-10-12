@@ -1,3 +1,3 @@
-export { GridOdataService } from './services/grid-odata.service';
-export { OdataQueryBuilderService } from './services/odataQueryBuilder.service';
-export type * from './interfaces/index';
+export { GridOdataService } from './services/grid-odata.service.js';
+export { OdataQueryBuilderService } from './services/odataQueryBuilder.service.js';
+export type * from './interfaces/index.js';

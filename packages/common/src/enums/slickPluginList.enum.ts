@@ -1,6 +1,6 @@
-import type { ExtensionName } from '../enums/index';
-import type { SlickEditorLock } from '../core/index';
-import type { SlickRowDetailView } from '../interfaces/index';
+import type { ExtensionName } from '../enums/index.js';
+import type { SlickEditorLock } from '../core/index.js';
+import type { SlickRowDetailView } from '../interfaces/index.js';
 import type {
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
@@ -20,7 +20,7 @@ import type {
   SlickRowBasedEdit,
   SlickRowMoveManager,
   SlickRowSelectionModel,
-} from '../extensions/index';
+} from '../extensions/index.js';
 
 export type SlickPluginList =
   SlickAutoTooltip |

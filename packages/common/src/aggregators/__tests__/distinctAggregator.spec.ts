@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { DistinctAggregator } from '../distinctAggregator';
+import { DistinctAggregator } from '../distinctAggregator.js';
 
 describe('disctinctAggregator', () => {
   let aggregator: DistinctAggregator;

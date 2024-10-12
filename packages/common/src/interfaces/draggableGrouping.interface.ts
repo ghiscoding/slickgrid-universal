@@ -1,8 +1,8 @@
 
-import type { Grouping } from './index';
-import type { DraggableGroupingOption } from './draggableGroupingOption.interface';
-import type { SlickDraggableGrouping } from '../extensions/slickDraggableGrouping';
-import type { SlickEventData } from '../core/index';
+import type { Grouping } from './index.js';
+import type { DraggableGroupingOption } from './draggableGroupingOption.interface.js';
+import type { SlickDraggableGrouping } from '../extensions/slickDraggableGrouping.js';
+import type { SlickEventData } from '../core/index.js';
 
 export interface DraggableGrouping extends DraggableGroupingOption {
   //

@@ -1,1 +1,1 @@
-export * from './commonEditorFilterUtils';
+export * from './commonEditorFilterUtils.js';

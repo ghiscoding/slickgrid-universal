@@ -1,6 +1,6 @@
 import { createDomElement, extend } from '@slickgrid-universal/utils';
 
-import { SlickEventHandler, type SlickDataView, SlickGroup, type SlickGrid, type SlickEventData } from '../core/index';
+import { SlickEventHandler, type SlickDataView, SlickGroup, type SlickGrid, type SlickEventData } from '../core/index.js';
 import type {
   Column,
   Formatter,
@@ -10,7 +10,7 @@ import type {
   ItemMetadata,
   OnClickEventArgs,
   SlickPlugin,
-} from '../interfaces/index';
+} from '../interfaces/index.js';
 
 /**
  * Provides item metadata for group (SlickGroup) and totals (SlickTotals) rows produced by the DataView.

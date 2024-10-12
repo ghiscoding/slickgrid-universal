@@ -12,18 +12,18 @@ import type {
   GridMenuOption,
   GridOption,
   onGridMenuColumnsChangedCallbackArgs,
-} from '../interfaces/index';
-import { DelimiterType, FileType } from '../enums/index';
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { getTranslationPrefix, } from '../services/index';
-import type { ExcelExportService } from '../services/excelExport.service';
-import type { FilterService } from '../services/filter.service';
-import type { SharedService } from '../services/shared.service';
-import type { SortService } from '../services/sort.service';
-import type { TextExportService } from '../services/textExport.service';
-import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass';
-import { SlickEvent, Utils as SlickUtils } from '../core/index';
+} from '../interfaces/index.js';
+import { DelimiterType, FileType } from '../enums/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { getTranslationPrefix, } from '../services/index.js';
+import type { ExcelExportService } from '../services/excelExport.service.js';
+import type { FilterService } from '../services/filter.service.js';
+import type { SharedService } from '../services/shared.service.js';
+import type { SortService } from '../services/sort.service.js';
+import type { TextExportService } from '../services/textExport.service.js';
+import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils.js';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass.js';
+import { SlickEvent, Utils as SlickUtils } from '../core/index.js';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)

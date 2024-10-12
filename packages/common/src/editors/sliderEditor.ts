@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { Constants } from '../constants';
+import { Constants } from '../constants.js';
 import type {
   Column,
   ColumnEditor,
@@ -13,10 +13,10 @@ import type {
   EditorValidationResult,
   GridOption,
   SliderOption,
-} from '../interfaces/index';
-import { getDescendantProperty } from '../services/utilities';
-import { sliderValidator } from '../editorValidators/sliderValidator';
-import { SlickEventData, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import { getDescendantProperty } from '../services/utilities.js';
+import { sliderValidator } from '../editorValidators/sliderValidator.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 /*
  * An example of a 'detached' editor.

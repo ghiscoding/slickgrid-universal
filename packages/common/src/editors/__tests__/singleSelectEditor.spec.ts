@@ -3,11 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
 
-import { Editors } from '../index';
-import { SingleSelectEditor } from '../singleSelectEditor';
-import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
-import type { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { SlickDataView, SlickGrid } from '../../core';
+import { Editors } from '../index.js';
+import { SingleSelectEditor } from '../singleSelectEditor.js';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
+import type { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { SlickDataView, SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

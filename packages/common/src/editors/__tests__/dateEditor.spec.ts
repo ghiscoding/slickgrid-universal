@@ -3,12 +3,12 @@ import { format } from '@formkit/tempo';
 import type VanillaCalendar from 'vanilla-calendar-pro';
 import type { ISelected } from 'vanilla-calendar-pro/types';
 
-import { Editors } from '../index';
-import { DateEditor } from '../dateEditor';
-import { FieldType } from '../../enums/index';
-import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
+import { Editors } from '../index.js';
+import { DateEditor } from '../dateEditor.js';
+import { FieldType } from '../../enums/index.js';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 
 const dataViewStub = {
   refresh: vi.fn(),
@@ -152,11 +152,16 @@ describe('DateEditor', () => {
     });
 
     it('should stop propagation on allowInput when hitting left or right arrow and home and end keys', () => {
-      editor = new DateEditor({ ...editorArguments,
-        column: { ...editorArguments.column,
-          editor: { ...editorArguments.column.editor,
+      editor = new DateEditor({
+        ...editorArguments,
+        column: {
+          ...editorArguments.column,
+          editor: {
+            ...editorArguments.column.editor,
             editorOptions: { ...editorArguments.column?.editor?.editorOptions, allowInput: true }
-           }}});
+          }
+        }
+      });
 
       let event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
       let propagationSpy = vi.spyOn(event, 'stopImmediatePropagation');
@@ -308,10 +313,14 @@ describe('DateEditor', () => {
       it('should return True when the last key was enter and alwaysSaveOnEnterKey is active', () => {
         mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
 
-        editor = new DateEditor({...editorArguments,
-          column: { ...mockColumn, editor: { ...editorArguments.column.editor, alwaysSaveOnEnterKey: true,
-            editorOptions: { ...editorArguments.column.editor?.editorOptions, allowInput: true}
-           } }
+        editor = new DateEditor({
+          ...editorArguments,
+          column: {
+            ...mockColumn, editor: {
+              ...editorArguments.column.editor, alwaysSaveOnEnterKey: true,
+              editorOptions: { ...editorArguments.column.editor?.editorOptions, allowInput: true }
+            }
+          }
         });
         const event = new KeyboardEvent('keydown', { key: 'Enter' });
         vi.runAllTimers();

@@ -1,12 +1,12 @@
 import { format } from '@formkit/tempo';
 import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 
-import { FieldType } from '../enums/fieldType.enum';
-import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
-import { multipleFormatter } from './multipleFormatter';
-import { Constants } from '../constants';
-import { type SlickGrid } from '../core/index';
-import { mapTempoDateFormatWithFieldType, toUtcDate, tryParseDate } from '../services/dateUtils';
+import { FieldType } from '../enums/fieldType.enum.js';
+import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index.js';
+import { multipleFormatter } from './multipleFormatter.js';
+import { Constants } from '../constants.js';
+import { type SlickGrid } from '../core/index.js';
+import { mapTempoDateFormatWithFieldType, toUtcDate, tryParseDate } from '../services/dateUtils.js';
 
 export type FormatterType = 'group' | 'cell';
 export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';

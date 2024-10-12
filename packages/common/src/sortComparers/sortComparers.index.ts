@@ -1,13 +1,13 @@
-import { booleanSortComparer } from './booleanSortComparer';
-import { numericSortComparer } from './numericSortComparer';
-import { objectStringSortComparer } from './objectStringSortComparer';
-import { stringSortComparer } from './stringSortComparer';
-import { getAssociatedDateSortComparer } from './dateUtilities';
-import { FieldType } from '../enums/fieldType.enum';
-import type { SortComparer } from '../interfaces/sorter.interface';
+import { booleanSortComparer } from './booleanSortComparer.js';
+import { numericSortComparer } from './numericSortComparer.js';
+import { objectStringSortComparer } from './objectStringSortComparer.js';
+import { stringSortComparer } from './stringSortComparer.js';
+import { getAssociatedDateSortComparer } from './dateUtilities.js';
+import { FieldType } from '../enums/fieldType.enum.js';
+import type { SortComparer } from '../interfaces/sorter.interface.js';
 
 // export the Sort Utilities so they could be used by others
-export * from './sortUtilities';
+export * from './sortUtilities.js';
 
 export const SortComparers: Record<string, SortComparer> = {
   /** SortComparer method to sort values as regular strings */

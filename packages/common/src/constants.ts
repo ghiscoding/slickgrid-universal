@@ -1,4 +1,4 @@
-import type { Locale } from './interfaces/locale.interface';
+import type { Locale } from './interfaces/locale.interface.js';
 
 export class Constants {
   static readonly locales: Locale = {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SharedService } from '@slickgrid-universal/common';
 
-import { UniversalContainerService } from '../universalContainer.service';
+import { UniversalContainerService } from '../universalContainer.service.js';
 
 describe('UniversalContainer Service', () => {
   let service: UniversalContainerService;

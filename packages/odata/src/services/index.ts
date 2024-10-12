@@ -1,2 +1,2 @@
-export * from './grid-odata.service';
-export * from './odataQueryBuilder.service';
+export * from './grid-odata.service.js';
+export * from './odataQueryBuilder.service.js';

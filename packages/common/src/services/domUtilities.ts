@@ -1,10 +1,10 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 import type { OptionRowData } from 'multiple-select-vanilla';
 
-import type { SearchTerm } from '../enums/index';
-import type { Column, SelectOption } from '../interfaces/index';
-import type { SlickGrid } from '../core/index';
-import type { TranslaterService } from './translater.service';
+import type { SearchTerm } from '../enums/index.js';
+import type { Column, SelectOption } from '../interfaces/index.js';
+import type { SlickGrid } from '../core/index.js';
+import type { TranslaterService } from './translater.service.js';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them

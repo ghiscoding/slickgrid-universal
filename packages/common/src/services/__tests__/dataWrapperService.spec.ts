@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { SlickDataView, SlickGrid } from '../../core';
-import { DataWrapperService } from '../dataWrapperService';
+import type { SlickDataView } from '../../core/slickDataview.js';
+import type { SlickGrid } from '../../core/slickGrid.js';
+import { DataWrapperService } from '../dataWrapperService.js';
 
 const gridStub = {
   destroy: vi.fn(),

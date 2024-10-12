@@ -1,1 +1,1 @@
-export type * from './slickerGridInstance.interface';
+export type * from './slickerGridInstance.interface.js';

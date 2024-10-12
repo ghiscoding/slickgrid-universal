@@ -4,9 +4,9 @@ import { dequal } from 'dequal/lite';
 import type VanillaCalendar from 'vanilla-calendar-pro';
 import type { IOptions, ISelected, FormatDateString } from 'vanilla-calendar-pro/types';
 
-import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
-import { FieldType } from '../enums';
-import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils';
+import { FieldType } from '../enums/fieldType.enum.js';
+import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index.js';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element

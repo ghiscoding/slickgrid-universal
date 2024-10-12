@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { hyperlinkFormatter } from '../hyperlinkFormatter';
-import type { SlickGrid } from '../../core/index';
+import type { Column } from '../../interfaces/index.js';
+import { hyperlinkFormatter } from '../hyperlinkFormatter.js';
+import type { SlickGrid } from '../../core/index.js';
 
 const gridStub = {
   getData: vi.fn(),

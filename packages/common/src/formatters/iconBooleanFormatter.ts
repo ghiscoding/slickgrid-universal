@@ -1,6 +1,6 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
-import { type Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index.js';
 
 /** Display whichever icon for a boolean value (library agnostic, it could be Font-Awesome, Material or any other icons set) */
 export const iconBooleanFormatter: Formatter = (_row, _cell, value, columnDef) => {

@@ -9,7 +9,7 @@ import {
   OperatorType,
   type OperatorString,
   type SearchTerm,
-} from '../enums/index';
+} from '../enums/index.js';
 import type {
   Column,
   ColumnFilter,
@@ -18,13 +18,13 @@ import type {
   FilterCallback,
   GridOption,
   OperatorDetail,
-} from '../interfaces/index';
-import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
-import { mapOperatorToShorthandDesignation } from '../services/utilities';
-import type { TranslaterService } from '../services/translater.service';
-import type { SlickGrid } from '../core/index';
-import { setPickerDates } from '../commonEditorFilter';
+} from '../interfaces/index.js';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities.js';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
+import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import type { SlickGrid } from '../core/slickGrid.js';
+import { setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;

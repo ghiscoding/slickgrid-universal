@@ -1,7 +1,7 @@
 import { parseBoolean } from '@slickgrid-universal/utils';
 
-import type { SearchTerm } from '../enums/index';
-import type { FilterCondition, FilterConditionOption } from './../interfaces/index';
+import type { SearchTerm } from '../enums/index.js';
+import type { FilterCondition, FilterConditionOption } from './../interfaces/index.js';
 
 /** Execute filter condition check on each cell */
 export const executeBooleanFilterCondition: FilterCondition = ((options: FilterConditionOption, parsedSearchValue: boolean | undefined) => {

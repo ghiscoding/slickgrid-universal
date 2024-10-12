@@ -13,6 +13,7 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// eslint-disable-next-line n/file-extension-in-import
 import './commands';
 
 Cypress.on('window:before:load', function (window) {

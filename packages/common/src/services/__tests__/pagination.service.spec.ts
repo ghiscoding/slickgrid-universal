@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of, throwError } from 'rxjs';
 
-import { PaginationService } from './../pagination.service';
-import { SharedService } from '../shared.service';
-import type { BackendUtilityService } from '../backendUtility.service';
-import type { BackendServiceApi, Column, CursorPageInfo, GridOption, Pagination } from '../../interfaces/index';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
+import { PaginationService } from './../pagination.service.js';
+import { SharedService } from '../shared.service.js';
+import type { BackendUtilityService } from '../backendUtility.service.js';
+import type { BackendServiceApi, Column, CursorPageInfo, GridOption, Pagination } from '../../interfaces/index.js';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 

@@ -1,5 +1,6 @@
-export * from './domUtils';
-export * from './nodeExtend';
-export * from './stripTagsUtil';
-export type * from './models';
-export * from './utils';
+export * from './domUtils.js';
+export * from './nodeExtend.js';
+export * from './stripTagsUtil.js';
+export type * from './models/interfaces.js';
+export type * from './models/types.js';
+export * from './utils.js';

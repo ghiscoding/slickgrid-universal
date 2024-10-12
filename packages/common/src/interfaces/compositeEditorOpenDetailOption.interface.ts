@@ -1,6 +1,6 @@
-import type { CompositeEditorModalType } from '../enums/compositeEditorModalType.type';
-import type { CompositeEditorLabel } from './compositeEditorLabel.interface';
-import type { GridServiceInsertOption } from './gridServiceInsertOption.interface';
+import type { CompositeEditorModalType } from '../enums/compositeEditorModalType.type.js';
+import type { CompositeEditorLabel } from './compositeEditorLabel.interface.js';
+import type { GridServiceInsertOption } from './gridServiceInsertOption.interface.js';
 
 export type OnErrorOption = {
   /** Error code (typically an uppercase error code key like: "NO_RECORD_FOUND") */

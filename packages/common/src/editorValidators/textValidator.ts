@@ -1,6 +1,6 @@
-import { Constants } from '../constants';
-import type { EditorValidationResult } from '../interfaces/editorValidationResult.interface';
-import type { EditorValidator } from '../interfaces/editorValidator.interface';
+import { Constants } from '../constants.js';
+import type { EditorValidationResult } from '../interfaces/editorValidationResult.interface.js';
+import type { EditorValidator } from '../interfaces/editorValidator.interface.js';
 
 interface TextValidatorOptions {
   editorArgs: any;

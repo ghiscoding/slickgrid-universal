@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/file-extension-in-import
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 describe('Example 17 - Auto-Scroll with Range Selector', () => {

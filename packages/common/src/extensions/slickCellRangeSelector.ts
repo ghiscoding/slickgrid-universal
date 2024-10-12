@@ -8,9 +8,9 @@ import type {
   GridOption,
   MouseOffsetViewport,
   OnScrollEventArgs,
-} from '../interfaces/index';
-import { SlickCellRangeDecorator } from './index';
-import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index';
+} from '../interfaces/index.js';
+import { SlickCellRangeDecorator } from './index.js';
+import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index.js';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;

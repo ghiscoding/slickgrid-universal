@@ -1,4 +1,4 @@
-import { BindingService } from './binding.service';
+import { BindingService } from './binding.service.js';
 
 export class BindingHelper {
   private _observers: BindingService[] = [];

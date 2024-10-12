@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { dollarColoredFormatter } from '../dollarColoredFormatter';
-import type { SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { dollarColoredFormatter } from '../dollarColoredFormatter.js';
+import type { SlickGrid } from '../../core/index.js';
 
 describe('the DollarColored Formatter', () => {
   const gridStub = {

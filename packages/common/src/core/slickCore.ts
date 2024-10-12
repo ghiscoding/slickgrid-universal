@@ -5,8 +5,8 @@
  * @module Core
  * @namespace Slick
  */
-import type { MergeTypes } from '../enums/index';
-import type { CSSStyleDeclarationWritable, EditController } from '../interfaces';
+import type { MergeTypes } from '../enums/index.js';
+import type { CSSStyleDeclarationWritable, EditController } from '../interfaces/index.js';
 
 export type Handler<ArgType = any> = (e: SlickEventData<ArgType>, args: ArgType) => void;
 

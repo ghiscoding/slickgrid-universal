@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Draggable, MouseWheel, Resizable } from '../slickInteractions';
+import { Draggable, MouseWheel, Resizable } from '../slickInteractions.js';
 
 describe('Draggable class', () => {
   let containerElement: HTMLDivElement;

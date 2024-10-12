@@ -1,2 +1,2 @@
-export * from './graphql.service';
-export { default as GraphqlQueryBuilder } from './graphqlQueryBuilder';
+export * from './graphql.service.js';
+export { default as GraphqlQueryBuilder } from './graphqlQueryBuilder.js';

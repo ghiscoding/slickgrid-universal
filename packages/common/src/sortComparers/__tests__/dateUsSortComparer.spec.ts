@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { sortByFieldType } from '../sortUtilities';
-import { FieldType, SortDirectionNumber } from '../../enums/index';
+import { sortByFieldType } from '../sortUtilities.js';
+import { FieldType, SortDirectionNumber } from '../../enums/index.js';
 
 describe('the Date US Sorter', () => {
   it('should return an array of US dates sorted ascending when only valid dates are provided', () => {

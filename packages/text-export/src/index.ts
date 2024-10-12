@@ -1,1 +1,1 @@
-export { TextExportService } from './textExport.service';
+export { TextExportService } from './textExport.service.js';

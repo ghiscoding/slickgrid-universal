@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { ExtensionService } from '../extension.service';
-import type { FilterService } from '../filter.service';
-import { GridStateService } from '../gridState.service';
-import type { SortService } from '../sort.service';
-import { GridStateType, ExtensionName } from '../../enums/index';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
+import type { ExtensionService } from '../extension.service.js';
+import type { FilterService } from '../filter.service.js';
+import { GridStateService } from '../gridState.service.js';
+import type { SortService } from '../sort.service.js';
+import { GridStateType, ExtensionName } from '../../enums/index.js';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import type {
   BackendService,
   CheckboxSelectorOption,
@@ -23,11 +23,11 @@ import type {
   RowDetailView,
   RowMoveManager,
   TreeToggleStateChange,
-} from '../../interfaces/index';
-import { SharedService } from '../shared.service';
-import type { TreeDataService } from '../treeData.service';
-import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
-import type { SlickColumnPicker } from '../../extensions/slickColumnPicker';
+} from '../../interfaces/index.js';
+import { SharedService } from '../shared.service.js';
+import type { TreeDataService } from '../treeData.service.js';
+import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
+import type { SlickColumnPicker } from '../../extensions/slickColumnPicker.js';
 
 vi.useFakeTimers();
 

@@ -1,7 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, findWidthOrDefault, getOffset } from '@slickgrid-universal/utils';
 
-import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
+import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type.js';
 import type {
   Column,
   DragRowMove,
@@ -9,8 +9,8 @@ import type {
   GridOption,
   RowMoveManager,
   RowMoveManagerOption,
-} from '../interfaces/index';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, Utils as SlickUtils } from '../core/index';
+} from '../interfaces/index.js';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, Utils as SlickUtils } from '../core/index.js';
 
 /**
  * Row Move Manager options:

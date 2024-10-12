@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { FieldType } from '../../enums/index';
-import type { FilterConditionOption } from '../../interfaces/index';
-import { executeFilterConditionTest } from '../filterConditionProcesses';
-import { executeObjectFilterCondition, getFilterParsedObjectResult } from '../objectFilterCondition';
+import { FieldType } from '../../enums/index.js';
+import type { FilterConditionOption } from '../../interfaces/index.js';
+import { executeFilterConditionTest } from '../filterConditionProcesses.js';
+import { executeObjectFilterCondition, getFilterParsedObjectResult } from '../objectFilterCondition.js';
 
 describe('executeObjectFilterCondition method', () => {
   let mockRow;

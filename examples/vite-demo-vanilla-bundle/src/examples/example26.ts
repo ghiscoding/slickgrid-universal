@@ -4,7 +4,7 @@ import { Aggregators, type Column, FieldType, Filters, type GridOption, type Gro
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import Data from './data/customers_100.json';
 import './example26.scss';
 

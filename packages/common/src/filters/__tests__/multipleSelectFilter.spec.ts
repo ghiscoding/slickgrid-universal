@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Filters } from '../filters.index';
-import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
-import { CollectionService } from './../../services/collection.service';
-import { MultipleSelectFilter } from '../multipleSelectFilter';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { SlickGrid } from '../../core/index';
+import { Filters } from '../filters.index.js';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { CollectionService } from './../../services/collection.service.js';
+import { MultipleSelectFilter } from '../multipleSelectFilter.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

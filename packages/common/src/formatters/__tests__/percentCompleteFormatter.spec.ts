@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { percentCompleteFormatter } from '../percentCompleteFormatter';
-import type { SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { percentCompleteFormatter } from '../percentCompleteFormatter.js';
+import type { SlickGrid } from '../../core/index.js';
 
 describe('the Percent Complete Formatter', () => {
   const gridStub = {

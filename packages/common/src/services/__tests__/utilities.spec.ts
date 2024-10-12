@@ -1,10 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 
-import { FieldType, OperatorType } from '../../enums/index';
-import type { Column, GridOption, TreeDataPropNames } from '../../interfaces/index';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { Column, GridOption, TreeDataPropNames } from '../../interfaces/index.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import {
   addTreeLevelByMutation,
   addTreeLevelAndAggregatorsByMutation,
@@ -27,9 +27,9 @@ import {
   thousandSeparatorFormatted,
   unsubscribeAll,
   getTreeDataOptionPropName,
-} from '../utilities';
-import { SumAggregator } from '../../aggregators';
-import { Constants } from '../../constants';
+} from '../utilities.js';
+import { SumAggregator } from '../../aggregators/sumAggregator.js';
+import { Constants } from '../../constants.js';
 
 describe('Service/Utilies', () => {
   describe('unflattenParentChildArrayToTree method', () => {

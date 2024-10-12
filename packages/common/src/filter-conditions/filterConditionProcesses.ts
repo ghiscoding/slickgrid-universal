@@ -1,13 +1,13 @@
-import { FieldType, type SearchTerm } from '../enums/index';
-import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
-import { executeBooleanFilterCondition, getFilterParsedBoolean } from './booleanFilterCondition';
-import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
-import { getFilterParsedNumbers, executeNumberFilterCondition } from './numberFilterCondition';
-import { executeDateFilterCondition, getFilterParsedDates } from './dateFilterCondition';
-import { executeObjectFilterCondition, getFilterParsedObjectResult } from './objectFilterCondition';
-import { executeStringFilterCondition, getFilterParsedText } from './stringFilterCondition';
-import { isCollectionOperator } from './filterUtilities';
-import { isColumnDateType } from '../services/utilities';
+import { FieldType, type SearchTerm } from '../enums/index.js';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
+import { executeBooleanFilterCondition, getFilterParsedBoolean } from './booleanFilterCondition.js';
+import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition.js';
+import { getFilterParsedNumbers, executeNumberFilterCondition } from './numberFilterCondition.js';
+import { executeDateFilterCondition, getFilterParsedDates } from './dateFilterCondition.js';
+import { executeObjectFilterCondition, getFilterParsedObjectResult } from './objectFilterCondition.js';
+import { executeStringFilterCondition, getFilterParsedText } from './stringFilterCondition.js';
+import { isCollectionOperator } from './filterUtilities.js';
+import { isColumnDateType } from '../services/utilities.js';
 
 /**
  * General variable types, just 5x types instead of the multiple FieldType.

@@ -1,5 +1,5 @@
-import type { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/toggleStateChangeType';
-import type { TreeToggledItem } from './treeToggledItem.interface';
+import type { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/toggleStateChangeType.js';
+import type { TreeToggledItem } from './treeToggledItem.interface.js';
 
 export interface TreeToggleStateChange {
   /** Optional, what was the item Id that triggered the toggle? Only available when a parent item got toggled within the grid */

@@ -1,7 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, classNameToList, toKebabCase } from '@slickgrid-universal/utils';
 
-import { EmitterType } from '../enums/index';
+import { EmitterType } from '../enums/index.js';
 import type {
   Column,
   CurrentSorter,
@@ -15,14 +15,14 @@ import type {
   MenuCommandItemCallbackArgs,
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
-} from '../interfaces/index';
-import type { SlickEventData } from '../core';
-import { getTranslationPrefix } from '../services/index';
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import type { FilterService } from '../services/filter.service';
-import type { SharedService } from '../services/shared.service';
-import type { SortService } from '../services/sort.service';
-import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
+} from '../interfaces/index.js';
+import type { SlickEventData } from '../core/slickCore.js';
+import { getTranslationPrefix } from '../services/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import type { FilterService } from '../services/filter.service.js';
+import type { SharedService } from '../services/shared.service.js';
+import type { SortService } from '../services/sort.service.js';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass.js';
 
 /**
  * A plugin to add drop-down menus to column headers.

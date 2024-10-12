@@ -1,8 +1,8 @@
-import { FieldType, type SortDirectionNumber } from '../enums/index';
-import type { Column, GridOption } from '../interfaces/index';
-import { SortComparers } from './index';
-import { getAssociatedDateSortComparer } from './dateUtilities';
-import { isColumnDateType } from '../services/utilities';
+import { FieldType, type SortDirectionNumber } from '../enums/index.js';
+import type { Column, GridOption } from '../interfaces/index.js';
+import { SortComparers } from './index.js';
+import { getAssociatedDateSortComparer } from './dateUtilities.js';
+import { isColumnDateType } from '../services/utilities.js';
 
 export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldType], value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column, gridOptions?: GridOption): number {
   let sortResult = 0;

@@ -11,11 +11,11 @@ import type {
   MenuFromCellCallbackArgs,
   MenuOptionItem,
   MenuOptionItemCallbackArgs,
-} from '../interfaces/index';
-import type { SlickEventData, SlickGrid } from '../core';
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
-import type { SharedService } from '../services/shared.service';
+} from '../interfaces/index.js';
+import type { SlickEventData, SlickGrid } from '../core/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass.js';
+import type { SharedService } from '../services/shared.service.js';
 
 export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends MenuBaseClass<M> {
   protected _currentCell = -1;

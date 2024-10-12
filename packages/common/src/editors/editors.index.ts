@@ -1,16 +1,16 @@
-import type { EditorConstructor } from '../interfaces';
-import { AutocompleterEditor } from './autocompleterEditor';
-import { CheckboxEditor } from './checkboxEditor';
-import { DateEditor } from './dateEditor';
-import { DualInputEditor } from './dualInputEditor';
-import { FloatEditor } from './floatEditor';
-import { InputEditor } from './inputEditor';
-import { InputPasswordEditor } from './inputPasswordEditor';
-import { IntegerEditor } from './integerEditor';
-import { LongTextEditor } from './longTextEditor';
-import { MultipleSelectEditor } from './multipleSelectEditor';
-import { SingleSelectEditor } from './singleSelectEditor';
-import { SliderEditor } from './sliderEditor';
+import type { EditorConstructor } from '../interfaces/editor.interface.js';
+import { AutocompleterEditor } from './autocompleterEditor.js';
+import { CheckboxEditor } from './checkboxEditor.js';
+import { DateEditor } from './dateEditor.js';
+import { DualInputEditor } from './dualInputEditor.js';
+import { FloatEditor } from './floatEditor.js';
+import { InputEditor } from './inputEditor.js';
+import { InputPasswordEditor } from './inputPasswordEditor.js';
+import { IntegerEditor } from './integerEditor.js';
+import { LongTextEditor } from './longTextEditor.js';
+import { MultipleSelectEditor } from './multipleSelectEditor.js';
+import { SingleSelectEditor } from './singleSelectEditor.js';
+import { SliderEditor } from './sliderEditor.js';
 
 export const Editors: Record<string, EditorConstructor> = {
   /** Autocompleter Editor (using https://github.com/kraaden/autocomplete) */

@@ -1,4 +1,4 @@
-import type { OperatorString } from '../enums/index';
+import type { OperatorString } from '../enums/index.js';
 
 /**
  * Compare 2 objects,

@@ -1,5 +1,5 @@
-import type { Column, GridOption, SortComparer } from '../interfaces/index';
-import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
+import type { Column, GridOption, SortComparer } from '../interfaces/index.js';
+import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
 
 export const objectStringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: SortDirectionNumber = SortDirectionNumber.neutral, sortColumn?: Column, gridOptions?: GridOption) => {
   if (!sortColumn || !sortColumn.dataKey) {

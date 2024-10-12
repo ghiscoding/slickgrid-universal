@@ -1,5 +1,5 @@
-import type { EditorArguments } from '../interfaces/editorArguments.interface';
-import { SelectEditor } from './selectEditor';
+import type { EditorArguments } from '../interfaces/editorArguments.interface.js';
+import { SelectEditor } from './selectEditor.js';
 
 export class SingleSelectEditor extends SelectEditor {
   /**

@@ -9,9 +9,9 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { BindingEventService } from '@slickgrid-universal/binding';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
+import type { TranslateService } from '../translate.service.js';
 import './example22.scss';
-import type { TranslateService } from '../translate.service';
 
 const NB_ITEMS = 20;
 

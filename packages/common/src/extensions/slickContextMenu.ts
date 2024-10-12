@@ -7,15 +7,15 @@ import type {
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
-} from '../interfaces/index';
-import type { SlickEventData, SlickGrid } from '../core';
-import { DelimiterType, FileType } from '../enums/index';
-import { type ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, type TextExportService } from '../services/index';
-import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities';
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import type { SharedService } from '../services/shared.service';
-import type { TreeDataService } from '../services/treeData.service';
-import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
+} from '../interfaces/index.js';
+import type { SlickEventData, SlickGrid } from '../core/index.js';
+import { DelimiterType, FileType } from '../enums/index.js';
+import { type ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, type TextExportService } from '../services/index.js';
+import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import type { SharedService } from '../services/shared.service.js';
+import type { TreeDataService } from '../services/treeData.service.js';
+import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
 
 
 /**

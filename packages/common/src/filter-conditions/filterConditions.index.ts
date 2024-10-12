@@ -1,9 +1,9 @@
-import { executeBooleanFilterCondition } from './booleanFilterCondition';
-import { executeFilterConditionTest } from './filterConditionProcesses';
-import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
-import { executeNumberFilterCondition } from './numberFilterCondition';
-import { executeStringFilterCondition } from './stringFilterCondition';
-import type { FilterCondition } from '../interfaces/index';
+import { executeBooleanFilterCondition } from './booleanFilterCondition.js';
+import { executeFilterConditionTest } from './filterConditionProcesses.js';
+import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition.js';
+import { executeNumberFilterCondition } from './numberFilterCondition.js';
+import { executeStringFilterCondition } from './stringFilterCondition.js';
+import type { FilterCondition } from '../interfaces/index.js';
 
 export const FilterConditions: Record<string, FilterCondition> = {
   executeFilterConditionTest: executeFilterConditionTest as FilterCondition,

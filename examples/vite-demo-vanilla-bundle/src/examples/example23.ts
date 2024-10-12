@@ -15,11 +15,11 @@ import {
   type SlickGroupTotals,
 } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example23.scss';
-import { BindingEventService } from '@slickgrid-universal/binding';
 
 interface GroceryItem {
   id: number;

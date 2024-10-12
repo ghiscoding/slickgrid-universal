@@ -1,6 +1,6 @@
-import { arrayToCsvFormatter } from './arrayToCsvFormatter';
-import type { Formatter } from './../interfaces/index';
-import { findOrDefault } from '../services/index';
+import { arrayToCsvFormatter } from './arrayToCsvFormatter.js';
+import type { Formatter } from './../interfaces/index.js';
+import { findOrDefault } from '../services/index.js';
 
 /**
  * Roughly the same as the "collectionFormatter" except that it

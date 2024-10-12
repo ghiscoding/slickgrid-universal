@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { complexObjectFormatter } from '../complexObjectFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { complexObjectFormatter } from '../complexObjectFormatter.js';
 
 describe('the ComplexObject Formatter', () => {
   const allRoles = [{ roleId: 0, name: 'Administrator' }, { roleId: 1, name: 'Regular User', empty: {}, nullable: null }];

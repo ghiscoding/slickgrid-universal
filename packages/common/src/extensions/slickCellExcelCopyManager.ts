@@ -9,9 +9,9 @@ import type {
   FormatterResultWithHtml,
   FormatterResultWithText,
   GridOption,
-} from '../interfaces/index';
-import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index';
-import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index.js';
+import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index.js';
 
 /*
   This manager enables users to copy/paste data from/to an external Spreadsheet application

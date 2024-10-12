@@ -11,7 +11,7 @@
  *     https://github.com/ericnorris/striptags/blob/main/LICENSE
  */
 
-import { isNumber } from './utils';
+import { isNumber } from './utils.js';
 
 const STATE_PLAINTEXT = Symbol('plaintext');
 const STATE_HTML = Symbol('html');

@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
-import type { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index';
-import { treeFormatter } from '../treeFormatter';
-import type { SlickGrid } from '../../core/index';
+import type { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index.js';
+import { treeFormatter } from '../treeFormatter.js';
+import type { SlickGrid } from '../../core/index.js';
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',

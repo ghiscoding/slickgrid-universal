@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { HeaderGroupingService } from '../headerGrouping.service';
-import type { Column, GridOption } from '../../interfaces/index';
-import type { ExtensionUtility } from '../../extensions/extensionUtility';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
+import { HeaderGroupingService } from '../headerGrouping.service.js';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import type { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
 
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';

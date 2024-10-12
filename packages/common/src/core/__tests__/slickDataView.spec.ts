@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 
-import { Aggregators } from '../../aggregators';
-import { SortDirectionNumber } from '../../enums';
-import type { GridOption, Grouping } from '../../interfaces';
-import { SortComparers } from '../../sortComparers';
-import { SlickDataView } from '../slickDataview';
-import { SlickGrid } from '../slickGrid';
-import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
-import { SlickEventData } from '../slickCore';
+import { Aggregators } from '../../aggregators/index.js';
+import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum.js';
+import type { GridOption, Grouping } from '../../interfaces/index.js';
+import { SortComparers } from '../../sortComparers/index.js';
+import { SlickDataView } from '../slickDataview.js';
+import { SlickGrid } from '../slickGrid.js';
+import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
+import { SlickEventData } from '../slickCore.js';
 
 class FakeAggregator {
   init() { }

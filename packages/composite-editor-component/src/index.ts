@@ -1,2 +1,2 @@
-export * from './compositeEditor.factory';
-export * from './slick-composite-editor.component';
+export * from './compositeEditor.factory.js';
+export * from './slick-composite-editor.component.js';

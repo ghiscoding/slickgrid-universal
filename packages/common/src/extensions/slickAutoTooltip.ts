@@ -1,8 +1,8 @@
 
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
-import type { AutoTooltipOption, Column } from '../interfaces/index';
-import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index';
+import type { AutoTooltipOption, Column } from '../interfaces/index.js';
+import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
 
 /**
  * AutoTooltips plugin to show/hide tooltips when columns are too narrow to fit content.

@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/file-extension-in-import
 import { convertPosition } from './common';
 
 declare global {

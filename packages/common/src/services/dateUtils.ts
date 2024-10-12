@@ -1,6 +1,6 @@
 import { format, offset, parse, removeOffset, tzDate } from '@formkit/tempo';
 
-import { FieldType } from '../enums/index';
+import { FieldType } from '../enums/index.js';
 
 /**
  * From a Date FieldType, return it's equivalent TempoJS format,

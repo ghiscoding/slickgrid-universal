@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { BindingService } from '../binding.service';
+import { BindingService } from '../binding.service.js';
 
 describe('Binding Service', () => {
   let div: HTMLDivElement;

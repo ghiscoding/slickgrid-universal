@@ -4,8 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "lib": ["es5", "dom"],
-    "types": ["@4tw/cypress-drag-drop", "cypress", "node"],
-    "jsx": "preserve"
+    "types": ["@4tw/cypress-drag-drop", "cypress", "node"]
   },
   "include": ["**/*.ts"]
 }

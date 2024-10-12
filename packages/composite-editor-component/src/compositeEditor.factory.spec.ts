@@ -10,7 +10,7 @@ import {
   type SlickGrid
 } from '@slickgrid-universal/common';
 
-import { SlickCompositeEditor } from './compositeEditor.factory';
+import { SlickCompositeEditor } from './compositeEditor.factory.js';
 
 vi.useFakeTimers();
 

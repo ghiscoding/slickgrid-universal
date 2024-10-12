@@ -1,4 +1,4 @@
-import type { SlickCellRangeDecorator } from '../extensions/slickCellRangeDecorator';
+import type { SlickCellRangeDecorator } from '../extensions/slickCellRangeDecorator.js';
 
 export interface CellRangeDecoratorOption {
   selectionCssClass: string;

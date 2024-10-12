@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type VanillaCalendar from 'vanilla-calendar-pro';
 
-import { FieldType } from '../../enums/index';
-import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
-import { Filters } from '../filters.index';
-import { DateRangeFilter } from '../dateRangeFilter';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { SlickGrid } from '../../core/index';
+import { FieldType } from '../../enums/index.js';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { Filters } from '../filters.index.js';
+import { DateRangeFilter } from '../dateRangeFilter.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

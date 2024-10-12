@@ -1,5 +1,5 @@
-import type { AnyFunction } from './models/types';
-import { extend } from './nodeExtend';
+import type { AnyFunction } from './models/types.js';
+import { extend } from './nodeExtend.js';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare

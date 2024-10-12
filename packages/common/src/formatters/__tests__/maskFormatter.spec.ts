@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { SlickGrid } from '../../core/index';
-import type { Column } from '../../interfaces/index';
-import { maskFormatter } from '../maskFormatter';
+import type { SlickGrid } from '../../core/index.js';
+import type { Column } from '../../interfaces/index.js';
+import { maskFormatter } from '../maskFormatter.js';
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',

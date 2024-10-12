@@ -2,7 +2,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { Aggregators, type Column, FieldType, Formatters, type GridOption, type Grouping, type OnRowCountChangedEventArgs, SortComparers, SortDirectionNumber, } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 
 const FETCH_SIZE = 50;
 

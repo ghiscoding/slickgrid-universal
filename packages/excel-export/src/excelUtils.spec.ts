@@ -10,7 +10,7 @@ import {
 } from '@slickgrid-universal/common';
 import { type StyleSheet } from 'excel-builder-vanilla';
 
-import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils';
+import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils.js';
 
 const mockGridOptions = {
   enableExcelExport: true,

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { CloneAggregator } from '../cloneAggregator';
+import { CloneAggregator } from '../cloneAggregator.js';
 
 describe('CloneAggregator', () => {
   let aggregator: CloneAggregator;

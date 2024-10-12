@@ -1,1 +1,1 @@
-export * from './rxjs.resource';
+export * from './rxjs.resource.js';

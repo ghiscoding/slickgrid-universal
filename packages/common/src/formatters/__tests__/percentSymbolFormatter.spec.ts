@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { percentSymbolFormatter } from '../percentSymbolFormatter';
-import type { SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { percentSymbolFormatter } from '../percentSymbolFormatter.js';
+import type { SlickGrid } from '../../core/index.js';
 
 describe('the Percent Symbol Formatter', () => {
   const gridStub = {

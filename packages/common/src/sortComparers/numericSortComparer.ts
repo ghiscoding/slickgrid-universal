@@ -1,5 +1,5 @@
-import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
-import type { Column, GridOption, SortComparer } from '../interfaces/index';
+import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
+import type { Column, GridOption, SortComparer } from '../interfaces/index.js';
 
 export const numericSortComparer: SortComparer = (value1: any, value2: any, sortDirection: SortDirectionNumber = SortDirectionNumber.neutral, sortColumn?: Column, gridOptions?: GridOption) => {
   const checkForUndefinedValues = sortColumn?.valueCouldBeUndefined ?? gridOptions?.cellValueCouldBeUndefined ?? false;

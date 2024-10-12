@@ -12,10 +12,10 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-} from '../interfaces/index';
-import { getDescendantProperty } from '../services/utilities';
-import { floatValidator, integerValidator, textValidator } from '../editorValidators';
-import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core';
+} from '../interfaces/index.js';
+import { getDescendantProperty } from '../services/utilities.js';
+import { floatValidator, integerValidator, textValidator } from '../editorValidators/index.js';
+import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 /*
  * An example of a 'detached' editor.

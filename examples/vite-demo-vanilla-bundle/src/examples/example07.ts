@@ -12,8 +12,8 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'dompurify';
 
-import { ExampleGridOptions } from './example-grid-options';
-import type { TranslateService } from '../translate.service';
+import { ExampleGridOptions } from './example-grid-options.js';
+import type { TranslateService } from '../translate.service.js';
 import './example07.scss';
 import '../material-styles.scss';
 

@@ -1,5 +1,5 @@
-import type { FilterMultiplePassType } from '../enums/filterMultiplePassType.enum';
-import type { FilterMultiplePassTypeString } from '../enums/filterMultiplePassTypeString.type';
+import type { FilterMultiplePassType } from '../enums/filterMultiplePassType.enum.js';
+import type { FilterMultiplePassTypeString } from '../enums/filterMultiplePassTypeString.type.js';
 
 export interface CollectionOption {
   /**

@@ -1,5 +1,5 @@
-import type { OperatorString, OperatorType } from '../enums/index';
-import type { SearchTerm } from '../enums/searchTerm.type';
+import type { OperatorString, OperatorType } from '../enums/index.js';
+import type { SearchTerm } from '../enums/searchTerm.type.js';
 
 export interface CurrentFilter {
   /**

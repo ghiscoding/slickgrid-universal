@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { MinAggregator } from '../minAggregator';
+import { MinAggregator } from '../minAggregator.js';
 
 describe('minAggregator', () => {
   let aggregator: MinAggregator;

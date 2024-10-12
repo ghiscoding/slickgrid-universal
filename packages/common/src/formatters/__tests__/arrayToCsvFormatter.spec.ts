@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { arrayToCsvFormatter } from '../arrayToCsvFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { arrayToCsvFormatter } from '../arrayToCsvFormatter.js';
 
 describe('the ArrayToCsv Formatter', () => {
   it('should return same output when no value is passed', () => {

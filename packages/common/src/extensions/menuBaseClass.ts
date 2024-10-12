@@ -15,10 +15,10 @@ import type {
   HeaderMenu,
   MenuCommandItem,
   MenuOptionItem,
-} from '../interfaces/index';
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import type { SharedService } from '../services/shared.service';
-import { SlickEventHandler, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import type { SharedService } from '../services/shared.service.js';
+import { SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';

@@ -10,10 +10,10 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-} from '../interfaces/index';
-import { getDescendantProperty } from '../services/utilities';
-import { textValidator } from '../editorValidators/textValidator';
-import { SlickEventData, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import { getDescendantProperty } from '../services/utilities.js';
+import { textValidator } from '../editorValidators/textValidator.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 const DEFAULT_DECIMAL_PLACES = 0;
 

@@ -1,8 +1,8 @@
 import { removeAccentFromText } from '@slickgrid-universal/utils';
 
-import { type OperatorString, OperatorType, type SearchTerm } from '../enums/index';
-import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
-import { testFilterCondition } from './filterUtilities';
+import { type OperatorString, OperatorType, type SearchTerm } from '../enums/index.js';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
+import { testFilterCondition } from './filterUtilities.js';
 
 /** Execute filter condition check on each cell */
 export const executeStringFilterCondition: FilterCondition = ((options: FilterConditionOption, parsedSearchValues: string[]) => {

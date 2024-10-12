@@ -1,4 +1,4 @@
-import type { FieldType } from '../enums/fieldType.enum';
+import type { FieldType } from '../enums/fieldType.enum.js';
 import type {
   CellMenu,
   ColumnEditor,
@@ -15,7 +15,7 @@ import type {
   HeaderButtonsOrMenu,
   OnEventArgs,
   SortComparer,
-} from './index';
+} from './index.js';
 
 export type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]

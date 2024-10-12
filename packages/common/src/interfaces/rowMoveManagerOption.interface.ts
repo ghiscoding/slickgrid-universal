@@ -1,5 +1,5 @@
-import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
-import type { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector';
+import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type.js';
+import type { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector.js';
 
 export interface RowMoveManagerOption {
   /**

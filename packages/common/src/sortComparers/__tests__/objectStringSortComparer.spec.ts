@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum';
-import { objectStringSortComparer } from '../objectStringSortComparer';
+import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum.js';
+import { objectStringSortComparer } from '../objectStringSortComparer.js';
 
 describe('the Object w/String SortComparer', () => {
   let collection: any[] = [];

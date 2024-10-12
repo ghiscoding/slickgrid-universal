@@ -1,4 +1,4 @@
-import type { OperatorType } from '../enums/operatorType.enum';
+import type { OperatorType } from '../enums/operatorType.enum.js';
 
 export interface CollectionFilterBy {
   /** Object Property name when the collection is an array of objects */

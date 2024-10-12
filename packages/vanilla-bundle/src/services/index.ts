@@ -1,1 +1,1 @@
-export * from './universalContainer.service';
+export * from './universalContainer.service.js';

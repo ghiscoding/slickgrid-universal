@@ -8,7 +8,7 @@ import {
   OperatorType,
   type OperatorString,
   type SearchTerm,
-} from '../enums/index';
+} from '../enums/index.js';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
@@ -23,16 +23,16 @@ import type {
   FilterCallbackArg,
   GridOption,
   Locale,
-} from '../interfaces/index';
-import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
-import type { CollectionService } from '../services/collection.service';
-import { collectionObserver, propertyObserver } from '../services/observers';
-import { getDescendantProperty, unsubscribeAll } from '../services/utilities';
-import type { TranslaterService } from '../services/translater.service';
-import { renderCollectionOptionsAsync } from './filterUtilities';
-import type { RxJsFacade, Subscription } from '../services/rxjsFacade';
-import { Constants } from '../constants';
-import { type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import type { CollectionService } from '../services/collection.service.js';
+import { collectionObserver, propertyObserver } from '../services/observers.js';
+import { getDescendantProperty, unsubscribeAll } from '../services/utilities.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { renderCollectionOptionsAsync } from './filterUtilities.js';
+import type { RxJsFacade, Subscription } from '../services/rxjsFacade.js';
+import { Constants } from '../constants.js';
+import { type SlickGrid } from '../core/index.js';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;

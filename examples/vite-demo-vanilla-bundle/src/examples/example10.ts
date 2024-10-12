@@ -16,8 +16,8 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
 
-import { ExampleGridOptions } from './example-grid-options';
-import type { TranslateService } from '../translate.service';
+import { ExampleGridOptions } from './example-grid-options.js';
+import type { TranslateService } from '../translate.service.js';
 import './example10.scss';
 import '../material-styles.scss';
 

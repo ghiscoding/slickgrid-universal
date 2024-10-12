@@ -1,4 +1,4 @@
-import type { MenuCallbackArgs, MenuCommandItemCallbackArgs, MenuItem } from './index';
+import type { MenuCallbackArgs, MenuCommandItemCallbackArgs, MenuItem } from './index.js';
 
 export interface MenuCommandItem<A = MenuCommandItemCallbackArgs, R = MenuCallbackArgs> extends MenuItem<R> {
   /** A command identifier to be passed to the onCommand event callback handler (when using "commandItems"). */

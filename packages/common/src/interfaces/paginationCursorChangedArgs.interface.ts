@@ -1,4 +1,4 @@
-import type { PaginationChangedArgs } from './paginationChangedArgs.interface';
+import type { PaginationChangedArgs } from './paginationChangedArgs.interface.js';
 
 export interface PaginationCursorChangedArgs extends PaginationChangedArgs {
   /** Start our page After cursor X */

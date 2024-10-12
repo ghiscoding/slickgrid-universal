@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/file-extension-in-import
 import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 08 - Column Span & Header Grouping', () => {

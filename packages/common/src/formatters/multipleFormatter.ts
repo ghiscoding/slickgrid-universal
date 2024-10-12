@@ -1,4 +1,4 @@
-import { type Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index.js';
 
 /**
  * You can pipe multiple formatters (executed in sequence), use params to pass the list of formatters.

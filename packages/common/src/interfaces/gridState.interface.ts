@@ -6,7 +6,7 @@ import type {
   CurrentRowSelection,
   CurrentSorter,
   TreeToggleStateChange,
-} from './index';
+} from './index.js';
 
 export interface GridState {
   /** Columns (and their state: visibility/position) that are currently applied in the grid */

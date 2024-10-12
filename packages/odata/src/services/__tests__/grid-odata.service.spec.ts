@@ -18,8 +18,8 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 
-import { GridOdataService } from '../grid-odata.service';
-import type { OdataOption } from '../../interfaces/odataOption.interface';
+import { GridOdataService } from '../grid-odata.service.js';
+import type { OdataOption } from '../../interfaces/odataOption.interface.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;

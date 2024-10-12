@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 import { type Column, getOffset, type GridOption, type SlickGrid, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
 import { delay, of, throwError } from 'rxjs';
 
-import { SlickCustomTooltip } from '../slickCustomTooltip';
-import { ContainerServiceStub } from '../../../../test/containerServiceStub';
-import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
+import { SlickCustomTooltip } from '../slickCustomTooltip.js';
+import { ContainerServiceStub } from '../../../../test/containerServiceStub.js';
+import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 
 // mocked modules
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({

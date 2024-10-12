@@ -31,10 +31,10 @@ import { format as tempoFormat, addDay } from '@formkit/tempo';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
 
 import exampleModal from './example11-modal.html?raw';
-import Example11Modal from './example11-modal';
+import Example11Modal from './example11-modal.js';
 import countriesJson from './data/countries.json?raw';
-import { ExampleGridOptions } from './example-grid-options';
-import { loadComponent } from './utilities';
+import { ExampleGridOptions } from './example-grid-options.js';
+import { loadComponent } from './utilities.js';
 import './example11.scss';
 
 const LOCAL_STORAGE_KEY = 'gridViewPreset';

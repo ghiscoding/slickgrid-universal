@@ -17,7 +17,7 @@ import {
   htmlEntityDecode,
   htmlEncodeWithPadding,
   insertAfterElement,
-} from '../domUtils';
+} from '../domUtils.js';
 
 describe('Service/domUtilies', () => {
   describe('calculateAvailableSpace()  method', () => {

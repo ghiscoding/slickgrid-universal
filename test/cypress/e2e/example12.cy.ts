@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/file-extension-in-import
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 12 - Composite Editor Modal', () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ContainerService } from '../container.service';
-import { ExcelExportService } from '../excelExport.service';
-import type { SlickGrid } from '../../core/index';
+import type { ContainerService } from '../container.service.js';
+import { ExcelExportService } from '../excelExport.service.js';
+import type { SlickGrid } from '../../core/index.js';
 
 describe('ExcelExport Service', () => {
   it('should display a not implemented when calling "init" method', () => {

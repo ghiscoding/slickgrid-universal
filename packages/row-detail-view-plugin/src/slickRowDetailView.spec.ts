@@ -11,7 +11,7 @@ import {
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { SlickRowDetailView } from './slickRowDetailView';
+import { SlickRowDetailView } from './slickRowDetailView.js';
 
 vi.useFakeTimers();
 

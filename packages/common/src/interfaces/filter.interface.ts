@@ -1,7 +1,7 @@
-import type { Column, FilterArguments, FilterCallback } from './index';
-import type { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
-import type { SlickGrid } from '../core/index';
-import type { CollectionService, RxJsFacade, TranslaterService } from '../services';
+import type { Column, FilterArguments, FilterCallback } from './index.js';
+import type { OperatorType, OperatorString, SearchTerm, } from '../enums/index.js';
+import type { SlickGrid } from '../core/index.js';
+import type { CollectionService, RxJsFacade, TranslaterService } from '../services/index.js';
 
 // export type Filter = (searchTerms: string | number | string[] | number[], columnDef: Column, params?: any) => string;
 export interface Filter {

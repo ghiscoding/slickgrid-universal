@@ -18,8 +18,8 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 
-import { ExampleGridOptions } from './example-grid-options';
-import { type TranslateService } from '../translate.service';
+import { ExampleGridOptions } from './example-grid-options.js';
+import { type TranslateService } from '../translate.service.js';
 
 const NB_ITEMS = 5000;
 

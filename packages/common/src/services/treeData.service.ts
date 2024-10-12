@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 
-import { Constants } from '../constants';
-import { ToggleStateChangeType, type ToggleStateChangeTypeString } from '../enums/index';
+import { Constants } from '../constants.js';
+import { ToggleStateChangeType, type ToggleStateChangeTypeString } from '../enums/index.js';
 import type {
   Column,
   ColumnSort,
@@ -10,16 +10,16 @@ import type {
   TreeDataOption,
   TreeToggledItem,
   TreeToggleStateChange,
-} from '../interfaces/index';
+} from '../interfaces/index.js';
 import {
   addTreeLevelAndAggregatorsByMutation,
   findItemInTreeStructure,
   getTreeDataOptionPropName,
   unflattenParentChildArrayToTree
-} from './utilities';
-import type { SharedService } from './shared.service';
-import type { SortService } from './sort.service';
-import { type SlickDataView, SlickEventHandler, type SlickGrid, type SlickEventData } from '../core/index';
+} from './utilities.js';
+import type { SharedService } from './shared.service.js';
+import type { SortService } from './sort.service.js';
+import { type SlickDataView, SlickEventHandler, type SlickGrid, type SlickEventData } from '../core/index.js';
 
 export class TreeDataService {
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;

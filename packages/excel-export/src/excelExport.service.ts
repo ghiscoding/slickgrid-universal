@@ -40,7 +40,7 @@ import {
   getGroupTotalValue,
   getExcelFormatFromGridFormatter,
   useCellFormatByFieldType,
-} from './excelUtils';
+} from './excelUtils.js';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',

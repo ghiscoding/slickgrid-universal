@@ -1,1 +1,1 @@
-export * from './slick-empty-warning.component';
+export * from './slick-empty-warning.component.js';

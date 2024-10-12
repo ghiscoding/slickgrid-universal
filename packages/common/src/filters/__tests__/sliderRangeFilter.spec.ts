@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Filters } from '../filters.index';
-import type { Column, FilterArguments, GridOption, SliderRangeOption } from '../../interfaces/index';
-import { SlickEvent, type SlickGrid } from '../../core/index';
-import { SliderRangeFilter } from '../sliderRangeFilter';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { Filters } from '../filters.index.js';
+import type { Column, FilterArguments, GridOption, SliderRangeOption } from '../../interfaces/index.js';
+import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { SliderRangeFilter } from '../sliderRangeFilter.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
 const containerId = 'demo-container';
 vi.useFakeTimers();

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   collectionObserver,
   propertyObserver,
-} from '../observers';
+} from '../observers.js';
 
 vi.useFakeTimers();
 

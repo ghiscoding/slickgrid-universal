@@ -1,9 +1,9 @@
 import { addWhiteSpaces, stripTags } from '@slickgrid-universal/utils';
 
-import { Constants } from '../constants';
-import { type Formatter } from './../interfaces/index';
-import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
-import { parseFormatterWhenExist } from './formatterUtilities';
+import { Constants } from '../constants.js';
+import { type Formatter } from './../interfaces/index.js';
+import { getCellValueFromQueryFieldGetter, } from '../services/utilities.js';
+import { parseFormatterWhenExist } from './formatterUtilities.js';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeExportFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {

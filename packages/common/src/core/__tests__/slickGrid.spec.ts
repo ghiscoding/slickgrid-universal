@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 
-import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors';
-import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand } from '../../interfaces';
-import { SlickEventData, SlickGlobalEditorLock } from '../slickCore';
-import { SlickDataView } from '../slickDataview';
-import { SlickGrid } from '../slickGrid';
+import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors/index.js';
+import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions/index.js';
+import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand } from '../../interfaces/index.js';
+import { SlickEventData, SlickGlobalEditorLock } from '../slickCore.js';
+import { SlickDataView } from '../slickDataview.js';
+import { SlickGrid } from '../slickGrid.js';
 
 vi.useFakeTimers();
 

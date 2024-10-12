@@ -1,4 +1,4 @@
-import type { ElementEventListener } from './interfaces';
+import type { ElementEventListener } from './interfaces.js';
 
 /**
  * Create a Service to bind event listeners to DOM elements events,

@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { autoAddEditorFormatterToColumnsWithEditor, exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities';
-import { FieldType } from '../../enums/index';
-import { Editors } from '../../editors/index';
-import type { Column, Formatter, GridOption } from '../../interfaces/index';
-import { complexObjectFormatter } from '../complexObjectFormatter';
-import { multipleFormatter } from '../multipleFormatter';
-import { type SlickGrid } from '../../core/index';
+import { autoAddEditorFormatterToColumnsWithEditor, exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities.js';
+import { FieldType } from '../../enums/index.js';
+import { Editors } from '../../editors/index.js';
+import type { Column, Formatter, GridOption } from '../../interfaces/index.js';
+import { complexObjectFormatter } from '../complexObjectFormatter.js';
+import { multipleFormatter } from '../multipleFormatter.js';
+import { type SlickGrid } from '../../core/index.js';
 
 describe('formatterUtilities', () => {
   const gridStub = {

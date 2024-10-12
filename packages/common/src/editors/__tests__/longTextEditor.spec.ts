@@ -6,11 +6,11 @@ vi.mock('@slickgrid-universal/utils', async (importOriginal) => ({
   getOffset: vi.fn(),
 }));
 
-import { Editors } from '../index';
-import { LongTextEditor } from '../longTextEditor';
-import type { Column, Editor, EditorArguments, LongTextEditorOption, GridOption } from '../../interfaces/index';
-import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { Editors } from '../index.js';
+import { LongTextEditor } from '../longTextEditor.js';
+import type { Column, Editor, EditorArguments, LongTextEditorOption, GridOption } from '../../interfaces/index.js';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { getOffset } from '@slickgrid-universal/utils';
 
 const containerId = 'demo-container';

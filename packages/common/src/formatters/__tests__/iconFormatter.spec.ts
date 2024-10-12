@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { iconFormatter } from '../iconFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { iconFormatter } from '../iconFormatter.js';
 
 describe('the Icon Formatter', () => {
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {

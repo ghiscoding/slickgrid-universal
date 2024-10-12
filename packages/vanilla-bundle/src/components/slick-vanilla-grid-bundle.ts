@@ -58,8 +58,8 @@ import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-c
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 
-import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
-import { UniversalContainerService } from '../services/universalContainer.service';
+import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface.js';
+import { UniversalContainerService } from '../services/universalContainer.service.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 

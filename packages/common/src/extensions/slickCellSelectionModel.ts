@@ -1,9 +1,9 @@
 import { isDefined } from '@slickgrid-universal/utils';
 
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, SlickRange, type SlickGrid } from '../core/index';
-import type { SelectionModel } from '../enums/index';
-import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index';
-import { SlickCellRangeSelector } from './slickCellRangeSelector';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, SlickRange, type SlickGrid } from '../core/index.js';
+import type { SelectionModel } from '../enums/index.js';
+import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index.js';
+import { SlickCellRangeSelector } from './slickCellRangeSelector.js';
 
 export interface CellSelectionModelOption {
   selectActiveCell?: boolean;
@@ -53,7 +53,7 @@ export class SlickCellSelectionModel implements SelectionModel {
   init(grid: SlickGrid): void {
     this._grid = grid;
     if (this._addonOptions === undefined || this._addonOptions.cellRangeSelector === undefined) {
-      this._selector = new SlickCellRangeSelector({ selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? "white" : "black"}` } as CSSStyleDeclaration })
+      this._selector = new SlickCellRangeSelector({ selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? "white" : "black"}` } as CSSStyleDeclaration });
     }
 
     if (grid.hasDataView()) {

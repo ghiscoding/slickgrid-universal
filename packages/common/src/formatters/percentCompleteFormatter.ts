@@ -1,8 +1,8 @@
 import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
-import { type Formatter } from './../interfaces/index';
-import { formatNumber } from './../services/utilities';
-import { retrieveFormatterOptions } from './formatterUtilities';
+import { type Formatter } from './../interfaces/index.js';
+import { formatNumber } from './../services/utilities.js';
+import { retrieveFormatterOptions } from './formatterUtilities.js';
 
 /** Takes a cell value number (between 0.0-100) and displays a red (<50) or green (>=50) bar */
 export const percentCompleteFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {

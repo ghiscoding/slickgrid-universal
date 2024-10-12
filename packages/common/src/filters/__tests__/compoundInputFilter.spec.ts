@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import { FieldType, OperatorType } from '../../enums/index';
-import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
-import { Filters } from '../index';
-import { CompoundInputFilter } from '../compoundInputFilter';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { SlickGrid } from '../../core/index';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { Filters } from '../index.js';
+import { CompoundInputFilter } from '../compoundInputFilter.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { SlickGrid } from '../../core/index.js';
 
 vi.useFakeTimers();
 

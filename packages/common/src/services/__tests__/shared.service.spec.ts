@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SharedService } from '../shared.service';
-import type { Column, GridOption } from '../../interfaces/index';
-import { ExcelExportService } from '../excelExport.service';
-import type { SlickGrid } from '../../core';
+import { SharedService } from '../shared.service.js';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { ExcelExportService } from '../excelExport.service.js';
+import type { SlickGrid } from '../../core/slickGrid.js';
 
 const gridStub = {
   autosizeColumns: vi.fn(),

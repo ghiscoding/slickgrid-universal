@@ -1,10 +1,10 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { Constants } from './../constants';
-import type { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption } from './../interfaces/index';
-import { getDescendantProperty, } from '../services/utilities';
-import { SlickEventData, type SlickGrid } from '../core/index';
+import { Constants } from './../constants.js';
+import type { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption } from './../interfaces/index.js';
+import { getDescendantProperty, } from '../services/utilities.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 /*
  * An example of a 'detached' editor.

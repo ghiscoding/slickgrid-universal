@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { checkmarkMaterialFormatter } from '../checkmarkMaterialFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { checkmarkMaterialFormatter } from '../checkmarkMaterialFormatter.js';
 
 describe('the Checkmark Formatter with Material Design Icon', () => {
   it('should return an empty string when no value is passed', () => {
