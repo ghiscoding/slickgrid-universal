@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 import { of, throwError } from 'rxjs';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { FieldType } from '../../enums/index';
+import { FieldType } from '../../enums/index.js';
 import type {
   BackendService,
   BackendServiceApi,
@@ -13,18 +13,18 @@ import type {
   GridOption,
   MenuCommandItem,
   RowDetailView,
-} from '../../interfaces/index';
-import { Filters, InputFilter, SingleSelectFilter } from '../../filters';
-import { FilterService } from '../filter.service';
-import { FilterFactory } from '../../filters/filterFactory';
-import { getParsedSearchTermsByFieldType } from '../../filter-conditions';
-import { SlickgridConfig } from '../../slickgrid-config';
-import { SharedService } from '../shared.service';
-import { BackendUtilityService } from '../backendUtility.service';
-import { CollectionService } from '../collection.service';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
+} from '../../interfaces/index.js';
+import { Filters, InputFilter, SingleSelectFilter } from '../../filters/index.js';
+import { FilterService } from '../filter.service.js';
+import { FilterFactory } from '../../filters/filterFactory.js';
+import { getParsedSearchTermsByFieldType } from '../../filter-conditions/index.js';
+import { SlickgridConfig } from '../../slickgrid-config.js';
+import { SharedService } from '../shared.service.js';
+import { BackendUtilityService } from '../backendUtility.service.js';
+import { CollectionService } from '../collection.service.js';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 

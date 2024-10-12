@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { BindingHelper } from '../binding.helper';
+import { BindingHelper } from '../binding.helper.js';
 
 describe('Binding Helper', () => {
   let div: HTMLDivElement;

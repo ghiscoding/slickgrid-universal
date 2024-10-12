@@ -1,4 +1,4 @@
-export * from './binding.helper';
-export * from './binding.service';
-export * from './bindingEvent.service';
-export type * from './interfaces';
+export * from './binding.helper.js';
+export * from './binding.service.js';
+export * from './bindingEvent.service.js';
+export type * from './interfaces.js';

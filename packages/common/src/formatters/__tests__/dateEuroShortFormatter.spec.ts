@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { Formatters } from '../index';
+import type { Column } from '../../interfaces/index.js';
+import { Formatters } from '../index.js';
 
 describe('the DateEuroShort Formatter', () => {
   it('should return null when no value is provided', () => {

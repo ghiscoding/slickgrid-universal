@@ -8,8 +8,8 @@ import type {
   OnBeforeEditCellEventArgs,
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
-} from '../../interfaces/index';
-import { SlickEvent, type SlickGrid } from '../../core/index';
+} from '../../interfaces/index.js';
+import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import {
   BTN_ACTION_CANCEL,
   BTN_ACTION_DELETE,
@@ -17,11 +17,11 @@ import {
   BTN_ACTION_UPDATE,
   ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
   SlickRowBasedEdit,
-} from '../slickRowBasedEdit';
-import { GridService } from '../../services';
-import { Editors } from '../../editors';
-import type { ExtensionUtility } from '../extensionUtility';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+} from '../slickRowBasedEdit.js';
+import { GridService } from '../../services/grid.service.js';
+import { Editors } from '../../editors/editors.index.js';
+import type { ExtensionUtility } from '../extensionUtility.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
 const addonOptions: RowBasedEditOptions = {
   actionsColumnLabel: 'MyActions',

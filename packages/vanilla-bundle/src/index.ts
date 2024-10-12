@@ -3,7 +3,7 @@ import { BindingService } from '@slickgrid-universal/binding';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { SlickVanillaGridBundle } from './components/slick-vanilla-grid-bundle';
+import { SlickVanillaGridBundle } from './components/slick-vanilla-grid-bundle.js';
 
 const Slicker: any = {
   GridBundle: SlickVanillaGridBundle,
@@ -27,5 +27,5 @@ export { BindingService };
 export { Aggregators, Editors, Enums, EventPubSubService, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities };
 export { SlickEmptyWarningComponent, SlickPaginationComponent, SlickVanillaGridBundle }; // export the custom components & interfaces
 export { Slicker };
-export type * from './interfaces/index';
-export * from './services/index';
+export type * from './interfaces/index.js';
+export * from './services/index.js';

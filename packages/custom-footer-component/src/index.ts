@@ -1,1 +1,1 @@
-export * from './slick-footer.component';
+export * from './slick-footer.component.js';

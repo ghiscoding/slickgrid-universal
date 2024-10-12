@@ -1,6 +1,6 @@
-import { InputFilter } from './inputFilter';
-import type { FilterArguments } from '../interfaces/filterArguments.interface';
-import type { TranslaterService } from '../services/translater.service';
+import { InputFilter } from './inputFilter.js';
+import type { FilterArguments } from '../interfaces/filterArguments.interface.js';
+import type { TranslaterService } from '../services/translater.service.js';
 
 export class InputMaskFilter extends InputFilter {
   protected _inputMask = '';

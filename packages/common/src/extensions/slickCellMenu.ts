@@ -9,11 +9,11 @@ import type {
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
   OnClickEventArgs,
-} from '../interfaces/index';
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import type { SharedService } from '../services/shared.service';
-import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
-import type { SlickEventData } from '../core';
+} from '../interfaces/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import type { SharedService } from '../services/shared.service.js';
+import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
+import type { SlickEventData } from '../core/slickCore.js';
 
 /**
  * A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined)

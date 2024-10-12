@@ -1,5 +1,5 @@
-import type { SlickEvent, SlickRange } from '../core/index';
-import type { SlickPlugin } from '../interfaces/index';
+import type { SlickEvent, SlickRange } from '../core/index.js';
+import type { SlickPlugin } from '../interfaces/index.js';
 
 export type SelectionModel = SlickPlugin & {
   refreshSelections: () => void;

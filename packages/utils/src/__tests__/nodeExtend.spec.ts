@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'vitest';
 
-import { extend } from '../nodeExtend';
+import { extend } from '../nodeExtend.js';
 
 // port of all the node-extend tests
 // original tests can be found at: https://github.com/justmoon/node-extend/blob/main/test/index.js

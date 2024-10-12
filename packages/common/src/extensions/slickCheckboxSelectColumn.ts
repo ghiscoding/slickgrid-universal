@@ -2,10 +2,10 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 
-import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
-import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, OnKeyDownEventArgs, SelectableOverrideCallback } from '../interfaces/index';
-import { SlickRowSelectionModel } from './slickRowSelectionModel';
-import type { SelectionModel } from '../enums/index';
+import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, OnKeyDownEventArgs, SelectableOverrideCallback } from '../interfaces/index.js';
+import { SlickRowSelectionModel } from './slickRowSelectionModel.js';
+import type { SelectionModel } from '../enums/index.js';
 
 export interface RowLookup { [row: number]: boolean; }
 

@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { SelectionModel } from '../../enums/index';
-import type { Column, GridOption, OnEventArgs, } from '../../interfaces/index';
-import type { SlickCellSelectionModel } from '../slickCellSelectionModel';
-import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
-import type { InputEditor } from '../../editors/inputEditor';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid, SlickRange } from '../../core/index';
+import type { SelectionModel } from '../../enums/index.js';
+import type { Column, GridOption, OnEventArgs, } from '../../interfaces/index.js';
+import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
+import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager.js';
+import type { InputEditor } from '../../editors/inputEditor.js';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid, SlickRange } from '../../core/index.js';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 vi.useFakeTimers();

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { TranslaterService } from '../translater.service';
+import { TranslaterService } from '../translater.service.js';
 
 describe('Translater Service', () => {
   it('should display a not implemented when calling "addPubSubMessaging" method', () => {

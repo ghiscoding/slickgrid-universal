@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/file-extension-in-import
 import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {

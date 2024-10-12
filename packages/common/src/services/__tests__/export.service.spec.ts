@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { TextExportService } from '../textExport.service';
+import { TextExportService } from '../textExport.service.js';
 
 describe('Export Service', () => {
   it('should display a not implemented when calling "init" method', () => {

@@ -4,13 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import 'multiple-select-vanilla';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
-import { SlickEvent, type SlickDataView } from '../../core/index';
-import { Editors } from '../index';
-import { SelectEditor } from '../selectEditor';
-import { FieldType, OperatorType } from '../../enums/index';
-import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { type SlickGrid } from '../../core/index';
+import { SlickEvent, type SlickDataView } from '../../core/index.js';
+import { Editors } from '../index.js';
+import { SelectEditor } from '../selectEditor.js';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { type SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, GridOption, BackendService } from '../../interfaces/index';
-import { SumAggregator } from '../../aggregators';
-import { SharedService } from '../shared.service';
-import type { SortService } from '../sort.service';
-import { TreeDataService } from '../treeData.service';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
-import { unflattenParentChildArrayToTree } from '../utilities';
+import type { Column, GridOption, BackendService } from '../../interfaces/index.js';
+import { SumAggregator } from '../../aggregators/sumAggregator.js';
+import { SharedService } from '../shared.service.js';
+import type { SortService } from '../sort.service.js';
+import { TreeDataService } from '../treeData.service.js';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
+import { unflattenParentChildArrayToTree } from '../utilities.js';
 
 // mocked modules
 vi.mock('../utilities', async (importOriginal) => ({

@@ -1,8 +1,8 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import type { Formatter } from '../interfaces/index';
-import { formatNumber } from '../services/utilities';
-import { retrieveFormatterOptions } from './formatterUtilities';
+import type { Formatter } from '../interfaces/index.js';
+import { formatNumber } from '../services/utilities.js';
+import { retrieveFormatterOptions } from './formatterUtilities.js';
 
 /**
  * This Formatters allow the user to provide any currency symbol (as symbol prefix/suffix) and also provide extra text prefix/suffix.

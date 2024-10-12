@@ -3,7 +3,7 @@ import { type Column, createDomElement, FieldType, Filters, Formatters, type Gri
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example21.scss';
 
 const NB_ITEMS = 995;

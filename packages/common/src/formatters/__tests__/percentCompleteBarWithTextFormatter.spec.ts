@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { percentCompleteBarWithTextFormatter } from '../percentCompleteBarWithTextFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { percentCompleteBarWithTextFormatter } from '../percentCompleteBarWithTextFormatter.js';
 
 describe('the Percent Complete with Text Formatter', () => {
   it('should return an empty string when no value is provided', () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { EditController } from '../../interfaces';
-import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore';
+import type { EditController } from '../../interfaces/editController.interface.js';
+import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore.js';
 
 const pubSubServiceStub = {
   publish: vi.fn(),

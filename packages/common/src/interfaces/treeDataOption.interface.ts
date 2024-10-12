@@ -1,7 +1,7 @@
 // import { Aggregator } from './aggregator.interface';
-import type { SortDirection, SortDirectionString } from '../enums/index';
-import type { Aggregator } from './aggregator.interface';
-import type { Formatter } from './formatter.interface';
+import type { SortDirection, SortDirectionString } from '../enums/index.js';
+import type { Aggregator } from './aggregator.interface.js';
+import type { Formatter } from './formatter.interface.js';
 
 export interface TreeDataOption extends TreeDataPropNames {
   /** Tree Data Aggregators array that can be provided to aggregate the tree (avg, sum, ...) */

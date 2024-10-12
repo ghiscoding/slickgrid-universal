@@ -23,15 +23,15 @@ import { type SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
 
-import { Aggregators } from '../../aggregators/aggregators.index';
-import { SlickDraggableGrouping } from '../slickDraggableGrouping';
-import { ExtensionUtility } from '../../extensions/extensionUtility';
-import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index';
-import { BackendUtilityService, } from '../../services';
-import { SharedService } from '../../services/shared.service';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SortDirectionNumber } from '../../enums/index';
-import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
+import { Aggregators } from '../../aggregators/aggregators.index.js';
+import { SlickDraggableGrouping } from '../slickDraggableGrouping.js';
+import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index.js';
+import { BackendUtilityService, } from '../../services/backendUtility.service.js';
+import { SharedService } from '../../services/shared.service.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SortDirectionNumber } from '../../enums/index.js';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 
 const GRID_UID = 'slickgrid12345';
 

@@ -8,15 +8,15 @@ import type {
   SingleColumnSort,
   TreeDataOption,
   DOMMouseOrTouchEvent,
-} from '../interfaces/index';
-import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index';
-import type { BackendUtilityService } from './backendUtility.service';
-import type { CollectionService } from './collection.service';
-import { getDescendantProperty, flattenToParentChildArray, isColumnDateType } from './utilities';
-import { sortByFieldType } from '../sortComparers/sortUtilities';
-import type { SharedService } from './shared.service';
-import type { RxJsFacade, Subject } from './rxjsFacade';
-import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index.js';
+import type { BackendUtilityService } from './backendUtility.service.js';
+import type { CollectionService } from './collection.service.js';
+import { getDescendantProperty, flattenToParentChildArray, isColumnDateType } from './utilities.js';
+import { sortByFieldType } from '../sortComparers/sortUtilities.js';
+import type { SharedService } from './shared.service.js';
+import type { RxJsFacade, Subject } from './rxjsFacade.js';
+import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];

@@ -11,8 +11,8 @@ import {
   type SliderRangeOption,
 } from '@slickgrid-universal/common';
 
-import { ExampleGridOptions } from './example-grid-options';
-import { CustomPager } from './example30-pager';
+import { ExampleGridOptions } from './example-grid-options.js';
+import { CustomPager } from './example30-pager.js';
 
 const NB_ITEMS = 5000;
 

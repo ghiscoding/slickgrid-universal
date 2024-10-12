@@ -1,9 +1,9 @@
-import { Constants } from '../constants';
-import type { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index';
-import type { BackendUtilityService } from '../services/backendUtility.service';
-import type { SharedService } from '../services/shared.service';
-import type { TranslaterService } from '../services/translater.service';
-import { getTranslationPrefix } from '../services/utilities';
+import { Constants } from '../constants.js';
+import type { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index.js';
+import type { BackendUtilityService } from '../services/backendUtility.service.js';
+import type { SharedService } from '../services/shared.service.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { getTranslationPrefix } from '../services/utilities.js';
 
 export class ExtensionUtility {
   constructor(

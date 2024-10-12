@@ -1,8 +1,8 @@
 import { describe, expect, it, type Mock, vi } from 'vitest';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { sumTotalsBoldFormatter } from '../sumTotalsBoldFormatter';
-import { type SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { sumTotalsBoldFormatter } from '../sumTotalsBoldFormatter.js';
+import { type SlickGrid } from '../../core/index.js';
 
 describe('sumTotalsBoldFormatter', () => {
   // stub some methods of the SlickGrid Grid instance

@@ -2,16 +2,16 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { extend, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 
-import { Constants } from '../constants';
-import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index';
-import { type FilterFactory } from './../filters/filterFactory';
+import { Constants } from '../constants.js';
+import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
+import { type FilterFactory } from './../filters/filterFactory.js';
 import {
   EmitterType,
   FieldType,
   OperatorType,
   type OperatorString,
   type SearchTerm,
-} from '../enums/index';
+} from '../enums/index.js';
 import type {
   Column,
   ColumnFilters,
@@ -24,12 +24,12 @@ import type {
   FilterConditionOption,
   GridOption,
   SearchColumnFilter,
-} from './../interfaces/index';
-import type { BackendUtilityService } from './backendUtility.service';
-import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
-import type { SharedService } from './shared.service';
-import type { RxJsFacade, Subject } from './rxjsFacade';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
+} from './../interfaces/index.js';
+import type { BackendUtilityService } from './backendUtility.service.js';
+import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType, } from './utilities.js';
+import type { SharedService } from './shared.service.js';
+import type { RxJsFacade, Subject } from './rxjsFacade.js';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 interface OnSearchChangeEventArgs {
   clearFilterTriggered?: boolean;

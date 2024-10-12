@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Editors } from '../index';
-import { AutocompleterEditor } from '../autocompleterEditor';
-import { FieldType } from '../../enums/index';
-import type { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
+import { Editors } from '../index.js';
+import { AutocompleterEditor } from '../autocompleterEditor.js';
+import { FieldType } from '../../enums/index.js';
+import type { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, DragRowMove, GridOption } from '../../interfaces/index';
-import { SlickRowMoveManager } from '../slickRowMoveManager';
-import { SlickEvent, type SlickGrid } from '../../core/index';
+import type { Column, DragRowMove, GridOption } from '../../interfaces/index.js';
+import { SlickRowMoveManager } from '../slickRowMoveManager.js';
+import { SlickEvent, type SlickGrid } from '../../core/index.js';
 
 const GRID_UID = 'slickgrid_12345';
 

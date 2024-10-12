@@ -4,8 +4,8 @@ import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid
 import VanillaCalendar from 'vanilla-calendar-pro';
 import type { FormatDateString, IOptions } from 'vanilla-calendar-pro/types';
 
-import { Constants } from './../constants';
-import { FieldType } from '../enums/index';
+import { Constants } from './../constants.js';
+import { FieldType } from '../enums/index.js';
 import type {
   Column,
   ColumnEditor,
@@ -16,12 +16,12 @@ import type {
   EditorValidationResult,
   GridOption,
   VanillaCalendarOption,
-} from './../interfaces/index';
-import { getDescendantProperty, } from './../services/utilities';
-import type { TranslaterService } from '../services/translater.service';
-import { SlickEventData, type SlickGrid } from '../core/index';
-import { setPickerDates } from '../commonEditorFilter';
-import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils';
+} from './../interfaces/index.js';
+import { getDescendantProperty, } from './../services/utilities.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Pro
@@ -210,7 +210,7 @@ export class DateEditor implements Editor {
 
         this._isValueTouched = true;
         this._lastInputKeyEvent = event;
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight'  || event.key === "Home" || event.key === "End") {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === "Home" || event.key === "End") {
           event.stopImmediatePropagation();
         }
       }) as EventListener);
@@ -364,7 +364,7 @@ export class DateEditor implements Editor {
 
     const lastEventKey = this._lastInputKeyEvent?.key;
     if (this.columnEditor.editorOptions?.allowInput === true &&
-        this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
+      this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
 

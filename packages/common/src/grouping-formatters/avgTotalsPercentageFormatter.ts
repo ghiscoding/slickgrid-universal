@@ -1,9 +1,9 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import type { Column, GroupTotalsFormatter } from './../interfaces/index';
-import { decimalFormatted, thousandSeparatorFormatted } from '../services/utilities';
-import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
-import { type SlickGrid } from '../core/index';
+import type { Column, GroupTotalsFormatter } from './../interfaces/index.js';
+import { decimalFormatted, thousandSeparatorFormatted } from '../services/utilities.js';
+import { retrieveFormatterOptions } from '../formatters/formatterUtilities.js';
+import { type SlickGrid } from '../core/index.js';
 
 export const avgTotalsPercentageFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';

@@ -1,9 +1,9 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
-import { Constants } from '../constants';
-import { type Formatter } from './../interfaces/index';
-import { parseFormatterWhenExist } from './formatterUtilities';
-import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
+import { Constants } from '../constants.js';
+import { type Formatter } from './../interfaces/index.js';
+import { parseFormatterWhenExist } from './formatterUtilities.js';
+import { getCellValueFromQueryFieldGetter, } from '../services/utilities.js';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {

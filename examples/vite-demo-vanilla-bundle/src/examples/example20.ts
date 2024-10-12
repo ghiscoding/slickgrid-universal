@@ -1,6 +1,7 @@
 import { type Column, FieldType, Filters, Formatters, type GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
+
+import { ExampleGridOptions } from './example-grid-options.js';
 
 const NB_ITEMS = 100;
 

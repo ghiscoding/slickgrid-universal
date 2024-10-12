@@ -1,8 +1,8 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import { type Formatter } from './../interfaces/index';
-import { formatNumber } from './../services/utilities';
-import { retrieveFormatterOptions } from './formatterUtilities';
+import { type Formatter } from './../interfaces/index.js';
+import { formatNumber } from './../services/utilities.js';
+import { retrieveFormatterOptions } from './formatterUtilities.js';
 
 /** Takes a cell value number (between 0-100) and add the "%" after the number */
 export const percentSymbolFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {

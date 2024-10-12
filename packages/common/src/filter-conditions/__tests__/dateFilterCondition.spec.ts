@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldType } from '../../enums/index';
-import type { FilterConditionOption } from '../../interfaces/index';
-import { getFilterParsedDates } from '../dateFilterCondition';
-import { executeFilterConditionTest } from '../filterConditionProcesses';
+import { FieldType } from '../../enums/index.js';
+import type { FilterConditionOption } from '../../interfaces/index.js';
+import { getFilterParsedDates } from '../dateFilterCondition.js';
+import { executeFilterConditionTest } from '../filterConditionProcesses.js';
 
 describe('dateFilterCondition method', () => {
   it('should return False when no cell value is provided, neither search terms', () => {

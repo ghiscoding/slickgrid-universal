@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Editors } from '../index';
-import { IntegerEditor } from '../integerEditor';
-import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
-import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
+import { Editors } from '../index.js';
+import { IntegerEditor } from '../integerEditor.js';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

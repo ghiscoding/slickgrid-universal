@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SortDirectionNumber } from '../../enums/index';
-import { SortComparers } from '../index';
+import { SortDirectionNumber } from '../../enums/index.js';
+import { SortComparers } from '../index.js';
 
 describe('the Boolean SortComparer', () => {
   it('should return original unsorted array when no direction is provided', () => {

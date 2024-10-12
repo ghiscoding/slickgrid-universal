@@ -1,6 +1,6 @@
-import type { SearchTerm } from '../enums/searchTerm.type';
-import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
-import { compareObjects } from './filterUtilities';
+import type { SearchTerm } from '../enums/searchTerm.type.js';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
+import { compareObjects } from './filterUtilities.js';
 
 /** Execute filter condition check on each cell */
 export const executeObjectFilterCondition: FilterCondition = ((options: FilterConditionOption, parsedSearchValue: SearchTerm | undefined) => {

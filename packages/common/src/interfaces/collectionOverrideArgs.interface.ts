@@ -1,6 +1,6 @@
-import type { CompositeEditorOption } from './index';
-import type { Column } from './index';
-import type { SlickGrid } from '../core/index';
+import type { CompositeEditorOption } from './index.js';
+import type { Column } from './index.js';
+import type { SlickGrid } from '../core/index.js';
 
 export interface CollectionOverrideArgs {
   /** Column Definition */

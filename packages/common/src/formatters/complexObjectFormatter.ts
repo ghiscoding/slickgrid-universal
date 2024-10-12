@@ -1,4 +1,4 @@
-import type { Formatter } from './../interfaces/index';
+import type { Formatter } from './../interfaces/index.js';
 
 /**
  * Takes a complex data object and return the data under that property (for example: "user.firstName" will return the first name "John")

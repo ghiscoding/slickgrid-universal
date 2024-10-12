@@ -17,9 +17,9 @@ import {
   type TextExportOption,
 } from '@slickgrid-universal/common';
 
-import { ContainerServiceStub } from '../../../test/containerServiceStub';
-import { TranslateServiceStub } from '../../../test/translateServiceStub';
-import { TextExportService } from './textExport.service';
+import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
+import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
+import { TextExportService } from './textExport.service.js';
 
 function removeMultipleSpaces(inputText: string) {
   return `${inputText}`.replace(/  +/g, '');

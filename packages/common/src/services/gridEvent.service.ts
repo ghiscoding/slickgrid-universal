@@ -1,5 +1,5 @@
-import { type SlickDataView, SlickEventHandler, type SlickGrid, SlickEventData } from '../core/index';
-import type { Column, OnEventArgs } from './../interfaces/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid, SlickEventData } from '../core/index.js';
+import type { Column, OnEventArgs } from './../interfaces/index.js';
 
 export class GridEventService {
   protected _eventHandler: SlickEventHandler;

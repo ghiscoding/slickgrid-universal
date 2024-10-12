@@ -11,15 +11,15 @@ import type {
   GridServiceUpdateOption,
   HideColumnOption,
   OnEventArgs,
-} from '../interfaces/index';
-import type { FilterService } from './filter.service';
-import type { GridStateService } from './gridState.service';
-import type { PaginationService } from '../services/pagination.service';
-import type { SharedService } from './shared.service';
-import type { SlickDataView, SlickGrid } from '../core/index';
-import type { SortService } from './sort.service';
-import type { TreeDataService } from './treeData.service';
-import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
+} from '../interfaces/index.js';
+import type { FilterService } from './filter.service.js';
+import type { GridStateService } from './gridState.service.js';
+import type { PaginationService } from '../services/pagination.service.js';
+import type { SharedService } from './shared.service.js';
+import type { SlickDataView, SlickGrid } from '../core/index.js';
+import type { SortService } from './sort.service.js';
+import type { TreeDataService } from './treeData.service.js';
+import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js';
 
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
 const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: true };

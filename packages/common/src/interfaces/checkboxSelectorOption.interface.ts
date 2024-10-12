@@ -1,6 +1,6 @@
-import type { SlickEventData } from '../core';
-import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
-import type { SlickCheckboxSelectColumn } from '../extensions/slickCheckboxSelectColumn';
+import type { SlickEventData } from '../core/slickCore.js';
+import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type.js';
+import type { SlickCheckboxSelectColumn } from '../extensions/slickCheckboxSelectColumn.js';
 
 export interface CheckboxSelectorOption {
   /**

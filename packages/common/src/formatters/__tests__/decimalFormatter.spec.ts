@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { decimalFormatter } from '../decimalFormatter';
-import type { SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { decimalFormatter } from '../decimalFormatter.js';
+import type { SlickGrid } from '../../core/index.js';
 
 describe('the Decimal Formatter', () => {
   const gridStub = {

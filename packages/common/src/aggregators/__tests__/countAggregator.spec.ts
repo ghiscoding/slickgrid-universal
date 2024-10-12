@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { CountAggregator } from '../countAggregator';
+import { CountAggregator } from '../countAggregator.js';
 
 describe('CountAggregator', () => {
   let aggregator: CountAggregator;

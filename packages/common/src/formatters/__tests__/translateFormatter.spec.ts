@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { translateFormatter } from '../translateFormatter';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { SlickGrid } from '../../core';
+import type { Column } from '../../interfaces/index.js';
+import { translateFormatter } from '../translateFormatter.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { SlickGrid } from '../../core/slickGrid.js';
 
 describe('the Translate Formatter', () => {
   let translateService: TranslateServiceStub;

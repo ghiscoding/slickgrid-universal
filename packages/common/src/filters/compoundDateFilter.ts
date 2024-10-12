@@ -1,5 +1,5 @@
-import type { TranslaterService } from '../services';
-import { DateFilter } from './dateFilter';
+import type { TranslaterService } from '../services/translater.service.js';
+import { DateFilter } from './dateFilter.js';
 
 export class CompoundDateFilter extends DateFilter {
   /** Initialize the Filter */

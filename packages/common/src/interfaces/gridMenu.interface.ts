@@ -1,6 +1,6 @@
-import type { Column, GridMenuOption, GridMenuCommandItemCallbackArgs } from './index';
-import type { SlickGridMenu } from '../extensions/slickGridMenu';
-import type { SlickGrid } from '../core/index';
+import type { Column, GridMenuOption, GridMenuCommandItemCallbackArgs } from './index.js';
+import type { SlickGridMenu } from '../extensions/slickGridMenu.js';
+import type { SlickGrid } from '../core/index.js';
 
 export interface GridMenu extends GridMenuOption {
   // --

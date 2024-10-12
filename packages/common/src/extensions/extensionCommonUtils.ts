@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { createDomElement, titleCase } from '@slickgrid-universal/utils';
 
-import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
-import { SlickColumnPicker } from './slickColumnPicker';
-import { SlickGridMenu } from './slickGridMenu';
+import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index.js';
+import { SlickColumnPicker } from './slickColumnPicker.js';
+import { SlickGridMenu } from './slickGridMenu.js';
 
 const PICKER_CHECK_ICON = 'mdi-icon-picker-check';
 const PICKER_UNCHECK_ICON = 'mdi-icon-picker-uncheck';

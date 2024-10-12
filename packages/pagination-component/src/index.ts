@@ -1,1 +1,1 @@
-export * from './slick-pagination.component';
+export * from './slick-pagination.component.js';

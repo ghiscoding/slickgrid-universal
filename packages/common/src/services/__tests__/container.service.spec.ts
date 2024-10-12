@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ContainerService } from '../container.service';
+import { ContainerService } from '../container.service.js';
 
 describe('Container Service', () => {
   it('should display a not implemented when calling "get" method', () => {

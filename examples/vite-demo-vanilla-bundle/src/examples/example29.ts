@@ -1,9 +1,9 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { type Column, Editors, Formatters, type GridOption, SlickGlobalEditorLock } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
 
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example29.scss';
-import { BindingEventService } from '@slickgrid-universal/binding';
 
 export default class Example29 {
   private _bindingEventService: BindingEventService;

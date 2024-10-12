@@ -12,9 +12,9 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 
-import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
-import { TranslateServiceStub } from '../../../test/translateServiceStub';
-import { ContainerServiceStub } from '../../../test/containerServiceStub';
+import { SlickCompositeEditorComponent } from './slick-composite-editor.component.js';
+import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
+import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 
 vi.useFakeTimers();
 

@@ -6,7 +6,7 @@ import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { delay, Observable, of, type Subject } from 'rxjs';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import Data from './data/customers_100.json';
 import './example15.scss';
 

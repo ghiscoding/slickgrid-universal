@@ -18,8 +18,8 @@ import {
   type TranslaterService,
 } from '@slickgrid-universal/common';
 
-import type { GraphqlServiceApi, GraphqlServiceOption } from '../../interfaces/index';
-import { GraphqlService } from './../graphql.service';
+import type { GraphqlServiceApi, GraphqlServiceOption } from '../../interfaces/index.js';
+import { GraphqlService } from './../graphql.service.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;

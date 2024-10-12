@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { FieldType } from '../../enums/index';
-import type { FilterConditionOption } from '../../interfaces/index';
-import { executeBooleanFilterCondition, getFilterParsedBoolean } from '../booleanFilterCondition';
-import { executeFilterConditionTest } from '../filterConditionProcesses';
+import { FieldType } from '../../enums/index.js';
+import type { FilterConditionOption } from '../../interfaces/index.js';
+import { executeBooleanFilterCondition, getFilterParsedBoolean } from '../booleanFilterCondition.js';
+import { executeFilterConditionTest } from '../filterConditionProcesses.js';
 
 /** will return True in all cases with only 1 exception when the only searchTerm is inversed to the cell value */
 

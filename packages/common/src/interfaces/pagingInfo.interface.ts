@@ -1,4 +1,4 @@
-import type { SlickDataView } from '../core/slickDataview';
+import type { SlickDataView } from '../core/slickDataview.js';
 
 export interface PagingInfo {
   /** Page size number */

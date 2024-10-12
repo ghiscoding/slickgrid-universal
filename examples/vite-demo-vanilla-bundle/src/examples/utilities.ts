@@ -1,4 +1,4 @@
-import { Renderer } from '../renderer';
+import { Renderer } from '../renderer.js';
 
 export function loadComponent<T = any>(containerElement: HTMLDivElement, htmlView: string, vmModule: any, bindings?: any): T | null {
   if (containerElement) {

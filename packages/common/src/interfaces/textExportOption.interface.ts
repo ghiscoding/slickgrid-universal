@@ -1,5 +1,5 @@
-import type { DelimiterType } from '../enums/delimiterType.enum';
-import type { FileType } from '../enums/fileType.enum';
+import type { DelimiterType } from '../enums/delimiterType.enum.js';
+import type { FileType } from '../enums/fileType.enum.js';
 
 export interface TextExportOption {
   /** export delimiter, can be (comma, tab, ... or even custom string). */

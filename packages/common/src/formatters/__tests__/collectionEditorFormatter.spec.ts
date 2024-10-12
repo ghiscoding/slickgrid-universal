@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { collectionEditorFormatter } from '../collectionEditorFormatter';
-import { Editors } from '../../editors';
+import type { Column } from '../../interfaces/index.js';
+import { collectionEditorFormatter } from '../collectionEditorFormatter.js';
+import { Editors } from '../../editors/editors.index.js';
 
 describe('the CollectionEditor Formatter', () => {
   let columnDef: Column;

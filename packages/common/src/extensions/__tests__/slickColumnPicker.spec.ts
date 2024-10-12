@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
-import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
-import type { Column, ColumnPicker, GridOption } from '../../interfaces/index';
-import { SlickColumnPicker } from '../slickColumnPicker';
-import { ExtensionUtility } from '../extensionUtility';
-import { SharedService } from '../../services/shared.service';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { BackendUtilityService } from '../../services/backendUtility.service';
 import { createDomElement } from '@slickgrid-universal/utils';
+
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import type { Column, ColumnPicker, GridOption } from '../../interfaces/index.js';
+import { SlickColumnPicker } from '../slickColumnPicker.js';
+import { ExtensionUtility } from '../extensionUtility.js';
+import { SharedService } from '../../services/shared.service.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { BackendUtilityService } from '../../services/backendUtility.service.js';
 
 const gridUid = 'slickgrid_124343';
 

@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/file-extension-in-import
 import { removeWhitespaces } from '../plugins/utilities';
 
 describe('Example 27 - GraphQL with Infinite Scroll', () => {

@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { ExtensionName } from '../../enums/index';
-import type { Column, ExtensionModel, GridOption } from '../../interfaces/index';
-import { ExtensionUtility, SlickRowBasedEdit } from '../../extensions';
-import { ExtensionService, type FilterService, type GridService, SharedService, type SortService, type TreeDataService } from '../index';
-import { SlickEvent, type SlickGrid } from '../../core/index';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { ExtensionName } from '../../enums/index.js';
+import type { Column, ExtensionModel, GridOption } from '../../interfaces/index.js';
+import { ExtensionUtility, SlickRowBasedEdit } from '../../extensions/index.js';
+import { ExtensionService, type FilterService, type GridService, SharedService, type SortService, type TreeDataService } from '../index.js';
+import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import {
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
@@ -21,7 +21,7 @@ import {
   SlickHeaderMenu,
   type SlickRowMoveManager,
   SlickRowSelectionModel,
-} from '../../extensions/index';
+} from '../../extensions/index.js';
 
 const GRID_UID = 'slickgrid_12345';
 

@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
-import { ExtensionName, GridStateType, } from '../enums/index';
+import { ExtensionName, GridStateType, } from '../enums/index.js';
 import type {
   Column,
   CurrentColumn,
@@ -12,13 +12,13 @@ import type {
   GridOption,
   GridState,
   TreeToggleStateChange,
-} from '../interfaces/index';
-import type { ExtensionService } from './extension.service';
-import type { FilterService } from './filter.service';
-import type { SharedService } from './shared.service';
-import type { SortService } from './sort.service';
-import type { TreeDataService } from './treeData.service';
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import type { ExtensionService } from './extension.service.js';
+import type { FilterService } from './filter.service.js';
+import type { SharedService } from './shared.service.js';
+import type { SortService } from './sort.service.js';
+import type { TreeDataService } from './treeData.service.js';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 export class GridStateService {
   protected _eventHandler: SlickEventHandler;

@@ -1,4 +1,4 @@
-import type { EditorArguments, EditorValidationResult } from './index';
+import type { EditorArguments, EditorValidationResult } from './index.js';
 
 /**
  * SlickGrid Editor interface, more info can be found on the SlickGrid repo

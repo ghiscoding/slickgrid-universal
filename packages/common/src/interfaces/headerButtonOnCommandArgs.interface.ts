@@ -1,5 +1,5 @@
-import type { Column, HeaderButtonItem } from './index';
-import type { SlickGrid } from '../core/index';
+import type { Column, HeaderButtonItem } from './index.js';
+import type { SlickGrid } from '../core/index.js';
 
 export interface HeaderButtonOnCommandArgs {
   grid: SlickGrid;

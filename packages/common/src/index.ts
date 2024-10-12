@@ -1,7 +1,7 @@
-import * as BackendUtilities from './services/backendUtility.service';
-import * as Observers from './services/observers';
-import * as ServiceUtilities from './services/utilities';
-import * as SortUtilities from './sortComparers/sortUtilities';
+import * as BackendUtilities from './services/backendUtility.service.js';
+import * as Observers from './services/observers.js';
+import * as ServiceUtilities from './services/utilities.js';
+import * as SortUtilities from './sortComparers/sortUtilities.js';
 
 import * as Utils from '@slickgrid-universal/utils';
 export * from '@slickgrid-universal/utils';
@@ -15,34 +15,34 @@ export {
 } from '@slickgrid-universal/event-pub-sub';
 
 // Public classes.
-export * from './constants';
-export * from './global-grid-options';
+export * from './constants.js';
+export * from './global-grid-options.js';
 
-export * from './core/index';
-export * from './enums/index';
-export type * from './interfaces/index';
-export * from './aggregators/index';
-export * from './aggregators/aggregators.index';
-export * from './editors/index';
-export * from './editors/editors.index';
-export * from './extensions/index';
-export * from './filter-conditions/index';
-export * from './filter-conditions/filterConditions.index';
-export * from './filters/index';
-export * from './filters/filters.index';
-export * from './filters/filterFactory';
-export * from './formatters/index';
-export * from './formatters/formatters.index';
-export * from './grouping-formatters/index';
-export * from './grouping-formatters/groupingFormatters.index';
-export * from './sortComparers/index';
-export * from './sortComparers/sortComparers.index';
-export * from './services/index';
-export { Enums } from './enums/enums.index';
+export * from './core/index.js';
+export * from './enums/index.js';
+export type * from './interfaces/index.js';
+export * from './aggregators/index.js';
+export * from './aggregators/aggregators.index.js';
+export * from './editors/index.js';
+export * from './editors/editors.index.js';
+export * from './extensions/index.js';
+export * from './filter-conditions/index.js';
+export * from './filter-conditions/filterConditions.index.js';
+export * from './filters/index.js';
+export * from './filters/filters.index.js';
+export * from './filters/filterFactory.js';
+export * from './formatters/index.js';
+export * from './formatters/formatters.index.js';
+export * from './grouping-formatters/index.js';
+export * from './grouping-formatters/groupingFormatters.index.js';
+export * from './sortComparers/index.js';
+export * from './sortComparers/sortComparers.index.js';
+export * from './services/index.js';
+export { Enums } from './enums/enums.index.js';
 
 const Utilities: any = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, ...Utils, deepAssign: Utils.deepMerge };
 export { Utilities };
-export { SlickgridConfig } from './slickgrid-config';
+export { SlickgridConfig } from './slickgrid-config.js';
 
 // re-export MultipleSelectOption type for convenience
 // and also to avoid asking the user to install it on their side without hoisting deps

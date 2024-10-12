@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/file-extension-in-import
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 05 - Tree Data (from a flat dataset with parentId references)', () => {

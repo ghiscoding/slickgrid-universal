@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldType, OperatorType } from '../../enums/index';
-import type { FilterConditionOption } from '../../interfaces/index';
-import { executeFilterConditionTest } from '../filterConditionProcesses';
-import { executeStringFilterCondition, getFilterParsedText } from '../stringFilterCondition';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { FilterConditionOption } from '../../interfaces/index.js';
+import { executeFilterConditionTest } from '../filterConditionProcesses.js';
+import { executeStringFilterCondition, getFilterParsedText } from '../stringFilterCondition.js';
 
 describe('executeStringFilterCondition method', () => {
   it('should return True when no cell input value is provided which is equal to the default search term, neither search terms', () => {

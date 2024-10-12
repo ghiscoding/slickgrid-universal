@@ -1,6 +1,6 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
-import type { Formatter } from './../interfaces/index';
+import type { Formatter } from './../interfaces/index.js';
 
 /** Takes an array of string and converts it to a comma delimited string */
 export const arrayToCsvFormatter: Formatter = (_row, _cell, value) => {

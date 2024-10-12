@@ -6,13 +6,13 @@ import {
   FieldType,
   OperatorType,
   SortDirectionNumber,
-} from './../enums/index';
-import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index';
-import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils';
-import { sortByFieldType } from '../sortComparers/sortUtilities';
-import type { TranslaterService } from './translater.service';
-import type { SlickGrid } from '../core/slickGrid';
-import { isColumnDateType } from './utilities';
+} from './../enums/index.js';
+import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index.js';
+import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils.js';
+import { sortByFieldType } from '../sortComparers/sortUtilities.js';
+import type { TranslaterService } from './translater.service.js';
+import type { SlickGrid } from '../core/slickGrid.js';
+import { isColumnDateType } from './utilities.js';
 
 type ParsingDateDetails = {
   columnId: number | string;

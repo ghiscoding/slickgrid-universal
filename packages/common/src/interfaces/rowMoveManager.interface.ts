@@ -1,6 +1,6 @@
-import type { RowMoveManagerOption } from './index';
-import type { SlickRowMoveManager } from '../extensions/slickRowMoveManager';
-import type { SlickGrid } from '../core/index';
+import type { RowMoveManagerOption } from './index.js';
+import type { SlickRowMoveManager } from '../extensions/slickRowMoveManager.js';
+import type { SlickGrid } from '../core/index.js';
 
 export interface RowMoveManager extends RowMoveManagerOption {
   //

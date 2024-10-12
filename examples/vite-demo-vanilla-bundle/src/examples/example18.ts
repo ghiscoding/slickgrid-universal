@@ -13,7 +13,8 @@ import {
   GroupTotalFormatters,
 } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
+
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example18.scss';
 import '../material-styles.scss';
 

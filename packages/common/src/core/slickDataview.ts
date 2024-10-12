@@ -1,6 +1,6 @@
 import { type AnyFunction, extend, getFunctionDetails, isDefined } from '@slickgrid-universal/utils';
 
-import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
+import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
 import type {
   Aggregator,
   DataViewHints,
@@ -15,8 +15,8 @@ import type {
   OnSelectedRowIdsChangedEventArgs,
   OnSetItemsCalledEventArgs,
   PagingInfo
-} from '../interfaces';
-import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface';
+} from '../interfaces/index.js';
+import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface.js';
 import {
   type BasePubSub,
   SlickEvent,
@@ -24,8 +24,8 @@ import {
   SlickGroup,
   SlickGroupTotals,
   type SlickNonDataItem,
-} from './slickCore';
-import type { SlickGrid } from './slickGrid';
+} from './slickCore.js';
+import type { SlickGrid } from './slickGrid.js';
 
 export interface DataViewOption {
   /**

@@ -1,6 +1,6 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
-import type { Formatter } from './../interfaces/index';
+import type { Formatter } from './../interfaces/index.js';
 
 /**
  * Takes an array of complex objects converts it to a comma delimited string.

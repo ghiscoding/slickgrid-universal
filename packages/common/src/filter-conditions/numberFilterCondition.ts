@@ -1,8 +1,8 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import { OperatorType, type SearchTerm } from '../enums/index';
-import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
-import { testFilterCondition } from './filterUtilities';
+import { OperatorType, type SearchTerm } from '../enums/index.js';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
+import { testFilterCondition } from './filterUtilities.js';
 
 /** Execute filter condition check on each cell */
 export const executeNumberFilterCondition: FilterCondition = ((options: FilterConditionOption, parsedSearchValues: number[]) => {

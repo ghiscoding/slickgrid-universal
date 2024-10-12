@@ -10,10 +10,10 @@ import type {
   OnRowsOrCountChangedEventArgs,
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
-} from '../interfaces/index';
-import { type SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
-import type { GridService } from '../services';
-import type { ExtensionUtility } from './extensionUtility';
+} from '../interfaces/index.js';
+import { type SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index.js';
+import type { GridService } from '../services/grid.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';

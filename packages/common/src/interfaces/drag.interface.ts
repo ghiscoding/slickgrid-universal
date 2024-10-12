@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index';
+import type { SlickGrid } from '../core/index.js';
 
 export interface DragItem {
   dragSource: HTMLElement | Document | null;

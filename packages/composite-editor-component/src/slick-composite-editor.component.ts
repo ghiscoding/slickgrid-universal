@@ -31,7 +31,7 @@ import {
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 
-import { SlickCompositeEditor } from './compositeEditor.factory';
+import { SlickCompositeEditor } from './compositeEditor.factory.js';
 
 const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);
 

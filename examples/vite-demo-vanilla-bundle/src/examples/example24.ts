@@ -2,7 +2,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { type Column, Editors, FieldType, type GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example24.scss';
 
 const NB_ITEMS = 100;

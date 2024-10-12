@@ -1,6 +1,7 @@
 import { type Column, type GridOption, SlickEventHandler, Editors, Formatters } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
+
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example19.scss';
 
 const NB_ITEMS = 100;
@@ -89,7 +90,7 @@ export default class Example19 {
       field: 'approvalDate',
       minWidth: 120,
       width: 120,
-      editor: { model: Editors.date, type: 'date'},
+      editor: { model: Editors.date, type: 'date' },
       formatter: Formatters.dateIso,
       exportWithFormatter: true
     });
@@ -149,7 +150,7 @@ export default class Example19 {
   getData(itemCount: number) {
     // mock a dataset
     const datasetTmp: any[] = [];
-    const start = new Date(2000,0,1);
+    const start = new Date(2000, 0, 1);
     const end = new Date();
     for (let i = 0; i < itemCount; i++) {
       const d: any = (datasetTmp[i] = {});

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { arrayObjectToCsvFormatter } from '../arrayObjectToCsvFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { arrayObjectToCsvFormatter } from '../arrayObjectToCsvFormatter.js';
 
 describe('the ArrayObjectToCsv Formatter', () => {
   const allRoles = [{ roleId: 0, name: 'Administrator' }, { roleId: 1, name: 'Regular User' }];

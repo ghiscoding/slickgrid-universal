@@ -1,5 +1,5 @@
-import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
-import { testFilterCondition } from './filterUtilities';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
+import { testFilterCondition } from './filterUtilities.js';
 
 /**
  * Execute filter condition check on each cell.

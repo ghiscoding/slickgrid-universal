@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import type { EditCommand, Formatter, GridOption } from '../../interfaces/index';
-import { SharedService } from '../../services/shared.service';
-import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
-import type { SlickCellSelectionModel } from '../slickCellSelectionModel';
-import type { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
-import { SlickEvent, SlickEventData, type SlickGrid, type SlickRange } from '../../core/index';
-import { Editors } from '../../editors';
+import type { EditCommand, Formatter, GridOption } from '../../interfaces/index.js';
+import { SharedService } from '../../services/shared.service.js';
+import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager.js';
+import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
+import type { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager.js';
+import { SlickEvent, SlickEventData, type SlickGrid, type SlickRange } from '../../core/index.js';
+import { Editors } from '../../editors/index.js';
 
 const getEditorLockMock = {
   isActive: vi.fn(),

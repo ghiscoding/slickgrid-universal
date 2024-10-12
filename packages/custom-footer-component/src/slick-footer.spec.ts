@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CustomFooterOption, type GridOption, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { SlickFooterComponent } from './slick-footer.component';
-import { TranslateServiceStub } from '../../../test/translateServiceStub';
+import { SlickFooterComponent } from './slick-footer.component.js';
+import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 
 function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s{2,}/g, '');

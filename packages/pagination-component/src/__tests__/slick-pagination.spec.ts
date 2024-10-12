@@ -2,8 +2,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from
 import { type GridOption, type PaginationService, type SlickGrid, } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { TranslateServiceStub } from '../../../../test/translateServiceStub';
-import { SlickPaginationComponent } from '../slick-pagination.component';
+import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
+import { SlickPaginationComponent } from '../slick-pagination.component.js';
 
 vi.useFakeTimers();
 

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
-import type { SlickGrid, SlickRange } from '../../core';
+import { SlickCellRangeDecorator } from '../slickCellRangeDecorator.js';
+import type { SlickGrid, SlickRange } from '../../core/index.js';
 
 const gridStub = {
   getActiveCell: vi.fn(),

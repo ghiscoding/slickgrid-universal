@@ -1,6 +1,7 @@
 import { type Column, ExtensionName, FieldType, Formatters, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
+
+import { ExampleGridOptions } from './example-grid-options.js';
 // import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss?inline';
 // import cssCode from '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss?url';
 

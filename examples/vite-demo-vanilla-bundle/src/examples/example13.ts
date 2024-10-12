@@ -3,7 +3,7 @@ import { type Column, Editors, FieldType, type GridOption } from '@slickgrid-uni
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import '../material-styles.scss';
 import './example13.scss';
 

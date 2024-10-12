@@ -1,4 +1,5 @@
-import type { Aggregator, GroupTotals } from './../interfaces';
+import type { Aggregator } from './../interfaces/aggregator.interface.js';
+import type { GroupTotals } from './../interfaces/grouping.interface.js';
 
 export class CloneAggregator implements Aggregator {
   private _isInitialized = false;

@@ -8,12 +8,12 @@ import type {
   Pagination,
   PaginationCursorChangedArgs,
   PaginationMetadata,
-} from '../interfaces/index';
-import type { BackendUtilityService } from './backendUtility.service';
-import type { SharedService } from './shared.service';
-import { propertyObserver } from './observers';
-import type { Observable, RxJsFacade } from './rxjsFacade';
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import type { BackendUtilityService } from './backendUtility.service.js';
+import type { SharedService } from './shared.service.js';
+import { propertyObserver } from './observers.js';
+import type { Observable, RxJsFacade } from './rxjsFacade.js';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 export class PaginationService {
   protected _eventHandler: SlickEventHandler;

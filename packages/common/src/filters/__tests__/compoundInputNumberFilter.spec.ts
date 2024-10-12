@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
-import { Filters } from '../index';
-import { CompoundInputNumberFilter } from '../compoundInputNumberFilter';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { SlickGrid } from '../../core/index';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { Filters } from '../index.js';
+import { CompoundInputNumberFilter } from '../compoundInputNumberFilter.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

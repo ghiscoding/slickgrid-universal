@@ -18,10 +18,10 @@ import {
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 
-import { ContainerServiceStub } from '../../../test/containerServiceStub';
-import { TranslateServiceStub } from '../../../test/translateServiceStub';
-import { ExcelExportService } from './excelExport.service';
-import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
+import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
+import { ExcelExportService } from './excelExport.service.js';
+import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils.js';
 
 // mocked modules
 vi.mock('excel-builder-vanilla', async (importOriginal) => ({

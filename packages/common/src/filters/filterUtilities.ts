@@ -1,11 +1,11 @@
 import { createDomElement, htmlEncodeWithPadding, } from '@slickgrid-universal/utils';
 
-import { Constants } from '../constants';
-import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index';
-import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
-import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-import type { TranslaterService } from '../services/translater.service';
-import type { SlickGrid } from '../core';
+import { Constants } from '../constants.js';
+import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index.js';
+import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade.js';
+import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions

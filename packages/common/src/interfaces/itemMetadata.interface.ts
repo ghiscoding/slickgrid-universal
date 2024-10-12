@@ -1,4 +1,4 @@
-import type { Column, Formatter, GroupTotalsFormatter } from './index';
+import type { Column, Formatter, GroupTotalsFormatter } from './index.js';
 
 /**
  * Provides a powerful way to specify additional informations of data item that can be used customize the grid appearance

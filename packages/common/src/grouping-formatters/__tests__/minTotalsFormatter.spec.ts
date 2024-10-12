@@ -1,8 +1,8 @@
 import { describe, expect, it, type Mock, vi } from 'vitest';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { minTotalsFormatter } from '../minTotalsFormatter';
-import { type SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { minTotalsFormatter } from '../minTotalsFormatter.js';
+import { type SlickGrid } from '../../core/index.js';
 
 describe('minTotalsFormatter', () => {
   // stub some methods of the SlickGrid Grid instance

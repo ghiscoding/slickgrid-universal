@@ -1,10 +1,10 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
 
-import { Constants } from '../constants';
-import { FieldType, type OperatorString, OperatorType } from '../enums/index';
-import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames, } from '../interfaces/index';
-import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
+import { Constants } from '../constants.js';
+import { FieldType, type OperatorString, OperatorType } from '../enums/index.js';
+import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames, } from '../interfaces/index.js';
+import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade.js';
 
 /** Cancelled Extension that can be only be thrown by the `cancellablePromise()` function */
 export class CancelledException extends Error {

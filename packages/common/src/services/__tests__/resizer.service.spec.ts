@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { Editors } from '../../editors/index';
-import { FieldType, } from '../../enums/index';
-import type { Column, GridOption, } from '../../interfaces/index';
-import { ResizerService } from '../resizer.service';
-import { SlickEvent, type SlickGrid } from '../../core/index';
+import { Editors } from '../../editors/index.js';
+import { FieldType, } from '../../enums/index.js';
+import type { Column, GridOption, } from '../../interfaces/index.js';
+import { ResizerService } from '../resizer.service.js';
+import { SlickEvent, type SlickGrid } from '../../core/index.js';
 
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;

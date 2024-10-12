@@ -26,7 +26,7 @@ import {
   toSnakeCase,
   uniqueArray,
   uniqueObjectArray,
-} from '../utils';
+} from '../utils.js';
 
 function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s+/g, ' ').replace(/\r\n/g, '').trim();

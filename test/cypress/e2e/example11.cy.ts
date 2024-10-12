@@ -1,5 +1,6 @@
 import { addDay, format } from '@formkit/tempo';
 
+// eslint-disable-next-line n/file-extension-in-import
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {

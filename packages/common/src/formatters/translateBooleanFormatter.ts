@@ -1,4 +1,4 @@
-import { type Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index.js';
 
 /** Takes a boolean value, cast it to upperCase string and finally translates it (i18n). */
 export const translateBooleanFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {

@@ -1,5 +1,5 @@
-import type { FieldType } from '../enums/index';
-import type { Observable } from '../services/rxjsFacade';
+import type { FieldType } from '../enums/index.js';
+import type { Observable } from '../services/rxjsFacade.js';
 import type {
   CollectionCustomStructure,
   CollectionFilterBy,
@@ -8,7 +8,7 @@ import type {
   CollectionSortBy,
   EditorConstructor,
   EditorValidator,
-} from './index';
+} from './index.js';
 
 export interface ColumnEditor {
   /**

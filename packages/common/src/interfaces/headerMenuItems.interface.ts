@@ -1,4 +1,4 @@
-import type { MenuCommandItem } from './menuCommandItem.interface';
+import type { MenuCommandItem } from './menuCommandItem.interface.js';
 
 export interface HeaderMenuItems {
   /** List of command items to show in the header menu. */

@@ -50,12 +50,12 @@ import {
 import type { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { HttpStub } from '../../../../../test/httpClientStub';
-import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
-import { UniversalContainerService } from '../../services/universalContainer.service';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
+import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { HttpStub } from '../../../../../test/httpClientStub.js';
+import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent.js';
+import { UniversalContainerService } from '../../services/universalContainer.service.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 

@@ -1,5 +1,5 @@
-import type { GraphqlFilteringOption } from './graphqlFilteringOption.interface';
-import type { GraphqlSortingOption } from './graphqlSortingOption.interface';
+import type { GraphqlFilteringOption } from './graphqlFilteringOption.interface.js';
+import type { GraphqlSortingOption } from './graphqlSortingOption.interface.js';
 
 export interface GraphqlDatasetFilter {
   first?: number;

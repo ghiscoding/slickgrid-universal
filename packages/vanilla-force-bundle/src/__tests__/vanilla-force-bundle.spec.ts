@@ -31,10 +31,10 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 
-import { VanillaForceGridBundle } from '../vanilla-force-bundle';
-import { TranslateServiceStub } from '../../../../test/translateServiceStub';
-import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent';
-import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
+import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
+import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
+import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
+import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 

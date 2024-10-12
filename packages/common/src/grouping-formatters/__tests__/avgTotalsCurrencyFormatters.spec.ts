@@ -1,8 +1,8 @@
 import { describe, expect, it, type Mock, vi } from 'vitest';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { avgTotalsCurrencyFormatter } from '../avgTotalsCurrencyFormatter';
-import { type SlickGrid } from '../../core/index';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { avgTotalsCurrencyFormatter } from '../avgTotalsCurrencyFormatter.js';
+import { type SlickGrid } from '../../core/index.js';
 
 describe('avgTotalsCurrencyFormatter', () => {
   // stub some methods of the SlickGrid Grid instance

@@ -1,4 +1,4 @@
-import { type Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index.js';
 
 /**
  * Takes a value display it according to a mask provided

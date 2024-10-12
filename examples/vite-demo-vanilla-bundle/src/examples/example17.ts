@@ -1,6 +1,7 @@
 import { Aggregators, type Column, Formatters, type GridOption, type Grouping, GroupTotalFormatters, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
+
+import { ExampleGridOptions } from './example-grid-options.js';
 
 // use any of the Styling Theme
 // import '../material-styles.scss';

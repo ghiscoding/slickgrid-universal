@@ -1,9 +1,9 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { SlickEventData, type SlickGrid } from '../core/index';
-import { Constants } from '../constants';
-import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { Constants } from '../constants.js';
+import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index.js';
 import type {
   Column,
   ColumnFilter,
@@ -17,10 +17,10 @@ import type {
   SliderOption,
   SliderRangeOption,
   SliderType,
-} from '../interfaces/index';
-import type { TranslaterService } from '../services/translater.service';
-import { mapOperatorToShorthandDesignation } from '../services/utilities';
-import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
+} from '../interfaces/index.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities.js';
 
 const DEFAULT_SLIDER_TRACK_FILLED_COLOR = '#86bff8';
 const GAP_BETWEEN_SLIDER_HANDLES = 0;

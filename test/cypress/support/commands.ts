@@ -25,6 +25,7 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import '@4tw/cypress-drag-drop';
 import 'cypress-real-events';
+// eslint-disable-next-line n/file-extension-in-import
 import { convertPosition } from './common';
 
 declare global {

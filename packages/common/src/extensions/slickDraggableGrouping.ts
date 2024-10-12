@@ -3,8 +3,8 @@ import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/
 import { createDomElement, emptyElement, isEmptyObject, classNameToList } from '@slickgrid-universal/utils';
 import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
 
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { SortDirectionNumber } from '../enums/index';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { SortDirectionNumber } from '../enums/index.js';
 import type {
   Column,
   DOMMouseOrTouchEvent,
@@ -13,10 +13,10 @@ import type {
   GridOption,
   Grouping,
   GroupingGetterFunction,
-} from '../interfaces/index';
-import type { SharedService } from '../services/shared.service';
-import { sortByFieldType } from '../sortComparers';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, } from '../core/index';
+} from '../interfaces/index.js';
+import type { SharedService } from '../services/shared.service.js';
+import { sortByFieldType } from '../sortComparers/sortUtilities.js';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, } from '../core/index.js';
 
 /**
  *

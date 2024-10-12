@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { progressBarFormatter } from '../progressBarFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { progressBarFormatter } from '../progressBarFormatter.js';
 
 describe('the Progress Bar Formatter', () => {
   it('should return an empty string when no value is provided', () => {

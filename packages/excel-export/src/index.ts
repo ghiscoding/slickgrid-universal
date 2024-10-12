@@ -1,1 +1,1 @@
-export { ExcelExportService } from './excelExport.service';
+export { ExcelExportService } from './excelExport.service.js';

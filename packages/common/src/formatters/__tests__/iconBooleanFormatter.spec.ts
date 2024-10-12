@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { iconBooleanFormatter } from '../iconBooleanFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { iconBooleanFormatter } from '../iconBooleanFormatter.js';
 
 describe('the Checkmark Formatter', () => {
   it('should throw an error when omitting to pass "params.cssClass"', () => {

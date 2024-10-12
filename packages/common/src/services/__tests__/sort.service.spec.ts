@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
 
-import { EmitterType, FieldType, } from '../../enums/index';
+import { EmitterType, FieldType, } from '../../enums/index.js';
 import type {
   BackendService,
   Column,
@@ -13,14 +13,14 @@ import type {
   MenuCommandItem,
   SingleColumnSort,
   BackendServiceApi,
-} from '../../interfaces/index';
-import type { CollectionService } from '../collection.service';
-import { SortComparers } from '../../sortComparers';
-import { SortService } from '../sort.service';
-import { BackendUtilityService } from '../backendUtility.service';
-import { SharedService } from '../shared.service';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
+} from '../../interfaces/index.js';
+import type { CollectionService } from '../collection.service.js';
+import { SortComparers } from '../../sortComparers/index.js';
+import { SortService } from '../sort.service.js';
+import { BackendUtilityService } from '../backendUtility.service.js';
+import { SharedService } from '../shared.service.js';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column, Formatter } from '../../interfaces/index';
-import { multipleFormatter } from '../multipleFormatter';
+import type { Column, Formatter } from '../../interfaces/index.js';
+import { multipleFormatter } from '../multipleFormatter.js';
 
 const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
 const myItalicFormatter: Formatter = (_row, _cell, value) => value ? `<i>${value}</i>` : '';

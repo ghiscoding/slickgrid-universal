@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldType } from '../../enums/index';
-import { mapTempoDateFormatWithFieldType, parseUtcDate } from '../dateUtils';
+import { FieldType } from '../../enums/index.js';
+import { mapTempoDateFormatWithFieldType, parseUtcDate } from '../dateUtils.js';
 
 describe('Service/Utilies', () => {
   describe('mapTempoDateFormatWithFieldType method', () => {

@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { InputNumberFilter } from '../inputNumberFilter';
-import type { Column, FilterArguments, GridOption } from '../../interfaces/index';
-import { Filters } from '../filters.index';
-import type { SlickGrid } from '../../core/index';
+import { InputNumberFilter } from '../inputNumberFilter.js';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { Filters } from '../filters.index.js';
+import type { SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
 

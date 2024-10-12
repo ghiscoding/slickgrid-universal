@@ -10,11 +10,11 @@ import type {
   HeaderButtonOnCommandArgs,
   HeaderButtonOption,
   OnHeaderCellRenderedEventArgs,
-} from '../interfaces/index';
-import type { ExtensionUtility } from '../extensions/extensionUtility';
-import type { SharedService } from '../services/shared.service';
-import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
-import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import type { SharedService } from '../services/shared.service.js';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass.js';
+import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
 
 /**
  * A plugin to add custom buttons to column headers.

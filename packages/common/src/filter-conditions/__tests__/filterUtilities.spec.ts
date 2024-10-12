@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { compareObjects, testFilterCondition } from '../filterUtilities';
+import { compareObjects, testFilterCondition } from '../filterUtilities.js';
 
 describe('filterUtilities', () => {
   describe('compareObjects method', () => {

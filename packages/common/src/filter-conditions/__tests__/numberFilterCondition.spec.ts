@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldType, OperatorType } from '../../enums/index';
-import type { FilterConditionOption } from '../../interfaces/index';
-import { executeFilterConditionTest } from '../filterConditionProcesses';
-import { executeNumberFilterCondition, getFilterParsedNumbers } from '../numberFilterCondition';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { FilterConditionOption } from '../../interfaces/index.js';
+import { executeFilterConditionTest } from '../filterConditionProcesses.js';
+import { executeNumberFilterCondition, getFilterParsedNumbers } from '../numberFilterCondition.js';
 
 describe('executeNumberFilterCondition method', () => {
   it('should return False when no cell value is provided, neither search terms', () => {

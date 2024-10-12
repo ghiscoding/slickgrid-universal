@@ -1,6 +1,6 @@
-import { arrayToCsvFormatter } from './arrayToCsvFormatter';
-import type { Formatter } from './../interfaces/index';
-import { findOrDefault } from '../services/index';
+import { arrayToCsvFormatter } from './arrayToCsvFormatter.js';
+import type { Formatter } from './../interfaces/index.js';
+import { findOrDefault } from '../services/index.js';
 
 /**
  * Looks up values from the columnDefinition.params.collection property and displays the label in CSV or string format

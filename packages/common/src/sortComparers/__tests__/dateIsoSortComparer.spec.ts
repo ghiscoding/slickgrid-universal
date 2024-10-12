@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { sortByFieldType } from '../sortUtilities';
-import { FieldType, SortDirectionNumber } from '../../enums/index';
-import type { Column } from '../../interfaces/column.interface';
+import { sortByFieldType } from '../sortUtilities.js';
+import { FieldType, SortDirectionNumber } from '../../enums/index.js';
+import type { Column } from '../../interfaces/column.interface.js';
 
 describe('the Date ISO (without time) Sorter', () => {
   it('should return an array of US dates sorted ascending when only valid dates are provided', () => {

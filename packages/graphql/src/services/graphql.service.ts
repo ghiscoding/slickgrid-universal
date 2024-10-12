@@ -38,9 +38,9 @@ import type {
   GraphqlPaginationOption,
   GraphqlServiceOption,
   GraphqlSortingOption,
-} from '../interfaces/index';
+} from '../interfaces/index.js';
 
-import QueryBuilder from './graphqlQueryBuilder';
+import QueryBuilder from './graphqlQueryBuilder.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;

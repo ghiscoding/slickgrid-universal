@@ -1,5 +1,5 @@
 import type { ExcelStyleInstruction, Worksheet, Workbook } from '@excel-builder-vanilla/types';
-import type { FileType } from '../enums/fileType.enum';
+import type { FileType } from '../enums/fileType.enum.js';
 
 export interface ExcelExportOption {
   /** Defaults to true, when grid is using Grouping, it will show indentation of the text with collapsed/expanded symbol as well */

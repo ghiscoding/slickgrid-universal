@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { AvgAggregator } from '../avgAggregator';
-import type { GroupTotals } from '../../interfaces';
+import { AvgAggregator } from '../avgAggregator.js';
+import type { GroupTotals } from '../../interfaces/grouping.interface.js';
 
 describe('avgAggregator', () => {
   let aggregator: AvgAggregator;

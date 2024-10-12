@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { InputFilter } from '../inputFilter';
-import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
-import { Filters } from '../filters.index';
-import type { SlickGrid } from '../../core/index';
+import { InputFilter } from '../inputFilter.js';
+import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { Filters } from '../filters.index.js';
+import type { SlickGrid } from '../../core/index.js';
 
 vi.useFakeTimers();
 

@@ -46,10 +46,10 @@ import type {
   TextExportOption,
   TreeDataOption,
   VanillaCalendarOption,
-} from './index';
-import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index';
-import type { TranslaterService } from '../services/translater.service';
-import type { DataViewOption, SlickEditorLock } from '../core/index';
+} from './index.js';
+import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import type { DataViewOption, SlickEditorLock } from '../core/index.js';
 
 export interface CellViewportRange {
   bottom: number;

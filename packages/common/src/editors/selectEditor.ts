@@ -2,8 +2,8 @@ import { emptyElement, setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 
-import { Constants } from '../constants';
-import { FieldType } from './../enums/index';
+import { Constants } from '../constants.js';
+import { FieldType } from './../enums/index.js';
 import type {
   CollectionCustomStructure,
   CollectionOption,
@@ -18,10 +18,10 @@ import type {
   GridOption,
   Locale,
   SelectOption,
-} from './../interfaces/index';
-import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index';
-import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-import { SlickEventData, type SlickGrid } from '../core/index';
+} from './../interfaces/index.js';
+import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
+import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 /**
  * Slickgrid editor class for multiple/single select lists

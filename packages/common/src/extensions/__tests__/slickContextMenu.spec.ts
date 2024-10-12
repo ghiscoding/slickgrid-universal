@@ -2,13 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
 
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
-import { DelimiterType, FileType } from '../../enums/index';
-import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index';
-import { BackendUtilityService, type ExcelExportService, SharedService, type TextExportService, type TreeDataService, } from '../../services/index';
-import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickContextMenu } from '../slickContextMenu';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import { DelimiterType, FileType } from '../../enums/index.js';
+import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index.js';
+import { BackendUtilityService, type ExcelExportService, SharedService, type TextExportService, type TreeDataService, } from '../../services/index.js';
+import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickContextMenu } from '../slickContextMenu.js';
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 

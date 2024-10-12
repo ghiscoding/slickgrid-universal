@@ -3,9 +3,9 @@ import type {
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
   MenuOptionItemCallbackArgs,
-} from './index';
-import type { SlickCellMenu } from '../extensions/slickCellMenu';
-import type { SlickEventData } from '../core';
+} from './index.js';
+import type { SlickCellMenu } from '../extensions/slickCellMenu.js';
+import type { SlickEventData } from '../core/slickCore.js';
 
 export interface CellMenu extends CellMenuOption {
 

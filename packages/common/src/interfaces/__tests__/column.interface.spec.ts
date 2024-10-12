@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Join, PathsToStringProps } from '../column.interface';
+import type { Join, PathsToStringProps } from '../column.interface.js';
 
 type Expect<T extends true> = T;
 type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <

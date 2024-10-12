@@ -1,5 +1,5 @@
-import type { SlickEventData, SlickGrid } from '../core/index';
-import type { RowDetailViewOption, SlickRowDetailView } from './index';
+import type { SlickEventData, SlickGrid } from '../core/index.js';
+import type { RowDetailViewOption, SlickRowDetailView } from './index.js';
 
 export interface RowDetailView extends RowDetailViewOption {
   // --

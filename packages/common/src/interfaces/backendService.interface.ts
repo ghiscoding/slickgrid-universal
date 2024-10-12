@@ -10,9 +10,9 @@ import type {
   PaginationChangedArgs,
   PaginationCursorChangedArgs,
   SingleColumnSort,
-} from './index';
-import type { SharedService } from '../services';
-import type { SlickGrid } from '../core/index';
+} from './index.js';
+import type { SharedService } from '../services/shared.service.js';
+import type { SlickGrid } from '../core/index.js';
 
 export interface BackendService {
   /** Backend Service options */

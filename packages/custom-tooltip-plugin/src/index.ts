@@ -1,1 +1,1 @@
-export * from './slickCustomTooltip';
+export * from './slickCustomTooltip.js';

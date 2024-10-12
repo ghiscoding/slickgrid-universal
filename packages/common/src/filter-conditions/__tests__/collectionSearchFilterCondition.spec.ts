@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldType } from '../../enums/index';
-import type { FilterConditionOption } from '../../interfaces/index';
-import { executeCollectionSearchFilterCondition } from '../collectionSearchFilterCondition';
-import { executeFilterConditionTest } from '../filterConditionProcesses';
+import { FieldType } from '../../enums/index.js';
+import type { FilterConditionOption } from '../../interfaces/index.js';
+import { executeCollectionSearchFilterCondition } from '../collectionSearchFilterCondition.js';
+import { executeFilterConditionTest } from '../filterConditionProcesses.js';
 
 describe('executeCollectionSearchFilterCondition method', () => {
   it('should return False when searchTerms is empty', () => {

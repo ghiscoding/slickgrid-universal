@@ -1,6 +1,6 @@
-import { FieldType } from '../enums/fieldType.enum';
-import type { SortComparer } from '../interfaces/index';
-import { mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils';
+import { FieldType } from '../enums/fieldType.enum.js';
+import type { SortComparer } from '../interfaces/index.js';
+import { mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
 
 export function compareDates(value1: any, value2: any, sortDirection: number, format?: string, strict?: boolean): number {
   let diff = 0;

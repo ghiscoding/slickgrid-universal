@@ -9,11 +9,11 @@ import type {
   FilterCallback,
   GridOption,
   OperatorDetail,
-} from '../interfaces/index';
-import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
-import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
-import { mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
-import { type SlickGrid } from '../core/index';
+} from '../interfaces/index.js';
+import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities.js';
+import { mapOperatorToShorthandDesignation, type TranslaterService, } from '../services/index.js';
+import { type SlickGrid } from '../core/index.js';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;

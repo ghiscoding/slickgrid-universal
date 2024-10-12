@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Column, Formatter, GridOption } from '../../interfaces/index';
-import { GroupTotalFormatters } from '../../grouping-formatters';
-import { treeParseTotalsFormatter } from '../treeParseTotalsFormatter';
-import { dollarFormatter } from '../dollarFormatter';
-import type { SlickGrid } from '../../core/index';
+import type { Column, Formatter, GridOption } from '../../interfaces/index.js';
+import { GroupTotalFormatters } from '../../grouping-formatters/groupingFormatters.index.js';
+import { treeParseTotalsFormatter } from '../treeParseTotalsFormatter.js';
+import { dollarFormatter } from '../dollarFormatter.js';
+import type { SlickGrid } from '../../core/index.js';
 
 const gridStub = {
   getData: vi.fn(),

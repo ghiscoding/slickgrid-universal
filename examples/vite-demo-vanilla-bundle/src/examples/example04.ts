@@ -19,7 +19,7 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import fetchJsonp from 'fetch-jsonp';
 // import { fetch } from 'whatwg-fetch';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example04.scss';
 
 // const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';

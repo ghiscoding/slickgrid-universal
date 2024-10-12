@@ -24,9 +24,9 @@ import {
   SlickEventData,
   SlickRange,
   Utils,
-} from './slickCore';
-import { Draggable, MouseWheel, Resizable } from './slickInteractions';
-import type { SelectionModel } from '../enums/index';
+} from './slickCore.js';
+import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
+import type { SelectionModel } from '../enums/index.js';
 import type {
   CellViewportRange,
   Column,
@@ -92,8 +92,8 @@ import type {
   SingleColumnSort,
   SlickPlugin,
   ElementPosition,
-} from '../interfaces';
-import type { SlickDataView } from './slickDataview';
+} from '../interfaces/index.js';
+import type { SlickDataView } from './slickDataview.js';
 
 /**
  * @license

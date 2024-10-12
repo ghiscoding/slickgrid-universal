@@ -1,4 +1,4 @@
-import type { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index';
+import type { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
 
 export interface FilterConditionOption {
   /** optional object data key */

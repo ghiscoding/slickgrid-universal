@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, GridOption } from '../../interfaces/index';
-import { SlickHeaderButtons } from '../slickHeaderButtons';
-import { BackendUtilityService } from '../../services';
-import { SharedService } from '../../services/shared.service';
-import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { SlickHeaderButtons } from '../slickHeaderButtons.js';
+import { BackendUtilityService } from '../../services/index.js';
+import { SharedService } from '../../services/shared.service.js';
+import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 

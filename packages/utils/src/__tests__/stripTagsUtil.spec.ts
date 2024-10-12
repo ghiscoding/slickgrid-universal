@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { stripTags } from '../stripTagsUtil';
+import { stripTags } from '../stripTagsUtil.js';
 
 describe('stripTags()', () => {
   describe('with no optional parameters', () => {

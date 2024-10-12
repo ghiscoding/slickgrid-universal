@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { SlickEvent, type SlickGrid, SlickRange } from '../../core/index';
-import type { Column, GridOption } from '../../interfaces/index';
-import { SlickCellRangeSelector } from '../slickCellRangeSelector';
-import { SlickRowSelectionModel } from '../slickRowSelectionModel';
+import { SlickEvent, type SlickGrid, SlickRange } from '../../core/index.js';
+import type { Column, GridOption } from '../../interfaces/index.js';
+import { SlickCellRangeSelector } from '../slickCellRangeSelector.js';
+import { SlickRowSelectionModel } from '../slickRowSelectionModel.js';
 
 const GRID_UID = 'slickgrid_12345';
 

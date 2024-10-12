@@ -1,5 +1,5 @@
-import { Constants } from '../constants';
-import type { Formatter, GridOption, GroupTotalsFormatter } from '../interfaces/index';
+import { Constants } from '../constants.js';
+import type { Formatter, GridOption, GroupTotalsFormatter } from '../interfaces/index.js';
 
 export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   const gridOptions = grid.getOptions() as GridOption;

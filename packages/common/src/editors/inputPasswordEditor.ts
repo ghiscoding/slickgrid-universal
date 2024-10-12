@@ -1,5 +1,5 @@
-import type { EditorArguments } from '../interfaces/editorArguments.interface';
-import { InputEditor } from './inputEditor';
+import type { EditorArguments } from '../interfaces/editorArguments.interface.js';
+import { InputEditor } from './inputEditor.js';
 
 export class InputPasswordEditor extends InputEditor {
   /** Initialize the Editor */

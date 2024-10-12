@@ -8,7 +8,7 @@ import {
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example11-modal.scss';
 
 export default class Example11Modal {

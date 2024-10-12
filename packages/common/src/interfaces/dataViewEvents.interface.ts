@@ -1,4 +1,4 @@
-import type { SlickDataView, SlickGrid } from '../core/index';
+import type { SlickDataView, SlickGrid } from '../core/index.js';
 
 export interface OnGroupExpandedEventArgs { level: number; groupingKey: string | number | null; }
 export interface OnGroupCollapsedEventArgs { level: number; groupingKey: string | number | null; }

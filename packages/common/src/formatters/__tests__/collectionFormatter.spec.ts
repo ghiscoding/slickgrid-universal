@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Column } from '../../interfaces/index';
-import { collectionFormatter } from '../collectionFormatter';
+import type { Column } from '../../interfaces/index.js';
+import { collectionFormatter } from '../collectionFormatter.js';
 
 describe('the Collection Formatter', () => {
   it('should return same output when no value is passed', () => {

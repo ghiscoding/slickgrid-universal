@@ -1,4 +1,4 @@
-import type { EventSubscription } from './eventSubscription.interface';
+import type { EventSubscription } from './eventSubscription.interface.js';
 
 export interface BasePubSubService {
   /**

@@ -27,7 +27,7 @@ import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanil
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
 
-import { ExampleGridOptions } from './example-grid-options';
+import { ExampleGridOptions } from './example-grid-options.js';
 import countriesJson from './data/countries.json?raw';
 import './example12.scss';
 

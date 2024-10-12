@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CaseType } from '@slickgrid-universal/common';
 
-import { OdataQueryBuilderService } from '../odataQueryBuilder.service';
+import { OdataQueryBuilderService } from '../odataQueryBuilder.service.js';
 
 describe('OdataService', () => {
   let service: OdataQueryBuilderService;

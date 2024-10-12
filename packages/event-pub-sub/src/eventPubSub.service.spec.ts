@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { EventPubSubService } from './eventPubSub.service';
-import { EventNamingStyle } from './types';
+import { EventPubSubService } from './eventPubSub.service.js';
+import { EventNamingStyle } from './types/eventNamingStyle.enum.js';
 
 describe('EventPubSub Service', () => {
   let service: EventPubSubService;

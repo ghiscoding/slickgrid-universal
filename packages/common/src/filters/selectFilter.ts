@@ -1,8 +1,8 @@
 import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
 
-import { Constants } from '../constants';
-import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
+import { Constants } from '../constants.js';
+import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index.js';
 import type {
   CollectionCustomStructure,
   CollectionOption,
@@ -13,13 +13,13 @@ import type {
   FilterCallback,
   GridOption,
   Locale,
-} from './../interfaces/index';
-import type { CollectionService } from '../services/collection.service';
-import { collectionObserver, propertyObserver } from '../services/observers';
-import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
-import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index';
-import { renderCollectionOptionsAsync } from './filterUtilities';
-import type { SlickGrid } from '../core/index';
+} from './../interfaces/index.js';
+import type { CollectionService } from '../services/collection.service.js';
+import { collectionObserver, propertyObserver } from '../services/observers.js';
+import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities.js';
+import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index.js';
+import { renderCollectionOptionsAsync } from './filterUtilities.js';
+import type { SlickGrid } from '../core/index.js';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;

@@ -29,7 +29,7 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { extend } from '@slickgrid-universal/utils';
 import { SlickVanillaGridBundle, type UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 
-import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
+import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options.js';
 
 export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;

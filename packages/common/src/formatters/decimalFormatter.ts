@@ -1,8 +1,8 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import type { Formatter } from './../interfaces/index';
-import { formatNumber } from './../services/utilities';
-import { retrieveFormatterOptions } from './formatterUtilities';
+import type { Formatter } from './../interfaces/index.js';
+import { formatNumber } from './../services/utilities.js';
+import { retrieveFormatterOptions } from './formatterUtilities.js';
 
 /**
  * Display the value as x decimals formatted, defaults to 2 decimals.
