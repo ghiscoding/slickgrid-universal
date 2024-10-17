@@ -9,15 +9,25 @@ export class CustomPager implements BasePaginationComponent {
   protected _paginationElement!: HTMLDivElement;
   protected _subscriptions: Subscription[] = [];
   protected _gridContainerElm?: HTMLElement;
+  protected grid!: SlickGrid;
+  protected paginationService!: PaginationService;
+  protected pubSubService!: PubSubService;
   currentPagination: PaginationMetadata;
   firstButtonClasses = 'li page-item seek-first';
   prevButtonClasses = 'li page-item seek-prev';
   lastButtonClasses = 'li page-item seek-end';
   nextButtonClasses = 'li page-item seek-next';
 
-  constructor(protected readonly grid: SlickGrid, protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService) {
+  constructor() {
     this._bindingHelper = new BindingHelper();
     this._bindingEventService = new BindingEventService();
+  }
+
+  init(grid: SlickGrid, paginationService: PaginationService, pubSubService: PubSubService) {
+    this.grid = grid;
+    this.paginationService = paginationService;
+    this.pubSubService = pubSubService;
+    this._bindingHelper.querySelectorPrefix = `.${grid.getUID()} `;
 
     // Anytime the pagination is initialized or has changes,
     // we'll copy the data into a local object so that we can add binding to this local object
@@ -47,7 +57,7 @@ export class CustomPager implements BasePaginationComponent {
     this._paginationElement.remove();
   }
 
-  render(containerElm: HTMLElement, position: 'top' | 'bottom' = 'top') {
+  renderPagination(containerElm: HTMLElement, position: 'top' | 'bottom' = 'top') {
     this._gridContainerElm = containerElm;
     this.currentPagination = this.paginationService.getFullPagination();
     this._paginationElement = document.createElement('div');

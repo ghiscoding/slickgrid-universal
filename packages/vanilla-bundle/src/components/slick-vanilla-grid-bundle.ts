@@ -1043,10 +1043,8 @@ export class SlickVanillaGridBundle<TData = any> {
       this.slickGrid.setSelectedRows([]);
     }
     const { pageNumber, pageSize } = pagination;
-    if (this.sharedService) {
-      if (pageSize !== undefined && pageNumber !== undefined) {
-        this.sharedService.currentPagination = { pageNumber, pageSize };
-      }
+    if (this.sharedService && pageSize !== undefined && pageNumber !== undefined) {
+      this.sharedService.currentPagination = { pageNumber, pageSize };
     }
     this._eventPubSubService.publish('onGridStateChanged', {
       change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
@@ -1265,8 +1263,9 @@ export class SlickVanillaGridBundle<TData = any> {
   protected renderPagination(showPagination = true): void {
     if (this.slickGrid && this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
       const PaginationClass = this.gridOptions.customPaginationComponent ?? SlickPaginationComponent;
-      this.paginationComponent = new PaginationClass(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
-      this.paginationComponent!.render(this._gridParentContainerElm);
+      this.paginationComponent = new PaginationClass();
+      this.paginationComponent.init(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
+      this.paginationComponent.renderPagination(this._gridParentContainerElm);
       this._isPaginationInitialized = true;
     } else if (!showPagination) {
       this.paginationComponent?.dispose();

@@ -118,10 +118,10 @@ export default class Example30 {
       enableFiltering: true,
       customPaginationComponent: CustomPager,
       enablePagination: true,
-      rowHeight: 40,
       pagination: {
         pageSize: this.pageSize
       },
+      rowHeight: 40,
     };
   }
 
@@ -158,6 +158,6 @@ export default class Example30 {
   togglePaginationPosition() {
     this.paginationPosition = this.paginationPosition === 'top' ? 'bottom' : 'top';
     (this.sgb.paginationComponent as CustomPager)?.disposeElement();
-    (this.sgb.paginationComponent as CustomPager)?.render(this.gridContainerElm, this.paginationPosition);
+    (this.sgb.paginationComponent as CustomPager)?.renderPagination(this.gridContainerElm, this.paginationPosition);
   }
 }
