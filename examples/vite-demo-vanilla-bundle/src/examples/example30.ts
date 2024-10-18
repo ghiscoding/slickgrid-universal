@@ -34,7 +34,7 @@ export default class Example30 {
     this.defineGrid();
 
     // mock some data (different in each dataset)
-    this.dataset = this.mockData(NB_ITEMS);
+    this.dataset = this.loadData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid30') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
     document.body.classList.add('material-theme');
@@ -59,7 +59,7 @@ export default class Example30 {
         type: FieldType.string,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', nameKey: 'PERCENT_COMPLETE', minWidth: 120,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 120,
         sortable: true,
         customTooltip: { position: 'center' },
         formatter: Formatters.progressBar,
@@ -91,7 +91,8 @@ export default class Example30 {
         id: 'duration', field: 'duration', name: 'Duration', maxWidth: 90,
         type: FieldType.number,
         sortable: true,
-        filterable: true, filter: {
+        filterable: true,
+        filter: {
           model: Filters.input,
           operator: OperatorType.rangeExclusive // defaults to exclusive
         }
@@ -116,12 +117,12 @@ export default class Example30 {
       },
       enableExcelCopyBuffer: true,
       enableFiltering: true,
-      customPaginationComponent: CustomPager,
+      customPaginationComponent: CustomPager, // load our Custom Pagination Component
       enablePagination: true,
-      rowHeight: 40,
       pagination: {
         pageSize: this.pageSize
       },
+      rowHeight: 40,
     };
   }
 
@@ -129,10 +130,10 @@ export default class Example30 {
     this.sgb.paginationService.changeItemPerPage(pageSize);
   }
 
-  mockData(itemCount: number, startingIndex = 0): any[] {
+  loadData(itemCount: number): any[] {
     // mock a dataset
     const tempDataset: any[] = [];
-    for (let i = startingIndex; i < (startingIndex + itemCount); i++) {
+    for (let i = 0, ln = itemCount; i < ln; i++) {
       const randomDuration = randomBetween(0, 365);
       const randomYear = randomBetween(new Date().getFullYear(), new Date().getFullYear() + 1);
       const randomMonth = randomBetween(0, 12);
@@ -146,7 +147,7 @@ export default class Example30 {
         duration: randomDuration,
         percentComplete: randomPercent,
         percentCompleteNumber: randomPercent,
-        start: (i % 4) ? null : new Date(randomYear, randomMonth, randomDay),          // provide a Date format
+        start: (i % 4) ? null : new Date(randomYear, randomMonth, randomDay), // provide a Date format
         finish: new Date(randomYear, randomMonth, randomDay),
         completed: (randomPercent === 100) ? true : false,
       });
@@ -158,6 +159,6 @@ export default class Example30 {
   togglePaginationPosition() {
     this.paginationPosition = this.paginationPosition === 'top' ? 'bottom' : 'top';
     (this.sgb.paginationComponent as CustomPager)?.disposeElement();
-    (this.sgb.paginationComponent as CustomPager)?.render(this.gridContainerElm, this.paginationPosition);
+    (this.sgb.paginationComponent as CustomPager)?.renderPagination(this.gridContainerElm, this.paginationPosition);
   }
 }

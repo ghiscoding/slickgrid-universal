@@ -19,16 +19,18 @@ export interface Pagination {
 }
 
 export class BasePaginationComponent {
-  constructor(
+  constructor(_elmRef?: any) { }
+
+  dispose(): void { }
+
+  init(
     _grid: SlickGrid,
     _paginationService: PaginationService,
     _pubSubService: BasePubSubService,
     _translaterService?: TranslaterService | undefined
-  ) { }
+  ): void { }
 
-  dispose(): void { }
-
-  render(_containerElm: HTMLElement): void { }
+  renderPagination(_containerElm: HTMLElement): void { }
 }
 
 export interface PaginationMetadata extends Pagination {

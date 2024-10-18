@@ -83,8 +83,9 @@ describe('Slick-Pagination Component', () => {
         translateService = undefined as any;
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, enableTranslate: true });
 
-        component = new SlickPaginationComponent(gridStub, paginationServiceStub, eventPubSubService, translateService);
-        component.render(div);
+        component = new SlickPaginationComponent();
+        component.init(gridStub, paginationServiceStub, eventPubSubService, translateService);
+        component.renderPagination(div);
       } catch (e) {
         expect(e.toString()).toContain('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
         done();
@@ -94,8 +95,9 @@ describe('Slick-Pagination Component', () => {
     it('should have defined locale and expect new text in the UI', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, locales: mockLocales });
 
-      component = new SlickPaginationComponent(gridStub, paginationServiceStub, eventPubSubService, translateService);
-      component.render(div);
+      component = new SlickPaginationComponent();
+      component.init(gridStub, paginationServiceStub, eventPubSubService, translateService);
+      component.renderPagination(div);
 
       const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
       const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
