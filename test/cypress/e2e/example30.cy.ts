@@ -15,7 +15,8 @@ describe('Example 30 - Custom Pagination', () => {
   });
 
   it('should expect first row to be Task 0', () => {
-    cy.get('#pager.top').should('exist');
+    cy.get('.seek-first').should('have.class', 'disabled');
+    cy.get('.seek-prev').should('have.class', 'disabled');
     cy.get('.item-from').should('contain', 1);
     cy.get('.item-to').should('contain', 50);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
@@ -28,6 +29,8 @@ describe('Example 30 - Custom Pagination', () => {
   it('should click on next page and expect top row to be Task 50', () => {
     cy.get('.page-item.seek-next').click();
 
+    cy.get('.seek-first').should('not.have.class', 'disabled');
+    cy.get('.seek-prev').should('not.have.class', 'disabled');
     cy.get('.item-from').should('contain', 51);
     cy.get('.item-to').should('contain', 100);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 50');
@@ -40,6 +43,8 @@ describe('Example 30 - Custom Pagination', () => {
   it('should click on goto last page and expect top row to be Task 50', () => {
     cy.get('.page-item.seek-end').click();
 
+    cy.get('.seek-next').should('have.class', 'disabled');
+    cy.get('.seek-end').should('have.class', 'disabled');
     cy.get('.item-from').should('contain', 4951);
     cy.get('.item-to').should('contain', 5000);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 4950');
@@ -51,6 +56,8 @@ describe('Example 30 - Custom Pagination', () => {
 
   it('should change page size and expect pagination to be updated', () => {
     cy.get('[data-test="page-size-input"]').type('{backspace}{backspace}75');
+    cy.get('.seek-first').should('have.class', 'disabled');
+    cy.get('.seek-prev').should('have.class', 'disabled');
     cy.get('.item-from').should('contain', 1);
     cy.get('.item-to').should('contain', 75);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
@@ -63,7 +70,6 @@ describe('Example 30 - Custom Pagination', () => {
   it('should toggle pagination position to bottom', () => {
     cy.get('[data-text="toggle-pagination-btn"]').click();
     cy.get('#pager.bottom').should('exist');
-
     cy.get('.page-item.seek-next').click();
 
     cy.get('.item-from').should('contain', 76);

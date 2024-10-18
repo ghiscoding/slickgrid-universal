@@ -3,6 +3,7 @@ import type { BasePaginationComponent, PaginationService, PubSubService, Paginat
 
 import './example30-pager.scss';
 
+/** Custom Pagination Componnet, please note that you MUST `implements BasePaginationComponent` with required functions */
 export class CustomPager implements BasePaginationComponent {
   protected _bindingHelper: BindingHelper;
   protected _bindingEventService: BindingEventService;
