@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.8.0...v5.9.0) (2024-10-19)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([fcc779b](https://github.com/ghiscoding/slickgrid-universal/commit/fcc779b25091dc2e9f49a5ce5c1362e7f138e8b1)) - by @renovate-bot
+
 ## [5.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.7.0...v5.8.0) (2024-09-29)
 
 **Note:** Version bump only for package @slickgrid-universal/excel-export

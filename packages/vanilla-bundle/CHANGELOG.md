@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.8.0...v5.9.0) (2024-10-19)
+
+### Features
+
+* allow providing a Custom Pagination ([4a2bfc8](https://github.com/ghiscoding/slickgrid-universal/commit/4a2bfc8cbd6ef446a884bae9ead9c10c083c6ecc)) - by @ghiscoding
+
+### Bug Fixes
+
+* move DI to init() to make Pagination Comp working with all ports ([cd30686](https://github.com/ghiscoding/slickgrid-universal/commit/cd306864d588f1d8f9590afbf0d03722ea54a9fc)) - by @ghiscoding
+
 ## [5.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.7.0...v5.8.0) (2024-09-29)
 
 ### Performance Improvements
