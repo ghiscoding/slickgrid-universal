@@ -136,7 +136,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /**
    * Initialize the Export Service
    * @param _grid
-   * @param _containerService
    */
   init(grid: SlickGrid): void {
     this._grid = grid;
@@ -175,7 +174,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this._grid.render();
     });
 
-    this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e: SlickEventData, args: { rows: number[]; }) => {
+    this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e, args) => {
       this._grid.invalidateRows(args.rows);
       this._grid.render();
     });
@@ -192,7 +191,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // we will need to know how many rows are rendered on the screen and we need to wait for grid to be rendered
     // unfortunately there is no triggered event for knowing when grid is finished, so we use 250ms delay and it's typically more than enough
     if (this._addonOptions.useSimpleViewportCalc) {
-      this._eventHandler.subscribe(this._grid.onRendered, (_e: SlickEventData, args: { endRow: number; startRow: number; }) => {
+      this._eventHandler.subscribe(this._grid.onRendered, (_e, args) => {
         if (args?.endRow) {
           this._visibleRenderedCellCount = args.endRow - args.startRow;
         }
