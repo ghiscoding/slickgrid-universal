@@ -1,13 +1,16 @@
-$slick-primary-color:#006DCC;
-$slick-link-color: #006DCC;
+$link-color: #006DCC;
 
-/* make sure to add the @import the SlickGrid Bootstrap Theme AFTER the variables changes */
-// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
+// @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 
 /** or SalesForce Theme */
-@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+// @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss' with (
+  $slick-primary-color:           #006DCC,
+  $slick-link-color:              $link-color,
+  $slick-checkbox-opacity-hover:  0.35,
+);
 
-@import './bulma.scss';
+@use './bulma.scss';
 
 :root {
   .ms-dark-mode,
@@ -56,7 +59,7 @@ body {
 
 .fake-hyperlink {
     cursor: pointer;
-    color: $slick-link-color;
+    color: $link-color;
     &:hover {
       text-decoration: underline;
     }

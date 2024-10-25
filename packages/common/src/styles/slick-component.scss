@@ -1,40 +1,40 @@
 /* pagination/pagination variables */
-@import './variables';
-@import './svg-utilities';
+@use './variables' as v;
+@use './svg-utilities' as svg;
 
 // ----------------------------------------------
 // Slick Footer Component
 // ----------------------------------------------
 
 .slick-custom-footer {
-  color: var(--slick-footer-text-color, $slick-footer-text-color);
-  padding: var(--slick-footer-padding, $slick-footer-padding);
-  background-color: var(--slick-footer-bg-color, $slick-footer-bg-color);
-  font-size: var(--slick-footer-font-size, $slick-footer-font-size);
-  font-style: var(--slick-footer-font-style, $slick-footer-font-style);
-  font-weight: var(--slick-footer-font-weight, $slick-footer-font-weight);
-  height: var(--slick-footer-height, $slick-footer-height);
+  color: var(--slick-footer-text-color, v.$slick-footer-text-color);
+  padding: var(--slick-footer-padding, v.$slick-footer-padding);
+  background-color: var(--slick-footer-bg-color, v.$slick-footer-bg-color);
+  font-size: var(--slick-footer-font-size, v.$slick-footer-font-size);
+  font-style: var(--slick-footer-font-style, v.$slick-footer-font-style);
+  font-weight: var(--slick-footer-font-weight, v.$slick-footer-font-weight);
+  height: var(--slick-footer-height, v.$slick-footer-height);
 
   .left-footer {
-    color: var(--slick-footer-left-text-color, $slick-footer-left-text-color);
-    font-style: var(--slick-footer-left-font-style, $slick-footer-left-font-style);
-    font-weight: var(--slick-footer-left-font-weight, $slick-footer-left-font-weight);
-    text-align: var(--slick-footer-left-text-align, $slick-footer-left-text-align);
-    padding: var(--slick-footer-left-padding, $slick-footer-left-padding);
-    width: var(--slick-footer-left-width, $slick-footer-left-width);
-    float: var(--slick-footer-left-float, $slick-footer-left-float);
+    color: var(--slick-footer-left-text-color, v.$slick-footer-left-text-color);
+    font-style: var(--slick-footer-left-font-style, v.$slick-footer-left-font-style);
+    font-weight: var(--slick-footer-left-font-weight, v.$slick-footer-left-font-weight);
+    text-align: var(--slick-footer-left-text-align, v.$slick-footer-left-text-align);
+    padding: var(--slick-footer-left-padding, v.$slick-footer-left-padding);
+    width: var(--slick-footer-left-width, v.$slick-footer-left-width);
+    float: var(--slick-footer-left-float, v.$slick-footer-left-float);
   }
 
   .right-footer {
-    color: var(--slick-footer-right-text-color, $slick-footer-right-text-color);
-    font-style: var(--slick-footer-right-font-style, $slick-footer-right-font-style);
-    font-weight: var(--slick-footer-right-font-weight, $slick-footer-right-font-weight);
-    text-align: var(--slick-footer-right-text-align, $slick-footer-right-text-align);
-    padding: var(--slick-footer-right-padding, $slick-footer-right-padding);
-    width: var(--slick-footer-right-width, $slick-footer-right-width);
-    float: var(--slick-footer-right-float, $slick-footer-right-float);
+    color: var(--slick-footer-right-text-color, v.$slick-footer-right-text-color);
+    font-style: var(--slick-footer-right-font-style, v.$slick-footer-right-font-style);
+    font-weight: var(--slick-footer-right-font-weight, v.$slick-footer-right-font-weight);
+    text-align: var(--slick-footer-right-text-align, v.$slick-footer-right-text-align);
+    padding: var(--slick-footer-right-padding, v.$slick-footer-right-padding);
+    width: var(--slick-footer-right-width, v.$slick-footer-right-width);
+    float: var(--slick-footer-right-float, v.$slick-footer-right-float);
     &.metrics .separator {
-      margin: var(--slick-footer-right-separator-margin, $slick-footer-right-separator-margin);
+      margin: var(--slick-footer-right-separator-margin, v.$slick-footer-right-separator-margin);
     }
   }
 }
@@ -49,14 +49,14 @@
   align-items: center;
   column-gap: 5px;
   position: relative;
-  color: var(--slick-empty-data-warning-color, $slick-empty-data-warning-color);
-  font-family: var(--slick-empty-data-warning-font-family, $slick-empty-data-warning-font-family);
-  font-size: var(--slick-empty-data-warning-font-size, $slick-empty-data-warning-font-size);
-  font-style: var(--slick-empty-data-warning-font-style, $slick-empty-data-warning-font-style);
-  line-height: var(--slick-empty-data-warning-line-height, $slick-empty-data-warning-line-height);
-  margin: var(--slick-empty-data-warning-margin, $slick-empty-data-warning-margin);
-  padding: var(--slick-empty-data-warning-padding, $slick-empty-data-warning-padding);
-  z-index: var(--slick-empty-data-warning-z-index, $slick-empty-data-warning-z-index);
+  color: var(--slick-empty-data-warning-color, v.$slick-empty-data-warning-color);
+  font-family: var(--slick-empty-data-warning-font-family, v.$slick-empty-data-warning-font-family);
+  font-size: var(--slick-empty-data-warning-font-size, v.$slick-empty-data-warning-font-size);
+  font-style: var(--slick-empty-data-warning-font-style, v.$slick-empty-data-warning-font-style);
+  line-height: var(--slick-empty-data-warning-line-height, v.$slick-empty-data-warning-line-height);
+  margin: var(--slick-empty-data-warning-margin, v.$slick-empty-data-warning-margin);
+  padding: var(--slick-empty-data-warning-padding, v.$slick-empty-data-warning-padding);
+  z-index: var(--slick-empty-data-warning-z-index, v.$slick-empty-data-warning-z-index);
   div {
     display: flex;
     align-items: center;
@@ -71,18 +71,18 @@
 
 .slick-pagination {
   list-style-type: none;
-  border-top: var(--slick-pagination-border-top, $slick-pagination-border-top);
-  border-right: var(--slick-pagination-border-right, $slick-pagination-border-right);
-  border-bottom: var(--slick-pagination-border-bottom, $slick-pagination-border-bottom);
-  border-left: var(--slick-pagination-border-left, $slick-pagination-border-left);
+  border-top: var(--slick-pagination-border-top, v.$slick-pagination-border-top);
+  border-right: var(--slick-pagination-border-right, v.$slick-pagination-border-right);
+  border-bottom: var(--slick-pagination-border-bottom, v.$slick-pagination-border-bottom);
+  border-left: var(--slick-pagination-border-left, v.$slick-pagination-border-left);
   width: 100%;
-  height: var(--slick-pagination-height, $slick-pagination-height);
+  height: var(--slick-pagination-height, v.$slick-pagination-height);
   padding-top: 4px;
   vertical-align: middle;
-  font-family: var(--slick-font-family, $slick-font-family);
-  font-size: var(--slick-pagination-font-size, $slick-pagination-font-size);
+  font-family: var(--slick-font-family, v.$slick-font-family);
+  font-size: var(--slick-pagination-font-size, v.$slick-pagination-font-size);
   font-weight: 400;
-  color: var(--slick-pagination-text-color, $slick-pagination-text-color);
+  color: var(--slick-pagination-text-color, v.$slick-pagination-text-color);
 
   .slick-pagination-status {
     display: inline-block;
@@ -91,7 +91,7 @@
 
   .slick-icon-container {
     display: inline-block;
-    border-color: var(--slick-pagination-border-color, $slick-pagination-border-color);
+    border-color: var(--slick-pagination-border-color, v.$slick-pagination-border-color);
   }
 
   .slick-pagination-nav {
@@ -112,11 +112,11 @@
       height: inherit;
 
       input {
-        background-color: var(--slick-pagination-page-input-bgcolor, $slick-pagination-page-input-bgcolor);
-        height: var(--slick-pagination-page-input-height, $slick-pagination-page-input-height);
-        width: var(--slick-pagination-page-input-width, $slick-pagination-page-input-width);
-        padding: var(--slick-pagination-page-input-padding, $slick-pagination-page-input-padding);
-        border-radius: var(--slick-pagination-page-input-border-radius, $slick-pagination-page-input-border-radius);
+        background-color: var(--slick-pagination-page-input-bgcolor, v.$slick-pagination-page-input-bgcolor);
+        height: var(--slick-pagination-page-input-height, v.$slick-pagination-page-input-height);
+        width: var(--slick-pagination-page-input-width, v.$slick-pagination-page-input-width);
+        padding: var(--slick-pagination-page-input-padding, v.$slick-pagination-page-input-padding);
+        border-radius: var(--slick-pagination-page-input-border-radius, v.$slick-pagination-page-input-border-radius);
         display: inline-block;
       }
     }
@@ -124,14 +124,14 @@
     .pagination {
       margin: 0;
       display: inline-flex;
-      background-color: var(--slick-pagination-button-bg-color, $slick-pagination-button-bg-color);
+      background-color: var(--slick-pagination-button-bg-color, v.$slick-pagination-button-bg-color);
 
       .page-link {
         display: flex;
         align-items: center;
-        font-size: var(--slick-pagination-icon-font-size, $slick-pagination-icon-font-size);
-        border: var(--slick-pagination-button-border, $slick-pagination-button-border);
-        height: var(--slick-pagination-button-height, $slick-pagination-button-height);
+        font-size: var(--slick-pagination-icon-font-size, v.$slick-pagination-icon-font-size);
+        border: var(--slick-pagination-button-border, v.$slick-pagination-button-border);
+        height: var(--slick-pagination-button-height, v.$slick-pagination-button-height);
       }
 
       .page-item {
@@ -140,20 +140,20 @@
         align-items: center;
         justify-content: center;
         border: 1px solid;
-        padding: var(--slick-pagination-button-padding, $slick-pagination-button-padding);
-        border-color: var(--slick-pagination-button-border-color, $slick-pagination-button-border-color);
+        padding: var(--slick-pagination-button-padding, v.$slick-pagination-button-padding);
+        border-color: var(--slick-pagination-button-border-color, v.$slick-pagination-button-border-color);
 
         &:hover {
-          background-color: var(--slick-pagination-button-hover-color, $slick-pagination-button-hover-color);
+          background-color: var(--slick-pagination-button-hover-color, v.$slick-pagination-button-hover-color);
         }
 
         &:first-child {
-          border-top-left-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
-          border-bottom-left-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
+          border-top-left-radius: var(--slick-pagination-button-border-radius, v.$slick-pagination-button-border-radius);
+          border-bottom-left-radius: var(--slick-pagination-button-border-radius, v.$slick-pagination-button-border-radius);
         }
         &:last-child {
-          border-top-right-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
-          border-bottom-right-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
+          border-top-right-radius: var(--slick-pagination-button-border-radius, v.$slick-pagination-button-border-radius);
+          border-bottom-right-radius: var(--slick-pagination-button-border-radius, v.$slick-pagination-button-border-radius);
         }
 
         // to make button borders overlap
@@ -166,34 +166,34 @@
         a.icon-seek-next,
         a.icon-seek-end {
           background-color: currentColor;
-          height: var(--slick-pagination-icon-size, $slick-pagination-icon-size);
-          width: var(--slick-pagination-icon-size, $slick-pagination-icon-size);
+          height: var(--slick-pagination-icon-size, v.$slick-pagination-icon-size);
+          width: var(--slick-pagination-icon-size, v.$slick-pagination-icon-size);
         }
         a.icon-seek-first {
-          @include generateSvgStyle('slick-pagination-icon-seek-first-svg', $slick-pagination-icon-seek-first-svg-path);
+          @include svg.generateSvgStyle('slick-pagination-icon-seek-first-svg', v.$slick-pagination-icon-seek-first-svg-path);
         }
         a.icon-seek-prev {
-          @include generateSvgStyle('slick-pagination-icon-seek-prev-svg', $slick-pagination-icon-seek-prev-svg-path);
+          @include svg.generateSvgStyle('slick-pagination-icon-seek-prev-svg', v.$slick-pagination-icon-seek-prev-svg-path);
           margin-left: -1px;
         }
         a.icon-seek-next {
-          @include generateSvgStyle('slick-pagination-icon-seek-next-svg', $slick-pagination-icon-seek-next-svg-path);
+          @include svg.generateSvgStyle('slick-pagination-icon-seek-next-svg', v.$slick-pagination-icon-seek-next-svg-path);
         }
         a.icon-seek-end {
-          @include generateSvgStyle('slick-pagination-icon-seek-end-svg', $slick-pagination-icon-seek-end-svg-path);
+          @include svg.generateSvgStyle('slick-pagination-icon-seek-end-svg', v.$slick-pagination-icon-seek-end-svg-path);
           margin-left: -1px;
         }
 
         a[class*="icon-seek-"] {
-          color: var(--slick-pagination-icon-color, $slick-pagination-icon-color);
+          color: var(--slick-pagination-icon-color, v.$slick-pagination-icon-color);
         }
 
         &.disabled {
           cursor: not-allowed;
-          background-color: var(--slick-pagination-icon-seek-background-color, $slick-pagination-icon-seek-disabled-bg-color);
-          border-color: var(--slick-pagination-button-border-disabled-color, $slick-pagination-button-border-disabled-color);
+          background-color: var(--slick-pagination-icon-seek-background-color, v.$slick-pagination-icon-seek-disabled-bg-color);
+          border-color: var(--slick-pagination-button-border-disabled-color, v.$slick-pagination-button-border-disabled-color);
           a[class*="icon-seek-"] {
-            color: var(--slick-pagination-icon-seek-disabled-color, $slick-pagination-icon-seek-disabled-color);
+            color: var(--slick-pagination-icon-seek-disabled-color, v.$slick-pagination-icon-seek-disabled-color);
           }
         }
       }
@@ -206,19 +206,19 @@
     padding: 2px;
 
     select {
-      color: var(--slick-font-color, $slick-font-color);
-      background-color: var(--slick-pagination-page-select-bg-color, $slick-pagination-page-select-bg-color);
-      font-size: var(--slick-pagination-page-select-font-size, $slick-pagination-page-select-font-size);
+      color: var(--slick-font-color, v.$slick-font-color);
+      background-color: var(--slick-pagination-page-select-bg-color, v.$slick-pagination-page-select-bg-color);
+      font-size: var(--slick-pagination-page-select-font-size, v.$slick-pagination-page-select-font-size);
       line-height: 1.5;
-      height: var(--slick-pagination-page-select-height, $slick-pagination-page-select-height);
-      width: var(--slick-pagination-page-select-width, $slick-pagination-page-select-width);
-      padding: var(--slick-pagination-page-select-padding, $slick-pagination-page-select-padding);
-      border: var(--slick-pagination-button-border, $slick-pagination-button-border);
-      border-radius: var(--slick-pagination-page-select-border-radius, $slick-pagination-page-select-border-radius);
+      height: var(--slick-pagination-page-select-height, v.$slick-pagination-page-select-height);
+      width: var(--slick-pagination-page-select-width, v.$slick-pagination-page-select-width);
+      padding: var(--slick-pagination-page-select-padding, v.$slick-pagination-page-select-padding);
+      border: var(--slick-pagination-button-border, v.$slick-pagination-button-border);
+      border-radius: var(--slick-pagination-page-select-border-radius, v.$slick-pagination-page-select-border-radius);
     }
 
     .slick-pagination-count {
-      margin-left: var(--slick-pagination-count-margin-left, $slick-pagination-count-margin-left);
+      margin-left: var(--slick-pagination-count-margin-left, v.$slick-pagination-count-margin-left);
     }
   }
 }

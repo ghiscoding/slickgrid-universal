@@ -1,4 +1,5 @@
-@import './variables';
+@use './variables' as v;
+@use './svg-utilities' as svg;
 
 // ----------------------------------------------
 // Slick Grid default theme
@@ -6,7 +7,7 @@
 
 @keyframes fade {
   0%, 100% { background: none }
-  50% { background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color) }
+  50% { background: var(--slick-row-highlight-background-color, v.$slick-row-highlight-background-color) }
 }
 
 @keyframes slickgrid-invalid-highlight {
@@ -26,18 +27,18 @@
 
 // default buttons used by SlickGrid and also when appended to body (e.g. LongText Editor)
 .btn-default {
-  color: var(--slick-btn-default-text-color, $slick-btn-default-text-color);
-  border: var(--slick-btn-default-border, $slick-btn-default-border);
+  color: var(--slick-btn-default-text-color, v.$slick-btn-default-text-color);
+  border: var(--slick-btn-default-border, v.$slick-btn-default-border);
   &:hover {
-    border-color: var(--slick-btn-default-border-hover-color, $slick-btn-default-border-hover-color);
+    border-color: var(--slick-btn-default-border-hover-color, v.$slick-btn-default-border-hover-color);
   }
 }
 .slick-dark-mode {
   .btn-default {
-    color: var(--slick-btn-default-text-color, $slick-btn-default-text-color);
-    border: var(--slick-btn-default-border, $slick-btn-default-border);
+    color: var(--slick-btn-default-text-color, v.$slick-btn-default-text-color);
+    border: var(--slick-btn-default-border, v.$slick-btn-default-border);
     &:hover {
-      border-color: var(--slick-btn-default-border-hover-color, $slick-btn-default-border-hover-color);
+      border-color: var(--slick-btn-default-border-hover-color, v.$slick-btn-default-border-hover-color);
     }
   }
 }
@@ -47,11 +48,11 @@
   position: relative;
   box-sizing: content-box;
   width: 100%;
-  border-top: var(--slick-container-border-top, $slick-container-border-top);
-  border-bottom: var(--slick-container-border-bottom, $slick-container-border-bottom);
-  border-left: var(--slick-container-border-left, $slick-container-border-left);
-  border-right: var(--slick-container-border-right, $slick-container-border-right);
-  font-family: var(--slick-font-family, $slick-font-family);
+  border-top: var(--slick-container-border-top, v.$slick-container-border-top);
+  border-bottom: var(--slick-container-border-bottom, v.$slick-container-border-bottom);
+  border-left: var(--slick-container-border-left, v.$slick-container-border-left);
+  border-right: var(--slick-container-border-right, v.$slick-container-border-right);
+  font-family: var(--slick-font-family, v.$slick-font-family);
 
   // Reset the margin of the checkboxes. The grid
   // needs a selection checbox column. Bootstrap gives
@@ -68,26 +69,26 @@
     box-sizing: content-box !important; /* this here only for Firefox! */
   }
   .slick-header-column:hover {
-    background: var(--slick-header-column-background-hover, $slick-header-column-background-hover);
+    background: var(--slick-header-column-background-hover, v.$slick-header-column-background-hover);
   }
 
   .slick-header-column-active {
-    background-color: var(--slick-header-column-background-active, $slick-header-column-background-active) !important;
+    background-color: var(--slick-header-column-background-active, v.$slick-header-column-background-active) !important;
   }
 
   .slick-headerrow {
-    background: var(--slick-grid-header-background, $slick-grid-header-background);
+    background: var(--slick-grid-header-background, v.$slick-grid-header-background);
   }
   .grid-canvas {
-    background: var(--slick-canvas-bg-color, $slick-canvas-bg-color);
+    background: var(--slick-canvas-bg-color, v.$slick-canvas-bg-color);
   }
 
   .slick-group {
-    border-bottom: var(--slick-group-border-bottom, $slick-group-border-bottom);
+    border-bottom: var(--slick-group-border-bottom, v.$slick-group-border-bottom);
   }
 
   .slick-sortable-placeholder {
-    background: var(--slick-header-column-sortable-background-hover, $slick-header-column-sortable-background-hover);
+    background: var(--slick-header-column-sortable-background-hover, v.$slick-header-column-sortable-background-hover);
   }
 
   .slick-row {
@@ -95,17 +96,17 @@
     width: 100%;
     border: 0;
     line-height: 20px;
-    color: var(--slick-cell-text-color, $slick-cell-text-color);
-    font-family: var(--slick-cell-font-family, $slick-cell-font-family);
-    font-weight: var(--slick-cell-font-weight, $slick-cell-font-weight);
+    color: var(--slick-cell-text-color, v.$slick-cell-text-color);
+    font-family: var(--slick-cell-font-family, v.$slick-cell-font-family);
+    font-weight: var(--slick-cell-font-weight, v.$slick-cell-font-weight);
 
     &:hover {
-      background-color: var(--slick-row-mouse-hover-color, $slick-row-mouse-hover-color);
-      box-shadow: var(--slick-row-mouse-hover-box-shadow, $slick-row-mouse-hover-box-shadow);
-      z-index: var(--slick-row-mouse-hover-z-index, $slick-row-mouse-hover-z-index);
+      background-color: var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
+      box-shadow: var(--slick-row-mouse-hover-box-shadow, v.$slick-row-mouse-hover-box-shadow);
+      z-index: var(--slick-row-mouse-hover-z-index, v.$slick-row-mouse-hover-z-index);
     }
     &.active {
-      padding: var(--slick-cell-padding, $slick-cell-padding);
+      padding: var(--slick-cell-padding, v.$slick-cell-padding);
     }
     &.highlighter {
       background: orange !important;
@@ -114,57 +115,57 @@
       transition-timing-function: ease-in;
     }
     &.copied {
-      background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
-      transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
+      background: var(--slick-copied-cell-bg-color-transition, v.$slick-copied-cell-bg-color-transition);
+      transition: var(--slick-copied-cell-transition, v.$slick-copied-cell-transition);
     }
     &.odd {
-      background-color: var(--slick-cell-odd-background-color, $slick-cell-odd-background-color);
+      background-color: var(--slick-cell-odd-background-color, v.$slick-cell-odd-background-color);
       &:hover {
-        background-color: var(--slick-row-mouse-hover-color, $slick-row-mouse-hover-color);
+        background-color: var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
       }
     }
     &.odd .slick-cell {
       background: inherit;
       &.selected {
-        background-color: var(--slick-row-selected-color, $slick-row-selected-color);
+        background-color: var(--slick-row-selected-color, v.$slick-row-selected-color);
       }
       &.copied {
-        background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
-        transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
+        background: var(--slick-copied-cell-bg-color-transition, v.$slick-copied-cell-bg-color-transition);
+        transition: var(--slick-copied-cell-transition, v.$slick-copied-cell-transition);
       }
     }
     &.highlight {
-      background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
+      background: var(--slick-row-highlight-background-color, v.$slick-row-highlight-background-color);
     }
     &.highlight-animate {
-      background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color) !important;
-      animation: fade var(--slick-row-highlight-fade-animation, $slick-row-highlight-fade-animation);
+      background: var(--slick-row-highlight-background-color, v.$slick-row-highlight-background-color) !important;
+      animation: fade var(--slick-row-highlight-fade-animation, v.$slick-row-highlight-fade-animation);
     }
     &.slick-group-totals {
-      color: var(--slick-group-totals-formatter-color, $slick-group-totals-formatter-color);
-      background: var(--slick-group-totals-formatter-bgcolor, $slick-group-totals-formatter-bgcolor);
+      color: var(--slick-group-totals-formatter-color, v.$slick-group-totals-formatter-color);
+      background: var(--slick-group-totals-formatter-bgcolor, v.$slick-group-totals-formatter-bgcolor);
       .slick-cell {
-        font-size: var(--slick-group-totals-formatter-font-size, $slick-group-totals-formatter-font-size);
+        font-size: var(--slick-group-totals-formatter-font-size, v.$slick-group-totals-formatter-font-size);
       }
     }
 
     &.slick-rbe-editmode.active .slick-cell,
     &.slick-rbe-editmode .slick-cell {
-      background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
+      background-color: var(--slick-row-based-edit-editmode-bgcolor, v.$slick-row-based-edit-editmode-bgcolor);
 
       &:hover {
-        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
+        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, v.$slick-row-based-edit-editmode-hover-bgcolor);
 
         .active {
-          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor) !important;
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, v.$slick-row-based-edit-editmode-active-hover-bgcolor) !important;
         }
       }
 
       .active {
-        background-color: var(--slick-row-based-edit-editmode-active-bgcolor, $slick-row-based-edit-editmode-active-bgcolor);
+        background-color: var(--slick-row-based-edit-editmode-active-bgcolor, v.$slick-row-based-edit-editmode-active-bgcolor);
 
         &:hover {
-          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor);
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, v.$slick-row-based-edit-editmode-active-hover-bgcolor);
         }
       }
     }
@@ -177,12 +178,12 @@
       }
 
       &.active {
-        box-shadow: var(--slick-cell-active-box-shadow, $slick-cell-active-box-shadow);
-        border: var(--slick-cell-active-border, $slick-cell-active-border);
-        z-index: var(--slick-cell-active-z-index, $slick-cell-active-z-index);
+        box-shadow: var(--slick-cell-active-box-shadow, v.$slick-cell-active-box-shadow);
+        border: var(--slick-cell-active-border, v.$slick-cell-active-border);
+        z-index: var(--slick-cell-active-z-index, v.$slick-cell-active-z-index);
 
         // We compensate for the all-around border (now 1px at top and left too!)
-        padding: var(--slick-cell-padding, $slick-cell-padding);
+        padding: var(--slick-cell-padding, v.$slick-cell-padding);
 
         input.dual-editor-text {
           width: calc(50% + 1px - 5px); // 1px (is 2px / 2) and 5px (is space between the 2 inputs)
@@ -193,7 +194,7 @@
       }
 
       &.slick-rbe-unsaved-cell {
-        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
+        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, v.$slick-row-based-edit-unsaved-cell-bgcolor) !important;
       }
     }
 
@@ -202,25 +203,25 @@
     }
 
     &.active-row.odd .slick-cell {
-      background-color: $slick-cell-odd-active-background-color;
+      background-color: v.$slick-cell-odd-active-background-color;
     }
 
     &.slick-rbe-editmode .slick-cell {
-      background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
+      background-color: var(--slick-row-based-edit-editmode-bgcolor, v.$slick-row-based-edit-editmode-bgcolor);
 
       &:hover {
-        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
+        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, v.$slick-row-based-edit-editmode-hover-bgcolor);
 
         .active {
-          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor) !important;
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, v.$slick-row-based-edit-editmode-active-hover-bgcolor) !important;
         }
       }
 
       .active {
-        background-color: var(--slick-row-based-edit-editmode-active-bgcolor, $slick-row-based-edit-editmode-active-bgcolor);
+        background-color: var(--slick-row-based-edit-editmode-active-bgcolor, v.$slick-row-based-edit-editmode-active-bgcolor);
 
         &:hover {
-          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor);
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, v.$slick-row-based-edit-editmode-active-hover-bgcolor);
         }
       }
     }
@@ -257,14 +258,14 @@
   .slick-footerrow {
     position: relative;
     width: 100%;
-    border: 1px solid $slick-grid-border-color;
+    border: 1px solid v.$slick-grid-border-color;
     border-right-color: transparent;
     border-bottom-color: transparent;
     border-right-width: 0;
     border-bottom-width: 0;
     margin: 0;
     outline: 0;
-    scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
+    scrollbar-color: var(--slick-scrollbar-color, v.$slick-scrollbar-color);
   }
 
   .slick-top-panel-scroller {
@@ -280,22 +281,22 @@
 
   .slick-pane-header {
     display: block;
-    background-color: var(--slick-header-background-color, $slick-header-background-color);
-    border-bottom: var(--slick-header-border-bottom, $slick-header-border-bottom);
+    background-color: var(--slick-header-background-color, v.$slick-header-background-color);
+    border-bottom: var(--slick-header-border-bottom, v.$slick-header-border-bottom);
   }
 
   .slick-pane-top {
     box-sizing: border-box;
-    border-top: var(--slick-pane-top-border-top, $slick-pane-top-border-top);
+    border-top: var(--slick-pane-top-border-top, v.$slick-pane-top-border-top);
   }
 
   .slick-viewport {
     height: 100%;
     overflow: auto;
-    border-top: var(--slick-viewport-border-top, $slick-viewport-border-top);
-    border-bottom: var(--slick-viewport-border-bottom, $slick-viewport-border-bottom);
-    border-left: var(--slick-viewport-border-left, $slick-viewport-border-left);
-    border-right: var(--slick-viewport-border-right, $slick-viewport-border-right);
+    border-top: var(--slick-viewport-border-top, v.$slick-viewport-border-top);
+    border-bottom: var(--slick-viewport-border-bottom, v.$slick-viewport-border-bottom);
+    border-left: var(--slick-viewport-border-left, v.$slick-viewport-border-left);
+    border-right: var(--slick-viewport-border-right, v.$slick-viewport-border-right);
     ::-webkit-scrollbar {
       -webkit-appearance: none;
     }
@@ -368,7 +369,7 @@
     line-height: 16px;
     margin: 0;
     padding: 4px;
-    border-right: 1px solid var(--slick-grid-border-color, $slick-grid-border-color);
+    border-right: 1px solid var(--slick-grid-border-color, v.$slick-grid-border-color);
     border-left: 0px !important;
     border-top: 0px !important;
     border-bottom: 0px !important;
@@ -376,7 +377,7 @@
   }
 
   .slick-header-column {
-    padding: var(--slick-header-padding, $slick-header-padding);
+    padding: var(--slick-header-padding, v.$slick-header-padding);
   }
 
   .grid-canvas {
@@ -392,15 +393,15 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: var(--slick-header-row-count, $slick-header-row-count);
+    -webkit-line-clamp: var(--slick-header-row-count, v.$slick-header-row-count);
   }
 
   .slick-cell {
     background: inherit;
     border: 1px transparent;
     box-sizing: border-box;
-    border-style: var(--slick-grid-border-style, $slick-grid-border-style);
-    display: var(--slick-cell-display, $slick-cell-display);
+    border-style: var(--slick-grid-border-style, v.$slick-grid-border-style);
+    display: var(--slick-cell-display, v.$slick-cell-display);
     padding: 1px 2px;
     align-items: center;
   }
@@ -419,7 +420,7 @@
     &.editable {
       z-index: 11;
       overflow: visible;
-      background: var(--slick-editor-bg-color, $slick-editor-bg-color);
+      background: var(--slick-editor-bg-color, v.$slick-editor-bg-color);
       border-color: black;
       border-style: solid;
     }
@@ -432,21 +433,21 @@
   .slick-reorder-proxy {
     cursor: move;
     display: inline-block;
-    background: var(--slick-row-move-plugin-proxy-bg-color, $slick-row-move-plugin-proxy-bg-color);
-    opacity: var(--row-move-plugin-proxy-opacity, $slick-row-move-plugin-proxy-opacity);
+    background: var(--slick-row-move-plugin-proxy-bg-color, v.$slick-row-move-plugin-proxy-bg-color);
+    opacity: var(--row-move-plugin-proxy-opacity, v.$slick-row-move-plugin-proxy-opacity);
   }
 
   .slick-reorder-guide {
     display: inline-block;
-    height: var(--slick-row-move-plugin-guide-height, $slick-row-move-plugin-guide-height);
-    background: var(--slick-row-move-plugin-guide-bg-color, $slick-row-move-plugin-guide-bg-color);
-    opacity: var(--slick-row-move-plugin-guide-opacity, $slick-row-move-plugin-guide-opacity);
+    height: var(--slick-row-move-plugin-guide-height, v.$slick-row-move-plugin-guide-height);
+    background: var(--slick-row-move-plugin-guide-bg-color, v.$slick-row-move-plugin-guide-bg-color);
+    opacity: var(--slick-row-move-plugin-guide-opacity, v.$slick-row-move-plugin-guide-opacity);
   }
 
   .slick-reorder-shadow-row {
     position: absolute;
     z-index: 999999;
-    box-shadow: var(--slick-row-move-plugin-shadow-row-box-shadow, $slick-row-move-plugin-shadow-row-box-shadow);
+    box-shadow: var(--slick-row-move-plugin-shadow-row-box-shadow, v.$slick-row-move-plugin-shadow-row-box-shadow);
   }
 }
 
@@ -458,10 +459,10 @@
 
 .slickgrid-container {
   @mixin resetSlickCell() {
-    padding: var(--slick-cell-padding, $slick-cell-padding);
-    font-size: var(--slick-font-size-base, $slick-font-size-base);
+    padding: var(--slick-cell-padding, v.$slick-cell-padding);
+    font-size: var(--slick-font-size-base, v.$slick-font-size-base);
     td {
-      font-size: var(--slick-font-size-base, $slick-font-size-base);
+      font-size: var(--slick-font-size-base, v.$slick-font-size-base);
     }
     body & {
       line-height: 20px;
@@ -470,28 +471,28 @@
 
   .grid-canvas {
     .slick-cell, .slick-headerrow-column {
-      border-top: var(--slick-cell-border-top, $slick-cell-border-top);
-      border-bottom: var(--slick-cell-border-bottom, $slick-cell-border-bottom);
-      border-left: var(--slick-cell-border-left, $slick-cell-border-left);
-      border-right: var(--slick-cell-border-right, $slick-cell-border-right);
-      box-shadow: var(--slick-cell-box-shadow, $slick-cell-box-shadow);
+      border-top: var(--slick-cell-border-top, v.$slick-cell-border-top);
+      border-bottom: var(--slick-cell-border-bottom, v.$slick-cell-border-bottom);
+      border-left: var(--slick-cell-border-left, v.$slick-cell-border-left);
+      border-right: var(--slick-cell-border-right, v.$slick-cell-border-right);
+      box-shadow: var(--slick-cell-box-shadow, v.$slick-cell-box-shadow);
     }
 
     .slick-cell {
       @include resetSlickCell();
 
       &.even {
-        background-color: var(--slick-cell-even-background-color, $slick-cell-even-background-color);
+        background-color: var(--slick-cell-even-background-color, v.$slick-cell-even-background-color);
       }
       &.slick-rbe-unsaved-cell {
-        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
+        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, v.$slick-row-based-edit-unsaved-cell-bgcolor) !important;
       }
 
       a, a:visited, .slick-widget-content a, .slick-widget-content a:visited {
-        color: var(--slick-link-color, $slick-link-color);
+        color: var(--slick-link-color, v.$slick-link-color);
       }
       a:hover, .slick-widget-content a:hover {
-        color: var(--slick-link-color-hover, $slick-link-color-hover);
+        color: var(--slick-link-color-hover, v.$slick-link-color-hover);
         border-bottom: none;
       }
       table {
@@ -505,20 +506,20 @@
         text-align: left;
       }
       &.selected {
-        background-color: var(--slick-row-selected-color, $slick-row-selected-color);
+        background-color: var(--slick-row-selected-color, v.$slick-row-selected-color);
       }
       &.copied {
-        background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
-        transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
+        background: var(--slick-copied-cell-bg-color-transition, v.$slick-copied-cell-bg-color-transition);
+        transition: var(--slick-copied-cell-transition, v.$slick-copied-cell-transition);
       }
       select:not([multiple]).form-control {
         height: 100%;
         padding: 0;
       }
       .slick-group-title {
-        height: var(--slick-draggable-group-title-height, $slick-draggable-group-title-height);
-        line-height: var(--slick-draggable-group-title-line-height, $slick-draggable-group-title-line-height);
-        vertical-align: var(--slick-draggable-group-title-vertical-align, $slick-draggable-group-title-vertical-align);
+        height: var(--slick-draggable-group-title-height, v.$slick-draggable-group-title-height);
+        line-height: var(--slick-draggable-group-title-line-height, v.$slick-draggable-group-title-line-height);
+        vertical-align: var(--slick-draggable-group-title-vertical-align, v.$slick-draggable-group-title-vertical-align);
       }
 
       .slick-group-toggle {
@@ -526,15 +527,15 @@
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: var(--slick-icon-group-color, $slick-icon-group-color);
-        font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
-        margin-right: var(--slick-icon-group-margin-right, $slick-icon-group-margin-right);
+        color: var(--slick-icon-group-color, v.$slick-icon-group-color);
+        font-size: var(--slick-icon-group-font-size, v.$slick-icon-group-font-size);
+        margin-right: var(--slick-icon-group-margin-right, v.$slick-icon-group-margin-right);
 
         &.expanded {
-          @include generateSvgStyle('slick-icon-group-expanded-svg', $slick-icon-group-expanded-svg-path);
+          @include svg.generateSvgStyle('slick-icon-group-expanded-svg', v.$slick-icon-group-expanded-svg-path);
         }
         &.collapsed {
-          @include generateSvgStyle('slick-icon-group-collapsed-svg', $slick-icon-group-collapsed-svg-path);
+          @include svg.generateSvgStyle('slick-icon-group-collapsed-svg', v.$slick-icon-group-collapsed-svg-path);
         }
         &.expanded,
         &.collapsed {
@@ -544,63 +545,63 @@
       // fix alignment when slick-cell includes slickgrid icons (align bottom will in fact center the icon & text), for example Tree Data/Grouping
       .slick-group-toggle,
       .mdi {
-        vertical-align: var(--slick-icon-with-text-valign, $slick-icon-with-text-valign);
+        vertical-align: var(--slick-icon-with-text-valign, v.$slick-icon-with-text-valign);
       }
     }
   }
 
   .slick-header {
-    border-top: var(--slick-header-border-top, $slick-header-border-top);
-    border-right: var(--slick-header-border-right, $slick-header-border-right);
-    border-bottom: var(--slick-header-border-bottom, $slick-header-border-bottom);
-    border-left: var(--slick-header-border-left, $slick-header-border-left);
+    border-top: var(--slick-header-border-top, v.$slick-header-border-top);
+    border-right: var(--slick-header-border-right, v.$slick-header-border-right);
+    border-bottom: var(--slick-header-border-bottom, v.$slick-header-border-bottom);
+    border-left: var(--slick-header-border-left, v.$slick-header-border-left);
     width: 100%;
     box-shadow: none !important;
   }
 
   .slick-headerrow {
-    border-bottom: var(--slick-header-filter-row-border-bottom, $slick-header-filter-row-border-bottom);
-    border-top: var(--slick-header-filter-row-border-top, $slick-header-filter-row-border-top);
-    border-left: var(--slick-header-filter-row-border-left, $slick-header-filter-row-border-left);
-    border-right: var(--slick-header-filter-row-border-right, $slick-header-filter-row-border-right);
+    border-bottom: var(--slick-header-filter-row-border-bottom, v.$slick-header-filter-row-border-bottom);
+    border-top: var(--slick-header-filter-row-border-top, v.$slick-header-filter-row-border-top);
+    border-left: var(--slick-header-filter-row-border-left, v.$slick-header-filter-row-border-left);
+    border-right: var(--slick-header-filter-row-border-right, v.$slick-header-filter-row-border-right);
 
     .slick-headerrow-columns {
       .slick-headerrow-column {
         border: none;
-        padding: var(--slick-header-row-filter-padding, $slick-header-row-filter-padding);
-        background: var(--slick-header-row-background-color, $slick-header-row-background-color);
+        padding: var(--slick-header-row-filter-padding, v.$slick-header-row-filter-padding);
+        background: var(--slick-header-row-background-color, v.$slick-header-row-background-color);
       }
       .slick-headerrow-column input,
       .slick-headerrow-column select,
       .slick-headerrow-column textarea {
         margin-right: 0;
-        padding: var(--slick-header-input-padding, $slick-header-input-padding);
-        height: var(--slick-header-input-height, $slick-header-input-height);
+        padding: var(--slick-header-input-padding, v.$slick-header-input-padding);
+        height: var(--slick-header-input-height, v.$slick-header-input-height);
         box-sizing: border-box;
       }
     }
   }
 
   .slick-footerrow {
-    border-top: var(--slick-grid-footer-border-top, $slick-grid-footer-border-top);
-    background-color: var(--slick-grid-footer-bg-color, $slick-grid-footer-bg-color);
+    border-top: var(--slick-grid-footer-border-top, v.$slick-grid-footer-border-top);
+    background-color: var(--slick-grid-footer-bg-color, v.$slick-grid-footer-bg-color);
     .slick-footerrow-columns {
       .slick-footerrow-column {
-        display: var(--slick-grid-footer-display, $slick-grid-footer-display);
-        align-items: var(--slick-grid-footer-align-items, $slick-grid-footer-align-items);
-        justify-content: var(--slick-grid-footer-justify-content, $slick-grid-footer-justify-content);
-        font-size: var(--slick-grid-footer-font-size, $slick-grid-footer-font-size);
-        font-style: var(--slick-grid-footer-font-style, $slick-grid-footer-font-style);
-        font-weight: var(--slick-grid-footer-font-weight, $slick-grid-footer-font-weight);
-        padding: var(--slick-grid-footer-cell-padding, $slick-grid-footer-cell-padding);
-        border-left: var(--slick-grid-footer-cell-border-left, $slick-grid-footer-cell-border-left);
+        display: var(--slick-grid-footer-display, v.$slick-grid-footer-display);
+        align-items: var(--slick-grid-footer-align-items, v.$slick-grid-footer-align-items);
+        justify-content: var(--slick-grid-footer-justify-content, v.$slick-grid-footer-justify-content);
+        font-size: var(--slick-grid-footer-font-size, v.$slick-grid-footer-font-size);
+        font-style: var(--slick-grid-footer-font-style, v.$slick-grid-footer-font-style);
+        font-weight: var(--slick-grid-footer-font-weight, v.$slick-grid-footer-font-weight);
+        padding: var(--slick-grid-footer-cell-padding, v.$slick-grid-footer-cell-padding);
+        border-left: var(--slick-grid-footer-cell-border-left, v.$slick-grid-footer-cell-border-left);
       }
     }
   }
   .slick-header-columns {
-    background: var(--slick-grid-header-background, $slick-grid-header-background);
-    background-color: var(--slick-header-background-color, $slick-header-background-color);
-    width: calc(100% - #{var(--slick-header-scroll-width-to-remove, $slick-header-scroll-width-to-remove)});
+    background: var(--slick-grid-header-background, v.$slick-grid-header-background);
+    background-color: var(--slick-header-background-color, v.$slick-header-background-color);
+    width: calc(100% - #{var(--slick-header-scroll-width-to-remove, v.$slick-header-scroll-width-to-remove)});
 
     [id$="checkbox_selector"] {
       justify-content: center;
@@ -612,35 +613,35 @@
     }
 
     .slick-header-column {
-      height: var(--slick-header-column-height, $slick-header-column-height);
-      line-height: var(--slick-font-size-base, $slick-font-size-base);
+      height: var(--slick-header-column-height, v.$slick-header-column-height);
+      line-height: var(--slick-font-size-base, v.$slick-font-size-base);
       margin: 0;
-      border-top: var(--slick-header-column-border-top, $slick-header-column-border-top);
-      border-right: var(--slick-header-column-border-right, $slick-header-column-border-right);
-      border-bottom: var(--slick-header-column-border-bottom, $slick-header-column-border-bottom);
-      border-left: var(--slick-header-column-border-left, $slick-header-column-border-left);
+      border-top: var(--slick-header-column-border-top, v.$slick-header-column-border-top);
+      border-right: var(--slick-header-column-border-right, v.$slick-header-column-border-right);
+      border-bottom: var(--slick-header-column-border-bottom, v.$slick-header-column-border-bottom);
+      border-left: var(--slick-header-column-border-left, v.$slick-header-column-border-left);
       white-space: normal;
       &.slick-state-default {
         @include resetSlickCell();
       }
       .slick-column-name {
-        margin-right: var(--slick-header-column-name-margin-right, $slick-header-column-name-margin-right);
+        margin-right: var(--slick-header-column-name-margin-right, v.$slick-header-column-name-margin-right);
       }
 
       @mixin ResetColumns () {
         /* like TH  */
         & {
-          background: var(--slick-header-background-color, $slick-header-background-color);
-          font-family: var(--slick-font-family, $slick-font-family);
-          color: var(--slick-header-text-color, $slick-header-text-color);
-          font-size: var(--slick-header-font-size, $slick-header-font-size);
-          font-weight: var(--slick-header-font-weight, $slick-header-font-weight);
+          background: var(--slick-header-background-color, v.$slick-header-background-color);
+          font-family: var(--slick-font-family, v.$slick-font-family);
+          color: var(--slick-header-text-color, v.$slick-header-text-color);
+          font-size: var(--slick-header-font-size, v.$slick-header-font-size);
+          font-weight: var(--slick-header-font-weight, v.$slick-header-font-weight);
         }
         a, a:visited {
-          color: var(--slick-text-color, $slick-text-color);
+          color: var(--slick-text-color, v.$slick-text-color);
         }
         a:hover {
-          color: var(--slick-hover-header-color, $slick-hover-header-color);
+          color: var(--slick-hover-header-color, v.$slick-hover-header-color);
         }
       }
 
@@ -651,49 +652,49 @@
 
       &.slick-header-column-sorted {
         font-style: normal;
-        color: var(--slick-sorting-header-color, $slick-sorting-header-color);
+        color: var(--slick-sorting-header-color, v.$slick-sorting-header-color);
       }
       &:hover {
-        color: var(--slick-hover-header-color, $slick-hover-header-color);
+        color: var(--slick-hover-header-color, v.$slick-hover-header-color);
       }
 
       .slick-sort-indicator ,
       .slick-sort-indicator-numbered {
         display: inline-block;
         position: absolute;
-        color: var(--slick-icon-sort-color, $slick-icon-sort-color);
+        color: var(--slick-icon-sort-color, v.$slick-icon-sort-color);
       }
 
       .slick-sort-indicator {
         height: 1em;
         width: 1em;
         left: auto;
-        font-size: var(--slick-icon-sort-font-size, $slick-icon-sort-font-size);
-        right: var(--slick-icon-sort-position-right, $slick-icon-sort-position-right);
-        top: var(--slick-icon-sort-position-top, $slick-icon-sort-position-top);
+        font-size: var(--slick-icon-sort-font-size, v.$slick-icon-sort-font-size);
+        right: var(--slick-icon-sort-position-right, v.$slick-icon-sort-position-right);
+        top: var(--slick-icon-sort-position-top, v.$slick-icon-sort-position-top);
       }
       .slick-sort-indicator-numbered {
-        font-family: var(--slick-font-family, $slick-font-family);
-        font-size: var(--slick-sort-indicator-number-font-size, $slick-sort-indicator-number-font-size);
-        width: var(--slick-sort-indicator-number-width, $slick-sort-indicator-number-width);
-        left: var(--slick-sort-indicator-number-left, $slick-sort-indicator-number-left);
-        right: var(--slick-sort-indicator-number-right, $slick-sort-indicator-number-right);
-        top: var(--slick-sort-indicator-number-top, $slick-sort-indicator-number-top);
+        font-family: var(--slick-font-family, v.$slick-font-family);
+        font-size: var(--slick-sort-indicator-number-font-size, v.$slick-sort-indicator-number-font-size);
+        width: var(--slick-sort-indicator-number-width, v.$slick-sort-indicator-number-width);
+        left: var(--slick-sort-indicator-number-left, v.$slick-sort-indicator-number-left);
+        right: var(--slick-sort-indicator-number-right, v.$slick-sort-indicator-number-right);
+        top: var(--slick-sort-indicator-number-top, v.$slick-sort-indicator-number-top);
       }
 
       // when sorting is possible and there's not yet a sort applied on the column
       // we could display the sort ascending icon (with an opacity) as a hint */
       &.slick-header-sortable.slick-state-hover:not(.slick-header-column-sorted) {
         .slick-sort-indicator {
-          opacity: var(--slick-sort-indicator-hint-opacity, $slick-sort-indicator-hint-opacity);
-          @include generateSvgStyle('slick-icon-sort-asc-icon-svg', $slick-icon-sort-asc-icon-svg-path);
+          opacity: var(--slick-sort-indicator-hint-opacity, v.$slick-sort-indicator-hint-opacity);
+          @include svg.generateSvgStyle('slick-icon-sort-asc-icon-svg', v.$slick-icon-sort-asc-icon-svg-path);
         }
       }
       .slick-sort-indicator-asc {
-        @include generateSvgStyle('slick-icon-sort-asc-icon-svg', $slick-icon-sort-asc-icon-svg-path);
+        @include svg.generateSvgStyle('slick-icon-sort-asc-icon-svg', v.$slick-icon-sort-asc-icon-svg-path);
       }
       .slick-sort-indicator-desc {
-        @include generateSvgStyle('slick-icon-sort-desc-icon-svg', $slick-icon-sort-desc-icon-svg-path);
+        @include svg.generateSvgStyle('slick-icon-sort-desc-icon-svg', v.$slick-icon-sort-desc-icon-svg-path);
       }
       .slick-sort-indicator-asc,
       .slick-sort-indicator-desc {
@@ -713,20 +714,20 @@
         z-index: 1;
 
         &:hover {
-          border-bottom: var(--slick-header-resizable-hover-border-bottom, $slick-header-resizable-hover-border-bottom);
-          border-left: var(--slick-header-resizable-hover-border-left, $slick-header-resizable-hover-border-left);
-          border-right: var(--slick-header-resizable-hover-border-right, $slick-header-resizable-hover-border-right);
-          border-top: var(--slick-header-resizable-hover-border-top, $slick-header-resizable-hover-border-top);
-          border-radius: var(--slick-header-resizable-hover-border-radius, $slick-header-resizable-hover-border-radius);
-          width: var(--slick-header-resizable-hover-width, $slick-header-resizable-hover-width);
-          right: var(--slick-header-resizable-hover-right, $slick-header-resizable-hover-right);
-          height: var(--slick-header-resizable-hover-height, $slick-header-resizable-hover-height);
-          top: var(--slick-header-resizable-hover-top, $slick-header-resizable-hover-top);
-          opacity: var(--slick-header-resizable-hover-opacity, $slick-header-resizable-hover-opacity);
+          border-bottom: var(--slick-header-resizable-hover-border-bottom, v.$slick-header-resizable-hover-border-bottom);
+          border-left: var(--slick-header-resizable-hover-border-left, v.$slick-header-resizable-hover-border-left);
+          border-right: var(--slick-header-resizable-hover-border-right, v.$slick-header-resizable-hover-border-right);
+          border-top: var(--slick-header-resizable-hover-border-top, v.$slick-header-resizable-hover-border-top);
+          border-radius: var(--slick-header-resizable-hover-border-radius, v.$slick-header-resizable-hover-border-radius);
+          width: var(--slick-header-resizable-hover-width, v.$slick-header-resizable-hover-width);
+          right: var(--slick-header-resizable-hover-right, v.$slick-header-resizable-hover-right);
+          height: var(--slick-header-resizable-hover-height, v.$slick-header-resizable-hover-height);
+          top: var(--slick-header-resizable-hover-top, v.$slick-header-resizable-hover-top);
+          opacity: var(--slick-header-resizable-hover-opacity, v.$slick-header-resizable-hover-opacity);
         }
       }
       &.unorderable {
-        background-color: var(--slick-grid-header-unorderable-bg-color, $slick-grid-header-unorderable-bg-color);
+        background-color: var(--slick-grid-header-unorderable-bg-color, v.$slick-grid-header-unorderable-bg-color);
       }
     }
   }
@@ -734,24 +735,24 @@
   /** Header Grouping **/
   .slick-preheader-panel.slick-state-default,
   .slick-topheader-panel.slick-state-default {
-    border-bottom: var(--slick-preheader-border-bottom, $slick-preheader-border-bottom);
+    border-bottom: var(--slick-preheader-border-bottom, v.$slick-preheader-border-bottom);
 
     .slick-header-columns {
-      border-top: var(--slick-preheader-border-top, $slick-preheader-border-top);
+      border-top: var(--slick-preheader-border-top, v.$slick-preheader-border-top);
 
       .slick-header-column {
-        height: var(--slick-preheader-height, $slick-preheader-height);
-        border-left: var(--slick-preheader-border-left, $slick-preheader-border-left);
-        border-right: var(--slick-preheader-border-right, $slick-preheader-border-right);
-        font-size: var(--slick-preheader-font-size, $slick-preheader-font-size);
-        justify-content: var(--slick-preheader-grouped-title-justify, $slick-preheader-grouped-title-justify);
-        display: var(--slick-preheader-grouped-title-display, $slick-preheader-grouped-title-display);
+        height: var(--slick-preheader-height, v.$slick-preheader-height);
+        border-left: var(--slick-preheader-border-left, v.$slick-preheader-border-left);
+        border-right: var(--slick-preheader-border-right, v.$slick-preheader-border-right);
+        font-size: var(--slick-preheader-font-size, v.$slick-preheader-font-size);
+        justify-content: var(--slick-preheader-grouped-title-justify, v.$slick-preheader-grouped-title-justify);
+        display: var(--slick-preheader-grouped-title-display, v.$slick-preheader-grouped-title-display);
       }
       .slick-header-column:first-child {
-        border-left: var(--slick-preheader-border-left-first-element, $slick-preheader-border-left-first-element);
+        border-left: var(--slick-preheader-border-left-first-element, v.$slick-preheader-border-left-first-element);
       }
       .slick-header-column:last-child {
-        border-right: var(--slick-preheader-border-right-last-element, $slick-preheader-border-right-last-element);
+        border-right: var(--slick-preheader-border-right-last-element, v.$slick-preheader-border-right-last-element);
       }
     }
   }
@@ -760,26 +761,26 @@
 
   .slick-row .slick-cell.frozen:last-child,
   .slick-footerrow-column.frozen:last-child {
-    border-right: var(--slick-frozen-border-right, $slick-frozen-border-right);
+    border-right: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
   }
   .slick-header-column.frozen:last-child {
-    border-right: var(--slick-frozen-header-row-border-right, $slick-frozen-header-row-border-right);
+    border-right: var(--slick-frozen-header-row-border-right, v.$slick-frozen-header-row-border-right);
   }
   .slick-pane-left {
     .slick-preheader-panel .slick-header-column.frozen:last-child,
     .slick-topheader-panel .slick-header-column.frozen:last-child {
-      border-right: var(--slick-frozen-preheader-row-border-right, $slick-frozen-preheader-row-border-right);
+      border-right: var(--slick-frozen-preheader-row-border-right, v.$slick-frozen-preheader-row-border-right);
     }
   }
   .slick-headerrow-column.frozen:last-child {
-    border-right: var(--slick-frozen-filter-row-border-right, $slick-frozen-filter-row-border-right);
+    border-right: var(--slick-frozen-filter-row-border-right, v.$slick-frozen-filter-row-border-right);
   }
 
   .slick-pane-bottom {
-    border-top: var(--slick-frozen-border-bottom, $slick-frozen-border-bottom);
+    border-top: var(--slick-frozen-border-bottom, v.$slick-frozen-border-bottom);
   }
   .slick-viewport-bottom.slick-viewport-right {
-    overflow-y: var(--slick-frozen-overflow-right, $slick-frozen-overflow-right) !important;
+    overflow-y: var(--slick-frozen-overflow-right, v.$slick-frozen-overflow-right) !important;
   }
   .input-group {
     display: flex;

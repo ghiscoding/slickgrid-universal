@@ -1,6 +1,7 @@
 @use 'sass:color';
 
-@import './svg-utilities';
+@use './variables' as v;
+@use './svg-utilities' as svg;
 
 /* icon/text colors */
 // we'll use the same color set as text-colors defined in Bootstrap 4 (ref: https://getbootstrap.com/docs/4.5/utilities/colors/)
@@ -11,7 +12,7 @@
 $text-color-lighten-percentage: 6% !default;
 $text-color-darken-percentage: 6% !default;
 
-$text-color-primary: $slick-primary-color !default;
+$text-color-primary: v.$slick-primary-color !default;
 $text-color-secondary: #6c757d !default;
 $text-color-success: #28a745 !default;
 $text-color-danger: #dc3545 !default;

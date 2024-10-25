@@ -70,7 +70,7 @@ export class GridBasicComponent {
 ```
 
 ### 3. CSS / SASS Styles
-Load your prefered theme, choose between Bootstrap (default), Material or Salesforce themes. You can also customize them to your taste (either by using SASS or CSS variables). 
+Load your prefered theme, choose between Bootstrap (default), Material or Salesforce themes. You can also customize them to your taste (either by using SASS or CSS variables).
 
 #### CSS
 Default compiled `css`, you can load it through HTML or import it in your JS code depending on your project.
@@ -87,11 +87,10 @@ You could also compile the SASS files with your own customization, for that simp
 
 ```scss
 /* for example, let's change the mouse hover color */
-$cell-odd-background-color: lightyellow;
-$row-mouse-hover-color: lightgreen;
-
-/* make sure to add the @import the SlickGrid Theme AFTER the variables changes */
-@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+  $cell-odd-background-color: lightyellow,
+  $row-mouse-hover-color: lightgreen
+);
 ```
 
 ### 4. Explore the Documentation
@@ -104,7 +103,7 @@ The last step is really to explore all the pages that are available on the docum
 ... and much more, just explorer the Documentation through the table of content (on your left)
 
 ### 5. Get Started
-The best way to get started is to clone either the [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo). 
+The best way to get started is to clone either the [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo).
 
 ### 6. CSP Compliance
 The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
