@@ -10,12 +10,13 @@
  *   `slick-without-bootstrap-min-styling.scss`, colors, extra-styling, slickgrid-icons and slickgrid-icons-svg-utils
  */
 
-/** SlickGrid Material Theme */
-@import './variables-theme-material';
-@import './roboto-font';
-@import './slick-grid';
-@import './slick-editors';
-@import './slick-plugins';
-@import './slick-component';
-@import './slickgrid-examples';
-@import './slick-autocomplete';
+@forward './variables-theme-material';
+
+@use './variables-theme-material';
+@use './roboto-font';
+@use './slick-grid';
+@use './slick-editors';
+@use './slick-plugins';
+@use './slick-component';
+@use './slickgrid-examples';
+@use './slick-autocomplete';

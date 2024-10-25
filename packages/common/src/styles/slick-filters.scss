@@ -1,7 +1,4 @@
-$slick-filled-filter-color:                                 $slick-form-control-focus-border-color !default;
-$slick-filled-filter-border:                                $slick-form-control-border !default;
-$slick-filled-filter-box-shadow:                            $slick-form-control-focus-border-color !default;
-$slick-filled-filter-font-weight:                           400 !default;
+@use './variables-theme-salesforce' as vts;
 
 // ------------------------------------------------
 // apply custom styling when Filters are filled in
@@ -14,10 +11,10 @@ $slick-filled-filter-font-weight:                           400 !default;
   .search-filter.filled .input-group-addon.slider-value,
   .search-filter.filled .input-group-addon.slider-range-value,
   .search-filter.filled .input-group-addon select {
-    color: var(--slick-filled-filter-color, $slick-filled-filter-color);
-    font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
-    border: var(--slick-filled-filter-border, $slick-filled-filter-border);
-    box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
+    color: var(--slick-filled-filter-color, vts.$slick-filled-filter-color);
+    font-weight: var(--slick-filled-filter-font-weight, vts.$slick-filled-filter-font-weight);
+    border: var(--slick-filled-filter-border, vts.$slick-filled-filter-border);
+    box-shadow: var(--slick-filled-filter-box-shadow, vts.$slick-filled-filter-box-shadow);
     &.input-group-prepend {
       border-right: 0;
     }
@@ -29,13 +26,13 @@ $slick-filled-filter-font-weight:                           400 !default;
     border-right: 0;
   }
   .search-filter.filled .ms-choice {
-    box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
-    border: var(--slick-filled-filter-border, $slick-filled-filter-border);
+    box-shadow: var(--slick-filled-filter-box-shadow, vts.$slick-filled-filter-box-shadow);
+    border: var(--slick-filled-filter-border, vts.$slick-filled-filter-border);
     span {
       display: inline-flex;
       align-items: center;
-      font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
-      color: var(--slick-filled-filter-color, $slick-filled-filter-color);
+      font-weight: var(--slick-filled-filter-font-weight, vts.$slick-filled-filter-font-weight);
+      color: var(--slick-filled-filter-color, vts.$slick-filled-filter-color);
     }
   }
 }

@@ -1,8 +1,7 @@
 @use 'sass:color';
 
-/* make sure to add the @import the SlickGrid Material Theme AFTER the variables changes */
-// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material-with-font.scss';
-// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
+// @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material-with-font.scss';
+// @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 
 :root {
   body.material-theme,
@@ -75,14 +74,17 @@
     --slick-header-resizable-hover-border-left: 2px solid #83d9a0;
     --slick-header-resizable-hover-border-top: 2px solid #83d9a0;
     --slick-header-resizable-hover-border-right: 2px solid #83d9a0;
-    --ms-ok-button-text-color: #009530;
-    --ms-select-all-text-color: #007c28;
     --slick-multiselect-icon-radio-border: none;
     --slick-multiselect-ok-button-text-color: #009530;
-    --slick-multiselect-ok-button-text-hover-color: #00a736;
+    --slick-multiselect-ok-button-text-hover-color: #{color.adjust(#009530, $lightness: -5%)};
     --slick-multiselect-select-all-text-color: #007c28;
-    --ms-checkbox-color: var(--slick-primary-color);
     --slick-multiselect-icon-color: var(--slick-primary-color);
+    --slick-multiselect-input-focus-border-color: #51d77c;
+    --ms-ok-button-text-color: #009530;
+    --ms-select-all-text-color: #007c28;
+    --ms-checkbox-color: var(--slick-primary-color);
+    --ms-choice-focus-box-shadow: 0 0 0 1.5px rgba(#66bb6a,.55);
+    --ms-choice-focus-border-color: #86d56c;
 
     .icon-checkbox-container {
       --slick-checkbox-icon-container-bg-color: transparent;
@@ -166,6 +168,10 @@
       --slick-menu-item-hover-color: #363b40;
       --slick-menu-item-hover-border: 1px solid #5a5a5a;
       --slick-submenu-box-shadow: none;
+      --slick-multiselect-checkbox-color: #66bb6a;
+      --slick-multiselect-checkbox-hover-color: #{color.adjust(#49a54e, $lightness: 13%)};
+      --slick-multiselect-ok-button-text-color: #66bb6a;
+      --slick-multiselect-ok-button-text-hover-color: #{color.adjust(#66bb6a, $lightness: 5%)};
       --ms-checkbox-color: #66bb6a;
       --ms-checkbox-hover-color: #{color.adjust(#49a54e, $lightness: 13%)};
       --ms-ok-button-text-color: #66bb6a;
