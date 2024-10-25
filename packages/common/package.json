@@ -75,7 +75,7 @@
     "@types/trusted-types": "^2.0.7",
     "autocompleter": "^9.3.2",
     "dequal": "^2.0.3",
-    "multiple-select-vanilla": "^3.3.7",
+    "multiple-select-vanilla": "^3.4.1",
     "sortablejs": "^1.15.3",
     "un-flatten-tree": "^2.0.12",
     "vanilla-calendar-pro": "^2.9.10"

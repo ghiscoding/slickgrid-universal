@@ -1,16 +1,16 @@
-@use 'sass:color';
-
-// import external lib CSS files (without the .css extension)
-@import 'vanilla-calendar-pro/build/vanilla-calendar.min';
-
-// SASS utils to generate SVGs
-@import './svg-utilities';
-
 /*
  * SlickGrid-Universal theming variables, used by all Themes
  * Lib Website (https://github.com/ghiscoding/slickgrid-universal)
  * Licensed under MIT (https://github.com/ghiscoding/slickgrid-universal/blob/master/LICENSE)
  */
+
+@use 'sass:color';
+
+// import external lib CSS files (without the .css extension)
+@use 'vanilla-calendar-pro/build/vanilla-calendar.min';
+
+// SASS utils to generate SVGs
+@use './svg-utilities';
 
 /* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
 /** extra styling when Bootstrap isn't provided */
@@ -793,36 +793,6 @@ $slick-multiselect-select-all-padding:                      6px 10px !default;
 $slick-multiselect-select-all-text-color:                   color.adjust($slick-primary-color, $lightness: -5%) !default;
 $slick-multiselect-select-all-text-hover-color:             transparent !default;
 
-// override some multiple-select SASS variables with our variables
-$ms-drop-color:                                             $slick-text-color;
-$ms-checkbox-color:                                         $slick-multiselect-icon-checked-color;
-$ms-chevron-icon-size:                                      1.3em;
-$ms-choice-border:                                          $slick-multiselect-input-filter-border;
-$ms-drop-background:                                        $slick-multiselect-dropdown-bg-color;
-$ms-drop-list-padding:                                      $slick-multiselect-dropdown-list-padding;
-$ms-drop-list-item-align-items:                             center;
-$ms-drop-list-item-display:                                 flex;
-$ms-drop-list-item-padding:                                 $slick-multiselect-item-padding;
-$ms-drop-hide-radio-hover-bgcolor:                          $slick-multiselect-item-hover-bg-color;
-$ms-drop-hide-radio-selected-color:                         unset;
-$ms-drop-hide-radio-selected-bgcolor:                       unset;
-$ms-icon-color:                                             $slick-icon-color;
-$ms-icon-size:                                              $slick-multiselect-icon-font-size;
-$ms-chevron-icon-size:                                      #{$slick-multiselect-icon-font-size + 3px};
-$ms-placeholder-color:                                      $slick-placeholder-color;
-$ms-label-padding:                                          $slick-multiselect-item-padding;
-$ms-ok-button-bg-color:                                     $slick-multiselect-ok-button-bg-color;
-$ms-ok-button-bg-hover-color:                               $slick-multiselect-ok-button-bg-hover-color;
-$ms-ok-button-text-color:                                   $slick-multiselect-ok-button-text-color;
-$ms-ok-button-text-hover-color:                             $slick-multiselect-ok-button-text-hover-color;
-$ms-option-highlight-bg-color:                              $slick-multiselect-option-highlight-bg-color;
-$ms-search-icon-close-margin:                               $slick-multiselect-search-icon-close-margin;
-$ms-select-all-label-hover-border:                          $slick-multiselect-select-all-label-hover-border;
-$ms-select-all-label-padding:                               $slick-multiselect-select-all-padding;
-$ms-select-all-label-span-padding:                          $slick-multiselect-select-all-label-padding;
-$ms-select-all-line-height:                                 $slick-multiselect-select-all-line-height;
-$ms-select-all-text-color:                                  $slick-multiselect-select-all-text-color;
-
 /* pagination variables */
 $slick-pagination-border-color:                             #ddd !default;
 $slick-pagination-button-bg-color:                          #fff !default;
@@ -953,8 +923,36 @@ $slick-empty-data-warning-margin:                           0px !default;
 $slick-empty-data-warning-padding:                          8px !default;
 $slick-empty-data-warning-z-index:                          10 !default;
 
-// import multiple-select SASS variables in order to override them
-@import 'multiple-select-vanilla/dist/styles/sass/multiple-select.scss';
+// override some multiple-select SASS variables with our variables
+@use 'multiple-select-vanilla/dist/styles/sass/multiple-select' with (
+  $ms-primary-color:                                        $slick-primary-color,
+  $ms-drop-color:                                           $slick-text-color,
+  $ms-checkbox-color:                                       $slick-multiselect-icon-checked-color,
+  $ms-choice-border:                                        $slick-multiselect-input-filter-border,
+  $ms-drop-background:                                      $slick-multiselect-dropdown-bg-color,
+  $ms-drop-list-padding:                                    $slick-multiselect-dropdown-list-padding,
+  $ms-drop-list-item-align-items:                           center,
+  $ms-drop-list-item-display:                               flex,
+  $ms-drop-list-item-padding:                               $slick-multiselect-item-padding,
+  $ms-drop-hide-radio-hover-bgcolor:                        $slick-multiselect-item-hover-bg-color,
+  $ms-drop-hide-radio-selected-color:                       unset,
+  $ms-drop-hide-radio-selected-bgcolor:                     unset,
+  $ms-icon-color:                                           $slick-icon-color,
+  $ms-icon-size:                                            $slick-multiselect-icon-font-size,
+  $ms-chevron-icon-size:                                    #{$slick-multiselect-icon-font-size + 3px},
+  $ms-placeholder-color:                                    $slick-placeholder-color,
+  $ms-label-padding:                                        $slick-multiselect-item-padding,
+  $ms-ok-button-bg-color:                                   $slick-multiselect-ok-button-bg-color,
+  $ms-ok-button-bg-hover-color:                             $slick-multiselect-ok-button-bg-hover-color,
+  $ms-ok-button-text-color:                                 $slick-multiselect-ok-button-text-color,
+  $ms-ok-button-text-hover-color:                           $slick-multiselect-ok-button-text-hover-color,
+  $ms-option-highlight-bg-color:                            $slick-multiselect-option-highlight-bg-color,
+  $ms-search-icon-close-margin:                             $slick-multiselect-search-icon-close-margin,
+  $ms-select-all-label-hover-border:                        $slick-multiselect-select-all-label-hover-border,
+  $ms-select-all-label-padding:                             $slick-multiselect-select-all-padding,
+  $ms-select-all-line-height:                               $slick-multiselect-select-all-line-height,
+  $ms-select-all-text-color:                                $slick-multiselect-select-all-text-color
+);
 
 // Dark Mode
 // -----------
@@ -1135,9 +1133,10 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-pagination-page-input-bgcolor:                  #2b2f34;
   --slick-pagination-page-select-bg-color:                #1c1c1c;
   --slick-pagination-text-color:                          #cfcfcf;
+  --slick-row-selected-color:                             #474747;
   --slick-scrollbar-color:                                #828282 #424242;
   --slick-sorting-header-color:                           var(--slick-base-dark-text-color);
-  --slick-row-selected-color:                             #474747;
+  --slick-submenu-box-shadow:                             0 1px 3px 1px rgba(146, 152, 163, 0.4);
   --slick-container-border-top:                           var(--slick-base-dark-menu-border);
   --slick-container-border-bottom:                        var(--slick-base-dark-menu-border);
   --slick-canvas-bg-color:                                #141618;
@@ -1146,8 +1145,19 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-multiselect-option-highlight-bg-color:          var(--slick-base-dark-menu-item-hover-color);
   --slick-multiselect-select-all-label-hover-bg-color:    var(--slick-base-dark-menu-item-hover-color);
   --slick-multiselect-option-highlight-border:            var(--slick-base-dark-menu-item-border);
-  --slick-submenu-box-shadow:                             0 1px 3px 1px rgba(146, 152, 163, 0.4);
-
+  --slick-multiselect-choice-border:                      var(--slick-base-dark-menu-item-border);
+  --slick-multiselect-choice-bgcolor:                     var(--slick-base-dark-menu-bg-color);
+  --slick-multiselect-drop-background:                    var(--slick-base-dark-menu-bg-color);
+  --slick-multiselect-drop-color:                         #bbbbbb;
+  --slick-multiselect-drop-hide-radio-hover-bgcolor:      var(--slick-base-dark-menu-item-hover-color);
+  --slick-multiselect-dropdown-border:                    1px solid #5d5d5d;
+  --slick-multiselect-option-highlight-bg-color:          var(--slick-multiselect-select-all-label-hover-bg-color);
+  --slick-multiselect-ok-button-bg-color:                 #262626;
+  --slick-multiselect-ok-button-bg-hover-color:           #373c42;
+  --slick-multiselect-placeholder-color:                  #999;
+  --slick-multiselect-select-all-border-bottom:           1px solid #5d5d5d;
+  --slick-multiselect-select-all-label-hover-border:      var(--slick-base-dark-menu-item-border);
+  --slick-multiselect-select-all-text-color:              #fff;
   --ms-choice-border:                                     var(--slick-base-dark-menu-item-border);
   --ms-choice-bgcolor:                                    var(--slick-base-dark-menu-bg-color);
   --ms-drop-background:                                   var(--slick-base-dark-menu-bg-color);

@@ -1,7 +1,7 @@
 @use 'bulma/bulma';
 
 [data-theme=light], .theme-light {
-  --bulma-body-color: black;
+  --bulma-body-color: black !important;
   --bulma-body-background-color: white !important;
   .button {
     // --bulma-scheme-main-l: 99%;
@@ -9,7 +9,7 @@
   }
 }
 [data-theme=dark], .theme-dark {
-  --bulma-body-color: white;
+  --bulma-body-color: white !important;
   --bulma-body-background-color: #33393e !important;
   .button {
     border-color: #585858;

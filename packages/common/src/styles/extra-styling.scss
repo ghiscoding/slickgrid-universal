@@ -1,4 +1,4 @@
-@import './variables';
+@use './variables' as v;
 
 $slick-font-size-count: 50;
 $slick-margin-max-count: 50;
@@ -9,7 +9,7 @@ $slick-padding-max-count: 30;
 
 .fake-hyperlink {
   cursor: pointer;
-  color: $slick-link-color;
+  color: v.$slick-link-color;
   &:hover {
       text-decoration: underline;
   }
@@ -17,13 +17,13 @@ $slick-padding-max-count: 30;
 
 .button-style {
   cursor: pointer;
-  background-color: var(--slick-button-style-bg-color, $slick-button-style-bg-color);
-  border: 1px solid #{var(--slick-button-border-color, $slick-button-border-color)};
+  background-color: var(--slick-button-style-bg-color, v.$slick-button-style-bg-color);
+  border: 1px solid #{var(--slick-button-border-color, v.$slick-button-border-color)};
   border-radius: 2px;
   justify-content: center;
   text-align: center;
   &:hover {
-    border-color: var(--slick-button-hover-border-color, $slick-button-hover-border-color);
+    border-color: var(--slick-button-hover-border-color, v.$slick-button-hover-border-color);
   }
 }
 

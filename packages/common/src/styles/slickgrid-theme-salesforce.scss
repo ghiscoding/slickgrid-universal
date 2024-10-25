@@ -9,17 +9,21 @@
  * (sames as `slickgrid-theme-salesforce.lite.scss` but includes all external 3rd party lib styling)
  */
 
-@import './variables-theme-salesforce';
-@import './slick-without-bootstrap-min-styling';
-@import './slick-grid';
-@import './slick-editors';
-@import './slick-plugins';
-@import './slick-component';
-@import './slickgrid-examples';
-@import './slick-filters';
-@import './slick-autocomplete';
-@import './slickgrid-icons-svg-utils';
-@import './slickgrid-icons';
+@forward './variables-theme-salesforce';
+
+@use './colors';
+@use './extra-styling';
+@use './variables-theme-salesforce' as vts;
+@use './slick-without-bootstrap-min-styling';
+@use './slick-grid';
+@use './slick-editors';
+@use './slick-plugins';
+@use './slick-component';
+@use './slickgrid-examples';
+@use './slick-filters';
+@use './slick-autocomplete';
+@use './slickgrid-icons-svg-utils';
+@use './slickgrid-icons';
 
 $slick-editing-field-bg-color: #fff !default;
 $slick-editing-field-border: 1px solid #dddbda !default;
@@ -79,13 +83,9 @@ $slick-editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
 
     .slick-cell.unsaved-editable-field {
       .editing-field {
-        border: var(--slick-editor-modal-detail-container-border-modified, $slick-editor-modal-detail-container-border-modified);
+        border: var(--slick-editor-modal-detail-container-border-modified, vts.$slick-editor-modal-detail-container-border-modified);
         border-width: var(--slick-editor-grid-cell-border-width-modified, $slick-editor-grid-cell-border-width-modified);
       }
     }
   }
 }
-
-$link-color: var(--slick-primary-color, $slick-primary-color) !default;
-@import './colors';
-@import './extra-styling';

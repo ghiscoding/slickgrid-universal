@@ -1,4 +1,4 @@
-@import './variables';
+@use './variables' as v;
 
 // Bootstrap 5 box-shadow
 // $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
@@ -7,7 +7,7 @@
 .slick-editor-modal, .slick-large-editor-text {
   .btn {
     cursor: pointer;
-    font-family: var(--slick-font-family, $slick-font-family);
+    font-family: var(--slick-font-family, v.$slick-font-family);
     display: inline-block;
     margin-bottom: 0;
     text-align: center;
@@ -18,14 +18,14 @@
   }
 
   .btn-default {
-    color: var(--slick-cell-text-color, $slick-cell-text-color);
-    background-color: var(--slick-btn-default-bg-color, $slick-btn-default-bg-color);
-    border-color: var(--slick-btn-default-border-color, $slick-btn-default-border-color);
+    color: var(--slick-cell-text-color, v.$slick-cell-text-color);
+    background-color: var(--slick-btn-default-bg-color, v.$slick-btn-default-bg-color);
+    border-color: var(--slick-btn-default-border-color, v.$slick-btn-default-border-color);
   }
 
   .btn-primary {
     color: #fff;
-    background-color: var(--slick-button-primary-bg-color, $slick-button-primary-bg-color);
+    background-color: var(--slick-button-primary-bg-color, v.$slick-button-primary-bg-color);
   }
 
   .btn-xs,
@@ -44,18 +44,18 @@
 }
 
 .gridPane, .grid-pane, .slick-editor-modal {
-  font-family: var(--slick-font-family, $slick-font-family);
+  font-family: var(--slick-font-family, v.$slick-font-family);
 
   .form-control {
     display: block;
     width: 100%;
-    font-size: var(--slick-font-size-base, $slick-font-size-base);
+    font-size: var(--slick-font-size-base, v.$slick-font-size-base);
     line-height: 1.42857143;
     background-image: none;
     border-radius: 4px;
-    background-color: var(--slick-form-control-bg-color, $slick-form-control-bg-color);
-    border: var(--slick-form-control-border, $slick-form-control-border);
-    color: var(--slick-font-color, $slick-font-color);
+    background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
+    border: var(--slick-form-control-border, v.$slick-form-control-border);
+    color: var(--slick-font-color, v.$slick-font-color);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   }
@@ -79,10 +79,10 @@
     font-size: 14px;
     font-weight: 400;
     line-height: 1;
-    border: var(--slick-input-group-addon-border, $slick-input-group-addon-border);
-    color: var(--slick-input-group-addon-color, $slick-input-group-addon-color);
+    border: var(--slick-input-group-addon-border, v.$slick-input-group-addon-border);
+    color: var(--slick-input-group-addon-color, v.$slick-input-group-addon-color);
     text-align: center;
-    background-color: var(--slick-input-group-addon-bg-color, $slick-input-group-addon-bg-color);
+    background-color: var(--slick-input-group-addon-bg-color, v.$slick-input-group-addon-bg-color);
     border-radius: 4px;
   }
   .input-group-addon, .input-group-btn {
@@ -140,8 +140,8 @@
 
   .form-control:focus {
     outline: 0;
-    border-color: var(--slick-form-control-focus-border-color, $slick-form-control-focus-border-color);
-    box-shadow: var(--slick-form-control-focus-box-shadow, $slick-form-control-focus-box-shadow);
+    border-color: var(--slick-form-control-focus-border-color, v.$slick-form-control-focus-border-color);
+    box-shadow: var(--slick-form-control-focus-box-shadow, v.$slick-form-control-focus-box-shadow);
   }
 
   .slick-pagination {

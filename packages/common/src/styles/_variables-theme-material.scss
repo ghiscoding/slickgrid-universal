@@ -1,10 +1,12 @@
-@use 'sass:color';
-
 /**
  * This is a bare version of "slickgrid-theme-material.scss",
  * A few files were removed and aren't included in this styling theme (while they are in original theme)
  * - (colors, extra-styling, slickgrid-icons, slickgrid-icons-svg-utils, slick-without-bootstrap-min-styling)
  */
+
+@use 'sass:color';
+
+@forward './variables';
 
 $slick-primary-color:                                       #009530 !default;
 $slick-highlight-color:                                     #48c774 !default;
