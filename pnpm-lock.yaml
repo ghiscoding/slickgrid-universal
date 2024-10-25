@@ -174,8 +174,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       multiple-select-vanilla:
-        specifier: ^3.4.1
-        version: 3.4.1
+        specifier: ^3.4.2
+        version: 3.4.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -238,8 +238,8 @@ importers:
         specifier: ^2.0.3
         version: 2.0.3
       multiple-select-vanilla:
-        specifier: ^3.4.1
-        version: 3.4.1
+        specifier: ^3.4.2
+        version: 3.4.2
       sortablejs:
         specifier: ^1.15.3
         version: 1.15.3
@@ -3228,8 +3228,8 @@ packages:
     resolution: {integrity: sha512-SYU3HBAdF4psHEL/+jXDKHO95/m5P2RvboHT2Y0WtTttvJLP4H/2WS9WlQPFvF6C8d6SpLw8vjCnQOnVIVOSJQ==}
     engines: {node: '>=18'}
 
-  multiple-select-vanilla@3.4.1:
-    resolution: {integrity: sha512-X2f7ZYsHIjjuiS635RY0puGwrX44ScdcxZ8Eg+xE/lCgS4cBaeqOsNvZbxLFJozH3pGtyCtCWHT7UyKH/rWhfw==}
+  multiple-select-vanilla@3.4.2:
+    resolution: {integrity: sha512-tBu370755T2mnS9EvtpDnPQiTt0KeG14VVIUSnul0ykMstHDBC+V5jEZ0zKQrY1HBtdotoHeiMrc5nV657Ywhg==}
 
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
@@ -7851,7 +7851,7 @@ snapshots:
       array-union: 3.0.1
       minimatch: 9.0.5
 
-  multiple-select-vanilla@3.4.1:
+  multiple-select-vanilla@3.4.2:
     dependencies:
       '@types/trusted-types': 2.0.7
 
