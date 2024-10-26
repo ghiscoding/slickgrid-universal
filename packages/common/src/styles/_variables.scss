@@ -42,7 +42,8 @@ $slick-focus-color:                                         rgb(115, 179, 229) !
 $slick-date-picker-bg-color:                                #fff !default;
 
 $slick-form-control-bg-color:                               #fff !default;
-$slick-form-control-border:                                 1px solid #ccc !default;
+$slick-form-control-border-color:                           #ccc !default;
+$slick-form-control-border:                                 1px solid #{$slick-form-control-border-color} !default;
 $slick-form-control-focus-border-color:                     color.adjust($slick-primary-color, $lightness: 10%) !default;
 $slick-form-control-focus-box-shadow:                       $input-focus-box-shadow !default;
 
@@ -745,7 +746,7 @@ $slick-slider-filter-number-padding:                        4px 8px !default;
 $slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
 
 /* Multiple-Select Filter */
-$slick-multiselect-input-filter-border:                     1px solid #ccc !default;
+$slick-multiselect-input-filter-border:                     $slick-form-control-border !default;
 $slick-multiselect-input-filter-font-family:                "Helvetica Neue", Helvetica, Arial !default;
 $slick-multiselect-input-filter-font-size:                  12px !default;
 $slick-multiselect-input-focus-border-color:                $slick-input-focus-border-color !default;
@@ -800,7 +801,7 @@ $slick-pagination-button-border-color:                      #b3b3b3 !default;
 $slick-pagination-button-border-disabled-color:             #dedede !default;
 $slick-pagination-button-border-radius:                     4px !default;
 $slick-pagination-button-height:                            32px !default;
-$slick-pagination-button-hover-color:                       #E6E6E6 !default;
+$slick-pagination-button-hover-color:                       #f6f6f6 !default;
 $slick-pagination-button-padding:                           5px 8px !default;
 $slick-pagination-button-border:                            1px solid #{$slick-pagination-button-border-color} !default;
 $slick-pagination-border-top:                               0 none !default;
