@@ -18,8 +18,7 @@ $primary-color:                                             #0d6efd !default;
 $slick-highlight-color:                                     #fcfcfc !default;
 $slick-primary-color:                                       $primary-color !default;
 // Bootstrap 5 box-shadow
-$input-focus-box-shadow:                                    inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(color.adjust($slick-primary-color, $lightness: 3%), .3) !default;
-// $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
+$input-focus-box-shadow:                                    0 0 0 0.25rem rgba($primary-color, 0.25) !default;
 
 $slick-border-color:                                        #dddddd !default;
 $slick-font-size-base-value:                                14 !default;
@@ -55,7 +54,7 @@ $slick-input-group-btn-hover-bg-color:                      #eee !default;
 $slick-input-group-btn-border:                              1px solid #ccc !default;
 $slick-input-group-append-bg-color:                         #eee !default;
 $slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 10%) !default;
-$slick-input-focus-box-shadow:                              $input-focus-box-shadow !default;
+$slick-input-focus-box-shadow:                              $slick-form-control-focus-box-shadow !default;
 
 /* Slickgrid container, including headers but excluding pagination */
 $slick-container-border-top:                                0 none !default;

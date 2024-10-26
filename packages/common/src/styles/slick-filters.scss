@@ -11,10 +11,13 @@
   .search-filter.filled .input-group-addon.slider-value,
   .search-filter.filled .input-group-addon.slider-range-value,
   .search-filter.filled .input-group-addon select {
+    border: var(--slick-filled-filter-border, vts.$slick-filled-filter-border);
     color: var(--slick-filled-filter-color, vts.$slick-filled-filter-color);
     font-weight: var(--slick-filled-filter-font-weight, vts.$slick-filled-filter-font-weight);
-    border: var(--slick-filled-filter-border, vts.$slick-filled-filter-border);
     box-shadow: var(--slick-filled-filter-box-shadow, vts.$slick-filled-filter-box-shadow);
+    &:focus {
+      box-shadow: var(--slick-filled-filter-focus-box-shadow, vts.$slick-filled-filter-focus-box-shadow);
+    }
     &.input-group-prepend {
       border-right: 0;
     }
@@ -26,8 +29,11 @@
     border-right: 0;
   }
   .search-filter.filled .ms-choice {
-    box-shadow: var(--slick-filled-filter-box-shadow, vts.$slick-filled-filter-box-shadow);
     border: var(--slick-filled-filter-border, vts.$slick-filled-filter-border);
+    box-shadow: var(--slick-filled-filter-box-shadow, vts.$slick-filled-filter-box-shadow);
+    &:focus {
+      box-shadow: var(--slick-filled-filter-focus-box-shadow, vts.$slick-filled-filter-focus-box-shadow);
+    }
     span {
       display: inline-flex;
       align-items: center;
