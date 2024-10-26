@@ -57,7 +57,7 @@
   "engines": {
     "node": "^18.0.0 || >=20.0.0"
   },
-  "packageManager": "pnpm@8.15.9",
+  "packageManager": "pnpm@9.12.2",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
     "@commitlint/cli": "^19.5.0",
@@ -86,7 +86,7 @@
     "jsdom": "^25.0.1",
     "jsdom-global": "^3.0.2",
     "npm-run-all2": "^7.0.1",
-    "pnpm": "^8.15.9",
+    "pnpm": "^9.12.2",
     "rimraf": "^5.0.10",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
