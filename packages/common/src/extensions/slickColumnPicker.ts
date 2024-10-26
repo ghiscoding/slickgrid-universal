@@ -44,7 +44,7 @@ export class SlickColumnPicker {
     hideForceFitButton: false,
     hideSyncResizeButton: false,
     forceFitTitle: 'Force fit columns',
-    minHeight: 200,
+    minHeight: 150,
     syncResizeTitle: 'Synchronous resize',
     headerColumnValueExtractor: (columnDef: Column) => {
       return getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML');
