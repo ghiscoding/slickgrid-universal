@@ -38,7 +38,6 @@ $slick-button-hover-border-color:                           color.adjust($slick-
 $slick-button-style-bg-color:                               #fff !default;
 $slick-filter-placeholder-font-family:                      'Segoe UI Symbol' !default;
 $slick-focus-color:                                         rgb(115, 179, 229) !default;
-$slick-date-picker-bg-color:                                #fff !default;
 
 $slick-form-control-bg-color:                               #fff !default;
 $slick-form-control-border-color:                           #ccc !default;
@@ -55,6 +54,7 @@ $slick-input-group-btn-border:                              1px solid #ccc !defa
 $slick-input-group-append-bg-color:                         #eee !default;
 $slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 10%) !default;
 $slick-input-focus-box-shadow:                              $slick-form-control-focus-box-shadow !default;
+$slick-date-picker-bg-color:                                $slick-form-control-bg-color !default;
 
 /* Slickgrid container, including headers but excluding pagination */
 $slick-container-border-top:                                0 none !default;
@@ -927,6 +927,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
 @use 'multiple-select-vanilla/dist/styles/sass/multiple-select' with (
   $ms-primary-color:                                        $slick-primary-color,
   $ms-drop-color:                                           $slick-text-color,
+  $ms-choice-bgcolor:                                       $slick-form-control-bg-color,
   $ms-checkbox-color:                                       $slick-multiselect-icon-checked-color,
   $ms-choice-border:                                        $slick-multiselect-input-filter-border,
   $ms-drop-background:                                      $slick-multiselect-dropdown-bg-color,
