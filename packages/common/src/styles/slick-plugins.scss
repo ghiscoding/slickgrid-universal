@@ -650,114 +650,116 @@ li.hidden {
 // ----------------------------------------------
 // Multi-Select Filter
 // ----------------------------------------------
+
+.ms-choice {
+  font-size: var(--slick-header-font-size, v.$slick-header-font-size);
+
+  span {
+    font-size: var(--slick-multiselect-input-filter-font-size, v.$slick-multiselect-input-filter-font-size);
+    font-family: var(--slick-multiselect-input-filter-font-family, v.$slick-multiselect-input-filter-font-family);
+  }
+  .placeholder {
+    background-color: var(--slick-multiselect-placeholder-bg-color, v.$slick-multiselect-placeholder-bg-color);
+    color: var(--slick-multiselect-placeholder-color, v.$slick-multiselect-placeholder-color) !important;
+    font-family: var(--slick-multiselect-placeholder-font-family, v.$slick-multiselect-placeholder-font-family);
+    font-size: var(--slick-header-font-size, v.$slick-header-font-size);
+  }
+}
+.ms-filter {
+  &.search-filter {
+    width: 100% !important;
+  }
+  .placeholder {
+    cursor: pointer;
+  }
+}
+.ms-parent-open button {
+  outline: 0;
+  border-color: var(--slick-multiselect-input-focus-border-color, v.$slick-multiselect-input-focus-border-color);
+  box-shadow: var(--slick-multiselect-input-focus-box-shadow, v.$slick-multiselect-input-focus-box-shadow);
+}
+.ms-drop {
+  max-width: var(--slick-multiselect-dropdown-max-width, v.$slick-multiselect-dropdown-max-width);
+  border: var(--slick-multiselect-dropdown-border, v.$slick-multiselect-dropdown-border);
+  z-index: var(--slick-multiselect-dropdown-z-index, v.$slick-multiselect-dropdown-z-index);
+
+  li {
+    margin: 0;
+    height: var(--slick-multiselect-item-height, v.$slick-multiselect-item-height);
+    line-height: var(--slick-multiselect-item-line-height, v.$slick-multiselect-item-line-height);
+    padding: var(--slick-multiselect-item-padding, v.$slick-multiselect-item-padding);
+    border: var(--slick-multiselect-item-border, v.$slick-multiselect-item-border);
+    width: 100%;
+    &:hover {
+      border: var(--slick-multiselect-item-hover-border, v.$slick-multiselect-item-hover-border);
+      background-color: var(--slick-multiselect-checkbox-hover-bg-color, v.$slick-multiselect-checkbox-hover-bg-color);
+    }
+    &.highlighted {
+      border: var(--slick-multiselect-option-highlight-border, v.$slick-multiselect-option-highlight-border);
+      background-color: var(--slick-multiselect-option-highlight-bg-color, v.$slick-multiselect-option-highlight-bg-color);
+    }
+  }
+
+  label {
+    span {
+      cursor: pointer;
+      margin-left: var(--slick-multiselect-checkbox-margin-left, v.$slick-multiselect-checkbox-margin-left);
+    }
+  }
+  .ms-select-all {
+    display: flex;
+    align-items: center;
+    border-bottom: var(--slick-multiselect-select-all-border-bottom, v.$slick-multiselect-select-all-border-bottom);
+    padding: var(--slick-multiselect-select-all-padding, v.$slick-multiselect-select-all-padding);
+    line-height: var(--slick-multiselect-select-all-line-height, v.$slick-multiselect-select-all-line-height);
+    &:hover {
+      background-color: var(--slick-multiselect-select-all-text-hover-color, v.$slick-multiselect-select-all-text-hover-color);
+    }
+    &.highlighted {
+      background-color: transparent;
+    }
+    &.highlighted label {
+      border: var(--slick-multiselect-option-highlight-border, v.$slick-multiselect-option-highlight-border);
+      background-color: var(--slick-multiselect-option-highlight-bg-color, v.$slick-multiselect-option-highlight-bg-color);
+    }
+
+    label {
+      display: inline-flex;
+      font-weight: normal;
+      padding: var(--slick-multiselect-select-all-label-padding, v.$slick-multiselect-select-all-label-padding);
+      border: var(--slick-multiselect-select-all-label-border, v.$slick-multiselect-select-all-label-border);
+      color: var(--slick-multiselect-select-all-text-color, v.$slick-multiselect-select-all-text-color);
+      &:hover {
+        cursor: pointer;
+        border: var(--slick-multiselect-select-all-label-hover-border, v.$slick-multiselect-select-all-label-hover-border);
+        background-color: var(--slick-multiselect-select-all-label-hover-bg-color, v.$slick-multiselect-select-all-label-hover-bg-color);
+      }
+    }
+  }
+  .ms-ok-button {
+    cursor: pointer;
+    display: block;
+    padding: 0;
+    width: var(--slick-multiselect-ok-button-width, v.$slick-multiselect-ok-button-width);
+    height: var(--slick-multiselect-ok-button-height, v.$slick-multiselect-ok-button-height);
+    border-color: var(--slick-multiselect-ok-button-border-color, v.$slick-multiselect-ok-button-border-color);
+    border-radius: var(--slick-multiselect-ok-button-border-radius, v.$slick-multiselect-ok-button-border-radius);
+    border-width: var(--slick-multiselect-ok-button-border-width, v.$slick-multiselect-ok-button-border-width);
+    text-align: var(--slick-multiselect-ok-button-text-align, v.$slick-multiselect-ok-button-text-align);
+    color: var(--slick-multiselect-ok-button-text-color, v.$slick-multiselect-ok-button-text-color);
+    font-weight: var(--slick-multiselect-ok-button-font-weight, v.$slick-multiselect-ok-button-font-weight);
+    background-color: var(--slick-multiselect-ok-button-bg-color, v.$slick-multiselect-ok-button-bg-color);
+    &:hover {
+      background-color: var(--slick-multiselect-ok-button-bg-hover-color, v.$slick-multiselect-ok-button-bg-hover-color);
+      color: var(--slick-multiselect-ok-button-text-hover-color, v.$slick-multiselect-ok-button-text-hover-color);
+    }
+  }
+}
+
 .slickgrid-container {
   .search-filter {
     :focus {
       outline-color: var(--slick-focus-color, v.$slick-focus-color);
-    }
-  }
-  .ms-choice {
-    font-size: var(--slick-header-font-size, v.$slick-header-font-size);
-
-    span {
-      font-size: var(--slick-multiselect-input-filter-font-size, v.$slick-multiselect-input-filter-font-size);
-      font-family: var(--slick-multiselect-input-filter-font-family, v.$slick-multiselect-input-filter-font-family);
-    }
-    .placeholder {
-      background-color: var(--slick-multiselect-placeholder-bg-color, v.$slick-multiselect-placeholder-bg-color);
-      color: var(--slick-multiselect-placeholder-color, v.$slick-multiselect-placeholder-color) !important;
-      font-family: var(--slick-multiselect-placeholder-font-family, v.$slick-multiselect-placeholder-font-family);
-      font-size: var(--slick-header-font-size, v.$slick-header-font-size);
-    }
-  }
-  .ms-filter {
-    &.search-filter {
-      width: 100% !important;
-    }
-    .placeholder {
-      cursor: pointer;
-    }
-  }
-  .ms-parent-open button {
-    outline: 0;
-    border-color: var(--slick-multiselect-input-focus-border-color, v.$slick-multiselect-input-focus-border-color);
-    box-shadow: var(--slick-multiselect-input-focus-box-shadow, v.$slick-multiselect-input-focus-box-shadow);
-  }
-  .ms-drop {
-    max-width: var(--slick-multiselect-dropdown-max-width, v.$slick-multiselect-dropdown-max-width);
-    border: var(--slick-multiselect-dropdown-border, v.$slick-multiselect-dropdown-border);
-    z-index: var(--slick-multiselect-dropdown-z-index, v.$slick-multiselect-dropdown-z-index);
-
-    li {
-      margin: 0;
-      height: var(--slick-multiselect-item-height, v.$slick-multiselect-item-height);
-      line-height: var(--slick-multiselect-item-line-height, v.$slick-multiselect-item-line-height);
-      padding: var(--slick-multiselect-item-padding, v.$slick-multiselect-item-padding);
-      border: var(--slick-multiselect-item-border, v.$slick-multiselect-item-border);
-      width: 100%;
-      &:hover {
-        border: var(--slick-multiselect-item-hover-border, v.$slick-multiselect-item-hover-border);
-        background-color: var(--slick-multiselect-checkbox-hover-bg-color, v.$slick-multiselect-checkbox-hover-bg-color);
-      }
-      &.highlighted {
-        border: var(--slick-multiselect-option-highlight-border, v.$slick-multiselect-option-highlight-border);
-        background-color: var(--slick-multiselect-option-highlight-bg-color, v.$slick-multiselect-option-highlight-bg-color);
-      }
-    }
-
-    label {
-      span {
-        cursor: pointer;
-        margin-left: var(--slick-multiselect-checkbox-margin-left, v.$slick-multiselect-checkbox-margin-left);
-      }
-    }
-    .ms-select-all {
-      display: flex;
-      align-items: center;
-      border-bottom: var(--slick-multiselect-select-all-border-bottom, v.$slick-multiselect-select-all-border-bottom);
-      padding: var(--slick-multiselect-select-all-padding, v.$slick-multiselect-select-all-padding);
-      line-height: var(--slick-multiselect-select-all-line-height, v.$slick-multiselect-select-all-line-height);
-      &:hover {
-        background-color: var(--slick-multiselect-select-all-text-hover-color, v.$slick-multiselect-select-all-text-hover-color);
-      }
-      &.highlighted {
-        background-color: transparent;
-      }
-      &.highlighted label {
-        border: var(--slick-multiselect-option-highlight-border, v.$slick-multiselect-option-highlight-border);
-        background-color: var(--slick-multiselect-option-highlight-bg-color, v.$slick-multiselect-option-highlight-bg-color);
-      }
-
-      label {
-        display: inline-flex;
-        font-weight: normal;
-        padding: var(--slick-multiselect-select-all-label-padding, v.$slick-multiselect-select-all-label-padding);
-        border: var(--slick-multiselect-select-all-label-border, v.$slick-multiselect-select-all-label-border);
-        color: var(--slick-multiselect-select-all-text-color, v.$slick-multiselect-select-all-text-color);
-        &:hover {
-          cursor: pointer;
-          border: var(--slick-multiselect-select-all-label-hover-border, v.$slick-multiselect-select-all-label-hover-border);
-          background-color: var(--slick-multiselect-select-all-label-hover-bg-color, v.$slick-multiselect-select-all-label-hover-bg-color);
-        }
-      }
-    }
-    .ms-ok-button {
-      cursor: pointer;
-      display: block;
-      padding: 0;
-      width: var(--slick-multiselect-ok-button-width, v.$slick-multiselect-ok-button-width);
-      height: var(--slick-multiselect-ok-button-height, v.$slick-multiselect-ok-button-height);
-      border-color: var(--slick-multiselect-ok-button-border-color, v.$slick-multiselect-ok-button-border-color);
-      border-radius: var(--slick-multiselect-ok-button-border-radius, v.$slick-multiselect-ok-button-border-radius);
-      border-width: var(--slick-multiselect-ok-button-border-width, v.$slick-multiselect-ok-button-border-width);
-      text-align: var(--slick-multiselect-ok-button-text-align, v.$slick-multiselect-ok-button-text-align);
-      color: var(--slick-multiselect-ok-button-text-color, v.$slick-multiselect-ok-button-text-color);
-      font-weight: var(--slick-multiselect-ok-button-font-weight, v.$slick-multiselect-ok-button-font-weight);
-      background-color: var(--slick-multiselect-ok-button-bg-color, v.$slick-multiselect-ok-button-bg-color);
-      &:hover {
-        background-color: var(--slick-multiselect-ok-button-bg-hover-color, v.$slick-multiselect-ok-button-bg-hover-color);
-        color: var(--slick-multiselect-ok-button-text-hover-color, v.$slick-multiselect-ok-button-text-hover-color);
-      }
     }
   }
 
@@ -853,11 +855,6 @@ li.hidden {
   // Date Picker Filter
   // ----------------------------------------------
 
-  .vanilla-calendar {
-    padding: 0.9rem;
-    z-index: 9999;
-  }
-
   .search-filter.form-group {
     .input-group.date-picker  input.form-control {
       border-bottom-left-radius: 0px;
@@ -901,6 +898,16 @@ li.hidden {
     }
   }
 }
+
+// ----------------------------------------------
+// Date Picker Filter
+// ----------------------------------------------
+
+.vanilla-calendar {
+  padding: 0.9rem;
+  z-index: 9999;
+}
+
 
 // ----------------------------------------------
 // Draggable Grouping Plugin
