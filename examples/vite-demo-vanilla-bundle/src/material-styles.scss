@@ -30,7 +30,7 @@
     --slick-slider-editor-focus-border-color: #00c840;
     --slick-slider-filter-focus-border-color: #00c840;
     --input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
-    --slick-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
+    --slick-input-focus-box-shadow: #{0 0 6px rgba(102, 187, 106, 0.3)};
     --slick-multiselect-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
     --slick-header-filter-row-border-bottom: 1px solid #d0d0d0;
     --slick-container-border-right: 1px solid #ccc;
@@ -139,7 +139,10 @@
       --slick-base-dark-menu-bg-color: #212121;
       --slick-primary-color: #66bb6a;
       --slick-button-primary-bg-color:#66bb6a;
-      --slick-cell-active-box-shadow: inset 0 0 0 1px #aaaaaa;
+      --slick-filled-filter-border: 1px solid #438446;
+      --slick-form-control-focus-border-color: #438446;
+      --slick-form-control-focus-box-shadow: #{0 0 0 2px rgba(#66bb6a, 0.25)};
+      --slick-cell-active-box-shadow: #{inset 0 0 0 1px #aaaaaa};
       --slick-cell-box-shadow: none;
       --slick-checkbox-icon-color: #66bb6a;
       --slick-checkbox-icon-height: 22px;
@@ -154,7 +157,10 @@
       --slick-container-border-left: 1px solid #505050;
       --slick-container-border-bottom: 1px solid #505050;
       --slick-pane-top-border-top: 1px solid #505050;
+      --slick-input-focus-box-shadow: #{0 0 0 2px rgba(#66bb6a, 0.25)};
       --slick-filled-filter-color: #66bb6a;
+      --slick-filled-filter-box-shadow: #{inset 0 0 0 1px #47a04b};
+      --slick-filled-filter-focus-box-shadow: #{inset 0 0 0 1px #47a04b, 0 0 0 1px rgba(#66bb6a, 0.25)};
       --slick-highlight-color: #49a54e;
       --slick-icon-sort-color: #66bb6a;
       --slick-grid-menu-icon-btn-color: #bbb;
@@ -174,6 +180,8 @@
       --slick-multiselect-ok-button-text-hover-color: #{color.adjust(#66bb6a, $lightness: 5%)};
       --ms-checkbox-color: #66bb6a;
       --ms-checkbox-hover-color: #{color.adjust(#49a54e, $lightness: 13%)};
+      --ms-choice-focus-border-color: #66bb6a;
+      --ms-choice-focus-box-shadow: 0 0 0 2px rgba(#66bb6a,.55);
       --ms-ok-button-text-color: #66bb6a;
       --ms-ok-button-text-hover-color: #{color.adjust(#66bb6a, $lightness: 5%)};
 

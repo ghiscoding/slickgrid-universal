@@ -650,11 +650,7 @@ li.hidden {
 // ----------------------------------------------
 // Multi-Select Filter
 // ----------------------------------------------
-.search-filter {
-  :focus {
-    outline-color: var(--slick-focus-color, v.$slick-focus-color);
-  }
-}
+
 .ms-choice {
   font-size: var(--slick-header-font-size, v.$slick-header-font-size);
 
@@ -760,75 +756,91 @@ li.hidden {
   }
 }
 
-// ----------------------------------------------
-// Compound Filters
-// ----------------------------------------------
-.search-filter .operator.input-group-addon {
-  margin: 0;
-  padding: 0;
-  min-width: 25px;
-  border: none;
-  &:focus {
-    z-index: 3;
+.slickgrid-container {
+  .search-filter {
+    :focus {
+      outline-color: var(--slick-focus-color, v.$slick-focus-color);
+    }
   }
 
-  .form-control {
-    border-radius: var(--slick-compound-filter-operator-border-radius, v.$slick-compound-filter-operator-border-radius);
-    // border-right: none;
-    padding: var(--slick-compound-filter-text-padding, v.$slick-compound-filter-text-padding) !important;
-    font-size: var(--slick-compound-filter-text-font-size, v.$slick-compound-filter-text-font-size);
-    color: var(--slick-compound-filter-text-color, v.$slick-compound-filter-text-color);
-    font-weight: var(--slick-compound-filter-text-weight, v.$slick-compound-filter-text-weight);
-    background-color: var(--slick-compound-filter-bgcolor, v.$slick-compound-filter-bgcolor);
+  // ----------------------------------------------
+  // Compound Filters
+  // ----------------------------------------------
+  .search-filter .operator.input-group-addon {
+    margin: 0;
+    padding: 0;
+    min-width: 25px;
+    border: none;
     &:focus {
       z-index: 3;
     }
-  }
 
-  select {
-    font-family: var(--slick-compound-filter-operator-select-font-family, v.$slick-compound-filter-operator-select-font-family);
-    font-size: var(--slick-compound-filter-operator-select-font-size, v.$slick-compound-filter-operator-select-font-size);
-    border: var(--slick-compound-filter-operator-select-border, v.$slick-compound-filter-operator-select-border);
-    width: var(--slick-compound-filter-operator-select-width, v.$slick-compound-filter-operator-select-width);
-
-    &.form-control {
-      cursor: pointer;
-      appearance: none;
-      &:-ms-expand {
-        display: none;
+    .form-control {
+      border-radius: var(--slick-compound-filter-operator-border-radius, v.$slick-compound-filter-operator-border-radius);
+      // border-right: none;
+      padding: var(--slick-compound-filter-text-padding, v.$slick-compound-filter-text-padding) !important;
+      font-size: var(--slick-compound-filter-text-font-size, v.$slick-compound-filter-text-font-size);
+      color: var(--slick-compound-filter-text-color, v.$slick-compound-filter-text-color);
+      font-weight: var(--slick-compound-filter-text-weight, v.$slick-compound-filter-text-weight);
+      background-color: var(--slick-compound-filter-bgcolor, v.$slick-compound-filter-bgcolor);
+      &:focus {
+        z-index: 3;
       }
-      .empty {
-        color: #c0c0c0;
+    }
+
+    select {
+      font-family: var(--slick-compound-filter-operator-select-font-family, v.$slick-compound-filter-operator-select-font-family);
+      font-size: var(--slick-compound-filter-operator-select-font-size, v.$slick-compound-filter-operator-select-font-size);
+      border: var(--slick-compound-filter-operator-select-border, v.$slick-compound-filter-operator-select-border);
+      width: var(--slick-compound-filter-operator-select-width, v.$slick-compound-filter-operator-select-width);
+
+      &.form-control {
+        cursor: pointer;
+        appearance: none;
+        &:-ms-expand {
+          display: none;
+        }
+        .empty {
+          color: #c0c0c0;
+        }
       }
     }
   }
-}
-.search-filter .operator-char3.input-group-addon {
-  min-width: 30px;
-}
+  .search-filter .operator-char3.input-group-addon {
+    min-width: 30px;
+  }
 
-input.search-filter {
-  font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
-}
-.search-filter {
-  input {
+  input.search-filter {
     font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
-    &.compound-input {
-      border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius) !important;
-      border-left: none;
+  }
+  .search-filter {
+    input {
+      font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
+      &.compound-input {
+        border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius) !important;
+        border-left: none;
+      }
+      &::placeholder {
+        color: var(--slick-placeholder-color, v.$slick-placeholder-color);
+      }
     }
-    &::placeholder {
-      color: var(--slick-placeholder-color, v.$slick-placeholder-color);
+    input.compound-slider {
+      border-left: none !important;
     }
   }
-  input.compound-slider {
-    border-left: none !important;
-  }
-}
-.slickgrid-container {
+
   .slick-headerrow {
     .slick-headerrow-columns {
       .slick-headerrow-column {
+        input.form-control.search-filter {
+          background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
+        }
+        .form-group.search-filter {
+          input, button, select {
+            background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
+          }
+        }
+
         .input-group-prepend + .date-picker {
           input.compound-input {
             border-top-left-radius: 0;
@@ -836,6 +848,53 @@ input.search-filter {
           }
         }
       }
+    }
+  }
+
+  // ----------------------------------------------
+  // Date Picker Filter
+  // ----------------------------------------------
+
+  .search-filter.form-group {
+    .input-group.date-picker  input.form-control {
+      border-bottom-left-radius: 0px;
+      border-top-left-radius: 0px;
+    }
+  }
+  .search-filter .date-picker {
+    input.form-control {
+      border-left: none;
+      &::placeholder {
+        color: var(--slick-placeholder-color, v.$slick-placeholder-color);
+      }
+    }
+  }
+  .search-filter .date-picker {
+    flex: 1;
+    cursor: pointer;
+
+    .date-picker input.form-control {
+      background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+      font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
+      font-size: var(--slick-font-size-base, v.$slick-font-size-base);
+      border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius);
+      width: 100%;
+      &[readonly] {
+        background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+      }
+    }
+    .form-control[readonly] {
+      cursor: pointer;
+      background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+    }
+  }
+  .date-picker input.form-control {
+    cursor: pointer;
+    font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
+    font-size: var(--slick-font-size-base, v.$slick-font-size-base);
+    border-radius: var(--slick-date-range-filter-border-radius, v.$slick-date-range-filter-border-radius);
+    &[readonly] {
+      background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
     }
   }
 }
@@ -849,48 +908,6 @@ input.search-filter {
   z-index: 9999;
 }
 
-.search-filter.form-group {
-  .input-group.date-picker  input.form-control {
-    border-bottom-left-radius: 0px;
-    border-top-left-radius: 0px;
-  }
-}
-.search-filter .date-picker {
-  input.form-control {
-    border-left: none;
-    &::placeholder {
-      color: var(--slick-placeholder-color, v.$slick-placeholder-color);
-    }
-  }
-}
-.search-filter .date-picker {
-  flex: 1;
-  cursor: pointer;
-
-  .date-picker input.form-control {
-    background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
-    font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
-    font-size: var(--slick-font-size-base, v.$slick-font-size-base);
-    border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius);
-    width: 100%;
-    &[readonly] {
-      background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
-    }
-  }
-  .form-control[readonly] {
-    cursor: pointer;
-    background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
-  }
-}
-.date-picker input.form-control {
-  cursor: pointer;
-  font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
-  font-size: var(--slick-font-size-base, v.$slick-font-size-base);
-  border-radius: var(--slick-date-range-filter-border-radius, v.$slick-date-range-filter-border-radius);
-  &[readonly] {
-    background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
-  }
-}
 
 // ----------------------------------------------
 // Draggable Grouping Plugin
