@@ -101,6 +101,11 @@ handleOnHeaderMenuCommand(e) {
 
 #### Pagination Service
   - `onBeforePaginationChange`
+  - `onPaginationChanged`
+  - `onPaginationRefreshed`
+  - `onPaginationPresetsInitialized`
+  - `onPaginationVisibilityChanged`
+  - `onPaginationSetCursorBased` (for GraphQL only)
 
 #### Resizer Service
   - `onGridBeforeResize`
