@@ -18,8 +18,7 @@ $primary-color:                                             #0d6efd !default;
 $slick-highlight-color:                                     #fcfcfc !default;
 $slick-primary-color:                                       $primary-color !default;
 // Bootstrap 5 box-shadow
-$input-focus-box-shadow:                                    inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(color.adjust($slick-primary-color, $lightness: 3%), .3) !default;
-// $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
+$input-focus-box-shadow:                                    0 0 0 0.25rem rgba($primary-color, 0.25) !default;
 
 $slick-border-color:                                        #dddddd !default;
 $slick-font-size-base-value:                                14 !default;
@@ -39,10 +38,10 @@ $slick-button-hover-border-color:                           color.adjust($slick-
 $slick-button-style-bg-color:                               #fff !default;
 $slick-filter-placeholder-font-family:                      'Segoe UI Symbol' !default;
 $slick-focus-color:                                         rgb(115, 179, 229) !default;
-$slick-date-picker-bg-color:                                #fff !default;
 
 $slick-form-control-bg-color:                               #fff !default;
-$slick-form-control-border:                                 1px solid #ccc !default;
+$slick-form-control-border-color:                           #ccc !default;
+$slick-form-control-border:                                 1px solid #{$slick-form-control-border-color} !default;
 $slick-form-control-focus-border-color:                     color.adjust($slick-primary-color, $lightness: 10%) !default;
 $slick-form-control-focus-box-shadow:                       $input-focus-box-shadow !default;
 
@@ -54,7 +53,8 @@ $slick-input-group-btn-hover-bg-color:                      #eee !default;
 $slick-input-group-btn-border:                              1px solid #ccc !default;
 $slick-input-group-append-bg-color:                         #eee !default;
 $slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 10%) !default;
-$slick-input-focus-box-shadow:                              $input-focus-box-shadow !default;
+$slick-input-focus-box-shadow:                              $slick-form-control-focus-box-shadow !default;
+$slick-date-picker-bg-color:                                $slick-form-control-bg-color !default;
 
 /* Slickgrid container, including headers but excluding pagination */
 $slick-container-border-top:                                0 none !default;
@@ -745,7 +745,7 @@ $slick-slider-filter-number-padding:                        4px 8px !default;
 $slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
 
 /* Multiple-Select Filter */
-$slick-multiselect-input-filter-border:                     1px solid #ccc !default;
+$slick-multiselect-input-filter-border:                     $slick-form-control-border !default;
 $slick-multiselect-input-filter-font-family:                "Helvetica Neue", Helvetica, Arial !default;
 $slick-multiselect-input-filter-font-size:                  12px !default;
 $slick-multiselect-input-focus-border-color:                $slick-input-focus-border-color !default;
@@ -800,7 +800,7 @@ $slick-pagination-button-border-color:                      #b3b3b3 !default;
 $slick-pagination-button-border-disabled-color:             #dedede !default;
 $slick-pagination-button-border-radius:                     4px !default;
 $slick-pagination-button-height:                            32px !default;
-$slick-pagination-button-hover-color:                       #E6E6E6 !default;
+$slick-pagination-button-hover-color:                       #f6f6f6 !default;
 $slick-pagination-button-padding:                           5px 8px !default;
 $slick-pagination-button-border:                            1px solid #{$slick-pagination-button-border-color} !default;
 $slick-pagination-border-top:                               0 none !default;
@@ -927,6 +927,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
 @use 'multiple-select-vanilla/dist/styles/sass/multiple-select' with (
   $ms-primary-color:                                        $slick-primary-color,
   $ms-drop-color:                                           $slick-text-color,
+  $ms-choice-bgcolor:                                       $slick-form-control-bg-color,
   $ms-checkbox-color:                                       $slick-multiselect-icon-checked-color,
   $ms-choice-border:                                        $slick-multiselect-input-filter-border,
   $ms-drop-background:                                      $slick-multiselect-dropdown-bg-color,
@@ -1154,10 +1155,14 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-multiselect-option-highlight-bg-color:          var(--slick-multiselect-select-all-label-hover-bg-color);
   --slick-multiselect-ok-button-bg-color:                 #262626;
   --slick-multiselect-ok-button-bg-hover-color:           #373c42;
+  --slick-multiselect-ok-button-border-color:             #626262;
+  --slick-multiselect-ok-button-text-color:               var(--slick-primary-color);
+  --slick-multiselect-ok-button-text-hover-color:         var(--slick-primary-color);
   --slick-multiselect-placeholder-color:                  #999;
   --slick-multiselect-select-all-border-bottom:           1px solid #5d5d5d;
   --slick-multiselect-select-all-label-hover-border:      var(--slick-base-dark-menu-item-border);
   --slick-multiselect-select-all-text-color:              #fff;
+  --ms-checkbox-color:                                    var(--slick-primary-color);
   --ms-choice-border:                                     var(--slick-base-dark-menu-item-border);
   --ms-choice-bgcolor:                                    var(--slick-base-dark-menu-bg-color);
   --ms-drop-background:                                   var(--slick-base-dark-menu-bg-color);

@@ -65,7 +65,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     forceFitTitle: 'Force fit columns',
     marginBottom: 15,
     menuWidth: 18,
-    minHeight: 250,
+    minHeight: 150,
     contentMinWidth: 0,
     resizeOnShowHeaderRow: false,
     syncResizeTitle: 'Synchronous resize',

@@ -11,8 +11,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * allow providing a Custom Pagination ([4a2bfc8](https://github.com/ghiscoding/slickgrid-universal/commit/4a2bfc8cbd6ef446a884bae9ead9c10c083c6ecc)) - by @ghiscoding
 
 ### Bug Fixes
-
-* always visible columns options ([6339f43](https://github.com/ghiscoding/slickgrid-universal/commit/6339f43c0a235f7a3036235321a7d4ce23c7db63)) - by @
 * Column Picker should auto-position left/right with available space ([48c2d13](https://github.com/ghiscoding/slickgrid-universal/commit/48c2d13e05d7e305bfaf40a2fe23fa74635cf5eb)) - by @ghiscoding
 * **deps:** update all non-major dependencies ([fcc779b](https://github.com/ghiscoding/slickgrid-universal/commit/fcc779b25091dc2e9f49a5ce5c1362e7f138e8b1)) - by @renovate-bot
 * move DI to init() to make Pagination Comp working with all ports ([cd30686](https://github.com/ghiscoding/slickgrid-universal/commit/cd306864d588f1d8f9590afbf0d03722ea54a9fc)) - by @ghiscoding
