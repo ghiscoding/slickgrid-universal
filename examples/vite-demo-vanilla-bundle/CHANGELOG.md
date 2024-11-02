@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.9.0...v5.10.0) (2024-11-02)
+
+### Features
+
+* switch to SASS `[@use](https://github.com/use)` and remove any `[@import](https://github.com/import)` to fix deprecations ([ba58eab](https://github.com/ghiscoding/slickgrid-universal/commit/ba58eabe97e2b2e09f91a42c0ae49561ed36e124)) - by @ghiscoding
+
+### Bug Fixes
+
+* add more SASS styling fixes & fix box-shadow w/filled filters ([2fc5dad](https://github.com/ghiscoding/slickgrid-universal/commit/2fc5dad0b99eb1539002eccc118f7157980b4938)) - by @ghiscoding
+
 ## [5.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.8.0...v5.9.0) (2024-10-19)
 
 ### Features
