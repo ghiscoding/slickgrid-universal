@@ -8,7 +8,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* switch to SASS `[@use](https://github.com/use)` and remove any `[@import](https://github.com/import)` to fix deprecations ([ba58eab](https://github.com/ghiscoding/slickgrid-universal/commit/ba58eabe97e2b2e09f91a42c0ae49561ed36e124)) - by @ghiscoding
+* switch to SASS `@use` and remove any `@import` to fix deprecations ([ba58eab](https://github.com/ghiscoding/slickgrid-universal/commit/ba58eabe97e2b2e09f91a42c0ae49561ed36e124)) - by @ghiscoding
 
 ### Bug Fixes
 
