@@ -18,7 +18,7 @@ $primary-color:                                             #0d6efd !default;
 $slick-highlight-color:                                     #fcfcfc !default;
 $slick-primary-color:                                       $primary-color !default;
 // Bootstrap 5 box-shadow
-$input-focus-box-shadow:                                    0 0 0 0.25rem rgba($primary-color, 0.25) !default;
+$input-focus-box-shadow:                                    0 0 0 0.25rem rgba($slick-primary-color, 0.25) !default;
 
 $slick-border-color:                                        #dddddd !default;
 $slick-font-size-base-value:                                14 !default;
@@ -37,7 +37,7 @@ $slick-button-border-color:                                 #c7c7c7 !default;
 $slick-button-hover-border-color:                           color.adjust($slick-button-border-color, $lightness: -15%) !default;
 $slick-button-style-bg-color:                               #fff !default;
 $slick-filter-placeholder-font-family:                      'Segoe UI Symbol' !default;
-$slick-focus-color:                                         rgb(115, 179, 229) !default;
+$slick-focus-color:                                         color.adjust($slick-primary-color, $lightness: 15%) !default;
 
 $slick-form-control-bg-color:                               #fff !default;
 $slick-form-control-border-color:                           #ccc !default;
