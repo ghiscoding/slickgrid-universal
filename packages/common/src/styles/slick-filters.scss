@@ -41,4 +41,7 @@
       color: var(--slick-filled-filter-color, vts.$slick-filled-filter-color);
     }
   }
+  .search-filter.filled.ms-parent-open .ms-choice {
+    box-shadow: var(--slick-filled-filter-focus-box-shadow, vts.$slick-filled-filter-focus-box-shadow);
+  }
 }

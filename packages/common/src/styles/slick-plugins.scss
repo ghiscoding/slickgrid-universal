@@ -664,6 +664,9 @@ li.hidden {
     font-family: var(--slick-multiselect-placeholder-font-family, v.$slick-multiselect-placeholder-font-family);
     font-size: var(--slick-header-font-size, v.$slick-header-font-size);
   }
+  &:focus {
+    border-color: var(--slick-multiselect-input-focus-border-color, v.$slick-multiselect-input-focus-border-color);
+  }
 }
 .ms-filter {
   &.search-filter {

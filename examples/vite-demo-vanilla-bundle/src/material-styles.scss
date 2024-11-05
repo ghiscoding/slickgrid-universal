@@ -117,12 +117,15 @@
         font-weight: bold;
       }
       .search-filter.filled .ms-choice {
-        box-shadow: none;
+        box-shadow: var(--slick-multiselect-input-focus-box-shadow);
         border: 1px solid #55B876;
         span {
           font-weight: normal;
           color: var(--slick-dark-text-color);
         }
+      }
+      .search-filter.filled:not(.ms-parent-open) .ms-choice {
+        box-shadow: none;
       }
       .search-filter.filled .input-group-append {
         border-left: 0;

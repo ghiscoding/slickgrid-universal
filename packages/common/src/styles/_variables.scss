@@ -14,9 +14,8 @@
 
 /* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
 /** extra styling when Bootstrap isn't provided */
-$primary-color:                                             #0d6efd !default;
 $slick-highlight-color:                                     #fcfcfc !default;
-$slick-primary-color:                                       $primary-color !default;
+$slick-primary-color:                                       #0d6efd !default;
 // Bootstrap 5 box-shadow
 $input-focus-box-shadow:                                    0 0 0 0.25rem rgba($slick-primary-color, 0.25) !default;
 
@@ -52,7 +51,7 @@ $slick-input-group-btn-bg-color:                            #f9f9f9 !default;
 $slick-input-group-btn-hover-bg-color:                      #eee !default;
 $slick-input-group-btn-border:                              1px solid #ccc !default;
 $slick-input-group-append-bg-color:                         #eee !default;
-$slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 10%) !default;
+$slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 25%) !default;
 $slick-input-focus-box-shadow:                              $slick-form-control-focus-box-shadow !default;
 $slick-date-picker-bg-color:                                $slick-form-control-bg-color !default;
 
