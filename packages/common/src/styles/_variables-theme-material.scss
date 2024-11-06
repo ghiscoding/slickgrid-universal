@@ -119,6 +119,8 @@ $slick-dark-text-color:                                   #d4d4d4;
   --slick-container-border-top:                   1px solid #505050;
   --slick-container-border-left:                  1px solid #505050;
   --slick-container-border-bottom:                1px solid #505050;
+  --slick-form-control-focus-border-color:        #66bb6a;
+  --slick-form-control-focus-box-shadow:          #{0 0 0 2px rgba(#66bb6a, 0.25)};
   --slick-pane-top-border-top:                    1px solid #505050;
   --slick-filled-filter-color:                    #66bb6a;
   --slick-highlight-color:                        #49a54e;
@@ -135,6 +137,7 @@ $slick-dark-text-color:                                   #d4d4d4;
   --slick-multiselect-icon-radio-color:           #66bb6a;
   --ms-checkbox-color:                            #66bb6a;
   --ms-checkbox-hover-color:                      #{color.adjust(#49a54e, $lightness: 13%)};
+  --ms-choice-focus-box-shadow:                   #{0 0 0 2px rgba(#66bb6a, 0.25)};
   --ms-ok-button-text-color:                      #66bb6a;
   --ms-ok-button-text-hover-color:                #{color.adjust(#66bb6a, $lightness: 5%)};
 }

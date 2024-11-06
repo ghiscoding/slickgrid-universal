@@ -926,9 +926,10 @@ $slick-empty-data-warning-z-index:                          10 !default;
 @use 'multiple-select-vanilla/dist/styles/sass/multiple-select' with (
   $ms-primary-color:                                        $slick-primary-color,
   $ms-drop-color:                                           $slick-text-color,
-  $ms-choice-bgcolor:                                       $slick-form-control-bg-color,
   $ms-checkbox-color:                                       $slick-multiselect-icon-checked-color,
+  $ms-choice-bgcolor:                                       $slick-form-control-bg-color,
   $ms-choice-border:                                        $slick-multiselect-input-filter-border,
+  $ms-choice-focus-box-shadow:                              $slick-form-control-focus-box-shadow,
   $ms-drop-background:                                      $slick-multiselect-dropdown-bg-color,
   $ms-drop-list-padding:                                    $slick-multiselect-dropdown-list-padding,
   $ms-drop-list-item-align-items:                           center,
@@ -1142,6 +1143,8 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-canvas-bg-color:                                #141618;
   --slick-multiselect-checkbox-hover-bg-color:            $slick-dark-base-dark-menu-bg-color;
   --slick-multiselect-input-filter-border:                1px solid #949494;
+  --slick-multiselect-input-focus-border-color:           var(--slick-form-control-focus-border-color);
+  --slick-multiselect-input-focus-box-shadow:             var(--slick-form-control-focus-box-shadow);
   --slick-multiselect-option-highlight-bg-color:          var(--slick-base-dark-menu-item-hover-color);
   --slick-multiselect-select-all-label-hover-bg-color:    var(--slick-base-dark-menu-item-hover-color);
   --slick-multiselect-option-highlight-border:            var(--slick-base-dark-menu-item-border);
@@ -1162,8 +1165,9 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-multiselect-select-all-label-hover-border:      var(--slick-base-dark-menu-item-border);
   --slick-multiselect-select-all-text-color:              #fff;
   --ms-checkbox-color:                                    var(--slick-primary-color);
-  --ms-choice-border:                                     var(--slick-base-dark-menu-item-border);
   --ms-choice-bgcolor:                                    var(--slick-base-dark-menu-bg-color);
+  --ms-choice-border:                                     var(--slick-base-dark-menu-item-border);
+  --ms-choice-focus-box-shadow:                           var(--slick-form-control-focus-box-shadow, $slick-form-control-focus-box-shadow);
   --ms-drop-background:                                   var(--slick-base-dark-menu-bg-color);
   --ms-drop-color:                                        #bbbbbb;
   --ms-drop-hide-radio-hover-bgcolor:                     var(--slick-base-dark-menu-item-hover-color);
