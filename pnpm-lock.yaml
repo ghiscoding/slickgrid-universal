@@ -76,7 +76,7 @@ importers:
         version: 15.11.0
       happy-dom:
         specifier: ^15.8.0
-        version: 15.10.1
+        version: 15.10.2
       husky:
         specifier: ^9.1.6
         version: 9.1.6
@@ -112,7 +112,7 @@ importers:
         version: 8.12.2(eslint@9.14.0(jiti@1.21.6))(typescript@5.6.3)
       vitest:
         specifier: ^2.1.4
-        version: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1)(sass@1.80.6)
+        version: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.2)(jsdom@25.0.1)(sass@1.80.6)
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -2584,8 +2584,8 @@ packages:
     engines: {node: '>=0.4.7'}
     hasBin: true
 
-  happy-dom@15.10.1:
-    resolution: {integrity: sha512-FuGnj/qIB4QnBL6fWmD7Wnh6STxevLgOVWB6+nopDGgWG1+t9CXkNB2ldZ+iqwD2UKxD2D0SU8el8A6AX6Q1+g==}
+  happy-dom@15.10.2:
+    resolution: {integrity: sha512-NbA5XrSovenJIIcfixCREX3ZnV7yHP4phhbfuxxf4CPn+LZpz/jIM9EqJ2DrPwgVDSMoAKH3pZwQvkbsSiCrUw==}
     engines: {node: '>=18.0.0'}
 
   has-bigints@1.0.2:
@@ -5817,7 +5817,7 @@ snapshots:
       std-env: 3.7.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1)(sass@1.80.6)
+      vitest: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.2)(jsdom@25.0.1)(sass@1.80.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -5827,7 +5827,7 @@ snapshots:
       eslint: 9.14.0(jiti@1.21.6)
     optionalDependencies:
       typescript: 5.6.3
-      vitest: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1)(sass@1.80.6)
+      vitest: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.2)(jsdom@25.0.1)(sass@1.80.6)
 
   '@vitest/expect@2.1.4':
     dependencies:
@@ -5872,7 +5872,7 @@ snapshots:
       sirv: 3.0.0
       tinyglobby: 0.2.10
       tinyrainbow: 1.2.0
-      vitest: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1)(sass@1.80.6)
+      vitest: 2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.2)(jsdom@25.0.1)(sass@1.80.6)
 
   '@vitest/utils@2.1.4':
     dependencies:
@@ -7234,7 +7234,7 @@ snapshots:
     optionalDependencies:
       uglify-js: 3.19.3
 
-  happy-dom@15.10.1:
+  happy-dom@15.10.2:
     dependencies:
       entities: 4.5.0
       webidl-conversions: 7.0.0
@@ -9137,7 +9137,7 @@ snapshots:
       fsevents: 2.3.3
       sass: 1.80.6
 
-  vitest@2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.1)(jsdom@25.0.1)(sass@1.80.6):
+  vitest@2.1.4(@types/node@22.8.6)(@vitest/ui@2.1.4)(happy-dom@15.10.2)(jsdom@25.0.1)(sass@1.80.6):
     dependencies:
       '@vitest/expect': 2.1.4
       '@vitest/mocker': 2.1.4(vite@5.4.10(@types/node@22.8.6)(sass@1.80.6))
@@ -9162,7 +9162,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.8.6
       '@vitest/ui': 2.1.4(vitest@2.1.4)
-      happy-dom: 15.10.1
+      happy-dom: 15.10.2
       jsdom: 25.0.1
     transitivePeerDependencies:
       - less
