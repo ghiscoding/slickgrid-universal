@@ -144,6 +144,7 @@ $slick-dark-base-dark-menu-bg-color:        #212121;
 .slick-dark-mode .icon-checkbox-container,
 .slick-dark-mode {
   --ms-checkbox-color:                            #66b8ff;
+  --ms-choice-focus-box-shadow:                   #{0 0 0 2.5px rgba(#66b8ff, 0.25)};
   --ms-ok-button-text-color:                      #66b8ff;
   --slick-multiselect-checkbox-color:             #66b8ff;
   --slick-multiselect-ok-button-text-color:       #66b8ff;

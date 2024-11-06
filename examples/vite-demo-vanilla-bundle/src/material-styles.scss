@@ -184,7 +184,7 @@
       --ms-checkbox-color: #66bb6a;
       --ms-checkbox-hover-color: #{color.adjust(#49a54e, $lightness: 13%)};
       --ms-choice-focus-border-color: #66bb6a;
-      --ms-choice-focus-box-shadow: 0 0 0 2px rgba(#66bb6a,.55);
+      --ms-choice-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
       --ms-ok-button-text-color: #66bb6a;
       --ms-ok-button-text-hover-color: #{color.adjust(#66bb6a, $lightness: 5%)};
 
