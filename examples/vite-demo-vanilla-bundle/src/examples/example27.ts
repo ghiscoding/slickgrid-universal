@@ -40,8 +40,8 @@ export default class Example27 {
 
   graphqlQuery = '...';
   processing = false;
-  selectedLanguage: string;
-  selectedLanguageFile: string;
+  selectedLanguage = 'en';
+  selectedLanguageFile = 'en.json';
   status = '';
   statusClass = 'is-success';
   translateService: TranslateService;
@@ -53,7 +53,8 @@ export default class Example27 {
     // get the Translate Service from the window object,
     // it might be better with proper Dependency Injection but this project doesn't have any at this point
     this.translateService = (<any>window).TranslateService;
-    this.selectedLanguage = this.translateService.getCurrentLanguage();
+    this.translateService.use('en');
+    this.selectedLanguage = 'en';
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
   }
 
