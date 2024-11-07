@@ -29,8 +29,8 @@ export default class Example07 {
   duplicateTitleHeaderCount = 1;
   filteringEnabledClass = '';
   sortingEnabledClass = '';
-  selectedLanguage: string;
-  selectedLanguageFile: string;
+  selectedLanguage = 'en';
+  selectedLanguageFile = 'en.json';
   translateService: TranslateService;
 
   set isFilteringEnabled(enabled: boolean) {
@@ -45,7 +45,8 @@ export default class Example07 {
     // get the Translate Service from the window object,
     // it might be better with proper Dependency Injection but this project doesn't have any at this point
     this.translateService = (<any>window).TranslateService;
-    this.selectedLanguage = this.translateService.getCurrentLanguage();
+    this.translateService.use('en');
+    this.selectedLanguage = 'en';
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
     this.isFilteringEnabled = true;
     this.isSortingEnabled = true;
