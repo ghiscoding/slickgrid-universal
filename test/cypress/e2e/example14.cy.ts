@@ -1,3 +1,5 @@
+import { format, addDay } from '@formkit/tempo';
+
 describe('Example 14 - Columns Resize by Content', () => {
   const GRID_ROW_HEIGHT = 33;
 
@@ -185,6 +187,26 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('.slick-cell-checkboxsel input:checked')
         .should('have.length', 0);
     });
+
+    it('should NOT be able to choose a Finish date older than today', () => {
+      // make grid editable
+      cy.get('[data-test="toggle-readonly-btn"]').click();
+
+      // 1st click on "Completed" to enable "Finish" date
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).click();
+      cy.get('.editor-completed').check();
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('contain', '').click(); // this date should also always be initially empty
+
+      const yesterdayDate = format(addDay(new Date(), -1), 'YYYY-MM-DD');
+      const todayDate = format(new Date(), 'YYYY-MM-DD');
+
+      cy.get(`[data-calendar-day=${yesterdayDate}]`).should('have.class', 'vanilla-calendar-day__btn_disabled');
+      cy.get(`[data-calendar-day=${todayDate}]`).should('not.have.class', 'vanilla-calendar-day__btn_disabled');
+
+      // make grid readonly again
+      cy.get('[data-test="toggle-readonly-btn"]').click();
+    });
   });
 
   describe('Filter Predicate on "Title" column that act similarly to an SQL LIKE matcher', () => {
@@ -362,7 +384,7 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.on('window:alert', stub);
 
       cy.get('.grid14')
-        .find('.slick-header-column:nth-of-type(8).slick-header-sortable')
+        .find('.slick-header-column:nth-of-type(7).slick-header-sortable')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
         .invoke('show')
