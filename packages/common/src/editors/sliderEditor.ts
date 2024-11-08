@@ -211,6 +211,35 @@ export class SliderEditor implements Editor {
     }
   }
 
+  /**
+   * Dynamically change an Editor option, this is especially useful with Composite Editor
+   * since this is the only way to change option after the Editor is created (for example dynamically change "minDate" or another Editor)
+   * @param {string} optionName - Slider editor option name
+   * @param {newValue} newValue - Slider editor new option value
+   */
+  changeEditorOption<T extends keyof Required<(CurrentSliderOption & SliderOption)>, K extends Required<(CurrentSliderOption & SliderOption)>[T]>(optionName: T, newValue: K): void {
+    if (this.columnEditor) {
+      this.columnEditor.editorOptions ??= {};
+      this.columnEditor.editorOptions[optionName] = newValue;
+      (this._sliderOptions as any)[optionName] = newValue;
+
+      switch (optionName) {
+        case 'hideSliderNumber':
+          this.renderSliderNumber(this._editorElm, 0);
+          break;
+        case 'sliderStartValue':
+          this._inputElm.value = `${newValue}`;
+          this._inputElm.defaultValue = `${newValue}`;
+          break;
+        case 'maxValue':
+        case 'minValue':
+        case 'step':
+          this._inputElm[optionName.replace('Value', '') as 'min' | 'max' | 'step'] = `${newValue}`;
+          break;
+      }
+    }
+  }
+
   isValueChanged(): boolean {
     const elmValue = this._inputElm?.value ?? '';
     return (!(elmValue === '' && this._originalValue === undefined)) && (+elmValue !== this._originalValue);
@@ -335,6 +364,15 @@ export class SliderEditor implements Editor {
     sliderInputContainerElm.appendChild(this._inputElm);
     divContainerElm.appendChild(sliderInputContainerElm);
 
+    this.renderSliderNumber(divContainerElm, defaultValue);
+
+    // merge options with optional user's custom options
+    this._sliderOptions = { minValue, maxValue, step };
+
+    return divContainerElm;
+  }
+
+  protected renderSliderNumber(divContainerElm: HTMLDivElement, defaultValue: number | string): void {
     if (!this.editorOptions.hideSliderNumber) {
       divContainerElm.classList.add('input-group');
 
@@ -342,12 +380,9 @@ export class SliderEditor implements Editor {
       this._sliderNumberElm = createDomElement('span', { className: `input-group-text`, textContent: `${defaultValue}` });
       divGroupAddonElm.appendChild(this._sliderNumberElm);
       divContainerElm.appendChild(divGroupAddonElm);
+    } else {
+      divContainerElm.querySelector('.slider-value')?.remove();
     }
-
-    // merge options with optional user's custom options
-    this._sliderOptions = { minValue, maxValue, step };
-
-    return divContainerElm;
   }
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
