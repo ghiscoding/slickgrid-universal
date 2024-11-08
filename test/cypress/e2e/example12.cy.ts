@@ -1,3 +1,5 @@
+import { format, addDay } from '@formkit/tempo';
+
 // eslint-disable-next-line n/file-extension-in-import
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
@@ -154,8 +156,15 @@ describe('Example 12 - Composite Editor Modal', () => {
     }
     const currentYear = today.getFullYear();
 
+    // get yesterday/today dates
+    const yesterdayDate = format(addDay(new Date(), -1), 'YYYY-MM-DD');
+    const todayDate = format(new Date(), 'YYYY-MM-DD');
+
     // change Finish date to today's date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('contain', '').click(); // this date should also always be initially empty
+    // any dates lower than today should be disabled
+    cy.get(`[data-calendar-day=${yesterdayDate}]`).should('have.class', 'vanilla-calendar-day__btn_disabled');
+    cy.get(`[data-calendar-day=${todayDate}]`).should('not.have.class', 'vanilla-calendar-day__btn_disabled');
     cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
