@@ -493,7 +493,7 @@ export class SelectEditor implements Editor {
    * @param {string} optionName - MultipleSelect option name
    * @param {newValue} newValue - MultipleSelect new option value
    */
-  changeEditorOption(optionName: keyof MultipleSelectOption, newValue: any): void {
+  changeEditorOption<T extends keyof Required<MultipleSelectOption>, K extends Required<MultipleSelectOption>[T]>(optionName: T, newValue: K): void {
     if (this.columnEditor) {
       if (!this.columnEditor.editorOptions) {
         this.columnEditor.editorOptions = {};

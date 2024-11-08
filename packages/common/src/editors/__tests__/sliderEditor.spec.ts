@@ -257,7 +257,65 @@ describe('SliderEditor', () => {
       expect(cellMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
     });
 
-    describe('isValueChanged method', () => {
+    describe('changeEditorOption() method', () => {
+      it('should be able to change enableSliderTrackColoring option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('enableSliderTrackColoring', true);
+
+        expect(editor.editorOptions.enableSliderTrackColoring).toBe(true);
+      });
+
+      it('should be able to change hideSliderNumber option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('hideSliderNumber', true);
+
+        expect(editor.editorOptions.hideSliderNumber).toBe(true);
+      });
+
+      it('should be able to change maxValue option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('maxValue', 33);
+
+        expect(editor.sliderOptions?.maxValue).toBe(33);
+      });
+
+      it('should be able to change minValue option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('minValue', 4);
+
+        expect(editor.sliderOptions?.minValue).toBe(4);
+      });
+
+      it('should be able to change step option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('step', 5);
+
+        expect(editor.sliderOptions?.step).toBe(5);
+      });
+
+      it('should be able to change sliderStartValue option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('sliderStartValue', 33);
+
+        expect(editor.editorOptions.sliderStartValue).toBe(33);
+      });
+
+      it('should be able to change sliderTrackBackground option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('sliderTrackBackground', '#fff');
+
+        expect(editor.sliderOptions?.sliderTrackBackground).toBe('#fff');
+      });
+
+      it('should be able to change sliderTrackFilledColor option', () => {
+        editor = new SliderEditor(editorArguments);
+        editor.changeEditorOption('sliderTrackFilledColor', '#fff');
+
+        expect(editor.editorOptions.sliderTrackFilledColor).toBe('#fff');
+      });
+    });
+
+    describe('isValueChanged() method', () => {
       it('should return True when previously dispatched change event is a different slider input number', () => {
         mockColumn.editor!.editorOptions = { sliderStartValue: 5 };
         mockItemData = { id: 1, price: 32, isActive: true };
@@ -305,7 +363,7 @@ describe('SliderEditor', () => {
       });
     });
 
-    describe('applyValue method', () => {
+    describe('applyValue() method', () => {
       it('should apply the value to the price property when it passes validation', () => {
         mockColumn.editor!.validator = null as any;
         mockItemData = { id: 1, price: 456, isActive: true };
@@ -343,7 +401,7 @@ describe('SliderEditor', () => {
       });
     });
 
-    describe('serializeValue method', () => {
+    describe('serializeValue() method', () => {
       it('should return serialized value as a number', () => {
         mockItemData = { id: 1, price: 33, isActive: true };
 
@@ -407,7 +465,7 @@ describe('SliderEditor', () => {
       });
     });
 
-    describe('save method', () => {
+    describe('save() method', () => {
       afterEach(() => {
         vi.clearAllMocks();
       });
@@ -472,7 +530,7 @@ describe('SliderEditor', () => {
       });
     });
 
-    describe('validate method', () => {
+    describe('validate() method', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.editor!.required = true;
         editor = new SliderEditor(editorArguments);

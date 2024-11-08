@@ -628,10 +628,11 @@ export default class Example12 {
     }
 
     // you can also change some editor options
-    // not all Editors supports this functionality, so far only these Editors are supported: AutoComplete, Date Single/Multiple Select
+    // not all Editors supports this functionality, so far only these Editors are supported are: Date, Single/Multiple Select, Slider
     /*
     if (columnDef.id === 'completed') {
-      this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
+      this.compositeEditorInstance.changeFormEditorOption('complexity', 'filter', true); // multiple-select dropdown editor
+      this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'hideSliderNumber', formValues['completed']); // slider editor
       this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' }); // calendar picker, change minDate to today
     }
     */

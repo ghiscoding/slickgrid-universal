@@ -89,7 +89,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
 
     // get locales provided by user in forRoot or else use default English locales via the Constants
-    this._locales = this.gridOptions && this.gridOptions.locales || Constants.locales;
+    this._locales = this.gridOptions?.locales || Constants.locales;
 
     this.init();
   }

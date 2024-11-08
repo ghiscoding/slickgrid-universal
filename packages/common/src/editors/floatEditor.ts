@@ -9,7 +9,7 @@ export class FloatEditor extends InputEditor {
   }
 
   loadValue(item: any): void {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
 
     if (fieldName !== undefined) {
 

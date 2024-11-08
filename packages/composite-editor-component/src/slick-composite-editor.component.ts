@@ -234,7 +234,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     if (editor?.changeEditorOption) {
       editor.changeEditorOption(optionName, newOptionValue);
     } else {
-      throw new Error(`Editor with column id "${columnId}" not found OR the Editor does not support "changeEditorOption" (current only available with AutoComplete, Date, MultipleSelect & SingleSelect Editors).`);
+      throw new Error(`Editor with column id "${columnId}" not found OR the Editor does not support "changeEditorOption" (current only available with Date, MultipleSelect, SingleSelect & Slider Editors).`);
     }
   }
 

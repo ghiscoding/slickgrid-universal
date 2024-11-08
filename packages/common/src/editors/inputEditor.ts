@@ -221,7 +221,7 @@ export class InputEditor implements Editor {
   }
 
   applyValue(item: any, state: any): void {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 

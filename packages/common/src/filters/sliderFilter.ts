@@ -133,7 +133,7 @@ export class SliderFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       const lowestValue = +(this.filterOptions?.sliderStartValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE) as number;
-      const highestValue = +(this.filterOptions?.sliderEndValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE) as number;
+      const highestValue = +((this.filterOptions as SliderRangeOption)?.sliderEndValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE) as number;
 
       if (this.sliderType === 'double') {
         if (this._sliderLeftInputElm) {

@@ -281,7 +281,7 @@ export class DateEditor implements Editor {
    * @param {string} optionName
    * @param {newValue} newValue
    */
-  changeEditorOption<T extends keyof VanillaCalendarOption, K extends Partial<VanillaCalendarOption[T]>>(optionName: T, newValue: K): void {
+  changeEditorOption<T extends keyof Required<VanillaCalendarOption>, K extends Required<VanillaCalendarOption>[T]>(optionName: T, newValue: K): void {
     if (!this.columnEditor.editorOptions) {
       this.columnEditor.editorOptions = {};
     }
