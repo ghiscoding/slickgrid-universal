@@ -223,7 +223,7 @@ export class GridService {
         }
 
         // execute common grid commands when enabled
-        this.executeResizeTrigger(options, ['onHeaderMenuHideColumns'], visibleColumns);
+        this.executeVisibilityCommands(options, ['onHeaderMenuHideColumns'], visibleColumns);
         return colIndexFound;
       }
     }
@@ -250,7 +250,7 @@ export class GridService {
 
       // execute common grid commands when enabled
       // @deprecate `onHeaderMenuHideColumns` event, we should keep only `onHideColumns`
-      this.executeResizeTrigger(options, ['onHeaderMenuHideColumns', 'onHideColumns'], finalVisibileColumns);
+      this.executeVisibilityCommands(options, ['onHeaderMenuHideColumns', 'onHideColumns'], finalVisibileColumns);
     }
   }
 
@@ -267,11 +267,11 @@ export class GridService {
       this.sharedService.visibleColumns = columns;
 
       // execute common grid commands when enabled
-      this.executeResizeTrigger(options, ['onShowColumns'], this.sharedService.visibleColumns);
+      this.executeVisibilityCommands(options, ['onShowColumns'], this.sharedService.visibleColumns);
     }
   }
 
-  protected executeResizeTrigger(options: { autoResizeColumns?: boolean; triggerEvent?: boolean; }, eventNames: string[], columns: Column[]): void {
+  protected executeVisibilityCommands(options: { autoResizeColumns?: boolean; triggerEvent?: boolean; }, eventNames: string[], columns: Column[]): void {
     // do we want to auto-resize the columns in the grid after hidding/showing columns?
     if (options?.autoResizeColumns) {
       this._grid.autosizeColumns();
