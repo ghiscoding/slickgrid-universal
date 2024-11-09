@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.10.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.0...v5.10.1) (2024-11-09)
+
+### Bug Fixes
+
+* **editor:** add missing `changeEditorOption()` for Composite Editor ([#1733](https://github.com/ghiscoding/slickgrid-universal/issues/1733)) ([b43b53b](https://github.com/ghiscoding/slickgrid-universal/commit/b43b53b04ead731816cdc40f8df53a6c9c0b0f6b)) - by @ghiscoding
+
 ## [5.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.9.0...v5.10.0) (2024-11-02)
 
 **Note:** Version bump only for package @slickgrid-universal/composite-editor-component

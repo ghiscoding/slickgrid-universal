@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.10.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.0...v5.10.1) (2024-11-09)
+
+### Bug Fixes
+
+* date editor clear/reset not working in composite editor ([#1735](https://github.com/ghiscoding/slickgrid-universal/issues/1735)) ([976bd23](https://github.com/ghiscoding/slickgrid-universal/commit/976bd232c42170230ca367dd667bad37b33aea09)) - by @ghiscoding
+* **editor:** add missing `changeEditorOption()` for Composite Editor ([#1733](https://github.com/ghiscoding/slickgrid-universal/issues/1733)) ([b43b53b](https://github.com/ghiscoding/slickgrid-universal/commit/b43b53b04ead731816cdc40f8df53a6c9c0b0f6b)) - by @ghiscoding
+* hideColumnByIds wasn't hiding columns properly ([#1738](https://github.com/ghiscoding/slickgrid-universal/issues/1738)) ([da89db4](https://github.com/ghiscoding/slickgrid-universal/commit/da89db4e25b2be9e50f27ead290b998059a3b069)) - by @ghiscoding
+* hideColumnByIds() should call setColumn() only once ([#1736](https://github.com/ghiscoding/slickgrid-universal/issues/1736)) ([0ba1a93](https://github.com/ghiscoding/slickgrid-universal/commit/0ba1a93c833b3fb36e9b8926d13de58471b37c23)) - by @ghiscoding
+* hiding column(s) returned incorrect Grid State changes data ([#1737](https://github.com/ghiscoding/slickgrid-universal/issues/1737)) ([59a47b8](https://github.com/ghiscoding/slickgrid-universal/commit/59a47b8067c6015a221de459d3e0fb99a5113f04)) - by @ghiscoding
+* Material Theme primary color should be reassigned & forwarded ([a786038](https://github.com/ghiscoding/slickgrid-universal/commit/a786038e7e5dc95ba7114889cffda9422fc966bf)) - by @ghiscoding
+* Material Theme primary color should be reassigned & forwarded ([b3f4a23](https://github.com/ghiscoding/slickgrid-universal/commit/b3f4a232b679df9aabcf6e26351b139879ea85f7)) - by @ghiscoding
+* more ms-select Dark Mode styling fixes ([810ce40](https://github.com/ghiscoding/slickgrid-universal/commit/810ce40eaa0b40c2576aecb61dd20fab1a377b78)) - by @ghiscoding
+* remove `$primary-color` & fix more styling issues for ms-select ([2841dbc](https://github.com/ghiscoding/slickgrid-universal/commit/2841dbca855a029a0ff301a2e33e8acc292893cc)) - by @ghiscoding
+* small box-shadow fix on ms-select filter in focus ([23ec036](https://github.com/ghiscoding/slickgrid-universal/commit/23ec036bb44e3c76498648b19592a58d20824f76)) - by @ghiscoding
+
 ## [5.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.9.0...v5.10.0) (2024-11-02)
 
 ### Features
