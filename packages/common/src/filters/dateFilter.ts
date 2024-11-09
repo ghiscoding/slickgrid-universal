@@ -24,7 +24,7 @@ import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../servi
 import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type { SlickGrid } from '../core/slickGrid.js';
-import { setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -162,18 +162,7 @@ export class DateFilter implements Filter {
       }
 
       if (this.calendarInstance) {
-        const now = new Date();
-        setPickerDates(this.columnFilter, this._dateInputElm, this.calendarInstance, {
-          columnDef: this.columnDef,
-          oldVal: this._currentDateOrDates,
-          newVal: '',
-          updatePickerUI: true,
-          selectedSettings: {
-            dates: [],
-            month: now.getMonth(),
-            year: now.getFullYear()
-          }
-        });
+        resetDatePicker(this.calendarInstance);
       }
     }
     this.onTriggerEvent(new Event('keyup'));

@@ -35,6 +35,25 @@ export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteIt
   }
 }
 
+export function resetDatePicker(pickerInstance: VanillaCalendar): void {
+  const today = new Date();
+  pickerInstance.settings.selected = {
+    dates: [],
+    month: today.getMonth(),
+    year: today.getFullYear()
+  };
+  const dateInputElm = pickerInstance.HTMLInputElement;
+  if (dateInputElm) {
+    dateInputElm.value = '';
+  }
+  pickerInstance.update({
+    dates: true,
+    month: true,
+    year: true,
+    time: true,
+  });
+}
+
 export function setPickerDates(
   colEditorOrFilter: ColumnEditor | ColumnFilter,
   dateInputElm: HTMLInputElement,
