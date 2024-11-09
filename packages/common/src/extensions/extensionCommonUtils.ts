@@ -150,12 +150,13 @@ function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inp
 
 export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption): void {
   const context: any = this;
-  const menuPrefix = context instanceof SlickGridMenu ? 'gridmenu-' : '';
+  const isGridMenu = context instanceof SlickGridMenu;
+  const menuPrefix = isGridMenu ? 'gridmenu-' : '';
 
   for (const column of context.columns) {
     const columnId = column.id;
     const columnLiElm = document.createElement('li');
-    if (column.excludeFromColumnPicker) {
+    if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
       columnLiElm.className = 'hidden';
     }
 

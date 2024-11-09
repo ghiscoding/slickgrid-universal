@@ -90,7 +90,7 @@ describe('GridMenuControl', () => {
   const columnsMock: Column[] = [
     { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
     { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
-    { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
+    { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing', excludeFromGridMenu: true },
   ];
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
@@ -681,7 +681,11 @@ describe('GridMenuControl', () => {
         const forceFitElm = control.menuElement!.querySelector('#slickgrid_124343-gridmenu-colpicker-forcefit') as HTMLInputElement;
         const inputSyncElm = control.menuElement!.querySelector('#slickgrid_124343-gridmenu-colpicker-syncresize') as HTMLInputElement;
         const pickerField1Elm = document.querySelector('input[type="checkbox"][data-columnid="field1"]') as HTMLInputElement;
+        const li2Elm = document.querySelector('.slick-column-picker-list li:nth-of-type(2)') as HTMLLIElement;
+        const li3Elm = document.querySelector('.slick-column-picker-list li:nth-of-type(3)') as HTMLLIElement;
         expect(pickerField1Elm.checked).toBe(true);
+        expect(li2Elm.className).not.toBe('hidden');
+        expect(li3Elm.className).toBe('hidden');
         pickerField1Elm.checked = false;
         pickerField1Elm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -1559,12 +1563,12 @@ describe('GridMenuControl', () => {
         const columnsUnorderedMock: Column[] = [
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
           { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
-          { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
+          { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing', excludeFromGridMenu: true },
         ];
         const columnsMock: Column[] = [
           { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
-          { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
+          { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing', excludeFromGridMenu: true },
         ];
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValueOnce(0).mockReturnValueOnce(1);
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
@@ -1630,7 +1634,7 @@ describe('GridMenuControl', () => {
       expect(columnsMock).toEqual([
         { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
-        { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
+        { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75, excludeFromGridMenu: true },
       ]);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
