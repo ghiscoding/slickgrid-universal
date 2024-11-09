@@ -83,6 +83,8 @@ $slick-editor-input-group-clear-btn-icon-color:               inherit !default;
   $slick-form-control-focus-box-shadow:                       0 0 0 2.5px rgba($primary-color, 0.25) !default,
   $slick-compound-filter-operator-select-border:              1px solid #{color.adjust($primary-color, $lightness: 10%)} !default,
   $slick-compound-filter-text-color:                          color.adjust($primary-color, $lightness: -20%) !default,
+  $slick-multiselect-icon-checked-color:                      $slick-highlight-color !default,
+  $slick-multiselect-option-highlight-bg-color:               #fafafa !default,
   $slick-preheader-border-right:                              1px solid #e2e2e2 !default,
   $slick-row-move-plugin-cursor:                              grab !default,
   $slick-row-move-plugin-icon-color:                          inherit !default,
