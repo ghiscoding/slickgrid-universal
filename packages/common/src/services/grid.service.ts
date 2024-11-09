@@ -205,10 +205,10 @@ export class GridService {
 
       if (colIndexFound >= 0) {
         const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, colIndexFound);
-        this.sharedService.visibleColumns = visibleColumns;
 
         // do we want to apply the new columns in the grid
         if (options?.applySetColumns) {
+          this.sharedService.visibleColumns = visibleColumns;
           this._grid.setColumns(visibleColumns);
         }
 
@@ -222,15 +222,8 @@ export class GridService {
           }
         }
 
-        // do we want to auto-resize the columns in the grid after hidding some? most often yes
-        if (options?.autoResizeColumns) {
-          this._grid.autosizeColumns();
-        }
-
-        // do we want to trigger an event after hidding
-        if (options?.triggerEvent) {
-          this.pubSubService.publish('onHeaderMenuHideColumns', { columns: visibleColumns });
-        }
+        // execute common grid commands when enabled
+        this.executeResizeTrigger(options, ['onHeaderMenuHideColumns'], visibleColumns);
         return colIndexFound;
       }
     }
@@ -244,26 +237,20 @@ export class GridService {
    */
   hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption): void {
     if (Array.isArray(columnIds)) {
+      const finalVisibileColumns = this._grid.getColumns().filter(c => !columnIds.includes(c.id));
       options = { ...HideColumnOptionDefaults, ...options };
       for (const columnId of columnIds) {
         // hide each column by its id but wait after the for loop to auto resize columns in the grid
         this.hideColumnById(columnId, { ...options, triggerEvent: false, applySetColumns: false, autoResizeColumns: false });
       }
 
-      // after looping through all columns, we can apply the new columns in the grid
-      this._grid.setColumns(this.sharedService.visibleColumns);
+      // after looping through all columns, we can apply the leftover visible columns in the grid & keep shared ref
+      this.sharedService.visibleColumns = finalVisibileColumns;
+      this._grid.setColumns(finalVisibileColumns);
 
-      // do we want to auto-resize the columns in the grid after hidding some? most often yes
-      if (options?.autoResizeColumns) {
-        this._grid.autosizeColumns();
-      }
-
-      // do we want to trigger an event after hidding
-      if (options?.triggerEvent) {
-        // @deprecate `onHeaderMenuHideColumns` event, we should keep only `onHideColumns`
-        this.pubSubService.publish('onHeaderMenuHideColumns', { columns: this.sharedService.visibleColumns });
-        this.pubSubService.publish('onHideColumns', { columns: this.sharedService.visibleColumns });
-      }
+      // execute common grid commands when enabled
+      // @deprecate `onHeaderMenuHideColumns` event, we should keep only `onHideColumns`
+      this.executeResizeTrigger(options, ['onHeaderMenuHideColumns', 'onHideColumns'], finalVisibileColumns);
     }
   }
 
@@ -279,15 +266,20 @@ export class GridService {
       this._grid.setColumns(columns);
       this.sharedService.visibleColumns = columns;
 
-      // do we want to auto-resize the columns in the grid after hidding some? most often yes
-      if (options?.autoResizeColumns) {
-        this._grid.autosizeColumns();
-      }
+      // execute common grid commands when enabled
+      this.executeResizeTrigger(options, ['onShowColumns'], this.sharedService.visibleColumns);
+    }
+  }
 
-      // do we want to trigger an event after showing
-      if (options?.triggerEvent) {
-        this.pubSubService.publish('onShowColumns', { columns: this.sharedService.visibleColumns });
-      }
+  protected executeResizeTrigger(options: { autoResizeColumns?: boolean; triggerEvent?: boolean; }, eventNames: string[], columns: Column[]): void {
+    // do we want to auto-resize the columns in the grid after hidding/showing columns?
+    if (options?.autoResizeColumns) {
+      this._grid.autosizeColumns();
+    }
+
+    // do we want to trigger an event after showing
+    if (options?.triggerEvent) {
+      eventNames.forEach(name => this.pubSubService.publish(name, { columns }));
     }
   }
 
