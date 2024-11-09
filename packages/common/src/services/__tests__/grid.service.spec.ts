@@ -1505,10 +1505,12 @@ describe('Grid Service', () => {
     it('should return -1 when the column id is not found in the list of loaded column definitions', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const setColSpy = vi.spyOn(gridStub, 'setColumns');
 
       const output = service.hideColumnById('xyz');
 
       expect(output).toBe(-1);
+      expect(setColSpy).not.toHaveBeenCalled();
     });
 
     it('should set new columns minus the column to hide and it should keep new set as the new "visibleColumns"', () => {
@@ -1519,6 +1521,7 @@ describe('Grid Service', () => {
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const setColsSpy = vi.spyOn(gridStub, 'setColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const setColSpy = vi.spyOn(gridStub, 'setColumns');
 
       const output = service.hideColumnById('field2');
 
@@ -1527,6 +1530,7 @@ describe('Grid Service', () => {
       expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: mockWithoutColumns });
+      expect(setColSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should set new columns minus the column to hide but without triggering an event when set to False', () => {
@@ -1605,14 +1609,17 @@ describe('Grid Service', () => {
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
+      const setColSpy = vi.spyOn(gridStub, 'setColumns');
 
       service.hideColumnByIds(['field2', 'field3']);
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
       expect(autoSizeSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: expect.any(Array) });
+      expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: expect.any(Array) });
+      expect(setColSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options BUT not auto size columns neither trigger when both are disabled', () => {
@@ -1621,14 +1628,16 @@ describe('Grid Service', () => {
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
+      const setColSpy = vi.spyOn(gridStub, 'setColumns');
 
       service.hideColumnByIds(['field2', 'field3'], { autoResizeColumns: false, triggerEvent: false });
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
       expect(autoSizeSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).not.toHaveBeenCalled();
+      expect(setColSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options and hide from column picker when "hideFromColumnPicker" is enabled', () => {
@@ -1639,8 +1648,8 @@ describe('Grid Service', () => {
       service.hideColumnByIds(['field2', 'field3'], { hideFromColumnPicker: true });
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false, triggerEvent: false });
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options and hide from column picker when "hideFromColumnPicker" is enabled', () => {
@@ -1651,8 +1660,26 @@ describe('Grid Service', () => {
       service.hideColumnByIds(['field2', 'field3'], { hideFromGridMenu: true });
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: true, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: true, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: true, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: true, triggerEvent: false });
+    });
+  });
+
+  describe('showColumnByIds method', () => {
+    it('should loop through the Ids provided and call setColumns() with columns found from allColumns reference', () => {
+      const mockAllColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockAllColumns);
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+
+      service.showColumnByIds(['field2', 'field3']);
+
+      expect(pubSubSpy).toHaveBeenCalledWith('onShowColumns', { columns: expect.any(Array) });
+      expect(setColSpy).toHaveBeenCalledTimes(1);
+      expect(setColSpy).toHaveBeenCalledWith([
+        { excludeFromColumnPicker: true, excludeFromGridMenu: true, id: 'field2', width: 150 },
+        { excludeFromColumnPicker: true, excludeFromGridMenu: true, field: 'field3', id: 'field3' },
+      ]);
     });
   });
 
