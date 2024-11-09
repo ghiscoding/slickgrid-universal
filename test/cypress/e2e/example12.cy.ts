@@ -733,6 +733,22 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal-title')
       .should('contain', 'Clone - Task 3');
 
+    // start date shouldn't be today's month/year
+    const today = new Date();
+    cy.get('.editor-start .vanilla-picker input').click();
+
+    cy.get('.vanilla-calendar:visible .vanilla-calendar-year')
+      .should('not.contain', today.getFullYear());
+
+    // clear start date
+    cy.get('.editor-start .vanilla-picker .btn-clear').click();
+
+    // reopen start date and expect today's year
+    cy.get('.editor-start .vanilla-picker input').click();
+
+    cy.get('.vanilla-calendar:visible .vanilla-calendar-year')
+      .should('contain', today.getFullYear());
+
     cy.get('.slick-editor-modal-footer .btn-cancel')
       .click();
   });

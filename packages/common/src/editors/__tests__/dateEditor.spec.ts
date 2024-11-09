@@ -351,6 +351,32 @@ describe('DateEditor', () => {
         expect(editor.isValueTouched()).toBe(true);
       });
 
+      it('should clear date picker when calling the reset() method', () => {
+        mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
+
+        editor = new DateEditor(editorArguments);
+        vi.runAllTimers();
+
+        editor.loadValue(mockItemData);
+        editor.focus();
+
+        const today = new Date();
+        let calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+        let yearElm = calendarElm.querySelector('.vanilla-calendar-year') as HTMLButtonElement;
+        const clearBtnElm = divContainer.querySelector('.btn-clear') as HTMLInputElement;
+
+        expect(+yearElm.innerText).not.toBe(today.getFullYear());
+
+        clearBtnElm.click();
+        editor.reset();
+        editor.show();
+
+        calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+        yearElm = calendarElm.querySelector('.vanilla-calendar-year') as HTMLButtonElement;
+
+        expect(+yearElm.innerText).toBe(today.getFullYear());
+      });
+
       it('should also return True when date is reset by the clear date button even if the previous date was empty', () => {
         mockItemData = { id: 1, startDate: '', isActive: true };
 

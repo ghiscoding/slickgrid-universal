@@ -20,7 +20,7 @@ import type {
 import { getDescendantProperty, } from './../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
-import { setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 
 /*
@@ -249,8 +249,7 @@ export class DateEditor implements Editor {
   clear(): void {
     this._lastTriggeredByClearDate = true;
     if (this.calendarInstance) {
-      this.calendarInstance.settings.selected.dates = [];
-      this._inputElm.value = '';
+      resetDatePicker(this.calendarInstance);
     }
   }
 
@@ -403,9 +402,13 @@ export class DateEditor implements Editor {
     if (this.calendarInstance) {
       this._originalDate = inputValue;
       this.calendarInstance.settings.selected.dates = [inputValue as FormatDateString];
-      if (!inputValue) {
-        this.calendarInstance.settings.selected.dates = [];
-        this._inputElm.value = '';
+      if (inputValue) {
+        setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
+          columnDef: this.columnDef,
+          newVal: inputValue,
+        });
+      } else {
+        resetDatePicker(this.calendarInstance);
       }
     }
     this._isValueTouched = false;
