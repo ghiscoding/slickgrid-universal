@@ -1188,4 +1188,15 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .click()
       .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
   });
+
+  it('should be able to show certain defined columns', () => {
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish'];
+
+    cy.get('[data-test="show-column-subset-btn"]').click();
+
+    cy.get('.grid7')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
+  });
 });

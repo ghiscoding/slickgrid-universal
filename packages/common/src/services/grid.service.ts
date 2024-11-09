@@ -11,6 +11,7 @@ import type {
   GridServiceUpdateOption,
   HideColumnOption,
   OnEventArgs,
+  ShowColumnOption,
 } from '../interfaces/index.js';
 import type { FilterService } from './filter.service.js';
 import type { GridStateService } from './gridState.service.js';
@@ -24,7 +25,8 @@ import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js'
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
 const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: true };
 const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true };
-const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
+const HideColumnOptionDefaults: HideColumnOption = { applySetColumns: true, autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
+const ShowColumnOptionDefaults: ShowColumnOption = { autoResizeColumns: true, triggerEvent: true };
 
 export class GridService {
   protected _grid!: SlickGrid;
@@ -190,21 +192,25 @@ export class GridService {
   }
 
   /**
-   * Hide a Column from the Grid by its column definition id, the column will just become hidden and will still show up in columnPicker/gridMenu
+   * Hide a Column from the Grid by its id, the column will just become hidden and will still show up in columnPicker/gridMenu
    * @param {string | number} columnId - column definition id
    * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
    * @return {number} columnIndex - column index position when found or -1
    */
   hideColumnById(columnId: string | number, options?: HideColumnOption): number {
-    options = { ...HideColumnOptionDefaults, ...options };
-    if (this._grid && this._grid.getColumns && this._grid.setColumns) {
+    if (this._grid) {
+      options = { ...HideColumnOptionDefaults, ...options };
       const currentColumns = this._grid.getColumns();
       const colIndexFound = currentColumns.findIndex(col => col.id === columnId);
 
       if (colIndexFound >= 0) {
         const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, colIndexFound);
         this.sharedService.visibleColumns = visibleColumns;
-        this._grid.setColumns(visibleColumns);
+
+        // do we want to apply the new columns in the grid
+        if (options?.applySetColumns) {
+          this._grid.setColumns(visibleColumns);
+        }
 
         const columnIndexFromAllColumns = this.sharedService.allColumns.findIndex(col => col.id === columnId);
         if (columnIndexFromAllColumns) {
@@ -232,24 +238,55 @@ export class GridService {
   }
 
   /**
-   * Hide a Column from the Grid by its column definition id(s), the column will just become hidden and will still show up in columnPicker/gridMenu
-   * @param {Array<string | number>} columnIds - column definition ids, can be a single string and an array of strings
-   * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
+   * Hide multiple columns by their Ids, the column will just become hidden and will still show up in columnPicker/gridMenu
+   * @param {Array<string | number>} columnIds - column ids to hide
+   * @param {boolean} triggerEvent - do we want to trigger an event "onHideColumns" when column becomes hidden? Defaults to true.
    */
   hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption): void {
-    options = { ...HideColumnOptionDefaults, ...options };
     if (Array.isArray(columnIds)) {
+      options = { ...HideColumnOptionDefaults, ...options };
       for (const columnId of columnIds) {
         // hide each column by its id but wait after the for loop to auto resize columns in the grid
-        this.hideColumnById(columnId, { ...options, triggerEvent: false, autoResizeColumns: false });
+        this.hideColumnById(columnId, { ...options, triggerEvent: false, applySetColumns: false, autoResizeColumns: false });
       }
+
+      // after looping through all columns, we can apply the new columns in the grid
+      this._grid.setColumns(this.sharedService.visibleColumns);
+
       // do we want to auto-resize the columns in the grid after hidding some? most often yes
       if (options?.autoResizeColumns) {
         this._grid.autosizeColumns();
       }
+
       // do we want to trigger an event after hidding
       if (options?.triggerEvent) {
+        // @deprecate `onHeaderMenuHideColumns` event, we should keep only `onHideColumns`
         this.pubSubService.publish('onHeaderMenuHideColumns', { columns: this.sharedService.visibleColumns });
+        this.pubSubService.publish('onHideColumns', { columns: this.sharedService.visibleColumns });
+      }
+    }
+  }
+
+  /**
+   * Show multiple columns by their Ids, any column outside the provided array will be considered hidden but will still show up in columnPicker/gridMenu
+   * @param {Array<string | number>} columnIds - column ids to show
+   * @param {boolean} triggerEvent - do we want to trigger an event (onShowColumns) when column becomes hidden? Defaults to true.
+   */
+  showColumnByIds(columnIds: Array<string | number>, options?: ShowColumnOption): void {
+    if (this._grid) {
+      options = { ...ShowColumnOptionDefaults, ...options };
+      const columns = this.sharedService.allColumns.filter(c => columnIds.includes(c.id));
+      this._grid.setColumns(columns);
+      this.sharedService.visibleColumns = columns;
+
+      // do we want to auto-resize the columns in the grid after hidding some? most often yes
+      if (options?.autoResizeColumns) {
+        this._grid.autosizeColumns();
+      }
+
+      // do we want to trigger an event after showing
+      if (options?.triggerEvent) {
+        this.pubSubService.publish('onShowColumns', { columns: this.sharedService.visibleColumns });
       }
     }
   }
