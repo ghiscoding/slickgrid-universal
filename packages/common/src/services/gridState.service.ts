@@ -428,10 +428,10 @@ export class GridStateService {
       });
     }
 
-    // subscribe to HeaderMenu (hide column)
+    // subscribe to HeaderMenu & GridService show/hide column(s)
     this._subscriptions.push(
-      this.pubSubService.subscribe<Column[]>('onHeaderMenuHideColumns', visibleColumns => {
-        const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(visibleColumns);
+      this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column; }>(['onHeaderMenuHideColumns', 'onHideColumns', 'onShowColumns'], data => {
+        const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
       })
     );

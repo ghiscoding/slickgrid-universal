@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, type GridState, } from '@slickgrid-universal/common';
+import { type Column, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, type GridState, type CurrentColumn, } from '@slickgrid-universal/common';
 import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -429,8 +429,11 @@ export default class Example09 {
   gridStateChanged(event) {
     if (event?.detail) {
       const gridStateChanges: GridStateChange = event.detail;
-      // console.log('Client sample, Grid State changed:: ', gridStateChanges);
-      console.log('Client sample, Grid State changed:: ', gridStateChanges.change);
+      // console.log('Grid State changed:: ', gridStateChanges);
+      console.log('Grid State changed:: ', gridStateChanges.change);
+      if (gridStateChanges.change?.type === 'columns') {
+        console.log(`Grid State changed, ${(gridStateChanges.change.newValues as CurrentColumn[]).length} columns displayed`);
+      }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(gridStateChanges.gridState));
     }

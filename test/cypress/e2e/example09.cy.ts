@@ -63,7 +63,7 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(1);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 3, pageSize: 20 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 3, pageSize: 20 }, type: 'pagination' });
       });
     });
 
@@ -97,7 +97,7 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(1);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
       });
     });
 
@@ -130,7 +130,7 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(1);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 5, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 5, pageSize: 10 }, type: 'pagination' });
       });
     });
 
@@ -164,7 +164,7 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(1);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
       });
     });
 
@@ -198,7 +198,7 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(1);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 5, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 5, pageSize: 10 }, type: 'pagination' });
       });
     });
 
@@ -240,8 +240,8 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(2);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: [], type: 'filter' });
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: [], type: 'filter' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
       });
     });
 
@@ -267,7 +267,7 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(1);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: [], type: 'sorter' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: [], type: 'sorter' });
       });
     });
 
@@ -646,8 +646,8 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().then((win) => {
         // expect(win.console.log).to.have.callCount(2);
-        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: [{ columnId: 'name', operator: 'Contains', searchTerms: ['x'], targetSelector: 'input.form-control.filter-name.compound-input.filled' }], type: 'filter' });
-        // expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: [{ columnId: 'name', operator: 'Contains', searchTerms: ['x'], targetSelector: 'input.form-control.filter-name.compound-input.filled' }], type: 'filter' });
+        // expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
       });
     });
 
@@ -997,6 +997,27 @@ describe('Example 09 - OData Grid', () => {
 
       cy.window().its('localStorage').invoke('getItem', STORAGE_KEY)
         .should('be.null');
+    });
+
+    it('should hide column from header menu and expect grid state change to reflect that', () => {
+      cy.get('.grid9')
+        .find('.slick-header-column:nth(2)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu .slick-menu-command-list')
+        .should('be.visible')
+        .children('.slick-menu-item:nth-of-type(8)')
+        .children('.slick-menu-content')
+        .should('contain', 'Hide Column')
+        .click();
+
+      cy.window().then((win) => {
+        expect(win.console.log).to.have.callCount(2);
+        expect(win.console.log).to.be.calledWith('Grid State changed, 4 columns displayed');
+      });
     });
   });
 });
