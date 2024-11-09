@@ -940,7 +940,7 @@ describe('GridStateService', () => {
       expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
     });
 
-    it('should trigger a "onGridStateChanged" event when "onHeaderMenuHideColumns" is triggered', () => {
+    it('should trigger a "onGridStateChanged" event when "onHeaderMenuHideColumns", "onHideColumns" or "onShowColumns" are triggered', () => {
       const columnsMock1 = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
       const currentColumnsMock1 = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const gridStateMock = { columns: currentColumnsMock1, filters: [], sorters: [] } as GridState;
@@ -949,27 +949,13 @@ describe('GridStateService', () => {
       const getCurGridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
       const getAssocCurColSpy = vi.spyOn(service, 'getAssociatedCurrentColumns').mockReturnValue(currentColumnsMock1);
 
-      fnCallbacks['onHeaderMenuHideColumns'](columnsMock1);
+      for (const eventName of ['onHeaderMenuHideColumns', 'onHideColumns', 'onShowColumns']) {
+        fnCallbacks[eventName](columnsMock1);
 
-      expect(getCurGridStateSpy).toHaveBeenCalled();
-      expect(getAssocCurColSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
-    });
-
-    it('should trigger a "onGridStateChanged" event when "onHideColumns" is triggered', () => {
-      const columnsMock1 = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      const currentColumnsMock1 = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-      const gridStateMock = { columns: currentColumnsMock1, filters: [], sorters: [] } as GridState;
-      const stateChangeMock = { change: { newValues: currentColumnsMock1, type: GridStateType.columns }, gridState: gridStateMock } as GridStateChange;
-      const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
-      const getCurGridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
-      const getAssocCurColSpy = vi.spyOn(service, 'getAssociatedCurrentColumns').mockReturnValue(currentColumnsMock1);
-
-      fnCallbacks['onHideColumns'](columnsMock1);
-
-      expect(getCurGridStateSpy).toHaveBeenCalled();
-      expect(getAssocCurColSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
+        expect(getCurGridStateSpy).toHaveBeenCalled();
+        expect(getAssocCurColSpy).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridStateChanged', stateChangeMock);
+      }
     });
 
     it('should trigger a "onGridStateChanged" event when "onTreeItemToggled" is triggered', () => {
