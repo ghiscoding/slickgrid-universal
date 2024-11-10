@@ -397,6 +397,27 @@ describe('DateEditor', () => {
         expect(editor.isValueTouched()).toBe(true);
       });
 
+      it('should return the first loaded date when date is loaded multiple times then reset', () => {
+        mockItemData = { id: 1, startDate: '02/25/2020', isActive: true };
+        mockColumn.type = FieldType.dateUs;
+        const dateMock = '02/25/2020';
+
+        editor = new DateEditor(editorArguments);
+        vi.runAllTimers();
+
+        editor.loadValue(mockItemData);
+        const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
+        editorInputElm.value = dateMock;
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock] } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.reset();
+
+        expect(editorInputElm.value).toBe(dateMock);
+        expect(editor.calendarInstance?.settings.selected.dates).toEqual(['2020-02-25']); // picker only deals with ISO formatted dates
+        expect(editor.isValueChanged()).toBe(false);
+        expect(editor.isValueTouched()).toBe(false);
+      });
+
       it('should return False when date in the picker is the same as the current date', () => {
         mockItemData = { id: 1, startDate: '2001-01-02', isActive: true };
         mockColumn.type = FieldType.dateIso;

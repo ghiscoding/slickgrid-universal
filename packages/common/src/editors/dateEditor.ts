@@ -388,8 +388,9 @@ export class DateEditor implements Editor {
       const inputFieldType = this.columnEditor.type || this.columnDef?.type || FieldType.dateIso;
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateIso;
 
-      this._originalDate = formatDateByFieldType(value, inputFieldType, outputFieldType);
-      this._inputElm.value = this._originalDate;
+      const formattedDate = formatDateByFieldType(value, inputFieldType, outputFieldType);
+      this._originalDate = formattedDate !== '' ? value : '';
+      this._inputElm.value = formattedDate;
     }
   }
 

@@ -718,6 +718,17 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     cy.get('.slick-editor-modal-title')
       .should('contain', 'Editing - Task 3');
+  });
+
+  it('should change Start date and reset to previous value when resetting the form', () => {
+    cy.get('.editor-start .vanilla-picker input').invoke('val').should('not.be.empty');
+    cy.get('.editor-start .vanilla-picker [data-clear] button.btn-clear').click();
+    cy.get('.editor-start .vanilla-picker input').invoke('val').should('be.empty');
+
+    cy.get('.item-details-container .modified').should('have.length', 1);
+    cy.get('.reset-form').contains('Reset Form').click();
+    cy.get('.item-details-container .modified').should('have.length', 0);
+    cy.get('.editor-start .vanilla-picker input').invoke('val').should('not.be.empty');
 
     cy.get('.slick-editor-modal-footer .btn-cancel')
       .click();
