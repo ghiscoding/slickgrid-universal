@@ -47,8 +47,5 @@
     "last 2 version",
     "> 1%",
     "not dead"
-  ],
-  "devDependencies": {
-    "@types/dompurify": "^3.0.5"
-  }
+  ]
 }
