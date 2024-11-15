@@ -235,21 +235,25 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
  * @param {Function} predicate - search predicate to find the item in the hierarchical tree structure
  * @param {String} childrenPropertyName - children property name to use in the tree (defaults to "children")
  */
-export function findItemInTreeStructure<T = any>(treeArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
+export function findItemInTreeStructure<T extends object = any>(
+  treeArray: T[],
+  predicate: (item: T) => boolean,
+  childrenPropertyName: string
+): T | undefined {
   if (!childrenPropertyName) {
-    throw new Error('findRecursive requires parameter "childrenPropertyName"');
+    throw new Error('findItemInTreeStructure requires parameter "childrenPropertyName"');
   }
   const initialFind = treeArray.find(predicate);
-  const elementsWithChildren = treeArray.filter((x: T) => x?.hasOwnProperty(childrenPropertyName) && x[childrenPropertyName as keyof T]);
+  const elementsWithChildren = treeArray.filter((x: T) => childrenPropertyName in x && x[childrenPropertyName as keyof T]);
   if (initialFind) {
     return initialFind;
   } else if (elementsWithChildren.length) {
     const childElements: T[] = [];
-    elementsWithChildren.forEach((item: T) => {
-      if (item?.hasOwnProperty(childrenPropertyName)) {
+    for (const item of elementsWithChildren) {
+      if (childrenPropertyName in item) {
         childElements.push(...(item as any)[childrenPropertyName]);
       }
-    });
+    }
     return findItemInTreeStructure<T>(childElements, predicate, childrenPropertyName);
   }
   return undefined;

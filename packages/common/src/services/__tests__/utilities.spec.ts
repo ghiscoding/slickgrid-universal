@@ -319,7 +319,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should throw an error when the children property name argument is missing', () => {
-      expect(() => findItemInTreeStructure(mockColumns, x => x.file === 'pop', '')).toThrow('findRecursive requires parameter "childrenPropertyName"');
+      expect(() => findItemInTreeStructure(mockColumns, x => x.file === 'pop', '')).toThrow('findItemInTreeStructure requires parameter "childrenPropertyName"');
     });
 
     it('should find an item from a hierarchical array', () => {
