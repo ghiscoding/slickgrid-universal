@@ -215,13 +215,15 @@ export class SlickCellExternalCopyManager {
   // ---------------------
 
   protected createTextBox(innerText: string): HTMLTextAreaElement {
-    const textAreaElm = createDomElement(
-      'textarea',
-      {
-        value: innerText,
-        style: { position: 'absolute', left: '-1000px', top: `${document.body.scrollTop}px`, }
-      },
-      this._bodyElement);
+    const scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
+    const textAreaElm = createDomElement('textarea', {
+      value: innerText,
+      style: {
+        position: 'absolute',
+        opacity: '0',
+        top: `${scrollPos}px`
+      }
+    }, this._bodyElement);
     textAreaElm.select();
 
     return textAreaElm;
