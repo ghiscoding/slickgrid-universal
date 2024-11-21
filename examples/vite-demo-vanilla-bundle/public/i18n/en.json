@@ -15,7 +15,7 @@
   "COMMANDS": "Commands",
   "CONTAINS": "Contains",
   "COPY": "Copy",
-  "DROP_COLUMN_HEADER_TO_GROUP_BY": "Drop a column header here to group by the column",
+  "DROP_COLUMN_HEADER_TO_GROUP_BY": "Drop a column header here to group by the column(s)",
   "EMPTY_DATA_WARNING_MESSAGE": "No data to display.",
   "ENDS_WITH": "Ends With",
   "EQUALS": "Equals",
