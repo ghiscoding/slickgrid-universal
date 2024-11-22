@@ -72,7 +72,7 @@ jobs:
 
       - name: Upload Vitest coverage to Codecov
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -82,7 +82,7 @@ jobs:
 
       - name: Retry Codecov upload when 1st try failed
         if: ${{ failure() && !contains(github.event.head_commit.message, 'chore(release)') }}
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
