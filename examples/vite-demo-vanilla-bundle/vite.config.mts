@@ -25,12 +25,5 @@ export default defineConfig(() => {
         followSymlinks: false,
       }
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          api: 'modern-compiler'
-        }
-      }
-    }
   };
 });
