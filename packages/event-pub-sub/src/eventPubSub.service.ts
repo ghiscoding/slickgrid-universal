@@ -74,6 +74,12 @@ export class EventPubSubService implements BasePubSubService {
   getEventNameByNamingConvention(inputEventName: string, eventNamePrefix: string): string {
     let outputEventName = '';
 
+    if (this.eventNamingStyle === EventNamingStyle.lowerCaseWithoutOnPrefix) {
+      outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`;
+    } else if (this.eventNamingStyle === EventNamingStyle.camelCaseWithExtraOnPrefix) {
+      outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, 'onOn')}`;
+    }
+
     switch (this.eventNamingStyle) {
       case EventNamingStyle.camelCase:
         outputEventName = (eventNamePrefix !== '') ? `${eventNamePrefix}${titleCase(inputEventName)}` : inputEventName;
@@ -83,9 +89,6 @@ export class EventPubSubService implements BasePubSubService {
         break;
       case EventNamingStyle.lowerCase:
         outputEventName = `${eventNamePrefix}${inputEventName}`.toLowerCase();
-        break;
-      case EventNamingStyle.lowerCaseWithoutOnPrefix:
-        outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`.toLowerCase();
         break;
     }
     return outputEventName;
