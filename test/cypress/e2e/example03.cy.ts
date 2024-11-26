@@ -323,6 +323,21 @@ describe('Example 03 - Draggable Grouping', () => {
         .find('input')
         .should('be.checked');
     });
+
+    it('should be able to toggle draggable grouping row (top-header panel)', () => {
+      cy.get('.slick-topheader-panel')
+        .should('be.visible');
+
+      cy.get('[data-test="toggle-draggable-grouping-row"]').click();
+
+      cy.get('.slick-topheader-panel')
+        .should('be.hidden');
+
+      cy.get('[data-test="toggle-draggable-grouping-row"]').click();
+
+      cy.get('.slick-topheader-panel')
+        .should('be.visible');
+    });
   });
 
   describe('Column Picker tests', () => {
