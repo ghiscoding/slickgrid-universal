@@ -175,6 +175,26 @@ describe('EventPubSub Service', () => {
       subscription.unsubscribe();
       expect(service.subscribedEvents.length).toBe(0);
     });
+
+    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with camelCaseWithExtraOnPrefix', () => {
+      const addEventSpy = vi.spyOn(divContainer, 'addEventListener');
+      const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
+      const mockCallback = vi.fn();
+
+      service.eventNamingStyle = EventNamingStyle.camelCaseWithExtraOnPrefix;
+      const subscription = service.subscribeEvent('onClick', mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('onOnClick', { composed: true, detail: { name: 'John' } }));
+
+      expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
+      expect(service.subscribedEventNames).toEqual(['onOnClick']);
+      expect(service.subscribedEvents.length).toBe(1);
+      expect(addEventSpy).toHaveBeenCalledWith('onOnClick', expect.any(Function));
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      // expect(mockCallback).toHaveBeenCalledWith({ detail: { name: 'John' } });
+
+      subscription.unsubscribe();
+      expect(service.subscribedEvents.length).toBe(0);
+    });
   });
 
   describe('unsubscribe & unsubscribeAll method', () => {
