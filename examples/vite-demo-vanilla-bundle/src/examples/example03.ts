@@ -462,6 +462,14 @@ export default class Example03 {
     }
   }
 
+  setFiltersDynamically() {
+    // we can Set Filters Dynamically (or different filters) afterward through the FilterService
+    this.sgb.filterService.updateFilters([
+      { columnId: 'percentComplete', operator: '>=', searchTerms: ['55'] },
+      { columnId: 'cost', operator: '<', searchTerms: ['80'] },
+    ]);
+  }
+
   showTopHeader() {
     this.sgb?.slickGrid?.setTopHeaderPanelVisibility(true);
   }
