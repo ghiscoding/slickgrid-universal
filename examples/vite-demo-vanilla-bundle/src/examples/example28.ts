@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { Aggregators, type Column, FieldType, Formatters, type GridOption, type Grouping, type OnRowCountChangedEventArgs, SortComparers, SortDirectionNumber, } from '@slickgrid-universal/common';
+import { Aggregators, type Column, FieldType, Filters, Formatters, type GridOption, type Grouping, type OnRowCountChangedEventArgs, SortComparers, SortDirectionNumber, } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -48,8 +48,8 @@ export default class Example28 {
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
       { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
+      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate } },
+      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate } },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true, formatter: Formatters.checkmarkMaterial }
     ];
 

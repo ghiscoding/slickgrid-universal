@@ -21,3 +21,8 @@ export function loadComponent<T = any>(containerElement: HTMLDivElement, htmlVie
   }
   return null;
 }
+
+export function zeroPadding(input: string | number) {
+  const number = parseInt(input as string, 10);
+  return number < 10 ? `0${number}` : number;
+}
