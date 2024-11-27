@@ -393,7 +393,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       autocomplete: 'off', ariaAutoComplete: 'none',
       placeholder,
-      className: `form-control search-filter filter-${columnId} slick-autocomplete-container`,
+      className: `form-control search-filter slick-filter filter-${columnId} slick-autocomplete-container`,
       value: (searchTerm ?? '') as string,
       dataset: { columnid: `${columnId}` }
     });

@@ -280,7 +280,7 @@ export class InputFilter implements Filter {
     if (this.inputFilterType === 'single') {
       this._filterContainerElm = this._filterInputElm;
       // append the new DOM element to the header row & an empty span
-      this._filterInputElm.classList.add('search-filter');
+      this._filterInputElm.classList.add('search-filter', 'slick-filter');
       this._cellContainerElm.appendChild(this._filterInputElm);
       this._cellContainerElm.appendChild(document.createElement('span'));
     } else {
