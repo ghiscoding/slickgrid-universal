@@ -241,10 +241,8 @@ export class FilterService {
     }
 
     // when using a backend service, we need to manually trigger a filter change but only if the filter was previously filled
-    if (isBackendApi) {
-      if (currentColFilter !== undefined) {
-        this.onBackendFilterChange(event, { grid: this._grid, columnFilters: this._columnFilters } as unknown as OnSearchChangeEventArgs);
-      }
+    if (isBackendApi && currentColFilter !== undefined) {
+      this.onBackendFilterChange(event, { grid: this._grid, columnFilters: this._columnFilters } as unknown as OnSearchChangeEventArgs);
     }
 
     // emit an event when filter is cleared
@@ -358,40 +356,38 @@ export class FilterService {
         }
         return filtered;
       }
-    } else {
-      if (typeof columnFilters === 'object') {
-        for (const columnId of Object.keys(columnFilters)) {
-          const searchColFilter = columnFilters[columnId] as SearchColumnFilter;
-          const columnFilterDef = searchColFilter.columnDef?.filter;
+    } else if (typeof columnFilters === 'object') {
+      for (const columnId of Object.keys(columnFilters)) {
+        const searchColFilter = columnFilters[columnId] as SearchColumnFilter;
+        const columnFilterDef = searchColFilter.columnDef?.filter;
 
-          // user could provide a custom filter predicate on the column definition
-          if (typeof columnFilterDef?.filterPredicate === 'function') {
-            // only return on false, when row is filtered out and no further filter to be considered
-            if (!columnFilterDef.filterPredicate(item, searchColFilter)) {
-              return false;
-            }
-          } else {
-            // otherwise execute built-in filter condition checks
-            const conditionOptions = this.preProcessFilterConditionOnDataContext(item, searchColFilter, grid);
-            if (typeof conditionOptions === 'boolean') {
-              return conditionOptions; // reaching this line means that the value is not being filtered out, return it right away
-            }
+        // user could provide a custom filter predicate on the column definition
+        if (typeof columnFilterDef?.filterPredicate === 'function') {
+          // only return on false, when row is filtered out and no further filter to be considered
+          if (!columnFilterDef.filterPredicate(item, searchColFilter)) {
+            return false;
+          }
+        } else {
+          // otherwise execute built-in filter condition checks
+          const conditionOptions = this.preProcessFilterConditionOnDataContext(item, searchColFilter, grid);
+          if (typeof conditionOptions === 'boolean') {
+            return conditionOptions; // reaching this line means that the value is not being filtered out, return it right away
+          }
 
-            let parsedSearchTerms = searchColFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
+          let parsedSearchTerms = searchColFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
 
-            // in the rare case of an empty search term (it can happen when creating an external grid global search)
-            // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
-            if (parsedSearchTerms === undefined) {
-              parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, searchColFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
-              if (parsedSearchTerms !== undefined) {
-                searchColFilter.parsedSearchTerms = parsedSearchTerms;
-              }
+          // in the rare case of an empty search term (it can happen when creating an external grid global search)
+          // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
+          if (parsedSearchTerms === undefined) {
+            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, searchColFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
+            if (parsedSearchTerms !== undefined) {
+              searchColFilter.parsedSearchTerms = parsedSearchTerms;
             }
+          }
 
-            // execute the filtering conditions check, comparing all cell values vs search term(s)
-            if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
-              return false;
-            }
+          // execute the filtering conditions check, comparing all cell values vs search term(s)
+          if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
+            return false;
           }
         }
       }

@@ -316,7 +316,7 @@ export class InputFilter implements Filter {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
       this.updateFilterStyle(false);
     } else {
-      const eventType = event?.type ?? '';
+      const eventType = event?.type || '';
       const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
       let value = this._filterInputElm.value;
       const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
