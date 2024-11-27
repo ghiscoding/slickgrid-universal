@@ -322,7 +322,7 @@ export class SliderFilter implements Filter {
     // put all DOM elements together to create the final Slider
     const hideSliderNumbers = (this.filterOptions as SliderOption)?.hideSliderNumber ?? (this.filterOptions as SliderRangeOption)?.hideSliderNumbers;
     const sliderNumberClass = hideSliderNumbers ? '' : 'input-group';
-    this._divContainerFilterElm = createDomElement('div', { className: `${sliderNumberClass} search-filter slider-container slider-values filter-${columnId}`.trim() });
+    this._divContainerFilterElm = createDomElement('div', { className: `${sliderNumberClass} search-filter slick-filter slider-container slider-values filter-${columnId}`.trim() });
 
     this._sliderRangeContainElm.appendChild(this._sliderTrackElm);
     if (this.sliderType === 'double' && this._sliderLeftInputElm) {

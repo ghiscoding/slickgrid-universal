@@ -280,7 +280,7 @@ export class InputFilter implements Filter {
     if (this.inputFilterType === 'single') {
       this._filterContainerElm = this._filterInputElm;
       // append the new DOM element to the header row & an empty span
-      this._filterInputElm.classList.add('search-filter');
+      this._filterInputElm.classList.add('search-filter', 'slick-filter');
       this._cellContainerElm.appendChild(this._filterInputElm);
       this._cellContainerElm.appendChild(document.createElement('span'));
     } else {
@@ -316,7 +316,7 @@ export class InputFilter implements Filter {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
       this.updateFilterStyle(false);
     } else {
-      const eventType = event?.type ?? '';
+      const eventType = event?.type || '';
       const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
       let value = this._filterInputElm.value;
       const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;

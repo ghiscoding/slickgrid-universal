@@ -448,7 +448,7 @@ export class DateFilter implements Filter {
 
     if (this.inputFilterType === 'range') {
       // if there's a search term, we will add the "filled" class for styling purposes
-      const inputContainerElm = createDomElement('div', { className: `date-picker form-group search-filter filter-${columnId}` });
+      const inputContainerElm = createDomElement('div', { className: `date-picker form-group search-filter slick-filter filter-${columnId}` });
 
       if (Array.isArray(searchTerms) && searchTerms.length > 0 && searchTerms[0] !== '') {
         this._currentDateOrDates = searchTerms as Date[];
