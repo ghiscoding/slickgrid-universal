@@ -966,6 +966,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** handles "display:none" on container or container parents, related to issue: https://github.com/6pac/SlickGrid/issues/568 */
   cacheCssForHiddenInit(): void {
     this._hiddenParents = Utils.parents(this._container, ':hidden') as HTMLElement[];
+    this.oldProps = [];
     this._hiddenParents.forEach(el => {
       const old: Partial<CSSStyleDeclaration> = {};
       Object.keys(this.cssShow).forEach(name => {
@@ -991,6 +992,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           }
         });
       });
+      this._hiddenParents = [];
     }
   }
 
