@@ -116,7 +116,7 @@ describe('Service/Utilies', () => {
       expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         if (input.length > 1) {
           return true;
-        }
+        };
         return input["age"].toString().includes(args.searchString)
       `));
     });
@@ -135,7 +135,7 @@ describe('Service/Utilies', () => {
       expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         if (input.length > 1) {
           return true;
-        }
+        };
         return input["age"].toString().includes(args.searchString)
       `));
     });
@@ -189,7 +189,7 @@ describe('Service/Utilies', () => {
         let sum = a + b;
         for (const n of rest) {
           sum += n;
-        }
+        };
         return sum;
       `));
     });
@@ -225,7 +225,7 @@ describe('Service/Utilies', () => {
       expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
         if (input.length > 1) {
           return true;
-        }
+        };
         return input["age"].toString().includes(args.searchString);
       `));
     });
