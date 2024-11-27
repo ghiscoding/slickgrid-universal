@@ -2,6 +2,7 @@ import { type Column, ExtensionName, FieldType, Formatters, type GridOption } fr
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
+import { zeroPadding } from './utilities.js';
 // import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss?inline';
 // import cssCode from '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss?url';
 
@@ -174,8 +175,8 @@ export default class Example01 {
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100) + '',
         percentComplete: randomPercent,
-        start: new Date(randomYear, randomMonth + 1, randomDay),
-        finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+        start: `${zeroPadding(randomYear)}-${zeroPadding(randomMonth + 1)}-${zeroPadding(randomDay)}`,
+        finish: `${zeroPadding(randomYear + 1)}-${zeroPadding(randomMonth + 1)}-${zeroPadding(randomDay)}`,
         effortDriven: (i % 5 === 0)
       };
     }
