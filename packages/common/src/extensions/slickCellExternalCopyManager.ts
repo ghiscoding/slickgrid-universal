@@ -81,7 +81,7 @@ export class SlickCellExternalCopyManager {
 
     // we give focus on the grid when a selection is done on it (unless it's an editor, if so the editor should have already set focus to the grid prior to editing a cell).
     // without this, if the user selects a range of cell without giving focus on a particular cell, the grid doesn't get the focus and key stroke handles (ctrl+c) don't work
-    this._eventHandler.subscribe(cellSelectionModel.onSelectedRangesChanged, (_e, ranges) => {
+    this._eventHandler.subscribe(cellSelectionModel.onSelectedRangesChanged, () => {
       if (!this._grid.getEditorLock().isActive() && !document.activeElement?.classList.contains('slick-filter')) {
         this._grid.focus();
       }
