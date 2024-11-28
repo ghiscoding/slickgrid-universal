@@ -39,7 +39,7 @@
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
     "directory": "packages/vanilla-bundle"
   },
   "bugs": {
