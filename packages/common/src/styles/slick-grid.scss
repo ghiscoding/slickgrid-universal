@@ -758,22 +758,8 @@
   }
 
   /** Frozen/Pinned styling */
-
-  .slick-row .slick-cell.frozen:last-child,
-  .slick-footerrow-column.frozen:last-child {
+  .slick-pane-left.frozen {
     border-right: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
-  }
-  .slick-header-column.frozen:last-child {
-    border-right: var(--slick-frozen-header-row-border-right, v.$slick-frozen-header-row-border-right);
-  }
-  .slick-pane-left {
-    .slick-preheader-panel .slick-header-column.frozen:last-child,
-    .slick-topheader-panel .slick-header-column.frozen:last-child {
-      border-right: var(--slick-frozen-preheader-row-border-right, v.$slick-frozen-preheader-row-border-right);
-    }
-  }
-  .slick-headerrow-column.frozen:last-child {
-    border-right: var(--slick-frozen-filter-row-border-right, v.$slick-frozen-filter-row-border-right);
   }
 
   .slick-pane-bottom {

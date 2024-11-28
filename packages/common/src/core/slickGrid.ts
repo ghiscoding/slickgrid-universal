@@ -875,6 +875,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       this.setFrozenOptions();
+      this.setPaneFrozenClasses();
       this.setPaneVisibility();
       this.setScroller();
       this.setOverflow();
@@ -2285,6 +2286,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
+  /** add/remove frozen class to left headers/footer when defined */
+  protected setPaneFrozenClasses(): void {
+    const classAction = this.hasFrozenColumns() ? 'add' : 'remove';
+    for (const elm of [this._paneHeaderL, this._paneTopL, this._paneBottomL]) {
+      elm.classList[classAction]('frozen');
+    }
+  }
+
   protected setPaneVisibility(): void {
     if (this.hasFrozenColumns()) {
       Utils.show(this._paneHeaderR);
@@ -3017,6 +3026,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.updateColumnCaches();
 
     if (this.initialized) {
+      this.setPaneFrozenClasses();
       this.setPaneVisibility();
       this.setOverflow();
       this.invalidateAllRows();

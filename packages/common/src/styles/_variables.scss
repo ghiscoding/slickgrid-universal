@@ -174,9 +174,6 @@ $slick-header-scroll-width-to-remove:                       16px !default;      
 /* Frozen pinned rows/columns */
 $slick-frozen-border-bottom:                                1px solid #a5a5a5 !default;
 $slick-frozen-border-right:                                 1px solid #a5a5a5 !default;
-$slick-frozen-preheader-row-border-right:                   $slick-frozen-border-right !default;
-$slick-frozen-header-row-border-right:                      $slick-frozen-border-right !default;
-$slick-frozen-filter-row-border-right:                      $slick-frozen-border-right !default;
 $slick-frozen-overflow-right:                               scroll !default;                      // typically we would like to always have the scroll displayed when using hamburger menu (top right)
 
 /* icons */
