@@ -7,7 +7,6 @@ import type {
   AutoTooltipOption,
   AutocompleterOption,
   BackendServiceApi,
-  BasePaginationComponent,
   CellMenu,
   CheckboxSelectorOption,
   Column,
@@ -223,8 +222,11 @@ export interface GridOption<C extends Column = Column> {
   /** Custom Footer Options */
   customFooterOptions?: CustomFooterOption;
 
-  /** External Custom Pagination Component that can be provided by the user */
-  customPaginationComponent?: typeof BasePaginationComponent;
+  /**
+   * External Custom Pagination Component that can be provided by the user.
+   * NOTE: Your Component MUST implement either a `BasePaginationComponent` Class OR a Component that will return an instance of type `BasePaginationModel`
+   */
+  customPaginationComponent?: any;
 
   /**
    * Custom Tooltip Options, the tooltip could be defined in any of the Column Definition or in the Grid Options,

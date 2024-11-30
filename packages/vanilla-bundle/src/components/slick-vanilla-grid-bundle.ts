@@ -1262,7 +1262,7 @@ export class SlickVanillaGridBundle<TData = any> {
    */
   protected renderPagination(showPagination = true): void {
     if (this.slickGrid && this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
-      const PaginationClass = this.gridOptions.customPaginationComponent ?? SlickPaginationComponent;
+      const PaginationClass = (this.gridOptions.customPaginationComponent ?? SlickPaginationComponent) as typeof BasePaginationComponent;
       this.paginationComponent = new PaginationClass();
       this.paginationComponent.init(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
       this.paginationComponent.renderPagination(this._gridParentContainerElm);

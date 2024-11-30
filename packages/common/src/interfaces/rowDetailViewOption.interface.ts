@@ -1,5 +1,17 @@
-import type { UsabilityOverrideFn } from '../index.js';
+import type { SlickDataView, SlickGrid, SlickRowDetailView, UsabilityOverrideFn } from '../index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
+
+export interface RowDetailViewProps<T = any> {
+  model: T;
+  addon: SlickRowDetailView;
+  expandedRows?: (string | number)[];
+  grid: SlickGrid;
+  dataView: SlickDataView;
+  parent: any;
+  rowId?: string | number;
+  rowIndex?: number;
+  rowIdsOutOfViewport?: (string | number)[];
+}
 
 export interface RowDetailViewOption {
   /** Defaults to True, do we always render/reRender the column */
@@ -43,10 +55,7 @@ export interface RowDetailViewOption {
    */
   panelRows: number;
 
-  /**
-   * Optionally pass your Parent Component reference to your Child Component (row detail component).
-   * note:: If anyone finds a better way of passing the parent to the row detail extension, please reach out and/or create a PR
-   */
+  /** Optionally pass your Parent Component reference or exposed functions to your Child Component (row detail component). */
   parent?: any;
 
   /** Defaults to false, makes the column reorderable to another position in the grid. */

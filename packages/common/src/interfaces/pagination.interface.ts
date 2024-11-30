@@ -18,6 +18,19 @@ export interface Pagination {
   totalItems?: number;
 }
 
+export interface BasePaginationModel {
+  init: (
+    grid: SlickGrid,
+    paginationService: PaginationService,
+    pubSubService: BasePubSubService,
+    translaterService?: TranslaterService | undefined
+  ) => void;
+
+  dispose: () => void;
+
+  renderPagination: (containerElm: HTMLElement) => void;
+}
+
 export class BasePaginationComponent {
   constructor(_elmRef?: any) { }
 
