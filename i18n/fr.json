@@ -15,7 +15,7 @@
   "COMMANDS": "Commandes",
   "CONTAINS": "Contient",
   "COPY": "Copier",
-  "DROP_COLUMN_HEADER_TO_GROUP_BY": "Glisser une en-tête de colonne ici pour grouper par cet colonne",
+  "DROP_COLUMN_HEADER_TO_GROUP_BY": "Glisser une ou plusieurs colonnes ici pour grouper par ces colonne(s)",
   "EMPTY_DATA_WARNING_MESSAGE": "Aucune donnée à afficher.",
   "ENDS_WITH": "Se termine par",
   "EQUALS": "Égale",
