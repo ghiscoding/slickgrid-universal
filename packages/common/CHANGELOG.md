@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.10.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.1...v5.10.2) (2024-11-30)
+
+### Bug Fixes
+
+* add "frozen" class to all slick-pane for easier styling ([#1752](https://github.com/ghiscoding/slickgrid-universal/issues/1752)) ([33a8a38](https://github.com/ghiscoding/slickgrid-universal/commit/33a8a3842bdf2957743f9016614319569cbb414e)) - by @ghiscoding
+* Composite Editor should reapply original when exist & form is reset ([#1739](https://github.com/ghiscoding/slickgrid-universal/issues/1739)) ([f709b56](https://github.com/ghiscoding/slickgrid-universal/commit/f709b56ded62bbe9cf4f034b5d84735495439fce)) - by @ghiscoding
+* ensure DOM alterations during initialization are always cleaned up ([#1751](https://github.com/ghiscoding/slickgrid-universal/issues/1751)) ([c65466f](https://github.com/ghiscoding/slickgrid-universal/commit/c65466f84f13efac2cf17275a51fffc5ccb325bc)) - by @ghiscoding
+* ExternalCopyManager shouldn't change body scroll pos, fixes [#1078](https://github.com/ghiscoding/slickgrid-universal/issues/1078) ([#1741](https://github.com/ghiscoding/slickgrid-universal/issues/1741)) ([5bf633c](https://github.com/ghiscoding/slickgrid-universal/commit/5bf633c5d7b0e2b4ca98c489c7da906286c2c0c8)) - by @ghiscoding
+* icons should have default black color instead of inherit ([af9f5db](https://github.com/ghiscoding/slickgrid-universal/commit/af9f5db4bb0bf75215537193472a1c34f292e0e9)) - by @ghiscoding
+* input filter loses focus after edit+filtering with `enableExcelCopyBuffer` ([#1750](https://github.com/ghiscoding/slickgrid-universal/issues/1750)) ([b2f4f52](https://github.com/ghiscoding/slickgrid-universal/commit/b2f4f52777b39e6935f2cc2bad5517e6b19590c1)) - by @ghiscoding
+* setting filter dynamically shouldn't make body taller ([#1748](https://github.com/ghiscoding/slickgrid-universal/issues/1748)) ([41e4317](https://github.com/ghiscoding/slickgrid-universal/commit/41e4317fe15498ed26cca40ad52f80e560a392d3)) - by @ghiscoding
+
 ## [5.10.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.0...v5.10.1) (2024-11-09)
 
 ### Bug Fixes

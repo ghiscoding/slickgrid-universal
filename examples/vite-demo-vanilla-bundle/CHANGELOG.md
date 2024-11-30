@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.10.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.1...v5.10.2) (2024-11-30)
+
+### Bug Fixes
+
+* setting filter dynamically shouldn't make body taller ([#1748](https://github.com/ghiscoding/slickgrid-universal/issues/1748)) ([41e4317](https://github.com/ghiscoding/slickgrid-universal/commit/41e4317fe15498ed26cca40ad52f80e560a392d3)) - by @ghiscoding
+
 ## [5.10.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.0...v5.10.1) (2024-11-09)
 
 ### Bug Fixes
