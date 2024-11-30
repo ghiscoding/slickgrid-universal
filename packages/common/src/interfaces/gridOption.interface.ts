@@ -762,7 +762,7 @@ export interface GridOption<C extends Column = Column> {
    * Provide an optional sanitizer, a recommendation is to use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`.
    * see https://github.com/cure53/DOMPurify
    */
-  sanitizer?: (dirtyHtml: string) => string | TrustedHTML;
+  sanitizer?: ((dirtyHtml: string) => string) | ((dirtyHtml: string) => TrustedHTML);
 
   /** Defaults to 10(ms), render throttling when using virtual scroll on large dataset */
   scrollRenderThrottling?: number;
