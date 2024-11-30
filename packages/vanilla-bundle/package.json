@@ -59,7 +59,7 @@
     "@slickgrid-universal/pagination-component": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
-    "sortablejs": "^1.15.3",
+    "sortablejs": "^1.15.6",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
