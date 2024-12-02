@@ -48,7 +48,11 @@
     "test:watch": "vitest --config ./test/vitest.config.mts",
     "test:ui": "vitest --ui --config ./test/vitest.config.mts",
     "prepare": "husky",
-    "commitlint": "commitlint --edit"
+    "commitlint": "commitlint --edit",
+    "vue:build": "pnpm -r --stream --filter=./demos/vue/** run build",
+    "vue:dev": "pnpm -r --stream --filter=./demos/vue/** run dev",
+    "vue:cypress": "pnpm -r --stream --filter=./demos/vue/** run cypress",
+    "vue:serve": "pnpm -r --stream --filter=./demos/vue/** run preview"
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
