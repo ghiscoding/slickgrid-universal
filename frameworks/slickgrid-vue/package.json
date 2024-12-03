@@ -1,15 +1,19 @@
 {
   "name": "slickgrid-vue",
   "version": "0.1.0",
-  "type": "module",
   "description": "Slickgrid-Vue",
-  "module": "./dist/index.js",
+  "type": "module",
+  "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -21,8 +25,10 @@
   "keywords": [
     "vue",
     "vue3",
-    "component",
-    "library"
+    "plugin",
+    "datagrid",
+    "datatable",
+    "slickgrid"
   ],
   "publishConfig": {
     "access": "public"
@@ -32,11 +38,13 @@
     "url": "https://ko-fi.com/ghiscoding"
   },
   "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "clean": "rimraf dist",
     "dev": "vite build --watch",
     "dev:init": "vite build",
-    "build": "vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",
+    "build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
     "preview": "vite preview",
+    "clone:dts": "node clone-dts.mjs",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {

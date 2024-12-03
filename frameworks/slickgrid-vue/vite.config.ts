@@ -14,14 +14,13 @@ export default defineConfig({
     copyPublicDir: false,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      formats: ['es'],
-      fileName: 'index',
+      formats: ['es', 'cjs'],
+      fileName: format => format === 'cjs' ? 'index.cjs' : 'index.mjs',
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
-        'vue',
         '@formkit/tempo',
         '@slickgrid-universal/common',
         '@slickgrid-universal/custom-footer-component',
@@ -34,7 +33,13 @@ export default defineConfig({
         'i18next',
         'i18next-vue',
         'sortablejs',
+        'vue',
       ],
+      output: {
+        globals: {
+          vue: 'Vue',
+        },
+      },
     },
   },
 });
