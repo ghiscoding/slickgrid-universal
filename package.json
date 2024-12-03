@@ -49,7 +49,7 @@
     "test:ui": "vitest --ui --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit",
-    "vue:framework:build": "pnpm -r --stream --filter=./demos/vue/** run build",
+    "vue:framework:build": "pnpm -r --stream --filter=./frameworks/slickgrid-vue/** run build",
     "vue:demo:build": "pnpm -r --stream --filter=./demos/vue/** run build",
     "vue:dev": "pnpm -r --stream --filter=./demos/vue/** run dev",
     "vue:cypress": "pnpm -r --stream --filter=./demos/vue/** run cypress",
