@@ -82,7 +82,7 @@ jobs:
           wait-on: 'http://localhost:7000'
           config-file: demos/vue/test/cypress.config.mjs
           browser: chrome
-          record: true
+          record: false
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
