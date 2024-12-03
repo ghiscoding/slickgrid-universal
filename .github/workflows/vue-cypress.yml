@@ -76,11 +76,11 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false
-          # working-directory: packages/dnd
+          working-directory: demos/vue
           # start: pnpm vue:serve
           # start: pnpm serve:vite
           wait-on: 'http://localhost:7000'
-          config-file: demos/vue/test/cypress.config.mjs
+          config-file: test/cypress.config.mjs
           browser: chrome
           record: false
         env:
