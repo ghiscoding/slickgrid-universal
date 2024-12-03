@@ -1,7 +1,6 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  projectId: 'gtbpy4',
   video: false,
   viewportWidth: 1200,
   viewportHeight: 1020,
