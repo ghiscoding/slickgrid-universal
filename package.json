@@ -49,7 +49,8 @@
     "test:ui": "vitest --ui --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit",
-    "vue:build": "pnpm -r --stream --filter=./demos/vue/** run build",
+    "vue:framework:build": "pnpm -r --stream --filter=./demos/vue/** run build",
+    "vue:demo:build": "pnpm -r --stream --filter=./demos/vue/** run build",
     "vue:dev": "pnpm -r --stream --filter=./demos/vue/** run dev",
     "vue:cypress": "pnpm -r --stream --filter=./demos/vue/** run cypress",
     "vue:serve": "pnpm -r --stream --filter=./demos/vue/** run serve:demo"
@@ -93,7 +94,6 @@
     "rimraf": "^5.0.10",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
-    "slickgrid-vue": "link:frameworks/slickgrid-vue",
     "sortablejs": "^1.15.6",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.16.0",

@@ -66,8 +66,11 @@ jobs:
       - name: TSC Build (esm)
         run: pnpm predev
 
+      - name: Slickgrid-Vue Framework Build
+        run: pnpm vue:framework:build
+
       - name: Website Dev Build (served for Cypress)
-        run: pnpm vue:build
+        run: pnpm vue:demo:build
 
       - name: Start HTTP Server
         run: pnpm vue:serve &
