@@ -28,6 +28,7 @@
     "build:watch": "tsc --build ./tsconfig.packages.json --watch",
     "predev": "pnpm run build:esm && pnpm run -r --filter=./packages/common sass:copy",
     "dev": "run-p dev:watch vite:watch",
+    "dev:vue": "run-p dev:watch vue:watch",
     "dev:watch": "lerna watch --no-bail --file-delimiter=\",\" --glob=\"src/**/*.{ts,scss}\" --ignored=\"**/*.spec.ts\" -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME dev",
     "vite:watch": "pnpm -r --parallel run vite:dev",
     "preview:publish": "lerna publish from-package --dry-run --yes",
@@ -49,11 +50,11 @@
     "test:ui": "vitest --ui --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit",
-    "vue:framework:build": "pnpm -r --stream --filter=./frameworks/slickgrid-vue/** run build",
-    "vue:demo:build": "pnpm -r --stream --filter=./demos/vue/** run build",
-    "vue:dev": "pnpm -r --stream --filter=./demos/vue/** run dev",
-    "vue:cypress": "pnpm -r --stream --filter=./demos/vue/** run cypress",
-    "vue:serve": "pnpm -r --stream --filter=./demos/vue/** run preview"
+    "vue:build:framework": "pnpm -r --stream --filter=./frameworks/slickgrid-vue/** run vue:build",
+    "vue:build:demo": "pnpm -r --stream --filter=./demos/vue/** run vue:build",
+    "vue:watch": "pnpm -r --stream --filter=./demos/vue/** run vue:dev",
+    "vue:cypress": "pnpm -r --stream --filter=./demos/vue/** run vue:cypress",
+    "vue:serve": "pnpm -r --stream --filter=./demos/vue/** run vue:preview"
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",

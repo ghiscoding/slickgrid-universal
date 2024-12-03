@@ -67,10 +67,10 @@ jobs:
         run: pnpm predev
 
       - name: Slickgrid-Vue Framework Build
-        run: pnpm vue:framework:build
+        run: pnpm vue:build:framework
 
       - name: Website Dev Build (served for Cypress)
-        run: pnpm vue:demo:build
+        run: pnpm vue:build:demo
 
       - name: Start HTTP Server
         run: pnpm vue:serve &
@@ -81,7 +81,6 @@ jobs:
           install: false
           working-directory: demos/vue
           # start: pnpm vue:serve
-          # start: pnpm serve:vite
           wait-on: 'http://localhost:7000'
           config-file: test/cypress.config.mjs
           browser: chrome

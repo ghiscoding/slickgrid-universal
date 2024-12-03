@@ -7,12 +7,10 @@
     "name": "Ghislain B."
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "cypress": "cypress open --config-file test/cypress.config.mjs",
-    "cypress:ci": "cypress run --config-file test/cypress.config.mjs",
-    "serve:demo": "servor ./dist index.html 7000"
+    "vue:dev": "vite",
+    "vue:build": "tsc && vite build",
+    "vue:preview": "vite preview",
+    "vue:cypress": "cypress open --config-file test/cypress.config.mjs"
   },
   "dependencies": {
     "@faker-js/faker": "^9.2.0",
@@ -47,7 +45,6 @@
     "cypress-real-events": "^1.13.0",
     "fetch-jsonp": "^1.3.0",
     "sass": "^1.81.0",
-    "servor": "^4.0.2",
     "typescript": "~5.6.2",
     "vite": "^6.0.1"
   }

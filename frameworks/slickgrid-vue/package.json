@@ -40,9 +40,9 @@
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "clean": "rimraf dist",
-    "dev": "vite build --watch",
-    "dev:init": "vite build",
-    "build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
+    "vue:dev": "vite build --watch",
+    "vue:dev:init": "vite build",
+    "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
     "clone:dts": "node clone-dts.mjs",
     "type-check": "vue-tsc --build --force"
   },
