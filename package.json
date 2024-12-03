@@ -93,6 +93,7 @@
     "rimraf": "^5.0.10",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
+    "slickgrid-vue": "link:frameworks/slickgrid-vue",
     "sortablejs": "^1.15.6",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.16.0",

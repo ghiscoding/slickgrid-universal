@@ -98,6 +98,9 @@ importers:
       servor:
         specifier: ^4.0.2
         version: 4.0.2
+      slickgrid-vue:
+        specifier: link:frameworks/slickgrid-vue
+        version: link:frameworks/slickgrid-vue
       sortablejs:
         specifier: ^1.15.6
         version: 1.15.6
@@ -177,7 +180,7 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       slickgrid-vue:
-        specifier: link:../../frameworks/slickgrid-vue
+        specifier: workspace:*
         version: link:../../frameworks/slickgrid-vue
       vue:
         specifier: ^3.5.13
