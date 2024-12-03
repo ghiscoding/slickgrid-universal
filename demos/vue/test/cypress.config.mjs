@@ -21,7 +21,7 @@ export default defineConfig({
     runMode: true, // run in CI
   },
   e2e: {
-    baseUrl: 'http://localhost:7000',
+    baseUrl: 'http://localhost:7000/#',
     experimentalRunAllSpecs: true,
     supportFile: 'test/cypress/support/index.ts',
     specPattern: 'test/cypress/e2e/**/*.cy.ts',
