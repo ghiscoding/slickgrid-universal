@@ -1156,9 +1156,9 @@ function updateColumnDefinitionsList(newColumnDefinitions: Column<any>[]) {
  * see docs https://docs.aurelia.io/components/bindable-properties#calling-a-change-function-when-bindable-is-modified
  */
 // function observeColumnDefinitions() {
-//   // _columnDefinitionObserver?.unsubscribe(columnDefinitionsModel.valueSubscriber);
-//   // _columnDefinitionObserver = observerLocator.getArrayObserver(columnDefinitions);
-//   // _columnDefinitionObserver.subscribe(columnDefinitionsModel.valueSubscriber);
+//   _columnDefinitionObserver?.unsubscribe(columnDefinitionsModel.valueSubscriber);
+//   _columnDefinitionObserver = observerLocator.getArrayObserver(columnDefinitions);
+//   _columnDefinitionObserver.subscribe(columnDefinitionsModel.valueSubscriber);
 // }
 
 /**
