@@ -1,4 +1,5 @@
 import dns from 'node:dns';
+import { resolve } from 'node:path';
 
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
@@ -31,5 +32,13 @@ export default defineConfig({
     hmr: {
       clientPort: 7000,
     },
+  },
+  resolve: {
+    alias: [
+      {
+        find: /slickgrid-vue/,
+        replacement: resolve(__dirname, '../../', 'frameworks', 'slickgrid-vue'),
+      },
+    ],
   },
 });

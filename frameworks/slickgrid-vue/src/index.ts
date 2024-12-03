@@ -1,5 +1,4 @@
-import { Aggregators, type Column, type Editors, Enums, type Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
-import { BindingService } from '@slickgrid-universal/binding';
+import { Aggregators, type Column, type Editors, Enums, type Filters, Formatters, GroupTotalFormatters, type RowDetailViewProps, SortComparers, Utilities } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 export * from '@slickgrid-universal/common';
 
@@ -23,6 +22,7 @@ export {
   type GridOption,
   GroupTotalFormatters,
   type RowDetailView,
+  type RowDetailViewProps,
   SlickgridConfig,
   SlickgridVue,
   type SlickgridVueInstance,
@@ -30,5 +30,3 @@ export {
   SortComparers,
   Utilities,
 };
-
-export { BindingService };
