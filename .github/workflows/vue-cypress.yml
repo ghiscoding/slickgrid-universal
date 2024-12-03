@@ -80,7 +80,7 @@ jobs:
           # start: pnpm vue:serve
           # start: pnpm serve:vite
           wait-on: 'http://localhost:7000'
-          config-file: demos/vue/test/cypress.config.ts
+          config-file: demos/vue/test/cypress.config.mjs
           browser: chrome
           record: true
         env:
