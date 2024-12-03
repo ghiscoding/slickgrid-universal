@@ -32,57 +32,6 @@ importers:
       '@lerna-lite/watch':
         specifier: ^3.10.1
         version: 3.10.1(@lerna-lite/publish@3.10.1)(@lerna-lite/run@3.10.1)(@types/node@22.10.1)(typescript@5.7.2)
-      '@slickgrid-universal/binding':
-        specifier: workspace:*
-        version: link:packages/binding
-      '@slickgrid-universal/common':
-        specifier: workspace:*
-        version: link:packages/common
-      '@slickgrid-universal/composite-editor-component':
-        specifier: workspace:*
-        version: link:packages/composite-editor-component
-      '@slickgrid-universal/custom-footer-component':
-        specifier: workspace:*
-        version: link:packages/custom-footer-component
-      '@slickgrid-universal/custom-tooltip-plugin':
-        specifier: workspace:*
-        version: link:packages/custom-tooltip-plugin
-      '@slickgrid-universal/empty-warning-component':
-        specifier: workspace:*
-        version: link:packages/empty-warning-component
-      '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:*
-        version: link:packages/event-pub-sub
-      '@slickgrid-universal/excel-export':
-        specifier: workspace:*
-        version: link:packages/excel-export
-      '@slickgrid-universal/graphql':
-        specifier: workspace:*
-        version: link:packages/graphql
-      '@slickgrid-universal/odata':
-        specifier: workspace:*
-        version: link:packages/odata
-      '@slickgrid-universal/pagination-component':
-        specifier: workspace:*
-        version: link:packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:packages/row-detail-view-plugin
-      '@slickgrid-universal/rxjs-observable':
-        specifier: workspace:*
-        version: link:packages/rxjs-observable
-      '@slickgrid-universal/text-export':
-        specifier: workspace:*
-        version: link:packages/text-export
-      '@slickgrid-universal/utils':
-        specifier: workspace:*
-        version: link:packages/utils
-      '@slickgrid-universal/vanilla-bundle':
-        specifier: workspace:*
-        version: link:packages/vanilla-bundle
-      '@slickgrid-universal/vanilla-force-bundle':
-        specifier: workspace:*
-        version: link:packages/vanilla-force-bundle
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1
