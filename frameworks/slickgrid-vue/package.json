@@ -30,6 +30,15 @@
     "datatable",
     "slickgrid"
   ],
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal/frameworks/slickgrid-vue",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "frameworks/slickgrid-vue"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
   "publishConfig": {
     "access": "public"
   },
