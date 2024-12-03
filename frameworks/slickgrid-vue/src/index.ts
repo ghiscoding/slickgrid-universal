@@ -1,5 +1,6 @@
-import type { Column } from '@slickgrid-universal/common';
-import { Editors, Filters } from '@slickgrid-universal/common';
+import { Aggregators, type Column, type Editors, Enums, type Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
+import { BindingService } from '@slickgrid-universal/binding';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 export * from '@slickgrid-universal/common';
 
 import SlickgridVue from './components/SlickgridVue.vue';
@@ -12,13 +13,22 @@ export type { SlickgridVueProps } from './components/slickgridVueProps.interface
 export { disposeAllSubscriptions, TranslaterService } from './services/index.js';
 
 export {
+  Aggregators,
   type Column,
-  Editors,
-  Filters,
+  type Editors,
+  type Filters,
+  Enums,
+  EventPubSubService,
+  Formatters,
   type GridOption,
+  GroupTotalFormatters,
   type RowDetailView,
   SlickgridConfig,
   SlickgridVue,
   type SlickgridVueInstance,
   SlickRowDetailView,
+  SortComparers,
+  Utilities,
 };
+
+export { BindingService };

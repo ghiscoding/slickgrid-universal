@@ -43,7 +43,6 @@
     "dev": "vite build --watch",
     "dev:init": "vite build",
     "build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
-    "preview": "vite preview",
     "clone:dts": "node clone-dts.mjs",
     "type-check": "vue-tsc --build --force"
   },
