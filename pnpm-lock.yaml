@@ -308,26 +308,26 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2
       '@slickgrid-universal/common':
-        specifier: ^5.10.2
-        version: 5.10.2
+        specifier: workspace:*
+        version: link:../../packages/common
       '@slickgrid-universal/custom-footer-component':
-        specifier: ^5.10.2
-        version: 5.10.2
+        specifier: workspace:*
+        version: link:../../packages/custom-footer-component
       '@slickgrid-universal/empty-warning-component':
-        specifier: ^5.10.2
-        version: 5.10.2
+        specifier: workspace:*
+        version: link:../../packages/empty-warning-component
       '@slickgrid-universal/event-pub-sub':
-        specifier: ^5.10.2
-        version: 5.10.2
+        specifier: workspace:*
+        version: link:../../packages/event-pub-sub
       '@slickgrid-universal/pagination-component':
-        specifier: ^5.10.2
-        version: 5.10.2
+        specifier: workspace:*
+        version: link:../../packages/pagination-component
       '@slickgrid-universal/row-detail-view-plugin':
-        specifier: ^5.10.2
-        version: 5.10.2
+        specifier: workspace:*
+        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/utils':
-        specifier: ^5.10.2
-        version: 5.10.2
+        specifier: workspace:*
+        version: link:../../packages/utils
       dequal:
         specifier: ^2.0.3
         version: 2.0.3

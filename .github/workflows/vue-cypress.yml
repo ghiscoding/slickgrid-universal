@@ -77,7 +77,7 @@ jobs:
         with:
           install: false
           # working-directory: packages/dnd
-          start: pnpm vue:serve
+          # start: pnpm vue:serve
           # start: pnpm serve:vite
           wait-on: 'http://localhost:7000'
           config-file: test/cypress.config.ts
