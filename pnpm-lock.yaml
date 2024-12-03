@@ -177,7 +177,7 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       slickgrid-vue:
-        specifier: workspace:*
+        specifier: link:../../frameworks/slickgrid-vue
         version: link:../../frameworks/slickgrid-vue
       vue:
         specifier: ^3.5.13
