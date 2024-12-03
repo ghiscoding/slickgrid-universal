@@ -177,8 +177,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       slickgrid-vue:
-        specifier: 0.1.1
-        version: 0.1.1(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
+        specifier: workspace:*
+        version: link:../../frameworks/slickgrid-vue
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.6.3)
@@ -1491,31 +1491,6 @@ packages:
   '@sindresorhus/merge-streams@2.3.0':
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
-
-  '@slickgrid-universal/binding@5.10.2':
-    resolution: {integrity: sha512-Hfn6ooFE28W9JOCLAOPDqlnrBJ1bfIkkXmV04bToCZk3SyKhUr6uYkmJMaMzs3S4U3a2aEe7srILPpLjfOmfmw==}
-
-  '@slickgrid-universal/common@5.10.2':
-    resolution: {integrity: sha512-yE6yw+23xC8LcA5+aPkcF/mexKFzX7qgWl4iGkDPDTA3RQaEYVWiv25XQWjwomti9CH9pnsBTRjLduEDm2NDDw==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-
-  '@slickgrid-universal/custom-footer-component@5.10.2':
-    resolution: {integrity: sha512-MgQr7N6gzs6pomrzBpvCxptS+faq4rs5WNITppw/uHa/bjprJltr80/dzvxlsGQHsug+ikspOuK8lxkKESxC/A==}
-
-  '@slickgrid-universal/empty-warning-component@5.10.2':
-    resolution: {integrity: sha512-LSXzWcyypK6xirZZDTrKIxY2HS0jCr90CTL7V4c9Vb1B8Nv0CGte4L686cwNxg6MK8oT9SLgMqLgtjSSa7g1Dg==}
-
-  '@slickgrid-universal/event-pub-sub@5.10.2':
-    resolution: {integrity: sha512-3l0rAZEf2CX2ApaXv4VCFVlExJSTu6VjDiWsNuZ9dh7+auWtiihsX4QZS8zskQIqEVrHtuJAlV8fq/l/XcwS+g==}
-
-  '@slickgrid-universal/pagination-component@5.10.2':
-    resolution: {integrity: sha512-rhspG1Lh5+ZUl96609p+NooDbAdzMMpkFsXxNW9jJWV9MnLQfg78FNDBG4zg/mLuVMW2SqNQ5p+N9TJS9TWbZg==}
-
-  '@slickgrid-universal/row-detail-view-plugin@5.10.2':
-    resolution: {integrity: sha512-XKwaHun1hhShguadz9OgzxvqFKkUFHdA1rEFJXC5t60cuTa4J0j7xWe9HWrNcu4d+ywmXvhWZWW4QPyXEb7f7g==}
-
-  '@slickgrid-universal/utils@5.10.2':
-    resolution: {integrity: sha512-cijV2/u3xKnfdUinaJeQNcoZuLy+9J4EgYSfUpNX22kanp948uKOICQxVrlb7Lj82Ki0U+vtuQ+fS59KQD3YOQ==}
 
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
@@ -4277,11 +4252,6 @@ packages:
     resolution: {integrity: sha512-qMCMfhY040cVHT43K9BFygqYbUPFZKHOg7K73mtTWJRb8pyP3fzf4Ixd5SzdEJQ6MRUg/WBnOLxghZtKKurENQ==}
     engines: {node: '>=10'}
 
-  slickgrid-vue@0.1.1:
-    resolution: {integrity: sha512-TSmNFeie7yZ5UsVw1+DhZ8HTouy8lDITp8cSb7Etb4Qbx5pmdfIm+4n2gh7KRNhgf7Z2Z4IJI1mA0mWUApGrcw==}
-    peerDependencies:
-      vue: '>=3.4.0'
-
   smart-buffer@4.2.0:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
@@ -6024,50 +5994,6 @@ snapshots:
       '@sigstore/protobuf-specs': 0.3.2
 
   '@sindresorhus/merge-streams@2.3.0': {}
-
-  '@slickgrid-universal/binding@5.10.2': {}
-
-  '@slickgrid-universal/common@5.10.2':
-    dependencies:
-      '@excel-builder-vanilla/types': 3.0.14
-      '@formkit/tempo': 0.1.2
-      '@slickgrid-universal/binding': 5.10.2
-      '@slickgrid-universal/event-pub-sub': 5.10.2
-      '@slickgrid-universal/utils': 5.10.2
-      '@types/sortablejs': 1.15.8
-      '@types/trusted-types': 2.0.7
-      autocompleter: 9.3.2
-      dequal: 2.0.3
-      multiple-select-vanilla: 3.4.4
-      sortablejs: 1.15.6
-      un-flatten-tree: 2.0.12
-      vanilla-calendar-pro: 2.9.10
-
-  '@slickgrid-universal/custom-footer-component@5.10.2':
-    dependencies:
-      '@formkit/tempo': 0.1.2
-      '@slickgrid-universal/binding': 5.10.2
-      '@slickgrid-universal/common': 5.10.2
-
-  '@slickgrid-universal/empty-warning-component@5.10.2':
-    dependencies:
-      '@slickgrid-universal/common': 5.10.2
-
-  '@slickgrid-universal/event-pub-sub@5.10.2':
-    dependencies:
-      '@slickgrid-universal/utils': 5.10.2
-
-  '@slickgrid-universal/pagination-component@5.10.2':
-    dependencies:
-      '@slickgrid-universal/binding': 5.10.2
-      '@slickgrid-universal/common': 5.10.2
-
-  '@slickgrid-universal/row-detail-view-plugin@5.10.2':
-    dependencies:
-      '@slickgrid-universal/common': 5.10.2
-      '@slickgrid-universal/utils': 5.10.2
-
-  '@slickgrid-universal/utils@5.10.2': {}
 
   '@trysound/sax@0.2.0': {}
 
@@ -8980,24 +8906,6 @@ snapshots:
       ansi-styles: 4.3.0
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
-
-  slickgrid-vue@0.1.1(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3)):
-    dependencies:
-      '@formkit/tempo': 0.1.2
-      '@slickgrid-universal/common': 5.10.2
-      '@slickgrid-universal/custom-footer-component': 5.10.2
-      '@slickgrid-universal/empty-warning-component': 5.10.2
-      '@slickgrid-universal/event-pub-sub': 5.10.2
-      '@slickgrid-universal/pagination-component': 5.10.2
-      '@slickgrid-universal/row-detail-view-plugin': 5.10.2
-      '@slickgrid-universal/utils': 5.10.2
-      dequal: 2.0.3
-      i18next: 24.0.2(typescript@5.6.3)
-      i18next-vue: 5.0.0(i18next@24.0.2(typescript@5.6.3))(vue@3.5.13(typescript@5.6.3))
-      sortablejs: 1.15.6
-      vue: 3.5.13(typescript@5.6.3)
-    transitivePeerDependencies:
-      - typescript
 
   smart-buffer@4.2.0: {}
 
