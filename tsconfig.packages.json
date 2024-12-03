@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    { "path": "./frameworks/slickgrid-vue" },
     { "path": "./packages/binding" },
     { "path": "./packages/common" },
     { "path": "./packages/composite-editor-component" },
