@@ -66,8 +66,8 @@ jobs:
       - name: ESLint
         run: pnpm lint
 
+      # only covering frameworks/demos folders for now
       - name: Prettier
-        description: only covering frameworks/demos folders for now
         run: pnpm prettier:check
 
       - name: TSC Full Bundle (all Bundler types)
