@@ -1,4 +1,4 @@
-
+/* eslint-disable n/file-extension-in-import */
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 function removeExtraSpaces(text) {

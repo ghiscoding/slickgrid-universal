@@ -1,3 +1,4 @@
+/* eslint-disable n/file-extension-in-import */
 import { addDay, format } from '@formkit/tempo';
 
 import { removeWhitespaces } from '../plugins/utilities';

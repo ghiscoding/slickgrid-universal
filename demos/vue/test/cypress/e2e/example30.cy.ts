@@ -1,3 +1,4 @@
+/* eslint-disable n/file-extension-in-import */
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 30  Composite Editor Modal', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable n/file-extension-in-import */
 import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 2 - Grid with Formatters', () => {
