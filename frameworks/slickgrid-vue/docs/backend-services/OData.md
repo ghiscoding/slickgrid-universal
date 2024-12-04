@@ -9,14 +9,14 @@
 ### Description
 OData Backend Service (for Pagination purposes) to get data from a backend server with the help of OData.
 
+### Demo
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/Example5) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example5.tsx)
+
 ### Note
-Use it when you need to support **Pagination** (that is when your dataset is rather large, more than 5k rows) with a OData endpoint. If your dataset is small (less than 5k rows), then go with a [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01) with the "dataset.bind" property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01).
+Use it when you need to support **Pagination** (that is when your dataset is rather large, more than 5k rows) with a OData endpoint. If your dataset is small (less than 5k rows), then go with a [regular grid](https://ghiscoding.github.io/slickgrid-vue/#/Example1) with the `[dataset]` binding property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-vue/#/Example1).
 
 ## Implementation
 To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi` and pass it the `service`. See below for the signature and an example further down below.
-
-### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/vite-demo-vanilla-bundle/src/examples/example09.ts)
 
 ### IMPORTANT NOTE
 All the code below assumes that your Backend Server (probably in C#) will return the data into an `items` property. You could return the array directly **but it is strongly discouraged to do that** because that will conflict with the `metrics` that you will see in the code below. The best approach is to return your data into a property, like `items` or any property name you wish to use, on your backend server side. Your result should have this kind of structure
@@ -41,7 +41,7 @@ backendServiceApi: {
   // Before executing the query, what action to perform? For example, start a spinner
   preProcess?: () => void;
 
-  // On Processing, we get the query back from the service, and we need to provide a Promise. For example: this.http.get(myGraphqlUrl)
+  // On Processing, we get the query back from the service, and we need to provide a Promise. For example: http.get(myGraphqlUrl)
   process: (query: string) => Promise<any>;
 
   // After executing the query, what action to perform? For example, stop the spinner
@@ -62,86 +62,89 @@ As you can see, you mainly need to define which service to use (GridODataService
   - this is meant to throttle the amount of requests sent to the backend (we don't really want to query every keystroke)
   - 700ms is the default when not provided
 
-##### Code
-```ts
+##### Component
+```vue
+<script setup lang="ts">
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
+import { Column, GridOption, Metrics, PaginationOption } from 'slickgrid-vue';
+import { onBeforeMount } from 'vue';
 
-export class Example {
-  columnDefinitions: Column[];
-  gridOptions: GridOption;
-  dataset = [];
+const gridOptions = ref<GridOption>();
+const columnDefinitions = ref<Column[]>([]);
+const dataset = ref<any[]>([]);
+const isCountEnabled = ref(false);
+const odataVersion = ref(4);
+const metrics = ref<Metrics>({});
+const paginationOptions = ref<PaginationOption>({});
 
-  constructor(http) {
-    this.http = http;
+onBeforeMount(() => {
+  defineGrid();
+});
 
-    // define the grid options & columns and then create the grid itself
-    this.defineGrid();
-  }
+function defineGrid() {
+  columnDefinitions.value = [/*...*/];
 
-  defineGrid() {
-    this.columnDefinitions = [
-      // your column definitions
-    ];
-
-    this.gridOptions = {
-      enableFiltering: true,
-      enablePagination: true,
-      pagination: {
-        pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
-        pageSize: defaultPageSize,
-        totalItems: 0
+  gridOptions.value = {
+    enableFiltering: true,
+    enablePagination: true,
+    pagination: {
+      pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
+      pageSize: defaultPageSize,
+      totalItems: 0
+    },
+    backendServiceApi: {
+      service: new GridOdataService(),
+      // define all the on Event callbacks
+      options: {
+        caseType: CaseType.pascalCase,
+        top: defaultPageSize
       },
-      backendServiceApi: {
-        service: new GridOdataService(),
-        // define all the on Event callbacks
-        options: {
-          caseType: CaseType.pascalCase,
-          top: defaultPageSize
-        } as OdataOption,
-        preProcess: () => this.displaySpinner(true),
-        process: (query) => this.getCustomerApiCall(query),
-        postProcess: (response) => {
-          this.displaySpinner(false);
-          this.getCustomerCallback(response);
-        }
+      // optional but typically use to show data on first page load
+      // on init (or on page load), what action to perform?
+      onInit: (query) => getCustomerApiCall(query),
+
+      preProcess: () => displaySpinner(true),
+      process: (query) => getCustomerApiCall(query),
+      postProcess: (response) => {
+        displaySpinner(false);
+        getCustomerCallback(response);
       }
-    };
-  }
-
-  // Web API call
-  getCustomerApiCall(odataQuery) {
-    // regular Http Client call
-    return this.http.createRequest(`/api/customers?${odataQuery}`).then(response => response.json());
-
-    // or with Fetch Client
-    // return this.http.fetch(`/api/customers?${odataQuery}`).then(response => response.json());
-  }
-
-  getCustomerCallback(response) {
-    // totalItems property needs to be filled for pagination to work correctly
-    // however we need to force the Framework to do a dirty check, doing a clone object will do just that
-    let countPropName = 'totalRecordCount'; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
-    if (this.isCountEnabled) {
-      countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
     }
-    if (this.metrics) {
-      this.metrics.totalItemCount = data[countPropName];
-    }
+  };
 
-    // once pagination totalItems is filled, we can update the dataset
-    this.sgb.paginationOptions.totalItems = data[countPropName];
-    this.sgb.dataset = data.items as Customer[];
-  }
+  dataset.value = getData();
 }
+
+// Web API call
+function getCustomerApiCall(odataQuery) {
+  return fetch(`/api/customers?${odataQuery}`).then(response => response.json());
+}
+
+function getCustomerCallback(response) {
+  // totalItems property needs to be filled for pagination to work correctly
+  // however we need to force the Framework to do a dirty check, doing a clone object will do just that
+  let countPropName = 'totalRecordCount'; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
+  if (isCountEnabled.value) {
+    countPropName = (odataVersion.value === 4) ? '@odata.count' : 'odata.count';
+  }
+  if (metrics.value) {
+    metrics.value.totalItemCount = data[countPropName];
+  }
+
+  // once pagination totalItems is filled, we can update the dataset
+  paginationOptions.value = { ...gridOptions.value.pagination, totalItems: totalItemCount } as Pagination;
+  dataset.value = data.items as Customer[];
+}
+</script>
 ```
 
 ### Passing Extra Arguments to the Query
 You might need to pass extra arguments to your OData query, for example passing a `userId`, you can do that simply by modifying the query you sent to your `process` callback method. For example
 ```ts
 // Web API call
-getCustomerApiCall(odataQuery) { with Fetch Client
+getCustomerApiCall(odataQuery) {
   const finalQuery = `${odataQuery}$filter=(userId eq 12345)`;
-  return this.http.get(`/api/getCustomers?${finalQuery}`);
+  return http.get(`/api/getCustomers?${finalQuery}`);
 }
 ```
 
@@ -156,18 +159,18 @@ Some are described in more detail below.
 By default the OData version is set to 2 because it was implemented with that version. If you wish to use version 4, then just change the `version: 4`, there are subtle differences.
 
 ```ts
-this.gridOptions = {
+gridOptions.value = {
   backendServiceApi: {
     service: new GridOdataService(),
       options: {
         enableCount: true, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
         version: 4        // defaults to 2, the query string is slightly different between OData 2 and 4
       } as OdataOption,
-      process: (query) => this.getCustomerApiCall(query),
+      process: (query) => getCustomerApiCall(query),
       postProcess: (response) => {
-        this.metrics = response.metrics;
-        this.displaySpinner(false);
-        this.getCustomerCallback(response);
+        metrics.value = response.metrics;
+        displaySpinner(false);
+        getCustomerCallback(response);
       }
   } as OdataServiceApi
 };

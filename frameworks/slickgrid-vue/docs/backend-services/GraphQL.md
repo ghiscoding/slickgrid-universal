@@ -12,10 +12,10 @@
 GraphQL Backend Service (for Pagination purposes) to get data from a backend server with the help of GraphQL.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/vite-demo-vanilla-bundle/src/examples/example10.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/Example6) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example6.tsx)
 
 ### Note
-You can use it when you need to support **Pagination** (though you could disable Pagination if you wish), that is when your dataset is rather large and has typically more than 5k rows, with a GraphQL endpoint. If your dataset is small (less than 5k rows), then you might be better off with [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01) with the "dataset.bind" property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01).
+You can use it when you need to support **Pagination** (though you could disable Pagination if you wish), that is when your dataset is rather large and has typically more than 5k rows, with a GraphQL endpoint. If your dataset is small (less than 5k rows), then you might be better off with [regular grid](https://ghiscoding.github.io/slickgrid-vue/#/Example1) with the "dataset.bind" property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-vue/#/Example1).
 
 ## Implementation
 To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi`. See below for the signature and an example further down below.
@@ -29,7 +29,7 @@ backendServiceApi: {
   // Before executing the query, what action to perform? For example, start a spinner
   preProcess?: () => void;
 
-  // On Processing, we get the query back from the service, and we need to provide a Promise. For example: this.http.get(myGraphqlUrl)
+  // On Processing, we get the query back from the service, and we need to provide a Promise. For example: http.get(myGraphqlUrl)
   process: (query: string) => Promise<any>;
 
   // After executing the query, what action to perform? For example, stop the spinner
@@ -42,6 +42,7 @@ backendServiceApi: {
   filterTypingDebounce?: number;
 }
 ```
+
 As you can see, you mainly need to define which service to use (GridODataService or GraphQLService) and finally add the `process` and `postProcess` callback, while all the rest are totally optional.
 
 ### Typescript GraphQL Service Options
@@ -103,80 +104,80 @@ export interface GraphqlServiceOption extends BackendServiceOption {
   - 700ms is the default when not provided
 
 ##### Code
-```ts
+```vue
+<script setup lang="ts">
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { onBeforeMount } from 'vue';
 
-export class Example {
-  columnDefinitions: Column[];
-  gridOptions: GridOption;
-  dataset = [];
+const gridOptions = ref<GridOption>();
+const columnDefinitions = ref<Column[]>([]);
+const dataset = ref<any[]>([]);
 
-  constructor(http: HttpFetch) {
-    // define the grid options & columns and then create the grid itself
-    this.defineGrid();
-  }
+onBeforeMount(() => {
+  defineGrid();
+});
 
-  defineGrid() {
-    this.columnDefinitions = [
-      // your column definitions
-    ];
+function defineGrid() {
+  columnDefinitions.value = [/*...*/];
 
-    this.gridOptions = {
-      enableFiltering: true,
-      enablePagination: true,
-      pagination: {
-        pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
-        pageSize: defaultPageSize,
-        totalItems: 0
+  gridOptions.value = {
+    enableFiltering: true,
+    enablePagination: true,
+    pagination: {
+      pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
+      pageSize: defaultPageSize,
+      totalItems: 0
+    },
+    backendServiceApi: {
+      service: new GraphqlService(),
+
+      // add some options to the backend service to work
+      // shown below is the minimum setup for the service to work correctly
+      options: {
+        columnDefinitions: columnDefinitions,
+        datasetName: 'users',
+        paginationOptions: {
+          first: 25,
+          offset: 0
+        }
       },
-      backendServiceApi: {
-        service: new GraphqlService(),
 
-        // add some options to the backend service to work
-        // shown below is the minimum setup for the service to work correctly
-        options: {
-          columnDefinitions: this.columnDefinitions,
-          datasetName: 'users',
-          paginationOptions: {
-            first: 25,
-            offset: 0
-          }
-        },
-
-        // define all the on Event callbacks
-        preProcess: () => this.displaySpinner(true),
-        process: (query) => this.getAllCustomers(query),
-        postProcess: (response) => {
-          this.displaySpinner(false);
-          this.getCustomerCallback(response);
-        },
-        filterTypingDebounce: 700,
-        service: this.graphqlService
-      }
-    };
-  }
-
-  // Web API call
-  getAllCustomers(graphqlQuery) {
-    // regular Http Client call
-    return this.http.createRequest(`/api/customers?${graphqlQuery}`).then(response => response.json());
-
-    // or with Fetch Client
-    // return this.http.fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
-  }
+      // define all the on Event callbacks
+      preProcess: () => displaySpinner(true),
+      process: (query) => getAllCustomers(query),
+      postProcess: (response) => {
+        displaySpinner(false);
+        getCustomerCallback(response);
+      },
+      filterTypingDebounce: 700,
+      service: graphqlService
+    }
+  };
 }
+
+// Web API call
+function getAllCustomers(graphqlQuery) {
+  // regular Http Client call
+  return fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
+
+  // or with Fetch Client
+  // return fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
+}
+</script>
 ```
 
 ### Extra Query Arguments
 You can pass extra query arguments to the GraphQL query via the `extraQueryArguments` property defined in the `backendServiceApi.options`. For example let say you have a list of users and your GraphQL query accepts an optional `userId`, you can write it in code this way:
-```ts
-this.gridOptions = {
+```vue
+<script setup lang="ts">
+gridOptions.value = {
   backendServiceApi: {
     service: new GraphqlService(),
 
     // add some options to the backend service to work
     options: {
-      columnDefinitions: this.columnDefinitions,
+      columnDefinitions: columnDefinitions.value,
       executeProcessCommandOnInit: false, // true by default, which load the data on page load
       datasetName: 'users',
       paginationOptions: {
@@ -190,11 +191,12 @@ this.gridOptions = {
     },
 
     // define all the on Event callbacks
-    preProcess: () => this.displaySpinner(true),
-    process: (query) => this.getCustomerApiCall(query),
-    postProcess: (response) => this.displaySpinner(false)
+    preProcess: () => displaySpinner(true),
+    process: (query) => getCustomerApiCall(query),
+    postProcess: (response) => displaySpinner(false)
   }
 };
+</script>
 ```
 
 The GraphQL query built with these options will be
@@ -216,33 +218,38 @@ The GraphQL query built with these options will be
 You might want to change certain options dynamically, for example passing new set of values to `extraQueryArguments`. For that you will have to first keep a reference to your `GraphqlService` instance and then you can call the `updateOptions` method.
 
 ##### Code Example
-```ts
-export class Example {
-  graphqlService: GraphqlService;
-  columnDefinitions: Column[];
-  gridOptions: GridOption;
+```vue
+<script setup lang="ts">
+import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 
-  constructor() {
-    this.graphqlService = new GraphqlService();
-  }
+const gridOptions = ref<GridOption>();
+const columnDefinitions = ref<Column[]>([]);
+const dataset = ref<any[]>([]);
+const graphqlService = new GraphqlService();
 
-  activate(): void {
-    this.columnDefinitions = [
-      // ...
-    ];
+onBeforeMount(() => {
+  defineGrid();
+});
 
-    this.gridOptions = {
-      backendServiceApi: {
-        service: this.graphqlService,
-        // ...
-      }
-    };
-  }
+function vueGridReady(vueGrid: SlickgridvueInstance) {
+  vueGrid = vueGrid;
 }
 
-changeQueryArguments() {
+function defineGrid(): void {
+  columnDefinitions.value = [/* ... */];
+
+  gridOptions.value = {
+    backendServiceApi: {
+      service: graphqlService,
+      // ...
+    }
+  };
+}
+
+function changeQueryArguments() {
   // update any Backend Service Options you want
-  this.graphqlService.updateOptions({
+  graphqlService.updateOptions({
     extraQueryArguments: [{
       field: 'userId',
       value: 567
@@ -250,8 +257,9 @@ changeQueryArguments() {
   });
 
   // then make sure to refresh the dataset
-  this.sgb.pluginService.refreshBackendDataset();
+  vueGrid.pluginService.refreshBackendDataset();
 }
+</script>
 ```
 
 ### GraphQL without Pagination
@@ -259,10 +267,10 @@ By default, the Pagination is enabled and will produce a GraphQL query which inc
 
 #### Code Example
 ```ts
-this.gridOptions = {
+gridOptions.value = {
   enablePagination: false,
   backendServiceApi: {
-    service: this.graphqlService,
+    service: graphqlService,
     // ...
   }
 };
