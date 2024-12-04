@@ -393,7 +393,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>On String filters, (*) can be used as startsWith (Hello* => matches "Hello Word") ... endsWith (*Doe => matches: "John Doe")</li>
       <li>
         Custom Filter are now possible, "Description" column below, is a customized InputFilter with different placeholder. See
-        <a href="https://ghiscoding.gitbook.io/slickgrid-react/column-functionalities/filters/custom-filter" target="_blank"
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/filters/custom-filter" target="_blank"
           >Wiki - Custom Filter</a
         >
       </li>

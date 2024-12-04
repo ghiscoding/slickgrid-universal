@@ -14,8 +14,8 @@ export { disposeAllSubscriptions, TranslaterService } from './services/index.js'
 export {
   Aggregators,
   type Column,
-  type Editors,
-  type Filters,
+  Editors,
+  Filters,
   Enums,
   EventPubSubService,
   Formatters,

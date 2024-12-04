@@ -503,7 +503,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     Use it when you need to support Pagination with a OData endpoint (for simple JSON, use a regular grid)<br />
-    Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-react/backend-services/odata" target="_blank">Wiki documentation</a
+    Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/odata" target="_blank">Wiki documentation</a
     >)
     <br />
     <ul class="small">
@@ -520,7 +520,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>OData Service could be replaced by other Service type in the future (GraphQL or whichever you provide)</li>
       <li>
         You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
-        <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/grid-state-preset" target="_blank"
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank"
           >Wiki - Grid Preset</a
         >
       </li>

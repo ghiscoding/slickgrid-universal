@@ -283,13 +283,13 @@ function defineGrid() {
         placeholder: '🔎︎ search city',
 
         // We can use the autocomplete through 3 ways 'collection', 'collectionAsync' or with your own autocomplete options
-        // use your own autocomplete options, instead of fetch-jsonp, use React HttpClient or FetchClient
-        // here we use fetch-jsonp just because I'm not sure how to configure React HttpClient with JSONP and CORS
+        // use your own autocomplete options, instead of fetch-jsonp, use Fetch
+        // here we use fetch-jsonp just because I'm not sure how to configure fetch with JSONP and CORS
         editorOptions: {
           minLength: 3,
           forceUserInput: true,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
-            /** with React Http, note this demo won't work because of CORS */
+            /** with Fetch, note this demo won't work because of CORS */
             // this.http.get(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`).subscribe(data => updateCallback(data));
 
             /** with JSONP AJAX will work locally but not on the GitHub demo because of CORS */
@@ -307,12 +307,12 @@ function defineGrid() {
         // We can use the autocomplete through 3 ways 'collection', 'collectionAsync' or with your own autocomplete options
         // collectionAsync: this.httpFetch.fetch(URL_COUNTRIES_COLLECTION),
 
-        // OR use your own autocomplete options, instead of fetch-jsonp, use React HttpClient or FetchClient
-        // here we use fetch-jsonp just because I'm not sure how to configure React HttpClient with JSONP and CORS
+        // OR use your own autocomplete options, instead of fetch-jsonp, use Fetch
+        // here we use fetch-jsonp just because I'm not sure how to configure fetch with JSONP and CORS
         filterOptions: {
           minLength: 3,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
-            /** with React Http, note this demo won't work because of CORS */
+            /** with Fetch, note this demo won't work because of CORS */
             // this.http.get(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`).subscribe(data => updateCallback(data));
 
             /** with JSONP AJAX will work locally but not on the GitHub demo because of CORS */

@@ -139,7 +139,6 @@ export interface SlickgridVueProps {
   onOnItemDeleted?: (e: CustomEvent<any>) => void;
   onOnGridStateChanged?: (e: CustomEvent<any>) => void;
   onOnPaginationChanged?: (e: CustomEvent<PaginationChangedArgs>) => void;
-  onOnReactGridCreated?: (e: CustomEvent<any>) => void;
   onOnSelectedRowIdsChanged?: (e: CustomEvent<any>) => void;
   onOnSortChanged?: (e: CustomEvent<any>) => void;
   onOnToggleTreeCollapsed?: (e: CustomEvent<any>) => void;

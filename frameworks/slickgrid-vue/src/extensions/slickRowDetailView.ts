@@ -25,7 +25,6 @@ export interface CreatedView {
   app: App | null;
   instance: ComponentPublicInstance | null;
 }
-// interface SRDV extends React.Component<Props, State>, UniversalSlickRowDetailView {}s
 
 export class SlickRowDetailView extends UniversalSlickRowDetailView {
   protected _component?: any;
@@ -100,12 +99,12 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       this._userProcessFn = this.gridOptions.rowDetailView.process as (item: any) => Promise<any>; // keep user's process method
       this.addonOptions.process = (item) => this.onProcessing(item); // replace process method & run our internal one
     } else {
-      throw new Error('[Slickgrid-React] You need to provide a "process" function for the Row Detail Extension to work properly');
+      throw new Error('[Slickgrid-Vue] You need to provide a "process" function for the Row Detail Extension to work properly');
     }
 
     if (this._grid && this.gridOptions?.rowDetailView) {
-      // load the Preload & RowDetail Templates (could be straight HTML or React Components)
-      // when those are React Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
+      // load the Preload & RowDetail Templates (could be straight HTML or Vue Components)
+      // when those are Vue Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadComponent = this.gridOptions?.rowDetailView?.preloadComponent;
         this.addonOptions.preTemplate = () => this._grid.sanitizeHtmlString(`<div class="${PRELOAD_CONTAINER_PREFIX}"></div>`) as string;
@@ -289,7 +288,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parent,
       } as AppData & ViewModelBindableInputData;
 
-      // load our Row Detail React Component dynamically, typically we would want to use `root.render()` after the preload component (last argument below)
+      // load our Row Detail Vue Component dynamically, typically we would want to use `root.render()` after the preload component (last argument below)
       // BUT the root render doesn't seem to work and shows a blank element, so we'll use `createRoot()` every time even though it shows a console log in Dev
       // that is the only way I got it working so let's use it anyway and console warnings are removed in production anyway
       if (viewObj?.app) {
@@ -404,7 +403,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
       if (!awaitedItemDetail || !(this.datasetIdPropName in awaitedItemDetail)) {
         throw new Error(
-          '[Slickgrid-React] could not process the Row Detail, please make sure that your "process" callback ' +
+          '[Slickgrid-Vue] could not process the Row Detail, please make sure that your "process" callback ' +
           '(a Promise or an HttpClient call returning an Observable) returns an item object that has an "${this.datasetIdPropName}" property'
         );
       }
