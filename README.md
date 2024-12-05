@@ -12,7 +12,7 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 > [!NOTE]
-> VueJS is now supported via a new [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) Component. One major difference compare to the other ports is that the code is included directly in here under the [`/frameworks`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder, eventually all other ports will also move in here (scheduled for our next major version).
+> 📢 VueJS is now supported via a new [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) Component 🚀. One major difference compare to the other ports is that the code is included directly in here under the [`/frameworks`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder, eventually all other ports will also move in here (scheduled for our next major version).
 
 ### Documentation
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
@@ -55,7 +55,7 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) above s
 | [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)  | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | Bootstrap | for [Angular](https://angular.io/) framework | [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid) |
 | [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | Bootstrap | for [Aurelia](https://aurelia.io/) framework | [![NPM downloads](https://img.shields.io/npm/dy/aurelia-slickgrid)](https://npmjs.org/package/aurelia-slickgrid)|
 | [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react/) | [demo](https://ghiscoding.github.io/slickgrid-react/) | Bootstrap | for [React](https://react.dev/) framework | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-react)](https://npmjs.org/package/slickgrid-react)
-| [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) | [demo](https://ghiscoding.github.io/slickgrid-vue-demos/) | Bootstrap | for [Vue](https://vuejs.org/) framework | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-vue)](https://npmjs.org/package/slickgrid-vue)
+| [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) | [demo](https://ghiscoding.github.io/slickgrid-vue-demos/) | Bootstrap | for [Vue](https://vuejs.org/) framework * new 🚀 | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-vue)](https://npmjs.org/package/slickgrid-vue)
 | [Slickgrid-Universal-WebPack-Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-webpack-demo) | Bulma | Vanilla demo with WebPack & TypeScript |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | Bulma | Vanilla demo with Vite & TypeScript |
 
