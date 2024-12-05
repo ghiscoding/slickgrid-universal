@@ -23,6 +23,9 @@ One of the best JavasSript data grid [SlickGrid](https://github.com/mleibman/Sli
 npm install slickgrid-vue
 ```
 
+#### Requirements 
+- Vue >=3.4
+  
 ### Stackblitz
 
 You can even play with the [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) Stackblitz live. It can also be use to provide a repro when opening any new bug/feature requests.
