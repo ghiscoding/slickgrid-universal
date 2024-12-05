@@ -59,7 +59,7 @@ export default tseslint.config(
       'cypress/no-assigning-return-values': 'off',
       'cypress/unsafe-to-chain-command': 'off',
       'object-shorthand': 'error',
-      'n/file-extension-in-import': ['error', 'always', { ".cy.ts": "never" }],
+      'n/file-extension-in-import': ['error', 'always'],
       'no-async-promise-executor': 'off',
       'no-case-declarations': 'off',
       'no-prototype-builtins': 'off',

@@ -111,7 +111,7 @@ export class Example {
   // Web API call
   getCustomerApiCall(odataQuery) {
     // regular Http Client call
-    return this.http.createRequest(`/api/customers?${odataQuery}`).asGet().send().then(response => response.content);
+    return this.http.createRequest(`/api/customers?${odataQuery}`).then(response => response.json());
 
     // or with Fetch Client
     // return this.http.fetch(`/api/customers?${odataQuery}`).then(response => response.json());

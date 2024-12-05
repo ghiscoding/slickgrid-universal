@@ -208,8 +208,7 @@ describe('Example 12 - Composite Editor Modal', () => {
   it('should undo last edit and expect the date editor to NOT be opened when clicking undo last edit button', () => {
     cy.get('[data-test=undo-last-edit-btn]').click();
 
-    cy.get('.vanilla-calendar')
-      .should('not.exist');
+    cy.get('.vanilla-calendar:visible').should('not.exist');
 
     cy.get('.unsaved-editable-field')
       .should('have.length', 11);

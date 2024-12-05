@@ -1,5 +1,5 @@
 # CI Build & Vitest Unit Tests (ship smaller name for CI badge)
-name: Build & Tests
+name: Build & Unit Tests
 on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch on Push and any branches on PR
@@ -62,6 +62,13 @@ jobs:
 
       - name: Run pnpm install dependencies
         run: pnpm install
+
+      - name: ESLint
+        run: pnpm lint
+
+      # only covering frameworks/demos folders for now
+      - name: Prettier
+        run: pnpm prettier:check
 
       - name: TSC Full Bundle (all Bundler types)
         run: pnpm bundle

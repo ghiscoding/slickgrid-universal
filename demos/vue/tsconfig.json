@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "../../frameworks/slickgrid-vue" },
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}

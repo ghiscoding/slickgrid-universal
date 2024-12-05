@@ -135,7 +135,7 @@ export class CustomPager implements BasePaginationComponent {
   }
 
   /**
-   * Add some DOM Element bindings, typically the framework you choose will do this (i.e. Angular/React/...)
+   * Add some DOM Element bindings, typically the framework you choose will do this (i.e. Angular/React/Vue/...)
    * but we're in plain JS here so let's use simply binding service available in Slickgrid-Universal
    */
   addBindings(): void {

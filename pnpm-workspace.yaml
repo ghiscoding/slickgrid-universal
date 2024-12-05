@@ -1,3 +1,5 @@
 packages:
+  - 'demos/**'
+  - 'frameworks/**'
   - 'packages/**'
   - 'examples/**'

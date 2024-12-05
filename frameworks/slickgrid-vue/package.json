@@ -1,0 +1,84 @@
+{
+  "name": "slickgrid-vue",
+  "version": "0.1.1",
+  "description": "Slickgrid-Vue",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "vue",
+    "vue3",
+    "plugin",
+    "datagrid",
+    "datatable",
+    "slickgrid"
+  ],
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal/frameworks/slickgrid-vue",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "frameworks/slickgrid-vue"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/ghiscoding"
+  },
+  "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
+    "clean": "rimraf dist",
+    "vue:dev": "vite build --watch",
+    "vue:dev:init": "vite build",
+    "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
+    "clone:dts": "node clone-dts.mjs",
+    "type-check": "vue-tsc --build --force"
+  },
+  "dependencies": {
+    "@formkit/tempo": "^0.1.2",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/custom-footer-component": "workspace:*",
+    "@slickgrid-universal/empty-warning-component": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/pagination-component": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
+    "dequal": "^2.0.3",
+    "i18next": "^24.0.2",
+    "i18next-vue": "^5.0.0",
+    "sortablejs": "^1.15.6"
+  },
+  "peerDependencies": {
+    "vue": ">=3.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "sass": "^1.81.0",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.1",
+    "vite-plugin-dts": "^4.3.0",
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.1.10"
+  }
+}

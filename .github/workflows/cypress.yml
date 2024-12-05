@@ -1,4 +1,4 @@
-name: E2E Tests (Cypress)
+name: Vanilla E2E Tests (Cypress)
 
 on:
   push:

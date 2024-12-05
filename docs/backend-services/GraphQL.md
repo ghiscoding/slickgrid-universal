@@ -159,7 +159,7 @@ export class Example {
   // Web API call
   getAllCustomers(graphqlQuery) {
     // regular Http Client call
-    return this.http.createRequest(`/api/customers?${graphqlQuery}`).asGet().send().then(response => response.content);
+    return this.http.createRequest(`/api/customers?${graphqlQuery}`).then(response => response.json());
 
     // or with Fetch Client
     // return this.http.fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
