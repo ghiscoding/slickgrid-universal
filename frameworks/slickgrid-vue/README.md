@@ -18,19 +18,18 @@ One of the best JavasSript data grid [SlickGrid](https://github.com/mleibman/Sli
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) website powered by GitBook.
 
 ## Installation
-Available in Stackblitz (Codeflow) below, this can also be used to provide an issue repro.
 
+```sh
+npm install slickgrid-vue
+```
 
 ### Stackblitz
 
-You can also try out the [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) live via Stackblitz. It can also be use to provide a repro when you openening any new bug/feature requests.
+You can even play with the [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) Stackblitz live. It can also be use to provide a repro when opening any new bug/feature requests.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
 
-Refer to the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository. Please consult all documentation before opening new issues, also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
-
-### NPM Package
-[slickgrid-vue on NPM](https://www.npmjs.com/package/slickgrid-vue)
+Refer to the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
 
 ### Styling Themes
 
