@@ -5,7 +5,7 @@ import { routes } from './router';
 
 <template>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand ms-2" href="https://github.com/ghiscoding/slickgrid-vue">
+    <a class="navbar-brand ms-2" href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue">
       <i class="mdi mdi-github"></i>
       <span class="ms-2">Slickgrid-Vue</span>
     </a>
@@ -22,8 +22,8 @@ import { routes } from './router';
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="github-button-container">
-      <a href="https://github.com/ghiscoding/slickgrid-vue">
-        <img src="https://img.shields.io/github/stars/ghiscoding/slickgrid-vue?style=social" />
+      <a href="https://github.com/ghiscoding/slickgrid-universal">
+        <img src="https://img.shields.io/github/stars/ghiscoding/slickgrid-universal?style=social" />
       </a>
     </div>
 
