@@ -20,5 +20,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src", "lib"]
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"]
 }

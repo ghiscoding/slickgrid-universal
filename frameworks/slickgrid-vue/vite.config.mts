@@ -9,11 +9,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), dts({ rollupTypes: false, tsconfigPath: './tsconfig.app.json' })],
+  plugins: [vue(), dts({ insertTypesEntry: true, rollupTypes: false, tsconfigPath: './tsconfig.app.json' })],
   build: {
-    copyPublicDir: false,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
+      name: 'SlickgridVue',
       formats: ['es', 'cjs'],
       fileName: format => format === 'cjs' ? 'index.cjs' : 'index.mjs',
     },
