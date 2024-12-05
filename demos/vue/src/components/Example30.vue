@@ -1064,7 +1064,7 @@ function renderItemCallbackWith4Corners(item: any): string {
     Composite Editor allows you to Create, Clone, Edit, Mass Update & Mass Selection Changes inside a nice Modal Window.
     <br />The modal is simply populated by looping through your column definition list and also uses a lot of the same logic as inline
     editing (see
-    <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/composite-editor-modal" target="_blank"
+    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/composite-editor-modal" target="_blank"
       >Composite Editor - Wiki</a
     >.)
   </div>

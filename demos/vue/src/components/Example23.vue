@@ -319,7 +319,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     This demo shows how to use Filters with Range of Search Values (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/column-functionalities/filters/range-filters"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/filters/range-filters"
       target="_blank"
       >Wiki docs</a
     >)

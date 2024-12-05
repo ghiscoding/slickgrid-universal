@@ -89,9 +89,9 @@ export class MyExample {
 
     this.sgb.dataView.setFilterArgs({
       columnFilters: filter,
-      grid: this.aureliaGrid.slickGrid
+      grid: this.sgb.slickGrid
     });
-    this.aureliaGrid.dataView.refresh();
+    this.sgb.dataView.refresh();
   }
 ```
 

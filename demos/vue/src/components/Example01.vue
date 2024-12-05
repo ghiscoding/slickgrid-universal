@@ -39,7 +39,7 @@ function isBrowserDarkModeEnabled() {
 }
 
 onUnmounted(() => {
-  // also unsubscribe all Angular Subscriptions
+  // also unsubscribe all Vue Subscriptions
   // document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
   // document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
 });

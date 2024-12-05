@@ -282,7 +282,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    Grid State & Preset (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/grid-state-preset" target="_blank"
+    Grid State & Preset (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank"
       >Wiki docs</a
     >)
     <br />

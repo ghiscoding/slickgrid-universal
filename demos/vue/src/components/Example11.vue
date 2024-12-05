@@ -181,11 +181,11 @@ function changeDurationBackgroundColor() {
   // also re-render the grid for the styling to be applied right away
   vueGrid.slickGrid.invalidate();
   vueGrid.slickGrid.render();
-  // or use the Aurelia-SlickGrid GridService
+  // or use the SlickGrid-Vue GridService
   // gridService.renderGrid();
 }
 
-/** Highlight the 5th row using the Aurelia-Slickgrid GridService */
+/** Highlight the 5th row using the Slickgrid-Vue GridService */
 function highlighFifthRow() {
   scrollGridTop();
   vueGrid.gridService.highlightRow(4, 1500);
@@ -288,7 +288,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>
         You can change the highlighted color &amp; animation by changing the
         <a
-          href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/aurelia-slickgrid/src/aurelia-slickgrid/styles/_variables.scss"
+          href="https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss"
           target="_blank"
           >SASS Variables</a
         >
@@ -301,7 +301,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <ul>
           <li>
             Example, click on button "Highlight Rows with Duration over 50" to see row styling changing.
-            <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/dynamic-item-metadata" target="_blank"
+            <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/dynamic-item-metadata" target="_blank"
               >Wiki doc</a
             >
           </li>

@@ -332,7 +332,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     Row selection, single or multi-select (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/row-selection"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/row-selection"
       target="_blank"
       >Wiki docs</a
     >).

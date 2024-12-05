@@ -11,7 +11,7 @@ import {
 import type { GridOption, RowDetailView } from './models/index.js';
 
 /**
- * Default Options that can be passed to the Aurelia-Slickgrid
+ * Default Options that can be passed to Slickgrid-Universal
  */
 export const GlobalGridOptions: Partial<GridOption> = {
   alwaysShowVerticalScroll: true,

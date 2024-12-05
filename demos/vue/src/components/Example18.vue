@@ -434,7 +434,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="subtitle">
     <ul>
       <li>
-        <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/grouping-aggregators" target="_blank">Wiki docs</a>
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grouping-aggregators" target="_blank">Wiki docs</a>
       </li>
       <li>This example shows 3 ways of grouping</li>
       <ol>
@@ -447,7 +447,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </ol>
       <li>Fully dynamic and interactive multi-level grouping with filtering and aggregates ovor 50'000 items</li>
       <li>Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows)..</li>
-      <li>Use "Aggregators" and "GroupTotalFormatters" directly from Aurelia-Slickgrid</li>
+      <li>Use "Aggregators" and "GroupTotalFormatters" directly from Slickgrid-Vue</li>
     </ul>
   </div>
 

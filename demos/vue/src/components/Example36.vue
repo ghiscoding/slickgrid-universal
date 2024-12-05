@@ -536,7 +536,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     Grid with Excel Formulas (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/export-to-excel#cell-value-parser"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/export-to-excel#cell-value-parser"
       target="_blank"
       >Wiki docs</a
     >). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via

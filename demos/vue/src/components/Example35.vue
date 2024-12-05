@@ -283,13 +283,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         grid rows.
       </li>
       <li>
-        Editedable rows, as well as modified cells are highlighted with a different color, which you can customize using css variables (see
-        <a
-          target="_blank"
-          href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example35.scss"
-        >
-          example35.scss </a
-        >)
+        Editable rows, as well as modified cells are highlighted with a different color, which you can customize using css variables
       </li>
       <li>Modifications are kept track of and if the cancel button is pressed, all modifications are rolled back.</li>
       <li>

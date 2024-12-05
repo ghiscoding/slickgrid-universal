@@ -398,9 +398,8 @@ function initialization() {
   preRegisterResources();
 
   // prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it.
-  // Wrap each editor class in the Factory resolver so consumers of this library can use
-  // dependency injection. Aurelia will resolve all dependencies when we pass the container
-  // and allow slickgrid to pass its arguments to the editors constructor last
+  // Wrap each editor class in the Factory resolver so consumers of this library.
+  // Vue will allow slickgrid to pass its arguments to the editors constructor last
   // when slickgrid creates the editor
   _columnDefinitions.value = loadSlickGridEditors(columnDefinitionsModel.value || []);
 
@@ -541,7 +540,7 @@ function initialization() {
     bindBackendCallbackFunctions(_gridOptions.value as GridOption);
   }
 
-  // create the Aurelia Grid Instance with reference to all Services
+  // create the Vue Grid Instance with reference to all Services
   const vueElementInstance: SlickgridVueInstance = {
     element: elm.value as HTMLDivElement,
 

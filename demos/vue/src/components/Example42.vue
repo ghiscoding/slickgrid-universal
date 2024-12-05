@@ -215,7 +215,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    You can create a Custom Pagination by passing an Aurelia Custom Element and it must <code>implements BasePaginationComponent</code>. Any
+    You can create a Custom Pagination by passing an Vue Custom Component and it must <code>implements BasePaginationComponent</code>. Any
     of the pagination controls could be moved anywhere on the page (for example we purposely moved the page size away from the rest of the
     pagination elements).
   </div>

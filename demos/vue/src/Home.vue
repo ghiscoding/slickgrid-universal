@@ -9,7 +9,7 @@
   <p>
     One of the best javascript datagrid
     <a href="https://github.com/mleibman/SlickGrid" target="_blank">SlickGrid</a> which was originally developed by &#64;mleibman is now
-    available to Angular. I have tried, and used, a few datagrids and SlickGrid beats most of them in terms of functionalities and
+    available to Vue. I have tried, and used, a few datagrids and SlickGrid beats most of them in terms of functionalities and
     performance (it can easily even handle a million row).
   </p>
   <h4>Documentation</h4>

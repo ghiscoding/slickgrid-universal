@@ -15,7 +15,7 @@
 ## Description
 Tree Data allows you to display a hierarchical (tree) dataset into the grid, it is visually very similar to Grouping but also very different in its implementation. A hierarchical dataset is commonly used for a parent/child relation and a great example is a Bill of Material (BOM), which you can't do with Grouping because parent/child relationship could be infinite tree level while Grouping is a defined and known level of Grouping.
 
-## Important Notes 
+## Important Notes
 
 #### data mutation
 
@@ -256,15 +256,9 @@ There are a few methods available from the `TreeDataService` (only listing the i
 For example
 ```ts
 export class Example1 {
-  angularGrid?: AngularGridInstance;
-
-  angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-  }
-
   getTreeDataState() {
     // for example get current Tree Data toggled state
-    console.log(this.angularGrid.getCurrentToggleState());
+    console.log(this.sgb.treeDataService.getCurrentToggleState());
   }
 }
 ```

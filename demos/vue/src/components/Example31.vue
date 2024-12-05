@@ -167,7 +167,7 @@ function displaySpinner(isProcessing: boolean) {
 
 function getCustomerCallback(data: any) {
   // totalItems property needs to be filled for pagination to work correctly
-  // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
+  // however we need to force Vue to do a dirty check, doing a clone object will do just that
   let totalItemCount: number = data['totalRecordCount']; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
   if (isCountEnabled.value) {
     totalItemCount = odataVersion.value === 4 ? data['@odata.count'] : data['d']['__count'];

@@ -36,7 +36,7 @@ export interface SlickgridVueInstance {
   /** Backend Service, when available */
   backendService?: BackendService;
 
-  /** EventPubSub Service instance that is used internal by the lib and could be used externally to subscribe to Aurelia-Slickgrid events */
+  /** EventPubSub Service instance that is used internal by the lib and could be used externally to subscribe to Slickgrid-Vue events */
   eventPubSubService?: EventPubSubService;
 
   /** Extension (Plugins & Controls) Service */

@@ -465,7 +465,7 @@ this.columnDefinitions = [
 ```
 
 ### Collection Async Load
-You can also load the collection asynchronously, but for that you will have to use the `collectionAsync` property, which expect a Promise (or an Observable when available, for example in Angular-Slickgrid) to be provided.
+You can also load the collection asynchronously, but for that you will have to use the `collectionAsync` property, which expect a Promise (or an Observable when available, for example in Slickgrid-Vue) to be provided.
 
 #### Load the collection through an Http call
 
@@ -521,7 +521,7 @@ For example
 
         if (Array.isArray(collectionFilterAsync)) {
           // add the new row to the grid
-          this.aureliaGrid.gridService.addItemToDatagrid(newRows[0]);
+          this.sgb.gridService.addItemToDatagrid(newRows[0]);
 
           // then refresh the Filter "collection", we have 2 ways of doing it
 

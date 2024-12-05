@@ -297,7 +297,7 @@ function getLanguages(): Promise<GraphqlResult<{ code: string; name: string; nat
 
   <div class="subtitle">
     Use basic GraphQL query with any external public APIs (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/backend-services/graphql"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/graphql"
       target="_blank"
       >Wiki docs</a
     >).

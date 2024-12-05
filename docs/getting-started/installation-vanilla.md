@@ -3,7 +3,7 @@
 > **NOTE** these instructions are for the latest v5.x and might differ from earlier versions of the lib.
 
 ### 1. Install NPM Package
-Install the `Angular-Slickgrid`, and other external packages like `Bootstrap` and `Font-Awesome`
+Install the `Slickgrid-Vue`, and other external packages like `Bootstrap` and `Font-Awesome`
 (Bootstrap, Font-Awesome are optional, you can choose other lib if you wish)
 ```bash
 npm install --save @slickgrid-universal/common
@@ -95,7 +95,7 @@ You could also compile the SASS files with your own customization, for that simp
 
 ### 4. Explore the Documentation
 The last step is really to explore all the pages that are available on the documentation website which are often updated. For example a good starter is to look at the following
-- all the `Grid Options` you can take a look at, [Slickgrid-Universal - Grid Options](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/modules/angular-slickgrid/models/gridOption.interface.ts) interface
+- all the `Grid Options` you can take a look at, [Slickgrid-Universal - Grid Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/gridOption.interface.ts) interface
 - [Formatters](../column-functionalities/Formatters.md)
 - [Editors](../column-functionalities/Editors.md)
 - [Filters](../column-functionalities/filters/Select-Filter.md)

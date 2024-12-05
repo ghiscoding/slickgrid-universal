@@ -232,7 +232,7 @@ function getData(count: number) {
 
 function dynamicallyAddTitleHeader() {
   // you can dynamically add your column to your column definitions
-  // and then use the spread operator [...cols] OR slice to force Aurelia to review the changes
+  // and then use the spread operator [...cols] OR slice to force Vue to review the changes
   const newCol = {
     id: `title${duplicateTitleHeaderCount++}`,
     field: 'id',
@@ -250,9 +250,9 @@ function dynamicallyAddTitleHeader() {
   // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
   // for example if you use the Checkbox Selector (row selection), you MUST use the code below
   /*
-    const allColumns = aureliaGrid.gridService.getAllColumnDefinitions();
+    const allColumns = vueGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    columnDefinitions.value = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
+    columnDefinitions.value = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
     */
 }
 
@@ -314,7 +314,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     Support multiple locales with the i18next plugin, following these steps. Take a look at the (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/localization/localization"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/localization/localization"
       target="_blank"
       >Wiki documentation</a
     >)
@@ -342,14 +342,14 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <li>What if you want to use "customStructure" and translation? Simply pass this flag <b>enableTranslateLabel: true</b></li>
         <li>
           More info on the Select Filter
-          <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/column-functionalities/filters/select-filter" target="_blank"
+          <a href="https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/filters/select-filter" target="_blank"
             >Wiki page</a
           >
         </li>
       </ul>
       <li>
         For more info about "Download to File", read the
-        <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/export-to-excel" target="_blank">Wiki page</a>
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/export-to-excel" target="_blank">Wiki page</a>
       </li>
     </ol>
   </div>

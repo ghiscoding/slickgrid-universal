@@ -568,7 +568,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     This demo shows how to create Regular & Custom Tooltips (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/custom-tooltip"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/custom-tooltip"
       target="_blank"
       >Wiki docs</a
     >)

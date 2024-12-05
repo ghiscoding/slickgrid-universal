@@ -8,10 +8,10 @@
 ### Demo
 Look at your developer console before leaving the page
 #### Regular grid
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example4.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example04) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example4.ts)
 
 #### with Backend Service
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example6) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example6.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example06) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example6.ts)
 
 ### Descriptions
 #### Grid State

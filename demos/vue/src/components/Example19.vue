@@ -124,7 +124,7 @@ function defineGrid() {
       // optionally change the column index position of the icon (defaults to 0)
       // columnIndexPosition: 1,
 
-      // We can load the "process" asynchronously in 3 different ways (aurelia-http-client, aurelia-fetch-client OR even Promise)
+      // We can load the "process" asynchronously in 2 different ways (Fetch OR Promise)
       process: (item: any) => simulateServerAsyncCall(item),
       // process: (item) => this.http.get(`api/item/${item.id}`),
 
@@ -329,7 +329,7 @@ defineExpose({
 
     <div class="subtitle">
       Add functionality to show extra information with a Row Detail View, (<a
-        href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/row-detail"
+        href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/row-detail"
         target="_blank"
         >Wiki docs</a
       >)

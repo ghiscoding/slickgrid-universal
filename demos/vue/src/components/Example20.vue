@@ -349,7 +349,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     This example demonstrates the use of Pinned (aka frozen) Columns and/or Rows (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/frozen-columns-rows"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/frozen-columns-rows"
       target="_blank"
       >Wiki docs</a
     >)

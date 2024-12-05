@@ -255,7 +255,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
   <div class="subtitle">
     This example demonstrates using the <b>Slick.Plugins.HeaderButtons</b> plugin to easily add buttons to colum headers. These buttons can
     be specified directly in the column definition, and are very easy to configure and use. (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/header-menu-header-buttons"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/header-menu-header-buttons"
       target="_blank"
       >Wiki docs</a
     >)

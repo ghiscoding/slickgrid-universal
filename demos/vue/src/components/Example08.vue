@@ -220,7 +220,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <div class="subtitle">
       This example demonstrates using the <b>Slick.Plugins.HeaderMenu</b> plugin to easily add menus to colum headers.<br />
       These menus can be specified directly in the column definition, and are very easy to configure and use. (<a
-        href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/header-menu-header-buttonss"
+        href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/header-menu-header-buttonss"
         target="_blank"
         >Wiki docs</a
       >)
