@@ -51,7 +51,7 @@ For a complete set of working demos (40+ examples), we strongly suggest you to c
 [MIT License](LICENSE)
 
 ## Latest News & Releases
-Check out the [Releases](https://github.com/ghiscoding/slickgrid-vue/releases) section for all latest News & Releases.
+Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
 
 ### Tested with [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Examples are tested with [Cypress](https://www.cypress.io/) as E2E tests.
@@ -60,12 +60,3 @@ Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Exampl
 You like **Slickgrid-Vue**? Be sure to upvote ⭐, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) and feel free to contribute. 👷👷‍♀️
 
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
-
-## Sponsors
-
-<div>
-  <img class="circle avatar-user" src="https://avatars.githubusercontent.com/u/48218815?s=52&amp;v=4" width="40" height="40" alt="@kevinburkett" />
-  <a href="/kevinburkett" class="Link">
-    <span class="wb-break-word ml-2">kevinburkett</span>
-  </a>
-</div>
