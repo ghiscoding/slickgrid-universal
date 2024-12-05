@@ -20,7 +20,12 @@ One of the best JavasSript data grid [SlickGrid](https://github.com/mleibman/Sli
 ## Installation
 Available in Stackblitz (Codeflow) below, this can also be used to provide an issue repro.
 
-[![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/ghiscoding/slickgrid-vue)
+
+### Stackblitz
+
+You can also try out the [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) live via Stackblitz. It can also be use to provide a repro when you openening any new bug/feature requests.
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
 
 Refer to the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository. Please consult all documentation before opening new issues, also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
 
