@@ -317,7 +317,7 @@ defineExpose({
         <a
           style="font-size: 18px"
           target="_blank"
-          href="https://github.com/ghiscoding/slickgrid-vue/blob/main/packages/demo/src/examples/slickgrid/example02.ts"
+         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example19.vue"
         >
           <span class="mdi mdi-link-variant"></span> code
         </a>

@@ -122,7 +122,7 @@ function toggleDarkModeGrid1() {
     Example 1: Basic Grids
     <span class="float-end font18">
       see&nbsp;
-      <a target="_blank" href="https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example01.tsx">
+      <a target="_blank" href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example01.vue">
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>

@@ -381,13 +381,13 @@ function vueGridReady(grid: SlickgridVueInstance) {
     Example 27: Tree Data
     <small>
       <span class="mdi mdi-file-tree mdi-27px"></span> (from a flat dataset with <code>parentId</code> references -
-      <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
+      <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
     >
     <span class="float-end">
       <a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-vue/blob/main/packages/demo/src/examples/slickgrid/example27.ts"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example27.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>

@@ -648,10 +648,18 @@ function vueGridReady(grid: SlickgridVueInstance) {
 <template>
   <h2>
     Example 3: Editors / Delete
-
     <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example03.vue"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
   </h2>
   <div class="subtitle">
     Grid with Inline Editors and onCellClick actions (<a

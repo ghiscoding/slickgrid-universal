@@ -261,7 +261,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-vue/blob/main/packages/demo/src/examples/slickgrid/example11.ts"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example11.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
@@ -273,7 +273,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="subtitle">
     Add / Update / Hightlight an Item from the Datagrid (<a
-      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/add-update-highlight"
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/add-update-highlight"
       target="_blank"
       >Wiki docs</a
     >).
