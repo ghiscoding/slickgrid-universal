@@ -36,14 +36,14 @@ importers:
         specifier: ^22.10.1
         version: 22.10.1
       '@vitest/coverage-v8':
-        specifier: ^2.1.6
-        version: 2.1.6(vitest@3.0.0-beta.1)
+        specifier: ^3.0.0-beta.1
+        version: 3.0.0-beta.1(vitest@3.0.0-beta.1)
       '@vitest/eslint-plugin':
-        specifier: ^1.1.12
-        version: 1.1.12(@typescript-eslint/utils@8.16.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3))(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3)(vitest@3.0.0-beta.1)
+        specifier: ^1.1.14
+        version: 1.1.14(@typescript-eslint/utils@8.16.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3))(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3)(vitest@3.0.0-beta.1)
       '@vitest/ui':
-        specifier: ^2.1.6
-        version: 2.1.6(vitest@3.0.0-beta.1)
+        specifier: ^3.0.0-beta.1
+        version: 3.0.0-beta.1(vitest@3.0.0-beta.1)
       conventional-changelog-conventionalcommits:
         specifier: ^7.0.2
         version: 7.0.2
@@ -112,7 +112,7 @@ importers:
         version: 8.16.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3)
       vitest:
         specifier: ^3.0.0-beta.1
-        version: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@2.1.6)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
+        version: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@3.0.0-beta.1)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -1626,17 +1626,17 @@ packages:
       vite: ^5.0.0 || ^6.0.0
       vue: ^3.2.25
 
-  '@vitest/coverage-v8@2.1.6':
-    resolution: {integrity: sha512-qItJVYDbG3MUFO68dOZUz+rWlqe9LMzotERXFXKg25s2A/kSVsyS9O0yNGrITfBd943GsnBeQZkBUu7Pc+zVeA==}
+  '@vitest/coverage-v8@3.0.0-beta.1':
+    resolution: {integrity: sha512-Qxov8nTb1cRmbFV5F+V9OQ/O2fjAk/zZzVJ3IQSnoagCTjDFiBpEhC/PyuO8fSAhn9Tds5/dvg4Acwn7M3Efww==}
     peerDependencies:
-      '@vitest/browser': 2.1.6
-      vitest: 2.1.6
+      '@vitest/browser': 3.0.0-beta.1
+      vitest: 3.0.0-beta.1
     peerDependenciesMeta:
       '@vitest/browser':
         optional: true
 
-  '@vitest/eslint-plugin@1.1.12':
-    resolution: {integrity: sha512-iv9K9fz9qRxBo9J/PGSMcLdOFIKqtFZ6THqSVG/jW8CJZFkIWLxPduCTXkbyG6FNKgL49fkv348nSgmfqCU6FA==}
+  '@vitest/eslint-plugin@1.1.14':
+    resolution: {integrity: sha512-ej0cT5rUt7uvwxuu7Qxkm7fI+eaOq8vD34qGpuRoXCdvOybOlE5GDqtgvVCYbxLANkcRJfm5VDU1TnJmQRHi9g==}
     peerDependencies:
       '@typescript-eslint/utils': '>= 8.0'
       eslint: '>= 8.57.0'
@@ -1662,9 +1662,6 @@ packages:
       vite:
         optional: true
 
-  '@vitest/pretty-format@2.1.6':
-    resolution: {integrity: sha512-exZyLcEnHgDMKc54TtHca4McV4sKT+NKAe9ix/yhd/qkYb/TP8HTyXRFDijV19qKqTZM0hPL4753zU/U8L/gAA==}
-
   '@vitest/pretty-format@3.0.0-beta.1':
     resolution: {integrity: sha512-uDPi6zXNyUBgXDUD+E3E8MzUGxWXffDENbBbek/Jn9pDQb6R5TVAq/pbs+rZ18iNvXAelzhyRjsNX4cbTreENA==}
 
@@ -1677,13 +1674,10 @@ packages:
   '@vitest/spy@3.0.0-beta.1':
     resolution: {integrity: sha512-QsOYySOzYMTCpCoQvCspUDz4YfmBahokzNlDYCUaLHVFZTtyeOukAwTv56hyUrOTStKvkuWeg4RIbr/PeNJuNw==}
 
-  '@vitest/ui@2.1.6':
-    resolution: {integrity: sha512-SrpLAM0/xpOjXBDv3mayFh5TDEYM59fmEmJXgp1AqtpUWHVw4Tonp6Z9dVBhChU/Q+BY57m74nrQZK8vxKDrMQ==}
+  '@vitest/ui@3.0.0-beta.1':
+    resolution: {integrity: sha512-02ZC8uV1zPGpVjMrMBtvNiAv5fKXzdoMGfSsiPqRRNnvSKbTqlbbUvq6F4l/tMll7TjLsKbGY1u7S9VnY7EHIw==}
     peerDependencies:
-      vitest: 2.1.6
-
-  '@vitest/utils@2.1.6':
-    resolution: {integrity: sha512-ixNkFy3k4vokOUTU2blIUvOgKq/N2PW8vKIjZZYsGJCMX69MRa9J2sKqX5hY/k5O5Gty3YJChepkqZ3KM9LyIQ==}
+      vitest: 3.0.0-beta.1
 
   '@vitest/utils@3.0.0-beta.1':
     resolution: {integrity: sha512-pxoUqW7lk/3/7iRAI3MqFRMfPpzdEKLn2Yz57TgMMUhP2/Cj3Izm3dXQaH45LhqU6uezi71U/fOLhLgTqMZnpA==}
@@ -2675,6 +2669,9 @@ packages:
 
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
+
+  flatted@3.3.2:
+    resolution: {integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA==}
 
   foreground-child@3.3.0:
     resolution: {integrity: sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==}
@@ -6147,7 +6144,7 @@ snapshots:
       vite: 6.0.1(@types/node@22.10.1)(jiti@1.21.6)(sass@1.81.0)(yaml@2.6.0)
       vue: 3.5.13(typescript@5.6.3)
 
-  '@vitest/coverage-v8@2.1.6(vitest@3.0.0-beta.1)':
+  '@vitest/coverage-v8@3.0.0-beta.1(vitest@3.0.0-beta.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -6156,22 +6153,22 @@ snapshots:
       istanbul-lib-report: 3.0.1
       istanbul-lib-source-maps: 5.0.6
       istanbul-reports: 3.1.7
-      magic-string: 0.30.12
+      magic-string: 0.30.14
       magicast: 0.3.5
       std-env: 3.8.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@2.1.6)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
+      vitest: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@3.0.0-beta.1)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.1.12(@typescript-eslint/utils@8.16.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3))(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3)(vitest@3.0.0-beta.1)':
+  '@vitest/eslint-plugin@1.1.14(@typescript-eslint/utils@8.16.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3))(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3)(vitest@3.0.0-beta.1)':
     dependencies:
       '@typescript-eslint/utils': 8.16.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.6.3)
       eslint: 9.16.0(jiti@1.21.6)
     optionalDependencies:
       typescript: 5.6.3
-      vitest: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@2.1.6)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
+      vitest: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@3.0.0-beta.1)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
 
   '@vitest/expect@3.0.0-beta.1':
     dependencies:
@@ -6187,10 +6184,6 @@ snapshots:
       magic-string: 0.30.14
     optionalDependencies:
       vite: 6.0.1(@types/node@22.10.1)(jiti@1.21.6)(sass@1.81.0)(yaml@2.6.0)
-
-  '@vitest/pretty-format@2.1.6':
-    dependencies:
-      tinyrainbow: 1.2.0
 
   '@vitest/pretty-format@3.0.0-beta.1':
     dependencies:
@@ -6211,22 +6204,16 @@ snapshots:
     dependencies:
       tinyspy: 3.0.2
 
-  '@vitest/ui@2.1.6(vitest@3.0.0-beta.1)':
+  '@vitest/ui@3.0.0-beta.1(vitest@3.0.0-beta.1)':
     dependencies:
-      '@vitest/utils': 2.1.6
+      '@vitest/utils': 3.0.0-beta.1
       fflate: 0.8.2
-      flatted: 3.3.1
+      flatted: 3.3.2
       pathe: 1.1.2
       sirv: 3.0.0
       tinyglobby: 0.2.10
       tinyrainbow: 1.2.0
-      vitest: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@2.1.6)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
-
-  '@vitest/utils@2.1.6':
-    dependencies:
-      '@vitest/pretty-format': 2.1.6
-      loupe: 3.1.2
-      tinyrainbow: 1.2.0
+      vitest: 3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@3.0.0-beta.1)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0)
 
   '@vitest/utils@3.0.0-beta.1':
     dependencies:
@@ -7360,6 +7347,8 @@ snapshots:
       keyv: 4.5.4
 
   flatted@3.3.1: {}
+
+  flatted@3.3.2: {}
 
   foreground-child@3.3.0:
     dependencies:
@@ -9338,7 +9327,7 @@ snapshots:
       sass: 1.81.0
       yaml: 2.6.0
 
-  vitest@3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@2.1.6)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0):
+  vitest@3.0.0-beta.1(@types/node@22.10.1)(@vitest/ui@3.0.0-beta.1)(happy-dom@15.11.7)(jiti@1.21.6)(jsdom@25.0.1)(sass@1.81.0)(yaml@2.6.0):
     dependencies:
       '@vitest/expect': 3.0.0-beta.1
       '@vitest/mocker': 3.0.0-beta.1(vite@6.0.1(@types/node@22.10.1)(jiti@1.21.6)(sass@1.81.0)(yaml@2.6.0))
@@ -9362,7 +9351,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.10.1
-      '@vitest/ui': 2.1.6(vitest@3.0.0-beta.1)
+      '@vitest/ui': 3.0.0-beta.1(vitest@3.0.0-beta.1)
       happy-dom: 15.11.7
       jsdom: 25.0.1
     transitivePeerDependencies:
