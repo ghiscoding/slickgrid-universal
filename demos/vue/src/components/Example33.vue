@@ -556,7 +556,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example33.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example33.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
@@ -583,7 +583,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div style="margin-bottom: 20px">
     <label for="pinned-rows">Simulated Server Delay (ms): </label>
-    <input id="server-delay" class="ms-1" type="number" data-test="server-delay" style="width: 60px" :value="serverApiDelay" />
+    <input id="server-delay" class="ms-1" type="number" data-test="server-delay" style="width: 60px" v-model="serverApiDelay" />
   </div>
 
   <slickgrid-vue

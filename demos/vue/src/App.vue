@@ -30,7 +30,7 @@ import { routes } from './router';
     <div id="navbarContent" class="navbar-collapse collapse justify-content-end me-2">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/#/home">Home</a>
+          <a class="nav-link" href="#/home">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-vue/" target="_blank"> Documentation </a>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  BasePaginationModel,
   type Column,
   FieldType,
   Filters,
@@ -11,11 +12,10 @@ import {
   type SlickgridVueInstance,
   type SliderRangeOption,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { ComponentPublicInstance, DefineComponent, onBeforeMount, ref } from 'vue';
 
 import CustomPagerComponent from './CustomPager.vue';
 
-export type MyComponentInstance = InstanceType<typeof CustomPagerComponent>;
 const NB_ITEMS = 5000;
 const gridOptions = ref<GridOption>();
 const columnDefinitions = ref<Column[]>([]);
@@ -142,7 +142,7 @@ function defineGrid() {
     },
     enableExcelCopyBuffer: true,
     enableFiltering: true,
-    customPaginationComponent: CustomPagerComponent, // load our Custom Pagination Component
+    customPaginationComponent: CustomPagerComponent as DefineComponent<any, BasePaginationModel>, // load our Custom Pagination Component
     enablePagination: true,
     pagination: {
       pageSize: pageSize.value,
@@ -204,7 +204,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example42.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example42.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
@@ -215,8 +215,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    You can create a Custom Pagination by passing an Vue Custom Component and it must <code>implements BasePaginationComponent</code>. Any
-    of the pagination controls could be moved anywhere on the page (for example we purposely moved the page size away from the rest of the
+    You can create a Custom Pagination by passing an Vue Custom Component and it must be an instance of type <code>DefineComponent&lt;any, BasePaginationModel&gt;</code> which must implements all necessary functions.
+    The pagination can be located anywhere on the page (top or bottom).
     pagination elements).
   </div>
 

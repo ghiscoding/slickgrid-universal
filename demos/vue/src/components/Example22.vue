@@ -140,7 +140,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
       <a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example22.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example22.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>

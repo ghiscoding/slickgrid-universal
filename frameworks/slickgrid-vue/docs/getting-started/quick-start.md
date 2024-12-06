@@ -1,27 +1,25 @@
 # Quick start
 
-> **NOTE** The Documentations shown on this website are meant for Slickgrid-Vue v4.x and higher, for older versions please refer to the project [Wikis](https://github.com/ghiscoding/slickgrid-vue/wiki) for earlier versions of the project.
-
 ### Easiest Way to Get Started
 
-The easiest is to simply clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) project and run it from there... or if you really wish to start from scratch then follow the steps below.
+The easiest is to simply clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) project and run it from there... or if you really wish to start from scratch then follow the steps shown below.
 
 ### 1. Install NPM Package
 
-Install `Vue`, `Slickgrid-Vue`, `Bootstrap` (or other UI framework)
+Install `Vue`, `Slickgrid-Vue`, `Bootstrap` (or any other UI framework)
 ```bash
 npm install --save slickgrid-vue bootstrap
 # or with yarn add
 ```
 
-_Note: `Bootstrap` is optional, you can use any other framework_
+_Note: `Bootstrap` is totally optional, you can use any other framework_
 
 ### 2. Import all necessary dependencies in `main.ts`
 ```vue
 <script setup lang="ts">
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
-import i18n from 'i18next';
+
 import Vue from 'vue';
 </script>
 ```
@@ -46,7 +44,7 @@ import 'node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme
 ```
 
 #### SASS (scss)
-You could also compile the SASS files with your own customization, for that simply take any of the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
+You could also compile the SASS files with your own customization, for that simply take any of the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward or use the new modern SASS approach with the `@use with()`. For example, you could modify your `style.scss` with the following changes:
 
 ```scss
 /* for example, let's change the mouse hover color */
@@ -58,7 +56,7 @@ You could also compile the SASS files with your own customization, for that simp
 
 ### 4. Install/Setup `I18N` for Localization (optional)
 To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
-1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other thank English)... this is a new feature starting from version `2.10.0` and up.
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other thank English)...
 2. Using [Localization with I18N](../localization/localization.md), that is when you want to use multiple locales dynamically.
 
 ### 5. Create a basic grid
@@ -66,13 +64,13 @@ To provide locales other than English (default locale), you have 2 options that 
 ```vue
 <script setup lang="ts">
 import {
-  SlickgridVueInstance,
   Column,
   FieldType,
   Formatter,
   Formatters,
   GridOption,
   SlickgridVue,
+  SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount } from 'vue';
 
@@ -104,10 +102,10 @@ function defineGrid() {
   dataset.value = getData();
 }
 
-function getData() {
+function getData(count: number) {
   // mock some data, an array of objects
   const tmpData = [];
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < count; i++) {
     const randomYear = 2000 + Math.floor(Math.random() * 10);
     const randomMonth = Math.floor(Math.random() * 11);
     const randomDay = Math.floor((Math.random() * 29));
@@ -119,7 +117,7 @@ function getData() {
       duration: Math.round(Math.random() * 100) + '',
       percentComplete: randomPercent,
       start: `${randomMonth}/${randomDay}/${randomYear}`,
-      finish: `${randomMonth}/${randomDay}/${randomYear}`,
+      finish: `${randomMonth}/${randomDay}/${randomYear + 1}`,
       effortDriven: (i % 5 === 0)
     };
   }
@@ -151,16 +149,16 @@ The last step is really to explore all the pages that are available in this Wiki
 
 ### 7. Get Started
 The best way to get started is to clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 4 demo page. `Slickgrid-Vue` has 2 `Bootstrap` themes, you can see a demo of each one below.
-- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos) (with `I18N` Service)
+- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos) (with `I18N` Service)
 
 ##### All Live Demo Examples have links to the actual code
 Like to see the code to a particular Example? Just click on the "see code" that is available in every live examples.
 
 ### 8. CSP Compliance
-The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
+The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend [DOMPurify](https://github.com/cure53/DOMPurify)). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
 
 ### 9. Add Optional Feature like Excel Export
-Starting with version 3.0.0, the Excel Export is now an optional package and if you want to use it then you'll need to install it via npm from the monorepo library with `npm install @slickgrid-universal/excel-export`. Refer to the [Excel Export - Docs](../grid-functionalities/export-to-excel.md) for more info.
+The Excel Export is an optional package and if you want to use it then you'll need to install it via npm from the monorepo library with `npm install @slickgrid-universal/excel-export`. Refer to the [Excel Export - Docs](../grid-functionalities/export-to-excel.md) for more info.
 
 Here's a quick list of some of these optional packages
 - [@slickgrid-universal/excel-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/excel-export)
@@ -176,4 +174,4 @@ After reading all this HOW TO, what if you have an issue with the grid?
 Please start by searching any related [issues](/ghiscoding/slickgrid-vue/issues). If you can't find anything in the issues log and you made sure to also look through the multiple [wiki](/ghiscoding/slickgrid-vue/wiki) pages as well, then go ahead and fill in a [new issue](/ghiscoding/slickgrid-vue/issues/new) and we'll try to help.
 
 ### Final word
-This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/N4N679OT) ☕️, some part of the code happens when I'm at StarBucks... That is it, thank you and don't forget to ⭐ it if you like the lib 😉
+This project is Open Source and is, for the most part, mainly done in my spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/N4N679OT) ☕️, some part of the code happens when I'm at StarBucks so... That is it, thank you and don't forget to ⭐ the project if you like the lib 😉

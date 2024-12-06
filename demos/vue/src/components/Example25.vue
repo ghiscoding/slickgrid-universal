@@ -285,7 +285,7 @@ function getLanguages(): Promise<GraphqlResult<{ code: string; name: string; nat
       <a
         style="font-size: 18px"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/example25.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example25.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>

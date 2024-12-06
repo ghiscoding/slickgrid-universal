@@ -23,9 +23,12 @@
     "src"
   ],
   "keywords": [
+    "OData",
+    "GraphQL",
     "vue",
     "vue3",
     "plugin",
+    "data grid",
     "datagrid",
     "datatable",
     "slickgrid"
