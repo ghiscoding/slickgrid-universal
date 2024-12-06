@@ -13,7 +13,7 @@
     {
       description: 'Group all Vue framework/demo dependencies',
       matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
-      groupName: 'Vue package'
+      groupName: 'Vue.JS dependencies'
     },
     // rimraf new major releases dropped support for Node 18, we'll have to wait our next major to upgrade them
     {
