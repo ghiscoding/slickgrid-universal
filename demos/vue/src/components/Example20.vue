@@ -1,6 +1,17 @@
 <script setup lang="ts">
-import type { ColumnEditorDualInput, GridOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Editors, FieldType, Filters, formatNumber, Formatters, SlickEventHandler, SlickgridVue } from 'slickgrid-vue';
+import {
+  type ColumnEditorDualInput,
+  type GridOption,
+  type SlickgridVueInstance,
+  type Column,
+  Editors,
+  FieldType,
+  Filters,
+  formatNumber,
+  Formatters,
+  SlickEventHandler,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const NB_ITEMS = 500;
@@ -281,7 +292,9 @@ function changeFrozenRowCount() {
 }
 
 function costDurationFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any) {
-  const costText = isNullUndefinedOrEmpty(dataContext.cost) ? 'n/a' : formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
+  const costText = isNullUndefinedOrEmpty(dataContext.cost)
+    ? 'n/a'
+    : formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
   let durationText = 'n/a';
   if (!isNullUndefinedOrEmpty(dataContext.duration) && dataContext.duration >= 0) {
     durationText = `${dataContext.duration} ${dataContext.duration > 1 ? 'days' : 'day'}`;
@@ -337,12 +350,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <a
         style="font-size: 18px"
         target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example20.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example20.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -380,7 +398,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="row mt-2">
     <div class="col-sm-12">
-      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-frozen-column-button" @click="setFrozenColumns(-1)">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        data-test="remove-frozen-column-button"
+        @click="setFrozenColumns(-1)"
+      >
         <i class="mdi mdi-close"></i> Remove Frozen Columns
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-3frozen-columns" @click="setFrozenColumns(2)">

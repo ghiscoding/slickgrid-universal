@@ -2,7 +2,19 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { useTranslation } from 'i18next-vue';
-import { type Column, DelimiterType, FieldType, FileType, Filters, type Formatter, Formatters, GridOption, GridStateChange,SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import {
+  type Column,
+  DelimiterType,
+  FieldType,
+  FileType,
+  Filters,
+  type Formatter,
+  Formatters,
+  GridOption,
+  GridStateChange,
+  SlickgridVue,
+  SlickgridVueInstance,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -307,7 +319,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -333,13 +350,18 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <ul>
         <li>You can easily implement logic to switch between Formatters "dateIso" or "dateUs", depending on current locale.</li>
       </ul>
-      <li>For the Select (dropdown) filter, you can fill in the "labelKey" property, if found it will use it, else it will use "label"</li>
+      <li>
+        For the Select (dropdown) filter, you can fill in the "labelKey" property, if found it will use it, else it will use
+        "label"
+      </li>
       <ul>
         <li>
           What if your select options have totally different value/label pair? In this case, you can use the
           <b>customStructure: { label: 'customLabel', value: 'customValue'}</b> to change the property name(s) to use.'
         </li>
-        <li>What if you want to use "customStructure" and translation? Simply pass this flag <b>enableTranslateLabel: true</b></li>
+        <li>
+          What if you want to use "customStructure" and translation? Simply pass this flag <b>enableTranslateLabel: true</b>
+        </li>
         <li>
           More info on the Select Filter
           <a href="https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/filters/select-filter" target="_blank"

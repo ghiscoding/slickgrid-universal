@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useTranslation } from 'i18next-vue';
-import type { ContextMenu, Formatter, GridOption, SlickGrid, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, ExtensionName, FieldType, Filters, Formatters, SlickgridVue } from 'slickgrid-vue';
+import {
+  type ContextMenu,
+  type Formatter,
+  type GridOption,
+  type SlickGrid,
+  type SlickgridVueInstance,
+  type Column,
+  ExtensionName,
+  FieldType,
+  Filters,
+  Formatters,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -637,7 +648,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
     <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" @click="toggleDarkMode()">
@@ -668,8 +684,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </ol>
       <li>It will also "autoAdjustDrop" (bottom/top) and "autoAlignSide" (left/right) by default but could be turned off</li>
       <li>
-        Both plugins have 2 sections, 1st section can have an array of Options (to change value of a field) and 2nd section an array of
-        Commands (execute a command)
+        Both plugins have 2 sections, 1st section can have an array of Options (to change value of a field) and 2nd section an
+        array of Commands (execute a command)
       </li>
       <li>There are 2 ways to execute a Command/Option</li>
       <ol>
@@ -677,11 +693,15 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <li>via action callback (that can be defined on each command/option)</li>
       </ol>
       <li>
-        Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list
+        Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the
+        list
       </li>
       <ol>
         <li>These callbacks are: "menuUsabilityOverride", "itemVisibilityOverride", "itemUsabilityOverride"</li>
-        <li>... e.g. in the demo, the "Action" Cell Menu is only available when Priority is set to "High" via "menuUsabilityOverride"</li>
+        <li>
+          ... e.g. in the demo, the "Action" Cell Menu is only available when Priority is set to "High" via
+          "menuUsabilityOverride"
+        </li>
         <li>... e.g. in the demo, the Context Menu is only available on the first 20 Tasks via "menuUsabilityOverride"</li>
       </ol>
     </ul>

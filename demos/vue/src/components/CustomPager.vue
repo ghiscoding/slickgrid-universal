@@ -11,7 +11,9 @@ let _subscriptions: Subscription[] = [];
 const elm = ref<HTMLDivElement>();
 const currentPagination = ref<PaginationMetadata>({} as PaginationMetadata);
 
-const isLeftPaginationDisabled = computed(() => currentPagination.value.pageNumber === 1 || currentPagination.value.totalItems === 0);
+const isLeftPaginationDisabled = computed(
+  () => currentPagination.value.pageNumber === 1 || currentPagination.value.totalItems === 0
+);
 const isRightPaginationDisabled = computed(
   () => currentPagination.value.pageNumber === currentPagination.value.pageCount || currentPagination.value.totalItems === 0
 );
@@ -127,13 +129,19 @@ defineExpose({
         </nav>
         <div class="page-number">
           <span class="text-page">Page</span>
-          <span class="page-number" aria-label="Page Number" data-test="page-number-label">{{ currentPagination?.pageNumber }}</span>
+          <span class="page-number" aria-label="Page Number" data-test="page-number-label">{{
+            currentPagination?.pageNumber
+          }}</span>
           of
           <span class="page-count" data-test="page-count">{{ currentPagination?.pageCount }}</span>
         </div>
         <nav aria-label="Page navigation">
           <ul class="custom-pagination-ul">
-            <li class="li page-item seek-next" :class="{ disabled: isRightPaginationDisabled }" @click="onNextPageClicked($event)">
+            <li
+              class="li page-item seek-next"
+              :class="{ disabled: isRightPaginationDisabled }"
+              @click="onNextPageClicked($event)"
+            >
               <a
                 class="pagination-link icon-seek-next mdi mdi-chevron-down mdi-22px mdi-rotate-270"
                 aria-label="Next Page"

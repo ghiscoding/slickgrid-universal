@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
+  type Formatter,
+  type GridOption,
+  type SlickgridVueInstance,
   type Column,
   FieldType,
-  type Formatter,
   Formatters,
-  type GridOption,
   SlickgridVue,
-  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 

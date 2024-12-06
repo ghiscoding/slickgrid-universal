@@ -1,5 +1,15 @@
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { Aggregators, type Column, type Editors, Enums, type Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  type Column,
+  type Editors,
+  Enums,
+  type Filters,
+  Formatters,
+  GroupTotalFormatters,
+  SortComparers,
+  Utilities,
+} from '@slickgrid-universal/common';
 export * from '@slickgrid-universal/common';
 
 import SlickgridVue from './components/SlickgridVue.vue';

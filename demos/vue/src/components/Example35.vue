@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { useTranslation } from 'i18next-vue';
-import type { GridOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Editors, FieldType, Formatters, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type SlickgridVueInstance,
+  type Column,
+  Editors,
+  FieldType,
+  Formatters,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -271,7 +278,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -279,18 +291,20 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="subtitle">
     <ul>
       <li>
-        The Row Based Edit plugin allows you to edit either a single or multiple specific rows at a time, while disabling the rest of the
-        grid rows.
+        The Row Based Edit plugin allows you to edit either a single or multiple specific rows at a time, while disabling the rest
+        of the grid rows.
       </li>
       <li>
-        Editable rows, as well as modified cells are highlighted with a different color, which you can customize using css variables
+        Editable rows, as well as modified cells are highlighted with a different color, which you can customize using css
+        variables
       </li>
       <li>Modifications are kept track of and if the cancel button is pressed, all modifications are rolled back.</li>
       <li>
-        If the save button is pressed, a custom "onBeforeRowUpdated" callback is called, which you can use to save the data with your
-        backend.<br />
-        The callback needs to return a Promise&lt;boolean&gt; and if the promise resolves to true, then the row will be updated, otherwise
-        it will be cancelled and stays in edit mode. You can try out the later by defining a Duration value <b>larger than 40</b>.
+        If the save button is pressed, a custom "onBeforeRowUpdated" callback is called, which you can use to save the data with
+        your backend.<br />
+        The callback needs to return a Promise&lt;boolean&gt; and if the promise resolves to true, then the row will be updated,
+        otherwise it will be cancelled and stays in edit mode. You can try out the later by defining a Duration value
+        <b>larger than 40</b>.
         <br />
         <small
           ><span class="has-text-danger">NOTE:</span> You can also combine this with e.g. Batch Editing like shown
@@ -299,9 +313,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </li>
       <li>
         This example additionally uses the ExcelCopyBuffer Plugin, which you can see also in Slickgrid-Universal
-        <a href="https://ghiscoding.github.io/slickgrid-universal/#/example19">example 19</a>. The example defines a rule that pastes in the
-        first column are prohibited. In combination with the Row Based Editing Plugin though, this rule gets enhanced with the fact that
-        only the edited rows are allowed to be pasted into, while still respecting the original rule.
+        <a href="https://ghiscoding.github.io/slickgrid-universal/#/example19">example 19</a>. The example defines a rule that
+        pastes in the first column are prohibited. In combination with the Row Based Editing Plugin though, this rule gets
+        enhanced with the fact that only the edited rows are allowed to be pasted into, while still respecting the original rule.
       </li>
     </ul>
   </div>
@@ -309,7 +323,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <section>
     <div class="row mb-4">
       <div class="col-sm-8">
-        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="single-multi-toggle" @click="toggleSingleMultiRowEdit()">
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon"
+          data-test="single-multi-toggle"
+          @click="toggleSingleMultiRowEdit()"
+        >
           Toggle Single/Multi Row Edit
         </button>
         <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-language" @click="switchLanguage()">

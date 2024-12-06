@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
-import type { GridOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Formatters, SlickgridVue } from 'slickgrid-vue';
+import { type GridOption, type SlickgridVueInstance, type Column, Formatters, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -207,12 +206,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <a
           style="font-size: 18px"
           target="_blank"
-         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example08.vue"
+          href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example08.vue"
         >
           <span class="mdi mdi-link-variant"></span> code
         </a>
       </span>
-      <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+      <button
+        class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+        type="button"
+        data-test="toggle-subtitle"
+        @click="toggleSubTitle()"
+      >
         <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
       </button>
     </h2>
@@ -225,14 +229,19 @@ function vueGridReady(grid: SlickgridVueInstance) {
         >Wiki docs</a
       >)
       <ul>
-        <li>Now enabled by default in the Global Grid Options, it will add the default commands of (hide column, sort asc/desc)</li>
+        <li>
+          Now enabled by default in the Global Grid Options, it will add the default commands of (hide column, sort asc/desc)
+        </li>
         <li>Hover over any column header to see an arrow showing up on the right</li>
         <li>Try Sorting (multi-sort) the 2 columns "Duration" and "% Complete" (the other ones are disabled)</li>
-        <li>Try hiding any columns (you use the "Column Picker" plugin by doing a right+click on the header to show the column back)</li>
+        <li>
+          Try hiding any columns (you use the "Column Picker" plugin by doing a right+click on the header to show the column back)
+        </li>
         <li>Note: The "Header Button" & "Header Menu" Plugins cannot be used at the same time</li>
         <li>You can change the menu icon via SASS variables as shown in this demo (check all SASS variables)</li>
         <li>
-          Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list
+          Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from
+          the list
         </li>
         <ol>
           <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>

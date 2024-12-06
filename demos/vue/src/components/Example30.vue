@@ -2,20 +2,18 @@
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import type {
-  AutocompleterOption,
-  CompositeEditorModalType,
-  EditCommand,
-  Formatter,
-  GridOption,
-  GridStateChange,
-  LongTextEditorOption,
-  OnCompositeEditorChangeEventArgs,
-  SlickGrid,
-  SlickgridVueInstance,
-  VanillaCalendarOption,
-} from 'slickgrid-vue';
 import {
+  type AutocompleterOption,
+  type CompositeEditorModalType,
+  type EditCommand,
+  type Formatter,
+  type GridOption,
+  type GridStateChange,
+  type LongTextEditorOption,
+  type OnCompositeEditorChangeEventArgs,
+  type SlickGrid,
+  type SlickgridVueInstance,
+  type VanillaCalendarOption,
   type Column,
   Editors,
   FieldType,
@@ -466,7 +464,9 @@ function defineGrid() {
       const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
         ? editCommand.prevSerializedValue
         : [editCommand.prevSerializedValue];
-      const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
+      const serializedValues = Array.isArray(editCommand.serializedValue)
+        ? editCommand.serializedValue
+        : [editCommand.serializedValue];
       const editorColumns = columnDefinitions.value.filter((col) => col.editor !== undefined);
 
       const modifiedColumns: Column[] = [];
@@ -1055,15 +1055,20 @@ function renderItemCallbackWith4Corners(item: any): string {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
     Composite Editor allows you to Create, Clone, Edit, Mass Update & Mass Selection Changes inside a nice Modal Window.
-    <br />The modal is simply populated by looping through your column definition list and also uses a lot of the same logic as inline
-    editing (see
+    <br />The modal is simply populated by looping through your column definition list and also uses a lot of the same logic as
+    inline editing (see
     <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/composite-editor-modal" target="_blank"
       >Composite Editor - Wiki</a
     >.)
@@ -1071,13 +1076,23 @@ function renderItemCallbackWith4Corners(item: any): string {
 
   <div class="mb-2">
     <div class="btn-group btn-group-sm" role="group" aria-label="Basic Editing Commands">
-      <button type="button" class="btn btn-outline-secondary btn-icon" data-test="toggle-readonly-btn" @click="toggleGridEditReadonly()">
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-icon"
+        data-test="toggle-readonly-btn"
+        @click="toggleGridEditReadonly()"
+      >
         <i class="mdi mdi-table-edit"></i> Toggle Edit/Readonly Grid
       </button>
       <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn" @click="undoLastEdit()">
         <i class="mdi mdi-undo"></i> Undo Last Edit
       </button>
-      <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-open-editor-btn" @click="undoLastEdit(true)">
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-icon"
+        data-test="undo-open-editor-btn"
+        @click="undoLastEdit(true)"
+      >
         <i class="mdi mdi-undo"></i> Undo Last Edit &amp; Open Editor
       </button>
       <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-all-edits-btn" @click="undoAllEdits()">

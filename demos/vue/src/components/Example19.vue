@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import type { GridOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Editors, ExtensionName, FieldType, Filters, Formatters, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type SlickgridVueInstance,
+  type Column,
+  Editors,
+  ExtensionName,
+  FieldType,
+  Filters,
+  Formatters,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref } from 'vue';
 
 import Example19Detail from './Example19Detail.vue';
@@ -317,12 +326,17 @@ defineExpose({
         <a
           style="font-size: 18px"
           target="_blank"
-         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example19.vue"
+          href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example19.vue"
         >
           <span class="mdi mdi-link-variant"></span> code
         </a>
       </span>
-      <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+      <button
+        class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+        type="button"
+        data-test="toggle-subtitle"
+        @click="toggleSubTitle()"
+      >
         <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
       </button>
     </h2>
@@ -334,11 +348,14 @@ defineExpose({
         >Wiki docs</a
       >)
       <ul>
-        <li>Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick: false")</li>
+        <li>
+          Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick:
+          false")
+        </li>
         <li>Pass a View/Model as a Template to the Row Detail</li>
         <li>
-          You can use "expandableOverride()" callback to override logic to display expand icon on every row (for example only show it every
-          2nd row)
+          You can use "expandableOverride()" callback to override logic to display expand icon on every row (for example only show
+          it every 2nd row)
         </li>
       </ul>
     </div>

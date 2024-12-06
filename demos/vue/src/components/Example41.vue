@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import type { GridOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Formatters, SlickGlobalEditorLock, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type SlickgridVueInstance,
+  type Column,
+  Formatters,
+  SlickGlobalEditorLock,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -228,7 +234,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>

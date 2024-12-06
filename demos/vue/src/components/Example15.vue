@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import { format as tempoFormat } from '@formkit/tempo';
 import { useTranslation } from 'i18next-vue';
-import type { GridOption, GridState, GridStateChange, MultipleSelectOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, FieldType, Filters, Formatters, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type GridState,
+  type GridStateChange,
+  type MultipleSelectOption,
+  type SlickgridVueInstance,
+  type Column,
+  FieldType,
+  Filters,
+  Formatters,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -126,7 +136,12 @@ function defineGrid(gridStatePresets?: GridState) {
       filter: {
         model: Filters.compoundDate,
         filterShortcuts: [
-          { titleKey: 'PAST', searchTerms: [tempoFormat(new Date(), 'YYYY-MM-DD')], operator: '<', iconCssClass: 'mdi mdi-calendar' },
+          {
+            titleKey: 'PAST',
+            searchTerms: [tempoFormat(new Date(), 'YYYY-MM-DD')],
+            operator: '<',
+            iconCssClass: 'mdi mdi-calendar',
+          },
           {
             titleKey: 'FUTURE',
             searchTerms: [tempoFormat(new Date(), 'YYYY-MM-DD')],
@@ -276,24 +291,37 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
-    Grid State & Preset (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank"
+    Grid State & Preset (<a
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset"
+      target="_blank"
       >Wiki docs</a
     >)
     <br />
     <ul class="small">
-      <li>Uses Local Storage to persist the Grid State and uses Grid Options "presets" to put the grid back to it's previous state</li>
+      <li>
+        Uses Local Storage to persist the Grid State and uses Grid Options "presets" to put the grid back to it's previous state
+      </li>
       <ul>
         <li>
-          to demo this, simply change any columns (position reorder, visibility, size, filter, sort), then refresh your browser with (F5)
+          to demo this, simply change any columns (position reorder, visibility, size, filter, sort), then refresh your browser
+          with (F5)
         </li>
       </ul>
-      <li>Local Storage is just one option, you can use whichever is more convenient for you (Local Storage, Session Storage, DB, ...)</li>
+      <li>
+        Local Storage is just one option, you can use whichever is more convenient for you (Local Storage, Session Storage, DB,
+        ...)
+      </li>
     </ul>
   </div>
 
