@@ -23,6 +23,9 @@
   ],
   ignoreDeps: [
     'node',
+
+    // ignoring TypeScript for now since latest v5.7.x has issues with vue-tsc
+    'typescript',
   ],
   schedule: ['every 2 weeks on friday'],
 }

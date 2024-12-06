@@ -102,7 +102,7 @@
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
     "sortablejs": "^1.15.6",
-    "typescript": "^5.7.2",
+    "typescript": "~5.6.2",
     "typescript-eslint": "^8.16.0",
     "vitest": "^2.1.6",
     "whatwg-fetch": "^3.6.20"
