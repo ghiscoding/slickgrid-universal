@@ -104,7 +104,7 @@
     "sortablejs": "^1.15.6",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.16.0",
-    "vitest": "^2.1.6",
+    "vitest": "^3.0.0-beta.1",
     "whatwg-fetch": "^3.6.20"
   },
   "funding": {

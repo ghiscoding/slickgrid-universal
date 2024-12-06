@@ -25,9 +25,6 @@ export default defineConfig({
       reportOnFailure: true,
     },
     environment: 'happy-dom',
-    fakeTimers: {
-      toFake: [...configDefaults.fakeTimers.toFake, 'queueMicrotask']
-    },
     pool: 'threads',
     globalSetup: './test/vitest-global-setup.ts',
     setupFiles: ['./test/vitest-pretest.ts', './test/vitest-global-mocks.ts'],
