@@ -592,9 +592,7 @@ function dynamicallyAddTitleHeader() {
   };
 
   // you can dynamically add your column to your column definitions
-  // and then use the spread operator [...cols] OR slice to force Vue to review the changes
   columnDefinitions.value.push(newCol);
-  columnDefinitions.value = [...columnDefinitions.value];
 
   // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
   // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -602,19 +600,16 @@ function dynamicallyAddTitleHeader() {
   /*
     const allColumns = vueGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
     */
 }
 
 function dynamicallyRemoveLastColumn() {
   columnDefinitions.value.pop();
-  columnDefinitions.value = [...columnDefinitions.value];
 
   /*
     // remove your column the full set of columns
-    // and use slice or spread [...] to trigger an Vue dirty change
     allOriginalColumns.pop();
-    */
+  */
 }
 
 function setAutoEdit(autoEdit: boolean) {

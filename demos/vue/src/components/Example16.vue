@@ -260,7 +260,6 @@ function addEditDeleteColumns() {
     // for example if you use the Checkbox Selector (row selection), you MUST use the code below
     const allColumns = vueGrid.gridService.getAllColumnDefinitions();
     allColumns.unshift(newCols[0], newCols[1]);
-    columnDefinitions.value = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
   }
 }
 
