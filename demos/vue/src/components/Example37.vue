@@ -106,6 +106,23 @@ function updateTotal(cell: number) {
   }
 }
 
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value;
+  toggleBodyBackground();
+  vueGrid.slickGrid?.setOptions({ darkMode: isDarkMode.value });
+  updateAllTotals();
+}
+
+function toggleBodyBackground() {
+  if (isDarkMode.value) {
+    document.querySelector<HTMLDivElement>('.panel-wm-content')!.classList.add('dark-mode');
+    document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'dark';
+  } else {
+    document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
+    document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
+  }
+}
+
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
@@ -137,6 +154,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
       @click="toggleSubTitle()"
     >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" @click="toggleDarkMode()">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
     </button>
   </h2>
 

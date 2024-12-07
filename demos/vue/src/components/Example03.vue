@@ -726,10 +726,18 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </span>
       <div class="row" style="margin-top: 5px">
         <div class="col-sm-12">
-          <button class="btn btn-outline-secondary btn-sm btn-icon" @click="vueGrid.filterService.clearFilters()">
+          <button
+            class="btn btn-outline-secondary btn-sm btn-icon"
+            data-test="clear-filters"
+            @click="vueGrid.filterService.clearFilters()"
+          >
             Clear Filters
           </button>
-          <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" @click="vueGrid.sortService.clearSorting()">
+          <button
+            class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            data-test="clear-sorting"
+            @click="vueGrid.sortService.clearSorting()"
+          >
             Clear Sorting
           </button>
           <button

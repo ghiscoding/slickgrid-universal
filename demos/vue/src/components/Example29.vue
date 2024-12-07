@@ -2,7 +2,7 @@
 import { type GridOption, type SlickgridVueInstance, type Column, Formatters, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
-import CustomFooter from './CustomFooter.vue';
+import CustomFooter from './CustomFooterComponent.vue';
 
 const NB_ITEMS = 995;
 const gridOptions = ref<GridOption>();

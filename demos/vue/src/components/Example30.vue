@@ -826,6 +826,12 @@ function undoAllEdits() {
   editQueue.value = [];
 }
 
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value;
+  toggleBodyBackground();
+  vueGrid.slickGrid?.setOptions({ darkMode: isDarkMode.value });
+}
+
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
@@ -1062,6 +1068,10 @@ function renderItemCallbackWith4Corners(item: any): string {
       @click="toggleSubTitle()"
     >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" @click="toggleDarkMode()">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
     </button>
   </h2>
 

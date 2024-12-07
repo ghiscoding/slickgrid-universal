@@ -25,6 +25,7 @@ import Example22 from '../components/Example22.vue';
 import Example23 from '../components/Example23.vue';
 import Example24 from '../components/Example24.vue';
 import Example25 from '../components/Example25.vue';
+import Example26 from '../components/Example26.vue';
 import Example27 from '../components/Example27.vue';
 import Example28 from '../components/Example28.vue';
 import Example29 from '../components/Example29.vue';
@@ -70,6 +71,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example23', name: '23- Filter by Range of Values', component: Example23 },
   { path: '/example24', name: '24- Cell & Context Menu', component: Example24 },
   { path: '/example25', name: '25- GraphQL without Pagination', component: Example25 },
+  { path: '/example26', name: '26- Use of Vue Components', component: Example26 },
   { path: '/example27', name: '27- Tree Data (Parent/Child)', component: Example27 },
   { path: '/example28', name: '28- Tree Data (Hierarchical set)', component: Example28 },
   { path: '/example29', name: '29- Grid Header & Footer Slots', component: Example29 },

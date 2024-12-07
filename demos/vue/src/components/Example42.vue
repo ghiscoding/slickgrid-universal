@@ -14,7 +14,7 @@ import {
 } from 'slickgrid-vue';
 import { DefineComponent, onBeforeMount, ref } from 'vue';
 
-import CustomPagerComponent from './CustomPager.vue';
+import CustomPagerComponent from './CustomPagerComponent.vue';
 
 const NB_ITEMS = 5000;
 const gridOptions = ref<GridOption>();

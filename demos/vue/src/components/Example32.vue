@@ -929,23 +929,10 @@ function renderItemCallbackWith4Corners(item: any): string {
 <style lang="scss">
 @use 'sass:color';
 
-$slick-button-border-color: #ababab !default;
-
 .editable-field {
   background-color: rgba(227, 240, 251, 0.57) !important;
 }
 .unsaved-editable-field {
   background-color: #fbfdd1 !important;
-}
-.button-style {
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid #{$slick-button-border-color};
-  border-radius: 2px;
-  justify-content: center;
-  text-align: center;
-  &:hover {
-    border-color: color.adjust($slick-button-border-color, $lightness: -10%);
-  }
 }
 </style>
