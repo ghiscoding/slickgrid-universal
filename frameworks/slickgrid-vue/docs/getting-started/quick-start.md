@@ -6,9 +6,10 @@ The easiest is to simply clone the [Slickgrid-Vue-Demos](https://github.com/ghis
 
 ### 1. Install NPM Package
 
-Install `Vue`, `Slickgrid-Vue`, `Bootstrap` (or any other UI framework)
+Install `Vue`, `Slickgrid-Vue`, `i18next` and `i18next-vue` while `Bootstrap` is optional (or any other UI framework)
+
 ```bash
-npm install --save slickgrid-vue bootstrap
+npm install --save slickgrid-vue i18next i18next-vue bootstrap
 # or with yarn add
 ```
 
