@@ -12,6 +12,7 @@ import localeEn from './assets/locales/en/translation.json';
 import localeFr from './assets/locales/fr/translation.json';
 import { router } from './router/index.js';
 
+// optionally lazy load translation JSON files
 i18next.use(Backend).init({
   // the translations
   // (tip move them in a JSON file and import them,
