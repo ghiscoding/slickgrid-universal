@@ -89,8 +89,4 @@
 
 * [Testing Patterns](testing/testing-patterns.md)
 
-## Migrations
-
-* [Migration Guide to 3.x](migrations/migration-to-3.x.md)
-* [Migration Guide to 4.x](migrations/migration-to-4.x.md)
-* [Migration Guide to 5.x](migrations/migration-to-5.x.md)
+<!-- ## Migrations -->
