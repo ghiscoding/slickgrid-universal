@@ -103,6 +103,12 @@ describe('Service/Observers', () => {
 
       expect(collection.length).toBe(4);
     });
+
+    it('should return null when input is not an array type', () => {
+      const observer = collectionObserver('text' as any, () => console.log('hello'));
+
+      expect(observer).toBeNull();
+    });
   });
 
   describe('propertyObserver method', () => {
