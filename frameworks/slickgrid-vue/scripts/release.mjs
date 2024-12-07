@@ -103,9 +103,11 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
     await updatePackageVersion(newVersion);
 
     // 4. run a prod build (TS + SASS)
+    console.log('Run Prod Build');
     await spawnStreaming('pnpm', ['run', 'vue:build'], { cwd: projectRootPath });
 
     // 5. Create/Update changelog.md
+    console.log('Updating Changelog');
     await updateChangelog({
       infile: './CHANGELOG.md',
       preset: 'angular',
@@ -122,13 +124,13 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
     const shouldCommitChanges = await promptConfirmation(`${c.bgMagenta(dryRunPrefix)} Ready to tag version "${newTag}" and push commits to remote? Choose No to cancel.`);
     if (shouldCommitChanges) {
       // 8. create git tag of new release
-      await gitTag(newTag, { cwd, dryRun: argv.dryRun });
+      // await gitTag(newTag, { cwd, dryRun: argv.dryRun });
 
       // 9. Commit all files changed to git
       await gitCommit(RELEASE_COMMIT_MSG.replace(/%s/g, newVersion), { cwd, dryRun: argv.dryRun });
 
       // 10. Push git tags and all commits to origin
-      await gitTagPushRemote(newTag, 'origin', { cwd, dryRun: argv.dryRun });
+      // await gitTagPushRemote(newTag, 'origin', { cwd, dryRun: argv.dryRun });
       await gitPushToCurrentBranch('origin', { cwd, dryRun: argv.dryRun });
 
       // 11. NPM publish
