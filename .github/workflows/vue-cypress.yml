@@ -63,6 +63,9 @@ jobs:
 
       - run: pnpm --version
 
+      - name: Prettier
+        run: pnpm prettier:check
+
       - name: TSC Build (esm)
         run: pnpm predev
 
