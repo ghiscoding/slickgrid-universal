@@ -105,6 +105,14 @@ corepack enable
 corepack prepare pnpm@latest --activate
 ```
 
+#### Specific Framework install
+For a more targeted install, you could optionally install a specific framework (which avoids installing all frameworks).
+For example
+
+```sh
+pnpm vue:install
+```
+
 2. Run Dev (Vanilla Implementation)
 
 There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework

@@ -53,6 +53,7 @@
     "test:ui": "vitest --ui --config ./test/vitest.config.mts",
     "prepare": "husky",
     "commitlint": "commitlint --edit",
+    "vue:install": "pnpm install --filter=./frameworks/slickgrid-vue --filter=./packages",
     "vue:build": "pnpm vue:build:framework && pnpm vue:build:demo",
     "vue:build:framework": "pnpm -r --stream --filter=./frameworks/slickgrid-vue/** run vue:build",
     "vue:build:demo": "pnpm -r --stream --filter=./demos/vue/** run vue:build",
