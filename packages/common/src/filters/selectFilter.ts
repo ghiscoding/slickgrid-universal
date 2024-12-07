@@ -24,6 +24,7 @@ import type { SlickGrid } from '../core/index.js';
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
   protected _collectionLength = 0;
+  protected _collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
   protected _locales!: Locale;
   protected _msInstance?: MultipleSelectInstance;
   protected _shouldTriggerQuery = true;
@@ -216,6 +217,9 @@ export class SelectFilter implements Filter {
     }
     this.filterElm?.remove();
 
+    // TODO: causing Example 7 E2E tests to fails, will revisit later
+    // this._collectionObservers.forEach(obs => obs?.disconnect());
+
     // unsubscribe all the possible Observables if RxJS was used
     unsubscribeAll(this.subscriptions);
   }
@@ -295,7 +299,9 @@ export class SelectFilter implements Filter {
   protected watchCollectionChanges(): void {
     if (this.columnFilter?.collection) {
       // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
-      collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this));
+      this._collectionObservers.push(
+        collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this))
+      );
 
       // observe for any "collection" changes (array replace)
       // then simply recreate/re-render the Select (dropdown) DOM Element
@@ -308,7 +314,9 @@ export class SelectFilter implements Filter {
 
     // when new assignment arrives, we need to also reassign observer to the new reference
     if (this.columnFilter.collection) {
-      collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this));
+      this._collectionObservers.push(
+        collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this))
+      );
     }
   }
 
