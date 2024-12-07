@@ -65,5 +65,6 @@ export default tseslint.config(
       'no-prototype-builtins': 'off',
       'no-extra-boolean-cast': 'off',
       'semi': 'off',
+      // 'sort-imports': ['error', { ignoreCase: true, ignoreMemberSort: true }]
     }
   });

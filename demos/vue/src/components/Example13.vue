@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import type { GridOption, Grouping, SlickgridVueInstance } from 'slickgrid-vue';
 import {
+  type GridOption,
+  type Grouping,
+  type SlickgridVueInstance,
   Aggregators,
   type Column,
   FieldType,
@@ -370,12 +372,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <a
         style="font-size: 18px"
         target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example13.vue"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example13.vue"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -383,7 +390,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="subtitle">
     <ul>
       <li>
-        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grouping-aggregators" target="_blank">Wiki docs</a>
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grouping-aggregators" target="_blank"
+          >Wiki docs</a
+        >
       </li>
       <li>Fully dynamic and interactive multi-level grouping with filtering and aggregates over 50'000 items</li>
       <li>Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows)..</li>
@@ -393,8 +402,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="row">
     <div class="col-sm-12">
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">500 rows</button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">50k rows</button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">
+        500 rows
+      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">
+        50k rows
+      </button>
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" @click="clearGrouping()">
         <i class="mdi mdi-close"></i> Clear grouping
       </button>
@@ -414,7 +427,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="row mb-2">
     <div class="col-sm-12">
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-value-btn" @click="groupByDuration()">
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        data-test="group-duration-sort-value-btn"
+        @click="groupByDuration()"
+      >
         Group by Duration &amp; sort groups by value
       </button>
       <button

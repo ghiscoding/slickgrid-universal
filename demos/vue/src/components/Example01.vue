@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import type { SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Formatters, type GridOption, type PaginationChangedArgs, SlickgridVue } from 'slickgrid-vue';
+import {
+  type Column,
+  Formatters,
+  type GridOption,
+  type PaginationChangedArgs,
+  SlickgridVue,
+  type SlickgridVueInstance,
+} from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref } from 'vue';
 
 import { zeroPadding } from './utilities';
@@ -122,7 +128,10 @@ function toggleDarkModeGrid1() {
     Example 1: Basic Grids
     <span class="float-end font18">
       see&nbsp;
-      <a target="_blank" href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example01.vue">
+      <a
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example01.vue"
+      >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>

@@ -2,8 +2,18 @@
 import { format as tempoFormat } from '@formkit/tempo';
 import type { OdataOption, OdataServiceApi } from '@slickgrid-universal/odata';
 import { GridOdataService } from '@slickgrid-universal/odata';
-import type { GridOption, GridStateChange, Metrics, Pagination, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, FieldType, Filters, OperatorType, SlickgridVue } from 'slickgrid-vue';
+import {
+  type Column,
+  FieldType,
+  Filters,
+  type GridOption,
+  type GridStateChange,
+  type Metrics,
+  OperatorType,
+  type Pagination,
+  SlickgridVue,
+  type SlickgridVueInstance,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 import Data from './data/customers_100.json';
@@ -150,7 +160,9 @@ function displaySpinner(isProcessing: boolean, isError?: boolean) {
   if (isError) {
     status.value = { text: 'ERROR!!!', class: 'alert alert-danger' };
   } else {
-    status.value = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
+    status.value = isProcessing
+      ? { text: 'loading', class: 'alert alert-warning' }
+      : { text: 'finished', class: 'alert alert-success' };
   }
 }
 
@@ -241,7 +253,10 @@ function getCustomerDataApiMock(query: string): Promise<any> {
           const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
           const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
           const fieldName = filterStartMatch[1].trim();
-          (columnFilters as any)[fieldName] = { type: 'starts+ends', term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()] };
+          (columnFilters as any)[fieldName] = {
+            type: 'starts+ends',
+            term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()],
+          };
         } else if (filterBy.includes('startswith')) {
           const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
           const fieldName = filterMatch![1].trim();
@@ -265,7 +280,13 @@ function getCustomerDataApiMock(query: string): Promise<any> {
     }
 
     // read the JSON and create a fresh copy of the data that we are free to modify
-    let data = Data as unknown as { name: string; gender: string; company: string; id: string; category: { id: string; name: string } }[];
+    let data = Data as unknown as {
+      name: string;
+      gender: string;
+      company: string;
+      id: string;
+      category: { id: string; name: string };
+    }[];
     data = JSON.parse(JSON.stringify(data));
 
     // Sort the data
@@ -496,18 +517,26 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
     Use it when you need to support Pagination with a OData endpoint (for simple JSON, use a regular grid)<br />
-    Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/odata" target="_blank">Wiki documentation</a
+    Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/odata" target="_blank"
+      >Wiki documentation</a
     >)
     <br />
     <ul class="small">
-      <li>Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported</li>
+      <li>
+        Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported
+      </li>
       <li>This example also demos the Grid State feature, open the console log to see the changes</li>
       <li>
         String column also support operator (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *)
@@ -525,9 +554,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
         >
       </li>
       <li>
-        <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only
-        purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state before you
-        did the action). Also changing Page Size to 50,000 will also throw which again is for demo purposes.
+        <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and
+        its only purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to
+        previous state before you did the action). Also changing Page Size to 50,000 will also throw which again is for demo
+        purposes.
       </li>
     </ul>
   </div>
@@ -561,7 +591,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" @click="setFiltersDynamically()">
         Set Filters Dynamically
       </button>
-      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+        data-test="set-dynamic-sorting"
+        @click="setSortingDynamically()"
+      >
         Set Sorting Dynamically
       </button>
       <br />
@@ -586,19 +620,38 @@ function vueGridReady(grid: SlickgridVueInstance) {
           2&nbsp;
         </label>
         <label class="radio-inline control-label" htmlFor="radio4">
-          <input id="radio4" type="radio" name="inlineRadioOptions" data-test="version4" value="4" @change="setOdataVersion(4)" /> 4
+          <input id="radio4" type="radio" name="inlineRadioOptions" data-test="version4" value="4" @change="setOdataVersion(4)" />
+          4
         </label>
       </span>
       <label class="checkbox-inline control-label" htmlFor="enableCount" style="margin-left: 20px">
-        <input id="enableCount" type="checkbox" data-test="enable-count" :checked="isCountEnabled" @click="changeCountEnableFlag()" />
+        <input
+          id="enableCount"
+          type="checkbox"
+          data-test="enable-count"
+          :checked="isCountEnabled"
+          @click="changeCountEnableFlag()"
+        />
         <span style="font-weight: bold"> Enable Count</span> (add to OData query)
       </label>
       <label class="checkbox-inline control-label" htmlFor="enableSelect" style="margin-left: 20px">
-        <input id="enableSelect" type="checkbox" data-test="enable-select" :checked="isSelectEnabled" @click="changeEnableSelectFlag()" />
+        <input
+          id="enableSelect"
+          type="checkbox"
+          data-test="enable-select"
+          :checked="isSelectEnabled"
+          @click="changeEnableSelectFlag()"
+        />
         <span style="font-weight: bold"> Enable Select</span> (add to OData query)
       </label>
       <label class="checkbox-inline control-label" htmlFor="enableExpand" style="margin-left: 20px">
-        <input id="enableExpand" type="checkbox" data-test="enable-expand" :checked="isExpandEnabled" @click="changeEnableExpandFlag()" />
+        <input
+          id="enableExpand"
+          type="checkbox"
+          data-test="enable-expand"
+          :checked="isExpandEnabled"
+          @click="changeEnableExpandFlag()"
+        />
         <span style="font-weight: bold"> Enable Expand</span> (add to OData query)
       </label>
     </div>

@@ -3,8 +3,17 @@ import { format as dateFormatter } from '@formkit/tempo';
 import type { GraphqlPaginatedResult, GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { GraphqlService } from '@slickgrid-universal/graphql';
 import { useTranslation } from 'i18next-vue';
-import type { GridOption, Metrics, MultipleSelectOption, OnRowCountChangedEventArgs, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, FieldType, Filters, SlickgridVue } from 'slickgrid-vue';
+import {
+  GridOption,
+  Metrics,
+  MultipleSelectOption,
+  OnRowCountChangedEventArgs,
+  SlickgridVueInstance,
+  type Column,
+  FieldType,
+  Filters,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { computed, onBeforeMount, ref } from 'vue';
 
 import SAMPLE_COLLECTION_DATA_URL from './data/customers_100.json?url';
@@ -27,7 +36,9 @@ const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with defaul
 let vueGrid!: SlickgridVueInstance;
 const backendService = new GraphqlService();
 
-const getMetricsEndTime = computed(() => (metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''));
+const getMetricsEndTime = computed(() =>
+  metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''
+);
 
 onBeforeMount(() => {
   defineGrid();
@@ -153,7 +164,9 @@ function displaySpinner(isProcessing: boolean, isError?: boolean) {
   if (isError) {
     status.value = { text: 'ERROR!!!', class: 'alert alert-danger' };
   } else {
-    status.value = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
+    status.value = isProcessing
+      ? { text: 'loading', class: 'alert alert-warning' }
+      : { text: 'finished', class: 'alert alert-success' };
   }
 }
 
@@ -209,8 +222,13 @@ function getCustomerDataApiMock(query: string): Promise<any> {
     fetch(SAMPLE_COLLECTION_DATA_URL)
       .then((e) => e.json())
       .then((data: any) => {
-        let filteredData: Array<{ id: number; name: string; gender: string; company: string; category: { id: number; name: string } }> =
-          data;
+        let filteredData: Array<{
+          id: number;
+          name: string;
+          gender: string;
+          company: string;
+          category: { id: number; name: string };
+        }> = data;
         if (query.includes('first:')) {
           const topMatch = query.match(/first:([0-9]+),/) || [];
           firstCount = +topMatch[1];
@@ -365,7 +383,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
           <span class="mdi mdi-link-variant"></span> code
         </a>
       </span>
-      <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+      <button
+        class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+        type="button"
+        data-test="toggle-subtitle"
+        @click="toggleSubTitle()"
+      >
         <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
       </button>
     </h2>
@@ -373,23 +396,24 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <h6 class="title is-6 italic content">
       <ul>
         <li>
-          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its
-          simplest form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and there is no more
-          data to load, then we'll assume to have the entire dataset loaded in memory. This contrast with the regular Pagination approach
-          which will only hold a single page data at a time.
+          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In
+          its simplest form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and
+          there is no more data to load, then we'll assume to have the entire dataset loaded in memory. This contrast with the
+          regular Pagination approach which will only hold a single page data at a time.
         </li>
         <li>NOTES</li>
         <ol>
           <li>
-            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we
-            keep appending data, we always have to start from index zero (no offset).
+            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply
+            because since we keep appending data, we always have to start from index zero (no offset).
           </li>
           <li>
-            Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next
-            batch).
+            Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end
+            (fetching next batch).
           </li>
           <li>
-            Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
+            Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first
+            page).
           </li>
         </ol>
       </ul>
@@ -446,7 +470,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
             <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
             items
           </span>
-          <span class="badge rounded-pill text-bg-primary" :class="tagDataClass" data-test="data-loaded-tag">All Data Loaded!!!</span>
+          <span class="badge rounded-pill text-bg-primary" :class="tagDataClass" data-test="data-loaded-tag"
+            >All Data Loaded!!!</span
+          >
         </div>
       </div>
 

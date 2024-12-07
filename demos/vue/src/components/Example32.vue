@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import type {
-  AutocompleterOption,
-  EditCommand,
-  Formatter,
-  GridOption,
-  LongTextEditorOption,
-  SearchTerm,
-  SlickgridVueInstance,
-  VanillaCalendarOption,
-} from 'slickgrid-vue';
 import {
+  type AutocompleterOption,
+  type EditCommand,
+  type Formatter,
+  type GridOption,
+  type LongTextEditorOption,
+  type SearchTerm,
+  type SlickgridVueInstance,
+  type VanillaCalendarOption,
   type Column,
   Editors,
   FieldType,
@@ -159,7 +157,15 @@ function defineGrid() {
         }
         return value > 1 ? `${value} days` : `${value} day`;
       },
-      editor: { model: Editors.float, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
+      editor: {
+        model: Editors.float,
+        decimal: 2,
+        valueStep: 1,
+        minValue: 0,
+        maxValue: 10000,
+        alwaysSaveOnEnterKey: true,
+        required: true,
+      },
     },
     {
       id: 'cost',
@@ -445,7 +451,9 @@ function defineGrid() {
       const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
         ? editCommand.prevSerializedValue
         : [editCommand.prevSerializedValue];
-      const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
+      const serializedValues = Array.isArray(editCommand.serializedValue)
+        ? editCommand.serializedValue
+        : [editCommand.serializedValue];
       const editorColumns = columnDefinitions.value.filter((col) => col.editor !== undefined);
 
       const modifiedColumns: Column[] = [];
@@ -825,15 +833,20 @@ function renderItemCallbackWith4Corners(item: any): string {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
-    The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons to see
-    the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional
-    because it requires to read the first thousand rows and do extra width calculation.
+    The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons
+    to see the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell
+    content is optional because it requires to read the first thousand rows and do extra width calculation.
   </div>
 
   <h4 class="ml-3">Container Width (950px)</h4>
@@ -846,7 +859,13 @@ function renderItemCallbackWith4Corners(item: any): string {
           :class="isUsingDefaultResize ? 'active' : ''"
           data-test="autosize-columns-btn"
         >
-          <input type="radio" class="btn-check" name="options" :checked="isUsingDefaultResize" @click="handleDefaultResizeColumns()" />
+          <input
+            type="radio"
+            class="btn-check"
+            name="options"
+            :checked="isUsingDefaultResize"
+            @click="handleDefaultResizeColumns()"
+          />
           <i class="mdi mdi-arrow-expand"></i> (default resize) by "autosizeColumns"
         </label>
         <label
@@ -854,7 +873,13 @@ function renderItemCallbackWith4Corners(item: any): string {
           :class="isUsingDefaultResize ? '' : 'active'"
           data-test="resize-by-content-btn"
         >
-          <input type="radio" class="btn-check" name="options" :checked="!isUsingDefaultResize" @click="handleNewResizeColumns()" />
+          <input
+            type="radio"
+            class="btn-check"
+            name="options"
+            :checked="!isUsingDefaultResize"
+            @click="handleNewResizeColumns()"
+          />
           <i class="mdi mdi-arrow-expand"></i> Resize by Cell Content
         </label>
       </div>
@@ -871,7 +896,12 @@ function renderItemCallbackWith4Corners(item: any): string {
         >
           <span>Change Row Selection</span>
         </button>
-        <button type="button" class="btn btn-outline-secondary btn-icon" data-test="toggle-readonly-btn" @click="toggleGridEditReadonly()">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-icon"
+          data-test="toggle-readonly-btn"
+          @click="toggleGridEditReadonly()"
+        >
           <i class="mdi mdi-table-edit"></i> Toggle Readonly
         </button>
         <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn" @click="undoLastEdit()">
@@ -899,23 +929,10 @@ function renderItemCallbackWith4Corners(item: any): string {
 <style lang="scss">
 @use 'sass:color';
 
-$slick-button-border-color: #ababab !default;
-
 .editable-field {
   background-color: rgba(227, 240, 251, 0.57) !important;
 }
 .unsaved-editable-field {
   background-color: #fbfdd1 !important;
-}
-.button-style {
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid #{$slick-button-border-color};
-  border-radius: 2px;
-  justify-content: center;
-  text-align: center;
-  &:hover {
-    border-color: color.adjust($slick-button-border-color, $lightness: -10%);
-  }
 }
 </style>

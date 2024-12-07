@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import type { GridOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Editors, FieldType, Formatters, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type SlickgridVueInstance,
+  type Column,
+  Editors,
+  FieldType,
+  Formatters,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const NB_ITEMS = 1000;
@@ -266,7 +273,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -278,7 +290,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
       >Wiki docs</a
     >).
     <ul>
-      <li><b>Note:</b> this demo is <b>only</b> on the datagrid (client) side, you still need to deal with the backend yourself</li>
+      <li>
+        <b>Note:</b> this demo is <b>only</b> on the datagrid (client) side, you still need to deal with the backend yourself
+      </li>
       <li>Adding an item, will always be showing as the 1st item in the grid because that is the best visual place to add it</li>
       <li>Add/Update an item requires a valid Slickgrid Selection Model, you have 2 choices to deal with this:</li>
       <ul>
@@ -296,7 +310,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <ul>
         <li>"$row-highlight-background-color" or "$row-highlight-fade-animation"</li>
       </ul>
-      <li>You can also add CSS class(es) on the fly (or on page load) on rows with certain criteria, (e.g. click on last button)</li>
+      <li>
+        You can also add CSS class(es) on the fly (or on page load) on rows with certain criteria, (e.g. click on last button)
+      </li>
       <li>
         <ul>
           <li>
@@ -327,7 +343,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="add-new-item-bottom-btn" @click="addNewItem('bottom')">
         Add New Mocked Item (bottom)
       </button>
-      <button class="btn btn-sm btn-outline-secondary btn-icon mx-1" data-test="update-second-item-btn" @click="updateSecondItem()">
+      <button
+        class="btn btn-sm btn-outline-secondary btn-icon mx-1"
+        data-test="update-second-item-btn"
+        @click="updateSecondItem()"
+      >
         Update 2nd Row Item with Random Duration
       </button>
       <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="highlight-row5-btn" @click="highlighFifthRow()">

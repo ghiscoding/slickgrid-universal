@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import { format as dateFormatter } from '@formkit/tempo';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
-import type { GridOption, Grouping, Metrics, OnRowCountChangedEventArgs, SlickgridVueInstance } from 'slickgrid-vue';
-import { Aggregators, type Column, FieldType, Filters, SlickgridVue, SortComparers } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type Grouping,
+  type Metrics,
+  type OnRowCountChangedEventArgs,
+  type SlickgridVueInstance,
+  Aggregators,
+  type Column,
+  FieldType,
+  Filters,
+  SlickgridVue,
+  SortComparers,
+} from 'slickgrid-vue';
 import { computed, onBeforeMount, ref } from 'vue';
 
 import Data from './data/customers_100.json';
@@ -24,7 +35,9 @@ const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
 const backendService = new GridOdataService();
 
-const getMetricsEndTime = computed(() => (metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''));
+const getMetricsEndTime = computed(() =>
+  metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''
+);
 
 onBeforeMount(() => {
   defineGrid();
@@ -127,7 +140,9 @@ function displaySpinner(isProcessing: boolean, isError?: boolean) {
   if (isError) {
     status.value = { text: 'ERROR!!!', class: 'alert alert-danger' };
   } else {
-    status.value = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
+    status.value = isProcessing
+      ? { text: 'loading', class: 'alert alert-warning' }
+      : { text: 'finished', class: 'alert alert-success' };
   }
 }
 
@@ -235,7 +250,10 @@ function getCustomerDataApiMock(query: string): Promise<any> {
           const filterStartMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
           const filterEndMatch = filterBy.match(/endswith\(([a-zA-Z ]*),\s?'(.*?)'/) || [];
           const fieldName = filterStartMatch[1].trim();
-          (columnFilters as any)[fieldName] = { type: 'starts+ends', term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()] };
+          (columnFilters as any)[fieldName] = {
+            type: 'starts+ends',
+            term: [filterStartMatch[2].trim(), filterEndMatch[2].trim()],
+          };
         } else if (filterBy.includes('startswith')) {
           const filterMatch = filterBy.match(/startswith\(([a-zA-Z ]*),\s?'(.*?)'/);
           const fieldName = filterMatch![1].trim();
@@ -259,7 +277,13 @@ function getCustomerDataApiMock(query: string): Promise<any> {
     }
 
     /// read the JSON and create a fresh copy of the data that we are free to modify
-    let data = Data as unknown as { name: string; gender: string; company: string; id: string; category: { id: string; name: string } }[];
+    let data = Data as unknown as {
+      name: string;
+      gender: string;
+      company: string;
+      id: string;
+      category: { id: string; name: string };
+    }[];
     data = JSON.parse(JSON.stringify(data));
 
     // Sort the data
@@ -422,7 +446,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
           <span class="mdi mdi-link-variant"></span> code
         </a>
       </span>
-      <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+      <button
+        class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+        type="button"
+        data-test="toggle-subtitle"
+        @click="toggleSubTitle()"
+      >
         <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
       </button>
     </h2>
@@ -430,23 +459,24 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <h6 class="subtitle italic content">
       <ul>
         <li>
-          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its
-          simplest form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and there is no more
-          data to load, then we'll assume to have the entire dataset loaded in memory. This contrast with the regular Pagination approach
-          which will only hold a single page data at a time.
+          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In
+          its simplest form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and
+          there is no more data to load, then we'll assume to have the entire dataset loaded in memory. This contrast with the
+          regular Pagination approach which will only hold a single page data at a time.
         </li>
         <li>NOTES</li>
         <ol>
           <li>
-            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we
-            keep appending data, we always have to start from index zero (no offset).
+            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply
+            because since we keep appending data, we always have to start from index zero (no offset).
           </li>
           <li>
-            Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next
-            batch).
+            Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end
+            (fetching next batch).
           </li>
           <li>
-            Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
+            Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first
+            page).
           </li>
         </ol>
       </ul>
@@ -493,7 +523,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
           Set Sorting Dynamically
         </button>
-        <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-gender" @click="groupByGender()">Group by Gender</button>
+        <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-gender" @click="groupByGender()">
+          Group by Gender
+        </button>
 
         <div v-show="metrics" class="mt-2" style="margin: 10px 0px">
           <b>Metrics:</b>
@@ -504,7 +536,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
             <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
             items
           </span>
-          <span class="badge rounded-pill text-bg-primary" :class="tagDataClass" data-test="data-loaded-tag">All Data Loaded!!!</span>
+          <span class="badge rounded-pill text-bg-primary" :class="tagDataClass" data-test="data-loaded-tag"
+            >All Data Loaded!!!</span
+          >
         </div>
       </div>
     </div>

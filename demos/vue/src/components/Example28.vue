@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import type { Formatter, GridOption, SlickDataView, SlickgridVueInstance } from 'slickgrid-vue';
 import {
+  type Formatter,
+  type GridOption,
+  type SlickDataView,
+  type SlickgridVueInstance,
   addWhiteSpaces,
   Aggregators,
   type Column,
@@ -211,7 +214,8 @@ function defineGrid() {
 
 function changeAutoApproveParentItem() {
   isAutoApproveParentItemWhenTreeColumnIsValid.value = !isAutoApproveParentItemWhenTreeColumnIsValid.value;
-  gridOptions.value!.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = isAutoApproveParentItemWhenTreeColumnIsValid.value;
+  gridOptions.value!.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid =
+    isAutoApproveParentItemWhenTreeColumnIsValid.value;
   vueGrid.slickGrid.setOptions(gridOptions.value!);
   vueGrid.filterService.refreshTreeDataFilters();
   return true;
@@ -346,7 +350,13 @@ function mockDataset() {
           id: 2,
           file: 'txt',
           files: [
-            { id: 3, file: 'todo.txt', description: 'things to do someday maybe', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7 },
+            {
+              id: 3,
+              file: 'todo.txt',
+              description: 'things to do someday maybe',
+              dateModified: '2015-05-12T14:50:00.123Z',
+              size: 0.7,
+            },
           ],
         },
         {
@@ -395,8 +405,20 @@ function mockDataset() {
       dateModified: '2012-03-05T12:44:00.123Z',
       files: [
         { id: 29, file: 'cheesecake', description: 'strawberry cheesecake', dateModified: '2012-04-04T13:52:00.123Z', size: 0.2 },
-        { id: 30, file: 'chocolate-cake', description: 'tasty sweet chocolate cake', dateModified: '2012-05-05T09:22:00.123Z', size: 0.2 },
-        { id: 31, file: 'coffee-cake', description: 'chocolate coffee cake', dateModified: '2012-01-01T08:08:48.123Z', size: 0.2 },
+        {
+          id: 30,
+          file: 'chocolate-cake',
+          description: 'tasty sweet chocolate cake',
+          dateModified: '2012-05-05T09:22:00.123Z',
+          size: 0.2,
+        },
+        {
+          id: 31,
+          file: 'coffee-cake',
+          description: 'chocolate coffee cake',
+          dateModified: '2012-01-01T08:08:48.123Z',
+          size: 0.2,
+        },
       ],
     },
   ];
@@ -430,7 +452,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -444,8 +471,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
           "convertHierarchicalViewToParentChildArray()"
         </li>
         <li>
-          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in the next
-          Hierarchical Example
+          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in
+          the next Hierarchical Example
         </li>
       </ul>
     </ul>
@@ -478,7 +505,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-close"></span>
         <span>Clear Filters</span>
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset" @click="logFlatStructure()">
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        title="console.log of the Flat dataset"
+        @click="logFlatStructure()"
+      >
         <span>Log Flat Structure</span>
       </button>
       <button
@@ -501,7 +532,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
           data-test="search-string"
           @input="searchStringChanged(($event.target as HTMLInputElement).value)"
         />
-        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" data-test="clear-search-string" @click="clearSearch()">
+        <button
+          class="btn btn-sm btn-outline-secondary d-flex align-items-center"
+          data-test="clear-search-string"
+          @click="clearSearch()"
+        >
           <span class="icon mdi mdi-close-thick"></span>
         </button>
       </div>

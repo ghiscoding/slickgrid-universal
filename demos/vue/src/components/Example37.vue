@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import type { GridOption, OnCellChangeEventArgs, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Editors, FieldType, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type OnCellChangeEventArgs,
+  type SlickgridVueInstance,
+  type Column,
+  Editors,
+  FieldType,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 
 const NB_ITEMS = 100;
@@ -99,6 +106,23 @@ function updateTotal(cell: number) {
   }
 }
 
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value;
+  toggleBodyBackground();
+  vueGrid.slickGrid?.setOptions({ darkMode: isDarkMode.value });
+  updateAllTotals();
+}
+
+function toggleBodyBackground() {
+  if (isDarkMode.value) {
+    document.querySelector<HTMLDivElement>('.panel-wm-content')!.classList.add('dark-mode');
+    document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'dark';
+  } else {
+    document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
+    document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
+  }
+}
+
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
@@ -123,8 +147,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" @click="toggleDarkMode()">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
     </button>
   </h2>
 

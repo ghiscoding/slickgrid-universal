@@ -107,7 +107,8 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       // when those are Vue Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadComponent = this.gridOptions?.rowDetailView?.preloadComponent;
-        this.addonOptions.preTemplate = () => this._grid.sanitizeHtmlString(`<div class="${PRELOAD_CONTAINER_PREFIX}"></div>`) as string;
+        this.addonOptions.preTemplate = () =>
+          this._grid.sanitizeHtmlString(`<div class="${PRELOAD_CONTAINER_PREFIX}"></div>`) as string;
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._component = this.gridOptions?.rowDetailView?.viewComponent;
@@ -339,7 +340,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
    * if it's expanding we will add it to our View Components reference array if we don't already have it
    * or if it's collapsing we will remove it from our View Components reference array
    */
-  protected handleOnBeforeRowDetailToggle(_e: SlickEventData<OnBeforeRowDetailToggleArgs>, args: { grid: SlickGrid; item: any; }) {
+  protected handleOnBeforeRowDetailToggle(_e: SlickEventData<OnBeforeRowDetailToggleArgs>, args: { grid: SlickGrid; item: any }) {
     // expanding
     if (args?.item?.__collapsed) {
       // expanding row detail
@@ -404,7 +405,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       if (!awaitedItemDetail || !(this.datasetIdPropName in awaitedItemDetail)) {
         throw new Error(
           '[Slickgrid-Vue] could not process the Row Detail, please make sure that your "process" callback ' +
-          '(a Promise or an HttpClient call returning an Observable) returns an item object that has an "${this.datasetIdPropName}" property'
+            '(a Promise or an HttpClient call returning an Observable) returns an item object that has an "${this.datasetIdPropName}" property'
         );
       }
 

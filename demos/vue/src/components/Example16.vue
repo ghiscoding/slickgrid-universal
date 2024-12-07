@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { GridOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Filters, Formatters, SlickgridVue } from 'slickgrid-vue';
+import { type GridOption, type SlickgridVueInstance, type Column, Filters, Formatters, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const NB_ITEMS = 500;
@@ -136,7 +135,10 @@ function getData(count: number) {
 function onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
   for (const rowIdx of data.rows) {
     // no point in moving before or after itself
-    if (rowIdx === data.insertBefore || (rowIdx === data.insertBefore - 1 && data.insertBefore - 1 !== vueGrid.dataView.getItemCount())) {
+    if (
+      rowIdx === data.insertBefore ||
+      (rowIdx === data.insertBefore - 1 && data.insertBefore - 1 !== vueGrid.dataView.getItemCount())
+    ) {
       e.preventDefault(); // OR eventData.preventDefault();
       return false;
     }
@@ -297,7 +299,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -308,18 +315,20 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>Click to select, Ctrl+Click to toggle selection, Shift+Click to select a range.</li>
       <li>Drag one or more rows by the handle (icon) to reorder</li>
       <li>If you plan to use Row Selection + Row Move, then use "singleRowMove: true" and "disableRowSelection: true"</li>
-      <li>You can change "columnIndexPosition" to move the icon position of any extension (RowMove, RowDetail or RowSelector icon)</li>
+      <li>
+        You can change "columnIndexPosition" to move the icon position of any extension (RowMove, RowDetail or RowSelector icon)
+      </li>
       <ul>
         <li>You will also want to enable the DataView "syncGridSelection: true" to keep row selection even after a row move</li>
       </ul>
       <li>
-        If you plan to use only Row Move, then you could keep default values (or omit them completely) of "singleRowMove: false" and
-        "disableRowSelection: false"
+        If you plan to use only Row Move, then you could keep default values (or omit them completely) of "singleRowMove: false"
+        and "disableRowSelection: false"
       </li>
       <ul>
         <li>
-          SingleRowMove has the name suggest will only move 1 row at a time, by default it will move any row(s) that are selected unless you
-          disable the flag
+          SingleRowMove has the name suggest will only move 1 row at a time, by default it will move any row(s) that are selected
+          unless you disable the flag
         </li>
       </ul>
     </ul>
@@ -327,7 +336,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="row">
     <div class="col-sm-12">
-      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="hide-duration-btn" @click="hideDurationColumnDynamically()">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        data-test="hide-duration-btn"
+        @click="hideDurationColumnDynamically()"
+      >
         <i class="mdi mdi-eye-off-outline"></i>
         Dynamically Hide "Duration"
       </button>
@@ -347,7 +360,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <i class="mdi mdi-swap-vertical"></i>
         Toggle Sorting
       </button>
-      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="add-crud-columns-btn" @click="addEditDeleteColumns()">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+        data-test="add-crud-columns-btn"
+        @click="addEditDeleteColumns()"
+      >
         <i class="mdi mdi-shape-square-plus"></i>
         Add Edit/Delete Columns
       </button>

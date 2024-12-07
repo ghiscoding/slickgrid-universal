@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import type { GraphqlResult, GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { GraphqlService } from '@slickgrid-universal/graphql';
-import type { GridOption, Metrics, MultipleSelectOption, SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type Metrics,
+  type MultipleSelectOption,
+  type SlickgridVueInstance,
+  type Column,
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickgridVue,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const COUNTRIES_API = 'https://countries.trevorblades.com/';
@@ -49,7 +58,15 @@ function defineGrid() {
       filterable: true,
       columnGroup: 'Country',
     },
-    { id: 'countryCurrency', field: 'currency', name: 'Currency', maxWidth: 90, sortable: true, filterable: true, columnGroup: 'Country' },
+    {
+      id: 'countryCurrency',
+      field: 'currency',
+      name: 'Currency',
+      maxWidth: 90,
+      sortable: true,
+      filterable: true,
+      columnGroup: 'Country',
+    },
     { id: 'countryEmoji', field: 'emoji', name: 'Emoji', maxWidth: 90, sortable: true, columnGroup: 'Country' },
     {
       id: 'languageName',
@@ -219,7 +236,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
 function displaySpinner(isProcessing: boolean) {
   processing.value = isProcessing;
-  status.value = isProcessing ? { text: 'processing...', class: 'alert alert-danger' } : { text: 'finished', class: 'alert alert-success' };
+  status.value = isProcessing
+    ? { text: 'processing...', class: 'alert alert-danger' }
+    : { text: 'finished', class: 'alert alert-success' };
 }
 
 // --
@@ -290,7 +309,12 @@ function getLanguages(): Promise<GraphqlResult<{ code: string; name: string; nat
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -309,20 +333,21 @@ function getLanguages(): Promise<GraphqlResult<{ code: string; name: string; nat
       <li>Compare to the regular and default GraphQL implementation, you will find the following differences</li>
       <ul>
         <li>
-          There are no Pagination and we only use GraphQL <b>once</b> to load the data, then we use the grid as a regular local in-memory
-          grid
+          There are no Pagination and we only use GraphQL <b>once</b> to load the data, then we use the grid as a regular local
+          in-memory grid
         </li>
         <li>
-          We enabled the following 2 flags "useLocalFiltering" and "useLocalSorting" to use regular (in memory) DataView filtering/sorting
+          We enabled the following 2 flags "useLocalFiltering" and "useLocalSorting" to use regular (in memory) DataView
+          filtering/sorting
         </li>
       </ul>
       <li>
-        NOTE - This Example calls multiple GraphQL queries, this is <b>ONLY</b> for demo purposes, you would typically only call 1 query
-        (which is what GraphQL is good at)
+        NOTE - This Example calls multiple GraphQL queries, this is <b>ONLY</b> for demo purposes, you would typically only call 1
+        query (which is what GraphQL is good at)
       </li>
       <li>
-        This example is mainly to demo the use of GraphqlService to build the query and retrieve the data but also to demo how to mix that
-        with local (in-memory) Filtering/Sorting strategies
+        This example is mainly to demo the use of GraphqlService to build the query and retrieve the data but also to demo how to
+        mix that with local (in-memory) Filtering/Sorting strategies
       </li>
     </ul>
   </div>

@@ -3,17 +3,22 @@ import { addDay, format } from '@formkit/tempo';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useTranslation } from 'i18next-vue';
-import type {
-  CurrentFilter,
-  Formatter,
-  GridOption,
-  Metrics,
-  MultipleSelectOption,
-  SlickGrid,
-  SlickgridVueInstance,
-  SliderRangeOption,
+import {
+  type CurrentFilter,
+  type Formatter,
+  type GridOption,
+  type Metrics,
+  type MultipleSelectOption,
+  type SlickGrid,
+  type SlickgridVueInstance,
+  type SliderRangeOption,
+  type Column,
+  FieldType,
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickgridVue,
 } from 'slickgrid-vue';
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
 import { CustomInputFilter } from './custom-inputFilter';
@@ -277,7 +282,11 @@ function predefinedFilterChanged(newPredefinedFilter: string) {
   switch (newPredefinedFilter) {
     case 'currentYearTasks':
       filters = [
-        { columnId: 'finish', operator: OperatorType.rangeInclusive, searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
+        {
+          columnId: 'finish',
+          operator: OperatorType.rangeInclusive,
+          searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`],
+        },
         { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
       ];
       break;
@@ -312,7 +321,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -326,15 +340,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <br />
     <ul class="small">
       <li>
-        All input filters support the following operators: (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *) and now also the (..) for an
-        input range
+        All input filters support the following operators: (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *) and now also the
+        (..) for an input range
       </li>
       <li>
-        All filters (which support ranges) can be defined via the 2 dots (..) which represents a range, this also works for dates and slider
-        in the "presets"
+        All filters (which support ranges) can be defined via the 2 dots (..) which represents a range, this also works for dates
+        and slider in the "presets"
       </li>
       <ul>
-        <li>For a numeric range defined in an input filter (must be of type text), you can use 2 dots (..) to represent a range</li>
+        <li>
+          For a numeric range defined in an input filter (must be of type text), you can use 2 dots (..) to represent a range
+        </li>
         <li>example: typing "10..90" will filter values between 10 and 90 (but excluding the number 10 and 90)</li>
       </ul>
     </ul>
@@ -349,12 +365,20 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="row row-cols-lg-auto g-1 align-items-center">
     <div class="col">
-      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" @click="vueGrid.filterService.clearFilters()">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        data-test="clear-filters"
+        @click="vueGrid.filterService.clearFilters()"
+      >
         Clear Filters
       </button>
     </div>
     <div class="col">
-      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting" @click="vueGrid.sortService.clearSorting()">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        data-test="clear-sorting"
+        @click="vueGrid.sortService.clearSorting()"
+      >
         Clear Sorting
       </button>
     </div>
@@ -390,7 +414,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <i class="mdi mdi-translate"></i>
         Switch Language
       </button>
-      <b>Locale:</b> <span class="ms-1" style="font-style: italic" data-test="selected-locale">{{ selectedLanguage + '.json' }}</span>
+      <b>Locale:</b>
+      <span class="ms-1" style="font-style: italic" data-test="selected-locale">{{ selectedLanguage + '.json' }}</span>
     </div>
   </div>
 

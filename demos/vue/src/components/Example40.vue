@@ -1,7 +1,20 @@
 <script setup lang="ts">
 import { format as dateFormatter } from '@formkit/tempo';
-import type { GridOption, Grouping, Metrics, OnRowCountChangedEventArgs, SlickgridVueInstance } from 'slickgrid-vue';
-import { Aggregators, type Column, FieldType, Filters, Formatters, SlickgridVue, SortComparers, SortDirectionNumber } from 'slickgrid-vue';
+import {
+  GridOption,
+  Grouping,
+  Metrics,
+  OnRowCountChangedEventArgs,
+  SlickgridVueInstance,
+  Aggregators,
+  type Column,
+  FieldType,
+  Filters,
+  Formatters,
+  SlickgridVue,
+  SortComparers,
+  SortDirectionNumber,
+} from 'slickgrid-vue';
 import { computed, onBeforeMount, ref } from 'vue';
 
 const FETCH_SIZE = 50;
@@ -13,7 +26,9 @@ const shouldResetOnSort = ref(false);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
 
-const getMetricsEndTime = computed(() => (metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''));
+const getMetricsEndTime = computed(() =>
+  metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''
+);
 
 onBeforeMount(() => {
   defineGrid();
@@ -28,7 +43,15 @@ onBeforeMount(() => {
 function defineGrid() {
   columnDefinitions.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
-    { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
+    {
+      id: 'duration',
+      name: 'Duration (days)',
+      field: 'duration',
+      sortable: true,
+      minWidth: 100,
+      filterable: true,
+      type: FieldType.number,
+    },
     {
       id: 'percentComplete',
       name: '% Complete',
@@ -198,7 +221,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      @click="toggleSubTitle()"
+    >
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -206,12 +234,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <h6 class="title italic content">
     <ul>
       <li>
-        Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest
-        form, the more the user scrolls down, the more rows get loaded.
+        Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In
+        its simplest form, the more the user scrolls down, the more rows get loaded.
       </li>
       <li>
-        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since
-        we keep appending data, we always have to start from index zero (no offset).
+        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply
+        because since we keep appending data, we always have to start from index zero (no offset).
       </li>
     </ul>
   </h6>
