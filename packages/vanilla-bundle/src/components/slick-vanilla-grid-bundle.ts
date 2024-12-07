@@ -142,13 +142,7 @@ export class SlickVanillaGridBundle<TData = any> {
     return this._columnDefinitions || [];
   }
   set columnDefinitions(columnDefinitions: Column<TData>[]) {
-    this._columnDefinitions = columnDefinitions;
-    if (this._slickgridInitialized) {
-      this.updateColumnDefinitionsList(this._columnDefinitions);
-    }
-    if (columnDefinitions.length > 0) {
-      this.copyColumnWidthsReference(columnDefinitions);
-    }
+    this.columnDefinitionsChanged(columnDefinitions);
   }
 
   get dataset(): TData[] {
@@ -1261,13 +1255,15 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   /** handler for when column definitions changes */
-  protected columnDefinitionsHandler(): void {
-    this._columnDefinitions = this.columnDefinitions;
+  protected columnDefinitionsChanged(columnDefinitions?: Column[]): void {
+    if (columnDefinitions) {
+      this._columnDefinitions = columnDefinitions;
+    }
     if (this._isGridInitialized) {
       this.updateColumnDefinitionsList(this.columnDefinitions);
     }
-    if (this._columnDefinitions.length > 0) {
-      this.copyColumnWidthsReference(this._columnDefinitions);
+    if (this.columnDefinitions.length > 0) {
+      this.copyColumnWidthsReference(this.columnDefinitions);
     }
   }
 
@@ -1277,7 +1273,7 @@ export class SlickVanillaGridBundle<TData = any> {
    */
   protected observeColumnDefinitions(): void {
     this._collectionObservers.push(
-      collectionObserver(this.columnDefinitions, this.columnDefinitionsHandler.bind(this))
+      collectionObserver(this.columnDefinitions, this.columnDefinitionsChanged.bind(this))
     );
   }
 
