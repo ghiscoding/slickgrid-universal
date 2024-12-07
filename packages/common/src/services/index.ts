@@ -11,6 +11,7 @@ export * from './grid.service.js';
 export * from './gridEvent.service.js';
 export * from './gridState.service.js';
 export * from './headerGrouping.service.js';
+export * from './observers.js';
 export * from './pagination.service.js';
 export * from './resizer.service.js';
 export * from './rxjsFacade.js';

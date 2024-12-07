@@ -86,6 +86,23 @@ describe('Service/Observers', () => {
       });
       inputArray.sort((obj1, obj2) => obj1.id - obj2.id);
     }));
+
+    it('should disconnect observer and expect callback to no longer be executed', () => {
+      let callbackCount = 0;
+      const collection = [1, 2];
+      const observer = collectionObserver(collection, () => callbackCount++);
+      collection.push(Math.random());
+      collection.push(Math.random());
+
+      expect(collection.length).toBe(4);
+
+      observer?.disconnect();
+
+      collection.push(Math.random());
+      collection.push(Math.random());
+
+      expect(collection.length).toBe(4);
+    });
   });
 
   describe('propertyObserver method', () => {

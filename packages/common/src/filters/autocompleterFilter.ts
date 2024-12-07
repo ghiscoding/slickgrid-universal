@@ -39,6 +39,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _collection?: any[];
+  protected _collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
   protected _filterElm!: HTMLInputElement;
   protected _instance: any;
   protected _locales!: Locale;
@@ -243,6 +244,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this._filterElm?.remove?.();
     this._collection = undefined;
     this._bindEventService.unbindAll();
+    this._collectionObservers.forEach(obs => obs?.disconnect());
 
     // unsubscribe all the possible Observables if RxJS was used
     unsubscribeAll(this.subscriptions);
@@ -316,20 +318,24 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   protected watchCollectionChanges(): void {
     if (this.columnFilter?.collection) {
       // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
-      collectionObserver(this.columnFilter.collection, (updatedArray) => {
-        this.renderDomElement(this.columnFilter.collection || updatedArray || []);
-      });
+      this._collectionObservers.push(
+        collectionObserver(this.columnFilter.collection, (updatedArray) => {
+          this.renderDomElement(this.columnFilter.collection || updatedArray || []);
+        })
+      );
 
       // observe for any "collection" changes (array replace)
-      // then simply recreate/re-render the Select (dropdown) DOM Element
+      // then simply recreate/re-render the filter DOM Element
       propertyObserver(this.columnFilter, 'collection', (newValue) => {
         this.renderDomElement(newValue || []);
 
         // when new assignment arrives, we need to also reassign observer to the new reference
         if (this.columnFilter.collection) {
-          collectionObserver(this.columnFilter.collection, (updatedArray) => {
-            this.renderDomElement(this.columnFilter.collection || updatedArray || []);
-          });
+          this._collectionObservers.push(
+            collectionObserver(this.columnFilter.collection, (updatedArray) => {
+              this.renderDomElement(this.columnFilter.collection || updatedArray || []);
+            })
+          );
         }
       });
     }
