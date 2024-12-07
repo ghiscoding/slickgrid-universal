@@ -11,6 +11,13 @@ export default defineConfig(() => {
       emptyOutDir: true,
       outDir: '../../website',
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          quietDeps: true,
+        },
+      },
+    },
     preview: {
       port: 8888
     },
