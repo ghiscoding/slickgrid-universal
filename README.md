@@ -107,11 +107,13 @@ corepack prepare pnpm@latest --activate
 
 #### Specific Framework install
 For a more targeted install, you could optionally install a specific framework (which avoids installing all frameworks).
-For example
+Taking Vue for example
 
 ```sh
 pnpm vue:install
 ```
+
+> **Note** for frameworks development you will not only require the targeted install but it also requires you to run a `pnpm bundle`
 
 2. Run Dev (Vanilla Implementation)
 
