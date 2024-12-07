@@ -7,6 +7,7 @@ import {
   BackendUtilityService,
   type BasePaginationComponent,
   type BasePaginationModel,
+  collectionObserver,
   CollectionService,
   type Column,
   type DataViewOption,
@@ -93,6 +94,7 @@ const backendService = computed(() => gridOptionsModel.value?.backendServiceApi?
 let currentDatasetLength = 0;
 let dataview: SlickDataView<any> | null = null;
 let grid: SlickGrid;
+let collectionObservers: Array<null | { disconnect: () => void }> = [];
 let groupItemMetadataProvider: SlickGroupItemMetadataProvider | undefined;
 let hideHeaderRowAfterPageLoad = false;
 let isAutosizeColsCalled = false;
@@ -342,7 +344,11 @@ onMounted(() => {
   if (dataHierarchicalModel.value) {
     sharedService.hierarchicalDataset = dataHierarchicalModel.value || [];
   }
+
   suggestDateParsingWhenHelpful();
+
+  // subscribe to column definitions assignment changes
+  observeColumnDefinitions();
 });
 
 function columnDefinitionsChanged(columnDefinitions?: Column[]) {
@@ -596,7 +602,7 @@ function disposing(shouldEmptyDomElementContainer = false) {
   if (shouldEmptyDomElementContainer) {
     emptyGridContainerElm();
   }
-
+  collectionObservers.forEach((obs) => obs?.disconnect());
   eventPubSubService.publish('onAfterGridDestroyed', true);
 
   // dispose of all Services
@@ -1185,15 +1191,12 @@ function updateColumnDefinitionsList(newColumnDefinitions: Column<any>[]) {
 }
 
 /**
- * assignment changes are not triggering a "columnDefinitionsChanged" event https://stackoverflow.com/a/30286225/1212166
- * we can use array observer for these other changes done via (push, pop, ...)
- * see docs https://docs.aurelia.io/components/bindable-properties#calling-a-change-function-when-bindable-is-modified
+ * assignment changes are not triggering on the column definitions, for that
+ * we can use our internal array observer for any changes done via (push, pop, shift, ...)
  */
-// function observeColumnDefinitions() {
-//   _columnDefinitionObserver?.unsubscribe(columnDefinitionsModel.valueSubscriber);
-//   _columnDefinitionObserver = observerLocator.getArrayObserver(columnDefinitions);
-//   _columnDefinitionObserver.subscribe(columnDefinitionsModel.valueSubscriber);
-// }
+function observeColumnDefinitions() {
+  collectionObservers.push(collectionObserver(columnDefinitionsModel.value, columnDefinitionsChanged));
+}
 
 /**
  * Loop through all column definitions and copy the original optional `width` properties optionally provided by the user.
