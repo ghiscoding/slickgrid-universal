@@ -419,8 +419,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
               ON (single-click)
             </label>
             <label class="radio-inline control-label" for="radioFalse">
-              <input type="radio" name="inlineRadioOptions" id="radioFalse" v-model="isAutoEdit" @click="setAutoEdit(false)" /> OFF
-              (double-click)
+              <input type="radio" name="inlineRadioOptions" id="radioFalse" v-model="isAutoEdit" @click="setAutoEdit(false)" />
+              OFF (double-click)
             </label>
           </div>
         </div>
