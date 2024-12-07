@@ -304,7 +304,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
   </slickgrid-vue>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 /* 1st grid */
 #grid7-1 {
   --slick-header-button-float: right;
@@ -312,7 +312,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
 /* 2nd grid */
 #grid7-2 {
-  --slick-header-button-margin: 4px 0 50px 0;
+  --slick-header-button-margin: 1px 0 50px 1px;
   --slick-header-button-float: left;
 }
 </style>
