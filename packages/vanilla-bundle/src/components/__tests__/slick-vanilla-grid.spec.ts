@@ -472,6 +472,19 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.columnDefinitions).toEqual(columnsMock);
   });
 
+  it('should update call updateColumnDefinitionsList() when pushing to the column definitions', () => {
+    const updateColumnsSpy = vi.spyOn(component, 'updateColumnDefinitionsList');
+    component.initialization(divContainer, slickEventHandler);
+
+    const newCol = { id: 'hobbies', name: 'Hobbies', field: 'hobbie' };
+    component.columnDefinitions.push(newCol);
+
+    expect(updateColumnsSpy).toHaveBeenCalled();
+    expect(component.columnDefinitions).toEqual(
+      expect.arrayContaining([{ id: 'name', field: 'name' }, newCol])
+    );
+  });
+
   describe('initialization method', () => {
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
       const isEditableItem = !!columnDef.editor;
@@ -561,7 +574,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith([{ id: 'name', field: 'name', editor: undefined }], customEditableInputFormatter);
+        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(
+          expect.arrayContaining([{ id: 'name', field: 'name' }]),
+          customEditableInputFormatter
+        );
       });
     });
 

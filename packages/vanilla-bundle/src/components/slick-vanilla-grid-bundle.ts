@@ -27,6 +27,7 @@ import {
   // services
   BackendUtilityService,
   CollectionService,
+  collectionObserver,
   ExtensionService,
   ExtensionUtility,
   FilterFactory,
@@ -67,6 +68,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _currentDatasetLength = 0;
   protected _eventPubSubService!: EventPubSubService;
   protected _darkMode = false;
+  protected _collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
   protected _columnDefinitions?: Column<TData>[];
   protected _gridOptions?: GridOption;
   protected _gridContainerElm!: HTMLElement;
@@ -478,6 +480,7 @@ export class SlickVanillaGridBundle<TData = any> {
     if (shouldEmptyDomElementContainer) {
       this.emptyGridContainerElm();
     }
+    this._collectionObservers.forEach(obs => obs?.disconnect());
     this._eventPubSubService?.dispose();
     this._slickerGridInstances = null as any;
   }
@@ -712,6 +715,9 @@ export class SlickVanillaGridBundle<TData = any> {
     this._eventPubSubService.publish('onSlickerGridCreated', this.instances);
     this._isGridInitialized = true;
     this.suggestDateParsingWhenHelpful();
+
+    // subscribe to column definitions assignment changes
+    this.observeColumnDefinitions();
   }
 
   hasBackendInfiniteScroll(): boolean {
@@ -1252,6 +1258,27 @@ export class SlickVanillaGridBundle<TData = any> {
       this.renderPagination();
       this._isPaginationInitialized = true;
     }
+  }
+
+  /** handler for when column definitions changes */
+  protected columnDefinitionsHandler(): void {
+    this._columnDefinitions = this.columnDefinitions;
+    if (this._isGridInitialized) {
+      this.updateColumnDefinitionsList(this.columnDefinitions);
+    }
+    if (this._columnDefinitions.length > 0) {
+      this.copyColumnWidthsReference(this._columnDefinitions);
+    }
+  }
+
+  /**
+   * assignment changes are not triggering on the column definitions, for that
+   * we can use our internal array observer for any changes done via (push, pop, shift, ...)
+   */
+  protected observeColumnDefinitions(): void {
+    this._collectionObservers.push(
+      collectionObserver(this.columnDefinitions, this.columnDefinitionsHandler.bind(this))
+    );
   }
 
   /**

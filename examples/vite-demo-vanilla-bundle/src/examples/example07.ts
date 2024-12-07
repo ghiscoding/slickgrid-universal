@@ -602,7 +602,6 @@ export default class Example07 {
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force the framework to review the changes
     this.sgb.columnDefinitions.push(newCol);
-    this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice(); // or use spread operator [...cols]
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -616,7 +615,6 @@ export default class Example07 {
 
   dynamicallyRemoveLastColumn() {
     this.sgb.columnDefinitions.pop();
-    this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice();
 
     /*
     const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
