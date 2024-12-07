@@ -94,7 +94,7 @@ const backendService = computed(() => gridOptionsModel.value?.backendServiceApi?
 let currentDatasetLength = 0;
 let dataview: SlickDataView<any> | null = null;
 let grid: SlickGrid;
-let collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
+let collectionObservers: Array<null | { disconnect: () => void }> = [];
 let groupItemMetadataProvider: SlickGroupItemMetadataProvider | undefined;
 let hideHeaderRowAfterPageLoad = false;
 let isAutosizeColsCalled = false;
@@ -602,7 +602,7 @@ function disposing(shouldEmptyDomElementContainer = false) {
   if (shouldEmptyDomElementContainer) {
     emptyGridContainerElm();
   }
-  collectionObservers.forEach(obs => obs?.disconnect());
+  collectionObservers.forEach((obs) => obs?.disconnect());
   eventPubSubService.publish('onAfterGridDestroyed', true);
 
   // dispose of all Services
@@ -1195,9 +1195,7 @@ function updateColumnDefinitionsList(newColumnDefinitions: Column<any>[]) {
  * we can use our internal array observer for any changes done via (push, pop, shift, ...)
  */
 function observeColumnDefinitions() {
-  collectionObservers.push(
-    collectionObserver(columnDefinitionsModel.value, columnDefinitionsChanged)
-  );
+  collectionObservers.push(collectionObserver(columnDefinitionsModel.value, columnDefinitionsChanged));
 }
 
 /**
