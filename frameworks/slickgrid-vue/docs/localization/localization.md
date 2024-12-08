@@ -3,19 +3,49 @@
 
 ### Installation
 
-Install the `i18next` library with a backend loader, typically `i18next-xhr-backend`
+Install the `i18next` and `i18next-vue` libraries with an optional backend loader, like `i18next-xhr-backend`
 
 ##### Install NPM package
 
 ```sh
-npm install i18next i18next-xhr-backend
+npm install i18next i18next-vue i18next-xhr-backend
 ```
 
-##### Main.ts
-###### configure i18n loader with assets folder
+##### add it to your `main.ts`
+
+Start by using the plugin in your `main.ts`
+
+```ts
+import i18next from 'i18next';
+import I18NextVue from 'i18next-vue';
+import { createApp } from 'vue';
+
+createApp(App).use(I18NextVue, { i18next })
+```
+
+##### then add it to your App
+
+Then to finally use translations in Slickgrid-Vue, you must first `provide` the I18Next instance in your App so that it can be `inject`ed in Slickgrid-Vue.
+
+```vue
+<script setup lang="ts">
+import { useTranslation } from 'i18next-vue';
+import { provide } from 'vue';
+
+provide('i18next', useTranslation().i18next);
+</script>
+```
+
+##### optionally configure i18n loader with assets folder
+
+You can use the optional `i18next-http-backend` to load JSON files asynchronously. This is just 1 in multiple ways to load translations, just choose whichever ways that best fits your use case.
+
 ```ts
 import i18next from 'i18next';
 import Backend from 'i18next-http-backend';
+
+import localeEn from './assets/locales/en/translation.json';
+import localeFr from './assets/locales/fr/translation.json';
 
 i18next
   .use(Backend)

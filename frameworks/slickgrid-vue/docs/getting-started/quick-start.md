@@ -6,10 +6,10 @@ The easiest is to simply clone the [Slickgrid-Vue-Demos](https://github.com/ghis
 
 ### 1. Install NPM Package
 
-Install `Vue`, `Slickgrid-Vue`, `i18next` and `i18next-vue` while `Bootstrap` is optional (or any other UI framework)
+Install `Vue`, `Slickgrid-Vue` and any UI framework you wish to install and use, for example `Bootstrap`.
 
 ```bash
-npm install --save slickgrid-vue i18next i18next-vue bootstrap
+npm install --save slickgrid-vue bootstrap
 # or with yarn add
 ```
 
@@ -17,24 +17,12 @@ _Note: `Bootstrap` is totally optional, you can use any other framework_
 
 ### 2. Import all necessary dependencies in `main.ts`
 
-At this point both `i18next` and `i18next-vue` are required to be installed for this project to work.
-
-```vue
-<script setup lang="ts">
+```ts
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
-import i18next from 'i18next';
-import I18NextVue from 'i18next-vue';
-import { createApp } from 'vue';
-
-createApp(App).use(I18NextVue, { i18next });
-</script>
+createApp(App);
 ```
-
-> **Note** if anyone knows how to make this optional, please reach out and/or contribute a Pull Request to the project.
->
-> **Note 2** some of you might prefer to use `vue-i18n` but this also goes with previous Note, I don't know how to make the i18n plugin(s) optional(s) in the project while keeping translations. So again if anyone knows how to address that, please reach out!
 
 <a name="step3"></a>
 ### 3. CSS / SASS Styles
@@ -66,10 +54,29 @@ You could also compile the SASS files with your own customization, for that simp
 );
 ```
 
-### 4. Install/Setup `I18N` for Localization (optional)
-To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
-1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other thank English)...
-2. Using [Localization with I18N](../localization/localization.md), that is when you want to use multiple locales dynamically.
+### 4. Install/Setup `I18Next` for Localization (optional)
+This step is totally optional and will allow you to provide different locales, other than English (which is the default), in your project. You have 2 options to approach this use case. If you only use English, then there is nothing to do (you can still change some of the texts in the grid via option 1.). The 2 approach are as follow:
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)...
+2. Using [Localization with I18Next](../localization/localization.md), that is when you want to use multiple locales dynamically.
+
+##### add it to your `main.ts`
+```ts
+import i18next from 'i18next';
+import I18NextVue from 'i18next-vue';
+import { createApp } from 'vue';
+
+createApp(App).use(I18NextVue, { i18next })
+```
+
+##### then add it to your App
+```vue
+<script setup lang="ts">
+import { useTranslation } from 'i18next-vue';
+import { provide } from 'vue';
+
+provide('i18next', useTranslation().i18next);
+</script>
+```
 
 ### 5. Create a basic grid
 
@@ -160,8 +167,8 @@ The last step is really to explore all the pages that are available in this Wiki
   - it gets updated very frequently, we usually mention any new/updated wikis in any new version release
 
 ### 7. Get Started
-The best way to get started is to clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 4 demo page. `Slickgrid-Vue` has 2 `Bootstrap` themes, you can see a demo of each one below.
-- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos) (with `I18N` Service)
+The best way to get started is to clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos), it is updated frequently since it is used for the GitHub Bootstrap 4 demo page. `Slickgrid-Vue` has 2 `Bootstrap` themes, you can see a demo of each one below.
+- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos) (with `I18Next` Service)
 
 ##### All Live Demo Examples have links to the actual code
 Like to see the code to a particular Example? Just click on the "see code" that is available in every live examples.
