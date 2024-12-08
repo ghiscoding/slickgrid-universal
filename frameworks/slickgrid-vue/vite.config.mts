@@ -9,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), dts({ insertTypesEntry: true, rollupTypes: false, tsconfigPath: './tsconfig.app.json' })],
+  plugins: [vue(), dts({ insertTypesEntry: true, rollupTypes: true, tsconfigPath: './tsconfig.app.json' })],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
