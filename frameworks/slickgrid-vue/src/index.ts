@@ -19,7 +19,7 @@ import type { SlickgridConfig } from './slickgrid-config.js';
 
 // expose all public classes
 export type { SlickgridVueProps } from './components/slickgridVueProps.interface.js';
-export { disposeAllSubscriptions, TranslaterService } from './services/index.js';
+export { disposeAllSubscriptions, TranslaterI18NextService } from './services/index.js';
 
 export {
   Aggregators,

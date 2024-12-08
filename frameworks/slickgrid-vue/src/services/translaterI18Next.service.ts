@@ -1,16 +1,16 @@
 import type { TranslaterService as UniversalTranslateService } from '@slickgrid-universal/common';
 import { type i18n } from 'i18next';
-import { useTranslation } from 'i18next-vue';
 
 /**
  * This is a Translate Service Wrapper for Slickgrid-Universal monorepo lib to work properly,
  * it must implement Slickgrid-Universal TranslaterService interface to work properly
  */
-export class TranslaterService implements UniversalTranslateService {
-  public i18n: i18n;
+export class TranslaterI18NextService implements UniversalTranslateService {
+  public i18n?: i18n;
 
-  constructor() {
-    this.i18n = useTranslation().i18next;
+  /** I18Next instance setter */
+  set i18nInstance(i18n: i18n) {
+    this.i18n = i18n;
   }
 
   /**
@@ -18,7 +18,7 @@ export class TranslaterService implements UniversalTranslateService {
    * @return {string} current language
    */
   getCurrentLanguage(): string {
-    return this.i18n.language;
+    return this.i18n?.language || '';
   }
 
   /**
@@ -27,7 +27,7 @@ export class TranslaterService implements UniversalTranslateService {
    * @return {Promise} output
    */
   async use(newLang: string): Promise<any> {
-    return this.i18n.changeLanguage(newLang);
+    return this.i18n?.changeLanguage(newLang);
   }
 
   /**
@@ -36,6 +36,6 @@ export class TranslaterService implements UniversalTranslateService {
    * @return {string} translated value
    */
   translate(translationKey: string): string {
-    return this.i18n.t(translationKey);
+    return this.i18n?.t(translationKey) || '';
   }
 }

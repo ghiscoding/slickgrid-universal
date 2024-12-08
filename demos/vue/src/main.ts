@@ -32,4 +32,5 @@ i18next.use(Backend).init({
     escapeValue: false,
   },
 });
+
 createApp(App).use(I18NextVue, { i18next }).use(router).mount('#app');

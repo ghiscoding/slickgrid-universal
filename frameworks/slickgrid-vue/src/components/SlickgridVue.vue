@@ -50,11 +50,12 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { useTranslation } from 'i18next-vue';
+import { type i18n } from 'i18next';
 import {
   type ComponentPublicInstance,
   computed,
   createApp,
+  inject,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -67,12 +68,11 @@ import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { GridOption, SlickgridVueInstance } from '../models/index.js';
 import { ContainerService, disposeAllSubscriptions } from '../services/index.js';
-import { TranslaterService } from '../services/translater.service.js';
+import { TranslaterI18NextService } from '../services/translaterI18Next.service.js';
 import type { SlickgridVueProps } from './slickgridVueProps.interface.js';
 
-const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
+const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parsing isn't enabled
 
-const { i18next } = useTranslation();
 const attrs = useAttrs();
 
 // props
@@ -97,6 +97,7 @@ let grid: SlickGrid;
 let collectionObservers: Array<null | { disconnect: () => void }> = [];
 let groupItemMetadataProvider: SlickGroupItemMetadataProvider | undefined;
 let hideHeaderRowAfterPageLoad = false;
+let i18next: i18n | null;
 let isAutosizeColsCalled = false;
 let isGridInitialized = false;
 let isDatasetInitialized = false;
@@ -124,7 +125,7 @@ const eventPubSubService = new EventPubSubService();
 eventPubSubService.eventNamingStyle = EventNamingStyle.camelCaseWithExtraOnPrefix;
 
 const containerService = new ContainerService();
-const translaterService = new TranslaterService();
+const translaterService = new TranslaterI18NextService();
 const backendUtilityService = new BackendUtilityService();
 const gridEventService = new GridEventService();
 const sharedService = new SharedService();
@@ -394,6 +395,18 @@ function initialization() {
   backendServiceApi = _gridOptions.value?.backendServiceApi;
   isLocalGrid = !backendServiceApi; // considered a local grid if it doesn't have a backend service set
 
+  // inject the I18Next instance when translation is enabled
+  if (_gridOptions.value?.enableTranslate || _gridOptions.value?.i18n) {
+    i18next = inject<i18n | null>('i18next', null);
+    if (i18next) {
+      translaterService.i18nInstance = i18next;
+    } else {
+      throw new Error(
+        "[Slickgrid-Vue] Enabling translation requires you to provide I18Next in your App, for example: `provide('i18next', useTranslation().i18next)`."
+      );
+    }
+  }
+
   // unless specified, we'll create an internal postProcess callback (currently only available for GraphQL)
   if (_gridOptions.value?.backendServiceApi && !_gridOptions.value.backendServiceApi?.disableInternalPostProcess) {
     createBackendApiInternalPostProcessCallback(_gridOptions.value as GridOption);
@@ -596,7 +609,9 @@ function initialization() {
 function disposing(shouldEmptyDomElementContainer = false) {
   eventPubSubService.publish('onBeforeGridDestroy', grid);
   eventHandler?.unsubscribeAll();
-  i18next.off('languageChanged');
+  if (typeof i18next?.off === 'function') {
+    i18next?.off('languageChanged');
+  }
 
   // we could optionally also empty the content of the grid container DOM element
   if (shouldEmptyDomElementContainer) {
@@ -716,20 +731,22 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
   }
 
   // on locale change, we have to manually translate the Headers, GridMenu
-  i18next.on('languageChanged', (lang: string) => {
-    // publish event of the same name that Slickgrid-Universal uses on a language change event
-    eventPubSubService.publish('onLanguageChange');
+  if (typeof i18next?.on === 'function') {
+    i18next?.on('languageChanged', (lang: string) => {
+      // publish event of the same name that Slickgrid-Universal uses on a language change event
+      eventPubSubService.publish('onLanguageChange');
 
-    if (gridOptions.enableTranslate) {
-      extensionService.translateAllExtensions(lang);
-      if (
-        (gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) ||
-        (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)
-      ) {
-        headerGroupingService.translateHeaderGrouping();
+      if (gridOptions.enableTranslate) {
+        extensionService.translateAllExtensions(lang);
+        if (
+          (gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) ||
+          (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)
+        ) {
+          headerGroupingService.translateHeaderGrouping();
+        }
       }
-    }
-  });
+    });
+  }
 
   // if user set an onInit Backend, we'll run it right away (and if so, we also need to run preProcess, internalPostProcess & postProcess)
   if (gridOptions.backendServiceApi) {
