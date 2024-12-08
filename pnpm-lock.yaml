@@ -331,12 +331,6 @@ importers:
       dequal:
         specifier: ^2.0.3
         version: 2.0.3
-      i18next:
-        specifier: ^24.0.2
-        version: 24.0.2(typescript@5.6.3)
-      i18next-vue:
-        specifier: ^5.0.0
-        version: 5.0.0(i18next@24.0.2(typescript@5.6.3))(vue@3.5.13(typescript@5.6.3))
       sortablejs:
         specifier: ^1.15.6
         version: 1.15.6
@@ -347,6 +341,12 @@ importers:
       conventional-changelog:
         specifier: ^6.0.0
         version: 6.0.0(conventional-commits-filter@5.0.0)
+      i18next:
+        specifier: ^24.0.2
+        version: 24.0.2(typescript@5.6.3)
+      i18next-vue:
+        specifier: ^5.0.0
+        version: 5.0.0(i18next@24.0.2(typescript@5.6.3))(vue@3.5.13(typescript@5.6.3))
       sass:
         specifier: ^1.81.0
         version: 1.81.0
