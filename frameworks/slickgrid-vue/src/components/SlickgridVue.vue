@@ -610,7 +610,7 @@ function disposing(shouldEmptyDomElementContainer = false) {
   eventPubSubService.publish('onBeforeGridDestroy', grid);
   eventHandler?.unsubscribeAll();
   if (typeof i18next?.off === 'function') {
-    i18next?.off('languageChanged');
+    i18next.off('languageChanged');
   }
 
   // we could optionally also empty the content of the grid container DOM element
@@ -732,7 +732,7 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
 
   // on locale change, we have to manually translate the Headers, GridMenu
   if (typeof i18next?.on === 'function') {
-    i18next?.on('languageChanged', (lang: string) => {
+    i18next.on('languageChanged', (lang: string) => {
       // publish event of the same name that Slickgrid-Universal uses on a language change event
       eventPubSubService.publish('onLanguageChange');
 
