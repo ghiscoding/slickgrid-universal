@@ -70,8 +70,6 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "^2.0.3",
-    "i18next": "^24.0.2",
-    "i18next-vue": "^5.0.0",
     "sortablejs": "^1.15.6"
   },
   "peerDependencies": {
@@ -80,6 +78,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "conventional-changelog": "^6.0.0",
+    "i18next": "^24.0.2",
+    "i18next-vue": "^5.0.0",
     "sass": "^1.81.0",
     "semver": "^7.6.3",
     "strong-log-transformer": "^2.1.0",
