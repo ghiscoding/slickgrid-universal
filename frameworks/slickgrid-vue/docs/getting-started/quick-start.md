@@ -78,6 +78,8 @@ provide('i18next', useTranslation().i18next);
 </script>
 ```
 
+> Currently only `i18next` (and `i18next-vue`) is implemented and supported. If anyone is interested in implementing `vue-i18n` then please reach out. Side note, `i18next` is easier to implement and is also being used in a couple of SlickGrid framework ports which help in consistency.
+
 ### 5. Create a basic grid
 
 ```vue
