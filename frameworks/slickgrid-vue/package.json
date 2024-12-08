@@ -53,7 +53,7 @@
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "clean": "rimraf dist",
-    "vue:dev": "vite build --watch",
+    "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
     "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
     "clone:dts": "node clone-dts.mjs",
@@ -79,6 +79,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "conventional-changelog": "^6.0.0",
+    "cross-env": "^7.0.3",
     "i18next": "^24.0.2",
     "i18next-vue": "^5.0.0",
     "sass": "^1.81.0",

@@ -341,6 +341,9 @@ importers:
       conventional-changelog:
         specifier: ^6.0.0
         version: 6.0.0(conventional-commits-filter@5.0.0)
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       i18next:
         specifier: ^24.0.2
         version: 24.0.2(typescript@5.6.3)
