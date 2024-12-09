@@ -11,8 +11,9 @@
 [![Vitest](https://img.shields.io/badge/tested%20with-vitest-fcc72b.svg?logo=vitest)](https://vitest.dev/)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
+### 📢 VueJS Support
 > [!NOTE]
-> 📢 VueJS is now supported via a new [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) Component 🚀. One major difference compare to the other ports is that the code is included directly in here under the [`/frameworks`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder, eventually all other ports will also move in here (scheduled for our next major version).
+> VueJS is now supported via a new [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) Component 🚀. One major difference compare to the other existing framework ports is that this new one is included directly in here under the [`/frameworks`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder, eventually all other framework ports will also be moved in here (it is scheduled for our next major version).
 
 ### Documentation
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
@@ -25,7 +26,7 @@ Also available in Stackblitz (Codeflow) below, this can also be used to provide 
 [![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/ghiscoding/slickgrid-universal)
 
 ### Description
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. It was originally requiring SlickGrid as an external dependency, but since v4.0, that is no longer the case and it is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however the goal of the project here is to offer an all assembled product that already includes a set of built-in Editors, Filters, Formatters while also offering extra (but optional) packages like OData, GraphQL, Export to Excel ... which SlickGrid simply does not offer by default. The project also provides multiple Themes including Dark Mode. See below for more project details.
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. It was originally requiring SlickGrid as an external dependency, but since v4.0, that is no longer the case and it is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any frameworks (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however the goal of the project here is to offer an all assembled product that already includes a set of built-in Editors, Filters, Formatters while also offering extra (but optional) packages like OData, GraphQL, Export to Excel ... which SlickGrid simply does not offer by default. The project also provides multiple Themes including Dark Mode. See below for more project details.
 
 ### Why create this monorepo?
 Below is a list of reasons why this project was created and why it is a monorepo project:
