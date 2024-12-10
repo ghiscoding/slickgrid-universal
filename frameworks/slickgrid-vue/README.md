@@ -9,10 +9,7 @@
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml)
 
 > [!WARNING]
-> Please note that Slickgrid-Vue is still in active development and usage might change depending on the feedback provided by external users like you. However, I don't expect much changes, all examples seem to work as intended. Give it a try!
-
-### Brief introduction
-One of the best JavasSript data grid [SlickGrid](https://github.com/mleibman/SlickGrid), which was originally developed by @mleibman, is now available to the Vue world. SlickGrid beats most other data grids in terms of features, customizability & performance (running smoothly with even a million rows). Slickgrid-Vue is a wrapper on top of [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal/) (which is a dependency).
+> Please note that Slickgrid-Vue is still in active development and usage might change depending on the feedback provided by external users like you. However, I don't expect much changes, all examples seem to work as expected. Give it a try!
 
 ## Documentation
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) website powered by GitBook.
@@ -23,12 +20,37 @@ One of the best JavasSript data grid [SlickGrid](https://github.com/mleibman/Sli
 npm install slickgrid-vue
 ```
 
+#### Basic Usage
+
+```vue
+<script setup lang="ts">
+import { type Column, type GridOption, SlickgridVue } from 'slickgrid-vue';
+
+const gridOptions = ref<GridOption>({ /*...*/ });
+const columnDefinitions = ref<Column[]>([
+  { id: 'username', name: 'Username', field: 'username'},
+  { id: 'age', name: 'Age', field: 'age' }
+]);
+const dataset = ref<any[]>([
+  { id: 1, username: 'John', age: 20 },
+  { id: 2, username: 'Jane', age: 21 }
+]);
+</script>
+
+<SlickgridVue
+    v-model:options="gridOptions"
+    v-model:columns="columnDefinitions"
+    v-model:data="dataset"
+    grid-id="grid1"
+/>
+```
+
 #### Requirements 
 - Vue >=3.4
   
 ### Stackblitz
 
-You can even play with the [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) Stackblitz live. It can also be use to provide a repro when opening any new bug/feature requests.
+You can even play with the [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) Stackblitz live. It is recommended as a way provide a repro when opening a new bug/feature request.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
 
@@ -57,7 +79,7 @@ For a complete set of working demos (40+ examples), we strongly suggest you to c
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
 
 ### Tested with [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Examples are tested with [Cypress](https://www.cypress.io/) as E2E tests.
+Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Examples are tested with [Cypress](https://www.cypress.io/) as E2E tests and that is whenever a new PR is created.
 
 ### Like it? ⭐ it
 You like **Slickgrid-Vue**? Be sure to upvote ⭐, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) and feel free to contribute. 👷👷‍♀️
