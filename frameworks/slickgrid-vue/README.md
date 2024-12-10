@@ -31,7 +31,7 @@ const columnDefinitions = ref<Column[]>([
   { id: 'username', name: 'Username', field: 'username'},
   { id: 'age', name: 'Age', field: 'age' }
 ]);
-const dataset = ref<any[]>([
+const dataset = ref([
   { id: 1, username: 'John', age: 20 },
   { id: 2, username: 'Jane', age: 21 }
 ]);
