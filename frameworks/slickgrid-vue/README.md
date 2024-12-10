@@ -37,12 +37,12 @@ const dataset = ref<any[]>([
 ]);
 </script>
 
-<SlickgridVue
+<slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
     v-model:data="dataset"
     grid-id="grid1"
-/>
+></slickgrid-vue>
 ```
 
 #### Requirements 
