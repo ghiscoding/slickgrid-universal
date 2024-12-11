@@ -197,7 +197,7 @@ containerService.registerInstance('SortService', sortService);
 containerService.registerInstance('TranslaterService', translaterService);
 containerService.registerInstance('TreeDataService', treeDataService);
 
-const gridOptionsModel = defineModel<GridOption>('options', { required: true });
+const gridOptionsModel = defineModel<GridOption>('options');
 _gridOptions.value = { ...GlobalGridOptions, ...gridOptionsModel.value };
 
 const _paginationOptions = ref<Pagination | undefined>();
@@ -283,9 +283,9 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
-  if (!_gridOptions.value || !columnDefinitionsModel.value) {
+  if (!columnDefinitionsModel.value) {
     throw new Error(
-      'Using `<Slickgrid-Vue>` requires `v-model:options` and `v-model:columns` props, it seems that you might have forgot to provide them since at least of them is undefined.'
+      'Using `<Slickgrid-Vue>` requires `v-model:columns` props, it seems that you might have forgot to provide the missing bindable model.'
     );
   }
 
