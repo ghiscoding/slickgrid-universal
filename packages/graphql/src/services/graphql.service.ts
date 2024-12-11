@@ -158,7 +158,7 @@ export class GraphqlService implements BackendService {
           ?? this.options?.paginationOptions?.first
           ?? this.pagination?.pageSize
           ?? this.defaultPaginationOptions.first;
-        datasetFilters.offset = paginationOptions?.hasOwnProperty('offset') ? +(paginationOptions as any)['offset'] : 0;
+        datasetFilters.offset = (paginationOptions && 'offset' in paginationOptions) ? +paginationOptions.offset! : 0;
       }
     }
 
@@ -285,7 +285,7 @@ export class GraphqlService implements BackendService {
     };
 
     // unless user specifically set "enablePagination" to False, we'll update pagination options in every other cases
-    if (this._gridOptions && (this._gridOptions.enablePagination || !this._gridOptions.hasOwnProperty('enablePagination') || this.options?.infiniteScroll)) {
+    if (this._gridOptions && (this._gridOptions.enablePagination || !('enablePagination' in this._gridOptions) || this.options?.infiniteScroll)) {
       this.updateOptions({ paginationOptions });
     }
   }
@@ -402,7 +402,7 @@ export class GraphqlService implements BackendService {
     }
 
     for (const columnId in columnFilters) {
-      if (columnFilters.hasOwnProperty(columnId)) {
+      if (columnId in columnFilters) {
         const columnFilter = (columnFilters as any)[columnId];
 
         // if user defined some "presets", then we need to find the filters from the column definitions instead

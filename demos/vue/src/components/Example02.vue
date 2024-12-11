@@ -134,7 +134,7 @@ function defineGrid() {
       minWidth: 100,
       formatter: customEnableButtonFormatter,
       onCellClick: (_e, args) => {
-        toggleCompletedProperty(args && args.dataContext);
+        toggleCompletedProperty(args?.dataContext);
       },
     },
   ];
