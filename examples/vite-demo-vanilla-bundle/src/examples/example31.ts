@@ -52,17 +52,31 @@ export default class Example31 {
       const dataEntryObj = {};
 
       if (rowIndex === 0) {
+        // the 1st row is considered to be the header titles, we can create the column definitions from it
         for (const cellVal of cellValues) {
           const camelFieldName = toCamelCase(cellVal);
-          columnDefinitions.push({ id: camelFieldName, name: cellVal, field: camelFieldName, filterable: true, sortable: true });
+          columnDefinitions.push({
+            id: camelFieldName,
+            name: cellVal,
+            field: camelFieldName,
+            filterable: true,
+            sortable: true,
+            type: isNaN(cellVal as any) ? 'string' : 'number'
+          });
         }
       } else {
-        // at this point all column defs were created and we can loop through them
-        // we can now start adding data as an object and then push it to the data array
+        // at this point all column defs were created and we can loop through them and
+        // we can now start adding data as an object and then simply push it to the dataset array
         cellValues.forEach((cellVal, colIndex) => {
           dataEntryObj[columnDefinitions[colIndex].id] = cellVal;
         });
-        dataset.push({ ...dataEntryObj, id: rowIndex }); // make sure to include a unique "id"
+
+        // a unique "id" must be provided, if not found then use the row index and push it to the dataset
+        if ('id' in dataEntryObj) {
+          dataset.push(dataEntryObj);
+        } else {
+          dataset.push({ ...dataEntryObj, id: rowIndex });
+        }
       }
     });
 
