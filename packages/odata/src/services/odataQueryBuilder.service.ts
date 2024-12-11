@@ -39,7 +39,7 @@ export class OdataQueryBuilderService {
     const queryTmpArray = [];
 
     // When enableCount is set, add it to the OData query
-    if (this._odataOptions && this._odataOptions.enableCount === true) {
+    if (this._odataOptions?.enableCount === true) {
       const countQuery = (this._odataOptions.version && this._odataOptions.version >= 4) ? '$count=true' : '$inlinecount=allpages';
       queryTmpArray.push(countQuery);
     }
@@ -120,7 +120,7 @@ export class OdataQueryBuilderService {
   }
 
   removeColumnFilter(fieldName: string): void {
-    if (this._columnFilters && this._columnFilters.hasOwnProperty(fieldName)) {
+    if (this._columnFilters && fieldName in this._columnFilters) {
       delete this._columnFilters[fieldName];
     }
   }
@@ -138,7 +138,7 @@ export class OdataQueryBuilderService {
    */
   updateOptions(options: Partial<OdataOption>): void {
     for (const property of Object.keys(options)) {
-      if (options.hasOwnProperty(property)) {
+      if (property in options) {
         this._odataOptions[property as keyof OdataOption] = options[property as keyof OdataOption]; // replace of the property
       }
 
@@ -168,7 +168,7 @@ export class OdataQueryBuilderService {
   // -------------------
 
   protected addToFilterQueueWhenNotExists(filterStr: string): void {
-    if (this._odataOptions.filterQueue && this._odataOptions.filterQueue.indexOf(filterStr) === -1) {
+    if (this._odataOptions.filterQueue?.indexOf(filterStr) === -1) {
       this._odataOptions.filterQueue.push(filterStr);
     }
   }

@@ -385,7 +385,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>Support multi-sort (by default), hold "Shift" key and click on the next column to sort.</li>
       <li>All column types support the following operators: (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *)</li>
       <ul>
-        <li>Example: >100 ... >=2001-01-01 ... >02/28/17</li>
+        <li>Example: &gt;100 ... &gt;=2001-01-01 ... &gt;02/28/17</li>
         <li>
           <b>Note:</b> For filters to work properly (default is string), make sure to provide a FieldType (type is against the
           dataset, not the Formatter)
