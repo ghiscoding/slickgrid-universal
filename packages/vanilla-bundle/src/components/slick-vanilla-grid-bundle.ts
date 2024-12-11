@@ -70,7 +70,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _darkMode = false;
   protected _collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
   protected _columnDefinitions?: Column<TData>[];
-  protected _gridOptions?: GridOption;
+  protected _gridOptions: GridOption = {};
   protected _gridContainerElm!: HTMLElement;
   protected _gridParentContainerElm!: HTMLElement;
   protected _hideHeaderRowAfterPageLoad = false;
@@ -216,6 +216,7 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   set gridOptions(options: GridOption) {
+    options ??= {} as GridOption;
     let mergedOptions: GridOption;
 
     // if we already have grid options, when grid was already initialized, we'll merge with those options
