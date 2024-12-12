@@ -31,6 +31,7 @@ import Example27 from './examples/example27.js';
 import Example28 from './examples/example28.js';
 import Example29 from './examples/example29.js';
 import Example30 from './examples/example30.js';
+import Example31 from './examples/example31.js';
 
 export class AppRouting {
   constructor(private config: RouterConfig) {
@@ -67,6 +68,7 @@ export class AppRouting {
       { route: 'example28', name: 'example28', view: './examples/example28.html', viewModel: Example28, title: 'Example28', },
       { route: 'example29', name: 'example29', view: './examples/example29.html', viewModel: Example29, title: 'Example29', },
       { route: 'example30', name: 'example30', view: './examples/example30.html', viewModel: Example30, title: 'Example30', },
+      { route: 'example31', name: 'example31', view: './examples/example31.html', viewModel: Example31, title: 'Example31', },
       { route: '', redirect: 'example01' },
       { route: '**', redirect: 'example01' }
     ];
