@@ -54,7 +54,7 @@ export default class Example31 {
     // create column definitions
     dataRows.forEach((dataRow, rowIndex) => {
       const cellValues = dataRow.split(',');
-      const dataEntryObj = {};
+      const dataEntryObj: any = {};
 
       if (rowIndex === 0) {
         // the 1st row is considered to be the header titles, we can create the column definitions from it
