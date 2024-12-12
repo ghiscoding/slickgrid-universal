@@ -42,6 +42,7 @@ import Example39 from '../components/Example39.vue';
 import Example40 from '../components/Example40.vue';
 import Example41 from '../components/Example41.vue';
 import Example42 from '../components/Example42.vue';
+import Example43 from '../components/Example43.vue';
 import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -88,6 +89,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example40', name: '40- Infinite Scroll from JSON data', component: Example40 },
   { path: '/example41', name: '41- Drag & Drop', component: Example41 },
   { path: '/example42', name: '42- Custom Pagination', component: Example42 },
+  { path: '/example43', name: '43- Create Grid from CSV', component: Example43 },
 ];
 
 export const router = createRouter({
