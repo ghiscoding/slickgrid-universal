@@ -11,6 +11,10 @@ const templateUrl = ref(new URL('./data/users.csv', import.meta.url).href);
 const uploadFileRef = ref('');
 const showSubTitle = ref(true);
 
+function destroyGrid() {
+  gridCreated.value = false;
+}
+
 function handleFileImport(event: any) {
   const file = event.target.files[0];
   if (file) {
@@ -133,6 +137,7 @@ function toggleSubTitle() {
       <button id="uploadBtn" data-test="static-data-btn" class="btn btn-outline-secondary" @click="handleDefaultCsv">
         Use default CSV data
       </button>
+      <button class="btn btn-outline-secondary" @click="destroyGrid()">Destroy Grid</button>
     </div>
   </div>
 
