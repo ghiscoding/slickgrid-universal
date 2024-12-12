@@ -137,7 +137,7 @@ function toggleSubTitle() {
       <button id="uploadBtn" data-test="static-data-btn" class="btn btn-outline-secondary" @click="handleDefaultCsv">
         Use default CSV data
       </button>
-      <button class="btn btn-outline-secondary" @click="destroyGrid()">Destroy Grid</button>
+      <button class="btn btn-outline-secondary ms-1" @click="destroyGrid()">Destroy Grid</button>
     </div>
   </div>
 
