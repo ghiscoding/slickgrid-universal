@@ -11,7 +11,7 @@ const templateUrl = ref(new URL('./data/users.csv', import.meta.url).href);
 const uploadFileRef = ref('');
 const showSubTitle = ref(true);
 
-function destroyGrid() {
+function disposeGrid() {
   gridCreated.value = false;
 }
 
@@ -137,7 +137,7 @@ function toggleSubTitle() {
       <button id="uploadBtn" data-test="static-data-btn" class="btn btn-outline-secondary" @click="handleDefaultCsv">
         Use default CSV data
       </button>
-      <button class="btn btn-outline-secondary ms-1" @click="destroyGrid()">Destroy Grid</button>
+      <button class="btn btn-outline-secondary ms-1" @click="disposeGrid()">Destroy Grid</button>
     </div>
   </div>
 
