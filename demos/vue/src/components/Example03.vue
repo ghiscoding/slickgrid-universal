@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import fetchJsonp from 'fetch-jsonp';
 import {
   type AutocompleterOption,
   type Column,
@@ -26,6 +25,7 @@ import SAMPLE_COLLECTION_DATA from './data/collection_100_numbers.json';
 import SAMPLE_COLLECTION_DATA_URL from './data/collection_100_numbers.json?url';
 import COUNTRIES_COLLECTION from './data/countries.json';
 import COUNTRY_NAMES from './data/country_names.json';
+import fetchJsonp from './jsonp.js';
 
 const NB_ITEMS = 100;
 
@@ -289,11 +289,8 @@ function defineGrid() {
           minLength: 3,
           forceUserInput: true,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
-            /** with Fetch, note this demo won't work because of CORS */
-            // this.http.get(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`).subscribe(data => updateCallback(data));
-
-            /** with JSONP AJAX will work locally but not on the GitHub demo because of CORS */
-            fetchJsonp(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)
+            /** with JSONP it will work locally but not on the GitHub demo because of CORS */
+            fetchJsonp<string[]>(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`, { crossorigin: true })
               .then((response) => response.json())
               .then((json) => updateCallback(json))
               .catch((ex) => console.log('invalid JSONP response', ex));
@@ -312,10 +309,7 @@ function defineGrid() {
         filterOptions: {
           minLength: 3,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
-            /** with Fetch, note this demo won't work because of CORS */
-            // this.http.get(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`).subscribe(data => updateCallback(data));
-
-            /** with JSONP AJAX will work locally but not on the GitHub demo because of CORS */
+            /** with JSONP will work locally but not on the GitHub demo because of CORS */
             fetchJsonp(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)
               .then((response) => response.json())
               .then((json) => updateCallback(json))
