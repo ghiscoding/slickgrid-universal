@@ -7,6 +7,7 @@ describe('Draggable class', () => {
   let dg: any;
 
   beforeEach(() => {
+    vi.resetAllMocks();
     containerElement = document.createElement('div');
   });
 

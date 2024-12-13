@@ -109,7 +109,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid-Universal] Zoom level other than 100% is not supported');
   });
 
   it('should not display a console warning when body zoom is not defined', () => {
@@ -121,7 +121,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid-Universal] Zoom level other than 100% is not supported');
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
