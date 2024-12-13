@@ -2,7 +2,7 @@
   '$schema': 'https://docs.renovatebot.com/renovate-schema.json',
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['dependencies'],
-  dependencyDashboard: false,
+  dependencyDashboard: true,
   pin: false,
   rangeStrategy: 'bump',
   packageRules: [
