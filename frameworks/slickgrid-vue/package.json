@@ -3,7 +3,6 @@
   "version": "0.1.2",
   "description": "Slickgrid-Vue",
   "type": "module",
-  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -11,10 +10,6 @@
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
       }
     },
     "./package.json": "./package.json"

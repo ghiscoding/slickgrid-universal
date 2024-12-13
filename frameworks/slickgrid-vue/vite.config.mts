@@ -20,8 +20,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'SlickgridVue',
-      formats: ['es', 'cjs'],
+      formats: ['es'],
       fileName: format => format === 'cjs' ? 'index.cjs' : 'index.mjs',
     },
     rollupOptions: {
