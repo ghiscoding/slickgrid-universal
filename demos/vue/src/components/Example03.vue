@@ -290,7 +290,7 @@ function defineGrid() {
           forceUserInput: true,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
             /** with JSONP it will work locally but not on the GitHub demo because of CORS */
-            fetchJsonp<string[]>(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`, { crossorigin: true })
+            fetchJsonp<string[]>(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)
               .then((response) => response.json())
               .then((json) => updateCallback(json))
               .catch((ex) => console.log('invalid JSONP response', ex));
