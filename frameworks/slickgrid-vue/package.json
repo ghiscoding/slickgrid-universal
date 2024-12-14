@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-vue",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Slickgrid-Vue",
   "type": "module",
   "module": "./dist/index.mjs",
