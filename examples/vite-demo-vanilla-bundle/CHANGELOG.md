@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.2...v5.11.0) (2024-12-14)
+
+### Features
+
+* create new Slickgrid-Vue package to support VueJS framework ([#1753](https://github.com/ghiscoding/slickgrid-universal/issues/1753)) ([ec4323b](https://github.com/ghiscoding/slickgrid-universal/commit/ec4323bfd201012c767e2614f3c390c6479ce00e)) - by @ghiscoding
+* dynamically create grid from imported CSV data ([#1772](https://github.com/ghiscoding/slickgrid-universal/issues/1772)) ([2c32450](https://github.com/ghiscoding/slickgrid-universal/commit/2c32450ace636e77cbccf2f7cec972f357edbceb)) - by @ghiscoding
+* **vue:** dynamically create grid from imported CSV data ([#1773](https://github.com/ghiscoding/slickgrid-universal/issues/1773)) ([d67d339](https://github.com/ghiscoding/slickgrid-universal/commit/d67d339519299db070d0f693a0b51710c8e3896a)) - by @ghiscoding
+
+### Bug Fixes
+
+* add missing Collection Observer disconnect method ([#1761](https://github.com/ghiscoding/slickgrid-universal/issues/1761)) ([68a2110](https://github.com/ghiscoding/slickgrid-universal/commit/68a21109376358f2f0241445f02c46b297d66c80)) - by @ghiscoding
+
 ## [5.10.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.1...v5.10.2) (2024-11-30)
 
 ### Bug Fixes
