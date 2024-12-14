@@ -58,6 +58,7 @@ describe('SliderRangeFilter', () => {
   });
 
   afterEach(() => {
+    vi.resetAllMocks();
     filter.destroy();
   });
 

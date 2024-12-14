@@ -566,6 +566,7 @@ describe('SortService', () => {
     const spyPostProcess = vi.fn();
 
     beforeEach(() => {
+      vi.resetAllMocks();
       gridOptionMock.backendServiceApi = {
         service: backendServiceStub,
         preProcess: spyPreProcess,
