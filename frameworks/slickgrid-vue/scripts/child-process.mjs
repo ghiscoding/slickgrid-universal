@@ -18,7 +18,7 @@ export function execAsyncPiped(command, execArgs, execOpts, cmdDryRun) {
     nodeOptions: {
       ...execOpts,
       stdio: ['pipe'],
-    }
+    },
   };
   const spawned = spawnProcess(command, execArgs, options, cmdDryRun);
 
@@ -33,9 +33,7 @@ export function execAsyncPiped(command, execArgs, execOpts, cmdDryRun) {
  * @param {Boolean} [cmdDryRun] - dry-run flag
  */
 export async function execAsync(command, args, opts, cmdDryRun = false) {
-  return cmdDryRun
-    ? logExecDryRunCommand(command, args)
-    : (await x('git', args, opts)).stdout.trim();
+  return cmdDryRun ? logExecDryRunCommand(command, args) : (await x('git', args, opts)).stdout.trim();
 }
 
 /**
@@ -62,16 +60,17 @@ export function logExecDryRunCommand(command, args) {
  * @param {import("tinyexec").Options} execOpts - tinyexec options
  * @returns {Promise<any>}
  */
-export async function spawnProcess(
-  command,
-  args,
-  execOpts,
-  cmdDryRun = false
-) {
+export async function spawnProcess(command, args, execOpts, cmdDryRun = false) {
   if (cmdDryRun) {
     return logExecDryRunCommand(command, args);
   }
-  const child = x(command, args, execOpts);
+  const options = {
+    ...execOpts,
+    nodeOptions: {
+      stdio: ['pipe', 'inherit', 'inherit'],
+    },
+  };
+  const child = x(command, args, options);
   const drain = (_code, signal) => {
     children.delete(child);
 
@@ -97,18 +96,13 @@ export async function spawnProcess(
  * @param {Boolean} [cmdDryRun=false]
  */
 // istanbul ignore next
-export function spawnStreaming(
-  command,
-  args,
-  opts,
-  prefix,
-  cmdDryRun = false
-) {
+export function spawnStreaming(command, args, opts, prefix, cmdDryRun = false) {
   const options = {
     ...opts,
     nodeOptions: {
-      stdio: ['ignore', 'pipe'],
-    }
+      stdio: ['pipe', 'inherit', 'inherit'],
+    },
+    throwOnError: false,
   };
 
   if (cmdDryRun) {
