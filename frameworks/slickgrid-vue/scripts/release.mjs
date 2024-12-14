@@ -1,4 +1,4 @@
-import { copyFileSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { copyFileSync, renameSync } from 'node:fs';
 import { dirname as pDirname, join as pJoin, resolve as pResolve } from 'node:path';
 import readline from 'node:readline';
 import { fileURLToPath } from 'node:url';
@@ -11,12 +11,12 @@ import { hideBin } from 'yargs/helpers';
 import { updateChangelog } from './changelog.mjs';
 import { execAsyncPiped, spawnStreaming } from './child-process.mjs';
 import { readJSONSync, writeJsonSync } from './fs-utils.mjs';
-import { gitAdd, gitCommit, gitTag, gitTagPushRemote, gitPushToCurrentBranch, hasUncommittedChanges } from './git-utils.mjs';
+import { gitAdd, gitCommit, gitPushToCurrentBranch, hasUncommittedChanges } from './git-utils.mjs';
 import { publishPackage, syncLockFile } from './npm-utils.mjs';
 
 const PUBLISH_CLEAN_FIELDS = ['devDependencies', 'scripts'];
 const TAG_PREFIX = '';
-const VERSION_PREFIX = 'v';
+// const VERSION_PREFIX = 'v';
 const RELEASE_COMMIT_MSG = 'chore(release): publish version %s';
 
 const cwd = process.cwd();
@@ -66,7 +66,7 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
     versionIncrements.push({
       key: bumpType.bump,
       name: `${bumpType.bump} (${c.bold(c.magenta(bumpVersion(bumpType.bump, false)))}) ${bumpType.desc}`,
-      value: bumpType.bump
+      value: bumpType.bump,
     });
   }
   versionIncrements.push(
@@ -108,11 +108,14 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
 
     // 5. Create/Update changelog.md
     console.log('Updating Changelog');
-    await updateChangelog({
-      infile: './CHANGELOG.md',
-      preset: 'angular',
-      tagPrefix: TAG_PREFIX,
-    }, newVersion);
+    await updateChangelog(
+      {
+        infile: './CHANGELOG.md',
+        preset: 'angular',
+        tagPrefix: TAG_PREFIX,
+      },
+      newVersion
+    );
 
     // 6. Update (sync) npm lock file
     await syncLockFile({ cwd, dryRun: argv.dryRun });
@@ -121,7 +124,9 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
     await gitAdd(null, { cwd, dryRun: argv.dryRun });
 
     // show git changes to user so he can confirm the changes are ok
-    const shouldCommitChanges = await promptConfirmation(`${c.bgMagenta(dryRunPrefix)} Ready to tag version "${newTag}" and push commits to remote? Choose No to cancel.`);
+    const shouldCommitChanges = await promptConfirmation(
+      `${c.bgMagenta(dryRunPrefix)} Ready to tag version "${newTag}" and push commits to remote? Choose No to cancel.`
+    );
     if (shouldCommitChanges) {
       // 8. create git tag of new release
       // await gitTag(newTag, { cwd, dryRun: argv.dryRun });
@@ -180,9 +185,10 @@ function bumpVersion(bump) {
       const [semverBump, preReleaseType] = bump.split('.');
       // const [oldSemVersion] = oldVersion.match(/^(\d\.\d\.\d)(\-)?((alpha|beta|next)\.\d)?$/) || [];
 
-      if ((preReleaseType === 'alpha' && oldVersion.includes('alpha.'))
-        || (preReleaseType === 'beta' && oldVersion.includes('beta.'))
-        || (preReleaseType === 'beta' && oldVersion.includes('alpha.'))
+      if (
+        (preReleaseType === 'alpha' && oldVersion.includes('alpha.')) ||
+        (preReleaseType === 'beta' && oldVersion.includes('beta.')) ||
+        (preReleaseType === 'beta' && oldVersion.includes('alpha.'))
       ) {
         return semver.inc(oldVersion, 'prerelease', preReleaseType);
       }
@@ -222,10 +228,12 @@ function getConsoleInput(promptText) {
     output: process.stdout,
   });
 
-  return new Promise(resolve => rl.question(promptText, ans => {
-    rl.close();
-    resolve(ans);
-  }));
+  return new Promise((resolve) =>
+    rl.question(promptText, (ans) => {
+      rl.close();
+      resolve(ans);
+    })
+  );
 }
 
 /**
@@ -254,7 +262,7 @@ async function promptConfirmation(message, choices, defaultIndex) {
   }
 
   // get and process input
-  const input = await getConsoleInput(`Enter value (default ${(defaultIndex + 1)}): `);
+  const input = await getConsoleInput(`Enter value (default ${defaultIndex + 1}): `);
   var index = !isNaN(input) && !isNaN(parseFloat(input)) ? +input - 1 : defaultIndex;
   if (index < 0 || index >= choices.length) {
     throw Error(`The input ${input} could not be matched to a selection`);
@@ -263,7 +271,9 @@ async function promptConfirmation(message, choices, defaultIndex) {
 }
 
 async function promptOtp(dryRunPrefix = '') {
-  const otp = await getConsoleInput(`${c.bgMagenta(dryRunPrefix)} If you have an OTP (One-Time-Password), type it now or press "Enter" to continue: \n`);
+  const otp = await getConsoleInput(
+    `${c.bgMagenta(dryRunPrefix)} If you have an OTP (One-Time-Password), type it now or press "Enter" to continue: \n`
+  );
   if (!otp) {
     console.log('No OTP provided, continuing to next step...');
   } else if (otp.length > 0 && otp.length < 6) {
