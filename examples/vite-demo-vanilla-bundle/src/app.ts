@@ -15,7 +15,7 @@ export class App {
   baseUrl = window.location.origin + window.location.pathname;
   routerConfig: RouterConfig = {
     pushState: false,
-    routes: []
+    routes: [],
   };
 
   constructor() {
@@ -44,7 +44,9 @@ export class App {
       }
     }
 
-    let route = this.routerConfig.pushState ? location.pathname.replace(this.stateBangChar, '') : location.hash.replace(this.stateBangChar, '');
+    let route = this.routerConfig.pushState
+      ? location.pathname.replace(this.stateBangChar, '')
+      : location.hash.replace(this.stateBangChar, '');
     if (!route || route === '/') {
       route = this.defaultRouteName;
     }
@@ -53,7 +55,9 @@ export class App {
     // re-render on browser history navigation change
     window.onpopstate = () => {
       const winLoc = window.location;
-      const prevRoute = this.routerConfig.pushState ? winLoc.pathname.replace(this.stateBangChar, '') : winLoc.hash.replace(this.stateBangChar, '');
+      const prevRoute = this.routerConfig.pushState
+        ? winLoc.pathname.replace(this.stateBangChar, '')
+        : winLoc.hash.replace(this.stateBangChar, '');
       this.loadRoute(prevRoute || this.defaultRouteName, false);
     };
   }
@@ -135,7 +139,7 @@ export class App {
     const dropdownElms = document.querySelectorAll('.dropdown:not(.is-hoverable)');
 
     if (dropdownElms.length > 0) {
-      dropdownElms.forEach($el => {
+      dropdownElms.forEach(($el) => {
         this.addElementEventListener($el, 'click', (event) => {
           event.stopPropagation();
           $el.classList.toggle('is-active');
@@ -148,7 +152,7 @@ export class App {
 
   closeDropdowns() {
     const dropdownElms = document.querySelectorAll('.dropdown:not(.is-hoverable)');
-    dropdownElms.forEach($el => $el.classList.remove('is-active'));
+    dropdownElms.forEach(($el) => $el.classList.remove('is-active'));
   }
 
   /** Add event listener for the navbar hamburger menu toggle when menu shows up on mobile */
@@ -163,17 +167,20 @@ export class App {
     // Check if there are any navbar burgers
     if (navbarBurgerElms.length > 0) {
       // Add a click event on each of them
-      navbarBurgerElms.forEach(el => {
-        el.addEventListener('click', () => {
+      navbarBurgerElms.forEach((el) => {
+        el.addEventListener(
+          'click',
+          () => {
+            // Get the target from the "data-target" attribute
+            const target = el.dataset.target as any;
+            const $target = document.getElementById(target) as HTMLDivElement;
 
-          // Get the target from the "data-target" attribute
-          const target = el.dataset.target as any;
-          const $target = document.getElementById(target) as HTMLDivElement;
-
-          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
-        }, { passive: true });
+            // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          },
+          { passive: true }
+        );
       });
     }
   }

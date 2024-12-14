@@ -7,8 +7,7 @@ import { ExampleGridOptions } from './example-grid-options.js';
 import './example04.scss';
 
 export default class Example31 {
-  staticDataCsv =
-    `First Name,Last Name,Age,Type\nBob,Smith,33,Teacher\nJohn,Doe,20,Student\nJane,Doe,21,Student`;
+  staticDataCsv = `First Name,Last Name,Age,Type\nBob,Smith,33,Teacher\nJohn,Doe,20,Student\nJane,Doe,21,Student`;
   private _bindingEventService: BindingEventService;
   sgb: SlickVanillaGridBundle;
 

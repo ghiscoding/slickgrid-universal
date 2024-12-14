@@ -1,6 +1,17 @@
 import { format } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { Aggregators, type Column, FieldType, Filters, type GridOption, type Grouping, type Metrics, type OnRowCountChangedEventArgs, OperatorType, SortComparers, } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  type Column,
+  FieldType,
+  Filters,
+  type GridOption,
+  type Grouping,
+  type Metrics,
+  type OnRowCountChangedEventArgs,
+  OperatorType,
+  SortComparers,
+} from '@slickgrid-universal/common';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -40,7 +51,12 @@ export default class Example26 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid26`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
+    this.sgb = new Slicker.GridBundle(
+      gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      []
+    );
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
@@ -64,35 +80,50 @@ export default class Example26 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', name: 'Name', field: 'name', sortable: true,
+        id: 'name',
+        name: 'Name',
+        field: 'name',
+        sortable: true,
         type: FieldType.string,
         filterable: true,
-        filter: { model: Filters.compoundInput }
+        filter: { model: Filters.compoundInput },
       },
       {
-        id: 'gender', name: 'Gender', field: 'gender', filterable: true, sortable: true,
+        id: 'gender',
+        name: 'Gender',
+        field: 'gender',
+        filterable: true,
+        sortable: true,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', label: 'male' },
+            { value: 'female', label: 'female' },
+          ],
+        },
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
       {
-        id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true,
-        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || ''
-      }
+        id: 'category_name',
+        name: 'Category',
+        field: 'category/name',
+        filterable: true,
+        sortable: true,
+        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || '',
+      },
     ];
 
     this.gridOptions = {
       enableAutoResize: true,
       autoResize: {
         container: '.demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       checkboxSelector: {
         // you can toggle these 2 properties to show the "select all" checkbox in different location
         hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true
+        hideInColumnTitleRow: true,
       },
       enableCellNavigation: true,
       enableFiltering: true,
@@ -117,12 +148,12 @@ export default class Example26 {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               let matchesSearch = searchValues[0].replace(/\*/g, '.*');
               matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
-              matchesSearch = matchesSearch.slice(0, -1) + '$\'';
+              matchesSearch = matchesSearch.slice(0, -1) + "$'";
 
               return `matchesPattern(${fieldName}, ${matchesSearch})`;
             }
           },
-          version: 4
+          version: 4,
         },
         onError: (error: Error) => {
           this.errorStatus = error.message;
@@ -155,12 +186,18 @@ export default class Example26 {
       this.status = 'ERROR!!!';
       this.statusClass = 'notification is-light is-danger';
     } else {
-      this.status = (isProcessing) ? 'loading...' : 'finished!!';
-      this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
+      this.status = isProcessing ? 'loading...' : 'finished!!';
+      this.statusClass = isProcessing ? 'notification is-light is-warning' : 'notification is-light is-success';
     }
   }
 
-  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[]; }) {
+  getCustomerCallback(data: {
+    '@odata.count': number;
+    infiniteScrollBottomHit: boolean;
+    metrics: Metrics;
+    query: string;
+    value: any[];
+  }) {
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
@@ -217,13 +254,13 @@ export default class Example26 {
 
       for (const param of queryParams) {
         if (param.includes('$top=')) {
-          top = +(param.substring('$top='.length));
+          top = +param.substring('$top='.length);
           if (top === 50000) {
             throw new Error('Server timed out retrieving 50,000 rows');
           }
         }
         if (param.includes('$skip=')) {
-          skip = +(param.substring('$skip='.length));
+          skip = +param.substring('$skip='.length);
         }
         if (param.includes('$orderby=')) {
           orderBy = param.substring('$orderby='.length);
@@ -284,7 +321,13 @@ export default class Example26 {
       }
 
       // read the JSON and create a fresh copy of the data that we are free to modify
-      let data = Data as unknown as { name: string; gender: string; company: string; id: string, category: { id: string; name: string; }; }[];
+      let data = Data as unknown as {
+        name: string;
+        gender: string;
+        company: string;
+        id: string;
+        category: { id: string; name: string };
+      }[];
       data = JSON.parse(JSON.stringify(data));
 
       // Sort the data
@@ -320,7 +363,7 @@ export default class Example26 {
       if (columnFilters) {
         for (const columnId in columnFilters) {
           if (columnFilters.hasOwnProperty(columnId)) {
-            filteredData = filteredData.filter(column => {
+            filteredData = filteredData.filter((column) => {
               const filterType = columnFilters[columnId].type;
               const searchTerm = columnFilters[columnId].term;
               let colId = columnId;
@@ -340,17 +383,28 @@ export default class Example26 {
                 const [term1, term2] = Array.isArray(searchTerm) ? searchTerm : [searchTerm];
 
                 switch (filterType) {
-                  case 'eq': return filterTerm.toLowerCase() === term1;
-                  case 'ne': return filterTerm.toLowerCase() !== term1;
-                  case 'le': return filterTerm.toLowerCase() <= term1;
-                  case 'lt': return filterTerm.toLowerCase() < term1;
-                  case 'gt': return filterTerm.toLowerCase() > term1;
-                  case 'ge': return filterTerm.toLowerCase() >= term1;
-                  case 'ends': return filterTerm.toLowerCase().endsWith(term1);
-                  case 'starts': return filterTerm.toLowerCase().startsWith(term1);
-                  case 'starts+ends': return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
-                  case 'substring': return filterTerm.toLowerCase().includes(term1);
-                  case 'matchespattern': return new RegExp((term1 as string).replaceAll(PERCENT_HTML_ESCAPED, '.*'), 'i').test(filterTerm);
+                  case 'eq':
+                    return filterTerm.toLowerCase() === term1;
+                  case 'ne':
+                    return filterTerm.toLowerCase() !== term1;
+                  case 'le':
+                    return filterTerm.toLowerCase() <= term1;
+                  case 'lt':
+                    return filterTerm.toLowerCase() < term1;
+                  case 'gt':
+                    return filterTerm.toLowerCase() > term1;
+                  case 'ge':
+                    return filterTerm.toLowerCase() >= term1;
+                  case 'ends':
+                    return filterTerm.toLowerCase().endsWith(term1);
+                  case 'starts':
+                    return filterTerm.toLowerCase().startsWith(term1);
+                  case 'starts+ends':
+                    return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
+                  case 'substring':
+                    return filterTerm.toLowerCase().includes(term1);
+                  case 'matchespattern':
+                    return new RegExp((term1 as string).replaceAll(PERCENT_HTML_ESCAPED, '.*'), 'i').test(filterTerm);
                 }
               }
             });
@@ -380,11 +434,9 @@ export default class Example26 {
       getter: 'gender',
       formatter: (g) => `Gender: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.string(a.value, b.value),
-      aggregators: [
-        new Aggregators.Sum('gemder')
-      ],
+      aggregators: [new Aggregators.Sum('gemder')],
       aggregateCollapsed: false,
-      lazyTotalsCalculation: true
+      lazyTotalsCalculation: true,
     } as Grouping);
 
     // you need to manually add the sort icon(s) in UI
@@ -400,24 +452,21 @@ export default class Example26 {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.sgb?.filterService.updateFilters([
-      { columnId: 'gender', searchTerms: ['female'] },
-    ]);
+    this.sgb?.filterService.updateFilters([{ columnId: 'gender', searchTerms: ['female'] }]);
   }
 
-  refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs; }>) {
+  refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs }>) {
     const args = event?.detail?.args;
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
-      this.tagDataClass = this.metricsItemCount === this.metricsTotalItemCount
-        ? 'tag tag-data is-primary fully-loaded'
-        : 'tag tag-data is-primary partial-load';
+      this.tagDataClass =
+        this.metricsItemCount === this.metricsTotalItemCount
+          ? 'tag tag-data is-primary fully-loaded'
+          : 'tag tag-data is-primary partial-load';
     }
   }
 
   setSortingDynamically() {
-    this.sgb?.sortService.updateSorting([
-      { columnId: 'name', direction: 'DESC' },
-    ]);
+    this.sgb?.sortService.updateSorting([{ columnId: 'name', direction: 'DESC' }]);
   }
 }

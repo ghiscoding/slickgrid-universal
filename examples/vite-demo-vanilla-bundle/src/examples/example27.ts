@@ -1,13 +1,7 @@
 import { format } from '@formkit/tempo';
-import {
-  type Column,
-  FieldType,
-  Filters,
-  type GridOption,
-  type OnRowCountChangedEventArgs,
-} from '@slickgrid-universal/common';
+import { type Column, FieldType, Filters, type GridOption, type OnRowCountChangedEventArgs } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
 
@@ -36,7 +30,7 @@ export default class Example27 {
   metricsTotalItemCount = 0;
   sgb: SlickVanillaGridBundle;
   tagDataClass = 'tag is-primary tag-data';
-  jsonData: Array<{ id: number; name: string; gender: string; company: string; category: { id: number; name: string; }; }> = [];
+  jsonData: Array<{ id: number; name: string; gender: string; company: string; category: { id: number; name: string } }> = [];
 
   graphqlQuery = '...';
   processing = false;
@@ -65,7 +59,12 @@ export default class Example27 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid27`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
@@ -83,34 +82,49 @@ export default class Example27 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', field: 'name', nameKey: 'NAME', width: 60,
+        id: 'name',
+        field: 'name',
+        nameKey: 'NAME',
+        width: 60,
         type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
           model: Filters.compoundInput,
-        }
+        },
       },
       {
-        id: 'gender', field: 'gender', nameKey: 'GENDER', filterable: true, sortable: true, width: 60,
+        id: 'gender',
+        field: 'gender',
+        nameKey: 'GENDER',
+        filterable: true,
+        sortable: true,
+        width: 60,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', labelKey: 'MALE', }, { value: 'female', labelKey: 'FEMALE', }]
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', labelKey: 'MALE' },
+            { value: 'female', labelKey: 'FEMALE' },
+          ],
+        },
       },
       {
-        id: 'company', field: 'company', nameKey: 'COMPANY', width: 60,
+        id: 'company',
+        field: 'company',
+        nameKey: 'COMPANY',
+        width: 60,
         sortable: true,
         filterable: true,
         filter: {
           model: Filters.multipleSelect,
           collection: this.jsonData
-            .sort((a, b) => a.company < b.company ? -1 : 1)
-            .map(m => ({ value: m.company, label: m.company })),
+            .sort((a, b) => (a.company < b.company ? -1 : 1))
+            .map((m) => ({ value: m.company, label: m.company })),
           filterOptions: {
-            filter: true // adds a filter on top of the multi-select dropdown
-          } as MultipleSelectOption
-        }
+            filter: true, // adds a filter on top of the multi-select dropdown
+          } as MultipleSelectOption,
+        },
       },
     ];
 
@@ -118,11 +132,11 @@ export default class Example27 {
       enableAutoResize: true,
       autoResize: {
         container: '.demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       enableAutoTooltip: true,
       autoTooltipOptions: {
-        enableForHeaderCells: true
+        enableForHeaderCells: true,
       },
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
@@ -138,11 +152,14 @@ export default class Example27 {
         service: this.backendService,
         options: {
           datasetName: GRAPHQL_QUERY_DATASET_NAME, // the only REQUIRED property
-          addLocaleIntoQuery: true,   // optionally add current locale into the query
-          extraQueryArguments: [{     // optionally add some extra query arguments as input query arguments
-            field: 'userId',
-            value: 123
-          }],
+          addLocaleIntoQuery: true, // optionally add current locale into the query
+          extraQueryArguments: [
+            {
+              // optionally add some extra query arguments as input query arguments
+              field: 'userId',
+              value: 123,
+            },
+          ],
           // enable infinite via Boolean OR via { fetchSize: number }
           infiniteScroll: { fetchSize: 30 }, // or use true, in that case it would use default size of 25
         },
@@ -155,8 +172,8 @@ export default class Example27 {
           this.metricsTotalItemCount = result.data[GRAPHQL_QUERY_DATASET_NAME].totalCount || 0;
           this.displaySpinner(false);
           this.getCustomerCallback(result);
-        }
-      } as GraphqlServiceApi
+        },
+      } as GraphqlServiceApi,
     };
   }
 
@@ -168,8 +185,8 @@ export default class Example27 {
 
   displaySpinner(isProcessing) {
     this.processing = isProcessing;
-    this.status = (isProcessing) ? 'loading...' : 'finished!!';
-    this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
+    this.status = isProcessing ? 'loading...' : 'finished!!';
+    this.statusClass = isProcessing ? 'notification is-light is-warning' : 'notification is-light is-success';
   }
 
   getCustomerCallback(result) {
@@ -247,24 +264,35 @@ export default class Example27 {
         let [term1, term2] = value.split(',');
 
         if (field && operator && value !== '') {
-          filteredData = filteredData.filter(dataContext => {
+          filteredData = filteredData.filter((dataContext) => {
             const dcVal = dataContext[field];
             // remove any double quotes & lowercase the terms
             term1 = unescapeAndLowerCase(term1);
             term2 = unescapeAndLowerCase(term2 || '');
 
             switch (operator) {
-              case 'EQ': return dcVal.toLowerCase() === term1;
-              case 'NE': return dcVal.toLowerCase() !== term1;
-              case 'LE': return dcVal.toLowerCase() <= term1;
-              case 'LT': return dcVal.toLowerCase() < term1;
-              case 'GT': return dcVal.toLowerCase() > term1;
-              case 'GE': return dcVal.toLowerCase() >= term1;
-              case 'EndsWith': return dcVal.toLowerCase().endsWith(term1);
-              case 'StartsWith': return dcVal.toLowerCase().startsWith(term1);
-              case 'Starts+Ends': return dcVal.toLowerCase().startsWith(term1) && dcVal.toLowerCase().endsWith(term2);
-              case 'Contains': return dcVal.toLowerCase().includes(term1);
-              case 'Not_Contains': return !dcVal.toLowerCase().includes(term1);
+              case 'EQ':
+                return dcVal.toLowerCase() === term1;
+              case 'NE':
+                return dcVal.toLowerCase() !== term1;
+              case 'LE':
+                return dcVal.toLowerCase() <= term1;
+              case 'LT':
+                return dcVal.toLowerCase() < term1;
+              case 'GT':
+                return dcVal.toLowerCase() > term1;
+              case 'GE':
+                return dcVal.toLowerCase() >= term1;
+              case 'EndsWith':
+                return dcVal.toLowerCase().endsWith(term1);
+              case 'StartsWith':
+                return dcVal.toLowerCase().startsWith(term1);
+              case 'Starts+Ends':
+                return dcVal.toLowerCase().startsWith(term1) && dcVal.toLowerCase().endsWith(term2);
+              case 'Contains':
+                return dcVal.toLowerCase().includes(term1);
+              case 'Not_Contains':
+                return !dcVal.toLowerCase().includes(term1);
               case 'IN':
                 const terms = value.toLocaleLowerCase().split(',');
                 for (const term of terms) {
@@ -287,7 +315,7 @@ export default class Example27 {
     }
 
     // sorting when defined
-    const selector = (obj: any) => orderByField ? obj[orderByField] : obj;
+    const selector = (obj: any) => (orderByField ? obj[orderByField] : obj);
     switch (orderByDir.toUpperCase()) {
       case 'ASC':
         filteredData = filteredData.sort((a, b) => selector(a).localeCompare(selector(b)));
@@ -313,7 +341,7 @@ export default class Example27 {
       },
     };
 
-    return new Promise<GraphqlPaginatedResult>(resolve => {
+    return new Promise<GraphqlPaginatedResult>((resolve) => {
       window.setTimeout(() => {
         this.graphqlQuery = this.gridOptions.backendServiceApi!.service.buildQuery();
         resolve(mockedResult);
@@ -321,18 +349,19 @@ export default class Example27 {
     });
   }
 
-  refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs; }>) {
+  refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs }>) {
     const args = event?.detail?.args;
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
-      this.tagDataClass = this.metricsItemCount === this.metricsTotalItemCount
-        ? 'tag tag-data is-primary fully-loaded'
-        : 'tag tag-data is-primary partial-load';
+      this.tagDataClass =
+        this.metricsItemCount === this.metricsTotalItemCount
+          ? 'tag tag-data is-primary fully-loaded'
+          : 'tag tag-data is-primary partial-load';
     }
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;

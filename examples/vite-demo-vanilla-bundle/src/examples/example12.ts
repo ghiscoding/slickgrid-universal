@@ -33,7 +33,11 @@ import './example12.scss';
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
-  if ((value === null || value === undefined || !value.length) && (args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create' || args.compositeEditorOptions.modalType === 'edit')) {
+  if (
+    (value === null || value === undefined || !value.length) &&
+    ((args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create') ||
+      args.compositeEditorOptions.modalType === 'edit')
+  ) {
     // we will only check if the field is supplied when it's an inline editing OR a composite editor of type create/edit
     return { valid: false, msg: 'This is a required field.' };
   } else if (!/^(task\s\d+)*$/i.test(value)) {
@@ -53,7 +57,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
   const gridOptions = grid.getOptions();
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  let isEditable = (isGridEditable && hasEditor);
+  let isEditable = isGridEditable && hasEditor;
 
   if (dataContext && columnDef && gridOptions?.editable) {
     switch (columnDef.id) {
@@ -75,7 +79,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
   const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
-  value = (value === null || value === undefined) ? '' : value;
+  value = value === null || value === undefined ? '' : value;
   const divElm = document.createElement('div');
   divElm.className = 'editing-field';
   if (value instanceof HTMLElement) {
@@ -94,7 +98,7 @@ export default class Example12 {
   gridOptions: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
-  editQueue: Array<{ item, columns: Column[], editCommand; }> = [];
+  editQueue: Array<{ item; columns: Column[]; editCommand }> = [];
   editedItems = {};
   isCompositeDisabled = false;
   isMassSelectionDisabled = true;
@@ -125,7 +129,10 @@ export default class Example12 {
     this.dataset = this.loadData(500);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid12`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, {
+      ...ExampleGridOptions,
+      ...this.gridOptions,
+    });
     this.sgb.dataset = this.dataset;
     // this.sgb.slickGrid.setActiveCell(0, 0);
 
@@ -137,9 +144,17 @@ export default class Example12 {
     this._bindingEventService.bind(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
-    this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
+    this._bindingEventService.bind(
+      this.gridContainerElm,
+      'oncompositeeditorchange',
+      this.handleOnCompositeEditorChange.bind(this)
+    );
     this._bindingEventService.bind(this.gridContainerElm, 'onrowsorcountchanged', this.handleReRenderUnsavedStyling.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowidschanged', this.handleOnSelectedRowIdsChanged.bind(this));
+    this._bindingEventService.bind(
+      this.gridContainerElm,
+      'onselectedrowidschanged',
+      this.handleOnSelectedRowIdsChanged.bind(this)
+    );
   }
 
   dispose() {
@@ -153,51 +168,89 @@ export default class Example12 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: '<span title="Task must always be followed by a number" class="text-color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
+        id: 'title',
+        name: '<span title="Task must always be followed by a number" class="text-color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
+        field: 'title',
+        sortable: true,
+        type: FieldType.string,
+        minWidth: 75,
         cssClass: 'text-bold text-uppercase',
-        filterable: true, columnGroup: 'Common Factor',
+        filterable: true,
+        columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         editor: {
-          model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true,
+          model: Editors.longText,
+          massUpdate: false,
+          required: true,
+          alwaysSaveOnEnterKey: true,
           maxLength: 12,
           editorOptions: {
             cols: 45,
             rows: 6,
             buttonTexts: {
               cancel: 'Close',
-              save: 'Done'
-            }
+              save: 'Done',
+            },
           } as LongTextEditorOption,
           validator: myCustomTitleValidator,
         },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 75,
-        type: FieldType.number, columnGroup: 'Common Factor',
+        id: 'duration',
+        name: 'Duration',
+        field: 'duration',
+        sortable: true,
+        filterable: true,
+        minWidth: 75,
+        type: FieldType.number,
+        columnGroup: 'Common Factor',
         formatter: (_row, _cell, value) => {
           if (value === null || value === undefined || value === '') {
             return '';
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
+        editor: {
+          model: Editors.float,
+          massUpdate: true,
+          decimal: 2,
+          valueStep: 1,
+          minValue: 0,
+          maxValue: 10000,
+          alwaysSaveOnEnterKey: true,
+          required: true,
+        },
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost', width: 90, minWidth: 70,
-        sortable: true, filterable: true, type: FieldType.number, columnGroup: 'Analysis',
+        id: 'cost',
+        name: 'Cost',
+        field: 'cost',
+        width: 90,
+        minWidth: 70,
+        sortable: true,
+        filterable: true,
+        type: FieldType.number,
+        columnGroup: 'Analysis',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 100,
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        minWidth: 100,
         type: FieldType.number,
-        sortable: true, filterable: true, columnGroup: 'Analysis',
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Analysis',
         filter: { model: Filters.compoundSlider, operator: '>=' },
         editor: {
           model: Editors.slider,
-          massUpdate: true, minValue: 0, maxValue: 100,
+          massUpdate: true,
+          minValue: 0,
+          maxValue: 100,
         },
-        customTooltip: { position: 'center' }
+        customTooltip: { position: 'center' },
       },
       // {
       //   id: 'percentComplete2', name: '% Complete', field: 'analysis.percentComplete', minWidth: 100,
@@ -225,9 +278,14 @@ export default class Example12 {
       //   },
       // },
       {
-        id: 'complexity', name: 'Complexity', field: 'complexity', minWidth: 100,
+        id: 'complexity',
+        name: 'Complexity',
+        field: 'complexity',
+        minWidth: 100,
         type: FieldType.number,
-        sortable: true, filterable: true, columnGroup: 'Analysis',
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Analysis',
         formatter: (_row, _cell, value) => this.complexityLevelList[value]?.label,
         exportCustomFormatter: (_row, _cell, value) => this.complexityLevelList[value]?.label,
         filter: {
@@ -238,35 +296,63 @@ export default class Example12 {
         editor: {
           model: Editors.singleSelect,
           collection: this.complexityLevelList,
-          massUpdate: true
+          massUpdate: true,
         },
       },
       {
-        id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
-        formatter: Formatters.dateUs, columnGroup: 'Period',
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        sortable: true,
+        minWidth: 100,
+        formatter: Formatters.dateUs,
+        columnGroup: 'Period',
         exportCustomFormatter: Formatters.dateUs,
-        type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
-        filterable: true, filter: { model: Filters.compoundDate },
+        type: FieldType.date,
+        outputType: FieldType.dateUs,
+        saveOutputType: FieldType.dateUtc,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, editorOptions: { hideClearButton: false } as SliderOption },
       },
       {
-        id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
-        sortable: true, filterable: true, columnGroup: 'Period', cssClass: 'text-center',
+        id: 'completed',
+        name: 'Completed',
+        field: 'completed',
+        width: 80,
+        minWidth: 75,
+        maxWidth: 100,
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Period',
+        cssClass: 'text-center',
         formatter: Formatters.checkmarkMaterial,
         exportWithFormatter: false,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
           model: Filters.singleSelect,
           filterOptions: { showClear: true } as MultipleSelectOption,
         },
-        editor: { model: Editors.checkbox, massUpdate: true, },
+        editor: { model: Editors.checkbox, massUpdate: true },
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 100,
-        formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
-        filterable: true, filter: { model: Filters.compoundDate },
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        sortable: true,
+        minWidth: 100,
+        formatter: Formatters.dateUs,
+        columnGroup: 'Period',
+        type: FieldType.date,
+        outputType: FieldType.dateUs,
+        saveOutputType: FieldType.dateUtc,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
@@ -285,16 +371,19 @@ export default class Example12 {
           massUpdate: true,
           validator: (value, args) => {
             const dataContext = args && args.item;
-            if (dataContext && (dataContext.completed && !value)) {
+            if (dataContext && dataContext.completed && !value) {
               return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
             }
             return { valid: true, msg: '' };
-          }
+          },
         },
       },
       {
-        id: 'product', name: 'Product', field: 'product',
-        filterable: true, columnGroup: 'Item',
+        id: 'product',
+        name: 'Product',
+        field: 'product',
+        filterable: true,
+        columnGroup: 'Item',
         minWidth: 100,
         exportWithFormatter: true,
         dataKey: 'id',
@@ -313,7 +402,7 @@ export default class Example12 {
             minLength: 1,
             fetch: (searchTerm, callback) => {
               const products = this.mockProducts();
-              callback(products.filter(product => product.itemName.toLowerCase().includes(searchTerm.toLowerCase())));
+              callback(products.filter((product) => product.itemName.toLowerCase().includes(searchTerm.toLowerCase())));
             },
             renderItem: {
               // layout: 'twoRows',
@@ -329,11 +418,14 @@ export default class Example12 {
           // placeholder: '🔎︎ search product',
           type: FieldType.string,
           queryField: 'product.itemName',
-        }
+        },
       },
       {
-        id: 'origin', name: 'Country of Origin', field: 'origin',
-        formatter: Formatters.complexObject, columnGroup: 'Item',
+        id: 'origin',
+        name: 'Country of Origin',
+        field: 'origin',
+        formatter: Formatters.complexObject,
+        columnGroup: 'Item',
         exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
         dataKey: 'code',
         labelKey: 'name',
@@ -352,7 +444,7 @@ export default class Example12 {
             fetch: (searchText, updateCallback) => {
               const countries: any[] = JSON.parse(countriesJson);
               const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(searchText.toLowerCase()));
-              updateCallback(foundCountries.map(item => ({ label: item.name, value: item.code, })));
+              updateCallback(foundCountries.map((item) => ({ label: item.name, value: item.code })));
             },
           } as AutocompleterOption,
         },
@@ -360,13 +452,19 @@ export default class Example12 {
           model: Filters.inputText,
           type: 'string',
           queryField: 'origin.name',
-        }
+        },
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
+        id: 'action',
+        name: 'Action',
+        field: 'action',
+        width: 70,
+        minWidth: 70,
+        maxWidth: 70,
         excludeFromExport: true,
         cssClass: 'justify-center flex',
-        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-dots-vertical mdi-22px text-color-primary"></span></div>`,
+        formatter: () =>
+          `<div class="button-style action-btn"><span class="mdi mdi-dots-vertical mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -387,8 +485,12 @@ export default class Example12 {
             },
             'divider',
             {
-              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'has-text-danger', textCssClass: 'text-italic',
+              command: 'delete-row',
+              title: 'Delete Row',
+              positionOrder: 64,
+              iconCssClass: 'mdi mdi-close',
+              cssClass: 'has-text-danger',
+              textCssClass: 'text-italic',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -398,10 +500,10 @@ export default class Example12 {
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${dataContext.title}"`)) {
                   this.slickerGridInstance?.gridService.deleteItemById(dataContext.id);
                 }
-              }
+              },
             },
           ],
-        }
+        },
       },
     ];
 
@@ -427,17 +529,17 @@ export default class Example12 {
       enablePagination: true,
       pagination: {
         pageSize: 10,
-        pageSizes: [10, 200, 500, 5000]
+        pageSizes: [10, 200, 500, 5000],
       },
       enableExcelExport: true,
       excelExportOptions: {
-        exportWithFormatter: false
+        exportWithFormatter: false,
       },
       externalResources: [new ExcelExportService(), this.compositeEditorInstance],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+        selectActiveRow: false,
       },
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
@@ -454,8 +556,12 @@ export default class Example12 {
       enableCompositeEditor: true,
       editCommandHandler: (item, column, editCommand) => {
         // composite editors values are saved as array, so let's convert to array in any case and we'll loop through these values
-        const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue) ? editCommand.prevSerializedValue : [editCommand.prevSerializedValue];
-        const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
+        const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
+          ? editCommand.prevSerializedValue
+          : [editCommand.prevSerializedValue];
+        const serializedValues = Array.isArray(editCommand.serializedValue)
+          ? editCommand.serializedValue
+          : [editCommand.serializedValue];
         const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
@@ -491,9 +597,9 @@ export default class Example12 {
             this._darkMode = !this._darkMode; // keep local toggle var in sync
             this.toggleBodyBackground();
           }
-        }
+        },
       },
-      skipCompoundOperatorFilterWithNullInput: true
+      skipCompoundOperatorFilterWithNullInput: true,
     };
   }
 
@@ -503,11 +609,11 @@ export default class Example12 {
     for (let i = 0; i < count; i++) {
       const randomItemId = Math.floor(Math.random() * this.mockProducts().length);
       const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomFinishYear = (new Date().getFullYear()) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
+      const randomFinishYear = new Date().getFullYear() + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
-      const randomTime = Math.floor((Math.random() * 59));
-      const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay, randomTime, randomTime, randomTime);
+      const randomDay = Math.floor(Math.random() * 29);
+      const randomTime = Math.floor(Math.random() * 59);
+      const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay, randomTime, randomTime, randomTime);
       const randomPercentComplete = Math.floor(Math.random() * 100) + 15; // make it over 15 for E2E testing purposes
       const percentCompletion = randomPercentComplete > 100 ? (i > 5 ? 100 : 88) : randomPercentComplete; // don't use 100 unless it's over index 5, for E2E testing purposes
       const isCompleted = percentCompletion === 100;
@@ -522,11 +628,12 @@ export default class Example12 {
         },
         complexity: i % 3 ? 0 : 2,
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
-        finish: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? (isCompleted ? new Date() : randomFinish) : ''), // make sure the random date is earlier than today and it's index is bigger than 3
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3))),
-        product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
-        origin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
+        finish:
+          isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3) ? (isCompleted ? new Date() : randomFinish) : '', // make sure the random date is earlier than today and it's index is bigger than 3
+        cost: i % 33 === 0 ? null : Math.round(Math.random() * 10000) / 100,
+        completed: isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3),
+        product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName },
+        origin: i % 2 ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
 
       if (!(i % 8)) {
@@ -661,7 +768,7 @@ export default class Example12 {
     // remove unsaved css class from that cell
     const cssStyleKey = `unsaved_highlight_${[column.id]}${row}`;
     this.sgb.slickGrid?.removeCellCssStyles(cssStyleKey);
-    const foundIdx = this.cellCssStyleQueue.findIndex(styleKey => styleKey === cssStyleKey);
+    const foundIdx = this.cellCssStyleQueue.findIndex((styleKey) => styleKey === cssStyleKey);
     if (foundIdx >= 0) {
       this.cellCssStyleQueue.splice(foundIdx, 1);
     }
@@ -728,7 +835,6 @@ export default class Example12 {
       }
       this.sgb.slickGrid?.invalidate();
 
-
       // optionally open the last cell editor associated
       if (showLastEditor) {
         this.sgb?.slickGrid?.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
@@ -792,7 +898,7 @@ export default class Example12 {
         listPrice: 2100.23,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: this.getRandomIcon(0)
+        icon: this.getRandomIcon(0),
       },
       {
         id: 1,
@@ -801,16 +907,16 @@ export default class Example12 {
         listPrice: 3200.12,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: this.getRandomIcon(1)
+        icon: this.getRandomIcon(1),
       },
       {
         id: 2,
         itemName: 'Awesome Wooden Mouse',
         itemNameTranslated: 'super old mouse',
-        listPrice: 15.00,
+        listPrice: 15.0,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: this.getRandomIcon(2)
+        icon: this.getRandomIcon(2),
       },
       {
         id: 3,
@@ -819,7 +925,7 @@ export default class Example12 {
         listPrice: 25.76,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: this.getRandomIcon(3)
+        icon: this.getRandomIcon(3),
       },
       {
         id: 4,
@@ -828,7 +934,7 @@ export default class Example12 {
         listPrice: 13.35,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: this.getRandomIcon(4)
+        icon: this.getRandomIcon(4),
       },
       {
         id: 5,
@@ -837,7 +943,7 @@ export default class Example12 {
         listPrice: 23.33,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: this.getRandomIcon(5)
+        icon: this.getRandomIcon(5),
       },
       {
         id: 6,
@@ -846,7 +952,7 @@ export default class Example12 {
         listPrice: 71.21,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: this.getRandomIcon(6)
+        icon: this.getRandomIcon(6),
       },
       {
         id: 7,
@@ -855,7 +961,7 @@ export default class Example12 {
         listPrice: 2.43,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: this.getRandomIcon(7)
+        icon: this.getRandomIcon(7),
       },
       {
         id: 8,
@@ -864,7 +970,7 @@ export default class Example12 {
         listPrice: 31288.39,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: this.getRandomIcon(8)
+        icon: this.getRandomIcon(8),
       },
     ];
   }
@@ -924,7 +1030,7 @@ export default class Example12 {
       'mdi-table-refresh',
       'mdi-undo',
     ];
-    const randomNumber = Math.floor((Math.random() * icons.length - 1));
+    const randomNumber = Math.floor(Math.random() * icons.length - 1);
     return icons[iconIndex ?? randomNumber];
   }
 
@@ -979,7 +1085,8 @@ export default class Example12 {
         modalTitle = 'Clone - {{title}}';
         break;
       case 'edit':
-        modalTitle = 'Editing - {{title}} (<span class="text-color-muted">id:</span> <span class="text-color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
+        modalTitle =
+          'Editing - {{title}} (<span class="text-color-muted">id:</span> <span class="text-color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
         modalTitle = 'Mass Update All Records';
@@ -1023,7 +1130,10 @@ export default class Example12 {
             // simulate a backend server call which will reject if the "% Complete" is below 50%
             return new Promise((resolve, reject) => {
               window.setTimeout(
-                () => (formValues.percentComplete >= 50) ? resolve(true) : reject('Unfortunately we only accept a minimum of 50% Completion...'),
+                () =>
+                  formValues.percentComplete >= 50
+                    ? resolve(true)
+                    : reject('Unfortunately we only accept a minimum of 50% Completion...'),
                 serverResponseDelay
               );
             });
@@ -1032,9 +1142,9 @@ export default class Example12 {
             // we'll just apply the change without any rejection from the server and
             // note that we also have access to the "dataContext" which is only available for these modal
             console.log(`${modalType} item data context`, dataContextOrUpdatedDatasetPreview);
-            return new Promise(resolve => window.setTimeout(() => resolve(true), serverResponseDelay));
+            return new Promise((resolve) => window.setTimeout(() => resolve(true), serverResponseDelay));
           }
-        }
+        },
       });
     }, openDelay);
   }

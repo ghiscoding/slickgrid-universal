@@ -1,4 +1,9 @@
-import { getDescendantProperty, type PubSubService, type TranslaterService, type TranslateServiceEventName } from '@slickgrid-universal/common';
+import {
+  getDescendantProperty,
+  type PubSubService,
+  type TranslaterService,
+  type TranslateServiceEventName,
+} from '@slickgrid-universal/common';
 import { fetch } from 'whatwg-fetch/fetch';
 
 interface Locales {
@@ -13,7 +18,7 @@ interface TranslateOptions {
 export class TranslateService implements TranslaterService {
   eventName = 'onLanguageChange' as TranslateServiceEventName;
   protected _currentLanguage = 'en';
-  protected _locales: { [language: string]: Locales; } = {};
+  protected _locales: { [language: string]: Locales } = {};
   protected _pubSubServices: PubSubService[] = [];
   protected _options;
   protected templateMatcher = /{{\s?([^{}\s]*)\s?}}/g;

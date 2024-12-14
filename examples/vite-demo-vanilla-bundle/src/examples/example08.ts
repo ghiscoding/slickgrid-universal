@@ -1,10 +1,4 @@
-import {
-  type Column,
-  type GridOption,
-  FieldType,
-  type ItemMetadata,
-  type OperatorString,
-} from '@slickgrid-universal/common';
+import { type Column, type GridOption, FieldType, type ItemMetadata, type OperatorString } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -37,8 +31,18 @@ export default class Example08 {
     this.dataset2 = this.loadData(500);
     const gridContainerElm1 = document.querySelector(`.grid1`) as HTMLDivElement;
     const gridContainerElm2 = document.querySelector(`.grid2`) as HTMLDivElement;
-    this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
-    this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+    this.sgb1 = new Slicker.GridBundle(
+      gridContainerElm1,
+      this.columnDefinitions1,
+      { ...ExampleGridOptions, ...this.gridOptions1 },
+      this.dataset1
+    );
+    this.sgb2 = new Slicker.GridBundle(
+      gridContainerElm2,
+      this.columnDefinitions2,
+      { ...ExampleGridOptions, ...this.gridOptions2 },
+      this.dataset2
+    );
     this.populategrid2SearchColumnsDropdown();
     this.populategrid2SearchOperatorDropdown();
   }
@@ -54,8 +58,15 @@ export default class Example08 {
       { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
-      { id: '%', name: '% Complete', type: FieldType.number, field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' }
+      {
+        id: '%',
+        name: '% Complete',
+        type: FieldType.number,
+        field: 'percentComplete',
+        selectable: false,
+        columnGroup: 'Analysis',
+      },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
     ];
 
     this.gridOptions1 = {
@@ -66,10 +77,10 @@ export default class Example08 {
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
-        sanitizeDataExport: true
+        sanitizeDataExport: true,
       },
       gridMenu: {
-        iconButtonContainer: 'preheader' // we can display the grid menu icon in either the preheader or in the column header (default)
+        iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
       externalResources: [new TextExportService(), new ExcelExportService()],
       enableCellNavigation: true,
@@ -86,13 +97,44 @@ export default class Example08 {
 
   definedGrid2() {
     this.columnDefinitions2 = [
-      { id: 'sel', name: '#', field: 'num', behavior: 'select', cssClass: 'cell-selection', width: 40, resizable: false, selectable: false },
+      {
+        id: 'sel',
+        name: '#',
+        field: 'num',
+        behavior: 'select',
+        cssClass: 'cell-selection',
+        width: 40,
+        resizable: false,
+        selectable: false,
+      },
       { id: 'title', name: 'Title', field: 'title', minWidth: 120, sortable: true, columnGroup: 'Common Factor' },
-      { id: 'duration', name: 'Duration', field: 'duration', type: FieldType.number, minWidth: 120, columnGroup: 'Common Factor' },
+      {
+        id: 'duration',
+        name: 'Duration',
+        field: 'duration',
+        type: FieldType.number,
+        minWidth: 120,
+        columnGroup: 'Common Factor',
+      },
       { id: 'start', name: 'Start', field: 'start', minWidth: 145, columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', minWidth: 145, columnGroup: 'Period' },
-      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 145, selectable: false, columnGroup: 'Analysis' },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 145, type: FieldType.boolean, columnGroup: 'Analysis' }
+      {
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        type: FieldType.number,
+        minWidth: 145,
+        selectable: false,
+        columnGroup: 'Analysis',
+      },
+      {
+        id: 'effort-driven',
+        name: 'Effort Driven',
+        field: 'effortDriven',
+        minWidth: 145,
+        type: FieldType.boolean,
+        columnGroup: 'Analysis',
+      },
     ];
 
     this.gridOptions2 = {
@@ -129,7 +171,7 @@ export default class Example08 {
         percentComplete: Math.round(Math.random() * 100),
         start: '01/01/2009',
         finish: '01/05/2009',
-        effortDriven: (i % 5 === 0)
+        effortDriven: i % 5 === 0,
       };
     }
     return mockDataset;
@@ -150,17 +192,17 @@ export default class Example08 {
       return {
         columns: {
           duration: {
-            colspan: 3 // "duration" will span over 3 columns
-          }
-        }
+            colspan: 3, // "duration" will span over 3 columns
+          },
+        },
       };
     }
     return {
       columns: {
         0: {
-          colspan: '*' // starting at column index 0, we will span accross all column (*)
-        }
-      }
+          colspan: '*', // starting at column index 0, we will span accross all column (*)
+        },
+      },
     };
   }
 
@@ -188,7 +230,7 @@ export default class Example08 {
       selectOption.label = columnDef.name as string;
       columnSelect.appendChild(selectOption);
     }
-    this.grid2SearchSelectedColumn = this.columnDefinitions2.find(col => col.id === 'title') as Column;
+    this.grid2SearchSelectedColumn = this.columnDefinitions2.find((col) => col.id === 'title') as Column;
   }
 
   populategrid2SearchOperatorDropdown() {
@@ -209,7 +251,7 @@ export default class Example08 {
   }
 
   selectedColumnChanged(selectedColumnId: string) {
-    this.grid2SearchSelectedColumn = this.columnDefinitions2.find(col => col.id === selectedColumnId) as Column;
+    this.grid2SearchSelectedColumn = this.columnDefinitions2.find((col) => col.id === selectedColumnId) as Column;
     this.updateFilter();
   }
 
@@ -222,7 +264,7 @@ export default class Example08 {
     this.sgb2.filterService.updateSingleFilter({
       columnId: `${this.grid2SearchSelectedColumn?.id ?? ''}`,
       operator: this.grid2SelectedOperator as OperatorString,
-      searchTerms: [this.grid2SearchValue || '']
+      searchTerms: [this.grid2SearchValue || ''],
     });
   }
 }

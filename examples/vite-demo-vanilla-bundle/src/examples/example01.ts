@@ -34,8 +34,18 @@ export default class Example01 {
     this.dataset1 = this.mockData(NB_ITEMS);
     this.dataset2 = this.mockData(NB_ITEMS);
 
-    this.sgb1 = new Slicker.GridBundle(document.querySelector(`.grid1`) as HTMLDivElement, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
-    this.sgb2 = new Slicker.GridBundle(document.querySelector(`.grid2`) as HTMLDivElement, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+    this.sgb1 = new Slicker.GridBundle(
+      document.querySelector(`.grid1`) as HTMLDivElement,
+      this.columnDefinitions1,
+      { ...ExampleGridOptions, ...this.gridOptions1 },
+      this.dataset1
+    );
+    this.sgb2 = new Slicker.GridBundle(
+      document.querySelector(`.grid2`) as HTMLDivElement,
+      this.columnDefinitions2,
+      { ...ExampleGridOptions, ...this.gridOptions2 },
+      this.dataset2
+    );
   }
 
   dispose() {
@@ -51,11 +61,34 @@ export default class Example01 {
   defineGrids() {
     this.columnDefinitions1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
+      {
+        id: 'duration',
+        name: 'Duration (days)',
+        field: 'duration',
+        sortable: true,
+        minWidth: 100,
+        filterable: true,
+        type: FieldType.number,
+      },
+      {
+        id: '%',
+        name: '% Complete',
+        field: 'percentComplete',
+        sortable: true,
+        minWidth: 100,
+        filterable: true,
+        type: FieldType.number,
+      },
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true }
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true },
     ];
     this._darkModeGrid1 = this.isBrowserDarkModeEnabled();
     this.gridOptions1 = {
@@ -70,8 +103,8 @@ export default class Example01 {
           if (args.command === 'toggle-dark-mode') {
             this._darkModeGrid1 = !this._darkModeGrid1; // keep local toggle var in sync
           }
-        }
-      }
+        },
+      },
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid
@@ -84,7 +117,8 @@ export default class Example01 {
         gridHeight: 255,
         headerRowHeight: 40,
         columnPicker: {
-          onColumnsChanged: (_e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
+          onColumnsChanged: (_e, args) =>
+            console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
         },
         gridMenu: {
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
@@ -92,33 +126,52 @@ export default class Example01 {
             { command: '', divider: true, positionOrder: 98 },
             {
               // we can also have multiple nested sub-menus
-              command: 'export', title: 'Exports', iconCssClass: 'mdi mdi-download', positionOrder: 99,
+              command: 'export',
+              title: 'Exports',
+              iconCssClass: 'mdi mdi-download',
+              positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
-                  command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
+                  command: 'sub-menu',
+                  title: 'Excel',
+                  cssClass: 'green',
+                  subMenuTitle: 'available formats',
+                  subMenuTitleCssClass: 'text-italic orange',
                   commandItems: [
                     { command: 'exports-csv', title: 'Excel (csv)' },
                     { command: 'exports-xlsx', title: 'Excel (xlsx)' },
-                  ]
-                }
-              ]
+                  ],
+                },
+              ],
             },
             {
-              command: 'feedback', title: 'Feedback', iconCssClass: 'mdi mdi-information-outline', positionOrder: 100,
+              command: 'feedback',
+              title: 'Feedback',
+              iconCssClass: 'mdi mdi-information-outline',
+              positionOrder: 100,
               commandItems: [
-                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                {
+                  command: 'request-update',
+                  title: 'Request update from supplier',
+                  iconCssClass: 'mdi mdi-star',
+                  tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update',
+                },
                 'divider',
                 {
-                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  command: 'sub-menu',
+                  title: 'Contact Us',
+                  iconCssClass: 'mdi mdi-account',
+                  subMenuTitle: 'contact us...',
+                  subMenuTitleCssClass: 'italic',
                   commandItems: [
                     { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
                     { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
                     { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
-                  ]
-                }
-              ]
-            }
+                  ],
+                },
+              ],
+            },
           ],
           // menuUsabilityOverride: () => false,
           onBeforeMenuShow: () => {
@@ -144,20 +197,20 @@ export default class Example01 {
         enablePagination: true,
         pagination: {
           pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],
-          pageSize: 5
+          pageSize: 5,
         },
         presets: {
           pagination: {
             pageNumber: 2,
-            pageSize: 5
+            pageSize: 5,
           },
           sorters: [
             // { columnId: '%', direction: 'DESC' },
-            { columnId: 'title', direction: 'ASC' }
+            { columnId: 'title', direction: 'ASC' },
           ],
-          filters: [{ columnId: 'title', searchTerms: ['2'] }]
-        }
-      }
+          filters: [{ columnId: 'title', searchTerms: ['2'] }],
+        },
+      },
     };
   }
 
@@ -167,7 +220,7 @@ export default class Example01 {
     for (let i = 0; i < count; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
 
       mockDataset[i] = {
@@ -177,7 +230,7 @@ export default class Example01 {
         percentComplete: randomPercent,
         start: `${zeroPadding(randomYear)}-${zeroPadding(randomMonth + 1)}-${zeroPadding(randomDay)}`,
         finish: `${zeroPadding(randomYear + 1)}-${zeroPadding(randomMonth + 1)}-${zeroPadding(randomDay)}`,
-        effortDriven: (i % 5 === 0)
+        effortDriven: i % 5 === 0,
       };
     }
 

@@ -11,7 +11,12 @@ import {
   SortDirection,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, type GraphqlServiceOption, } from '@slickgrid-universal/graphql';
+import {
+  GraphqlService,
+  type GraphqlPaginatedResult,
+  type GraphqlServiceApi,
+  type GraphqlServiceOption,
+} from '@slickgrid-universal/graphql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
@@ -60,7 +65,12 @@ export default class Example10 {
 
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
     this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     document.body.classList.add('material-theme');
   }
@@ -79,7 +89,11 @@ export default class Example10 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', field: 'name', nameKey: 'NAME', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'name',
+        field: 'name',
+        nameKey: 'NAME',
+        width: 60,
+        columnGroupKey: 'CUSTOMER_INFORMATION',
         type: FieldType.string,
         sortable: true,
         filterable: true,
@@ -93,44 +107,79 @@ export default class Example10 {
             { operator: 'a*', desc: 'Starts With' },
             { operator: 'Custom', desc: 'SQL Like' },
           ],
-        }
+        },
       },
       {
-        id: 'gender', field: 'gender', nameKey: 'GENDER', filterable: true, sortable: true, width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'gender',
+        field: 'gender',
+        nameKey: 'GENDER',
+        filterable: true,
+        sortable: true,
+        width: 60,
+        columnGroupKey: 'CUSTOMER_INFORMATION',
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', labelKey: 'MALE', }, { value: 'female', labelKey: 'FEMALE', }]
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', labelKey: 'MALE' },
+            { value: 'female', labelKey: 'FEMALE' },
+          ],
+        },
       },
       {
-        id: 'company', field: 'company', nameKey: 'COMPANY', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'company',
+        field: 'company',
+        nameKey: 'COMPANY',
+        width: 60,
+        columnGroupKey: 'CUSTOMER_INFORMATION',
         sortable: true,
         filterable: true,
         filter: {
           model: Filters.multipleSelect,
-          collection: [{ value: 'acme', label: 'Acme' }, { value: 'abc', label: 'Company ABC' }, { value: 'xyz', label: 'Company XYZ' }],
+          collection: [
+            { value: 'acme', label: 'Acme' },
+            { value: 'abc', label: 'Company ABC' },
+            { value: 'xyz', label: 'Company XYZ' },
+          ],
           filterOptions: {
-            filter: true // adds a filter on top of the multi-select dropdown
-          } as MultipleSelectOption
-        }
+            filter: true, // adds a filter on top of the multi-select dropdown
+          } as MultipleSelectOption,
+        },
       },
       {
-        id: 'billingAddressStreet', field: 'billing.address.street', nameKey: 'BILLING.ADDRESS.STREET',
+        id: 'billingAddressStreet',
+        field: 'billing.address.street',
+        nameKey: 'BILLING.ADDRESS.STREET',
         formatter: Formatters.complexObject,
-        width: 60, filterable: true, sortable: true, columnGroupKey: 'BILLING.INFORMATION',
+        width: 60,
+        filterable: true,
+        sortable: true,
+        columnGroupKey: 'BILLING.INFORMATION',
       },
       {
-        id: 'billingAddressZip', field: 'billing.address.zip', nameKey: 'BILLING.ADDRESS.ZIP', width: 60,
+        id: 'billingAddressZip',
+        field: 'billing.address.zip',
+        nameKey: 'BILLING.ADDRESS.ZIP',
+        width: 60,
         type: FieldType.number,
         columnGroupKey: 'BILLING.INFORMATION',
-        filterable: true, sortable: true,
+        filterable: true,
+        sortable: true,
         filter: {
-          model: Filters.compoundInput
+          model: Filters.compoundInput,
         },
-        formatter: Formatters.multiple, params: { formatters: [Formatters.complexObject, Formatters.translate] }
+        formatter: Formatters.multiple,
+        params: { formatters: [Formatters.complexObject, Formatters.translate] },
       },
       {
-        id: 'finish', field: 'finish', name: 'Date', formatter: Formatters.dateIso, sortable: true, minWidth: 90, width: 120, exportWithFormatter: true,
+        id: 'finish',
+        field: 'finish',
+        name: 'Date',
+        formatter: Formatters.dateIso,
+        sortable: true,
+        minWidth: 90,
+        width: 120,
+        exportWithFormatter: true,
         columnGroupKey: 'BILLING.INFORMATION',
         type: FieldType.date,
         filterable: true,
@@ -142,8 +191,8 @@ export default class Example10 {
               iconCssClass: 'mdi mdi-calendar',
               searchTerms: [tempoFormat(new Date(), 'YYYY-MM-DD'), tempoFormat(addDay(new Date(), 20), 'YYYY-MM-DD')],
             },
-          ]
-        }
+          ],
+        },
       },
     ];
 
@@ -154,7 +203,7 @@ export default class Example10 {
     this.gridOptions = {
       enableAutoTooltip: true,
       autoTooltipOptions: {
-        enableForHeaderCells: true
+        enableForHeaderCells: true,
       },
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
@@ -163,7 +212,7 @@ export default class Example10 {
       gridWidth: 900,
       compoundOperatorAltTexts: {
         // where '=' is any of the `OperatorString` type shown above
-        text: { 'Custom': { operatorAlt: '%%', descAlt: 'SQL Like' } },
+        text: { Custom: { operatorAlt: '%%', descAlt: 'SQL Like' } },
       },
       enableFiltering: true,
       enableCellNavigation: true,
@@ -177,7 +226,7 @@ export default class Example10 {
       pagination: {
         pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
         pageSize: defaultPageSize,
-        totalItems: 0
+        totalItems: 0,
       },
       presets: {
         columns: [
@@ -201,19 +250,22 @@ export default class Example10 {
         sorters: [
           // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC }
+          { columnId: 'company', direction: SortDirection.DESC },
         ],
-        pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 } // if cursor based, start at page 1
+        pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 }, // if cursor based, start at page 1
       },
       backendServiceApi: {
         service: new GraphqlService(),
         options: {
           datasetName: GRAPHQL_QUERY_DATASET_NAME, // the only REQUIRED property
-          addLocaleIntoQuery: true,   // optionally add current locale into the query
-          extraQueryArguments: [{     // optionally add some extra query arguments as input query arguments
-            field: 'userId',
-            value: 123
-          }],
+          addLocaleIntoQuery: true, // optionally add current locale into the query
+          extraQueryArguments: [
+            {
+              // optionally add some extra query arguments as input query arguments
+              field: 'userId',
+              value: 123,
+            },
+          ],
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               // technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
@@ -226,7 +278,7 @@ export default class Example10 {
           useCursor: this.isWithCursor, // sets pagination strategy, if true requires a call to setPageInfo() when graphql call returns
           // when dealing with complex objects, we want to keep our field name with double quotes
           // example with gender: query { users (orderBy:[{field:"gender",direction:ASC}]) {}
-          keepArgumentFieldDoubleQuotes: true
+          keepArgumentFieldDoubleQuotes: true,
         },
         // you can define the onInit callback OR enable the "executeProcessCommandOnInit" flag in the service init
         // onInit: (query) => this.getCustomerApiCall(query),
@@ -235,8 +287,8 @@ export default class Example10 {
         postProcess: (result: GraphqlPaginatedResult) => {
           this.metrics = result.metrics as Metrics;
           this.displaySpinner(false);
-        }
-      } as GraphqlServiceApi
+        },
+      } as GraphqlServiceApi,
     };
   }
 
@@ -248,8 +300,8 @@ export default class Example10 {
 
   displaySpinner(isProcessing) {
     this.processing = isProcessing;
-    this.status = (isProcessing) ? 'loading...' : 'finished!!';
-    this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
+    this.status = isProcessing ? 'loading...' : 'finished!!';
+    this.statusClass = isProcessing ? 'notification is-light is-warning' : 'notification is-light is-success';
   }
 
   /**
@@ -277,14 +329,14 @@ export default class Example10 {
         hasPreviousPage: paginationService.dataFrom === 0,
         hasNextPage: paginationService.dataTo === 100,
         startCursor,
-        endCursor
+        endCursor,
       };
     } else {
       pageInfo = {
         hasPreviousPage: false,
         hasNextPage: true,
         startCursor: 'A',
-        endCursor: 'B'
+        endCursor: 'B',
       };
     }
 
@@ -297,19 +349,19 @@ export default class Example10 {
         [GRAPHQL_QUERY_DATASET_NAME]: {
           nodes: [],
           totalCount: 100,
-          pageInfo
+          pageInfo,
         },
       },
     };
 
-    return new Promise<GraphqlPaginatedResult>(resolve => {
+    return new Promise<GraphqlPaginatedResult>((resolve) => {
       window.setTimeout(() => {
         this.graphqlQuery = this.gridOptions.backendServiceApi!.service.buildQuery();
         if (this.isWithCursor) {
           // When using cursor pagination, the pagination service needs to be updated with the PageInfo data from the latest request
           // This might be done automatically if using a framework specific slickgrid library
           // Note because of this timeout, this may cause race conditions with rapid clicks!
-          this.sgb?.paginationService.setCursorPageInfo((mockedResult.data[GRAPHQL_QUERY_DATASET_NAME].pageInfo));
+          this.sgb?.paginationService.setCursorPageInfo(mockedResult.data[GRAPHQL_QUERY_DATASET_NAME].pageInfo);
         }
         resolve(mockedResult);
       }, this.serverWaitDelay);
@@ -376,7 +428,7 @@ export default class Example10 {
     this.sgb?.sortService.updateSorting([
       // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC }
+      { columnId: 'company', direction: SortDirection.DESC },
     ]);
     window.setTimeout(() => {
       this.sgb?.paginationService?.changeItemPerPage(20);
@@ -390,7 +442,7 @@ export default class Example10 {
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;

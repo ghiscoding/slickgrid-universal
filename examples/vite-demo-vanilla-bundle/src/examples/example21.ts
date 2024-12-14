@@ -1,5 +1,15 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, createDomElement, FieldType, Filters, Formatters, type GridOption, SlickEventHandler, Editors, ExtensionName } from '@slickgrid-universal/common';
+import {
+  type Column,
+  createDomElement,
+  FieldType,
+  Filters,
+  Formatters,
+  type GridOption,
+  SlickEventHandler,
+  Editors,
+  ExtensionName,
+} from '@slickgrid-universal/common';
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -37,7 +47,18 @@ export default class Example21 {
   status = '';
   statusClass = '';
   gridContainerElm: HTMLDivElement;
-  fakeNames = ['John Doe', 'Jane Doe', 'Chuck Norris', 'Bumblebee', 'Jackie Chan', 'Elvis Presley', 'Bob Marley', 'Mohammed Ali', 'Bruce Lee', 'Rocky Balboa'];
+  fakeNames = [
+    'John Doe',
+    'Jane Doe',
+    'Chuck Norris',
+    'Bumblebee',
+    'Jackie Chan',
+    'Elvis Presley',
+    'Bob Marley',
+    'Mohammed Ali',
+    'Bruce Lee',
+    'Rocky Balboa',
+  ];
   rowDetail!: SlickRowDetailView;
 
   constructor() {
@@ -52,7 +73,12 @@ export default class Example21 {
     this.dataset = this.mockData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid21`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      this.gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
 
     // add all row detail event listeners
     this.addRowDetailEventHandlers();
@@ -75,12 +101,72 @@ export default class Example21 {
   /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', width: 110, minWidth: 110, cssClass: 'cell-title', filterable: true, sortable: true, editor: { model: Editors.text } },
-      { id: 'duration', name: 'Duration', field: 'duration', width: 90, maxWidth: 200, filterable: true, sortable: true, type: FieldType.number },
-      { id: '%', name: '% Complete', field: 'percentComplete', minWidth: 100, width: 250, resizable: false, filterable: true, sortable: true, editor: { model: Editors.slider }, type: FieldType.number, formatter: Formatters.percentCompleteBar },
-      { id: 'start', name: 'Start', field: 'start', minWidth: 60, maxWidth: 130, filterable: true, filter: { model: Filters.compoundDate }, type: FieldType.dateIso, formatter: Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', minWidth: 60, maxWidth: 130, filterable: true, filter: { model: Filters.compoundDate }, type: FieldType.dateIso, formatter: Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', width: 90, minWidth: 20, maxWidth: 120, filterable: true, formatter: Formatters.checkmarkMaterial }
+      {
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        width: 110,
+        minWidth: 110,
+        cssClass: 'cell-title',
+        filterable: true,
+        sortable: true,
+        editor: { model: Editors.text },
+      },
+      {
+        id: 'duration',
+        name: 'Duration',
+        field: 'duration',
+        width: 90,
+        maxWidth: 200,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+      },
+      {
+        id: '%',
+        name: '% Complete',
+        field: 'percentComplete',
+        minWidth: 100,
+        width: 250,
+        resizable: false,
+        filterable: true,
+        sortable: true,
+        editor: { model: Editors.slider },
+        type: FieldType.number,
+        formatter: Formatters.percentCompleteBar,
+      },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        minWidth: 60,
+        maxWidth: 130,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
+        type: FieldType.dateIso,
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        minWidth: 60,
+        maxWidth: 130,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
+        type: FieldType.dateIso,
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'effort-driven',
+        name: 'Effort Driven',
+        field: 'effortDriven',
+        width: 90,
+        minWidth: 20,
+        maxWidth: 120,
+        filterable: true,
+        formatter: Formatters.checkmarkMaterial,
+      },
     ];
 
     this.gridOptions = {
@@ -116,7 +202,7 @@ export default class Example21 {
       },
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+        selectActiveRow: false,
       },
 
       // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
@@ -252,7 +338,18 @@ export default class Example21 {
   /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
   simulateServerAsyncCall(item: ItemDetail) {
     // random set of names to use for more item detail
-    const randomNames = ['John Doe', 'Jane Doe', 'Chuck Norris', 'Bumblebee', 'Jackie Chan', 'Elvis Presley', 'Bob Marley', 'Mohammed Ali', 'Bruce Lee', 'Rocky Balboa'];
+    const randomNames = [
+      'John Doe',
+      'Jane Doe',
+      'Chuck Norris',
+      'Bumblebee',
+      'Jackie Chan',
+      'Elvis Presley',
+      'Bob Marley',
+      'Mohammed Ali',
+      'Bruce Lee',
+      'Rocky Balboa',
+    ];
 
     // fill the template on async delay
     return new Promise((resolve) => {
@@ -274,23 +371,39 @@ export default class Example21 {
   // notify the onAsyncResponse with the "args.item" (required property)
   // the plugin will then use itemDetail to populate the detail panel with "postTemplate"
   notifyTemplate(itemDetail: ItemDetail) {
-    this.rowDetail.onAsyncResponse.notify({
-      item: itemDetail,
-      itemDetail,
-    }, undefined, this);
+    this.rowDetail.onAsyncResponse.notify(
+      {
+        item: itemDetail,
+        itemDetail,
+      },
+      undefined,
+      this
+    );
   }
 
   addDeleteRowOnClickListener(itemId: string) {
     const deleteBtnElm = document.querySelector('#delete_row_' + itemId);
     if (deleteBtnElm) {
-      this._bindingEventService.bind(deleteBtnElm, 'click', this.handleDeleteRow.bind(this, itemId), undefined, `event-detail-${itemId}`);
+      this._bindingEventService.bind(
+        deleteBtnElm,
+        'click',
+        this.handleDeleteRow.bind(this, itemId),
+        undefined,
+        `event-detail-${itemId}`
+      );
     }
   }
 
   addAssigneeOnClickListener(itemId: string) {
     const assigneeBtnElm = document.querySelector('#who-is-assignee_' + itemId);
     if (assigneeBtnElm) {
-      this._bindingEventService.bind(assigneeBtnElm, 'click', this.handleAssigneeClicked.bind(this, itemId), undefined, `event-detail-${itemId}`);
+      this._bindingEventService.bind(
+        assigneeBtnElm,
+        'click',
+        this.handleAssigneeClicked.bind(this, itemId),
+        undefined,
+        `event-detail-${itemId}`
+      );
     }
   }
 
@@ -329,7 +442,7 @@ export default class Example21 {
     for (let i = 0; i < count; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
 
       mockDataset[i] = {
@@ -339,7 +452,7 @@ export default class Example21 {
         percentComplete: randomPercent,
         start: new Date(randomYear, randomMonth + 1, randomDay),
         finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
-        effortDriven: (i % 5 === 0)
+        effortDriven: i % 5 === 0,
       };
     }
 

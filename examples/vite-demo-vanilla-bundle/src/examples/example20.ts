@@ -1,4 +1,4 @@
-import { type Column, FieldType, Filters, Formatters, type GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
+import { type Column, FieldType, Filters, Formatters, type GridOption, SlickEventHandler } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -34,7 +34,12 @@ export default class Example20 {
     // not sure why but ShadowDOM seems a little slower to render,
     // let's wrap the grid resize in a delay & show the grid only after the resize
     window.setTimeout(async () => {
-      this.sgb = new Slicker.GridBundle(shadowObj.gridContainer as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+      this.sgb = new Slicker.GridBundle(
+        shadowObj.gridContainer as HTMLDivElement,
+        this.columnDefinitions,
+        { ...ExampleGridOptions, ...this.gridOptions },
+        this.dataset
+      );
       await this.sgb.resizerService.resizeGrid(150);
       shadowObj.gridContainer.style.opacity = '1';
     }, 75);
@@ -53,7 +58,7 @@ export default class Example20 {
   createShadowElement(): ShadowContainer {
     // const styleElms = document.querySelectorAll<HTMLStyleElement>('head > link[rel=stylesheet], head > style[type="text/css"]');
     const styleElms = document.querySelectorAll<HTMLStyleElement>('head > link[rel=stylesheet]');
-    const styleClones = Array.from(styleElms).map(el => el.cloneNode(true));
+    const styleClones = Array.from(styleElms).map((el) => el.cloneNode(true));
 
     const host = document.querySelector('#host') as HTMLDivElement;
     const shadow = host.attachShadow({ mode: 'open' });
@@ -87,11 +92,45 @@ export default class Example20 {
   defineGrid(shadowObj) {
     this.columnDefinitions = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, filter: { model: Filters.compoundDate }, type: FieldType.dateIso, exportWithFormatter: true, filterable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, filter: { model: Filters.compoundDate }, type: FieldType.dateIso, exportWithFormatter: true, filterable: true },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true }
+      {
+        id: 'duration',
+        name: 'Duration (days)',
+        field: 'duration',
+        sortable: true,
+        minWidth: 100,
+        filterable: true,
+        type: FieldType.number,
+      },
+      {
+        id: '%',
+        name: '% Complete',
+        field: 'percentComplete',
+        sortable: true,
+        minWidth: 100,
+        filterable: true,
+        type: FieldType.number,
+      },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        filter: { model: Filters.compoundDate },
+        type: FieldType.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        filter: { model: Filters.compoundDate },
+        type: FieldType.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true },
     ];
 
     this.gridOptions = {
@@ -101,7 +140,7 @@ export default class Example20 {
       enableFiltering: true,
       headerRowHeight: 35,
       rowHeight: 30,
-      shadowRoot: shadowObj.shadow
+      shadowRoot: shadowObj.shadow,
     };
   }
 
@@ -118,7 +157,7 @@ export default class Example20 {
         percentComplete: randomPercent,
         start: '2009-01-01',
         finish: '2009-05-05',
-        effortDriven: (i % 5 === 0)
+        effortDriven: i % 5 === 0,
       });
     }
 

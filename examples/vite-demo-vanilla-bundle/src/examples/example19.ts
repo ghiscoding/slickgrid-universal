@@ -26,7 +26,12 @@ export default class Example19 {
     // mock some data (different in each dataset)
     this.dataset = this.getData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid19`) as HTMLDivElement;
-    this.sgb = new Slicker.GridBundle(document.querySelector(`.grid19`) as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      document.querySelector(`.grid19`) as HTMLDivElement,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
     document.body.classList.add('salesforce-theme');
 
     // bind any of the grid events, e.g. onSelectedRangesChanged to show selection range on screen
@@ -57,7 +62,7 @@ export default class Example19 {
         2: 'blocked-cell',
         3: 'blocked-cell',
         4: 'blocked-cell',
-      }
+      },
     };
     for (let i = 0; i < NB_ITEMS; i++) {
       hash[0][i] = 'blocked-cell';
@@ -81,7 +86,7 @@ export default class Example19 {
         name: '',
         field: 'num',
         width: 30,
-      }
+      },
     ];
 
     this.columnDefinitions.push({
@@ -92,14 +97,15 @@ export default class Example19 {
       width: 120,
       editor: { model: Editors.date, type: 'date' },
       formatter: Formatters.dateIso,
-      exportWithFormatter: true
+      exportWithFormatter: true,
     });
     for (let i = 0; i < NB_ITEMS; i++) {
       this.columnDefinitions.push({
         id: i,
-        name: i < 26
-          ? String.fromCharCode('A'.charCodeAt(0) + (i % 26))
-          : String.fromCharCode('A'.charCodeAt(0) + (Math.floor(i / 26)) - 1) + String.fromCharCode('A'.charCodeAt(0) + (i % 26)),
+        name:
+          i < 26
+            ? String.fromCharCode('A'.charCodeAt(0) + (i % 26))
+            : String.fromCharCode('A'.charCodeAt(0) + Math.floor(i / 26) - 1) + String.fromCharCode('A'.charCodeAt(0) + (i % 26)),
         field: String(i),
         minWidth: 60,
         exportWithFormatter: true,
@@ -125,7 +131,7 @@ export default class Example19 {
       editable: this.isGridEditable,
       pagination: {
         pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],
-        pageSize: 20
+        pageSize: 20,
       },
       headerRowHeight: 35,
       rowHeight: 30,
@@ -143,7 +149,7 @@ export default class Example19 {
         copyActiveEditorCell: true,
         removeDoubleQuotesOnPaste: true,
         replaceNewlinesWith: ' ',
-      }
+      },
     };
   }
 

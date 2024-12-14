@@ -72,7 +72,7 @@ export default class Example05 {
   }
 
   hideSpinner() {
-    window.setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit to avoid show/hide too quickly
+    window.setTimeout(() => (this.loadingClass = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
   }
 
   showSpinner() {
@@ -89,9 +89,7 @@ export default class Example05 {
   getTreeIds(itemObj: any) {
     let treeIds: any[] = [];
     if (itemObj.__hasChildren && itemObj.treeLevel === 0) {
-      treeIds = this.sgb.dataset
-        .filter(item => item.parentId === itemObj.id)
-        .map(child => child.id);
+      treeIds = this.sgb.dataset.filter((item) => item.parentId === itemObj.id).map((child) => child.id);
       treeIds.push(itemObj.id); // also add parent Id into the list for the complete tree Ids
     }
     return treeIds;
@@ -106,9 +104,10 @@ export default class Example05 {
     let treeIds: any[] = [];
     const selectedIds = this.sgb.dataView?.mapRowsToIds(previousSelectedRows);
     if (rootParentItemObj.__hasChildren && rootParentItemObj.treeLevel === 0) {
-      treeIds = this.sgb.dataset.filter(item => item.parentId === rootParentItemObj.id)
-        .filter(item => selectedIds?.some(selectedId => selectedId === item.id))
-        .map(child => child.id);
+      treeIds = this.sgb.dataset
+        .filter((item) => item.parentId === rootParentItemObj.id)
+        .filter((item) => selectedIds?.some((selectedId) => selectedId === item.id))
+        .map((child) => child.id);
     }
     return treeIds.length;
   }
@@ -119,12 +118,12 @@ export default class Example05 {
 
     if (args.caller === 'click.toggle') {
       let treeIds: Array<number> = [];
-      const childItemsIdxAndIds: Array<{ itemId: number; rowIdx: number; }> = [];
+      const childItemsIdxAndIds: Array<{ itemId: number; rowIdx: number }> = [];
       const allSelectionChanges = args.changedSelectedRows.concat(args.changedUnselectedRows);
       let changedRowIndex = allSelectionChanges.length > 0 ? allSelectionChanges[0] : null;
 
       if (changedRowIndex !== null) {
-        const isRowBeingUnselected = (args.changedUnselectedRows.length && changedRowIndex === args.changedUnselectedRows[0]);
+        const isRowBeingUnselected = args.changedUnselectedRows.length && changedRowIndex === args.changedUnselectedRows[0];
         let selectedRowItemObj = this.sgb.dataView?.getItem(changedRowIndex);
 
         // the steps we'll do below are the same for both the if/else
@@ -136,7 +135,12 @@ export default class Example05 {
           // when it's a parent we'll make sure to expand the current tree on first level (if not yet expanded) and then return all tree Ids
           this.sgb.treeDataService.dynamicallyToggleItemState([{ itemId: selectedRowItemObj.id, isCollapsed: false }]);
           treeIds = this.getTreeIds(selectedRowItemObj);
-        } else if ((selectedRowItemObj.__hasChildren && selectedRowItemObj.treeLevel === 1) || (!selectedRowItemObj.__hasChildren && selectedRowItemObj.parentId && !this.getTreeSelectedCount(this.sgb.dataView?.getItemById(selectedRowItemObj.parentId), args.previousSelectedRows))) {
+        } else if (
+          (selectedRowItemObj.__hasChildren && selectedRowItemObj.treeLevel === 1) ||
+          (!selectedRowItemObj.__hasChildren &&
+            selectedRowItemObj.parentId &&
+            !this.getTreeSelectedCount(this.sgb.dataView?.getItemById(selectedRowItemObj.parentId), args.previousSelectedRows))
+        ) {
           // if we're toggling a child item that is also a parent item (e.g. a switchboard inside an INEQ) then we'll do the following
           // circle back to its root parent and perform (in other word use the parent of this parent)
           // then same as previous condition, we'll return the Ids of that that tree
@@ -155,12 +159,14 @@ export default class Example05 {
               childItemsIdxAndIds.push({ itemId: leafId, rowIdx: childIndexes[0] });
             }
           }
-          const childrenRowIndexes = childItemsIdxAndIds.map(childItem => childItem.rowIdx);
-          const currentSelectionPlusChildrenIndexes: number[] = Array.from(new Set(currentSelectedRows?.concat(childrenRowIndexes))); // use Set to remove duplicates
+          const childrenRowIndexes = childItemsIdxAndIds.map((childItem) => childItem.rowIdx);
+          const currentSelectionPlusChildrenIndexes: number[] = Array.from(
+            new Set(currentSelectedRows?.concat(childrenRowIndexes))
+          ); // use Set to remove duplicates
 
           // if we are unselecting the row then we'll remove the children from the final list of selections else just use that entire tree Ids
           const finalSelection = isRowBeingUnselected
-            ? currentSelectionPlusChildrenIndexes.filter(rowIdx => !childrenRowIndexes.includes(rowIdx))
+            ? currentSelectionPlusChildrenIndexes.filter((rowIdx) => !childrenRowIndexes.includes(rowIdx))
             : currentSelectionPlusChildrenIndexes;
           this.sgb.slickGrid?.setSelectedRows(finalSelection);
         }
@@ -171,41 +177,76 @@ export default class Example05 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
-        filterable: true, sortable: true, exportWithFormatter: false,
-        queryFieldSorter: 'id', type: FieldType.string,
-        formatter: Formatters.tree, exportCustomFormatter: Formatters.treeExport
-
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        width: 220,
+        cssClass: 'cell-title',
+        filterable: true,
+        sortable: true,
+        exportWithFormatter: false,
+        queryFieldSorter: 'id',
+        type: FieldType.string,
+        formatter: Formatters.tree,
+        exportCustomFormatter: Formatters.treeExport,
       },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
-        minWidth: 120, maxWidth: 200, exportWithFormatter: false,
-        sortable: true, filterable: true, filter: { model: Filters.compoundSlider, operator: '>=' },
-        formatter: Formatters.percentCompleteBarWithText, type: FieldType.number,
-      },
-      {
-        id: 'start', name: 'Start', field: 'start', minWidth: 60,
-        type: FieldType.dateIso, filterable: true, sortable: true,
-        filter: { model: Filters.compoundDate },
-        formatter: Formatters.dateIso,
-      },
-      {
-        id: 'finish', name: 'Finish', field: 'finish', minWidth: 60,
-        type: FieldType.dateIso, filterable: true, sortable: true,
-        filter: { model: Filters.compoundDate },
-        formatter: Formatters.dateIso,
-      },
-      {
-        id: 'effortDriven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 120, cssClass: 'cell-effort-driven', field: 'effortDriven',
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        minWidth: 120,
+        maxWidth: 200,
         exportWithFormatter: false,
-        formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
+        sortable: true,
+        filterable: true,
+        filter: { model: Filters.compoundSlider, operator: '>=' },
+        formatter: Formatters.percentCompleteBarWithText,
+        type: FieldType.number,
+      },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        minWidth: 60,
+        type: FieldType.dateIso,
+        filterable: true,
+        sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        minWidth: 60,
+        type: FieldType.dateIso,
+        filterable: true,
+        sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'effortDriven',
+        name: 'Effort Driven',
+        width: 80,
+        minWidth: 20,
+        maxWidth: 120,
+        cssClass: 'cell-effort-driven',
+        field: 'effortDriven',
+        exportWithFormatter: false,
+        formatter: Formatters.checkmarkMaterial,
+        cannotTriggerInsert: true,
         filterable: true,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
-        }
-      }
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+          model: Filters.singleSelect,
+        },
+      },
     ];
 
     this.gridOptions = {
@@ -222,7 +263,8 @@ export default class Example05 {
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
-        leftFooterText: '<div class="flex gap-5px">Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i></div>',
+        leftFooterText:
+          '<div class="flex gap-5px">Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i></div>',
       },
       // enableCheckboxSelector: true,
       // enableRowSelection: true,
@@ -289,7 +331,7 @@ export default class Example05 {
         percentComplete: 99,
         start: new Date(),
         finish: new Date(),
-        effortDriven: false
+        effortDriven: false,
       };
 
       // use the Grid Service to insert the item,
@@ -334,7 +376,14 @@ export default class Example05 {
 
     // optiona 2 - alternative
     // we could also simply use the spread operator directly
-    this.sgb.gridService.updateItem({ ...item, duration: `11 days`, percentComplete: 77, start: new Date(), finish: new Date(), effortDriven: false });
+    this.sgb.gridService.updateItem({
+      ...item,
+      duration: `11 days`,
+      percentComplete: 77,
+      start: new Date(),
+      finish: new Date(),
+      effortDriven: false,
+    });
   }
 
   collapseAll() {
@@ -371,7 +420,7 @@ export default class Example05 {
     for (let i = 0; i < rowCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const item = (data[i] = {});
       let parentId;
 
@@ -388,12 +437,14 @@ export default class Example05 {
       if (i === 1 || i === 0) {
         indent = 0;
         parents.pop();
-      } if (i === 3) {
+      }
+      if (i === 3) {
         indent = 1;
-      } else if (i === 2 || i === 4 || (Math.random() > 0.8 && i > 0 && indent < 3 && i - 1 !== 0 && i - 1 !== 2)) { // also make sure Task 0, 2 remains empty
+      } else if (i === 2 || i === 4 || (Math.random() > 0.8 && i > 0 && indent < 3 && i - 1 !== 0 && i - 1 !== 2)) {
+        // also make sure Task 0, 2 remains empty
         indent++;
         parents.push(i - 1);
-      } else if ((Math.random() < 0.3 && indent > 0)) {
+      } else if (Math.random() < 0.3 && indent > 0) {
         indent--;
         parents.pop();
       }
@@ -410,8 +461,8 @@ export default class Example05 {
       item['duration'] = '5 days';
       item['percentComplete'] = Math.round(Math.random() * 100);
       item['start'] = new Date(randomYear, randomMonth, randomDay);
-      item['finish'] = new Date(randomYear, (randomMonth + 1), randomDay);
-      item['effortDriven'] = (i % 5 === 0);
+      item['finish'] = new Date(randomYear, randomMonth + 1, randomDay);
+      item['effortDriven'] = i % 5 === 0;
     }
     if (this.sgb) {
       this.sgb.dataset = data;
@@ -457,7 +508,9 @@ export default class Example05 {
     const parentItemFound = this.sgb.dataView?.getItemByIdx(childItemFound[parentPropName]);
 
     if (childItemFound && parentItemFound) {
-      this.sgb.treeDataService.dynamicallyToggleItemState([{ itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed }]);
+      this.sgb.treeDataService.dynamicallyToggleItemState([
+        { itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed },
+      ]);
     }
   }
 

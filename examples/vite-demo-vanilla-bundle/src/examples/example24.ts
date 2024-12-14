@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, Editors, FieldType, type GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
+import { type Column, Editors, FieldType, type GridOption, SlickEventHandler } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -32,7 +32,12 @@ export default class Example24 {
     this.dataset = this.getData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid24') as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(document.querySelector('.grid24') as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      document.querySelector('.grid24') as HTMLDivElement,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
     this.updateAllTotals();
 
     // bind any of the grid events
@@ -60,7 +65,7 @@ export default class Example24 {
         field: String(i),
         type: FieldType.number,
         width: 58,
-        editor: { model: Editors.integer }
+        editor: { model: Editors.integer },
       });
     }
     this.columnDefinitions = columnDefs;
@@ -76,7 +81,7 @@ export default class Example24 {
       rowHeight: 33,
       createFooterRow: true,
       showFooterRow: true,
-      footerRowHeight: 35
+      footerRowHeight: 35,
     };
   }
 
@@ -134,7 +139,7 @@ export default class Example24 {
     let total = 0;
     let i = this.dataset.length;
     while (i--) {
-      total += (parseInt(this.dataset[i][columnId], 10) || 0);
+      total += parseInt(this.dataset[i][columnId], 10) || 0;
     }
     const columnElement = this.sgb.slickGrid?.getFooterRowColumn(columnId);
     if (columnElement) {

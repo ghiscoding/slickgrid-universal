@@ -26,7 +26,12 @@ export default class Example29 {
     // mock some data (different in each dataset)
     this.dataset1 = this.mockData(1);
 
-    this.sgb1 = new Slicker.GridBundle(gridContainer1Elm, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.sgb1 = new Slicker.GridBundle(
+      gridContainer1Elm,
+      this.columnDefinitions1,
+      { ...ExampleGridOptions, ...this.gridOptions1 },
+      this.dataset1
+    );
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainer1Elm, 'ondraginit', this.handleOnDragInit.bind(this) as EventListener);
@@ -46,8 +51,25 @@ export default class Example29 {
   /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
-      { id: 'name', name: 'Name', field: 'name', width: 300, cssClass: 'cell-title', editor: { model: Editors.Text, }, validator: this.requiredFieldValidator },
-      { id: 'complete', name: 'Complete', width: 60, cssClass: 'cell-effort-driven', field: 'complete', cannotTriggerInsert: true, formatter: Formatters.checkmarkMaterial, editor: { model: Editors.Checkbox }, }
+      {
+        id: 'name',
+        name: 'Name',
+        field: 'name',
+        width: 300,
+        cssClass: 'cell-title',
+        editor: { model: Editors.Text },
+        validator: this.requiredFieldValidator,
+      },
+      {
+        id: 'complete',
+        name: 'Complete',
+        width: 60,
+        cssClass: 'cell-effort-driven',
+        field: 'complete',
+        cannotTriggerInsert: true,
+        formatter: Formatters.checkmarkMaterial,
+        editor: { model: Editors.Checkbox },
+      },
     ];
     this.gridOptions1 = {
       enableAutoResize: false,
@@ -59,7 +81,7 @@ export default class Example29 {
       enableRowMoveManager: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+        selectActiveRow: false,
       },
       rowMoveManager: {
         columnIndexPosition: 0,
@@ -82,19 +104,19 @@ export default class Example29 {
           { id: 0, name: 'Make a list', complete: true },
           { id: 1, name: 'Check it twice', complete: false },
           { id: 2, name: `Find out who's naughty`, complete: false },
-          { id: 3, name: `Find out who's nice`, complete: false }
+          { id: 3, name: `Find out who's nice`, complete: false },
         ];
       case 2:
         return [
           { id: 0, name: 'Onions', complete: true },
           { id: 1, name: 'Vegemite', complete: false },
           { id: 2, name: 'Corn Flakes', complete: false },
-          { id: 3, name: 'Beans', complete: false }
+          { id: 3, name: 'Beans', complete: false },
         ];
     }
   }
 
-  onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number; }) {
+  onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
     for (const dataRow of data.rows) {
       // no point in moving before or after itself
       if (dataRow === data.insertBefore || dataRow === data.insertBefore - 1) {
@@ -105,7 +127,7 @@ export default class Example29 {
     return true;
   }
 
-  onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number; }) {
+  onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number }) {
     const extractedRows: any[] = [];
     const rows = args.rows;
     const insertBefore = args.insertBefore;
@@ -168,7 +190,7 @@ export default class Example29 {
 
     let selectedRows: number[] = this.sgb1.slickGrid?.getSelectedRows() || [];
 
-    if (!selectedRows.length || selectedRows.findIndex(row => row === row) === -1) {
+    if (!selectedRows.length || selectedRows.findIndex((row) => row === row) === -1) {
       selectedRows = [row];
       this.sgb1.slickGrid?.setSelectedRows(selectedRows);
     }

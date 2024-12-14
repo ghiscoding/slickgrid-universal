@@ -52,7 +52,7 @@ const customEditableInputFormatter: Formatter<ReportItem> = (_row, _cell, _value
 
 export default class Example04 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<ReportItem & { action?: string; }>[];
+  columnDefinitions: Column<ReportItem & { action?: string }>[];
   gridOptions: GridOption;
   dataset: any[];
   dataViewObj: SlickDataView;
@@ -75,7 +75,12 @@ export default class Example04 {
     // this._bindingEventService.bind(gridContainerElm, 'onclick', handleOnClick);
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleOnItemDeleted.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.sgb = new Slicker.GridBundle(
+      gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      dataset
+    );
   }
 
   dispose() {
@@ -87,7 +92,11 @@ export default class Example04 {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        sortable: true,
+        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -98,52 +107,73 @@ export default class Example04 {
         filterable: true,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true,
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        sortable: true,
         filterable: true,
         type: FieldType.number,
         editor: {
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
           // collection: [{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }],
-          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="mdi mdi-percent-outline text-color-info"></i>' })),
+          collection: Array.from(Array(101).keys()).map((k) => ({
+            value: k,
+            label: k,
+            symbol: '<i class="mdi mdi-percent-outline text-color-info"></i>',
+          })),
           customStructure: {
             value: 'value',
             label: 'label',
-            labelSuffix: 'symbol'
+            labelSuffix: 'symbol',
           },
           collectionSortBy: {
             property: 'label',
-            sortDesc: true
+            sortDesc: true,
           },
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual
+            operator: OperatorType.notEqual,
           },
           // collectionOverride: (updatedCollection, args) => {
           //   console.log(args);
           //   return updatedCollection.filter((col) => args.dataContext.id % 2 ? col.value < 50 : col.value >= 50);
           // },
           editorOptions: {
-            filter: true // adds a filter on top of the multi-select dropdown
+            filter: true, // adds a filter on top of the multi-select dropdown
           },
           model: Editors.singleSelect,
         },
       },
       {
-        id: 'start', name: 'Start', field: 'start', minWidth: 60,
-        type: FieldType.dateIso, filterable: true, sortable: true,
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        minWidth: 60,
+        type: FieldType.dateIso,
+        filterable: true,
+        sortable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', minWidth: 60,
-        type: FieldType.dateIso, filterable: true, sortable: true,
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        minWidth: 60,
+        type: FieldType.dateIso,
+        filterable: true,
+        sortable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
       },
       {
-        id: 'completed', name: 'Completed', field: 'completed', sortable: true, formatter: Slicker.Formatters.checkmarkMaterial,
+        id: 'completed',
+        name: 'Completed',
+        field: 'completed',
+        sortable: true,
+        formatter: Slicker.Formatters.checkmarkMaterial,
         exportWithFormatter: false,
         filterable: true,
         editor: {
@@ -151,11 +181,17 @@ export default class Example04 {
         },
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+        },
       },
       {
-        id: 'cost', name: 'Cost | Duration', field: 'cost',
+        id: 'cost',
+        name: 'Cost | Duration',
+        field: 'cost',
         formatter: this.costDurationFormatter.bind(this),
         sortable: true,
         // filterable: true,
@@ -223,10 +259,12 @@ export default class Example04 {
             return { valid: isValid, msg: errorMsg };
           }
           */
-        }
+        },
       },
       {
-        id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin',
+        id: 'cityOfOrigin',
+        name: 'City of Origin',
+        field: 'cityOfOrigin',
         filterable: true,
         sortable: true,
         minWidth: 100,
@@ -288,10 +326,14 @@ export default class Example04 {
                 .catch((ex) => console.log('invalid JSONP response', ex));
             },
           } as AutocompleterOption,
-        }
+        },
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
+        id: 'action',
+        name: 'Action',
+        field: 'action',
+        width: 100,
+        maxWidth: 100,
         excludeFromExport: true,
         formatter: () => `<div class="cell-menu-dropdown">Action<i class="mdi mdi-chevron-down"></i></div>`,
         cellMenu: {
@@ -309,7 +351,9 @@ export default class Example04 {
           commandItems: [
             // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
             {
-              command: 'command2', title: 'Command 2', positionOrder: 62,
+              command: 'command2',
+              title: 'Command 2',
+              positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
               action: (_e, args) => {
                 console.log(args.dataContext, args.column);
@@ -318,31 +362,35 @@ export default class Example04 {
               // only enable command when the task is not completed
               itemUsabilityOverride: (args) => {
                 return !args.dataContext.completed;
-              }
+              },
             },
             { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
             {
-              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+              command: 'delete-row',
+              title: 'Delete Row',
+              positionOrder: 64,
+              iconCssClass: 'mdi mdi-close',
+              cssClass: 'red',
+              textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
-              }
+              },
             },
             // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
             // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
             { divider: true, command: '', positionOrder: 63 },
             // 'divider',
 
-            { command: 'help', title: 'Help', iconCssClass: 'mdi mdi-help-circle', positionOrder: 66, },
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, },
+            { command: 'help', title: 'Help', iconCssClass: 'mdi mdi-help-circle', positionOrder: 66 },
+            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67 },
           ],
           optionTitle: 'Change Complete Flag',
           optionItems: [
             { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
             { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-          ]
-        }
+          ],
+        },
       },
     ];
 
@@ -355,7 +403,7 @@ export default class Example04 {
       },
       enableAutoTooltip: true,
       autoTooltipOptions: {
-        enableForHeaderCells: true
+        enableForHeaderCells: true,
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
@@ -364,19 +412,19 @@ export default class Example04 {
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
-        sanitizeDataExport: true
+        sanitizeDataExport: true,
       },
       externalResources: [new ExcelExportService()],
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+        selectActiveRow: false,
       },
       enableCheckboxSelector: true,
       checkboxSelector: {
         hideInColumnTitleRow: !this.isSelectAllShownAsColumnTitle,
         hideInFilterHeaderRow: this.isSelectAllShownAsColumnTitle,
         name: 'Sel', // column name will only show when `hideInColumnTitleRow` is true
-        onExtensionRegistered: (instance) => this.checkboxSelectorInstance = instance,
+        onExtensionRegistered: (instance) => (this.checkboxSelectorInstance = instance),
       },
       enableRowSelection: true,
       frozenColumn: this.frozenColumnCount,
@@ -427,46 +475,68 @@ export default class Example04 {
           'divider',
           {
             // we can also have multiple nested sub-menus
-            option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: [
+            option: null,
+            title: 'Sub-Options (demo)',
+            subMenuTitle: 'Set Percent Complete',
+            optionItems: [
               { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline text-color-secondary', title: 'Not Started (0%)' },
               { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
               { option: 100, iconCssClass: 'mdi mdi-checkbox-marked text-color-success', title: 'Completed (100%)' },
-            ]
-          }
+            ],
+          },
         ],
         commandItems: [
           { command: '', divider: true, positionOrder: 98 },
           {
             // we can also have multiple nested sub-menus
-            command: 'export', title: 'Exports', iconCssClass: 'mdi mdi-download', positionOrder: 99,
+            command: 'export',
+            title: 'Exports',
+            iconCssClass: 'mdi mdi-download',
+            positionOrder: 99,
             commandItems: [
               { command: 'exports-txt', title: 'Text (tab delimited)' },
               {
-                command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
+                command: 'sub-menu',
+                title: 'Excel',
+                cssClass: 'green',
+                subMenuTitle: 'available formats',
+                subMenuTitleCssClass: 'text-italic orange',
                 commandItems: [
                   { command: 'exports-csv', title: 'Excel (csv)' },
                   { command: 'exports-xlsx', title: 'Excel (xlsx)' },
-                ]
-              }
-            ]
+                ],
+              },
+            ],
           },
           {
-            command: 'feedback', title: 'Feedback', iconCssClass: 'mdi mdi-information-outline', positionOrder: 100,
+            command: 'feedback',
+            title: 'Feedback',
+            iconCssClass: 'mdi mdi-information-outline',
+            positionOrder: 100,
             commandItems: [
-              { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+              {
+                command: 'request-update',
+                title: 'Request update from supplier',
+                iconCssClass: 'mdi mdi-star',
+                tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update',
+              },
               'divider',
               {
-                command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                command: 'sub-menu',
+                title: 'Contact Us',
+                iconCssClass: 'mdi mdi-account',
+                subMenuTitle: 'contact us...',
+                subMenuTitleCssClass: 'italic',
                 commandItems: [
                   { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
                   { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
                   { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
-                ]
-              }
-            ]
-          }
+                ],
+              },
+            ],
+          },
         ],
-        onCommand: (e, args) => this.executeCommand(e, args)
+        onCommand: (e, args) => this.executeCommand(e, args),
       },
     };
 
@@ -476,20 +546,22 @@ export default class Example04 {
       this.dataset[i] = {
         id: i,
         title: 'Task ' + i,
-        duration: i % 8 ? (Math.round(Math.random() * 100) + '') : null,
+        duration: i % 8 ? Math.round(Math.random() * 100) + '' : null,
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 4, 5),
-        cost: (i % 33 === 0) ? null : Math.random() * 10000,
-        completed: (i % 5 === 0),
-        cityOfOrigin: (i % 2) ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
+        cost: i % 33 === 0 ? null : Math.random() * 10000,
+        completed: i % 5 === 0,
+        cityOfOrigin: i % 2 ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
       };
     }
     return this.dataset;
   }
 
   costDurationFormatter(_row, _cell, _value, _columnDef, dataContext) {
-    const costText = this.isNullUndefinedOrEmpty(dataContext.cost) ? 'n/a' : Slicker.Utilities.formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
+    const costText = this.isNullUndefinedOrEmpty(dataContext.cost)
+      ? 'n/a'
+      : Slicker.Utilities.formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
     let durationText = 'n/a';
     if (!this.isNullUndefinedOrEmpty(dataContext.duration) && dataContext.duration >= 0) {
       durationText = `${dataContext.duration} ${dataContext.duration > 1 ? 'days' : 'day'}`;
@@ -498,7 +570,7 @@ export default class Example04 {
   }
 
   isNullUndefinedOrEmpty(data: any) {
-    return (data === '' || data === null || data === undefined);
+    return data === '' || data === null || data === undefined;
   }
 
   handleOnClick(event) {
@@ -523,7 +595,7 @@ export default class Example04 {
   changeFrozenColumnCount() {
     if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
       this.sgb?.slickGrid.setOptions({
-        frozenColumn: +this.frozenColumnCount
+        frozenColumn: +this.frozenColumnCount,
       });
     }
   }
@@ -532,7 +604,7 @@ export default class Example04 {
   changeFrozenRowCount() {
     if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
       this.sgb?.slickGrid.setOptions({
-        frozenRow: +this.frozenRowCount
+        frozenRow: +this.frozenRowCount,
       });
     }
   }
@@ -546,7 +618,7 @@ export default class Example04 {
   toggleFrozenBottomRows() {
     if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
       this.sgb?.slickGrid.setOptions({
-        frozenBottom: !this.isFrozenBottom
+        frozenBottom: !this.isFrozenBottom,
       });
       this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
     }
