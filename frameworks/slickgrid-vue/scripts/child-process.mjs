@@ -64,13 +64,7 @@ export async function spawnProcess(command, args, execOpts, cmdDryRun = false) {
   if (cmdDryRun) {
     return logExecDryRunCommand(command, args);
   }
-  const options = {
-    ...execOpts,
-    nodeOptions: {
-      stdio: ['pipe', 'inherit', 'inherit'],
-    },
-  };
-  const child = x(command, args, options);
+  const child = x(command, args, execOpts);
   const drain = (_code, signal) => {
     children.delete(child);
 
