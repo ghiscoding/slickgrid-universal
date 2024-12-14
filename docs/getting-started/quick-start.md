@@ -4,32 +4,33 @@
 
 #### Welcome to the Slickgrid-Universal lib!
 
-To get started follow any of these instruction Wikis depending on your choice of Framework.
+To get started follow any of these instruction Documentation depending on your choice of Framework.
 
-| Framework  | Wiki                                                                                                     | Demo                                                                                                  |
-| ---------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Angular    | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) | [Live Demo](https://ghiscoding.github.io/Angular-Slickgrid/)                                          |
-| Aurelia    | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start)  | [Live Demo](https://ghiscoding.github.io/aurelia-slickgrid/)                                          |
-| React      | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/slickgrid-react/getting-started/quick-start)    | [Live Demo](https://ghiscoding.github.io/slickgrid-react/)                                            |
-| Vue        | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)    | [Live Demo](https://ghiscoding.github.io/slickgrid-vue-demos/)                                        |
-| Salesforce | [Salesforce Installation](./installation-salesforce.md)  | [Print Screen](https://github.com/ghiscoding/slickgrid-universal/wiki#salesforce-demo---print-screen) |
-| ----       |                                                                                                          |                                                                                                       |
-| Vanilla | [Installation (Step by Step)](./installation-vanilla.md)  | | | ----       |                                                                                                          |                                                                                                       |
+| Framework  | Documentation                                                                                                       | Demo                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Angular    | [Documentation - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) | [Live Demo](https://ghiscoding.github.io/Angular-Slickgrid/)                                          |
+| Aurelia    | [Documentation - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start) | [Live Demo](https://ghiscoding.github.io/aurelia-slickgrid/)                                          |
+| React      | [Documentation - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/slickgrid-react/getting-started/quick-start)   | [Live Demo](https://ghiscoding.github.io/slickgrid-react/)                                            |
+| Vue        | [Documentation - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)     | [Live Demo](https://ghiscoding.github.io/slickgrid-vue-demos/)                                        |
+| Salesforce | [Salesforce Installation](./installation-salesforce.md)                                                             | [Print Screen](https://github.com/ghiscoding/slickgrid-universal/wiki#salesforce-demo---print-screen) |
+| ----       |                                                                                                                     |                                                                                                       |
+| Vanilla    | [Installation (Step by Step)](./installation-vanilla.md)                                                            |                                                                                                       |
+| ----       |                                                                                                                     |                                                                                                       |
 
 **General Subjects**
 
-* Installation
-  * Salesforce (LWC)
-* Column Functionalities
-  * Editors
-  * Formatters
-* Interfaces/Models
-  * Column Options
-  * Grid Options
-  * Global Grid Options
-  * Sales Global Grid Options
+- Installation
+  - Salesforce (LWC)
+- Column Functionalities
+  - Editors
+  - Formatters
+- Interfaces/Models
+  - Column Options
+  - Grid Options
+  - Global Grid Options
+  - Sales Global Grid Options
 
-***
+---
 
 #### Salesforce Demo - Print Screen
 
