@@ -11,6 +11,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [0.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v0.2.0) (2024-12-14)
 
+### ⚠ BREAKING CHANGES
+
+- `i18next` is now totally optional and must be `provide`d separately.
+
 ### Features
 
 - **vue:** allow using SlickgridVue component w/o grid options ([#1771](https://github.com/ghiscoding/slickgrid-universal/issues/1771)) ([2a24968](https://github.com/ghiscoding/slickgrid-universal/commit/2a249683fca9dda7785ffb4f99f2ff2e6270de2c)) - by @ghiscoding
