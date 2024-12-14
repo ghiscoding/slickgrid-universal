@@ -1,4 +1,4 @@
-import { execAsyncPiped } from './child-process.mjs';
+import { logExecDryRunCommand, execAsyncPiped } from './child-process.mjs';
 
 /**
  * @param {Array<String>} [files]
@@ -61,6 +61,12 @@ export async function gitTagPushRemote(tag, remote = 'origin', { cwd, dryRun }) 
 export async function gitPushToCurrentBranch(remote = 'origin', { cwd, dryRun }) {
   const branchName = await gitCurrentBranchName({ cwd });
   const execArgs = ['push', remote, branchName];
+
+  // also print git command to console until we fix the issue "-fatal: invalid refspec"
+  if (!dryRun) {
+    logExecDryRunCommand('git', execArgs);
+  }
+
   return execAsyncPiped('git', execArgs, { cwd }, dryRun);
 }
 

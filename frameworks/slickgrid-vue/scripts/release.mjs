@@ -95,6 +95,9 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
     newTag = `${TAG_PREFIX}${newVersion}`;
     console.log(`${c.bgMagenta(dryRunPrefix)} Bumping new version to "${newTag}"`);
 
+    console.log('Disable Husky');
+    execAsyncPiped('HUSKY=0');
+
     // 2. delete (empty) dist folder
     console.log('Emptying dist folder');
     rimrafSync('dist');
