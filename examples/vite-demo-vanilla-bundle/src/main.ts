@@ -8,7 +8,7 @@ import './styles.scss';
 
 class Main {
   app!: App;
-  constructor(private renderer: Renderer) { }
+  constructor(private renderer: Renderer) {}
 
   async loadApp() {
     this.app = this.renderer.loadViewModel(App);
@@ -17,7 +17,7 @@ class Main {
     const translate = new TranslateService();
     translate.setup({
       loadPath: 'i18n/{{lang}}.json',
-      lang: 'en'
+      lang: 'en',
     });
     await translate.use('en');
 

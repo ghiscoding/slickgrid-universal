@@ -37,14 +37,14 @@ function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, grid:
   const gridOptions = grid.getOptions();
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  const isEditable = (isGridEditable && hasEditor);
+  const isEditable = isGridEditable && hasEditor;
 
   return isEditable;
 }
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext: GroceryItem, grid) => {
   const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
-  value = (value === null || value === undefined) ? '' : value;
+  value = value === null || value === undefined ? '' : value;
   const divElm = document.createElement('div');
   divElm.className = 'editing-field';
   if (value instanceof HTMLElement) {
@@ -60,7 +60,10 @@ export class CustomSumAggregator implements Aggregator {
   private _sum = 0;
   private _type = 'sum' as const;
 
-  constructor(public readonly field: number | string, public taxRate: number) { }
+  constructor(
+    public readonly field: number | string,
+    public taxRate: number
+  ) {}
 
   get type(): string {
     return this._type;
@@ -119,7 +122,12 @@ export default class Example23 {
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid23') as HTMLDivElement;
     this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.invalidateAll.bind(this));
 
-    this.sgb = new Slicker.GridBundle(document.querySelector('.grid23') as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      document.querySelector('.grid23') as HTMLDivElement,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
     document.body.classList.add('salesforce-theme');
   }
 
@@ -134,20 +142,34 @@ export default class Example23 {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'sel', name: '#', field: 'id',
+        id: 'sel',
+        name: '#',
+        field: 'id',
         headerCssClass: 'header-centered',
         cssClass: 'cell-unselectable',
         excludeFromExport: true,
         maxWidth: 30,
       },
       {
-        id: 'name', name: 'Name', field: 'name', sortable: true, width: 140, filterable: true,
-        excelExportOptions: { width: 18 }
+        id: 'name',
+        name: 'Name',
+        field: 'name',
+        sortable: true,
+        width: 140,
+        filterable: true,
+        excelExportOptions: { width: 18 },
       },
       {
-        id: 'price', name: 'Price', field: 'price', type: FieldType.number,
-        editor: { model: Editors.float, decimal: 2 }, sortable: true, width: 70, filterable: true,
-        formatter: Formatters.dollar, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+        id: 'price',
+        name: 'Price',
+        field: 'price',
+        type: FieldType.number,
+        editor: { model: Editors.float, decimal: 2 },
+        sortable: true,
+        width: 70,
+        filterable: true,
+        formatter: Formatters.dollar,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         groupTotalsExcelExportOptions: {
           style: {
             font: { bold: true, size: 11.5 },
@@ -155,10 +177,13 @@ export default class Example23 {
             border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
-        }
+        },
       },
       {
-        id: 'qty', name: 'Quantity', field: 'qty', type: FieldType.number,
+        id: 'qty',
+        name: 'Quantity',
+        field: 'qty',
+        type: FieldType.number,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         groupTotalsExcelExportOptions: {
           style: {
@@ -168,18 +193,28 @@ export default class Example23 {
           valueParserCallback: this.excelGroupCellParser.bind(this),
         },
         params: { minDecimal: 0, maxDecimal: 0 },
-        editor: { model: Editors.integer }, sortable: true, width: 60, filterable: true
+        editor: { model: Editors.integer },
+        sortable: true,
+        width: 60,
+        filterable: true,
       },
       {
-        id: 'subTotal', name: 'Sub-Total', field: 'subTotal', cssClass: 'text-sub-total',
-        type: FieldType.number, sortable: true, width: 70, filterable: true,
+        id: 'subTotal',
+        name: 'Sub-Total',
+        field: 'subTotal',
+        cssClass: 'text-sub-total',
+        type: FieldType.number,
+        sortable: true,
+        width: 70,
+        filterable: true,
         exportWithFormatter: false,
-        formatter: Formatters.multiple, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+        formatter: Formatters.multiple,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         params: {
           formatters: [
             (_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty,
-            Formatters.dollar
-          ] as Formatter[]
+            Formatters.dollar,
+          ] as Formatter[],
         },
         excelExportOptions: {
           style: {
@@ -196,22 +231,35 @@ export default class Example23 {
             border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
-        }
+        },
       },
       {
-        id: 'taxable', name: 'Taxable', field: 'taxable', cssClass: 'text-center', sortable: true, width: 60, filterable: true,
+        id: 'taxable',
+        name: 'Taxable',
+        field: 'taxable',
+        cssClass: 'text-center',
+        sortable: true,
+        width: 60,
+        filterable: true,
         formatter: Formatters.checkmarkMaterial,
-        exportCustomFormatter: (_row, _cell, val) => val ? '✓' : '',
+        exportCustomFormatter: (_row, _cell, val) => (val ? '✓' : ''),
         excelExportOptions: {
           style: {
             alignment: { horizontal: 'center' },
           },
-        }
+        },
       },
       {
-        id: 'taxes', name: 'Taxes', field: 'taxes', cssClass: 'text-taxes',
-        type: FieldType.number, sortable: true, width: 70, filterable: true,
-        formatter: Formatters.multiple, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+        id: 'taxes',
+        name: 'Taxes',
+        field: 'taxes',
+        cssClass: 'text-taxes',
+        type: FieldType.number,
+        sortable: true,
+        width: 70,
+        filterable: true,
+        formatter: Formatters.multiple,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         params: {
           formatters: [
             (_row, _cell, _value, _coldef, dataContext) => {
@@ -220,8 +268,8 @@ export default class Example23 {
               }
               return null;
             },
-            Formatters.dollar
-          ] as Formatter[]
+            Formatters.dollar,
+          ] as Formatter[],
         },
         excelExportOptions: {
           style: {
@@ -238,11 +286,19 @@ export default class Example23 {
             border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
-        }
+        },
       },
       {
-        id: 'total', name: 'Total', field: 'total', type: FieldType.number, sortable: true, width: 70, filterable: true,
-        cssClass: 'text-total', formatter: Formatters.multiple, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+        id: 'total',
+        name: 'Total',
+        field: 'total',
+        type: FieldType.number,
+        sortable: true,
+        width: 70,
+        filterable: true,
+        cssClass: 'text-total',
+        formatter: Formatters.multiple,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         params: {
           formatters: [
             (_row, _cell, _value, _coldef, dataContext) => {
@@ -252,8 +308,8 @@ export default class Example23 {
               }
               return subTotal;
             },
-            Formatters.dollar
-          ] as Formatter[]
+            Formatters.dollar,
+          ] as Formatter[],
         },
         excelExportOptions: {
           style: {
@@ -270,7 +326,7 @@ export default class Example23 {
             border: { top: { color: 'FF747474', style: 'thick' } },
           },
           valueParserCallback: this.excelGroupCellParser.bind(this),
-        }
+        },
       },
     ];
 
@@ -296,7 +352,7 @@ export default class Example23 {
         sheetName: 'Grocery List',
         columnHeaderStyle: {
           font: { color: 'FFFFFFFF' },
-          fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' }
+          fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' },
         },
 
         // optionally pass a custom header to the Excel Sheet
@@ -376,7 +432,10 @@ export default class Example23 {
         excelCol = excelTotalCol;
         break;
     }
-    return { value: `SUM(${excelCol}${dataRowIdx + rowOffset - groupItemCount}:${excelCol}${dataRowIdx + rowOffset - 1})`, metadata: { type: 'formula', style: excelFormatId } };
+    return {
+      value: `SUM(${excelCol}${dataRowIdx + rowOffset - groupItemCount}:${excelCol}${dataRowIdx + rowOffset - 1})`,
+      metadata: { type: 'formula', style: excelFormatId },
+    };
   }
 
   /**  We'll use a generic parser to reuse similar logic for all 3 calculable columns (SubTotal, Taxes, Total) */
@@ -402,9 +461,7 @@ export default class Example23 {
         excelVal = `${excelPriceCol}*${excelQtyCol}`; // like "C4*D4"
         break;
       case 'taxes':
-        excelVal = (dataContext.taxable)
-          ? `${excelPriceCol}*${excelQtyCol}*${this.taxRate / 100}`
-          : '';
+        excelVal = dataContext.taxable ? `${excelPriceCol}*${excelQtyCol}*${this.taxRate / 100}` : '';
         break;
       case 'total':
         excelVal = `(${excelPriceCol}*${excelQtyCol})+${excelTaxesCol}`;
@@ -424,7 +481,7 @@ export default class Example23 {
       { id: i++, name: 'Tomatoes', qty: 3, taxable: false, price: 1.88 },
       { id: i++, name: 'Butter', qty: 1, taxable: false, price: 3.33 },
       { id: i++, name: 'BBQ Chicken', qty: 1, taxable: false, price: 12.33 },
-      { id: i++, name: 'Chicken Wings', qty: 12, taxable: true, price: .53 },
+      { id: i++, name: 'Chicken Wings', qty: 12, taxable: true, price: 0.53 },
       { id: i++, name: 'Drinkable Yogurt', qty: 6, taxable: true, price: 1.22 },
       { id: i++, name: 'Milk', qty: 3, taxable: true, price: 3.11 },
     ] as GroceryItem[];
@@ -444,7 +501,8 @@ export default class Example23 {
 
     this.sgb?.dataView?.setGrouping({
       getter: 'taxable',
-      formatter: (g) => `Taxable: <span class="mdi ${g.value ? checkIcon : uncheckIcon} text-color-se-danger"></span> <span class="text-color-primary">(${g.count} items)</span>`,
+      formatter: (g) =>
+        `Taxable: <span class="mdi ${g.value ? checkIcon : uncheckIcon} text-color-se-danger"></span> <span class="text-color-primary">(${g.count} items)</span>`,
       comparer: (a, b) => b.value - a.value,
       aggregators: [
         new Aggregators.Sum('price'),

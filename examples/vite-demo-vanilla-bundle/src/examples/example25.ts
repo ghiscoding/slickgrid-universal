@@ -40,7 +40,7 @@ export default class Example25 {
   filterList = [
     { value: '', label: '' },
     { value: 'currentYearTasks', label: 'Current Year Completed Tasks' },
-    { value: 'nextYearTasks', label: 'Next Year Active Tasks' }
+    { value: 'nextYearTasks', label: 'Next Year Active Tasks' },
   ];
   selectedLanguage = 'en';
   selectedLanguageFile = 'en.json';
@@ -66,7 +66,12 @@ export default class Example25 {
     this.dataset = this.mockData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid25') as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      this.gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
@@ -89,20 +94,33 @@ export default class Example25 {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'id', nameKey: 'TITLE', minWidth: 100,
+        id: 'title',
+        name: 'Title',
+        field: 'id',
+        nameKey: 'TITLE',
+        minWidth: 100,
         formatter: (_row, _cell, value) => {
           return this.translateService.translate('TASK_X', { x: value }) ?? '';
         },
         sortable: true,
         filterable: true,
-        params: { useFormatterOuputToFilter: true }
+        params: { useFormatterOuputToFilter: true },
       },
       {
-        id: 'description', name: 'Description', field: 'description', filterable: true, sortable: true, minWidth: 80,
+        id: 'description',
+        name: 'Description',
+        field: 'description',
+        filterable: true,
+        sortable: true,
+        minWidth: 80,
         type: FieldType.string,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', nameKey: 'PERCENT_COMPLETE', minWidth: 120,
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        nameKey: 'PERCENT_COMPLETE',
+        minWidth: 120,
         sortable: true,
         customTooltip: { position: 'center' },
         formatter: Formatters.progressBar,
@@ -114,42 +132,74 @@ export default class Example25 {
           operator: OperatorType.rangeInclusive, // defaults to inclusive
           filterOptions: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
-            min: 0, step: 5
-          } as SliderRangeOption
-        }
+            min: 0,
+            step: 5,
+          } as SliderRangeOption,
+        },
       },
       {
-        id: 'start', name: 'Start', field: 'start', nameKey: 'START', formatter: Formatters.dateIso, sortable: true, minWidth: 75, width: 100, exportWithFormatter: true,
-        type: FieldType.date, filterable: true, filter: { model: Filters.compoundDate }
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        nameKey: 'START',
+        formatter: Formatters.dateIso,
+        sortable: true,
+        minWidth: 75,
+        width: 100,
+        exportWithFormatter: true,
+        type: FieldType.date,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', nameKey: 'FINISH', formatter: Formatters.dateIso, sortable: true, minWidth: 75, width: 120, exportWithFormatter: true,
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        nameKey: 'FINISH',
+        formatter: Formatters.dateIso,
+        sortable: true,
+        minWidth: 75,
+        width: 120,
+        exportWithFormatter: true,
         type: FieldType.date,
         filterable: true,
         filter: {
           model: Filters.dateRange,
-        }
+        },
       },
       {
-        id: 'duration', field: 'duration', nameKey: 'DURATION', maxWidth: 90,
+        id: 'duration',
+        field: 'duration',
+        nameKey: 'DURATION',
+        maxWidth: 90,
         type: FieldType.number,
         sortable: true,
-        filterable: true, filter: {
+        filterable: true,
+        filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive // defaults to exclusive
-        }
+          operator: OperatorType.rangeExclusive, // defaults to exclusive
+        },
       },
       {
-        id: 'completed', name: 'Completed', field: 'completed', nameKey: 'COMPLETED', minWidth: 85, maxWidth: 90,
+        id: 'completed',
+        name: 'Completed',
+        field: 'completed',
+        nameKey: 'COMPLETED',
+        minWidth: 85,
+        maxWidth: 90,
         formatter: Formatters.checkmarkMaterial,
         exportWithFormatter: true, // you can set this property in the column definition OR in the grid options, column def has priority over grid options
         filterable: true,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
           model: Filters.singleSelect,
-          filterOptions: { autoAdjustDropHeight: true } as MultipleSelectOption
-        }
-      }
+          filterOptions: { autoAdjustDropHeight: true } as MultipleSelectOption,
+        },
+      },
     ];
 
     const today = new Date();
@@ -190,7 +240,7 @@ export default class Example25 {
   mockData(itemCount: number, startingIndex = 0): any[] {
     // mock a dataset
     const tempDataset: any[] = [];
-    for (let i = startingIndex; i < (startingIndex + itemCount); i++) {
+    for (let i = startingIndex; i < startingIndex + itemCount; i++) {
       const randomDuration = randomBetween(0, 365);
       const randomYear = randomBetween(new Date().getFullYear(), new Date().getFullYear() + 1);
       const randomMonth = randomBetween(0, 12);
@@ -200,13 +250,13 @@ export default class Example25 {
       tempDataset.push({
         id: i,
         title: 'Task ' + i,
-        description: (i % 5) ? 'desc ' + i : null, // also add some random to test NULL field
+        description: i % 5 ? 'desc ' + i : null, // also add some random to test NULL field
         duration: randomDuration,
         percentComplete: randomPercent,
         percentCompleteNumber: randomPercent,
-        start: (i % 4) ? null : new Date(randomYear, randomMonth, randomDay),          // provide a Date format
+        start: i % 4 ? null : new Date(randomYear, randomMonth, randomDay), // provide a Date format
         finish: new Date(randomYear, randomMonth, randomDay),
-        completed: (randomPercent === 100) ? true : false,
+        completed: randomPercent === 100 ? true : false,
       });
     }
 
@@ -266,7 +316,11 @@ export default class Example25 {
     switch (newPredefinedFilter) {
       case 'currentYearTasks':
         filters = [
-          { columnId: 'finish', operator: OperatorType.rangeInclusive, searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
+          {
+            columnId: 'finish',
+            operator: OperatorType.rangeInclusive,
+            searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`],
+          },
           { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
         ];
         break;
@@ -278,7 +332,7 @@ export default class Example25 {
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;

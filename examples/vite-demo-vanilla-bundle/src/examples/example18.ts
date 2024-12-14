@@ -59,7 +59,7 @@ const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col
       const tooltip = svg?.nextElementSibling as HTMLElement;
       if (tooltip) {
         tooltip.hidden = false;
-        tooltip.textContent = `$${(datapoint.value * 100 / 100).toFixed(2)}`;
+        tooltip.textContent = `$${((datapoint.value * 100) / 100).toFixed(2)}`;
         tooltip.style.top = `${event.offsetY}px`;
         tooltip.style.left = `${event.offsetX + 20}px`;
       }
@@ -70,7 +70,7 @@ const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col
       if (tooltip) {
         tooltip.hidden = true;
       }
-    }
+    },
   });
   const div = document.createElement('div');
   div.appendChild(svgElem);
@@ -99,7 +99,12 @@ export default class Example18 {
 
     // mock some data (different in each dataset)
     this.dataset = this.getData(NB_ITEMS);
-    this.sgb = new Slicker.GridBundle(document.querySelector(`.grid18`) as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      document.querySelector(`.grid18`) as HTMLDivElement,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
 
     window.setTimeout(() => {
       this.startSimulation();
@@ -120,82 +125,150 @@ export default class Example18 {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
     this.columnDefinitions = [
       {
-        id: 'currency', name: 'Currency', field: 'currency', filterable: true, sortable: true, minWidth: 65, width: 65,
+        id: 'currency',
+        name: 'Currency',
+        field: 'currency',
+        filterable: true,
+        sortable: true,
+        minWidth: 65,
+        width: 65,
         formatter: currencyFormatter,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ label: '', value: '' }, { label: 'CAD', value: 'CAD' }, { label: 'USD', value: 'USD' }]
+          collection: [
+            { label: '', value: '' },
+            { label: 'CAD', value: 'CAD' },
+            { label: 'USD', value: 'USD' },
+          ],
         },
         grouping: {
           getter: 'currency',
-          formatter: (g) => `Currency: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('amount')
-          ],
+          formatter: (g) =>
+            `Currency: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
+          aggregators: [new Aggregators.Sum('amount')],
           aggregateCollapsed: true,
-          collapsed: false
-        }
+          collapsed: false,
+        },
       },
       { id: 'symbol', name: 'Symbol', field: 'symbol', filterable: true, sortable: true, minWidth: 65, width: 65 },
       {
-        id: 'market', name: 'Market', field: 'market', filterable: true, sortable: true, minWidth: 75, width: 75,
+        id: 'market',
+        name: 'Market',
+        field: 'market',
+        filterable: true,
+        sortable: true,
+        minWidth: 75,
+        width: 75,
         grouping: {
           getter: 'market',
-          formatter: (g) => `Market: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('amount')
-          ],
+          formatter: (g) =>
+            `Market: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
+          aggregators: [new Aggregators.Sum('amount')],
           aggregateCollapsed: true,
-          collapsed: false
-        }
+          collapsed: false,
+        },
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true, minWidth: 80, width: 130 },
       {
-        id: 'trsnType', name: 'Type', field: 'trsnType', filterable: true, sortable: true, minWidth: 60, width: 60,
+        id: 'trsnType',
+        name: 'Type',
+        field: 'trsnType',
+        filterable: true,
+        sortable: true,
+        minWidth: 60,
+        width: 60,
         formatter: transactionTypeFormatter,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ label: '', value: '' }, { label: 'Buy', value: 'Buy' }, { label: 'Sell', value: 'Sell' }]
+          collection: [
+            { label: '', value: '' },
+            { label: 'Buy', value: 'Buy' },
+            { label: 'Sell', value: 'Sell' },
+          ],
         },
         grouping: {
           getter: 'trsnType',
-          formatter: (g) => `Type: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('amount')
-          ],
+          formatter: (g) =>
+            `Type: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
+          aggregators: [new Aggregators.Sum('amount')],
           aggregateCollapsed: true,
-          collapsed: false
-        }
+          collapsed: false,
+        },
       },
       {
-        id: 'priceChange', name: 'Change', field: 'priceChange', filterable: true, sortable: true, minWidth: 80, width: 80,
-        filter: { model: Filters.compoundInputNumber }, type: FieldType.number,
+        id: 'priceChange',
+        name: 'Change',
+        field: 'priceChange',
+        filterable: true,
+        sortable: true,
+        minWidth: 80,
+        width: 80,
+        filter: { model: Filters.compoundInputNumber },
+        type: FieldType.number,
         formatter: Formatters.multiple,
         params: {
           formatters: [Formatters.dollar, priceFormatter],
           maxDecimal: 2,
-        }
+        },
       },
       {
-        id: 'price', name: 'Price', field: 'price', filterable: true, sortable: true, minWidth: 70, width: 70,
-        filter: { model: Filters.compoundInputNumber }, type: FieldType.number,
-        formatter: Formatters.dollar, params: { maxDecimal: 2 }
+        id: 'price',
+        name: 'Price',
+        field: 'price',
+        filterable: true,
+        sortable: true,
+        minWidth: 70,
+        width: 70,
+        filter: { model: Filters.compoundInputNumber },
+        type: FieldType.number,
+        formatter: Formatters.dollar,
+        params: { maxDecimal: 2 },
       },
       {
-        id: 'quantity', name: 'Quantity', field: 'quantity', filterable: true, sortable: true, minWidth: 70, width: 70,
-        filter: { model: Filters.compoundInputNumber }, type: FieldType.number,
+        id: 'quantity',
+        name: 'Quantity',
+        field: 'quantity',
+        filterable: true,
+        sortable: true,
+        minWidth: 70,
+        width: 70,
+        filter: { model: Filters.compoundInputNumber },
+        type: FieldType.number,
       },
       {
-        id: 'amount', name: 'Amount', field: 'amount', filterable: true, sortable: true, minWidth: 70, width: 60,
-        filter: { model: Filters.compoundInputNumber }, type: FieldType.number,
-        formatter: Formatters.dollar, params: { maxDecimal: 2 },
+        id: 'amount',
+        name: 'Amount',
+        field: 'amount',
+        filterable: true,
+        sortable: true,
+        minWidth: 70,
+        width: 60,
+        filter: { model: Filters.compoundInputNumber },
+        type: FieldType.number,
+        formatter: Formatters.dollar,
+        params: { maxDecimal: 2 },
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
       },
-      { id: 'historic', name: 'Price History', field: 'historic', minWidth: 100, width: 150, maxWidth: 150, formatter: historicSparklineFormatter },
       {
-        id: 'execution', name: 'Execution Timestamp', field: 'execution', filterable: true, sortable: true, minWidth: 125,
-        formatter: Formatters.dateTimeIsoAmPm, exportWithFormatter: true,
-        type: FieldType.dateTimeIsoAM_PM, filter: { model: Filters.compoundDate }
+        id: 'historic',
+        name: 'Price History',
+        field: 'historic',
+        minWidth: 100,
+        width: 150,
+        maxWidth: 150,
+        formatter: historicSparklineFormatter,
+      },
+      {
+        id: 'execution',
+        name: 'Execution Timestamp',
+        field: 'execution',
+        filterable: true,
+        sortable: true,
+        minWidth: 125,
+        formatter: Formatters.dateTimeIsoAmPm,
+        exportWithFormatter: true,
+        type: FieldType.dateTimeIsoAM_PM,
+        filter: { model: Filters.compoundDate },
       },
     ];
 
@@ -207,7 +280,7 @@ export default class Example18 {
       },
       formatterOptions: {
         displayNegativeNumberWithParentheses: true,
-        thousandSeparator: ','
+        thousandSeparator: ',',
       },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
@@ -240,24 +313,24 @@ export default class Example18 {
       const amount = price * quantity;
       const now = new Date();
       now.setHours(9, 30, 0);
-      const currency = (Math.floor(Math.random() * 10)) % 2 ? 'CAD' : 'USD';
+      const currency = Math.floor(Math.random() * 10) % 2 ? 'CAD' : 'USD';
       const company = faker.company.name();
 
       datasetTmp[i] = {
         id: i,
         currency,
-        trsnType: (Math.round(Math.random() * 100)) % 2 ? 'Buy' : 'Sell',
+        trsnType: Math.round(Math.random() * 100) % 2 ? 'Buy' : 'Sell',
         company,
         symbol: currency === 'CAD' ? company.substring(0, 3).toUpperCase() + '.TO' : company.substring(0, 4).toUpperCase(),
         market: currency === 'CAD' ? 'TSX' : price > 200 ? 'Nasdaq' : 'S&P 500',
-        duration: (i % 33 === 0) ? null : Math.random() * 100 + '',
+        duration: i % 33 === 0 ? null : Math.random() * 100 + '',
         percentCompleteNumber: randomPercent,
         priceChange,
         price,
         quantity,
         amount,
         execution: now,
-        historic: [price]
+        historic: [price],
       };
     }
     return datasetTmp;
@@ -275,10 +348,10 @@ export default class Example18 {
       const prevItem = deepCopy(this.dataset[rowNumber]);
       const itemTmp = { ...this.dataset[rowNumber] };
       itemTmp.priceChange = priceChange;
-      itemTmp.price = ((itemTmp.price + priceChange) < 0) ? 0 : itemTmp.price + priceChange;
+      itemTmp.price = itemTmp.price + priceChange < 0 ? 0 : itemTmp.price + priceChange;
       itemTmp.quantity = itemTmp.price < 5 ? randomHighQty : randomLowQty;
       itemTmp.amount = itemTmp.price * itemTmp.quantity;
-      itemTmp.trsnType = (Math.round(Math.random() * 100)) % 2 ? 'Buy' : 'Sell';
+      itemTmp.trsnType = Math.round(Math.random() * 100) % 2 ? 'Buy' : 'Sell';
       itemTmp.execution = new Date();
       if (itemTmp.price !== undefined) {
         itemTmp.historic.push(itemTmp.price);
@@ -313,7 +386,7 @@ export default class Example18 {
   }
 
   findColumnById(columnName: string): Column {
-    return this.columnDefinitions.find(col => col.field === columnName) as Column;
+    return this.columnDefinitions.find((col) => col.field === columnName) as Column;
   }
 
   renderCellHighlighting(item: any, column: Column, priceChange: number) {

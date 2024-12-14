@@ -34,7 +34,7 @@ const NB_ITEMS = 400;
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value) => {
-  if ((value === null || value === undefined || !value.length)) {
+  if (value === null || value === undefined || !value.length) {
     // we will only check if the field is supplied when it's an inline editing
     return { valid: false, msg: 'This is a required field.' };
   } else if (!/^(task\s\d+)*$/i.test(value)) {
@@ -54,7 +54,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
   const gridOptions = grid.getOptions();
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  let isEditable = (isGridEditable && hasEditor);
+  let isEditable = isGridEditable && hasEditor;
 
   if (dataContext && columnDef && gridOptions && gridOptions.editable) {
     switch (columnDef.id) {
@@ -76,7 +76,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
   const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
-  value = (value === null || value === undefined) ? '' : value;
+  value = value === null || value === undefined ? '' : value;
   const divElm = document.createElement('div');
   divElm.className = 'editing-field';
   if (value instanceof HTMLElement) {
@@ -95,7 +95,7 @@ export default class Example14 {
   isGridEditable = true;
   classDefaultResizeButton = 'button is-small';
   classNewResizeButton = 'button is-small is-selected is-primary';
-  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand; }> = [];
+  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand }> = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -121,7 +121,12 @@ export default class Example14 {
     this.dataset = this.loadData(NB_ITEMS);
     this.gridContainerElm = document.querySelector(`.grid14`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      this.gridContainerElm,
+      Utilities.deepCopy(this.columnDefinitions),
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
@@ -130,7 +135,11 @@ export default class Example14 {
     this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handlePaginationChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onbeforeresizebycontent', this.showSpinner.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onafterresizebycontent', this.hideSpinner.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowidschanged', this.handleOnSelectedRowIdsChanged.bind(this));
+    this._bindingEventService.bind(
+      this.gridContainerElm,
+      'onselectedrowidschanged',
+      this.handleOnSelectedRowIdsChanged.bind(this)
+    );
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
   }
 
@@ -143,14 +152,20 @@ export default class Example14 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 65,
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        sortable: true,
+        type: FieldType.string,
+        minWidth: 65,
         cssClass: 'text-bold text-uppercase',
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
         resizeCharWidthInPx: 7.6,
         resizeCalcWidthRatio: 1, // default ratio is ~0.9 for string but since our text is all uppercase then a higher ratio is needed
         resizeMaxWidthThreshold: 200,
-        filterable: true, columnGroup: 'Common Factor',
+        filterable: true,
+        columnGroup: 'Common Factor',
         filter: {
           model: Filters.inputText,
           // you can use your own custom filter predicate when built-in filters aren't working for you
@@ -194,40 +209,67 @@ export default class Example14 {
           },
         },
         editor: {
-          model: Editors.longText, required: true, alwaysSaveOnEnterKey: true,
+          model: Editors.longText,
+          required: true,
+          alwaysSaveOnEnterKey: true,
           maxLength: 12,
           editorOptions: {
             cols: 45,
             rows: 6,
             buttonTexts: {
               cancel: 'Close',
-              save: 'Done'
-            }
+              save: 'Done',
+            },
           } as LongTextEditorOption,
           validator: myCustomTitleValidator,
         },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, width: 110,
-        type: FieldType.number, columnGroup: 'Common Factor',
+        id: 'duration',
+        name: 'Duration',
+        field: 'duration',
+        sortable: true,
+        filterable: true,
+        width: 110,
+        type: FieldType.number,
+        columnGroup: 'Common Factor',
         formatter: (_row, _cell, value) => {
           if (value === null || value === undefined || value === '') {
             return '';
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        editor: { model: Editors.float, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
+        editor: {
+          model: Editors.float,
+          decimal: 2,
+          valueStep: 1,
+          minValue: 0,
+          maxValue: 10000,
+          alwaysSaveOnEnterKey: true,
+          required: true,
+        },
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost', minWidth: 65,
-        sortable: true, filterable: true, type: FieldType.number, columnGroup: 'Analysis',
+        id: 'cost',
+        name: 'Cost',
+        field: 'cost',
+        minWidth: 65,
+        sortable: true,
+        filterable: true,
+        type: FieldType.number,
+        columnGroup: 'Analysis',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 150,
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        minWidth: 150,
         type: FieldType.number,
-        sortable: true, filterable: true, columnGroup: 'Analysis',
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Analysis',
         customTooltip: { position: 'center' },
         filter: {
           model: Filters.sliderRange,
@@ -240,18 +282,23 @@ export default class Example14 {
         },
         editor: {
           model: Editors.slider,
-          minValue: 0, maxValue: 100,
+          minValue: 0,
+          maxValue: 100,
         },
       },
       {
-        id: 'complexity', name: 'Complexity', field: 'complexity',
+        id: 'complexity',
+        name: 'Complexity',
+        field: 'complexity',
         resizeCalcWidthRatio: 0.82, // default calc ratio is 1 or 0.95 for field type of string
-        sortable: true, filterable: true, columnGroup: 'Analysis',
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Analysis',
         formatter: (_row, _cell, value) => this.complexityLevelList[value]?.label,
         exportCustomFormatter: (_row, _cell, value) => this.complexityLevelList[value]?.label,
         filter: {
           model: Filters.multipleSelect,
-          collection: this.complexityLevelList
+          collection: this.complexityLevelList,
         },
         editor: {
           model: Editors.singleSelect,
@@ -259,46 +306,75 @@ export default class Example14 {
         },
       },
       {
-        id: 'start', name: 'Start', field: 'start', sortable: true,
-        formatter: Formatters.dateUs, columnGroup: 'Period',
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        sortable: true,
+        formatter: Formatters.dateUs,
+        columnGroup: 'Period',
         exportCustomFormatter: Formatters.dateUs,
-        type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
-        filterable: true, filter: { model: Filters.compoundDate },
+        type: FieldType.date,
+        outputType: FieldType.dateUs,
+        saveOutputType: FieldType.dateUtc,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, editorOptions: { hideClearButton: false } as VanillaCalendarOption },
       },
       {
-        id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
-        sortable: true, filterable: true, columnGroup: 'Period', cssClass: 'text-center',
+        id: 'completed',
+        name: 'Completed',
+        field: 'completed',
+        width: 80,
+        minWidth: 75,
+        maxWidth: 100,
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Period',
+        cssClass: 'text-center',
         formatter: Formatters.checkmarkMaterial,
         exportWithFormatter: false,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+          model: Filters.singleSelect,
         },
-        editor: { model: Editors.checkbox, },
+        editor: { model: Editors.checkbox },
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
-        filterable: true, filter: { model: Filters.compoundDate },
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        sortable: true,
+        formatter: Formatters.dateUs,
+        columnGroup: 'Period',
+        type: FieldType.date,
+        outputType: FieldType.dateUs,
+        saveOutputType: FieldType.dateUtc,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
           editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
           validator: (value, args) => {
             const dataContext = args && args.item;
-            if (dataContext && (dataContext.completed && !value)) {
+            if (dataContext && dataContext.completed && !value) {
               return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
             }
             return { valid: true, msg: '' };
-          }
+          },
         },
       },
       {
-        id: 'product', name: 'Product', field: 'product',
-        filterable: true, columnGroup: 'Item',
+        id: 'product',
+        name: 'Product',
+        field: 'product',
+        filterable: true,
+        columnGroup: 'Item',
         minWidth: 100,
         // resizeCalcWidthRatio: 1.01,
         resizeMaxWidthThreshold: 185,
@@ -319,7 +395,7 @@ export default class Example14 {
             minLength: 1,
             fetch: (searchText, updateCallback) => {
               const products = this.mockProducts();
-              updateCallback(products.filter(product => product.itemName.toLowerCase().includes(searchText.toLowerCase())));
+              updateCallback(products.filter((product) => product.itemName.toLowerCase().includes(searchText.toLowerCase())));
             },
             renderItem: {
               // layout: 'twoRows',
@@ -335,11 +411,14 @@ export default class Example14 {
           // placeholder: '🔎︎ search product',
           type: FieldType.string,
           queryField: 'product.itemName',
-        }
+        },
       },
       {
-        id: 'origin', name: 'Country of Origin', field: 'origin',
-        formatter: Formatters.complexObject, columnGroup: 'Item',
+        id: 'origin',
+        name: 'Country of Origin',
+        field: 'origin',
+        formatter: Formatters.complexObject,
+        columnGroup: 'Item',
         exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
         dataKey: 'code',
         labelKey: 'name',
@@ -357,7 +436,7 @@ export default class Example14 {
             fetch: (searchText, updateCallback) => {
               const countries: any[] = JSON.parse(countriesJson);
               const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(searchText.toLowerCase()));
-              updateCallback(foundCountries.map(item => ({ label: item.name, value: item.code, })));
+              updateCallback(foundCountries.map((item) => ({ label: item.name, value: item.code })));
             },
           } as AutocompleterOption,
         },
@@ -365,13 +444,19 @@ export default class Example14 {
           model: Filters.inputText,
           type: 'string',
           queryField: 'origin.name',
-        }
+        },
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
+        id: 'action',
+        name: 'Action',
+        field: 'action',
+        width: 70,
+        minWidth: 70,
+        maxWidth: 70,
         excludeFromExport: true,
         cssClass: 'justify-center flex',
-        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+        formatter: () =>
+          `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -385,8 +470,12 @@ export default class Example14 {
             },
             'divider',
             {
-              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close text-color-danger', cssClass: 'red', textCssClass: 'text-italic text-color-danger-light',
+              command: 'delete-row',
+              title: 'Delete Row',
+              positionOrder: 64,
+              iconCssClass: 'mdi mdi-close text-color-danger',
+              cssClass: 'red',
+              textCssClass: 'text-italic text-color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -396,53 +485,70 @@ export default class Example14 {
                 if (confirm(`Do you really want to delete row (${args.row || 0 + 1}) with "${dataContext.title}"`)) {
                   this.slickerGridInstance?.gridService.deleteItemById(dataContext.id);
                 }
-              }
+              },
             },
           ],
-        }
+        },
       },
     ];
 
     // add custom Header Menu to all columns except "Action"
-    this.columnDefinitions.forEach(col => {
+    this.columnDefinitions.forEach((col) => {
       col.header = {
         menu: {
           commandItems: [
             { command: '', divider: true, positionOrder: 98 },
             {
               // we can also have multiple nested sub-menus
-              command: 'custom-actions', title: 'Hello', positionOrder: 99,
+              command: 'custom-actions',
+              title: 'Hello',
+              positionOrder: 99,
               commandItems: [
                 { command: 'hello-world', title: 'Hello World' },
                 { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
                 {
-                  command: 'sub-menu', title: `Let's play`, cssClass: 'green', subMenuTitle: 'choose your game', subMenuTitleCssClass: 'text-italic salmon',
+                  command: 'sub-menu',
+                  title: `Let's play`,
+                  cssClass: 'green',
+                  subMenuTitle: 'choose your game',
+                  subMenuTitleCssClass: 'text-italic salmon',
                   commandItems: [
                     { command: 'sport-badminton', title: 'Badminton' },
                     { command: 'sport-tennis', title: 'Tennis' },
                     { command: 'sport-racquetball', title: 'Racquetball' },
                     { command: 'sport-squash', title: 'Squash' },
-                  ]
-                }
-              ]
+                  ],
+                },
+              ],
             },
             {
-              command: 'feedback', title: 'Feedback', positionOrder: 100,
+              command: 'feedback',
+              title: 'Feedback',
+              positionOrder: 100,
               commandItems: [
-                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                {
+                  command: 'request-update',
+                  title: 'Request update from supplier',
+                  iconCssClass: 'mdi mdi-star',
+                  tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update',
+                },
                 'divider',
                 {
-                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  command: 'sub-menu',
+                  title: 'Contact Us',
+                  iconCssClass: 'mdi mdi-account',
+                  subMenuTitle: 'contact us...',
+                  subMenuTitleCssClass: 'italic',
                   commandItems: [
                     { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
                     { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
                     { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
-                  ]
-                }
-              ]
-            }
-          ]
-        }
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       };
     });
 
@@ -456,13 +562,13 @@ export default class Example14 {
       autoResize: {
         container: '.grid-container',
         resizeDetection: 'container',
-        minHeight: 250
+        minHeight: 250,
       },
       enableAutoResize: true,
       enablePagination: true,
       pagination: {
         pageSize: 10,
-        pageSizes: [10, 200, 500, 5000]
+        pageSizes: [10, 200, 500, 5000],
       },
       // you can change compound filter text/desc shown in operator dropdown
       // compoundOperatorAltTexts: {
@@ -482,7 +588,7 @@ export default class Example14 {
       },
       enableExcelExport: true,
       excelExportOptions: {
-        exportWithFormatter: false
+        exportWithFormatter: false,
       },
       externalResources: [new SlickCustomTooltip(), new ExcelExportService()],
       enableFiltering: true,
@@ -495,7 +601,7 @@ export default class Example14 {
       },
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+        selectActiveRow: false,
       },
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
@@ -503,8 +609,12 @@ export default class Example14 {
       rowHeight: 33,
       headerRowHeight: 35,
       editCommandHandler: (item, column, editCommand) => {
-        const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue) ? editCommand.prevSerializedValue : [editCommand.prevSerializedValue];
-        const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
+        const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
+          ? editCommand.prevSerializedValue
+          : [editCommand.prevSerializedValue];
+        const serializedValues = Array.isArray(editCommand.serializedValue)
+          ? editCommand.serializedValue
+          : [editCommand.serializedValue];
         const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
@@ -543,12 +653,12 @@ export default class Example14 {
             alert('Command: ' + args?.item?.command);
           }
         },
-      }
+      },
     };
   }
 
   hideSpinner() {
-    window.setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit to avoid show/hide too quickly
+    window.setTimeout(() => (this.loadingClass = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
   }
 
   showSpinner() {
@@ -561,11 +671,11 @@ export default class Example14 {
     for (let i = 0; i < count; i++) {
       const randomItemId = Math.floor(Math.random() * this.mockProducts().length);
       const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomFinishYear = (new Date().getFullYear()) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
+      const randomFinishYear = new Date().getFullYear() + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
-      const randomTime = Math.floor((Math.random() * 59));
-      const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay, randomTime, randomTime, randomTime);
+      const randomDay = Math.floor(Math.random() * 29);
+      const randomTime = Math.floor(Math.random() * 59);
+      const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay, randomTime, randomTime, randomTime);
       const randomPercentComplete = Math.floor(Math.random() * 100) + 15; // make it over 15 for E2E testing purposes
       const percentCompletion = randomPercentComplete > 100 ? (i > 5 ? 100 : 88) : randomPercentComplete; // don't use 100 unless it's over index 5, for E2E testing purposes
       const isCompleted = percentCompletion === 100;
@@ -580,11 +690,12 @@ export default class Example14 {
         },
         complexity: i % 3 ? 0 : 2,
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
-        finish: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? (isCompleted ? new Date() : randomFinish) : ''), // make sure the random date is earlier than today and it's index is bigger than 3
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3))),
-        product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
-        origin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
+        finish:
+          isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3) ? (isCompleted ? new Date() : randomFinish) : '', // make sure the random date is earlier than today and it's index is bigger than 3
+        cost: i % 33 === 0 ? null : Math.round(Math.random() * 10000) / 100,
+        completed: isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3),
+        product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName },
+        origin: i % 2 ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
 
       if (!(i % 8)) {
@@ -654,7 +765,7 @@ export default class Example14 {
   handleDefaultResizeColumns() {
     // just for demo purposes, set it back to its original width
     const columns = this.sgb.slickGrid?.getColumns() as Column[];
-    columns.forEach(col => col.width = col.originalWidth);
+    columns.forEach((col) => (col.width = col.originalWidth));
     this.sgb.slickGrid?.setColumns(columns);
     this.sgb.slickGrid?.autosizeColumns();
 
@@ -772,7 +883,6 @@ export default class Example14 {
       }
       this.sgb.slickGrid?.invalidate();
 
-
       // optionally open the last cell editor associated
       if (showLastEditor) {
         this.sgb?.slickGrid?.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
@@ -820,7 +930,7 @@ export default class Example14 {
         id: 2,
         itemName: 'Awesome Wooden Mouse',
         itemNameTranslated: 'super old mouse',
-        listPrice: 15.00,
+        listPrice: 15.0,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
         icon: `mdi ${this.getRandomIcon(2)}`,
@@ -937,7 +1047,7 @@ export default class Example14 {
       'mdi-table-refresh',
       'mdi-undo',
     ];
-    const randomNumber = Math.floor((Math.random() * icons.length - 1));
+    const randomNumber = Math.floor(Math.random() * icons.length - 1);
     return icons[iconIndex ?? randomNumber];
   }
 

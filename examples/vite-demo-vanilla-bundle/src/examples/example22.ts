@@ -1,10 +1,4 @@
-import {
-  type Column,
-  FieldType,
-  Formatters,
-  type GridOption,
-  Editors,
-} from '@slickgrid-universal/common';
+import { type Column, FieldType, Formatters, type GridOption, Editors } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { BindingEventService } from '@slickgrid-universal/binding';
@@ -89,7 +83,10 @@ export default class Example22 {
         minWidth: 100,
         filterable: true,
         type: FieldType.number,
-        editor: { model: Editors.text, validator: (val) => (val > 100 ? { msg: 'Max 100% allowed', valid: false } : { msg: '', valid: true }) },
+        editor: {
+          model: Editors.text,
+          validator: (val) => (val > 100 ? { msg: 'Max 100% allowed', valid: false } : { msg: '', valid: true }),
+        },
       },
       {
         id: 'start',
@@ -155,13 +152,14 @@ export default class Example22 {
             method: 'POST',
             body: JSON.stringify({ effortDriven, percentComplete, finish, start, duration, title }),
             headers: {
-              'Content-type': 'application/json; charset=UTF-8'
-            }
-          }).catch(err => {
-            console.error(err);
-            return false;
+              'Content-type': 'application/json; charset=UTF-8',
+            },
           })
-            .then(response => {
+            .catch((err) => {
+              console.error(err);
+              return false;
+            })
+            .then((response) => {
               if (response === false) {
                 this.statusClass = 'notification is-danger';
                 return false;
@@ -170,14 +168,15 @@ export default class Example22 {
                 return response!.json();
               }
             })
-            .then(json => {
+            .then((json) => {
               this.statusStyle = 'display: block';
               this.statusClass = 'notification is-light is-success';
               this.fetchResult = json.message;
               return true;
             });
         },
-        actionColumnConfig: { // override the defaults of the action column
+        actionColumnConfig: {
+          // override the defaults of the action column
           width: 100,
           minWidth: 100,
           maxWidth: 100,
@@ -210,7 +209,7 @@ export default class Example22 {
       },
       enableTranslate: true,
       translater: this.translateService,
-      externalResources: [new SlickCustomTooltip()]
+      externalResources: [new SlickCustomTooltip()],
     };
   }
 
@@ -258,7 +257,7 @@ export default class Example22 {
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
@@ -267,9 +266,12 @@ export default class Example22 {
 
 function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefined): Promise<Response> {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
-      resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
-      // reduces the delay for automated Cypress tests
-    }, (window as any).Cypress ? 10 : 500);
+    window.setTimeout(
+      () => {
+        resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
+        // reduces the delay for automated Cypress tests
+      },
+      (window as any).Cypress ? 10 : 500
+    );
   });
 }

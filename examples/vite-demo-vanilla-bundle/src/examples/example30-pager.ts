@@ -1,5 +1,12 @@
 import { BindingEventService, BindingHelper } from '@slickgrid-universal/binding';
-import type { BasePaginationComponent, PaginationService, PubSubService, PaginationMetadata, SlickGrid, Subscription } from '@slickgrid-universal/common';
+import type {
+  BasePaginationComponent,
+  PaginationService,
+  PubSubService,
+  PaginationMetadata,
+  SlickGrid,
+  Subscription,
+} from '@slickgrid-universal/common';
 
 import './example30-pager.scss';
 
@@ -33,7 +40,7 @@ export class CustomPager implements BasePaginationComponent {
     // Anytime the pagination is initialized or has changes,
     // we'll copy the data into a local object so that we can add binding to this local object
     this._subscriptions.push(
-      this.pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', paginationChanges => {
+      this.pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', (paginationChanges) => {
         this.currentPagination.dataFrom = paginationChanges.dataFrom;
         this.currentPagination.dataTo = paginationChanges.dataTo;
         this.currentPagination.pageCount = paginationChanges.pageCount;
@@ -65,8 +72,7 @@ export class CustomPager implements BasePaginationComponent {
     this._paginationElement.id = 'pager';
     this._paginationElement.className = `pagination-container pager ${this.grid.getUID()}`;
     this._paginationElement.style.width = '100%';
-    this._paginationElement.innerHTML =
-      `<div class="custom-pagination">
+    this._paginationElement.innerHTML = `<div class="custom-pagination">
             <span class="custom-pagination-settings">
               <span class="custom-pagination-count">
                 <span class="page-info-from-to">
@@ -155,10 +161,26 @@ export class CustomPager implements BasePaginationComponent {
 
   /** Add some DOM Element event listeners */
   addEventListeners(containerElm: HTMLElement): void {
-    this._bindingEventService.bind(containerElm.querySelector('.icon-seek-first')!, 'click', this.onFirstPageClicked.bind(this) as EventListener);
-    this._bindingEventService.bind(containerElm.querySelector('.icon-seek-prev')!, 'click', this.onPreviousPageClicked.bind(this) as EventListener);
-    this._bindingEventService.bind(containerElm.querySelector('.icon-seek-next')!, 'click', this.onNextPageClicked.bind(this) as EventListener);
-    this._bindingEventService.bind(containerElm.querySelector('.icon-seek-end')!, 'click', this.onLastPageClicked.bind(this) as EventListener);
+    this._bindingEventService.bind(
+      containerElm.querySelector('.icon-seek-first')!,
+      'click',
+      this.onFirstPageClicked.bind(this) as EventListener
+    );
+    this._bindingEventService.bind(
+      containerElm.querySelector('.icon-seek-prev')!,
+      'click',
+      this.onPreviousPageClicked.bind(this) as EventListener
+    );
+    this._bindingEventService.bind(
+      containerElm.querySelector('.icon-seek-next')!,
+      'click',
+      this.onNextPageClicked.bind(this) as EventListener
+    );
+    this._bindingEventService.bind(
+      containerElm.querySelector('.icon-seek-end')!,
+      'click',
+      this.onLastPageClicked.bind(this) as EventListener
+    );
   }
 
   onFirstPageClicked(event: MouseEvent): void {
