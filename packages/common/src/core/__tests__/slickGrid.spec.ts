@@ -26,8 +26,7 @@ const DEFAULT_GRID_WIDTH = 800;
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
-const template =
-  `<div id="${containerId}" style="height: ${DEFAULT_GRID_HEIGHT}px; width: ${DEFAULT_GRID_WIDTH}px; overflow: hidden; display: block;">
+const template = `<div id="${containerId}" style="height: ${DEFAULT_GRID_HEIGHT}px; width: ${DEFAULT_GRID_WIDTH}px; overflow: hidden; display: block;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%"></div>
     </div>
@@ -109,7 +108,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid-Universal] Zoom level other than 100% is not supported');
   });
 
   it('should not display a console warning when body zoom is not defined', () => {
@@ -121,11 +120,13 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid-Universal] Zoom level other than 100% is not supported');
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } }] as Column[];
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } },
+    ] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
     grid.init();
     grid.setOptions({ addNewRowCssClass: 'new-class' });
@@ -179,7 +180,7 @@ describe('SlickGrid core file', () => {
 
   it('should expect "slick-header-sortable" when column is sortable', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
-    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, enableColumnReorder: () => true, });
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, enableColumnReorder: () => true });
     grid.init();
     grid.setOptions({ addNewRowCssClass: 'new-class' });
     const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
@@ -208,7 +209,13 @@ describe('SlickGrid core file', () => {
     expect(grid.getData()).toEqual([]);
 
     const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-    grid.setData([{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }], true);
+    grid.setData(
+      [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ],
+      true
+    );
 
     expect(grid.getDataLength()).toBe(2);
     expect(scrollToSpy).toHaveBeenCalledWith(0);
@@ -226,13 +233,25 @@ describe('SlickGrid core file', () => {
   });
 
   it('should be able to instantiate SlickGrid and invalidate some rows', () => {
-    const columns = [{
-      id: 'firstName', field: 'firstName', name: 'First Name',
-      alwaysRenderColumn: true,
-      cellAttrs: { 'cell-attr': 22 },
-      formatter: (r, c, val) => ({ text: val, addClasses: 'text-bold', toolTip: 'cell tooltip', insertElementAfterTarget: container.querySelector('.slick-header') as HTMLDivElement })
-    }] as Column[];
-    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+    const columns = [
+      {
+        id: 'firstName',
+        field: 'firstName',
+        name: 'First Name',
+        alwaysRenderColumn: true,
+        cellAttrs: { 'cell-attr': 22 },
+        formatter: (r, c, val) => ({
+          text: val,
+          addClasses: 'text-bold',
+          toolTip: 'cell tooltip',
+          insertElementAfterTarget: container.querySelector('.slick-header') as HTMLDivElement,
+        }),
+      },
+    ] as Column[];
+    const data = [
+      { id: 0, firstName: 'John' },
+      { id: 1, firstName: 'Jane' },
+    ];
 
     grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
     const invalidSpy = vi.spyOn(grid, 'invalidateAllRows');
@@ -253,7 +272,10 @@ describe('SlickGrid core file', () => {
 
   it('should be able to disable column reorderable', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', reorderable: false }] as Column[];
-    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+    const data = [
+      { id: 0, firstName: 'John' },
+      { id: 1, firstName: 'Jane' },
+    ];
 
     grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
     const headerElms = container.querySelectorAll('.slick-header-column');
@@ -263,9 +285,17 @@ describe('SlickGrid core file', () => {
 
   it('should be able to edit when editable grid option is enabled and invalidate some rows', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: InputEditor }] as Column[];
-    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+    const data = [
+      { id: 0, firstName: 'John' },
+      { id: 1, firstName: 'Jane' },
+    ];
 
-    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, editable: true, enableAsyncPostRenderCleanup: true, asyncPostRenderCleanupDelay: 0 });
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, {
+      ...defaultOptions,
+      editable: true,
+      enableAsyncPostRenderCleanup: true,
+      asyncPostRenderCleanupDelay: 0,
+    });
     grid.setData(data);
     grid.setActiveCell(0, 0);
     grid.editActiveCell(InputEditor as any, true);
@@ -279,7 +309,10 @@ describe('SlickGrid core file', () => {
 
   it('should be able to edit when editable grid option is enabled and invalidate all rows', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: InputEditor }] as Column[];
-    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+    const data = [
+      { id: 0, firstName: 'John' },
+      { id: 1, firstName: 'Jane' },
+    ];
 
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, editable: true });
     grid.setData(data);
@@ -294,14 +327,18 @@ describe('SlickGrid core file', () => {
 
   it('should throw when trying to edit cell when editable grid option is disabled', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+    const data = [
+      { id: 0, firstName: 'John' },
+      { id: 1, firstName: 'Jane' },
+    ];
 
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
     grid.setData(data);
     grid.setActiveRow(0, 0);
     grid.setActiveCell(0, 0);
-    expect(() => grid.editActiveCell(new InputEditor({ container: document.createElement('div'), column: columns[0], grid } as any, 'text'), true))
-      .toThrow('SlickGrid makeActiveCellEditable : should never get called when grid options.editable is false');
+    expect(() => grid.editActiveCell(new InputEditor({ container: document.createElement('div'), column: columns[0], grid } as any, 'text'), true)).toThrow(
+      'SlickGrid makeActiveCellEditable : should never get called when grid options.editable is false'
+    );
     grid.invalidateRows([0, 1]);
   });
 
@@ -341,14 +378,16 @@ describe('SlickGrid core file', () => {
 
   it('should be able to set column minWidth', () => {
     const minWidth = 85; // make it greater than default 80 to see it changed
-    const columns = [{
-      id: 'firstName',
-      field: 'firstName',
-      name: 'First Name',
-      minWidth,
-      headerCssClass: 'header-class',
-      headerCellAttrs: { 'some-attr': 3 }
-    }] as Column[];
+    const columns = [
+      {
+        id: 'firstName',
+        field: 'firstName',
+        name: 'First Name',
+        minWidth,
+        headerCssClass: 'header-class',
+        headerCellAttrs: { 'some-attr': 3 },
+      },
+    ] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
     grid.init();
 
@@ -357,14 +396,16 @@ describe('SlickGrid core file', () => {
 
   it('should be able to set column maxWidth', () => {
     const maxWidth = 65; // make it lower than default 80 to see it changed
-    const columns = [{
-      id: 'firstName',
-      field: 'firstName',
-      name: 'First Name',
-      maxWidth,
-      headerCssClass: 'header-class',
-      headerCellAttrs: { 'some-attr': 3 }
-    }] as Column[];
+    const columns = [
+      {
+        id: 'firstName',
+        field: 'firstName',
+        name: 'First Name',
+        maxWidth,
+        headerCssClass: 'header-class',
+        headerCellAttrs: { 'some-attr': 3 },
+      },
+    ] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
     grid.init();
 
@@ -381,7 +422,10 @@ describe('SlickGrid core file', () => {
 
   describe('Row Selections', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const data = [
+      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+    ];
 
     describe('setSelectedRows() method', () => {
       it('should throw when calling setSelectedRows() without a selection model', () => {
@@ -406,10 +450,13 @@ describe('SlickGrid core file', () => {
         const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
         const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
-        expect(setRangeSpy).toHaveBeenCalledWith([
-          { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
-          { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }
-        ], 'SlickGrid.setSelectedRows');
+        expect(setRangeSpy).toHaveBeenCalledWith(
+          [
+            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
+          ],
+          'SlickGrid.setSelectedRows'
+        );
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
@@ -439,10 +486,13 @@ describe('SlickGrid core file', () => {
         grid.render();
 
         expect(grid.getEditorLock()).toBeUndefined();
-        expect(setRangeSpy).not.toHaveBeenCalledWith([
-          { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
-          { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }
-        ], 'SlickGrid.setSelectedRows');
+        expect(setRangeSpy).not.toHaveBeenCalledWith(
+          [
+            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
+          ],
+          'SlickGrid.setSelectedRows'
+        );
       });
     });
   });
@@ -450,7 +500,14 @@ describe('SlickGrid core file', () => {
   describe('Pre-Header Panel', () => {
     it('should create a preheader panel when enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = { ...defaultOptions, enableCellNavigation: true, preHeaderPanelHeight: 30, showPreHeaderPanel: true, frozenColumn: 0, createPreHeaderPanel: true } as GridOption;
+      const gridOptions = {
+        ...defaultOptions,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        frozenColumn: 0,
+        createPreHeaderPanel: true,
+      } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
       const preheaderElm = container.querySelector('.slick-preheader-panel');
@@ -468,7 +525,13 @@ describe('SlickGrid core file', () => {
 
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = { ...defaultOptions, enableCellNavigation: true, preHeaderPanelHeight: 30, showPreHeaderPanel: false, createPreHeaderPanel: true } as GridOption;
+      const gridOptions = {
+        ...defaultOptions,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: false,
+        createPreHeaderPanel: true,
+      } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
       let preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
@@ -495,7 +558,14 @@ describe('SlickGrid core file', () => {
       const paneHeight = 25;
       const topHeaderPanelHeight = 30;
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = { ...defaultOptions, enableCellNavigation: true, topHeaderPanelHeight, showTopHeaderPanel: true, frozenColumn: 0, createTopHeaderPanel: true } as GridOption;
+      const gridOptions = {
+        ...defaultOptions,
+        enableCellNavigation: true,
+        topHeaderPanelHeight,
+        showTopHeaderPanel: true,
+        frozenColumn: 0,
+        createTopHeaderPanel: true,
+      } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
       const topheaderElm = container.querySelector('.slick-topheader-panel');
@@ -522,7 +592,13 @@ describe('SlickGrid core file', () => {
 
     it('should hide column headers div when "showTopHeaderPanel" is disabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = { ...defaultOptions, enableCellNavigation: true, topHeaderPanelHeight: 30, showTopHeaderPanel: false, createTopHeaderPanel: true } as GridOption;
+      const gridOptions = {
+        ...defaultOptions,
+        enableCellNavigation: true,
+        topHeaderPanelHeight: 30,
+        showTopHeaderPanel: false,
+        createTopHeaderPanel: true,
+      } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
       let topheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-topheader-panel');
@@ -557,7 +633,7 @@ describe('SlickGrid core file', () => {
 
     it('should hide column headers div when "showColumnHeader" is disabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showColumnHeader: false, });
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showColumnHeader: false });
       grid.init();
       let headerElms = container.querySelectorAll<HTMLDivElement>('.slick-header');
 
@@ -580,7 +656,10 @@ describe('SlickGrid core file', () => {
 
   describe('Footer', () => {
     it('should show footer when "showFooterRow" is enabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true });
       grid.init();
       const headerElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
@@ -594,9 +673,15 @@ describe('SlickGrid core file', () => {
     });
 
     it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow) and expect footer row column exists', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', colspan: 3 }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 3 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
       const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0 } as GridOption;
-      const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
@@ -624,9 +709,15 @@ describe('SlickGrid core file', () => {
     });
 
     it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow/frozenBottom) and expect footer row column exists', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
       const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0, frozenBottom: true } as GridOption;
-      const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
@@ -650,7 +741,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should hide column headers div when "showFooterRow" is disabled and expect undefined footer row column', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
       const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 1 } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
@@ -674,7 +768,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should hide column headers div when "showFooterRow" is disabled and return undefined footer row column', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
       const gridOptions = { ...defaultOptions, createFooterRow: false, showFooterRow: false, frozenColumn: 1 } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
@@ -686,7 +783,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should show footer when "showFooterRow" is enabled but not return any row when columns to the right are outside the range', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true });
       vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 0, rightPx: -1, bottom: 230, top: 12 });
 
@@ -705,8 +805,16 @@ describe('SlickGrid core file', () => {
     });
 
     it('should show footer when "showFooterRow" is enabled with frozen column', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true }, { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true, frozenColumn: 1 });
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], columns, {
+        ...defaultOptions,
+        createFooterRow: true,
+        showFooterRow: true,
+        frozenColumn: 1,
+      });
       vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
       grid.init();
       grid.render();
@@ -726,7 +834,7 @@ describe('SlickGrid core file', () => {
   describe('Top Panel', () => {
     it('should show top panel div when "showTopPanel" is enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showTopPanel: true, });
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showTopPanel: true });
       grid.init();
       const topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel');
       const topPanelScrollerElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
@@ -740,7 +848,7 @@ describe('SlickGrid core file', () => {
 
     it('should hide top panel div when "showTopPanel" is disabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showTopPanel: false, });
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showTopPanel: false });
       grid.init();
       let topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
 
@@ -762,7 +870,10 @@ describe('SlickGrid core file', () => {
 
   describe('Header Row', () => {
     it('should show top panel div when "showHeaderRow" is enabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: true, frozenColumn: 0 });
       grid.init();
       const headerElms = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
@@ -786,7 +897,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should hide top panel div when "showHeaderRow" is disabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: false, frozenColumn: 1 });
       grid.init();
       let headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
@@ -809,7 +923,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should hide top panel div when "showHeaderRow" is disabled and return undefined header row column', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: false, frozenColumn: 1 });
       grid.init();
       let headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
@@ -888,7 +1005,13 @@ describe('SlickGrid core file', () => {
     });
 
     it('should be able to supply a custom sanitizer to use before applying html code', () => {
-      const sanitizer = (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml;
+      const sanitizer = (dirtyHtml: string) =>
+        typeof dirtyHtml === 'string'
+          ? dirtyHtml.replace(
+              /(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi,
+              ''
+            )
+          : dirtyHtml;
       const divElm = document.createElement('div');
       const htmlStr = '<span><script>alert("hello")</script>only text kept</span>';
 
@@ -967,7 +1090,12 @@ describe('SlickGrid core file', () => {
     });
 
     it('should be able to apply text, CSS classes and removed CSS classes when Formatter is returnbing FormatterResultWithText', () => {
-      const formatterResult = { addClasses: 'some-class', removeClasses: 'slick-cell', toolTip: 'some tooltip', text: 'some content' } as FormatterResultWithText;
+      const formatterResult = {
+        addClasses: 'some-class',
+        removeClasses: 'slick-cell',
+        toolTip: 'some tooltip',
+        text: 'some content',
+      } as FormatterResultWithText;
 
       grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
       grid.applyFormatResultToCellNode(formatterResult, cellNodeElm);
@@ -979,10 +1107,10 @@ describe('SlickGrid core file', () => {
   describe('dataItemColumnValueExtractor', () => {
     it('should use dataItemColumnValueExtractor when provided to retrieve value to show in grid cell', () => {
       const columns = [
-        { id: 'title', name: 'Name', field: 'name', asyncPostRender: (node) => node.textContent = 'Item ' + Math.random() },
+        { id: 'title', name: 'Name', field: 'name', asyncPostRender: (node) => (node.textContent = 'Item ' + Math.random()) },
         { id: 'field1', name: 'Field1', field: 'values', fieldIdx: 0 },
         { id: 'field2', name: 'Field2', field: 'values', fieldIdx: 1 },
-        { id: 'field3', name: 'Field3', field: 'values', fieldIdx: 2 }
+        { id: 'field3', name: 'Field3', field: 'values', fieldIdx: 2 },
       ];
       const gridOptions = {
         enableCellNavigation: true,
@@ -996,13 +1124,15 @@ describe('SlickGrid core file', () => {
             return values;
           }
         },
-        enableAsyncPostRenderCleanup: true, asyncPostRenderDelay: 1, asyncPostRenderCleanupDelay: 1
+        enableAsyncPostRenderCleanup: true,
+        asyncPostRenderDelay: 1,
+        asyncPostRenderCleanupDelay: 1,
       } as GridOption;
       const data: any[] = [];
       for (let i = 0; i < 500; i++) {
         data[i] = {
           name: 'Item ' + i,
-          values: [i + 8, i + 9, i + 11]
+          values: [i + 8, i + 9, i + 11],
         };
       }
 
@@ -1043,13 +1173,19 @@ describe('SlickGrid core file', () => {
         enableCellNavigation: true,
         enableColumnReorder: false,
         rowHeight: 2500,
-
       } as GridOption;
-      const mockItems = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 0, firstName: 'Jane', lastName: 'Doe', age: 28 }];
-
+      const mockItems = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 0, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
 
       const dv = new SlickDataView({});
-      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ cssClasses: 'text-bold', focusable: true, formatter: (r, c, val) => val, columns: { 0: { colspan: '*' } } });
+      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
+        cssClasses: 'text-bold',
+        focusable: true,
+        formatter: (r, c, val) => val,
+        columns: { 0: { colspan: '*' } },
+      });
       grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, ...gridOptions });
       dv.addItems(mockItems);
       grid.init;
@@ -1073,7 +1209,10 @@ describe('SlickGrid core file', () => {
     const dv = new SlickDataView({});
 
     it('should call the method and expect the highlight to happen for a certain duration', () => {
-      const mockItems = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 0, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+      const mockItems = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 0, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
 
       grid = new SlickGrid<any, Column>(container, dv, columns, defaultOptions);
       dv.addItems(mockItems);
@@ -1102,8 +1241,15 @@ describe('SlickGrid core file', () => {
 
   describe('flashCell() method', () => {
     it('should flash cell 2 times', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
-      const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
+      const items = [
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 2, name: 'Rachel', age: 46 },
+      ];
 
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
       grid.flashCell(1, 1, 10);
@@ -1249,7 +1395,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call getCellNode() and return null trying to retrieve cell higher than what is in the dataset', () => {
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
         const result = grid.getCellNode(0, 3);
 
@@ -1317,7 +1466,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age', hidden: true },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
         expect(grid.getCellNodeBox(0, 0)).toEqual({
@@ -1334,7 +1486,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age', hidden: true },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
         expect(grid.getCellNodeBox(1, 1)).toEqual({
@@ -1351,7 +1506,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age' },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
         expect(grid.getCellNodeBox(1, 1)).toEqual({
@@ -1368,7 +1526,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age' },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
 
         expect(grid.getCellNodeBox(1, 2)).toEqual({
@@ -1387,7 +1548,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age' },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
 
         expect(grid.getFrozenRowOffset(1)).toBe(0);
@@ -1399,7 +1563,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age' },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
 
         expect(grid.getFrozenRowOffset(2)).toBe(0);
@@ -1411,7 +1578,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age' },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 1 });
 
         expect(grid.getFrozenRowOffset(2)).toBe(DEFAULT_COLUMN_HEIGHT);
@@ -1423,7 +1593,10 @@ describe('SlickGrid core file', () => {
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age' },
         ] as Column[];
-        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenBottom: true, frozenRow: 2 }); // 2 - 2 = 0 as actual frozen row
 
         expect(grid.getFrozenRowOffset(2)).toBe(0);
@@ -1441,7 +1614,13 @@ describe('SlickGrid core file', () => {
           { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
           { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
         ];
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenBottom: true, frozenRow: 2, topPanelHeight: 540, showTopPanel: true });
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          frozenBottom: true,
+          frozenRow: 2,
+          topPanelHeight: 540,
+          showTopPanel: true,
+        });
 
         expect(grid.getFrozenRowOffset(2)).toBe(DEFAULT_COLUMN_HEIGHT * 2);
       });
@@ -1637,7 +1816,16 @@ describe('SlickGrid core file', () => {
       });
 
       it('should return full viewport height by data size + headerRow & footerRow when they are enabled with "autoHeight"', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeight: true, forceFitColumns: true, headerRowHeight: 50, showHeaderRow: true, footerRowHeight: 40, createFooterRow: true, showFooterRow: true });
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          autoHeight: true,
+          forceFitColumns: true,
+          headerRowHeight: 50,
+          showHeaderRow: true,
+          footerRowHeight: 40,
+          createFooterRow: true,
+          showFooterRow: true,
+        });
         grid.init();
 
         expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 40);
@@ -1658,7 +1846,14 @@ describe('SlickGrid core file', () => {
       });
 
       it('should return original grid height minus headerRow & footerRow heights when calling method', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, headerRowHeight: 50, showHeaderRow: true, footerRowHeight: 40, createFooterRow: true, showFooterRow: true });
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          headerRowHeight: 50,
+          showHeaderRow: true,
+          footerRowHeight: 40,
+          createFooterRow: true,
+          showFooterRow: true,
+        });
         grid.init();
 
         expect(grid.getViewportHeight()).toBe(DEFAULT_GRID_HEIGHT - 50 - 40);
@@ -1727,7 +1922,7 @@ describe('SlickGrid core file', () => {
 
   describe('Editors', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: LongTextEditor }] as Column[];
-    let items: Array<{ id: number; name: string; age: number; active?: boolean; }> = [];
+    let items: Array<{ id: number; name: string; age: number; active?: boolean }> = [];
 
     beforeEach(() => {
       items = [
@@ -1758,7 +1953,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
       vi.spyOn(grid, 'getDataItem').mockReturnValue(null);
       grid.setActiveCell(0, 1);
@@ -1770,7 +1968,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should return undefined editor when trying to add a new row item and "cannotTriggerInsert" is set', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
       const onBeforeEditCellSpy = vi.spyOn(grid.onBeforeEditCell, 'notify');
       grid.setActiveCell(0, 1);
@@ -1781,7 +1982,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should return undefined editor when onBeforeEditCell returns false', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
       const sed = new SlickEventData();
       vi.spyOn(sed, 'getReturnValue').mockReturnValue(false);
@@ -1795,7 +1999,10 @@ describe('SlickGrid core file', () => {
 
     it('should do nothing when trying to commit unchanged Age field Editor', () => {
       (navigator as any).__defineGetter__('userAgent', () => 'msie'); // this will call clearTextSelection() & window.getSelection()
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
       grid.setActiveCell(0, 1);
       grid.editActiveCell(InputEditor as any, true);
@@ -1812,9 +2019,12 @@ describe('SlickGrid core file', () => {
 
     it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
       (navigator as any).__defineGetter__('userAgent', () => 'msie'); // this will call clearTextSelection() & document.selection.empty()
-      Object.defineProperty(document, 'selection', { writable: true, value: { empty: () => { } } });
+      Object.defineProperty(document, 'selection', { writable: true, value: { empty: () => {} } });
       const newValue = 33;
-      const columns = [{ id: 'name', field: 'name', name: 'Name', colspan: '*', }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name', colspan: '*' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+      ] as Column[];
       const dv = new SlickDataView();
       dv.setItems(items);
       grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
@@ -1847,7 +2057,10 @@ describe('SlickGrid core file', () => {
     it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
       (navigator as any).__defineGetter__('userAgent', () => 'Firefox');
       const newValue = 33;
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', colspan: '2', editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', colspan: '2', editorClass: InputEditor },
+      ] as Column[];
       const dv = new SlickDataView();
       dv.setItems(items);
       grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
@@ -1879,7 +2092,10 @@ describe('SlickGrid core file', () => {
 
     it('should commit Age field Editor by calling execute() command and triggering onCellChange() notify', () => {
       const newValue = 33;
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: LongTextEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: LongTextEditor },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
       const onPositionSpy = vi.spyOn(grid.onActiveCellPositionChanged, 'notify');
       grid.setActiveCell(0, 1);
@@ -1917,7 +2133,7 @@ describe('SlickGrid core file', () => {
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },
         { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: CheckboxEditor },
-        { id: 'active', field: 'active', name: 'Active', type: 'boolean' }
+        { id: 'active', field: 'active', name: 'Active', type: 'boolean' },
       ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
       grid.setActiveCell(0, 1, true);
@@ -1932,18 +2148,14 @@ describe('SlickGrid core file', () => {
       // expect(preClickSpy).toHaveBeenCalled();
       expect(editor).toBeTruthy();
       expect(updateRowSpy).toHaveBeenCalledWith(0);
-      expect(onCellChangeSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ command: 'execute', row: 0, cell: 1, }),
-        expect.anything(),
-        grid
-      );
+      expect(onCellChangeSpy).toHaveBeenCalledWith(expect.objectContaining({ command: 'execute', row: 0, cell: 1 }), expect.anything(), grid);
       expect(grid.getEditController()).toBeTruthy();
       expect(result).toBeTruthy();
     });
 
     it('should commit & rollback Age field Editor by calling execute() & undo() commands from a custom EditCommandHandler and triggering onCellChange() notify', () => {
       const newValue = 33;
-      const editQueue: Array<{ item: any; column: Column; editCommand: EditCommand; }> = [];
+      const editQueue: Array<{ item: any; column: Column; editCommand: EditCommand }> = [];
       const undoLastEdit = () => {
         const lastEditCommand = editQueue.pop()?.editCommand;
         if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
@@ -1958,7 +2170,10 @@ describe('SlickGrid core file', () => {
           editCommand.execute();
         }
       };
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+      ] as Column[];
 
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, editCommandHandler });
       grid.setActiveCell(0, 1);
@@ -1991,7 +2206,10 @@ describe('SlickGrid core file', () => {
 
     it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify', () => {
       const newValue = 77;
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, enableAddRow: true, editable: true });
 
       grid.setActiveCell(1, 1);
@@ -2004,22 +2222,27 @@ describe('SlickGrid core file', () => {
       const result = grid.getEditController()?.commitCurrentEdit();
 
       expect(editor).toBeTruthy();
-      expect(onAddNewRowSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ item: { age: newValue }, column: columns[1] }),
-        expect.anything(),
-        grid
-      );
+      expect(onAddNewRowSpy).toHaveBeenCalledWith(expect.objectContaining({ item: { age: newValue }, column: columns[1] }), expect.anything(), grid);
       expect(grid.getEditController()).toBeTruthy();
       expect(result).toBeTruthy();
     });
 
     it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify with autoHeight enabled and expect different viewport height', () => {
       const newValue = 77;
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor }] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, autoHeight: true, enableCellNavigation: true, enableAddRow: true, editable: true });
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, {
+        ...defaultOptions,
+        autoHeight: true,
+        enableCellNavigation: true,
+        enableAddRow: true,
+        editable: true,
+      });
       const prevHeight = grid.getViewportHeight();
       grid.onAddNewRow.subscribe((e, args) => {
-        grid.setData([...grid.getData() as any[], args.item]);
+        grid.setData([...(grid.getData() as any[]), args.item]);
       });
 
       grid.setActiveCell(1, 1);
@@ -2033,11 +2256,7 @@ describe('SlickGrid core file', () => {
       const newHeight = grid.getViewportHeight();
 
       expect(editor).toBeTruthy();
-      expect(onAddNewRowSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ item: { age: newValue }, column: columns[1] }),
-        expect.anything(),
-        grid
-      );
+      expect(onAddNewRowSpy).toHaveBeenCalledWith(expect.objectContaining({ item: { age: newValue }, column: columns[1] }), expect.anything(), grid);
       expect(grid.getEditController()).toBeTruthy();
       expect(result).toBeTruthy();
       expect(prevHeight).not.toEqual(newHeight);
@@ -2045,7 +2264,10 @@ describe('SlickGrid core file', () => {
 
     it('should not commit Age field Editor returns invalid result, expect triggering onValidationError() notify', () => {
       const invalidResult = { valid: false, msg: 'invalid value' };
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor }] as Column[];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+      ] as Column[];
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
       grid.setActiveCell(0, 1);
       grid.editActiveCell(InputEditor as any, true);
@@ -2064,7 +2286,7 @@ describe('SlickGrid core file', () => {
           validationResults: invalidResult,
           row: 0,
           cell: 1,
-          column: columns[1]
+          column: columns[1],
         }),
         expect.anything(),
         grid
@@ -2080,13 +2302,16 @@ describe('SlickGrid core file', () => {
       { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
-    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const data = [
+      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+    ];
     let sortInstance;
 
     it('should reorder column to the left when current column pageX is lower than viewport left position', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
       const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
-      Object.keys(headerColumnsElm).forEach(prop => {
+      Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
         }
@@ -2118,7 +2343,7 @@ describe('SlickGrid core file', () => {
     it('should reorder column to the right when current column pageX is greater than container width', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
       const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
-      Object.keys(headerColumnsElm).forEach(prop => {
+      Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
         }
@@ -2149,7 +2374,7 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
       grid.setActiveCell(0, 1);
       const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
-      Object.keys(headerColumnsElm).forEach(prop => {
+      Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
         }
@@ -2180,7 +2405,7 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
       vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
       const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
-      Object.keys(headerColumnsElm).forEach(prop => {
+      Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
         }
@@ -2210,16 +2435,26 @@ describe('SlickGrid core file', () => {
   describe('Drag & Drop (Draggable)', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, asyncPostRender: (node) => node.textContent = String(Math.random()), asyncPostRenderCleanup: (node) => node.textContent = '' },
+      {
+        id: 'lastName',
+        field: 'lastName',
+        name: 'Last Name',
+        sortable: true,
+        asyncPostRender: (node) => (node.textContent = String(Math.random())),
+        asyncPostRenderCleanup: (node) => (node.textContent = ''),
+      },
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
-    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const data = [
+      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+    ];
     for (let i = 0; i < 500; i++) {
       data[i] = {
         id: i,
         firstName: i % 2 ? 'John' : 'Jane',
         lastName: 'Doe',
-        age: Math.random()
+        age: Math.random(),
       };
     }
 
@@ -2352,7 +2587,12 @@ describe('SlickGrid core file', () => {
     });
 
     it('should drag from a cell and execute all onDrag events then cleanup async renderer when a slick-cell is dragged and its event is stopped', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 2200, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true });
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        rowHeight: 2200,
+        enableAsyncPostRender: true,
+        enableAsyncPostRenderCleanup: true,
+      });
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
@@ -2404,7 +2644,13 @@ describe('SlickGrid core file', () => {
     });
 
     it('should "rowTopOffsetRenderType" use grid option and scrollTo row and expect transform of translateY to be changed', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 2200, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true, rowTopOffsetRenderType: 'transform' });
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        rowHeight: 2200,
+        enableAsyncPostRender: true,
+        enableAsyncPostRenderCleanup: true,
+        rowTopOffsetRenderType: 'transform',
+      });
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
@@ -2489,13 +2735,16 @@ describe('SlickGrid core file', () => {
 
   describe('Column Resizing', () => {
     const columns = [
-      { id: 'id', field: 'id', name: 'Id', hidden: true, },
+      { id: 'id', field: 'id', name: 'Id', hidden: true },
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true, width: 77, rerenderOnResize: true },
       { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, minWidth: 35 },
       { id: 'age', field: 'age', name: 'Age', sortable: true, minWidth: 82, width: 86, maxWidth: 88 },
       { id: 'gender', field: 'gender', name: 'Gender', sortable: true },
     ] as Column[];
-    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const data = [
+      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+    ];
 
     it('should resize should not go through when column has an editor', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
@@ -2546,11 +2795,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // header click won't get through
       const onHeaderClickSpy = vi.spyOn(grid.onHeaderClick, 'notify');
@@ -2594,11 +2839,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2637,11 +2878,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2680,11 +2917,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2731,11 +2964,7 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
       document.body.dispatchEvent(bodyMouseMoveEvent2);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2779,11 +3008,7 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
       document.body.dispatchEvent(bodyMouseMoveEvent2);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2823,11 +3048,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2867,11 +3088,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2911,11 +3128,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -2955,11 +3168,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -3000,11 +3209,7 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
       expect(column3.classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: column3, resizeHandle: resizeHandleElm, grid },
-        expect.anything(),
-        grid
-      );
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: column3, resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
@@ -3163,14 +3368,18 @@ describe('SlickGrid core file', () => {
 
       // clicking on firstName with legacy behavior
       expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: false,
-        sortAsc: true,
-        columnId: 'firstName',
-        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
-        sortCol: columns[0]
-      }, click2, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: false,
+          sortAsc: true,
+          columnId: 'firstName',
+          previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
+          sortCol: columns[0],
+        },
+        click2,
+        grid
+      );
     });
 
     it('should find multiple sorted icons when calling setSortColumn() with 2 columns being sorted when multiSort is enabled', () => {
@@ -3192,7 +3401,10 @@ describe('SlickGrid core file', () => {
       expect(sortNumberedIndicators[0]?.textContent).toBe('1');
       expect(sortNumberedIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
       expect(sortNumberedIndicators[1]?.textContent).toBe('2');
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName', sortAsc: true }]);
+      expect(grid.getSortColumns()).toEqual([
+        { columnId: 'firstName', sortAsc: false },
+        { columnId: 'lastName', sortAsc: true },
+      ]);
 
       const firstColHeaderElm = container.querySelector('.slick-header-columns');
       const click = new CustomEvent('click');
@@ -3207,16 +3419,28 @@ describe('SlickGrid core file', () => {
       firstColHeaderElm?.dispatchEvent(click2);
 
       // clicking on firstName with legacy behavior
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: true,
-        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
-        sortCols: [{ columnId: 'firstName', sortAsc: true, sortCol: columns[0] }]
-      }, click2, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: true,
+          previousSortColumns: [
+            { columnId: 'firstName', sortAsc: true },
+            { columnId: 'lastName', sortAsc: true },
+          ],
+          sortCols: [{ columnId: 'firstName', sortAsc: true, sortCol: columns[0] }],
+        },
+        click2,
+        grid
+      );
     });
 
     it('should find multiple sorted icons numbered icons when calling setSortColumn() with 2 columns being sorted when multiSort and tristateMultiColumnSort are enabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: true, numberedMultiColumnSort: true, tristateMultiColumnSort: true });
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        multiColumnSort: true,
+        numberedMultiColumnSort: true,
+        tristateMultiColumnSort: true,
+      });
       grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 
@@ -3234,7 +3458,10 @@ describe('SlickGrid core file', () => {
       expect(sortNumberedIndicators[0]?.textContent).toBe('1');
       expect(sortNumberedIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
       expect(sortNumberedIndicators[1]?.textContent).toBe('2');
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName', sortAsc: true }]);
+      expect(grid.getSortColumns()).toEqual([
+        { columnId: 'firstName', sortAsc: false },
+        { columnId: 'lastName', sortAsc: true },
+      ]);
 
       const firstColHeaderElm = container.querySelector('.slick-header-columns');
       const click = new CustomEvent('click');
@@ -3249,16 +3476,29 @@ describe('SlickGrid core file', () => {
       firstColHeaderElm?.dispatchEvent(click2);
 
       // only left with lastName since firstName is now sorted ascending because of tristate
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: true,
-        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
-        sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }]
-      }, click2, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: true,
+          previousSortColumns: [
+            { columnId: 'firstName', sortAsc: true },
+            { columnId: 'lastName', sortAsc: true },
+          ],
+          sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }],
+        },
+        click2,
+        grid
+      );
     });
 
     it('should find multiple sorted icons with separate numbered icons when calling setSortColumn() with 2 columns being sorted when multiSort, tristateMultiColumnSort and sortColNumberInSeparateSpan are enabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: true, numberedMultiColumnSort: true, tristateMultiColumnSort: true, sortColNumberInSeparateSpan: true });
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        multiColumnSort: true,
+        numberedMultiColumnSort: true,
+        tristateMultiColumnSort: true,
+        sortColNumberInSeparateSpan: true,
+      });
       grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 
@@ -3276,7 +3516,10 @@ describe('SlickGrid core file', () => {
       expect(sortNumberedIndicators[0]?.textContent).toBe('1');
       expect(sortIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
       expect(sortNumberedIndicators[1]?.textContent).toBe('2');
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName', sortAsc: true }]);
+      expect(grid.getSortColumns()).toEqual([
+        { columnId: 'firstName', sortAsc: false },
+        { columnId: 'lastName', sortAsc: true },
+      ]);
 
       const firstColHeaderElm = container.querySelector('.slick-header-columns');
       const click = new CustomEvent('click');
@@ -3291,16 +3534,28 @@ describe('SlickGrid core file', () => {
       firstColHeaderElm?.dispatchEvent(click2);
 
       // only left with lastName since firstName is now sorted ascending because of tristate
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: true,
-        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
-        sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }]
-      }, click2, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: true,
+          previousSortColumns: [
+            { columnId: 'firstName', sortAsc: true },
+            { columnId: 'lastName', sortAsc: true },
+          ],
+          sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }],
+        },
+        click2,
+        grid
+      );
     });
 
     it('should remove current sort when the sorting is triggered and tristateMultiColumnSort is enabled but multiColumnSort is disabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false, numberedMultiColumnSort: true, tristateMultiColumnSort: true });
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        multiColumnSort: false,
+        numberedMultiColumnSort: true,
+        tristateMultiColumnSort: true,
+      });
       grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 
@@ -3311,16 +3566,30 @@ describe('SlickGrid core file', () => {
       firstColHeaderElm?.dispatchEvent(colClick);
 
       // only left with lastName since firstName is now sorted ascending because of tristate
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: false,
-        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
-        columnId: null, sortAsc: true, sortCol: null
-      }, colClick, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: false,
+          previousSortColumns: [
+            { columnId: 'firstName', sortAsc: true },
+            { columnId: 'lastName', sortAsc: true },
+          ],
+          columnId: null,
+          sortAsc: true,
+          sortCol: null,
+        },
+        colClick,
+        grid
+      );
     });
 
     it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort enabled but multiColumnSort is disabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false, numberedMultiColumnSort: true, tristateMultiColumnSort: true });
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        multiColumnSort: false,
+        numberedMultiColumnSort: true,
+        tristateMultiColumnSort: true,
+      });
       grid.setSortColumns([]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 
@@ -3333,16 +3602,27 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
       firstColHeaderElm?.dispatchEvent(colClick);
 
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: false,
-        previousSortColumns: [],
-        columnId: 'firstName', sortAsc: true, sortCol: columns[0]
-      }, colClick, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: false,
+          previousSortColumns: [],
+          columnId: 'firstName',
+          sortAsc: true,
+          sortCol: columns[0],
+        },
+        colClick,
+        grid
+      );
     });
 
     it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort & multiColumnSort both disabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false, numberedMultiColumnSort: true, tristateMultiColumnSort: false });
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        multiColumnSort: false,
+        numberedMultiColumnSort: true,
+        tristateMultiColumnSort: false,
+      });
       grid.setSortColumns([]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 
@@ -3355,12 +3635,18 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
       firstColHeaderElm?.dispatchEvent(colClick);
 
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: false,
-        previousSortColumns: [],
-        columnId: 'firstName', sortAsc: true, sortCol: columns[0]
-      }, colClick, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: false,
+          previousSortColumns: [],
+          columnId: 'firstName',
+          sortAsc: true,
+          sortCol: columns[0],
+        },
+        colClick,
+        grid
+      );
     });
 
     it('should remove all sorting when multiSort is enabled and we clicked column with a metaKey (Ctrl/Win)', () => {
@@ -3377,12 +3663,16 @@ describe('SlickGrid core file', () => {
 
       // clicking on firstName with legacy behavior
       expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
-      expect(onBeforeSortSpy).toHaveBeenCalledWith({
-        grid,
-        multiColumnSort: true,
-        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
-        sortCols: []
-      }, click2, grid);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith(
+        {
+          grid,
+          multiColumnSort: true,
+          previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
+          sortCols: [],
+        },
+        click2,
+        grid
+      );
     });
   });
 
@@ -3392,7 +3682,10 @@ describe('SlickGrid core file', () => {
       { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
-    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const data = [
+      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+    ];
 
     it('should not scroll when calling scrollCellIntoView() with same position to frozen column', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
@@ -3457,7 +3750,8 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, enableMouseWheelScrollHandler: true,
+        ...defaultOptions,
+        enableMouseWheelScrollHandler: true,
         createTopHeaderPanel: true,
       });
       grid.setOptions({ enableMouseWheelScrollHandler: false });
@@ -3490,8 +3784,10 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, enableMouseWheelScrollHandler: true,
-        createFooterRow: true, createPreHeaderPanel: true,
+        ...defaultOptions,
+        enableMouseWheelScrollHandler: true,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
       });
       grid.setOptions({ enableMouseWheelScrollHandler: false });
       grid.setOptions({ enableMouseWheelScrollHandler: true });
@@ -3525,8 +3821,10 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, enableMouseWheelScrollHandler: true,
-        createFooterRow: true, createPreHeaderPanel: true,
+        ...defaultOptions,
+        enableMouseWheelScrollHandler: true,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
       });
       grid.scrollCellIntoView(1, 2, true);
 
@@ -3558,8 +3856,11 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, frozenColumn: 0, enableMouseWheelScrollHandler: true,
-        createFooterRow: true, createPreHeaderPanel: true,
+        ...defaultOptions,
+        frozenColumn: 0,
+        enableMouseWheelScrollHandler: true,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
       });
       grid.scrollCellIntoView(1, 2, true);
 
@@ -3592,8 +3893,11 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, frozenRow: 0, enableMouseWheelScrollHandler: true,
-        createFooterRow: true, createPreHeaderPanel: true,
+        ...defaultOptions,
+        frozenRow: 0,
+        enableMouseWheelScrollHandler: true,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
       });
       grid.scrollCellIntoView(1, 2, true);
 
@@ -3632,8 +3936,12 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems([data[0]]);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, frozenRow: 0, enableMouseWheelScrollHandler: true,
-        createFooterRow: true, createPreHeaderPanel: true, rowHeight: 50,
+        ...defaultOptions,
+        frozenRow: 0,
+        enableMouseWheelScrollHandler: true,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
+        rowHeight: 50,
       });
       let viewportBottomLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportBottomLeftElm, 'scrollTop', { writable: true, value: 50 });
@@ -3669,8 +3977,12 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, frozenColumn: 0, frozenRow: 1, enableMouseWheelScrollHandler: true,
-        createFooterRow: true, createPreHeaderPanel: true,
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 1,
+        enableMouseWheelScrollHandler: true,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
       });
       grid.scrollCellIntoView(1, 2, true);
 
@@ -3702,8 +4014,12 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions, frozenColumn: 0, frozenRow: 0, enableMouseWheelScrollHandler: true,
-        createFooterRow: true, createPreHeaderPanel: true,
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 0,
+        enableMouseWheelScrollHandler: true,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
       });
       grid.scrollCellIntoView(1, 2, true);
 
@@ -3738,7 +4054,10 @@ describe('SlickGrid core file', () => {
       { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
-    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const data = [
+      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+    ];
 
     it('should scroll to defined row position when calling scrollRowToTop()', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
@@ -3773,7 +4092,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll when calling to navigateTop with dataset', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
@@ -3787,7 +4109,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll when calling to navigateBottom with dataset', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
@@ -3803,7 +4128,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
@@ -3823,7 +4151,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
@@ -3842,7 +4173,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll when calling to navigatePageDown with dataset', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
@@ -3860,7 +4194,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll when calling to navigatePageUp with dataset', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
@@ -3878,7 +4215,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should return false when trying to scroll to left but enableCellNavigation is disabled', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: false });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -3892,7 +4232,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should try to scroll to left but return false cell is already at column index 0 and cannot go further', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -3919,7 +4262,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll to left and return true when calling navigateLeft with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -3935,7 +4281,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll to left and return true but stay at same cell column when calling navigateLeft with an active editor', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
       grid.setActiveCell(0, 1);
@@ -3945,7 +4294,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll to right but return false when calling navigateRight but cannot go further', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -3958,7 +4310,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll to right and return true when calling navigateRight with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -3970,7 +4325,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with frozenRow/frozenBottom', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
       vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -3986,7 +4345,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with frozenRow', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: false });
       vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4002,7 +4365,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate left and return true when calling navigateLeft and only right is available', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
       vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4018,7 +4385,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll up but return false when calling navigateUp but cannot go further', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4032,7 +4402,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll to right and return true when calling navigateUp with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4059,7 +4433,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll down and return true when calling navigateDown with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4073,7 +4451,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should scroll down and return true when calling navigateDown with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
       vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4102,7 +4484,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to previous cell and return true when calling navigatePrev but scroll to 0,0 when providing out of bound cell', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4115,7 +4500,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to previous cell and return true when calling navigatePrev with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4130,7 +4519,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to previous cell and return false when calling navigatePrev with invalid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4145,7 +4538,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to next but decrease row count when calling navigateNext and cell is detected as out of bound', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4159,7 +4555,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to next but return false when calling navigateNext and cannot find any first focusable cell', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4173,7 +4572,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to next cell and return true when calling navigateNext but cannot go further it will find next focusable cell nonetheless', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4186,7 +4588,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to next cell and return true when calling navigateNext but scroll to 0,0 when providing out of bound cell', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4199,7 +4604,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to next cell and return true when calling navigateNext with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4227,7 +4636,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to first row start and return true when calling navigateRowStart with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4255,7 +4668,11 @@ describe('SlickGrid core file', () => {
     });
 
     it('should navigate to end of row and return true when calling navigateRowEnd with valid navigation', () => {
-      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+        { id: 2, firstName: 'Bob' },
+      ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
@@ -4270,8 +4687,11 @@ describe('SlickGrid core file', () => {
   });
 
   describe('CSS Styles', () => {
-    const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
-    let items: Array<{ id: number; name: string; age: number; }> = [];
+    const columns = [
+      { id: 'name', field: 'name', name: 'Name' },
+      { id: 'age', field: 'age', name: 'Age' },
+    ];
+    let items: Array<{ id: number; name: string; age: number }> = [];
     let hash: any = {};
 
     beforeEach(() => {
@@ -4300,7 +4720,9 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
 
       grid.setCellCssStyles('age_greater30_highlight', hash);
-      expect(() => grid.addCellCssStyles('age_greater30_highlight', hash)).toThrow('SlickGrid addCellCssStyles: cell CSS hash with key "age_greater30_highlight" already exists.');
+      expect(() => grid.addCellCssStyles('age_greater30_highlight', hash)).toThrow(
+        'SlickGrid addCellCssStyles: cell CSS hash with key "age_greater30_highlight" already exists.'
+      );
     });
 
     it('should exit early when trying to remove CSS Style key that does not exist in hash', () => {
@@ -4371,7 +4793,13 @@ describe('SlickGrid core file', () => {
         const result = grid.getActiveCellPosition();
 
         expect(result).toEqual({
-          bottom: 11, height: 0, left: 0, right: 0, top: 11, width: 0, visible: true,
+          bottom: 11,
+          height: 0,
+          left: 0,
+          right: 0,
+          top: 11,
+          width: 0,
+          visible: true,
         });
       });
 
@@ -4390,7 +4818,13 @@ describe('SlickGrid core file', () => {
         const result = grid.getActiveCellPosition();
 
         expect(result).toEqual({
-          bottom: -58, height: 0, left: -80, right: -80, top: -58, width: 0, visible: false,
+          bottom: -58,
+          height: 0,
+          left: -80,
+          right: -80,
+          top: -58,
+          width: 0,
+          visible: false,
         });
       });
 
@@ -4411,7 +4845,13 @@ describe('SlickGrid core file', () => {
         const result = grid.getActiveCellPosition();
 
         expect(result).toEqual({
-          bottom: -25, height: 0, left: -113, right: -113, top: -25, width: 0, visible: false,
+          bottom: -25,
+          height: 0,
+          left: -113,
+          right: -113,
+          top: -25,
+          width: 0,
+          visible: false,
         });
       });
 
@@ -4433,7 +4873,13 @@ describe('SlickGrid core file', () => {
         const result = grid.getActiveCellPosition();
 
         expect(result).toEqual({
-          bottom: -18, height: 0, left: -107, right: -107, top: -18, width: 0, visible: false,
+          bottom: -18,
+          height: 0,
+          left: -107,
+          right: -107,
+          top: -18,
+          width: 0,
+          visible: false,
         });
       });
     });
@@ -4462,9 +4908,9 @@ describe('SlickGrid core file', () => {
         const result2 = grid.getCellFromPoint(0, DEFAULT_COLUMN_HEIGHT + 5);
         const result3 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, 0);
         const result4 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, DEFAULT_COLUMN_HEIGHT + 5);
-        const result5 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 2) + 5, (DEFAULT_COLUMN_HEIGHT * 2) + 5);
-        const result6 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 3) + 5, (DEFAULT_COLUMN_HEIGHT * 3) + 5);
-        const result7 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 4) + 5, (DEFAULT_COLUMN_HEIGHT * 4) + 5);
+        const result5 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 2 + 5, DEFAULT_COLUMN_HEIGHT * 2 + 5);
+        const result6 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 3 + 5, DEFAULT_COLUMN_HEIGHT * 3 + 5);
+        const result7 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 4 + 5, DEFAULT_COLUMN_HEIGHT * 4 + 5);
 
         expect(result1).toEqual({ cell: 0, row: 0 });
         expect(result2).toEqual({ cell: 0, row: 1 });
@@ -4481,8 +4927,8 @@ describe('SlickGrid core file', () => {
         const result1 = grid.getCellFromPoint(0, -999);
         const result2 = grid.getCellFromPoint(-777, 0);
         const result3 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH + 5), -(DEFAULT_COLUMN_HEIGHT + 5));
-        const result4 = grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 2) + 5), -((DEFAULT_COLUMN_HEIGHT * 2) + 5));
-        const result5 = grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 3) + 5), -((DEFAULT_COLUMN_HEIGHT * 3) + 5));
+        const result4 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 2 + 5), -(DEFAULT_COLUMN_HEIGHT * 2 + 5));
+        const result5 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 3 + 5), -(DEFAULT_COLUMN_HEIGHT * 3 + 5));
 
         expect(result1).toEqual({ cell: 0, row: -1 });
         expect(result2).toEqual({ cell: -1, row: 0 });
@@ -4494,8 +4940,8 @@ describe('SlickGrid core file', () => {
       it('should return hidden cells as well since skipping them would add an unwanted offset', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        const result1 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 5) + 5, (DEFAULT_COLUMN_HEIGHT * 5) + 5);
-        const result2 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 6) + 5, (DEFAULT_COLUMN_HEIGHT * 6) + 5);
+        const result1 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 5 + 5, DEFAULT_COLUMN_HEIGHT * 5 + 5);
+        const result2 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 6 + 5, DEFAULT_COLUMN_HEIGHT * 6 + 5);
 
         expect(result1).toEqual({ cell: 5, row: 5 });
         expect(result2).toEqual({ cell: 6, row: 6 });
@@ -4565,8 +5011,8 @@ describe('SlickGrid core file', () => {
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
         const event = new CustomEvent('click');
         Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        Object.defineProperty(event, 'clientX', { writable: true, value: (DEFAULT_COLUMN_WIDTH * 2) + 5 });
-        Object.defineProperty(event, 'clientY', { writable: true, value: (DEFAULT_COLUMN_HEIGHT * 1) + 5 });
+        Object.defineProperty(event, 'clientX', { writable: true, value: DEFAULT_COLUMN_WIDTH * 2 + 5 });
+        Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
         const result = grid.getCellFromEvent(event);
 
         expect(result).toEqual({ row: 1, cell: 1 });
@@ -4577,8 +5023,8 @@ describe('SlickGrid core file', () => {
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
         const event = new CustomEvent('click');
         Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        Object.defineProperty(event, 'clientX', { writable: true, value: (DEFAULT_COLUMN_WIDTH * 2) + 5 });
-        Object.defineProperty(event, 'clientY', { writable: true, value: (DEFAULT_COLUMN_HEIGHT * 1) + 5 });
+        Object.defineProperty(event, 'clientX', { writable: true, value: DEFAULT_COLUMN_WIDTH * 2 + 5 });
+        Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
         const result = grid.getCellFromEvent(event);
 
         expect(result).toEqual({ row: 1, cell: 1 });
@@ -4589,8 +5035,8 @@ describe('SlickGrid core file', () => {
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
         const event = new CustomEvent('click');
         Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        Object.defineProperty(event, 'clientX', { writable: true, value: (DEFAULT_COLUMN_WIDTH * 2) + 5 });
-        Object.defineProperty(event, 'clientY', { writable: true, value: (DEFAULT_COLUMN_HEIGHT * 1) + 5 });
+        Object.defineProperty(event, 'clientX', { writable: true, value: DEFAULT_COLUMN_WIDTH * 2 + 5 });
+        Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
         const result = grid.getCellFromEvent(event);
 
         expect(result).toEqual({ row: 1, cell: 1 });
@@ -4617,7 +5063,13 @@ describe('SlickGrid core file', () => {
     ] as Column[];
 
     it('should use sanitizer when provided in grid options and expect <script> to be removed', () => {
-      const sanitizer = (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml;
+      const sanitizer = (dirtyHtml: string) =>
+        typeof dirtyHtml === 'string'
+          ? dirtyHtml.replace(
+              /(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi,
+              ''
+            )
+          : dirtyHtml;
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, sanitizer });
 
       const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
@@ -4638,8 +5090,15 @@ describe('SlickGrid core file', () => {
   describe('Update UI', () => {
     describe('updateCell() method', () => {
       it('should change an item property then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => val > 20 ? `<strong>${val}</strong>` : null } as any];
-        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
+        ];
+        const items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+        ];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
@@ -4656,10 +5115,21 @@ describe('SlickGrid core file', () => {
         const newValue = '25';
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node) => node.textContent = newValue },
+          { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node) => (node.textContent = newValue) },
         ] as Column[];
-        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
-        const gridOptions = { ...defaultOptions, enableCellNavigation: true, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true, asyncPostRenderDelay: 1, asyncPostRenderCleanupDelay: 1 };
+        const items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+        ];
+        const gridOptions = {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          enableAsyncPostRender: true,
+          enableAsyncPostRenderCleanup: true,
+          asyncPostRenderDelay: 1,
+          asyncPostRenderCleanupDelay: 1,
+        };
         grid = new SlickGrid<any, Column>(container, items, columns, gridOptions);
         let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
         expect(firstItemAgeCell.innerHTML).toBe('44');
@@ -4675,8 +5145,15 @@ describe('SlickGrid core file', () => {
       });
 
       it('should change an item from an Editor then call updateCell() and expect it call the editor loadValue() method', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
-        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        const items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+        ];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         grid.setActiveCell(0, 1);
@@ -4690,8 +5167,15 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateDown() when calling save() on default editor', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
-        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        const items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+        ];
 
         const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
@@ -4704,8 +5188,15 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT call navigateDown() when calling save() on an AutoCompleterEditor that disabled navigate down', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: AutocompleterEditor }] as Column[];
-        const items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: AutocompleterEditor },
+        ] as Column[];
+        const items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+        ];
 
         const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
@@ -4719,7 +5210,7 @@ describe('SlickGrid core file', () => {
     });
 
     describe('updateRow() method', () => {
-      let items: Array<{ id: number; name: string; age: number; }> = [];
+      let items: Array<{ id: number; name: string; age: number }> = [];
 
       beforeEach(() => {
         items = [
@@ -4738,7 +5229,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call the method but expect nothing to happen when row number is invalid', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` },
+        ];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
@@ -4748,7 +5242,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call the method but expect it to empty the cell node when getDataItem() returns no item', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const getDataItemSpy = vi.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
@@ -4762,7 +5259,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should change an item property then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` },
+        ];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
@@ -4779,12 +5279,22 @@ describe('SlickGrid core file', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
           {
-            id: 'age', field: 'age', name: 'Age',
-            asyncPostRender: (node, row, data) => node.textContent = data,
-            asyncPostRenderCleanup: (node) => node.textContent = ''
+            id: 'age',
+            field: 'age',
+            name: 'Age',
+            asyncPostRender: (node, row, data) => (node.textContent = data),
+            asyncPostRenderCleanup: (node) => (node.textContent = ''),
           },
         ] as Column[];
-        const gridOptions = { ...defaultOptions, rowHeight: 2222, enableCellNavigation: true, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true, asyncPostRenderDelay: 1, asyncPostRenderCleanupDelay: 1 };
+        const gridOptions = {
+          ...defaultOptions,
+          rowHeight: 2222,
+          enableCellNavigation: true,
+          enableAsyncPostRender: true,
+          enableAsyncPostRenderCleanup: true,
+          asyncPostRenderDelay: 1,
+          asyncPostRenderCleanupDelay: 1,
+        };
         grid = new SlickGrid<any, Column>(container, items, columns, gridOptions);
         let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
         expect(firstItemAgeCell.innerHTML).toBe('44');
@@ -4813,7 +5323,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should change an item from an Editor then call updateRow() and expect it call the editor loadValue() method', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         grid.setActiveCell(0, 1);
@@ -4829,7 +5342,7 @@ describe('SlickGrid core file', () => {
   });
 
   describe('Activate Cell/Row methods', () => {
-    let items: Array<{ id: number; name: string; age: number; }> = [];
+    let items: Array<{ id: number; name: string; age: number }> = [];
 
     beforeEach(() => {
       items = [
@@ -4849,7 +5362,10 @@ describe('SlickGrid core file', () => {
 
     describe('setActiveRow() method', () => {
       it('should do nothing when row to activate is greater than data length or cell is greater than available column length', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
         grid.setActiveRow(99, 1);
@@ -4859,7 +5375,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should do nothing when row or cell is a negative number', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4870,7 +5389,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should do nothing when row to activate is greater than data length', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4882,7 +5404,10 @@ describe('SlickGrid core file', () => {
 
     describe('gotoCell() method', () => {
       it('should call gotoCell() and expect it to scroll to the cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4892,7 +5417,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call gotoCell() with invalid cell and expect to NOT scroll to the cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4902,7 +5430,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call gotoCell() with commitCurrentEdit() returning false and expect to NOT scroll to the cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -5071,7 +5602,7 @@ describe('SlickGrid core file', () => {
   });
 
   describe('Grid Events', () => {
-    let items: Array<{ id: number; name: string; age: number; }> = [];
+    let items: Array<{ id: number; name: string; age: number }> = [];
 
     beforeEach(() => {
       items = [
@@ -5091,7 +5622,10 @@ describe('SlickGrid core file', () => {
 
     describe('Cell Click', () => {
       test('double-click event triggered on header resize handle should call "onColumnsResizeDblClick" notify', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onColumnsResizeDblClickSpy = vi.spyOn(grid.onColumnsResizeDblClick, 'notify');
         const columnElms = container.querySelectorAll('.slick-header-column');
@@ -5104,7 +5638,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should not scroll or do anything when getCellFromEvent() returns null', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
         const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
@@ -5117,7 +5654,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should goto cell or do anything when event default is prevented', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
@@ -5130,7 +5670,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should scroll to cell when clicking on cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onClickSpy = vi.spyOn(grid.onClick, 'notify');
         const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
@@ -5150,7 +5693,10 @@ describe('SlickGrid core file', () => {
           .mockReturnValueOnce({ rangeCount: 2, getRangeAt: () => items[1].name } as any)
           .mockReturnValueOnce({ removeAllRanges: removeRangeMock, addRange: addRangeMock } as any);
 
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onClickSpy = vi.spyOn(grid.onClick, 'notify');
         const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
@@ -5168,7 +5714,10 @@ describe('SlickGrid core file', () => {
 
     describe('Cell Double-Click', () => {
       it('should goto cell or do anything when getCellFromEvent() returns null', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
         const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
@@ -5181,7 +5730,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should goto cell or do anything when event default is prevented', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
@@ -5194,7 +5746,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should scroll to cell when clicking on cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
@@ -5208,7 +5763,10 @@ describe('SlickGrid core file', () => {
 
     describe('Cell Context Menu', () => {
       it('should not trigger onContextMenu event when cannot find closest slick-cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
@@ -5220,7 +5778,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should not trigger onContextMenu event when current cell is active and is editable', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         grid.setActiveCell(1, 1);
         const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
@@ -5234,7 +5795,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onContextMenu event when current cell is not active and not editable', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
@@ -5248,7 +5812,10 @@ describe('SlickGrid core file', () => {
 
     describe('Cell Mouse Events', () => {
       it('should trigger onMouseEnter notify when hovering a cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onMouseEnterSpy = vi.spyOn(grid.onMouseEnter, 'notify');
         container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseover'));
@@ -5257,7 +5824,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderMouseLeave notify when leaving the hovering of a cell', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onMouseLeaveSpy = vi.spyOn(grid.onMouseLeave, 'notify');
         container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseout'));
@@ -5268,8 +5838,17 @@ describe('SlickGrid core file', () => {
 
     describe('Pre-Header Click', () => {
       it('should trigger onPreHeaderClick notify when not column resizing', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, createPreHeaderPanel: true, showPreHeaderPanel: true });
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          editable: true,
+          createPreHeaderPanel: true,
+          showPreHeaderPanel: true,
+        });
         vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
         const onPreHeaderClickSpy = vi.spyOn(grid.onPreHeaderClick, 'notify');
         const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
@@ -5283,8 +5862,17 @@ describe('SlickGrid core file', () => {
 
     describe('Pre-Header Context Menu', () => {
       it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, createPreHeaderPanel: true, showPreHeaderPanel: true });
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          editable: true,
+          createPreHeaderPanel: true,
+          showPreHeaderPanel: true,
+        });
         const onContextSpy = vi.spyOn(grid.onPreHeaderContextMenu, 'notify');
         const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
         const event = new CustomEvent('contextmenu');
@@ -5297,7 +5885,10 @@ describe('SlickGrid core file', () => {
 
     describe('Header Click', () => {
       it('should trigger onHeaderClick notify when not column resizing', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
         const onHeaderClickSpy = vi.spyOn(grid.onHeaderClick, 'notify');
@@ -5312,7 +5903,10 @@ describe('SlickGrid core file', () => {
 
     describe('Header Context Menu', () => {
       it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onContextSpy = vi.spyOn(grid.onHeaderContextMenu, 'notify');
         const headerColumns = container.querySelectorAll('.slick-header-column');
@@ -5326,7 +5920,10 @@ describe('SlickGrid core file', () => {
 
     describe('Header Mouse Events', () => {
       it('should trigger onHeaderMouseEnter notify when hovering a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseEnterSpy = vi.spyOn(grid.onHeaderMouseEnter, 'notify');
         container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseenter'));
@@ -5335,7 +5932,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderMouseEnter notify when hovering a header when "slick-header-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseEnterSpy = vi.spyOn(grid.onHeaderMouseEnter, 'notify');
         const headerRowElm = container.querySelector('.slick-header-column');
@@ -5346,7 +5946,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderMouseOver notify when hovering a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseOverSpy = vi.spyOn(grid.onHeaderMouseOver, 'notify');
         container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseover'));
@@ -5355,7 +5958,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderMouseOver notify when hovering a header when "slick-header-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseOverSpy = vi.spyOn(grid.onHeaderMouseOver, 'notify');
         const headerRowElm = container.querySelector('.slick-header-column');
@@ -5366,7 +5972,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderMouseLeave notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseLeaveSpy = vi.spyOn(grid.onHeaderMouseLeave, 'notify');
         container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseleave'));
@@ -5375,7 +5984,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderMouseLeave notify when leaving the hovering of a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseLeaveSpy = vi.spyOn(grid.onHeaderMouseLeave, 'notify');
         const headerRowElm = container.querySelector('.slick-header-column');
@@ -5386,7 +5998,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderMouseOut notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseOutSpy = vi.spyOn(grid.onHeaderMouseOut, 'notify');
         container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseout'));
@@ -5395,7 +6010,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderMouseOut notify when leaving the hovering of a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
         const onHeaderMouseOutSpy = vi.spyOn(grid.onHeaderMouseOut, 'notify');
         const headerRowElm = container.querySelector('.slick-header-column');
@@ -5406,7 +6024,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderRowMouseEnter notify when hovering a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseEnterSpy = vi.spyOn(grid.onHeaderRowMouseEnter, 'notify');
         container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseenter'));
@@ -5415,7 +6036,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderRowMouseOver notify when hovering a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseOverSpy = vi.spyOn(grid.onHeaderRowMouseOver, 'notify');
         container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseover'));
@@ -5424,7 +6048,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should update viewport top/left scrollLeft when scrolling in headerRow DOM element', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const headerRowElm = container.querySelector('.slick-headerrow') as HTMLDivElement;
         Object.defineProperty(headerRowElm, 'scrollLeft', { writable: true, value: 25 });
@@ -5436,8 +6063,16 @@ describe('SlickGrid core file', () => {
       });
 
       it('should update viewport top/left scrollLeft when scrolling in footerRow DOM element', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true, enableCellNavigation: true });
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          createFooterRow: true,
+          showFooterRow: true,
+          enableCellNavigation: true,
+        });
         const footerRowElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
         Object.defineProperty(footerRowElm, 'scrollLeft', { writable: true, value: 25 });
 
@@ -5448,8 +6083,17 @@ describe('SlickGrid core file', () => {
       });
 
       it('should update viewport top/left scrollLeft when scrolling in preHeader DOM element', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createPreHeaderPanel: true, preHeaderPanelHeight: 44, showPreHeaderPanel: true, enableCellNavigation: true });
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          createPreHeaderPanel: true,
+          preHeaderPanelHeight: 44,
+          showPreHeaderPanel: true,
+          enableCellNavigation: true,
+        });
         const preheaderElm = container.querySelector('.slick-preheader-panel') as HTMLDivElement;
         Object.defineProperty(preheaderElm, 'scrollLeft', { writable: true, value: 25 });
 
@@ -5465,8 +6109,17 @@ describe('SlickGrid core file', () => {
       });
 
       it('should update viewport top/left scrollLeft when scrolling in topHeader DOM element', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createTopHeaderPanel: true, topHeaderPanelHeight: 44, showTopHeaderPanel: true, enableCellNavigation: true });
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          createTopHeaderPanel: true,
+          topHeaderPanelHeight: 44,
+          showTopHeaderPanel: true,
+          enableCellNavigation: true,
+        });
         const topheaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
         Object.defineProperty(topheaderElm, 'scrollLeft', { writable: true, value: 25 });
 
@@ -5482,7 +6135,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseEnterSpy = vi.spyOn(grid.onHeaderRowMouseEnter, 'notify');
         const headerRowElm = container.querySelector('.slick-headerrow-column');
@@ -5493,7 +6149,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderRowMouseOver notify when hovering a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseOverSpy = vi.spyOn(grid.onHeaderRowMouseOver, 'notify');
         const headerRowElm = container.querySelector('.slick-headerrow-column');
@@ -5504,7 +6163,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderRowMouseLeave notify when leaving the hovering of a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseLeaveSpy = vi.spyOn(grid.onHeaderRowMouseLeave, 'notify');
         container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseleave'));
@@ -5513,7 +6175,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderRowMouseLeave notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseLeaveSpy = vi.spyOn(grid.onHeaderRowMouseLeave, 'notify');
         const headerRowElm = container.querySelector('.slick-headerrow-column');
@@ -5524,7 +6189,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should trigger onHeaderRowMouseOut notify when leaving the hovering of a header', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseOutSpy = vi.spyOn(grid.onHeaderRowMouseOut, 'notify');
         container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseout'));
@@ -5533,7 +6201,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should NOT trigger onHeaderRowMouseOut notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const onHeaderRowMouseOutSpy = vi.spyOn(grid.onHeaderRowMouseOut, 'notify');
         const headerRowElm = container.querySelector('.slick-headerrow-column');
@@ -5546,7 +6217,10 @@ describe('SlickGrid core file', () => {
 
     describe('Footer Click', () => {
       it('should trigger onFooterClick notify when not column resizing', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
         const onFooterClickSpy = vi.spyOn(grid.onFooterClick, 'notify');
         const FooterColumns = container.querySelectorAll('.slick-footerrow-column');
@@ -5560,7 +6234,10 @@ describe('SlickGrid core file', () => {
 
     describe('Footer Context Menu', () => {
       it('should trigger onFooterClick notify grid context menu event is triggered', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
         const onContextSpy = vi.spyOn(grid.onFooterContextMenu, 'notify');
         const footerColumns = container.querySelectorAll('.slick-footerrow-column');
@@ -5574,7 +6251,10 @@ describe('SlickGrid core file', () => {
 
     describe('Keydown Events', () => {
       it('should call navigateRowStart() when triggering Home key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateRowStartSpy = vi.spyOn(grid, 'navigateRowStart');
@@ -5587,7 +6267,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateTop() when triggering Ctrl+Home key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
@@ -5601,7 +6284,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateRowEnd() when triggering End key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateRowEndSpy = vi.spyOn(grid, 'navigateRowEnd');
@@ -5614,7 +6300,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateBottom() when triggering Ctrl+End key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateBottomSpy = vi.spyOn(grid, 'navigateBottom');
@@ -5628,7 +6317,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigatePageDown() when triggering PageDown key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigatePageDownSpy = vi.spyOn(grid, 'navigatePageDown');
@@ -5641,7 +6333,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigatePageUp() when triggering PageDown key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigatePageUpSpy = vi.spyOn(grid, 'navigatePageUp');
@@ -5654,7 +6349,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateLeft() when triggering PageDown key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateLeftSpy = vi.spyOn(grid, 'navigateLeft');
@@ -5667,7 +6365,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateRight() when triggering PageDown key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateRightSpy = vi.spyOn(grid, 'navigateRight');
@@ -5680,7 +6381,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateUp() when triggering PageDown key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateUpSpy = vi.spyOn(grid, 'navigateUp');
@@ -5693,7 +6397,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateDown() when triggering PageDown key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
@@ -5706,7 +6413,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateNext() when triggering PageDown key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateNextSpy = vi.spyOn(grid, 'navigateNext');
@@ -5719,7 +6429,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigatePrev() when triggering Enter key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigatePrevSpy = vi.spyOn(grid, 'navigatePrev');
@@ -5733,7 +6446,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should do nothing when triggering Escape key without any editor to cancel', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const event = new CustomEvent('keydown');
@@ -5746,7 +6462,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should cancel opened editor when triggering Escape key and editor is active', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const event = new CustomEvent('keydown');
@@ -5760,7 +6479,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should call navigateDown() when triggering Enter key', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const event = new CustomEvent('keydown');
@@ -5771,7 +6493,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should commit editor & set focus to next down cell when triggering Enter key with an active Editor', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(true);
         grid.setActiveCell(0, 1);
@@ -5787,7 +6512,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should navigateDown() when triggering Enter key with an active Editor that is considered a new row', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         grid.setActiveCell(0, 1);
         grid.editActiveCell(InputEditor as any, true);
@@ -5805,7 +6533,10 @@ describe('SlickGrid core file', () => {
       });
 
       it('should do nothing when active Editor has multiple keyCaptureList and event is triggered is part of that list', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         grid.setActiveCell(0, 1);
         grid.editActiveCell(InputEditor as any, true);

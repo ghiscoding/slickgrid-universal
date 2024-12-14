@@ -7,6 +7,7 @@ describe('Draggable class', () => {
   let dg: any;
 
   beforeEach(() => {
+    vi.resetAllMocks();
     containerElement = document.createElement('div');
   });
 
@@ -78,7 +79,14 @@ describe('Draggable class', () => {
     const dragEndSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
-    dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
+    dg = Draggable({
+      containerElement,
+      allowDragFrom: 'div.slick-cell',
+      onDrag: dragSpy,
+      onDragInit: dragInitSpy,
+      onDragStart: dragStartSpy,
+      onDragEnd: dragEndSpy,
+    });
 
     const mdEvt = new MouseEvent('mousedown');
     Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
@@ -95,8 +103,16 @@ describe('Draggable class', () => {
     document.body.dispatchEvent(muEvt);
 
     expect(dg).toBeTruthy();
-    expect(dragInitSpy).toHaveBeenCalledWith(mdEvt, { startX: 10, startY: 10, deltaX: 2, deltaY: 0, dragHandle: containerElement, dragSource: containerElement, target: document.body });
-    expect(dragStartSpy).toHaveBeenCalled();  // TODO: revisit calledWith X/Y pos, after migrating to TS class
+    expect(dragInitSpy).toHaveBeenCalledWith(mdEvt, {
+      startX: 10,
+      startY: 10,
+      deltaX: 2,
+      deltaY: 0,
+      dragHandle: containerElement,
+      dragSource: containerElement,
+      target: document.body,
+    });
+    expect(dragStartSpy).toHaveBeenCalled(); // TODO: revisit calledWith X/Y pos, after migrating to TS class
     expect(dragSpy).toHaveBeenCalled();
     expect(dragEndSpy).toHaveBeenCalled();
     expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
@@ -110,7 +126,15 @@ describe('Draggable class', () => {
     const dragEndSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
-    dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', preventDragFromKeys: ['metaKey'], onDrag: dragSpy, onDragInit: dragInitSpy, onDragStart: dragStartSpy, onDragEnd: dragEndSpy });
+    dg = Draggable({
+      containerElement,
+      allowDragFrom: 'div.slick-cell',
+      preventDragFromKeys: ['metaKey'],
+      onDrag: dragSpy,
+      onDragInit: dragInitSpy,
+      onDragStart: dragStartSpy,
+      onDragEnd: dragEndSpy,
+    });
 
     const mdEvt = new MouseEvent('mousedown', { metaKey: true });
     Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
@@ -127,7 +151,15 @@ describe('Draggable class', () => {
     document.body.dispatchEvent(muEvt);
 
     expect(dg).toBeTruthy();
-    expect(dragInitSpy).not.toHaveBeenCalledWith(mdEvt, { startX: 10, startY: 10, deltaX: 2, deltaY: 0, dragHandle: containerElement, dragSource: containerElement, target: document.body });
+    expect(dragInitSpy).not.toHaveBeenCalledWith(mdEvt, {
+      startX: 10,
+      startY: 10,
+      deltaX: 2,
+      deltaY: 0,
+      dragHandle: containerElement,
+      dragSource: containerElement,
+      target: document.body,
+    });
     expect(dragStartSpy).not.toHaveBeenCalled();
     expect(dragSpy).not.toHaveBeenCalled();
     expect(dragEndSpy).not.toHaveBeenCalled();
@@ -213,7 +245,7 @@ describe('Resizable class', () => {
   it('should be able to instantiate the class', () => {
     rsz = Resizable({
       resizeableElement: document.createElement('div'),
-      resizeableHandleElement: document.createElement('div')
+      resizeableHandleElement: document.createElement('div'),
     });
 
     expect(rsz).toBeTruthy();
@@ -229,7 +261,13 @@ describe('Resizable class', () => {
     const resizeEndSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
-    rsz = Resizable({ resizeableElement: containerElement, resizeableHandleElement: containerElement, onResize: resizeSpy, onResizeStart: resizeStartSpy, onResizeEnd: resizeEndSpy });
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResize: resizeSpy,
+      onResizeStart: resizeStartSpy,
+      onResizeEnd: resizeEndSpy,
+    });
 
     const mdEvt = new MouseEvent('mousedown');
     Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
