@@ -55,13 +55,14 @@ export class Renderer {
     return null;
   }
 
-
   parseTemplate(viewTemplate: string) {
-    return viewTemplate
-      // .replace(/([a-z]*){1}.(delegate)="(.*?)(\(.*\))"/gi, this.parseMethodBinding.bind(this))
-      .replace(/([a-z]*){1}.(delegate)="?(.*?)(\))"/gi, this.parseMethodBinding.bind(this))
-      .replace(/([a-z]*){1}.(bind)="?([^">\s]*)"?/gi, this.parsePropertyBinding.bind(this))
-      .replace(/\${(.*)}/gi, this.parseLogicExecution.bind(this));
+    return (
+      viewTemplate
+        // .replace(/([a-z]*){1}.(delegate)="(.*?)(\(.*\))"/gi, this.parseMethodBinding.bind(this))
+        .replace(/([a-z]*){1}.(delegate)="?(.*?)(\))"/gi, this.parseMethodBinding.bind(this))
+        .replace(/([a-z]*){1}.(bind)="?([^">\s]*)"?/gi, this.parsePropertyBinding.bind(this))
+        .replace(/\${(.*)}/gi, this.parseLogicExecution.bind(this))
+    );
   }
 
   parseLogicExecution(_match: string, code: string) {
@@ -87,7 +88,7 @@ export class Renderer {
         output = `${eventName.toLowerCase()}="window.${this._className.trim()}.${callbackFn.trim()}${lastChar}"`;
         break;
     }
-    return (output || '');
+    return output || '';
   }
 
   /**

@@ -38,8 +38,18 @@ export default class Example13 {
     const gridContainerElm1 = document.querySelector(`.grid13-1`) as HTMLDivElement;
     const gridContainerElm2 = document.querySelector(`.grid13-2`) as HTMLDivElement;
 
-    this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
-    this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+    this.sgb1 = new Slicker.GridBundle(
+      gridContainerElm1,
+      this.columnDefinitions1,
+      { ...ExampleGridOptions, ...this.gridOptions1 },
+      this.dataset1
+    );
+    this.sgb2 = new Slicker.GridBundle(
+      gridContainerElm2,
+      this.columnDefinitions2,
+      { ...ExampleGridOptions, ...this.gridOptions2 },
+      this.dataset2
+    );
     document.body.classList.add('material-theme');
   }
 
@@ -75,8 +85,8 @@ export default class Example13 {
       gridHeight: 275,
       headerButton: {
         // you can use the "onCommand" (in Grid Options) and/or the "action" callback (in Column Definition)
-        onCommand: (_e, args) => this.handleOnCommand(_e, args, 1)
-      }
+        onCommand: (_e, args) => this.handleOnCommand(_e, args, 1),
+      },
     };
 
     // grid 2 options, same as grid 1 + extras
@@ -87,8 +97,8 @@ export default class Example13 {
       // frozenColumn: 2,
       // frozenRow: 2,
       headerButton: {
-        onCommand: (_e, args) => this.handleOnCommand(_e, args, 2)
-      }
+        onCommand: (_e, args) => this.handleOnCommand(_e, args, 2),
+      },
     };
   }
 
@@ -133,8 +143,8 @@ export default class Example13 {
         editor: { model: Editors.integer },
         formatter: (_row, _cell, value, columnDef) => {
           if (
-            gridNo === 1 && columns1WithHighlightingById[columnDef.id] && value < 0 ||
-            gridNo === 2 && columns2WithHighlightingById[columnDef.id] && value < 0
+            (gridNo === 1 && columns1WithHighlightingById[columnDef.id] && value < 0) ||
+            (gridNo === 2 && columns2WithHighlightingById[columnDef.id] && value < 0)
           ) {
             return `<div class="text-red text-bold">${value}</div>`;
           }
@@ -158,10 +168,10 @@ export default class Example13 {
                 // you can use the "action" callback and/or subscribe to the "onCallback" event, they both have the same arguments
                 // do something
                 console.log(`execute a callback action to "${args.command}" on ${args.column.name}`);
-              }
-            }
-          ]
-        }
+              },
+            },
+          ],
+        },
       });
     }
 
@@ -173,27 +183,27 @@ export default class Example13 {
           cssClass: 'mdi mdi-message-text',
           handler: () => {
             alert('Tag');
-          }
+          },
         },
         {
           cssClass: 'mdi mdi-forum-outline',
           handler: () => {
             alert('Comment');
-          }
+          },
         },
         {
           cssClass: 'mdi mdi-information-outline',
           handler: () => {
             alert('Info');
-          }
+          },
         },
         {
           cssClass: 'mdi mdi-help-circle-outline',
           handler: () => {
             alert('Help');
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     // when floating to left, you might want to inverse the icon orders
@@ -211,9 +221,9 @@ export default class Example13 {
           tooltip: 'This button only appears on hover.',
           handler: () => {
             alert('Help');
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     // mock a dataset

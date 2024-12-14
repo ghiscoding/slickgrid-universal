@@ -47,7 +47,7 @@ describe('SliderRangeFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
     gridOptionMock = {
       enableFiltering: true,
@@ -85,7 +85,7 @@ describe('SliderRangeFilter', () => {
 
   it('should initialize the filter with slider value define in global default user filter options', () => {
     gridOptionMock.defaultFilterOptions = {
-      slider: { sliderStartValue: 2 }
+      slider: { sliderStartValue: 2 },
     };
     filter.init(filterArguments);
 
@@ -129,7 +129,12 @@ describe('SliderRangeFilter', () => {
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
     filterElms[0].dispatchEvent(new CustomEvent('change'));
 
-    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [2, 80], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      operator: 'RangeInclusive',
+      searchTerms: [2, 80],
+      shouldTriggerQuery: true,
+    });
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
     expect(rowMouseLeaveSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub });
   });
@@ -197,7 +202,12 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].style.zIndex).toBe('0');
     expect(sliderInputs[1].style.zIndex).toBe('1');
-    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [3, 84], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      operator: 'RangeInclusive',
+      searchTerms: [3, 84],
+      shouldTriggerQuery: true,
+    });
   });
 
   it('should change z-index on left handle when it is by 20px near right handle so it shows over the right handle not below', () => {
@@ -211,7 +221,12 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].style.zIndex).toBe('1');
     expect(sliderInputs[1].style.zIndex).toBe('0');
-    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [50, 63], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      operator: 'RangeInclusive',
+      searchTerms: [50, 63],
+      shouldTriggerQuery: true,
+    });
   });
 
   it('should change minValue to a lower value when it is to close to maxValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change minValue to a lower value plus gap', () => {
@@ -220,7 +235,7 @@ describe('SliderRangeFilter', () => {
     const maxVal = 58;
 
     mockColumn.filter = {
-      filterOptions: { stopGapBetweenSliderHandles: 5 }
+      filterOptions: { stopGapBetweenSliderHandles: 5 },
     };
     filter.init(filterArguments);
     filter.setValues([minVal, maxVal]);
@@ -230,7 +245,12 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].value).toBe(`${minVal - 5}`);
     expect(sliderInputs[1].value).toBe('58');
-    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [51, 58], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      operator: 'RangeInclusive',
+      searchTerms: [51, 58],
+      shouldTriggerQuery: true,
+    });
   });
 
   it('should change maxValue to a lower value when it is to close to minValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change maxValue to a lower value plus gap', () => {
@@ -239,7 +259,7 @@ describe('SliderRangeFilter', () => {
     const maxVal = 58;
 
     mockColumn.filter = {
-      filterOptions: { stopGapBetweenSliderHandles: 5 }
+      filterOptions: { stopGapBetweenSliderHandles: 5 },
     };
     filter.init(filterArguments);
     filter.setValues([minVal, maxVal]);
@@ -249,7 +269,12 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].value).toBe('56');
     expect(sliderInputs[1].value).toBe(`${minVal + 5}`);
-    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [56, 61], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      operator: 'RangeInclusive',
+      searchTerms: [56, 61],
+      shouldTriggerQuery: true,
+    });
   });
 
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
@@ -298,7 +323,7 @@ describe('SliderRangeFilter', () => {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
-      }
+      },
     };
 
     filter.init(filterArguments);
@@ -353,7 +378,7 @@ describe('SliderRangeFilter', () => {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
-      }
+      },
     };
 
     filter.init(filterArguments);

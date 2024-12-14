@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
 
-import { EmitterType, FieldType, } from '../../enums/index.js';
+import { EmitterType, FieldType } from '../../enums/index.js';
 import type {
   BackendService,
   Column,
@@ -33,15 +33,17 @@ const gridOptionMock = {
     postProcess: vi.fn(),
   },
   gridMenu: {
-    commandItems: [{
-      command: 'clear-sorting',
-      disabled: false,
-      hidden: true,
-      iconCssClass: 'mdi mdi-sort-variant-off',
-      positionOrder: 51,
-      title: 'Clear all Sorting'
-    }]
-  }
+    commandItems: [
+      {
+        command: 'clear-sorting',
+        disabled: false,
+        hidden: true,
+        iconCssClass: 'mdi mdi-sort-variant-off',
+        positionOrder: 51,
+        title: 'Clear all Sorting',
+      },
+    ],
+  },
 } as unknown as GridOption;
 
 const dataViewStub = {
@@ -131,7 +133,10 @@ describe('SortService', () => {
 
   describe('clearSortByColumnId method', () => {
     let mockSortedCols: ColumnSort[];
-    const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'lastName', field: 'lastName' }] as Column[];
+    const mockColumns = [
+      { id: 'firstName', field: 'firstName' },
+      { id: 'lastName', field: 'lastName' },
+    ] as Column[];
 
     beforeEach(() => {
       mockSortedCols = [
@@ -140,7 +145,7 @@ describe('SortService', () => {
       ];
       gridOptionMock.backendServiceApi = {
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(vi.fn()))
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
@@ -234,7 +239,13 @@ describe('SortService', () => {
 
       expect(previousSortSpy).toHaveBeenCalled();
       expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
-      expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'id', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'id', id: 'id' } }], false, true);
+      expect(localSortSpy).toHaveBeenNthCalledWith(
+        2,
+        gridStub,
+        [{ columnId: 'id', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'id', id: 'id' } }],
+        false,
+        true
+      );
       expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
       expect(setSortSpy).toHaveBeenCalled();
       expect(sortDefaultSpy).toHaveBeenCalled();
@@ -259,7 +270,13 @@ describe('SortService', () => {
       expect(previousSortSpy).toHaveBeenCalled();
       expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
       expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
-      expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'customId', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'customId', id: 'customId' } }], false, true);
+      expect(localSortSpy).toHaveBeenNthCalledWith(
+        2,
+        gridStub,
+        [{ columnId: 'customId', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'customId', id: 'customId' } }],
+        false,
+        true
+      );
       expect(setSortSpy).toHaveBeenCalled();
       expect(sortDefaultSpy).toHaveBeenCalled();
     });
@@ -267,13 +284,22 @@ describe('SortService', () => {
 
   describe('clearSorting method', () => {
     let mockSortedCol: SingleColumnSort;
-    const mockColumns = [{ id: 'lastName', field: 'lastName' }, { id: 'firstName', field: 'firstName' }] as Column[];
+    const mockColumns = [
+      { id: 'lastName', field: 'lastName' },
+      { id: 'firstName', field: 'firstName' },
+    ] as Column[];
 
     beforeEach(() => {
-      mockSortedCol = { multiColumnSort: false, columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true, grid: gridStub };
+      mockSortedCol = {
+        multiColumnSort: false,
+        columnId: 'lastName',
+        sortCol: { id: 'lastName', field: 'lastName', width: 100 },
+        sortAsc: true,
+        grid: gridStub,
+      };
       gridOptionMock.backendServiceApi = {
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(vi.fn()))
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
@@ -339,7 +365,7 @@ describe('SortService', () => {
     beforeEach(() => {
       gridOptionMock.backendServiceApi = {
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(vi.fn()))
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
     });
 
@@ -376,7 +402,7 @@ describe('SortService', () => {
       const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
       const mockSortedCols: ColumnSort[] = [
         { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { columnId: 'firstName', sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } }
+        { columnId: 'firstName', sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } },
       ];
 
       service.bindLocalOnSort(gridStub);
@@ -384,13 +410,22 @@ describe('SortService', () => {
 
       await new Promise(process.nextTick);
       expect(spyCurrentSort).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }]);
+      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [
+        { columnId: 'lastName', direction: 'ASC' },
+        { columnId: 'firstName', direction: 'DESC' },
+      ]);
       expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
     });
 
     it('should enable pre-parse and expect "preParseSingleDateItem()" being called when "grid.onCellChange" is called', async () => {
-      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
-      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      const mockColumns = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ] as Column[];
+      const mockData = [
+        { firstName: 'John', updatedDate: '2020-01-01' },
+        { firstName: 'Jane', updatedDate: '2020-02-02' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
       const parseSingleSpy = vi.spyOn(service, 'preParseSingleDateItem');
@@ -405,8 +440,14 @@ describe('SortService', () => {
     });
 
     it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemAdded" event is called', async () => {
-      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
-      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      const mockColumns = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ] as Column[];
+      const mockData = [
+        { firstName: 'John', updatedDate: '2020-01-01' },
+        { firstName: 'Jane', updatedDate: '2020-02-02' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
       const parseSingleSpy = vi.spyOn(service, 'preParseSingleDateItem');
@@ -421,8 +462,14 @@ describe('SortService', () => {
     });
 
     it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemUpdated" event is called', async () => {
-      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
-      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      const mockColumns = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ] as Column[];
+      const mockData = [
+        { firstName: 'John', updatedDate: '2020-01-01' },
+        { firstName: 'Jane', updatedDate: '2020-02-02' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
       const parseSingleSpy = vi.spyOn(service, 'preParseSingleDateItem');
@@ -437,8 +484,14 @@ describe('SortService', () => {
     });
 
     it('should expect Collection Service "preParseByMutationDateItems()" to be called when calling "preParseAllDateItems()"', async () => {
-      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
-      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      const mockColumns = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ] as Column[];
+      const mockData = [
+        { firstName: 'John', updatedDate: '2020-01-01' },
+        { firstName: 'Jane', updatedDate: '2020-02-02' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
       sharedService.isItemsDateParsed = false;
@@ -451,8 +504,14 @@ describe('SortService', () => {
     });
 
     it('should expect Collection Service "parseSingleDateItem()" to be called when calling "preParseSingleDateItem()"', async () => {
-      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
-      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      const mockColumns = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ] as Column[];
+      const mockData = [
+        { firstName: 'John', updatedDate: '2020-01-01' },
+        { firstName: 'Jane', updatedDate: '2020-02-02' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
       sharedService.isItemsDateParsed = false;
@@ -465,8 +524,14 @@ describe('SortService', () => {
     });
 
     it('should enable pre-parse and expect "preParseByMutationDateItems()" being called when dataset has Date items not yet being parsed', async () => {
-      const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }] as Column[];
-      const mockData = [{ firstName: 'John', updatedDate: '2020-01-01' }, { firstName: 'Jane', updatedDate: '2020-02-02' }];
+      const mockColumns = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+      ] as Column[];
+      const mockData = [
+        { firstName: 'John', updatedDate: '2020-01-01' },
+        { firstName: 'Jane', updatedDate: '2020-02-02' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(mockData);
       sharedService.isItemsDateParsed = false;
@@ -475,7 +540,7 @@ describe('SortService', () => {
       const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyCurrentSort = vi.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = vi.spyOn(service, 'onLocalSortChanged');
-      const mockSortedCols: ColumnSort[] = [{ columnId: 'updatedDate', sortAsc: true, sortCol: mockColumns[1] },];
+      const mockSortedCols: ColumnSort[] = [{ columnId: 'updatedDate', sortAsc: true, sortCol: mockColumns[1] }];
 
       service.bindLocalOnSort(gridStub);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
@@ -498,7 +563,7 @@ describe('SortService', () => {
         service: backendServiceStub,
         preProcess: spyPreProcess,
         postProcess: spyPostProcess,
-        process: () => new Promise((resolve) => resolve(spyProcess))
+        process: () => new Promise((resolve) => resolve(spyProcess)),
       };
     });
 
@@ -523,7 +588,10 @@ describe('SortService', () => {
     });
 
     it('should expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', async () => {
-      const expectedSortCols = [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }] as CurrentSorter[];
+      const expectedSortCols = [
+        { columnId: 'lastName', direction: 'ASC' },
+        { columnId: 'firstName', direction: 'DESC' },
+      ] as CurrentSorter[];
       const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
       const spyBackendCurrentSort = vi.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentSorters');
       (spyBackendCurrentSort as Mock).mockReturnValue(expectedSortCols);
@@ -531,7 +599,7 @@ describe('SortService', () => {
       (spyBackendProcessSort as Mock).mockReturnValue('backend query');
       const mockSortedCols: ColumnSort[] = [
         { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { columnId: 'firstName', sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } }
+        { columnId: 'firstName', sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } },
       ];
 
       service.bindBackendOnSort(gridStub);
@@ -571,36 +639,47 @@ describe('SortService', () => {
         service: backendServiceStub,
         preProcess: spyPreProcess,
         postProcess: spyPostProcess,
-        process: undefined as any
+        process: undefined as any,
       };
       gridStub.getOptions = () => gridOptionMock;
     });
 
     it('should throw an error when not passing a grid in the args', () => {
-      expect(() => service.onBackendSortChanged(undefined, undefined as any)).toThrow('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function');
+      expect(() => service.onBackendSortChanged(undefined, undefined as any)).toThrow(
+        'Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function'
+      );
     });
 
     it('should throw an error when backend service is missing', () => {
       gridOptionMock.backendServiceApi!.service = undefined as any;
       service.bindBackendOnSort(gridStub);
-      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow(
+        'BackendServiceApi requires at least a "process" function and a "service" defined'
+      );
     });
 
     it('should throw an error when backend "process" method is missing', () => {
       gridOptionMock.backendServiceApi!.process = undefined as any;
       service.bindBackendOnSort(gridStub);
-      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow(
+        'BackendServiceApi requires at least a "process" function and a "service" defined'
+      );
     });
 
     it('should use an empty grid option object when grid "getOptions" method is not available', () => {
       gridStub.getOptions = () => undefined as any;
 
       service.bindBackendOnSort(gridStub);
-      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrow(
+        'BackendServiceApi requires at least a "process" function and a "service" defined'
+      );
     });
 
     it('should execute the "onError" method when the Promise throws an error & also execute internal "errorCallback" to reapply previous sort icons+query', async () => {
-      const columnsMock = [{ id: 'lastName', field: 'lastName', width: 100 }, { id: 'birthday', field: 'birthday' },];
+      const columnsMock = [
+        { id: 'lastName', field: 'lastName', width: 100 },
+        { id: 'birthday', field: 'birthday' },
+      ];
       const mockSortedCol = { columnId: 'lastName', sortCol: columnsMock[0], sortAsc: true } as ColumnSort;
       const mockPreviousSortedCol = { columnId: 'birthday', sortCol: columnsMock[1], sortAsc: false } as ColumnSort;
       gridOptionMock.backendServiceApi = {
@@ -618,7 +697,12 @@ describe('SortService', () => {
       vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
       service.bindBackendOnSort(gridStub);
-      service.onBackendSortChanged(undefined, { multiColumnSort: true, sortCols: [mockSortedCol], previousSortColumns: [mockPreviousSortedCol], grid: gridStub });
+      service.onBackendSortChanged(undefined, {
+        multiColumnSort: true,
+        sortCols: [mockSortedCol],
+        previousSortColumns: [mockPreviousSortedCol],
+        grid: gridStub,
+      });
 
       await new Promise(process.nextTick);
 
@@ -647,7 +731,10 @@ describe('SortService', () => {
   });
 
   describe('getCurrentColumnSorts method', () => {
-    const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'lastName', field: 'lastName' }] as Column[];
+    const mockColumns = [
+      { id: 'firstName', field: 'firstName' },
+      { id: 'lastName', field: 'lastName' },
+    ] as Column[];
 
     beforeEach(() => {
       gridStub.getColumns = vi.fn();
@@ -683,7 +770,10 @@ describe('SortService', () => {
     });
 
     it('should return the second sorted column without the first column since it was an exclusion', () => {
-      const mockSortCols = [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: false }];
+      const mockSortCols = [
+        { columnId: 'firstName', sortAsc: true },
+        { columnId: 'lastName', sortAsc: false },
+      ];
       vi.spyOn(gridStub, 'getSortColumns').mockReturnValue(mockSortCols as any);
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
 
@@ -698,8 +788,18 @@ describe('SortService', () => {
     let mockColumns: Column[];
     beforeEach(() => {
       mockColumns = [
-        { id: 'field1', field: 'field1', sortable: true, header: { menu: { commandItems: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
-        { id: 'field2', field: 'field2', sortable: true, header: { menu: { commandItems: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
+        {
+          id: 'field1',
+          field: 'field1',
+          sortable: true,
+          header: { menu: { commandItems: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } },
+        },
+        {
+          id: 'field2',
+          field: 'field2',
+          sortable: true,
+          header: { menu: { commandItems: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } },
+        },
       ] as Column[];
     });
 
@@ -713,13 +813,15 @@ describe('SortService', () => {
 
       expect(clearSpy).toHaveBeenCalled();
       expect(unsubscribeSpy).toHaveBeenCalled();
-      mockColumns.forEach(col => {
+      mockColumns.forEach((col) => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header!.menu!.commandItems!.forEach(item => {
-        expect((item as MenuCommandItem).hidden).toBeTruthy();
-      }));
-      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
+      mockColumns.forEach((col) =>
+        col.header!.menu!.commandItems!.forEach((item) => {
+          expect((item as MenuCommandItem).hidden).toBeTruthy();
+        })
+      );
+      gridOptionMock.gridMenu!.commandItems!.forEach((item) => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
     });
@@ -734,13 +836,15 @@ describe('SortService', () => {
 
       expect(clearSpy).not.toHaveBeenCalled();
       expect(unsubscribeSpy).toHaveBeenCalled();
-      mockColumns.forEach(col => {
+      mockColumns.forEach((col) => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header!.menu!.commandItems!.forEach(item => {
-        expect((item as MenuCommandItem).hidden).toBeTruthy();
-      }));
-      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
+      mockColumns.forEach((col) =>
+        col.header!.menu!.commandItems!.forEach((item) => {
+          expect((item as MenuCommandItem).hidden).toBeTruthy();
+        })
+      );
+      gridOptionMock.gridMenu!.commandItems!.forEach((item) => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
     });
@@ -753,13 +857,15 @@ describe('SortService', () => {
       service.disableSortFunctionality(false);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new SlickEventData(), gridStub);
 
-      mockColumns.forEach(col => {
+      mockColumns.forEach((col) => {
         expect(col.sortable).toBeTruthy();
       });
-      mockColumns.forEach(col => col.header!.menu!.commandItems!.forEach(item => {
-        expect((item as MenuCommandItem).hidden).toBeFalsy();
-      }));
-      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
+      mockColumns.forEach((col) =>
+        col.header!.menu!.commandItems!.forEach((item) => {
+          expect((item as MenuCommandItem).hidden).toBeFalsy();
+        })
+      );
+      gridOptionMock.gridMenu!.commandItems!.forEach((item) => {
         expect((item as GridMenuItem).hidden).toBeFalsy();
       });
 
@@ -803,11 +909,17 @@ describe('SortService', () => {
   });
 
   describe('loadGridSorters method', () => {
-    const mockColumns = [{ id: 'firstName', field: 'firstName', sortable: true }, { id: 'lastName', field: 'lastName', sortable: true }] as Column[];
+    const mockColumns = [
+      { id: 'firstName', field: 'firstName', sortable: true },
+      { id: 'lastName', field: 'lastName', sortable: true },
+    ] as Column[];
 
     beforeEach(() => {
       gridOptionMock.presets = {
-        sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
+        sorters: [
+          { columnId: 'firstName', direction: 'ASC' },
+          { columnId: 'lastName', direction: 'DESC' },
+        ],
       };
       gridOptionMock.enableTreeData = false;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -818,7 +930,9 @@ describe('SortService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce([colMock]);
 
       service.bindLocalOnSort(gridStub);
-      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow('[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column');
+      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow(
+        '[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column'
+      );
     });
 
     it('should throw when trying to add sorter on a TreeData grid with a column that is not sortable', () => {
@@ -827,7 +941,9 @@ describe('SortService', () => {
       gridOptionMock.enableTreeData = true;
 
       service.bindLocalOnSort(gridStub);
-      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow('Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.');
+      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow(
+        'Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.'
+      );
     });
 
     it('should load local grid multiple presets sorting when multiColumnSort is enabled', () => {
@@ -842,7 +958,7 @@ describe('SortService', () => {
       service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([
-        { columnId: 'firstName', sortAsc: true, },
+        { columnId: 'firstName', sortAsc: true },
         { columnId: 'lastName', sortAsc: false },
       ]);
       expect(spySortChanged).toHaveBeenCalledWith(gridStub, expectation);
@@ -868,7 +984,10 @@ describe('SortService', () => {
   describe('undefined getColumns & getOptions', () => {
     it('should use an empty column definition when grid "getColumns" method is not available', () => {
       gridOptionMock.presets = {
-        sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
+        sorters: [
+          { columnId: 'firstName', direction: 'ASC' },
+          { columnId: 'lastName', direction: 'DESC' },
+        ],
       };
       const spySetCols = vi.spyOn(gridStub, 'setSortColumns');
       gridStub.getColumns = () => undefined as any;
@@ -935,7 +1054,7 @@ describe('SortService', () => {
 
       gridOptionMock.backendServiceApi = {
         service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(vi.fn()))
+        process: () => new Promise((resolve) => resolve(vi.fn())),
       };
 
       dataset = [
@@ -955,9 +1074,7 @@ describe('SortService', () => {
     });
 
     it('should sort the data with a sorter that is a number type', () => {
-      const mockSortedCols = [
-        { sortCol: { id: 'age', field: 'age', type: FieldType.number }, sortAsc: true },
-      ] as ColumnSort[];
+      const mockSortedCols = [{ sortCol: { id: 'age', field: 'age', type: FieldType.number }, sortAsc: true }] as ColumnSort[];
 
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
@@ -1045,7 +1162,7 @@ describe('SortService', () => {
 
     it('should sort the data with a sorter that is a complex object (with a dataKey provided)', () => {
       const mockSortedCols = [
-        { sortCol: { id: 'address', field: 'address', dataKey: 'zip', sortComparer: SortComparers.objectString, }, sortAsc: true },
+        { sortCol: { id: 'address', field: 'address', dataKey: 'zip', sortComparer: SortComparers.objectString }, sortAsc: true },
         { sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: true },
       ] as ColumnSort[];
 
@@ -1112,7 +1229,7 @@ describe('SortService', () => {
 
       mockNewSorters = [
         { columnId: 'firstName', direction: 'ASC' },
-        { columnId: 'isActive', direction: 'desc' }
+        { columnId: 'isActive', direction: 'desc' },
       ];
       mockColumn1 = { id: 'firstName', name: 'firstName', field: 'firstName', sortable: true };
       mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', sortable: true };
@@ -1121,16 +1238,19 @@ describe('SortService', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
     });
 
-    it('should throw an error when there are no sorters defined in the column definitions', () => new Promise((done: any) => {
-      try {
-        gridOptionMock.enableSorting = false;
-        service.bindLocalOnSort(gridStub);
-        service.updateSorting([{ columnId: 'firstName', direction: 'ASC' }]);
-      } catch (e) {
-        expect(e.toString()).toContain('[Slickgrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid');
-        done();
-      }
-    }));
+    it('should throw an error when there are no sorters defined in the column definitions', () =>
+      new Promise((done: any) => {
+        try {
+          gridOptionMock.enableSorting = false;
+          service.bindLocalOnSort(gridStub);
+          service.updateSorting([{ columnId: 'firstName', direction: 'ASC' }]);
+        } catch (e) {
+          expect(e.toString()).toContain(
+            '[Slickgrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid'
+          );
+          done();
+        }
+      }));
 
     it('should trigger an "emitSortChanged" local when using "bindLocalOnSort" and also expect sorters to be set in CurrentLocalSorter', () => {
       const emitSpy = vi.spyOn(service, 'emitSortChanged');
@@ -1141,7 +1261,7 @@ describe('SortService', () => {
       expect(emitSpy).toHaveBeenCalledWith('local');
       expect(service.getCurrentLocalSorters()).toEqual([
         { columnId: 'firstName', direction: 'ASC' },
-        { columnId: 'isActive', direction: 'DESC' }
+        { columnId: 'isActive', direction: 'DESC' },
       ]);
     });
 
@@ -1154,7 +1274,7 @@ describe('SortService', () => {
       expect(emitSpy).not.toHaveBeenCalled();
       expect(service.getCurrentLocalSorters()).toEqual([
         { columnId: 'firstName', direction: 'ASC' },
-        { columnId: 'isActive', direction: 'DESC' }
+        { columnId: 'isActive', direction: 'DESC' },
       ]);
     });
 
@@ -1198,7 +1318,7 @@ describe('SortService', () => {
     const mockColumns = [
       { id: 'firstName', field: 'firstName', sortable: true },
       { id: 'lastName', field: 'lastName', sortable: true },
-      { id: 'file', field: 'file', name: 'Files', sortable: true }
+      { id: 'file', field: 'file', name: 'Files', sortable: true },
     ] as Column[];
 
     beforeEach(() => {
@@ -1220,7 +1340,7 @@ describe('SortService', () => {
       const spyUpdateSorting = vi.spyOn(service, 'updateSorting');
       const mockSortedCols: ColumnSort[] = [
         { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
+        { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } },
       ];
 
       sharedService.hierarchicalDataset = [];
@@ -1249,7 +1369,7 @@ describe('SortService', () => {
 
       const mockSortedCols: ColumnSort[] = [
         { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
+        { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } },
       ];
 
       sharedService.hierarchicalDataset = [];
@@ -1305,18 +1425,22 @@ describe('SortService', () => {
           { id: 24, file: 'bucket-list.txt', dateModified: '2012-03-05T12:44:00.123Z', size: 0.5 },
           { id: 18, file: 'something.txt', dateModified: '2015-03-03T03:50:00.123Z', size: 90 },
           {
-            id: 21, file: 'documents', files: [
-              { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7, }] },
+            id: 21,
+            file: 'documents',
+            files: [
+              { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7 }] },
               {
-                id: 4, file: 'pdf', files: [
-                  { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
-                  { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
-                  { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
-                ]
+                id: 4,
+                file: 'pdf',
+                files: [
+                  { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1 },
+                  { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4 },
+                  { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4 },
+                ],
               },
-              { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
-              { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
-            ]
+              { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4 }] },
+              { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3 }] },
+            ],
           },
         ] as any;
         sharedService.hierarchicalDataset = dataset;
@@ -1337,7 +1461,7 @@ describe('SortService', () => {
 
       it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called once with sorted ASC dataset', async () => {
         gridOptionMock.enableTreeData = true;
-        gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files', };
+        gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
         vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(dataset);
 
         const spySetItems = vi.spyOn(dataViewStub, 'setItems');
@@ -1358,7 +1482,7 @@ describe('SortService', () => {
 
       it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called twice (1st is always ASC, then 2nd by our defined sort of DSEC)', async () => {
         gridOptionMock.enableTreeData = true;
-        gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files', };
+        gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
         vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(dataset);
 
         const spySetItems = vi.spyOn(dataViewStub, 'setItems');
