@@ -3,16 +3,9 @@
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es2021",
-    "lib": [
-      "es2021",
-      "dom"
-    ],
-    "types": [
-      "node"
-    ],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "lib": ["es2021", "dom"],
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"],
     "pretty": true,
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
@@ -29,6 +22,7 @@
     "skipLibCheck": true,
     "preserveConstEnums": true,
     "stripInternal": true,
-    "strict": true
+    "strict": true,
+    "verbatimModuleSyntax": true
   }
 }
