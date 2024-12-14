@@ -18,6 +18,9 @@ export function publishPackage(publishTagName, { cwd, otp, dryRun, stream }) {
     execArgs.push('--dry-run');
   }
 
+  // pnpm will not allow you to make a publish if you have changes in the repository
+  execArgs.push('--no-git-checks');
+
   if (stream) {
     return spawnStreaming('pnpm', execArgs, { cwd });
   }
