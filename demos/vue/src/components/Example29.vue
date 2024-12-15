@@ -91,7 +91,7 @@ function toggleSubTitle() {
   <div class="subtitle">Simple Grids with a custom header and footer via named slots</div>
 
   <slickgrid-vue
-    v-model:options="gridOptions!"
+    v-model:options="gridOptions"
     v-model:columns="columnDefinitions as Column[]"
     v-model:data="dataset"
     grid-id="grid2"

@@ -594,7 +594,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div id="grid-container" class="col-sm-12">
     <slickgrid-vue
-      v-model:options="gridOptions!"
+      v-model:options="gridOptions"
       v-model:columns="columnDefinitions as Column[]"
       v-model:hierarchical="datasetHierarchical"
       grid-id="grid28"

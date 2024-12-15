@@ -1165,7 +1165,7 @@ function renderItemCallbackWith4Corners(item: any): string {
   </div>
 
   <slickgrid-vue
-    v-model:options="gridOptions!"
+    v-model:options="gridOptions"
     v-model:columns="columnDefinitions as Column[]"
     v-model:data="dataset"
     grid-id="grid30"

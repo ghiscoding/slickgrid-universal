@@ -259,7 +259,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <span class="ms-1 fst-italic" data-test="selected-locale"> {{ selectedLanguage + '.json' }} </span>
 
     <slickgrid-vue
-      v-model:options="gridOptions!"
+      v-model:options="gridOptions"
       v-model:columns="columnDefinitions as Column[]"
       v-model:data="dataset"
       grid-id="grid8"
