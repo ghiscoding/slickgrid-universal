@@ -1,4 +1,4 @@
-name: Vue E2E Tests (Cypress)
+name: Vue Cypress (E2E)
 
 on:
   push:
