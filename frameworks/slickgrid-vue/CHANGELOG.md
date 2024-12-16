@@ -3,13 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [0.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v0.2.1) (2024-12-14)
+## [0.2.1](https://github.com/ghiscoding/slickgrid-universal/slickgrid-vue/compare/v0.2.0...v0.2.1) (2024-12-14)
 
 ### Bug Fixes
 
-- **vue:** publish with pnpm to replace `workspace:` protocol - by @ghiscoding
+- **vue:** publish with pnpm to correctly replace `workspace:` protocol with real version - by @ghiscoding
 
-# [0.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v0.2.0) (2024-12-14)
+# [0.2.0](https://github.com/ghiscoding/slickgrid-universal/slickgrid-vue/compare/v0.1.0...v0.2.0) (2024-12-14)
 
 ### ⚠ BREAKING CHANGES
 
@@ -27,7 +27,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **deps:** update vue.js dependencies ([#1776](https://github.com/ghiscoding/slickgrid-universal/issues/1776)) ([6060d94](https://github.com/ghiscoding/slickgrid-universal/commit/6060d94d427dd34672921357f3c34f841b39b9c7)) - by @renovate-bot
 - **vue:** use dts w/Rollup to fix types & pass "are the types wrong" ([#1766](https://github.com/ghiscoding/slickgrid-universal/issues/1766)) ([30fa904](https://github.com/ghiscoding/slickgrid-universal/commit/30fa9045175198324fc20bfa18219c9a1809fe55)) - by @ghiscoding
 
-# [0.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v0.2.0) (2024-12-14)
+# [0.1.0](https://github.com/ghiscoding/slickgrid-universal/slickgrid-vue/compare/v0.1.0...v0.2.0) (2024-11-30)
 
 ### Features
 
