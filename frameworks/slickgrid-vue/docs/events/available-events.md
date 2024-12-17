@@ -5,6 +5,7 @@
 All the events are published with a data payload in a `CustomEvent`, so you will typically find the payload under the `detail` property of the `CustomEvent`. However please note that the events from `SlickGrid` and `SlickDataView`, shown at the bottom of the list, are published with a different structure which is also including the JS event that it was triggered with under the property `eventData` and the payload itself is under the `args` property (which follows original SlickGrid structure). To subscribe to all events, you can use your PubSub instance (if available) or add listeners on your grid container DOM element.
 
 #### `SlickGrid` and `SlickDataView`
+
 ```vue
 <script setup lang="ts">
 // 1. with PubSub instance
@@ -21,17 +22,18 @@ function handleOnCellChange(e, args) {
 
 <template>
   <SlickgridVue
-      grid-id="grid3"
-      v-model:columns="columnDefinitions"
-      v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onvueGridCreated="vueGridReady(e.detail)"
-      @onCellChange="handleOnCellChange(e.detail.eventData, e.detail.args)"
-    />
+    grid-id="grid3"
+    v-model:columns="columnDefinitions"
+    v-model:options="gridOptions"
+    v-model:data="dataset"
+    @onvueGridCreated="vueGridReady(e.detail)"
+    @onCellChange="handleOnCellChange(e.detail.eventData, e.detail.args)"
+  />
 </template>
 ```
 
 #### all other events
+
 ```vue
 <script setup lang="ts">
 // 1. with PubSub instance
@@ -47,183 +49,198 @@ function handleOnHeaderMenuCommand(e) {
 
 <template>
   <SlickgridVue
-      grid-id='grid3'
-      v-model:columns="columnDefinitions"
-      v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onvueGridCreated="vueGridReady($event.detail)"
-      @onHeaderMenuCommand="handleOnHeaderMenuCommand($event.detail)"
-    />
+    grid-id="grid3"
+    v-model:columns="columnDefinitions"
+    v-model:options="gridOptions"
+    v-model:data="dataset"
+    @onvueGridCreated="vueGridReady($event.detail)"
+    @onHeaderMenuCommand="handleOnHeaderMenuCommand($event.detail)"
+  />
 </template>
 ```
 
 ---
 
 #### CellExternalCopyManager (extension)
-  - `onCopyCells`
-  - `onCopyCancelled`
-  - `onPasteCells`
-  - `onBeforePasteCell`
+
+- `onCopyCells`
+- `onCopyCancelled`
+- `onPasteCells`
+- `onBeforePasteCell`
 
 #### Context Menu / Cell Menu (extension)
-  - `onContextMenuClearGrouping`
-  - `onContextMenuCollapseAllGroups`
-  - `onContextMenuExpandAllGroups`
-  - **Slick Events**
-    - `onAfterMenuShow`
-    - `onBeforeMenuShow`
-    - `onBeforeMenuClose`
-    - `onCommand`
-    - `onOptionSelected`
+
+- `onContextMenuClearGrouping`
+- `onContextMenuCollapseAllGroups`
+- `onContextMenuExpandAllGroups`
+- **Slick Events**
+  - `onAfterMenuShow`
+  - `onBeforeMenuShow`
+  - `onBeforeMenuClose`
+  - `onCommand`
+  - `onOptionSelected`
 
 #### Column Picker (extension)
-  - `onColumnPickerColumnsChanged`
-  - **Slick Events**
-    - `onColumnsChanged`
+
+- `onColumnPickerColumnsChanged`
+- **Slick Events**
+  - `onColumnsChanged`
 
 #### Grid Menu (extension)
-  - `onGridMenuMenuClose`
-  - `onGridMenuBeforeMenuShow`
-  - `onGridMenuAfterMenuShow`
-  - `onGridMenuClearAllPinning`
-  - `onGridMenuClearAllFilters`
-  - `onGridMenuClearAllSorting`
-  - `onGridMenuColumnsChanged`
-  - `onGridMenuCommand`
-  - **Slick Events**
-    - `onAfterMenuShow`
-    - `onBeforeMenuShow`
-    - `onBeforeMenuClose`
-    - `onColumnsChanged`
-    - `onMenuClose`
-    - `onCommand`
+
+- `onGridMenuMenuClose`
+- `onGridMenuBeforeMenuShow`
+- `onGridMenuAfterMenuShow`
+- `onGridMenuClearAllPinning`
+- `onGridMenuClearAllFilters`
+- `onGridMenuClearAllSorting`
+- `onGridMenuColumnsChanged`
+- `onGridMenuCommand`
+- **Slick Events**
+  - `onAfterMenuShow`
+  - `onBeforeMenuShow`
+  - `onBeforeMenuClose`
+  - `onColumnsChanged`
+  - `onMenuClose`
+  - `onCommand`
 
 #### Header Buttons (extension)
-  - `onHeaderButtonCommand`
+
+- `onHeaderButtonCommand`
 
 #### Header Menu (extension)
-  - `onHeaderMenuHideColumns`
-  - `onHeaderMenuCommand`
-  - `onHeaderMenuColumnResizeByContent`
-  - `onHeaderMenuBeforeMenuShow`
-  - `onHeaderMenuAfterMenuShow`
+
+- `onHeaderMenuHideColumns`
+- `onHeaderMenuCommand`
+- `onHeaderMenuColumnResizeByContent`
+- `onHeaderMenuBeforeMenuShow`
+- `onHeaderMenuAfterMenuShow`
 
 #### Filter Service
-   - `onBeforeFilterClear`
-   - `onBeforeSearchChange`
-   - `onFilterCleared`
+
+- `onBeforeFilterClear`
+- `onBeforeSearchChange`
+- `onFilterCleared`
 
 #### Grid Service
-  - `onHeaderMenuHideColumns`
-  - `onItemAdded`
-  - `onItemDeleted`
-  - `onItemUpdated`
-  - `onItemUpserted`
+
+- `onItemAdded`
+- `onItemDeleted`
+- `onItemUpdated`
+- `onItemUpserted`
 
 #### GridState Service
-  - `onFullResizeByContentRequested`
-  - `onGridStateChanged`
+
+- `onFullResizeByContentRequested`
+- `onGridStateChanged`
 
 #### Pagination Service
-  - `onBeforePaginationChange`
-  - `onPaginationChanged`
-  - `onPaginationRefreshed`
-  - `onPaginationPresetsInitialized`
-  - `onPaginationVisibilityChanged`
-  - `onPaginationSetCursorBased` (for GraphQL only)
+
+- `onBeforePaginationChange`
+- `onPaginationChanged`
+- `onPaginationRefreshed`
+- `onPaginationPresetsInitialized`
+- `onPaginationVisibilityChanged`
+- `onPaginationSetCursorBased` (for GraphQL only)
 
 #### Resizer Service
-  - `onGridBeforeResize`
-  - `onGridAfterResize`
-  - `onBeforeResizeByContent`
-  - `onAfterResizeByContent`
+
+- `onGridBeforeResize`
+- `onGridAfterResize`
+- `onBeforeResizeByContent`
+- `onAfterResizeByContent`
 
 #### Sort Service
-  - `onSortCleared`
-  - `onSortChanged`
-  - `onBeforeSortChange`
+
+- `onSortCleared`
+- `onSortChanged`
+- `onBeforeSortChange`
 
 #### TreeData Service
-  - `onTreeFullToggleStart`
-  - `onTreeFullToggleEnd`
-  - `onTreeItemToggled`
+
+- `onTreeFullToggleStart`
+- `onTreeFullToggleEnd`
+- `onTreeItemToggled`
 
 #### Slickgrid-Vue Component
-  - `onBeforeGridDestroy`
-  - `onAfterGridDestroyed`
-  - `onBeforeGridCreate`
-  - `onDataviewCreated`
-  - `onGridCreated`
-  - `onvueGridCreated`
-  - `onGridStateChanged`
+
+- `onBeforeGridDestroy`
+- `onAfterGridDestroyed`
+- `onBeforeGridCreate`
+- `onDataviewCreated`
+- `onGridCreated`
+- `onvueGridCreated`
+- `onGridStateChanged`
 
 #### SlickGrid
-  - `onActiveCellChanged`
-  - `onActiveCellPositionChanged`
-  - `onAddNewRow`
-  - `onAfterSetColumns`
-  - `onAutosizeColumns`
-  - `onBeforeAppendCell`
-  - `onBeforeCellEditorDestroy`
-  - `onBeforeColumnsResize`
-  - `onBeforeDestroy`
-  - `onBeforeEditCell`
-  - `onBeforeFooterRowCellDestroy`
-  - `onBeforeHeaderCellDestroy`
-  - `onBeforeHeaderRowCellDestroy`
-  - `onBeforeSetColumns`
-  - `onBeforeSort`
-  - `onBeforeUpdateColumns`
-  - `onCellChange`
-  - `onCellCssStylesChanged`
-  - `onClick`
-  - `onColumnsReordered`
-  - `onColumnsDrag`
-  - `onColumnsResized`
-  - `onColumnsResizeDblClick`
-  - `onCompositeEditorChange`
-  - `onContextMenu`
-  - `onDblClick`
-  - `onDrag`
-  - `onDragInit`
-  - `onDragStart`
-  - `onDragEnd`
-  - `onFooterClick`
-  - `onFooterContextMenu`
-  - `onFooterRowCellRendered`
-  - `onHeaderCellRendered`
-  - `onHeaderClick`
-  - `onHeaderContextMenu`
-  - `onHeaderMouseEnter`
-  - `onHeaderMouseLeave`
-  - `onHeaderMouseOver`
-  - `onHeaderMouseOut`
-  - `onHeaderRowCellRendered`
-  - `onHeaderRowMouseEnter`
-  - `onHeaderRowMouseLeave`
-  - `onHeaderRowMouseOver`
-  - `onHeaderRowMouseOut`
-  - `onKeyDown`
-  - `onMouseEnter`
-  - `onMouseLeave`
-  - `onPreHeaderClick`
-  - `onPreHeaderContextMenu`
-  - `onRendered`
-  - `onScroll`
-  - `onSelectedRowsChanged`
-  - `onSetOptions`
-  - `onActivateChangedOptions`
-  - `onSort`
-  - `onValidationError`
-  - `onViewportChanged`
+
+- `onActiveCellChanged`
+- `onActiveCellPositionChanged`
+- `onAddNewRow`
+- `onAfterSetColumns`
+- `onAutosizeColumns`
+- `onBeforeAppendCell`
+- `onBeforeCellEditorDestroy`
+- `onBeforeColumnsResize`
+- `onBeforeDestroy`
+- `onBeforeEditCell`
+- `onBeforeFooterRowCellDestroy`
+- `onBeforeHeaderCellDestroy`
+- `onBeforeHeaderRowCellDestroy`
+- `onBeforeSetColumns`
+- `onBeforeSort`
+- `onBeforeUpdateColumns`
+- `onCellChange`
+- `onCellCssStylesChanged`
+- `onClick`
+- `onColumnsReordered`
+- `onColumnsDrag`
+- `onColumnsResized`
+- `onColumnsResizeDblClick`
+- `onCompositeEditorChange`
+- `onContextMenu`
+- `onDblClick`
+- `onDrag`
+- `onDragInit`
+- `onDragStart`
+- `onDragEnd`
+- `onFooterClick`
+- `onFooterContextMenu`
+- `onFooterRowCellRendered`
+- `onHeaderCellRendered`
+- `onHeaderClick`
+- `onHeaderContextMenu`
+- `onHeaderMouseEnter`
+- `onHeaderMouseLeave`
+- `onHeaderMouseOver`
+- `onHeaderMouseOut`
+- `onHeaderRowCellRendered`
+- `onHeaderRowMouseEnter`
+- `onHeaderRowMouseLeave`
+- `onHeaderRowMouseOver`
+- `onHeaderRowMouseOut`
+- `onKeyDown`
+- `onMouseEnter`
+- `onMouseLeave`
+- `onPreHeaderClick`
+- `onPreHeaderContextMenu`
+- `onRendered`
+- `onScroll`
+- `onSelectedRowsChanged`
+- `onSetOptions`
+- `onActivateChangedOptions`
+- `onSort`
+- `onValidationError`
+- `onViewportChanged`
 
 #### SlickDataView
-  - `onBeforePagingInfoChanged`
-  - `onGroupExpanded`
-  - `onGroupCollapsed`
-  - `onPagingInfoChanged`
-  - `onRowCountChanged`
-  - `onRowsChanged`
-  - `onRowsOrCountChanged`
-  - `onSelectedRowIdsChanged`
-  - `onSetItemsCalled`
+
+- `onBeforePagingInfoChanged`
+- `onGroupExpanded`
+- `onGroupCollapsed`
+- `onPagingInfoChanged`
+- `onRowCountChanged`
+- `onRowsChanged`
+- `onRowsOrCountChanged`
+- `onSelectedRowIdsChanged`
+- `onSetItemsCalled`
