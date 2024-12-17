@@ -14,7 +14,7 @@ provide('i18next', useTranslation().i18next);
       <i class="mdi mdi-github"></i>
       <span class="ms-2">Slickgrid-Vue</span>
     </a>
-    <img :src="VueLogo" height="28" />
+    <img :src="VueLogo" class="logo" height="28" />
     <button
       class="navbar-toggler"
       type="button"

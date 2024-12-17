@@ -13,9 +13,8 @@ $primary-color: #0e6cfa;
 // -- 1. load with modern `@use`
 // @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
-    $slick-primary-color: $primary-color,
-    // $slick-input-focus-box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25),
-  );
+  $slick-primary-color: $primary-color // $slick-input-focus-box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25),
+);
 
 // -- 2. load with legacy `@import`
 // $slick-primary-color: red;
@@ -152,8 +151,13 @@ section {
   }
 }
 
-.navbar-brand {
-  margin-right: 4px;
+.navbar {
+  .navbar-brand {
+    margin-right: 0px;
+  }
+  .logo {
+    margin: 0 8px;
+  }
 }
 
 .github-button-container {
