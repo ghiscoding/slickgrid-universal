@@ -32,8 +32,8 @@ This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) 
 Below is a list of reasons as to why this project was created and why it is a monorepo project:
 1. it was originally created to remove duplicated code from the first 2 framework ports
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
-   - prior to creating this monorepo, these 2 projects had ~90% duplicated code in common which was not very DRY.
-   - being a common source makes it a lot easier to maintain by pushing fixes in 1 common project (this one here).
+   - prior to this monorepo, these 2 projects had ~90% duplicated code in common which was not very DRY.
+   - being a common source makes it a lot easier to maintain by pushing fixes in this common project here.
 2. it also decoupled a few Services which are not required in every project (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
 3. and finally it is framework agnostic, it could be implemented in many different frameworks (if you are interested in adding a different framework port, which is not listed in the [table](#available-framework-ports) below, then please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
    - you can use it in plain JavaScript (ES6) or TypeScript, i.e. we use plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
@@ -136,7 +136,7 @@ pnpm run bundle
 ```
 
 ### Tests
-You must go through Installation Steps 1-3 prior to running the Vitest unit tests OR steps 1-2 when running Cypress E2E tests.
+You must go through Installation Steps 1-3 prior to running the Vitest unit tests OR steps 1-2 for Cypress E2E tests.
 
 #### Vitest Unit Tests
 To run all unit tests (with Vitest), you can run one of the following commands (make sure that steps 1-3 were executed prior to running this command)
