@@ -1434,7 +1434,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.hasFrozenColumns()) {
         const cWidth = Utils.width(this._container) || 0;
-        /* v8 ignore next 4 */
         if (cWidth > 0 && this.canvasWidthL > cWidth && this._options.throwWhenFrozenNotAllViewable) {
           throw new Error(
             '[SlickGrid] Frozen columns cannot be wider than the actual grid container width. ' +
@@ -1675,16 +1674,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getHeaderColumn(columnIdOrIdx: number | string): HTMLDivElement {
     const idx = typeof columnIdOrIdx === 'number' ? columnIdOrIdx : this.getColumnIndex(columnIdOrIdx);
-    const targetHeader = this.hasFrozenColumns()
-      ? idx <= this._options.frozenColumn!
-        ? this._headerL
-        : this._headerR
-      : this._headerL;
-    const targetIndex = this.hasFrozenColumns()
-      ? idx <= this._options.frozenColumn!
-        ? idx
-        : idx - this._options.frozenColumn! - 1
-      : idx;
+    // prettier-ignore
+    const targetHeader = this.hasFrozenColumns() ? ((idx <= this._options.frozenColumn!) ? this._headerL : this._headerR) : this._headerL;
+    // prettier-ignore
+    const targetIndex = this.hasFrozenColumns() ? ((idx <= this._options.frozenColumn!) ? idx : idx - this._options.frozenColumn! - 1) : idx;
 
     return targetHeader.children[targetIndex] as HTMLDivElement;
   }
@@ -2351,9 +2344,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             let x;
             let newCanvasWidthL = 0;
             let newCanvasWidthR = 0;
-            const viewportWidth = this.viewportHasVScroll
-              ? this.viewportW - (this.scrollbarDimensions?.width || 0)
-              : this.viewportW;
+            // prettier-ignore
+            const viewportWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
 
             if (d < 0) {
               // shrink column
@@ -2464,16 +2456,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
                     if (this.hasFrozenColumns() && j <= this._options.frozenColumn!) {
                       // if we're on the left frozen side, we need to make sure that our left section width never goes over the total viewport width
-                      if (
-                        newWidth > frozenLeftColMaxWidth &&
-                        resizedCanvasWidthL < viewportWidth - this._options.frozenRightViewportMinWidth!
-                      ) {
+                      // prettier-ignore
+                      if (newWidth > frozenLeftColMaxWidth && resizedCanvasWidthL < viewportWidth - this._options.frozenRightViewportMinWidth!) {
                         frozenLeftColMaxWidth = newWidth; // keep max column width ref, if we go over the limit this number will stop increasing
                       }
-                      c.width =
-                        resizedCanvasWidthL + this._options.frozenRightViewportMinWidth! > viewportWidth
-                          ? frozenLeftColMaxWidth
-                          : newWidth;
+                      // prettier-ignore
+                      c.width = resizedCanvasWidthL + this._options.frozenRightViewportMinWidth! > viewportWidth ? frozenLeftColMaxWidth : newWidth;
                     } else {
                       c.width = newWidth;
                     }
@@ -4712,16 +4700,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       while (isDefined((columnIdx = cacheEntry.cellRenderQueue.pop()))) {
         node = divRow.lastChild as HTMLElement;
 
-        // no idea why node would be null here but apparently it is..
-        if (!node) {
-          continue;
+        // no idea why node would be null here but apparently it could be..
+        if (node) {
+          if (this.hasFrozenColumns() && columnIdx > this._options.frozenColumn!) {
+            cacheEntry.rowNode![1].appendChild(node);
+          } else {
+            cacheEntry.rowNode![0].appendChild(node);
+          }
+          cacheEntry.cellNodesByColumnIdx![columnIdx] = node;
         }
-        if (this.hasFrozenColumns() && columnIdx > this._options.frozenColumn!) {
-          cacheEntry.rowNode![1].appendChild(node);
-        } else {
-          cacheEntry.rowNode![0].appendChild(node);
-        }
-        cacheEntry.cellNodesByColumnIdx![columnIdx] = node;
       }
     }
   }
@@ -5450,10 +5437,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // if this click resulted in some cell child node getting focus,
       // don't steal it back - keyboard events will still bubble up
       // IE9+ seems to default DIVs to tabIndex=0 instead of -1, so check for cell clicks directly.
-      if (
-        (e as DOMEvent<HTMLDivElement>).target !== document.activeElement ||
-        (e as DOMEvent<HTMLDivElement>).target.classList.contains('slick-cell')
-      ) {
+      // prettier-ignore
+      if ((e as DOMEvent<HTMLDivElement>).target !== document.activeElement || (e as DOMEvent<HTMLDivElement>).target.classList.contains('slick-cell')) {
         const selection = this.getTextSelection(); // store text-selection and restore it after
         this.setFocus();
         this.setTextSelection(selection as Range);

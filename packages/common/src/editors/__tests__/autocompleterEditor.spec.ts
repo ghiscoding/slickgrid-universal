@@ -82,7 +82,7 @@ describe('AutocompleterEditor', () => {
         try {
           editor = new AutocompleterEditor(null as any);
         } catch (e) {
-          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
+          expect(e.toString()).toContain('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
           done();
         }
       }));

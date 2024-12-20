@@ -36,6 +36,7 @@ describe('SlickGrid core file', () => {
   let container: HTMLElement;
   let grid: SlickGrid;
   let defaultOptions: GridOption;
+  let skipGridDestroy = false;
 
   beforeEach(() => {
     defaultOptions = {
@@ -60,7 +61,10 @@ describe('SlickGrid core file', () => {
 
   afterEach(() => {
     document.body.textContent = '';
-    grid?.destroy(true);
+    if (!skipGridDestroy) {
+      grid?.destroy(true);
+    }
+    skipGridDestroy = false;
   });
 
   it('should be able to instantiate SlickGrid without DataView', () => {
@@ -521,6 +525,31 @@ describe('SlickGrid core file', () => {
       expect(grid.getPreHeaderPanel()).toBeTruthy();
       expect(grid.getPreHeaderPanel()).toEqual(grid.getPreHeaderPanelLeft());
       expect(grid.getPreHeaderPanelRight().outerHTML).toBe('<div></div>');
+    });
+
+    it('should throw when frozen column is wider than actual grid width', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableColumnReorder: false,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        frozenColumn: 0,
+        createPreHeaderPanel: true,
+        throwWhenFrozenNotAllViewable: true,
+      } as GridOption;
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
+
+      skipGridDestroy = true;
+      expect(() => new SlickGrid<any, Column>(container, data, columns, gridOptions)).toThrow(
+        '[SlickGrid] Frozen columns cannot be wider than the actual grid container width.'
+      );
     });
 
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
@@ -5109,6 +5138,29 @@ describe('SlickGrid core file', () => {
 
         expect(getDataItemSpy).toHaveBeenCalledTimes(1);
         expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
+      });
+
+      it('should change an item property then call updateCell() on a cell that does not exist and expect it to be an empty string cell', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
+        ];
+        const items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+        ];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        vi.spyOn(grid, 'getCellNode').mockReturnValueOnce(document.createElement('div'));
+        const getDataItemSpy = vi.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
+        items[1].age = 25;
+        grid.updateCell(3, 3);
+
+        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+        expect(secondItemAgeCell.innerHTML).toBe('');
       });
 
       it('should change an item value via asyncPostRenderer then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
