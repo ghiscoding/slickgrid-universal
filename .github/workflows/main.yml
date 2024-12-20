@@ -66,7 +66,6 @@ jobs:
       - name: ESLint
         run: pnpm lint
 
-      # only covering frameworks/demos folders for now
       - name: Prettier
         run: pnpm prettier:check
 

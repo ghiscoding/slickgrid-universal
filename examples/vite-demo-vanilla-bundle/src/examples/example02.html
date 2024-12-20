@@ -3,9 +3,11 @@
   <span class="subtitle">(with Material Theme)</span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
-    <a class="is-size-5"
-       target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example02.ts">
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example02.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
@@ -13,12 +15,8 @@
 
 <section class="mb-2">
   <div class="row mb-1">
-    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">
-      500 rows
-    </button>
-    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(50000)">
-      50k rows
-    </button>
+    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
+    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(50000)">50k rows</button>
     <button class="button is-small" data-test="clear-grouping-btn" onclick.delegate="clearGrouping()">
       <span class="mdi mdi-playlist-remove"></span>
       <span>Clear grouping</span>
@@ -41,29 +39,35 @@
   </div>
 
   <div class="row">
-    <button class="button is-small" data-test="group-duration-sort-value-btn"
-            onclick.delegate="groupByDuration()">
+    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.delegate="groupByDuration()">
       Group by Duration &amp; sort groups by value
     </button>
-    <button class="button is-small" data-test="group-duration-sort-count-btn"
-            onclick.delegate="groupByDurationOrderByCount(false)">
+    <button
+      class="button is-small"
+      data-test="group-duration-sort-count-btn"
+      onclick.delegate="groupByDurationOrderByCount(false)"
+    >
       Group by Duration &amp; sort groups by count
     </button>
-    <button class="button is-small" data-test="group-duration-sort-count-collapse-btn"
-            onclick.delegate="groupByDurationOrderByCount(true)">
+    <button
+      class="button is-small"
+      data-test="group-duration-sort-count-collapse-btn"
+      onclick.delegate="groupByDurationOrderByCount(true)"
+    >
       Group by Duration &amp; sort groups by count, aggregate collapsed
     </button>
-    <button class="button is-small" data-test="group-duration-effort-btn"
-            onclick.delegate="groupByDurationEffortDriven()">
+    <button class="button is-small" data-test="group-duration-effort-btn" onclick.delegate="groupByDurationEffortDriven()">
       Group by Duration then Effort-Driven
     </button>
-    <button class="button is-small" data-test="group-duration-effort-percent-btn"
-            onclick.delegate="groupByDurationEffortDrivenPercent()">
+    <button
+      class="button is-small"
+      data-test="group-duration-effort-percent-btn"
+      onclick.delegate="groupByDurationEffortDrivenPercent()"
+    >
       Group by Duration then Effort-Driven then Percent.
     </button>
     <span class.bind="loadingClass"></span>
   </div>
 </section>
 
-<div class="grid2">
-</div>
+<div class="grid2"></div>

@@ -3,9 +3,11 @@
   <span class="subtitle is-size-5 has-text-grey-dark">(with Salesforce Theme)</span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
-    <a class="is-size-5"
-       target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example14.ts">
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example14.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
@@ -14,10 +16,9 @@
 <div class="columns">
   <div class="column is-three-quarters">
     <p class="italic example-details">
-      The grid below uses the optional resize by cell content (with a fixed 1000px for demo purposes), you can click on
-      the 2 buttons to see the difference.
-      The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is
-      optional because it requires to read the first thousand rows and do extra width calculation.
+      The grid below uses the optional resize by cell content (with a fixed 1000px for demo purposes), you can click on the 2
+      buttons to see the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by
+      cell content is optional because it requires to read the first thousand rows and do extra width calculation.
     </p>
   </div>
 </div>
@@ -28,15 +29,17 @@
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class.bind="classDefaultResizeButton" onclick.delegate="handleDefaultResizeColumns()"
-              data-test="autosize-columns-btn">
+      <button
+        class.bind="classDefaultResizeButton"
+        onclick.delegate="handleDefaultResizeColumns()"
+        data-test="autosize-columns-btn"
+      >
         <span class="mdi mdi-arrow-expand"></span>
         <span>(default resize) "autosizeColumns"</span>
       </button>
     </p>
     <p class="control">
-      <button class.bind="classNewResizeButton" onclick.delegate="handleNewResizeColumns()"
-              data-test="resize-by-content-btn">
+      <button class.bind="classNewResizeButton" onclick.delegate="handleNewResizeColumns()" data-test="resize-by-content-btn">
         <span class="mdi mdi-arrow-expand"></span>
         <span>Resize by Cell Content</span>
       </button>
@@ -57,15 +60,23 @@
       </button>
     </p>
     <p class="control">
-      <button class="button is-small is-success is-outlined" onclick.delegate="saveAll()" data-test="save-all-btn"
-              title="Check your console log for the result">
+      <button
+        class="button is-small is-success is-outlined"
+        onclick.delegate="saveAll()"
+        data-test="save-all-btn"
+        title="Check your console log for the result"
+      >
         <span class="mdi mdi-check-all text-color-se-primary"></span>
         <span>Save All</span>
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="setSelectedRowIds()" data-test="set-dynamic-rows-btn"
-              title="Change Row Selection across multiple pages">
+      <button
+        class="button is-small"
+        onclick.delegate="setSelectedRowIds()"
+        data-test="set-dynamic-rows-btn"
+        title="Change Row Selection across multiple pages"
+      >
         <span>Change Row Selection</span>
       </button>
     </p>
@@ -75,6 +86,5 @@
 
 <!-- https://www.w3docs.com/snippets/html/how-to-make-a-div-fill-the-height-of-the-remaining-space.html -->
 <div class="grid-container grid14-container">
-  <div class="grid14">
-  </div>
+  <div class="grid14"></div>
 </div>

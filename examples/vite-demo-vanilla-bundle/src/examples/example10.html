@@ -9,43 +9,53 @@
 
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
-    <a class="is-size-5" target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example10.ts">
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example10.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
 <h6 class="italic content example-details">
   <span class="text-red">(*) NO DATA SHOWN</span>
-  - just change any of Filters/Sorting/Pages and look at the "GraphQL Query" changing.
-  Also note that the column Name has a filter with a custom %% operator that behaves like an SQL LIKE operator supporting % wildcards.
-  Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex">_regex</a>)
-  or you could add your own implementation (e.g. see this <a href="https://stackoverflow.com/a/37981802/1212166">SO</a>).
+  - just change any of Filters/Sorting/Pages and look at the "GraphQL Query" changing. Also note that the column Name has a filter
+  with a custom %% operator that behaves like an SQL LIKE operator supporting % wildcards. Depending on your configuration, your
+  GraphQL Server might already support regex querying (e.g. Hasura
+  <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex">_regex</a>) or you could add your
+  own implementation (e.g. see this <a href="https://stackoverflow.com/a/37981802/1212166">SO</a>).
 </h6>
 
 <div class="row">
-  <button class="button is-small" data-test="clear-filters-sorting"
-          onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
+  <button
+    class="button is-small"
+    data-test="clear-filters-sorting"
+    onclick.delegate="clearAllFiltersAndSorts()"
+    title="Clear all Filters & Sorts"
+  >
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter &amp; Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter"
-          onclick.delegate="setFiltersDynamically()">
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
     Set Filters Dynamically
   </button>
-  <button class="button is-small" data-test="set-dynamic-sorting"
-          onclick.delegate="setSortingDynamically()">
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
-  <button class="button is-small" data-test="reset-presets"
-          onclick.delegate="resetToOriginalPresets()">
+  <button class="button is-small" data-test="reset-presets" onclick.delegate="resetToOriginalPresets()">
     Reset Original Presets
   </button>
 
   <label for="serverdelay" class="ml-4">Server Delay: </label>
-  <input id="serverdelay" type="number" data-test="server-delay" class="is-narrow input is-small"
-        value.bind="serverWaitDelay"
-        title="input a fake timer delay to simulate slow server response" />
+  <input
+    id="serverdelay"
+    type="number"
+    data-test="server-delay"
+    class="is-narrow input is-small"
+    value.bind="serverWaitDelay"
+    title="input a fake timer delay to simulate slow server response"
+  />
 
   <div class="row col-md-12 mt-2">
     <span>
@@ -64,25 +74,36 @@
         <span>Switch Language</span>
       </button>
       <b>Locale:</b>
-      <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile">
-      </span>
+      <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile"> </span>
     </span>
 
     <span class="ml-4">
       <label>Pagination strategy: </label>
       <span data-test="radioStrategy">
         <label class="radio-inline control-label" for="offset">
-          <input type="radio" name="inlineRadioOptions" data-test="offset" id="radioOffset" checked
-                 onclick.delegate="setIsWithCursor(false)"> Offset
+          <input
+            type="radio"
+            name="inlineRadioOptions"
+            data-test="offset"
+            id="radioOffset"
+            checked
+            onclick.delegate="setIsWithCursor(false)"
+          />
+          Offset
         </label>
         <label class="radio-inline control-label" for="radioCursor">
-          <input type="radio" name="inlineRadioOptions" data-test="cursor" id="radioCursor"
-                 onclick.delegate="setIsWithCursor(true)"> Cursor
+          <input
+            type="radio"
+            name="inlineRadioOptions"
+            data-test="cursor"
+            id="radioCursor"
+            onclick.delegate="setIsWithCursor(true)"
+          />
+          Cursor
         </label>
       </span>
     </span>
   </div>
-
 </div>
 
 <div class="columns mt-2">
@@ -93,11 +114,8 @@
     </div>
   </div>
   <div class="column is-narrow">
-    <div class.bind="statusClass" data-test="status">
-      <strong>Status:</strong> <span textcontent.bind="status"></span>
-    </div>
+    <div class.bind="statusClass" data-test="status"><strong>Status:</strong> <span textcontent.bind="status"></span></div>
   </div>
 </div>
 
-<div class="grid10">
-</div>
+<div class="grid10"></div>

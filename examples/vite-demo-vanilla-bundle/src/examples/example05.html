@@ -4,29 +4,26 @@
   <span class="subtitle">(from a flat dataset with <code>parentId</code> references)</span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
-    <a class="is-size-5"
-       target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example05.ts">
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example05.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
 
 <h6 class="italic content example-details">
-  NOTE: The grid will automatically sort Ascending with the column that has the Tree Data, you could add a
-  "sortByFieldId" in your column "treeData" option if you wish to sort on a different column
+  NOTE: The grid will automatically sort Ascending with the column that has the Tree Data, you could add a "sortByFieldId" in your
+  column "treeData" option if you wish to sort on a different column
 </h6>
 <div class="columns">
   <div class="column is-narrow">
     <div class="row mb-1">
-      <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">
-        500 rows
-      </button>
-      <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(25000)">
-        25k rows
-      </button>
-      <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small"
-              data-test="change-filter-dynamically">
+      <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
+      <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(25000)">25k rows</button>
+      <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small" data-test="change-filter-dynamically">
         <span class="mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
@@ -34,12 +31,19 @@
         <span class="mdi mdi-arrow-collapse"></span>
         <span>Collapse All (without triggering event)</span>
       </button>
-      <button onclick.delegate="dynamicallyToggledFirstParent()" data-test="dynamically-toggle-first-parent-btn"
-              class="button is-small">
+      <button
+        onclick.delegate="dynamicallyToggledFirstParent()"
+        data-test="dynamically-toggle-first-parent-btn"
+        class="button is-small"
+      >
         <span>Dynamically Toggle First Parent</span>
       </button>
-      <button onclick.delegate="reapplyToggledItems()" data-test="reapply-toggled-items-btn" class="button is-small"
-              disabled.bind="hasNoExpandCollapseChanged">
+      <button
+        onclick.delegate="reapplyToggledItems()"
+        data-test="reapply-toggled-items-btn"
+        class="button is-small"
+        disabled.bind="hasNoExpandCollapseChanged"
+      >
         <span class="mdi mdi-history"></span>
         <span>Reapply Previous Toggled Items</span>
       </button>
@@ -76,5 +80,4 @@
   </div>
 </div>
 
-<div class="grid5">
-</div>
+<div class="grid5"></div>

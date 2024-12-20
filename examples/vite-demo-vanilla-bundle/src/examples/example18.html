@@ -9,15 +9,18 @@
   </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
-    <a class="is-size-5" target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example18.ts">
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example18.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
 <h6 class="italic content example-details">
-  Simulate a stock trading platform with lot of price changes, to show SlickGrid HUGE PERF., do the following: (1) lower
-  Changes Rate (2) increase both Changes per Cycle and (3) lower Highlight Duration
+  Simulate a stock trading platform with lot of price changes, to show SlickGrid HUGE PERF., do the following: (1) lower Changes
+  Rate (2) increase both Changes per Cycle and (3) lower Highlight Duration
 </h6>
 
 <div class="trading-platform">
@@ -25,9 +28,9 @@
     <div>
       <div class="range">
         <label for="refreshRateRange" class="form-label">Changes Rate(ms)</label>
-        <input type="range" class="form-range" id="refreshRateRange" min="0" max="250" step="5" value.bind="refreshRate">
+        <input type="range" class="form-range" id="refreshRateRange" min="0" max="250" step="5" value.bind="refreshRate" />
         <span class="refresh-rate">
-          <input type="number" class="is-narrow input is-small" value.bind="refreshRate">
+          <input type="number" class="is-narrow input is-small" value.bind="refreshRate" />
         </span>
       </div>
       <span>
@@ -44,13 +47,33 @@
       </span>
       <span>
         <label for="change-per-cycle-input">Changes p/Cycle</label>
-        <input type="number" class="is-narrow input is-small" id="change-per-cycle-input" value.bind="minChangePerCycle" max.bind="maxChangePerCycle" step="5">
+        <input
+          type="number"
+          class="is-narrow input is-small"
+          id="change-per-cycle-input"
+          value.bind="minChangePerCycle"
+          max.bind="maxChangePerCycle"
+          step="5"
+        />
         to
-        <input type="number" class="is-narrow input is-small" value.bind="maxChangePerCycle" min.bind="minChangePerCycle" step="5">
+        <input
+          type="number"
+          class="is-narrow input is-small"
+          value.bind="maxChangePerCycle"
+          min.bind="minChangePerCycle"
+          step="5"
+        />
       </span>
       <span>
         <label for="highlight-input">Highlight Duration(ms)</label>
-        <input type="number" class="is-narrow input is-small" id="highlight-input" data-test="highlight-input" value.bind="highlightDuration" step="10">
+        <input
+          type="number"
+          class="is-narrow input is-small"
+          id="highlight-input"
+          data-test="highlight-input"
+          value.bind="highlightDuration"
+          step="10"
+        />
       </span>
       <span class="float-right">
         <button class="button is-small" onclick.delegate="toggleFullScreen()">
@@ -61,6 +84,5 @@
     </div>
   </div>
 
-  <div class="grid18">
-  </div>
+  <div class="grid18"></div>
 </div>
