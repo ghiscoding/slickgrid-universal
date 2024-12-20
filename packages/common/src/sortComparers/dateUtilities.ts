@@ -28,8 +28,8 @@ export function compareDates(value1: any, value2: any, sortDirection: number, fo
 }
 
 /** From a FieldType, return the associated Date SortComparer */
-export function getAssociatedDateSortComparer(fieldType: typeof FieldType[keyof typeof FieldType]): SortComparer {
-  const FORMAT = (fieldType === FieldType.date) ? undefined : mapTempoDateFormatWithFieldType(fieldType);
+export function getAssociatedDateSortComparer(fieldType: (typeof FieldType)[keyof typeof FieldType]): SortComparer {
+  const FORMAT = fieldType === FieldType.date ? undefined : mapTempoDateFormatWithFieldType(fieldType);
 
   return ((value1: any, value2: any, sortDirection: number) => {
     if (FORMAT === undefined) {

@@ -54,7 +54,11 @@ export function Draggable(options: DraggableOption): {
     }
   }
 
-  function executeDragCallbackWhenDefined(callback?: (e: DragEvent, dd: DragPosition) => boolean | void, evt?: MouseEvent | Touch | TouchEvent | KeyboardEvent, dd?: DragItem): boolean | void {
+  function executeDragCallbackWhenDefined(
+    callback?: (e: DragEvent, dd: DragPosition) => boolean | void,
+    evt?: MouseEvent | Touch | TouchEvent | KeyboardEvent,
+    dd?: DragItem
+  ): boolean | void {
     if (typeof callback === 'function') {
       return callback(evt as DragEvent, dd as DragItem);
     }
@@ -71,7 +75,7 @@ export function Draggable(options: DraggableOption): {
   function preventDrag(event: MouseEvent | TouchEvent | KeyboardEvent): boolean {
     let eventPrevented = false;
     if (preventDragFromKeys) {
-      preventDragFromKeys.forEach(key => {
+      preventDragFromKeys.forEach((key) => {
         if ((event as KeyboardEvent)[key]) {
           eventPrevented = true;
         }
@@ -86,7 +90,11 @@ export function Draggable(options: DraggableOption): {
       const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
       const { target } = targetEvent;
 
-      if (!options.allowDragFrom || (options.allowDragFrom && (element.matches(options.allowDragFrom)) || (options.allowDragFromClosest && element.closest(options.allowDragFromClosest)))) {
+      if (
+        !options.allowDragFrom ||
+        (options.allowDragFrom && element.matches(options.allowDragFrom)) ||
+        (options.allowDragFromClosest && element.closest(options.allowDragFromClosest))
+      ) {
         originaldd.dragHandle = element as HTMLElement;
         const winScrollPos = windowScrollPosition();
         startX = winScrollPos.left + targetEvent.clientX;
@@ -94,7 +102,11 @@ export function Draggable(options: DraggableOption): {
         deltaX = targetEvent.clientX - targetEvent.clientX;
         deltaY = targetEvent.clientY - targetEvent.clientY;
         originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target });
-        const result = executeDragCallbackWhenDefined(onDragInit as (e: DragEvent, dd: DragPosition) => boolean | void, event, originaldd as DragItem);
+        const result = executeDragCallbackWhenDefined(
+          onDragInit as (e: DragEvent, dd: DragPosition) => boolean | void,
+          event,
+          originaldd as DragItem
+        );
 
         if (result !== false) {
           document.body.addEventListener('mousemove', userMoved);
@@ -173,7 +185,9 @@ export function MouseWheel(options: MouseWheelOption): {
   }
 
   // copy over the same event handler code used in jquery.mousewheel
-  function wheelHandler(event: WheelEvent & { axis: number; wheelDelta: number; wheelDeltaX: number; wheelDeltaY: number; HORIZONTAL_AXIS: number; }): void {
+  function wheelHandler(
+    event: WheelEvent & { axis: number; wheelDelta: number; wheelDeltaX: number; wheelDeltaY: number; HORIZONTAL_AXIS: number }
+  ): void {
     const orgEvent = event || window.event;
     let delta = 0;
     let deltaX = 0;
@@ -201,7 +215,7 @@ export function MouseWheel(options: MouseWheelOption): {
       deltaY = orgEvent.wheelDeltaY / 120;
     }
     if (orgEvent.wheelDeltaX !== undefined) {
-      deltaX = -1 * orgEvent.wheelDeltaX / 120;
+      deltaX = (-1 * orgEvent.wheelDeltaX) / 120;
     }
 
     if (typeof onMouseWheel === 'function') {
@@ -252,7 +266,13 @@ export function Resizable(options: ResizableOption): {
     }
   }
 
-  function executeResizeCallbackWhenDefined(callback?: (e: MouseEvent | TouchEvent, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void, e?: MouseEvent | TouchEvent | Touch): boolean | void {
+  function executeResizeCallbackWhenDefined(
+    callback?: (
+      e: MouseEvent | TouchEvent,
+      resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement }
+    ) => boolean | void,
+    e?: MouseEvent | TouchEvent | Touch
+  ): boolean | void {
     if (typeof callback === 'function') {
       return callback(e as any, { resizeableElement, resizeableHandleElement });
     }

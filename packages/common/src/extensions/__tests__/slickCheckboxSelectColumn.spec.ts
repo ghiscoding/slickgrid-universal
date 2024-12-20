@@ -96,9 +96,9 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
   beforeEach(() => {
     mockColumns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', },
-      { id: 'age', field: 'age', name: 'Age', },
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      { id: 'age', field: 'age', name: 'Age' },
     ];
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub);
     vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
@@ -180,7 +180,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
     plugin.init(gridStub);
-    plugin.setOptions({ hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false, });
+    plugin.setOptions({ hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false });
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
@@ -235,7 +235,14 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     plugin.selectedRowsLookup = { 1: false, 2: true };
     plugin.init(gridStub);
-    plugin.setOptions({ applySelectOnAllPages: false, hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false, onSelectAllToggleStart: onToggleStartMock, onSelectAllToggleEnd: onToggleEndMock });
+    plugin.setOptions({
+      applySelectOnAllPages: false,
+      hideInColumnTitleRow: false,
+      hideInFilterHeaderRow: true,
+      hideSelectAllCheckbox: false,
+      onSelectAllToggleStart: onToggleStartMock,
+      onSelectAllToggleEnd: onToggleEndMock,
+    });
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
@@ -249,7 +256,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
     expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 2], 'click.selectAll');
-    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, });
+    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined });
     expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, rows: [0, 2] });
   });
 
@@ -269,7 +276,14 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     plugin.selectedRowsLookup = { 1: false, 2: true };
     plugin.init(gridStub);
-    plugin.setOptions({ applySelectOnAllPages: true, hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false, onSelectAllToggleStart: onToggleStartMock, onSelectAllToggleEnd: onToggleEndMock });
+    plugin.setOptions({
+      applySelectOnAllPages: true,
+      hideInColumnTitleRow: false,
+      hideInFilterHeaderRow: true,
+      hideSelectAllCheckbox: false,
+      onSelectAllToggleStart: onToggleStartMock,
+      onSelectAllToggleEnd: onToggleEndMock,
+    });
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
@@ -283,7 +297,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
     expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 2], 'click.selectAll');
-    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, });
+    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined });
     expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, rows: [0, 2] });
     expect(setSelectedIdsSpy).toHaveBeenCalledWith([22], { isRowBeingAdded: true });
   });
@@ -293,10 +307,10 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     nodeElm.className = 'slick-headerrow-column';
     const updateColHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
 
-    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false });
     plugin.init(gridStub);
     gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
-    plugin.setOptions({ hideInColumnTitleRow: true, hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
+    plugin.setOptions({ hideInColumnTitleRow: true, hideInFilterHeaderRow: false, hideSelectAllCheckbox: false });
     let filterSelectAll = plugin.headerRowNode!.querySelector('#filter-checkbox-selectall-container') as HTMLSpanElement;
 
     expect(plugin).toBeTruthy();
@@ -429,7 +443,9 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       name: expect.any(DocumentFragment),
       formatter: expect.any(Function),
     });
-    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`);
+    expect(nameHtmlOutput).toBe(
+      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`
+    );
   });
 
   it('should create the plugin and add the Toggle All checkbox in the filter header row and expect toggle all to work when clicked', () => {
@@ -437,7 +453,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const nodeElm = document.createElement('div');
     nodeElm.className = 'slick-headerrow-column';
 
-    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { applySelectOnAllPages: false, hideInFilterHeaderRow: false, });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { applySelectOnAllPages: false, hideInFilterHeaderRow: false });
     plugin.init(gridStub);
 
     gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
@@ -474,13 +490,14 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', {
       columns: expect.arrayContaining([{ ...checkboxColumnMock, name: expect.any(DocumentFragment), formatter: expect.any(Function) }]),
-      pluginName: 'CheckboxSelectColumn'
+      pluginName: 'CheckboxSelectColumn',
     });
     expect(plugin).toBeTruthy();
     expect(mockColumns[0]).toEqual(expect.objectContaining({ ...checkboxColumnMock, formatter: expect.any(Function) }));
-    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`);
+    expect(nameHtmlOutput).toBe(
+      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`
+    );
   });
-
 
   it('should call the "create" method and expect plugin to be created at position 1 when defined', () => {
     plugin.create(mockColumns, { checkboxSelector: { columnIndexPosition: 1 } });
@@ -506,7 +523,9 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       width: 30,
       maxWidth: 30,
     });
-    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`);
+    expect(nameHtmlOutput).toBe(
+      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`
+    );
   });
 
   it('should add a "name" and "hideSelectAllCheckbox: true" and call the "create" method and expect plugin to be created with a column name and without a checkbox', () => {
@@ -538,7 +557,14 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when selectableOverride is returning False', () => {
     plugin.selectableOverride(() => false);
     plugin.create(mockColumns, {});
-    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(
+      0,
+      0,
+      null,
+      { id: 'checkbox_selector', field: '' } as Column,
+      { firstName: 'John', lastName: 'Doe', age: 33 },
+      gridStub
+    );
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual(null);
@@ -547,7 +573,14 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when selectableOverride is returning False', () => {
     plugin.init(gridStub);
     plugin.selectableOverride(() => true);
-    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub) as DocumentFragment;
+    const output = plugin.getColumnDefinition().formatter!(
+      0,
+      0,
+      null,
+      { id: 'checkbox_selector', field: '' } as Column,
+      { firstName: 'John', lastName: 'Doe', age: 33 },
+      gridStub
+    ) as DocumentFragment;
 
     expect(plugin).toBeTruthy();
     expect(output.querySelector('input')?.id).toMatch(/^selector.*/);
@@ -556,8 +589,8 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
   it('should trigger "onClick" event and expect toggleRowSelection to be called', () => {
     const newCols = [
-      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector', },
-      { id: 'firstName', field: 'firstName', name: 'First Name', },
+      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' },
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
     ];
     const toggleRowSpy = vi.spyOn(plugin, 'toggleRowSelectionWithEvent');
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(newCols);
@@ -591,7 +624,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
 
     expect(plugin).toBeTruthy();
-    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { previousSelectedRows: [1, 2], row: 2, });
+    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { previousSelectedRows: [1, 2], row: 2 });
     expect(toggleRowSpy).toHaveBeenCalledWith(expect.anything(), 2);
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
@@ -611,7 +644,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
 
     expect(plugin).toBeTruthy();
-    expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { previousSelectedRows: [1, 2], row: 2, });
+    expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { previousSelectedRows: [1, 2], row: 2 });
     expect(toggleRowSpy).toHaveBeenCalledWith(expect.anything(), 2);
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
@@ -656,8 +689,8 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
   it('should trigger "onKeyDown" event and expect toggleRowSelection to be called when editor "commitCurrentEdit" returns True', () => {
     const newCols = [
-      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector', },
-      { id: 'firstName', field: 'firstName', name: 'First Name', },
+      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' },
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
     ];
     const toggleRowSpy = vi.spyOn(plugin, 'toggleRowSelectionWithEvent');
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
@@ -737,7 +770,12 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
 
-    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { applySelectOnAllPages: false, hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, selectableOverride: () => false });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, {
+      applySelectOnAllPages: false,
+      hideInFilterHeaderRow: false,
+      hideSelectAllCheckbox: false,
+      selectableOverride: () => false,
+    });
     plugin.init(gridStub);
     plugin.selectedRowsLookup = { 1: false, 2: true };
 
@@ -778,7 +816,10 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
     const clickEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
-    dataViewStub.onSelectedRowIdsChanged.notify({ rows: [0, 1], filteredIds: [1, 2], ids: [1, 2], selectedRowIds: [1, 2], dataView: dataViewStub, grid: gridStub }, clickEvent);
+    dataViewStub.onSelectedRowIdsChanged.notify(
+      { rows: [0, 1], filteredIds: [1, 2], ids: [1, 2], selectedRowIds: [1, 2], dataView: dataViewStub, grid: gridStub },
+      clickEvent
+    );
 
     expect(plugin).toBeTruthy();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(

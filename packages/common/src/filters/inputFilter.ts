@@ -11,8 +11,13 @@ import type {
   OperatorDetail,
 } from '../interfaces/index.js';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
-import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities.js';
-import { mapOperatorToShorthandDesignation, type TranslaterService, } from '../services/index.js';
+import {
+  applyOperatorAltTextWhenExists,
+  buildSelectOperator,
+  compoundOperatorNumeric,
+  compoundOperatorString,
+} from './filterUtilities.js';
+import { mapOperatorToShorthandDesignation, type TranslaterService } from '../services/index.js';
 import { type SlickGrid } from '../core/index.js';
 
 export class InputFilter implements Filter {
@@ -93,10 +98,13 @@ export class InputFilter implements Filter {
     // analyze if we have any keyboard debounce delay (do we wait for user to finish typing before querying)
     // it is used by default for a backend service but is optional when using local dataset
     const backendApi = this.gridOptions?.backendServiceApi;
-    this._debounceTypingDelay = (backendApi ? (backendApi?.filterTypingDebounce ?? this.gridOptions?.defaultBackendServiceFilterTypingDebounce) : this.gridOptions?.filterTypingDebounce) ?? 0;
+    this._debounceTypingDelay =
+      (backendApi
+        ? (backendApi?.filterTypingDebounce ?? this.gridOptions?.defaultBackendServiceFilterTypingDebounce)
+        : this.gridOptions?.filterTypingDebounce) ?? 0;
 
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
-    const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
+    const searchTerm = Array.isArray(this.searchTerms) && this.searchTerms.length >= 0 ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
     this.createDomFilterElement(searchTerm);
@@ -104,8 +112,14 @@ export class InputFilter implements Filter {
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
-    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change'], this.onTriggerEvent.bind(this) as EventListener);
-    this._bindEventService.bind(this._filterInputElm, 'wheel', this.onTriggerEvent.bind(this) as EventListener, { passive: true });
+    this._bindEventService.bind(
+      this._filterInputElm,
+      ['keyup', 'blur', 'change'],
+      this.onTriggerEvent.bind(this) as EventListener
+    );
+    this._bindEventService.bind(this._filterInputElm, 'wheel', this.onTriggerEvent.bind(this) as EventListener, {
+      passive: true,
+    });
     if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this) as EventListener);
     }
@@ -217,7 +231,7 @@ export class InputFilter implements Filter {
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getCompoundOperatorOptionValues(): OperatorDetail[] {
-    const type = (this.columnDef.type && this.columnDef.type) ? this.columnDef.type : FieldType.string;
+    const type = this.columnDef.type && this.columnDef.type ? this.columnDef.type : FieldType.string;
     let operatorList: OperatorDetail[];
     let listType: 'text' | 'numeric' = 'text';
 
@@ -263,11 +277,13 @@ export class InputFilter implements Filter {
     const searchVal = `${searchTerm ?? ''}`;
     this._filterInputElm = createDomElement('input', {
       type: this._inputType || 'text',
-      autocomplete: 'off', ariaAutoComplete: 'none', placeholder,
+      autocomplete: 'off',
+      ariaAutoComplete: 'none',
+      placeholder,
       ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       className: `form-control filter-${columnId}`,
       value: searchVal,
-      dataset: { columnid: `${columnId}` }
+      dataset: { columnid: `${columnId}` },
     });
 
     // if there's a search term, we will add the "filled" class for styling purposes
@@ -289,7 +305,11 @@ export class InputFilter implements Filter {
       this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.grid);
       this._filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group' }, this._filterContainerElm);
-      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
+      const operatorInputGroupAddonElm = createDomElement(
+        'div',
+        { className: 'input-group-addon input-group-prepend operator' },
+        containerInputGroupElm
+      );
 
       // append operator & input DOM element
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
@@ -313,7 +333,11 @@ export class InputFilter implements Filter {
    */
   protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false): void {
     if (isClearFilterEvent) {
-      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(event, {
+        columnDef: this.columnDef,
+        clearFilterTriggered: isClearFilterEvent,
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      });
       this.updateFilterStyle(false);
     } else {
       const eventType = event?.type || '';
@@ -329,11 +353,18 @@ export class InputFilter implements Filter {
       }
 
       this.updateFilterStyle(value !== '');
-      const callbackArgs = { columnDef: this.columnDef, operator: selectedOperator, searchTerms: (value ? [value] : null), shouldTriggerQuery: this._shouldTriggerQuery };
-      const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
+      const callbackArgs = {
+        columnDef: this.columnDef,
+        operator: selectedOperator,
+        searchTerms: value ? [value] : null,
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      };
+      const typingDelay = eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter' ? this._debounceTypingDelay : 0;
 
-      const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
-      const hasSkipNullValChanged = (skipNullInput && isDefined(this._currentValue)) || (this._currentValue === '' && isDefined(this._lastSearchValue));
+      const skipNullInput =
+        this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      const hasSkipNullValChanged =
+        (skipNullInput && isDefined(this._currentValue)) || (this._currentValue === '' && isDefined(this._lastSearchValue));
 
       if (this.inputFilterType === 'single' || !skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {

@@ -2,13 +2,13 @@ import { parse } from '@formkit/tempo';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CollectionService } from '../collection.service.js';
-import { FieldType, FilterMultiplePassType, OperatorType, } from '../../enums/index.js';
-import type { CollectionFilterBy, CollectionSortBy, Column, GridOption, } from '../../interfaces/index.js';
+import { FieldType, FilterMultiplePassType, OperatorType } from '../../enums/index.js';
+import type { CollectionFilterBy, CollectionSortBy, Column, GridOption } from '../../interfaces/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { type SlickGrid } from '../../core/slickGrid.js';
 
 const gridOptionMock: GridOption = {
-  preParseDateColumns: true
+  preParseDateColumns: true,
 };
 
 const gridStub: SlickGrid = {
@@ -60,9 +60,7 @@ describe('CollectionService', () => {
 
           const result = service.filterCollection(collection, filterBy);
 
-          expect(result).toEqual([
-            { firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 }
-          ]);
+          expect(result).toEqual([{ firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 }]);
         });
 
         it('should return an array without certain filtered values', () => {
@@ -82,7 +80,7 @@ describe('CollectionService', () => {
         it('should return an array without certain values filtered in a "chain" way', () => {
           const filterBy = [
             { property: 'firstName', operator: 'NE', value: 'John' },
-            { property: 'lastName', operator: 'NE', value: 'Doe' }
+            { property: 'lastName', operator: 'NE', value: 'Doe' },
           ] as CollectionFilterBy[];
 
           const result1 = service.filterCollection(collection, filterBy);
@@ -100,7 +98,7 @@ describe('CollectionService', () => {
         it('should return an array with merged output of filtered values', () => {
           const filterBy = [
             { property: 'firstName', operator: OperatorType.equal, value: 'John' },
-            { property: 'lastName', value: 'Doe' } // ommitted Operator are Equal by default
+            { property: 'lastName', value: 'Doe' }, // ommitted Operator are Equal by default
           ] as CollectionFilterBy[];
 
           const result = service.filterCollection(collection, filterBy, FilterMultiplePassType.merge);
@@ -182,9 +180,7 @@ describe('CollectionService', () => {
 
         it('should return a collection sorted by a sortyBy entity being a number', () => {
           const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
-          const sortBy = [
-            { property: 'order', sortDesc: true, fieldType: FieldType.number },
-          ] as CollectionSortBy[];
+          const sortBy = [{ property: 'order', sortDesc: true, fieldType: FieldType.number }] as CollectionSortBy[];
 
           const result = service.sortCollection(columnDef, collection, sortBy);
 
@@ -259,7 +255,7 @@ describe('CollectionService', () => {
         it('should return an array without certain values filtered in a "chain" way', () => {
           const filterBy = [
             { operator: 'NE', value: 'John' },
-            { operator: 'NE', value: 'Bob' }
+            { operator: 'NE', value: 'Bob' },
           ] as CollectionFilterBy[];
 
           const result1 = service.filterCollection(stringCollection, filterBy);
@@ -272,7 +268,7 @@ describe('CollectionService', () => {
         it('should return an array with merged (unique values no duplicate) output of filtered values', () => {
           const filterBy = [
             { operator: OperatorType.equal, value: 'John' },
-            { value: 'Bob' } // ommitted Operator are Equal by default
+            { value: 'Bob' }, // ommitted Operator are Equal by default
           ] as CollectionFilterBy[];
 
           const result = service.filterCollection(stringCollection, filterBy, FilterMultiplePassType.merge);
@@ -337,8 +333,9 @@ describe('CollectionService', () => {
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
       const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
 
-      expect(() => service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: FieldType.string }, true))
-        .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+      expect(() => service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: FieldType.string }, true)).toThrow(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured'
+      );
     });
   });
 
@@ -372,8 +369,22 @@ describe('CollectionService', () => {
       service.preParseByMutationDateItems(collection, gridStub, '_');
 
       expect(collection).toEqual([
-        { firstName: 'John', lastName: 'Z', start: '2024-02-05', finish: '2024-04-01', _start: parse('2024-02-05', 'YYYY-MM-DD'), _finish: parse('2024-04-01', 'YYYY-MM-DD') },
-        { firstName: 'Jane', lastName: 'Doe', start: '2024-05-02', finish: '2024-06-02', _start: parse('2024-05-02', 'YYYY-MM-DD'), _finish: parse('2024-06-02', 'YYYY-MM-DD') },
+        {
+          firstName: 'John',
+          lastName: 'Z',
+          start: '2024-02-05',
+          finish: '2024-04-01',
+          _start: parse('2024-02-05', 'YYYY-MM-DD'),
+          _finish: parse('2024-04-01', 'YYYY-MM-DD'),
+        },
+        {
+          firstName: 'Jane',
+          lastName: 'Doe',
+          start: '2024-05-02',
+          finish: '2024-06-02',
+          _start: parse('2024-05-02', 'YYYY-MM-DD'),
+          _finish: parse('2024-06-02', 'YYYY-MM-DD'),
+        },
       ]);
     });
 

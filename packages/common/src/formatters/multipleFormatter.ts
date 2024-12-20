@@ -19,7 +19,9 @@ export const multipleFormatter: Formatter = (row, cell, value, columnDef, dataCo
   let currentValue = value;
   formatters.forEach((formatter, idx) => {
     if (typeof formatter !== 'function') {
-      throw new Error(`[Slickgrid-Universal] the "params.formatters" at index(${idx}) to be used by "Formatters.multiple" is invalid, please verify all formatter functions.`);
+      throw new Error(
+        `[Slickgrid-Universal] the "params.formatters" at index(${idx}) to be used by "Formatters.multiple" is invalid, please verify all formatter functions.`
+      );
     }
     currentValue = formatter.call(this, row, cell, currentValue, columnDef, dataContext, grid);
   });

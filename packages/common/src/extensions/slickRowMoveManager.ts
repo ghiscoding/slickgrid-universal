@@ -24,8 +24,8 @@ import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, Utils as
  *
  */
 export class SlickRowMoveManager {
-  onBeforeMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>;
-  onMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>;
+  onBeforeMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number }>;
+  onMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number }>;
   pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   protected _addonOptions!: RowMoveManager;
@@ -52,8 +52,8 @@ export class SlickRowMoveManager {
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly pubSubService: BasePubSubService) {
-    this.onBeforeMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onBeforeMoveRows');
-    this.onMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onMoveRows');
+    this.onBeforeMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number }>('onBeforeMoveRows');
+    this.onMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number }>('onMoveRows');
     this._eventHandler = new SlickEventHandler();
   }
 
@@ -84,7 +84,8 @@ export class SlickRowMoveManager {
       this.usabilityOverride(this._addonOptions.usabilityOverride);
     }
 
-    this._eventHandler.subscribe(this._grid.onDragInit, this.handleDragInit.bind(this))
+    this._eventHandler
+      .subscribe(this._grid.onDragInit, this.handleDragInit.bind(this))
       .subscribe(this._grid.onDragStart, this.handleDragStart.bind(this))
       .subscribe(this._grid.onDrag, this.handleDrag.bind(this))
       .subscribe(this._grid.onDragEnd, this.handleDragEnd.bind(this));
@@ -105,8 +106,9 @@ export class SlickRowMoveManager {
       const newRowMoveColumn: Column = this.getColumnDefinition();
 
       // add new row move column unless it was already added
-      if (!columnDefinitions.some(col => col.id === newRowMoveColumn.id)) {
-        const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
+      if (!columnDefinitions.some((col) => col.id === newRowMoveColumn.id)) {
+        const rowMoveColDef =
+          Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
         const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
 
         // column index position in the grid
@@ -119,7 +121,7 @@ export class SlickRowMoveManager {
 
         this.pubSubService.publish(`onPluginColumnsChanged`, {
           columns: columnDefinitions,
-          pluginName: this.pluginName
+          pluginName: this.pluginName,
         });
       }
     }
@@ -199,7 +201,7 @@ export class SlickRowMoveManager {
       const e = evt.getNativeEvent<MouseEvent | TouchEvent>();
 
       const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-      const top = targetEvent.pageY - (getOffset(this._canvas).top);
+      const top = targetEvent.pageY - getOffset(this._canvas).top;
       dd.selectionProxy.style.top = `${top - 5}px`;
       dd.selectionProxy.style.display = 'block';
 
@@ -217,7 +219,10 @@ export class SlickRowMoveManager {
           insertBefore,
         };
 
-        if (this._addonOptions?.onBeforeMoveRows?.(e, eventData) === false || this.onBeforeMoveRows.notify(eventData).getReturnValue() === false) {
+        if (
+          this._addonOptions?.onBeforeMoveRows?.(e, eventData) === false ||
+          this.onBeforeMoveRows.notify(eventData).getReturnValue() === false
+        ) {
           dd.canMove = false;
         } else {
           dd.canMove = true;
@@ -252,7 +257,10 @@ export class SlickRowMoveManager {
         this._grid.getEditorLock().cancelCurrentEdit();
       }
 
-      if (this._grid.getEditorLock().isActive() || !/move|selectAndMove/.test(this._grid.getColumns()[cell.cell].behavior || '')) {
+      if (
+        this._grid.getEditorLock().isActive() ||
+        !/move|selectAndMove/.test(this._grid.getColumns()[cell.cell].behavior || '')
+      ) {
         return false;
       }
 
@@ -275,7 +283,7 @@ export class SlickRowMoveManager {
       }
 
       let selectedRows = this._addonOptions.singleRowMove ? [cell.row] : this._grid.getSelectedRows();
-      if (selectedRows.length === 0 || !selectedRows.some(selectedRow => selectedRow === cell.row)) {
+      if (selectedRows.length === 0 || !selectedRows.some((selectedRow) => selectedRow === cell.row)) {
         selectedRows = [cell.row];
         if (!this._addonOptions.disableRowSelection) {
           this._grid.setSelectedRows(selectedRows);
@@ -285,26 +293,34 @@ export class SlickRowMoveManager {
       const rowHeight = this.gridOptions.rowHeight as number;
       dd.selectedRows = selectedRows;
 
-      dd.selectionProxy = createDomElement('div', {
-        className: 'slick-reorder-proxy',
-        style: {
-          display: 'none',
-          position: 'absolute',
-          zIndex: '99999',
-          width: `${this._canvas.clientWidth}px`,
-          height: `${rowHeight * selectedRows.length}px`,
-        }
-      }, this._canvas);
+      dd.selectionProxy = createDomElement(
+        'div',
+        {
+          className: 'slick-reorder-proxy',
+          style: {
+            display: 'none',
+            position: 'absolute',
+            zIndex: '99999',
+            width: `${this._canvas.clientWidth}px`,
+            height: `${rowHeight * selectedRows.length}px`,
+          },
+        },
+        this._canvas
+      );
 
-      dd.guide = createDomElement('div', {
-        className: 'slick-reorder-guide',
-        style: {
-          position: 'absolute',
-          zIndex: '99999',
-          width: `${this._canvas.clientWidth}px`,
-          top: `-1000px`,
-        }
-      }, this._canvas);
+      dd.guide = createDomElement(
+        'div',
+        {
+          className: 'slick-reorder-guide',
+          style: {
+            position: 'absolute',
+            zIndex: '99999',
+            width: `${this._canvas.clientWidth}px`,
+            top: `-1000px`,
+          },
+        },
+        this._canvas
+      );
 
       dd.insertBefore = -1;
     }
@@ -317,7 +333,14 @@ export class SlickRowMoveManager {
     return true;
   }
 
-  protected moveIconFormatter(row: number, _cell: number, _val: any, _col: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | string {
+  protected moveIconFormatter(
+    row: number,
+    _cell: number,
+    _val: any,
+    _col: Column,
+    dataContext: any,
+    grid: SlickGrid
+  ): FormatterResultWithHtml | string {
     if (!this.checkUsabilityOverride(row, dataContext, grid)) {
       return '';
     } else {

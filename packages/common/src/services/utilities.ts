@@ -3,7 +3,7 @@ import { flatten } from 'un-flatten-tree';
 
 import { Constants } from '../constants.js';
 import { FieldType, type OperatorString, OperatorType } from '../enums/index.js';
-import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames, } from '../interfaces/index.js';
+import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade.js';
 
 /** Cancelled Extension that can be only be thrown by the `cancellablePromise()` function */
@@ -24,13 +24,13 @@ export function cancellablePromise<T = any>(inputPromise: Promise<T>): Cancellab
 
   if (inputPromise instanceof Promise) {
     return {
-      promise: inputPromise.then(result => {
+      promise: inputPromise.then((result) => {
         if (hasCancelled) {
           throw new CancelledException('Cancelled Promise');
         }
         return result;
       }),
-      cancel: () => hasCancelled = true
+      cancel: () => (hasCancelled = true),
     };
   }
   return inputPromise;
@@ -41,7 +41,11 @@ export function cancellablePromise<T = any>(inputPromise: Promise<T>): Cancellab
  * @param object which could be of type Promise or Observable
  * @param fromServiceName string representing the caller service name and will be used if we throw a casting problem error
  */
-export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> | Observable<T> | Subject<T>, fromServiceName = ''): Promise<T> {
+export function castObservableToPromise<T>(
+  rxjs: RxJsFacade,
+  input: Promise<T> | Observable<T> | Subject<T>,
+  fromServiceName = ''
+): Promise<T> {
   let promise: any = input;
 
   if (input instanceof Promise) {
@@ -52,7 +56,9 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
   }
 
   if (!(promise instanceof Promise)) {
-    throw new Error(`Something went wrong, Slickgrid-Universal ${fromServiceName} is not able to convert the Observable into a Promise.`);
+    throw new Error(
+      `Something went wrong, Slickgrid-Universal ${fromServiceName} is not able to convert the Observable into a Promise.`
+    );
   }
 
   return promise;
@@ -64,11 +70,15 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
  * @param {Object} options - options containing info like children & treeLevel property names
  * @param {Number} [treeLevel] - current tree level
  */
-export function addTreeLevelByMutation<T>(treeArray: T[], options: Required<Pick<TreeDataPropNames, 'childrenPropName' | 'levelPropName'>>, treeLevel = 0): void {
+export function addTreeLevelByMutation<T>(
+  treeArray: T[],
+  options: Required<Pick<TreeDataPropNames, 'childrenPropName' | 'levelPropName'>>,
+  treeLevel = 0
+): void {
   const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T;
 
   if (Array.isArray(treeArray)) {
-    treeArray.forEach(item => {
+    treeArray.forEach((item) => {
       if (item) {
         if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as Array<T>).length > 0) {
           treeLevel++;
@@ -81,12 +91,17 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: Required<Pick
   }
 }
 
-export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], options: { aggregator: Aggregator; } & Required<Pick<TreeDataPropNames, 'childrenPropName' | 'levelPropName'>>, treeLevel = 0, parent: T = null as any): void {
+export function addTreeLevelAndAggregatorsByMutation<T = any>(
+  treeArray: T[],
+  options: { aggregator: Aggregator } & Required<Pick<TreeDataPropNames, 'childrenPropName' | 'levelPropName'>>,
+  treeLevel = 0,
+  parent: T = null as any
+): void {
   const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T;
   const { aggregator } = options;
 
   if (Array.isArray(treeArray)) {
-    treeArray.forEach(item => {
+    treeArray.forEach((item) => {
       if (item) {
         const isParent = Array.isArray(item[childrenPropName]);
 
@@ -114,7 +129,10 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], op
  * @param {Object} options - you can provide "childrenPropName" and other options (defaults to "children")
  * @return {Array<Object>} output - Parent/Child array
  */
-export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggregators?: Aggregator[]; shouldAddTreeLevelNumber?: boolean; } & Omit<TreeDataPropNames, 'collapsedPropName'>): any[] {
+export function flattenToParentChildArray<T>(
+  treeArray: T[],
+  options?: { aggregators?: Aggregator[]; shouldAddTreeLevelNumber?: boolean } & Omit<TreeDataPropNames, 'collapsedPropName'>
+): any[] {
   const identifierPropName = getTreeDataOptionPropName(options, 'identifierPropName') as keyof T & string;
   const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T & string;
   const hasChildrenPropName = getTreeDataOptionPropName(options, 'hasChildrenPropName') as keyof T & string;
@@ -140,7 +158,7 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggrega
         [identifierPropName]: node[identifierPropName],
         [parentPropName]: parentNode !== undefined ? parentNode![identifierPropName] : null,
         [hasChildrenPropName]: !!node[childrenPropName],
-        ...objectWithoutKey(node, childrenPropName as keyof T) // reuse the entire object except the children array property
+        ...objectWithoutKey(node, childrenPropName as keyof T), // reuse the entire object except the children array property
       } as unknown as FlatParentChildArray;
     }
   );
@@ -149,7 +167,11 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggrega
 }
 
 /** Find the associated property name from the Tree Data option when found or return a default property name that we defined internally */
-export function getTreeDataOptionPropName(treeDataOptions: Partial<TreeDataPropNames> | undefined, optionName: keyof TreeDataPropNames, defaultDataIdPropName = 'id'): string {
+export function getTreeDataOptionPropName(
+  treeDataOptions: Partial<TreeDataPropNames> | undefined,
+  optionName: keyof TreeDataPropNames,
+  defaultDataIdPropName = 'id'
+): string {
   let propName = '';
   switch (optionName) {
     case 'childrenPropName':
@@ -181,7 +203,10 @@ export function getTreeDataOptionPropName(treeDataOptions: Partial<TreeDataPropN
  * @param options you can provide the following tree data options (which are all prop names, except 1 boolean flag, to use or else use their defaults):: collapsedPropName, childrenPropName, parentPropName, identifierPropName and levelPropName and initiallyCollapsed (boolean)
  * @return roots - hierarchical (tree) data view array
  */
-export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[]; }>(flatArray: P[], options?: { aggregators?: Aggregator[]; initiallyCollapsed?: boolean; } & Omit<TreeDataPropNames, 'hasChildrenPropName'>): T[] {
+export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[] }>(
+  flatArray: P[],
+  options?: { aggregators?: Aggregator[]; initiallyCollapsed?: boolean } & Omit<TreeDataPropNames, 'hasChildrenPropName'>
+): T[] {
   const identifierPropName = getTreeDataOptionPropName(options, 'identifierPropName');
   const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName');
   const parentPropName = getTreeDataOptionPropName(options, 'parentPropName');
@@ -201,7 +226,12 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
     const item = all[id];
-    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
+    if (
+      !(parentPropName in item) ||
+      item[parentPropName] === null ||
+      item[parentPropName] === undefined ||
+      item[parentPropName] === ''
+    ) {
       roots.push(item);
     } else if (item[parentPropName] in all) {
       const p = all[item[parentPropName]];
@@ -267,19 +297,25 @@ export function findItemInTreeStructure<T extends object = any>(
  * @param decimalSeparator
  * @param thousandSeparator
  */
-export function decimalFormatted(input: number | string, minDecimal?: number, maxDecimal?: number, decimalSeparator: '.' | ',' = '.', thousandSeparator: ',' | '_' | '.' | ' ' | '' = ''): string {
+export function decimalFormatted(
+  input: number | string,
+  minDecimal?: number,
+  maxDecimal?: number,
+  decimalSeparator: '.' | ',' = '.',
+  thousandSeparator: ',' | '_' | '.' | ' ' | '' = ''
+): string {
   if (isNaN(+input)) {
     return input as string;
   }
 
-  const minDec = (minDecimal === undefined) ? 2 : minDecimal;
-  const maxDec = (maxDecimal === undefined) ? 2 : maxDecimal;
+  const minDec = minDecimal === undefined ? 2 : minDecimal;
+  const maxDec = maxDecimal === undefined ? 2 : maxDecimal;
   let amount = String(Math.round(+input * Math.pow(10, maxDec)) / Math.pow(10, maxDec));
 
-  if ((amount.indexOf('.') < 0) && (minDec > 0)) {
+  if (amount.indexOf('.') < 0 && minDec > 0) {
     amount += '.';
   }
-  while ((amount.length - amount.indexOf('.')) <= minDec) {
+  while (amount.length - amount.indexOf('.') <= minDec) {
     amount += '0';
   }
 
@@ -319,12 +355,21 @@ export function decimalFormatted(input: number | string, minDecimal?: number, ma
  * @param decimalSeparator
  * @param thousandSeparator
  */
-export function formatNumber(input: number | string, minDecimal?: number, maxDecimal?: number, wrapNegativeNumberInBraquets?: boolean, symbolPrefix = '', symbolSuffix = '', decimalSeparator: '.' | ',' = '.', thousandSeparator: ',' | '_' | '.' | ' ' | '' = ''): string {
+export function formatNumber(
+  input: number | string,
+  minDecimal?: number,
+  maxDecimal?: number,
+  wrapNegativeNumberInBraquets?: boolean,
+  symbolPrefix = '',
+  symbolSuffix = '',
+  decimalSeparator: '.' | ',' = '.',
+  thousandSeparator: ',' | '_' | '.' | ' ' | '' = ''
+): string {
   if (isNaN(+input)) {
     return input as string;
   }
 
-  const calculatedValue = ((Math.round(parseFloat(input as string) * 1000000) / 1000000));
+  const calculatedValue = Math.round(parseFloat(input as string) * 1000000) / 1000000;
 
   if (calculatedValue < 0) {
     const absValue = Math.abs(calculatedValue);
@@ -394,12 +439,12 @@ export function getTranslationPrefix(gridOptions?: GridOption): string {
 }
 
 /** From a column definition, find column type */
-export function getColumnFieldType(columnDef: Column): typeof FieldType[keyof typeof FieldType] {
+export function getColumnFieldType(columnDef: Column): (typeof FieldType)[keyof typeof FieldType] {
   return columnDef.outputType || columnDef.type || FieldType.string;
 }
 
 /** Verify if the identified column is of type Date */
-export function isColumnDateType(fieldType?: typeof FieldType[keyof typeof FieldType]): boolean {
+export function isColumnDateType(fieldType?: (typeof FieldType)[keyof typeof FieldType]): boolean {
   switch (fieldType) {
     case FieldType.date:
     case FieldType.dateTime:
@@ -557,7 +602,7 @@ export function mapOperatorToShorthandDesignation(operator: OperatorType | Opera
  * @param operator
  * @returns string map
  */
-export function mapOperatorByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): OperatorType {
+export function mapOperatorByFieldType(fieldType: (typeof FieldType)[keyof typeof FieldType]): OperatorType {
   let map: OperatorType;
 
   if (isColumnDateType(fieldType)) {
@@ -604,7 +649,10 @@ export function objectWithoutKey<T = any>(obj: T, omitKey: keyof T): T {
  * @param separator default to comma ","
  * @returns string
  */
-export function thousandSeparatorFormatted(inputValue: string | number | null, separator: ',' | '_' | '.' | ' ' | '' = ','): string | null {
+export function thousandSeparatorFormatted(
+  inputValue: string | number | null,
+  separator: ',' | '_' | '.' | ' ' | '' = ','
+): string | null {
   if (inputValue !== null && inputValue !== undefined) {
     const stringValue = `${inputValue}`;
     const decimalSplit = stringValue.split('.');

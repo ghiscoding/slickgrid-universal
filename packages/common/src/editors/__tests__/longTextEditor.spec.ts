@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 
 // mocked modules
 vi.mock('@slickgrid-universal/utils', async (importOriginal) => ({
-  ...await importOriginal() as any,
+  ...((await importOriginal()) as any),
   getOffset: vi.fn(),
 }));
 
@@ -92,14 +92,15 @@ describe('LongTextEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
-      try {
-        editor = new LongTextEditor(null as any);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-        done();
-      }
-    }));
+    it('should throw an error when trying to call init without any arguments', () =>
+      new Promise((done: any) => {
+        try {
+          editor = new LongTextEditor(null as any);
+        } catch (e) {
+          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
+          done();
+        }
+      }));
   });
 
   describe('with valid Editor instance', () => {
@@ -178,7 +179,7 @@ describe('LongTextEditor', () => {
 
     it('should initialize the editor with cols & rows define in global default user editor options', () => {
       gridOptionMock.defaultEditorOptions = {
-        longText: { cols: 7, rows: 6 }
+        longText: { cols: 7, rows: 6 },
       };
       editor = new LongTextEditor(editorArguments);
 
@@ -492,11 +493,13 @@ describe('LongTextEditor', () => {
         const spySave = vi.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
-        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          key: 'Enter',
-          ctrlKey: true,
-          bubbles: true
-        }));
+        editorElm.dispatchEvent(
+          new (window.window as any).KeyboardEvent('keydown', {
+            key: 'Enter',
+            ctrlKey: true,
+            bubbles: true,
+          })
+        );
 
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
@@ -514,11 +517,13 @@ describe('LongTextEditor', () => {
         const spySave = vi.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
-        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          key: 's',
-          ctrlKey: true,
-          bubbles: true
-        }));
+        editorElm.dispatchEvent(
+          new (window.window as any).KeyboardEvent('keydown', {
+            key: 's',
+            ctrlKey: true,
+            bubbles: true,
+          })
+        );
 
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
@@ -536,11 +541,13 @@ describe('LongTextEditor', () => {
         const spySave = vi.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
-        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          key: 'S',
-          ctrlKey: true,
-          bubbles: true
-        }));
+        editorElm.dispatchEvent(
+          new (window.window as any).KeyboardEvent('keydown', {
+            key: 'S',
+            ctrlKey: true,
+            bubbles: true,
+          })
+        );
 
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
@@ -553,10 +560,12 @@ describe('LongTextEditor', () => {
         const spyCancel = vi.spyOn(editor, 'cancel');
         const editorElm = editor.editorDomElement;
 
-        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          key: 'Escape',
-          bubbles: true
-        }));
+        editorElm.dispatchEvent(
+          new (window.window as any).KeyboardEvent('keydown', {
+            key: 'Escape',
+            bubbles: true,
+          })
+        );
 
         expect(spyCancel).toHaveBeenCalled();
       });
@@ -567,11 +576,13 @@ describe('LongTextEditor', () => {
         const editorElm = editor.editorDomElement;
         const spyNavigate = vi.spyOn(gridStub, 'navigatePrev');
 
-        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          key: 'Tab',
-          shiftKey: true,
-          bubbles: true
-        }));
+        editorElm.dispatchEvent(
+          new (window.window as any).KeyboardEvent('keydown', {
+            key: 'Tab',
+            shiftKey: true,
+            bubbles: true,
+          })
+        );
 
         expect(spyNavigate).toHaveBeenCalled();
         expect(editor.isValueTouched()).toBe(true);
@@ -583,11 +594,13 @@ describe('LongTextEditor', () => {
         const editorElm = editor.editorDomElement;
         const spyNavigate = vi.spyOn(gridStub, 'navigateNext');
 
-        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          key: 'Tab',
-          shiftKey: false,
-          bubbles: true
-        }));
+        editorElm.dispatchEvent(
+          new (window.window as any).KeyboardEvent('keydown', {
+            key: 'Tab',
+            shiftKey: false,
+            bubbles: true,
+          })
+        );
 
         expect(spyNavigate).toHaveBeenCalled();
         expect(editor.isValueTouched()).toBe(true);
@@ -869,23 +882,31 @@ describe('LongTextEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       editor = new LongTextEditor(editorArguments);
       editor.setValue('task 2', true);
 
       expect(editor.getValue()).toBe('task 2');
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: 'task 2' }, editors: {}, triggeredBy: 'system',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { title: 'task 2' },
+          editors: {},
+          triggeredBy: 'system',
+        },
+        expect.anything()
+      );
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
 
       editor = new LongTextEditor(editorArguments);
@@ -893,7 +914,14 @@ describe('LongTextEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -901,10 +929,10 @@ describe('LongTextEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
 
       editor = new LongTextEditor(editorArguments);
@@ -913,11 +941,26 @@ describe('LongTextEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: '' }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { title: '' },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.value).toEqual('');
@@ -927,13 +970,13 @@ describe('LongTextEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new LongTextEditor(editorArguments);
@@ -942,7 +985,14 @@ describe('LongTextEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(onCompositeEditorSpy).not.toHaveBeenCalled;
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
@@ -953,10 +1003,10 @@ describe('LongTextEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new LongTextEditor(editorArguments);
@@ -965,10 +1015,18 @@ describe('LongTextEditor', () => {
       editor.disable();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: {},
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.value).toEqual('');
     });
@@ -978,10 +1036,10 @@ describe('LongTextEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, title: 'task 2', isActive: true };
@@ -995,11 +1053,26 @@ describe('LongTextEditor', () => {
       vi.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: 'task 2' }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { title: 'task 2' },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
     });
   });
 });

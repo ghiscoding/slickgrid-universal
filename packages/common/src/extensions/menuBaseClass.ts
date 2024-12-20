@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { classNameToList, createDomElement, emptyElement, isDefined, } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, emptyElement, isDefined } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -23,10 +23,7 @@ import { SlickEventHandler, type SlickGrid } from '../core/index.js';
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
 
-export type ExtractMenuType<A, T> =
-  T extends 'command' ? A :
-  T extends 'option' ? A :
-  A extends 'divider' ? A : never;
+export type ExtractMenuType<A, T> = T extends 'command' ? A : T extends 'option' ? A : A extends 'divider' ? A : never;
 
 export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderMenu | HeaderButton> {
   protected _addonOptions: M = {} as unknown as M;
@@ -44,7 +41,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
     protected readonly pubSubService: BasePubSubService,
-    protected readonly sharedService: SharedService,
+    protected readonly sharedService: SharedService
   ) {
     this._bindEventService = new BindingEventService();
     this._eventHandler = new SlickEventHandler();
@@ -104,8 +101,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
 
     // remove all parent menu listeners before removing them from the DOM
     this._bindEventService.unbindAll('parent-menu');
-    document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`)
-      .forEach(subElm => subElm.remove());
+    document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`).forEach((subElm) => subElm.remove());
   }
 
   /**
@@ -114,8 +110,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
    */
   disposeSubMenus(): void {
     this._bindEventService.unbindAll('sub-menu');
-    document.querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
-      .forEach(subElm => subElm.remove());
+    document.querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`).forEach((subElm) => subElm.remove());
   }
 
   setOptions(newOptions: M): void {
@@ -126,7 +121,10 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // protected functions
   // ------------------
 
-  protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement): void {
+  protected addSubMenuTitleWhenExists(
+    item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+    commandOrOptionMenu: HTMLDivElement
+  ): void {
     if (item !== 'divider' && (item as MenuCommandItem | MenuOptionItem | GridMenuItem)?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
       subMenuTitleElm.className = 'slick-menu-title';
@@ -146,23 +144,50 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement,
     commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: unknown,
-    itemClickCallback: (e: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void,
-    itemMouseoverCallback?: (e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
+    itemClickCallback: (
+      e: DOMMouseOrTouchEvent<HTMLDivElement>,
+      type: MenuType,
+      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+      level: number,
+      columnDef?: Column
+    ) => void,
+    itemMouseoverCallback?: (
+      e: DOMMouseOrTouchEvent<HTMLElement>,
+      type: MenuType,
+      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+      level: number,
+      columnDef?: Column
+    ) => void
   ): void {
     if (args && commandOrOptionItems && menuOptions) {
       for (const item of commandOrOptionItems) {
-        this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback, itemMouseoverCallback);
+        this.populateSingleCommandOrOptionItem(
+          itemType,
+          menuOptions,
+          commandOrOptionMenuElm,
+          item,
+          args,
+          itemClickCallback,
+          itemMouseoverCallback
+        );
       }
     }
   }
 
   /** Add the Command/Options Title when necessary. */
-  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number): void {
+  protected populateCommandOrOptionTitle(
+    itemType: MenuType,
+    menuOptions: M,
+    commandOrOptionMenuElm: HTMLElement,
+    level: number
+  ): void {
     if (menuOptions) {
       const isSubMenu = level > 0;
 
       // return or create a title container
-      const menuHeaderElm = this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
+      const menuHeaderElm =
+        this._menuElm?.querySelector(`.slick-${itemType}-header`) ??
+        createDomElement('div', { className: `slick-${itemType}-header` });
 
       // user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
@@ -170,7 +195,10 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       if (!isSubMenu) {
         if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
           emptyElement(menuHeaderElm); // make sure title container is empty before adding anything inside it
-          this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'slick-menu-title', textContent: (menuOptions as never)[titleProp] });
+          this[`_${itemType}TitleElm`] = createDomElement('span', {
+            className: 'slick-menu-title',
+            textContent: (menuOptions as never)[titleProp],
+          });
           menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
           menuHeaderElm.classList.add('with-title');
         } else {
@@ -188,8 +216,20 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement | null,
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     args: any,
-    itemClickCallback: (e: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void,
-    itemMouseoverCallback?: (e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
+    itemClickCallback: (
+      e: DOMMouseOrTouchEvent<HTMLDivElement>,
+      type: MenuType,
+      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+      level: number,
+      columnDef?: Column
+    ) => void,
+    itemMouseoverCallback?: (
+      e: DOMMouseOrTouchEvent<HTMLElement>,
+      type: MenuType,
+      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+      level: number,
+      columnDef?: Column
+    ) => void
   ): HTMLLIElement | null {
     let commandLiElm: HTMLLIElement | null = null;
 
@@ -261,7 +301,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
           'span',
           {
             className: `${this._menuCssPrefix}-content`,
-            textContent: typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || ''
+            textContent: (typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title) || '',
           },
           commandLiElm
         );
@@ -276,17 +316,29 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       this._bindEventService.bind(
         commandLiElm,
         'click',
-        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
+        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
+          itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
         undefined,
         eventGroupName
       );
 
       // optionally open sub-menu(s) by mouseover
-      if ((this._addonOptions as CellMenu | ContextMenu | GridMenu | HeaderMenu)?.subMenuOpenByEvent === 'mouseover' && typeof itemMouseoverCallback === 'function') {
+      if (
+        (this._addonOptions as CellMenu | ContextMenu | GridMenu | HeaderMenu)?.subMenuOpenByEvent === 'mouseover' &&
+        typeof itemMouseoverCallback === 'function'
+      ) {
         this._bindEventService.bind(
           commandLiElm,
           'mouseover',
-          ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemMouseoverCallback.call(this, e, itemType, item as ExtractMenuType<ExtendableItemTypes, MenuType>, level, args?.column)) as EventListener,
+          ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
+            itemMouseoverCallback.call(
+              this,
+              e,
+              itemType,
+              item as ExtractMenuType<ExtendableItemTypes, MenuType>,
+              level,
+              args?.column
+            )) as EventListener,
           undefined,
           eventGroupName
         );

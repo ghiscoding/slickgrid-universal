@@ -1,14 +1,16 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { classNameToList, createDomElement, emptyElement, isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
-
 import {
-  FieldType,
-  OperatorType,
-  type OperatorString,
-  type SearchTerm,
-} from '../enums/index.js';
+  classNameToList,
+  createDomElement,
+  emptyElement,
+  isPrimitiveValue,
+  toKebabCase,
+  toSentenceCase,
+} from '@slickgrid-universal/utils';
+
+import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
@@ -39,7 +41,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _collection?: any[];
-  protected _collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
+  protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
   protected _filterElm!: HTMLInputElement;
   protected _instance: any;
   protected _locales!: Locale;
@@ -118,7 +120,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   get customStructure(): CollectionCustomStructure | undefined {
     let customStructure = this.columnFilter?.customStructure;
     const columnType = this.columnFilter?.type ?? this.columnDef?.type;
-    if (!customStructure && (columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey)) {
+    if (!customStructure && columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey) {
       customStructure = {
         label: this.columnDef.labelKey,
         value: this.columnDef.dataKey,
@@ -167,11 +169,16 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
     this.filterContainerElm = args.filterContainerElm;
 
-    if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.collectionAsync && !this.columnFilter.filterOptions)) {
+    if (
+      !this.grid ||
+      !this.columnDef ||
+      !this.columnFilter ||
+      (!this.columnFilter.collection && !this.columnFilter.collectionAsync && !this.columnFilter.filterOptions)
+    ) {
       throw new Error(
         `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.` +
-        ` Also each option should include a value/label pair (or value/labelKey when using Locale).` +
-        ` For example:: { filter: model: Filters.autocompleter, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`
+          ` Also each option should include a value/label pair (or value/labelKey when using Locale).` +
+          ` For example:: { filter: model: Filters.autocompleter, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`
       );
     }
 
@@ -197,7 +204,13 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
         if (collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
           // we do this because Http Fetch will throw an error saying body was already read and is streaming is locked
-          collectionOutput = renderCollectionOptionsAsync(collectionAsync, this.columnDef, this.renderDomElement.bind(this), this.rxjs, this.subscriptions);
+          collectionOutput = renderCollectionOptionsAsync(
+            collectionAsync,
+            this.columnDef,
+            this.renderDomElement.bind(this),
+            this.rxjs,
+            this.subscriptions
+          );
           resolve(collectionOutput);
         } else {
           collectionOutput = newCollection;
@@ -244,7 +257,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this._filterElm?.remove?.();
     this._collection = undefined;
     this._bindEventService.unbindAll();
-    this._collectionObservers.forEach(obs => obs?.disconnect());
+    this._collectionObservers.forEach((obs) => obs?.disconnect());
 
     // unsubscribe all the possible Observables if RxJS was used
     unsubscribeAll(this.subscriptions);
@@ -267,7 +280,12 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this.operator = operator || this.defaultOperator;
 
     if (triggerChange) {
-      this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: [this.getValues()], shouldTriggerQuery: true });
+      this.callback(undefined, {
+        columnDef: this.columnDef,
+        operator: this.operator,
+        searchTerms: [this.getValues()],
+        shouldTriggerQuery: true,
+      });
     }
   }
 
@@ -286,7 +304,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // user might want to filter certain items of the collection
     if (this.columnFilter && this.columnFilter.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
-      const filterCollectionBy = this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass || null;
+      const filterCollectionBy =
+        (this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass) || null;
       outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
     }
 
@@ -304,7 +323,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // user might want to sort the collection
     if (this.columnFilter && this.columnFilter.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
+      outputCollection =
+        this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
     }
 
     return outputCollection;
@@ -360,7 +380,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     }
 
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
-    const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
+    const searchTerm = Array.isArray(this.searchTerms) && this.searchTerms.length >= 0 ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & pre-load search term
     // also subscribe to the onSelect event
@@ -397,11 +417,12 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this._filterElm = createDomElement('input', {
       type: 'text',
       ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
-      autocomplete: 'off', ariaAutoComplete: 'none',
+      autocomplete: 'off',
+      ariaAutoComplete: 'none',
       placeholder,
       className: `form-control search-filter slick-filter filter-${columnId} slick-autocomplete-container`,
       value: (searchTerm ?? '') as string,
-      dataset: { columnid: `${columnId}` }
+      dataset: { columnid: `${columnId}` },
     });
 
     // create the DOM element & add an ID and filter class
@@ -409,16 +430,16 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
     // the kradeen autocomplete lib only works with label/value pair, make sure that our array is in accordance
     if (Array.isArray(collection)) {
-      if (collection.every(x => isPrimitiveValue(x))) {
+      if (collection.every((x) => isPrimitiveValue(x))) {
         // when detecting an array of primitives, we have to remap it to an array of value/pair objects
-        collection = collection.map(c => ({ label: c, value: c }));
+        collection = collection.map((c) => ({ label: c, value: c }));
       } else {
         // user might provide its own custom structures, if so remap them as the new label/value pair
         collection = collection.map((item) => ({
           label: item?.[this.labelName],
           value: item?.[this.valueName],
           labelPrefix: item?.[this.labelPrefixName] ?? '',
-          labelSuffix: item?.[this.labelSuffixName] ?? ''
+          labelSuffix: item?.[this.labelSuffixName] ?? '',
         }));
       }
     }
@@ -428,6 +449,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       input: this._filterElm,
       debounceWaitMs: 200,
       className: `slick-autocomplete ${this.filterOptions?.className ?? ''}`.trim(),
+      // prettier-ignore
       emptyMsg: this.gridOptions.enableTranslate && this.translaterService?.translate ? this.translaterService.translate('NO_ELEMENTS_FOUND') : this._locales?.TEXT_NO_ELEMENTS_FOUND ?? 'No elements found',
       customize: (_input, _inputRect, container) => {
         container.style.width = ''; // unset width that was set internally by the Autopleter lib
@@ -474,12 +496,14 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
           if (collection) {
             // you can also use AJAX requests instead of preloaded data
             // also at this point our collection was already modified, by the previous map, to have the "label" property (unless it's a string)
-            updateCallback(collection.filter(c => {
-              const label = (typeof c === 'string' ? c : c?.label) || '';
-              return label.toLowerCase().includes(searchText.toLowerCase());
-            }));
+            updateCallback(
+              collection.filter((c) => {
+                const label = (typeof c === 'string' ? c : c?.label) || '';
+                return label.toLowerCase().includes(searchText.toLowerCase());
+              })
+            );
           }
-        }
+        },
       } as AutocompleteSettings<any>);
     }
 
@@ -518,8 +542,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       // otherwise we know that the autocomplete lib always require a label/value pair, we can pull them directly
       const hasCustomRenderItemCallback = this.filterOptions?.renderItem ?? false;
 
-      const itemLabel = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.labelName] : item.label);
-      let itemValue = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.valueName] : item.value);
+      const itemLabel = typeof item === 'string' ? item : hasCustomRenderItemCallback ? item[this.labelName] : item.label;
+      let itemValue = typeof item === 'string' ? item : hasCustomRenderItemCallback ? item[this.valueName] : item.value;
 
       // trim whitespaces when option is enabled globally or on the filter itself
       itemValue = this.trimWhitespaceWhenEnabled(itemValue);
@@ -528,7 +552,12 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       this.updateFilterStyle(itemValue !== '');
 
       this.setValues(itemLabel);
-      this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [itemValue], shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(event, {
+        columnDef: this.columnDef,
+        operator: this.operator,
+        searchTerms: [itemValue],
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      });
 
       // reset both flags for next use
       this._clearFilterTriggered = false;
@@ -563,9 +592,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   protected renderRegularItem(item: T): HTMLDivElement {
-    const itemLabel = (typeof item === 'string' ? item : item?.label ?? '') as string;
+    const itemLabel = (typeof item === 'string' ? item : (item?.label ?? '')) as string;
     return createDomElement('div', {
-      textContent: itemLabel || ''
+      textContent: itemLabel || '',
     });
   }
 

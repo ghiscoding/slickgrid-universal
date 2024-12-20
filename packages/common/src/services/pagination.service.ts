@@ -37,7 +37,12 @@ export class PaginationService {
   grid!: SlickGrid;
 
   /** Constructor */
-  constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService | undefined, protected rxjs?: RxJsFacade | undefined) {
+  constructor(
+    protected readonly pubSubService: BasePubSubService,
+    protected readonly sharedService: SharedService,
+    protected readonly backendUtilities?: BackendUtilityService | undefined,
+    protected rxjs?: RxJsFacade | undefined
+  ) {
     this._eventHandler = new SlickEventHandler();
   }
 
@@ -130,13 +135,18 @@ export class PaginationService {
       this._eventHandler.subscribe(this.dataView.onPagingInfoChanged, (_e, pagingInfo) => {
         if (this._totalItems !== pagingInfo.totalRows) {
           this.updateTotalItems(pagingInfo.totalRows);
-          this._previousPagination = { pageNumber: pagingInfo.pageNum, pageSize: pagingInfo.pageSize, pageSizes: this.availablePageSizes, totalItems: pagingInfo.totalRows };
+          this._previousPagination = {
+            pageNumber: pagingInfo.pageNum,
+            pageSize: pagingInfo.pageSize,
+            pageSizes: this.availablePageSizes,
+            totalItems: pagingInfo.totalRows,
+          };
         }
       });
       queueMicrotask(() => {
         if (this.dataView) {
           this.dataView.setRefreshHints({ isFilterUnchanged: true });
-          this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: (this._pageNumber - 1) }); // dataView page starts at 0 instead of 1
+          this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: this._pageNumber - 1 }); // dataView page starts at 0 instead of 1
         }
       });
     }
@@ -152,20 +162,29 @@ export class PaginationService {
     // Subscribe to any dataview row count changed so that when Adding/Deleting item(s) through the DataView
     // that would trigger a refresh of the pagination numbers
     if (this.dataView) {
-      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>('onItemAdded', items => this.processOnItemAddedOrRemoved(items, true)));
-      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>('onItemDeleted', items => this.processOnItemAddedOrRemoved(items, false)));
+      this._subscriptions.push(
+        this.pubSubService.subscribe<any | any[]>('onItemAdded', (items) => this.processOnItemAddedOrRemoved(items, true))
+      );
+      this._subscriptions.push(
+        this.pubSubService.subscribe<any | any[]>('onItemDeleted', (items) => this.processOnItemAddedOrRemoved(items, false))
+      );
     }
 
     this.refreshPagination(false, false, true);
 
     // also keep reference to current pagination in case we need to rollback
     const pagination = this.getFullPagination();
-    this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
+    this._previousPagination = {
+      pageNumber: pagination.pageNumber,
+      pageSize: pagination.pageSize,
+      pageSizes: pagination.pageSizes,
+      totalItems: this.totalItems,
+    };
 
     this._initialized = true;
 
     // observe for pagination total items change and update our local totalItems ref
-    propertyObserver(paginationOptions, 'totalItems', (newTotal) => this._totalItems = newTotal);
+    propertyObserver(paginationOptions, 'totalItems', (newTotal) => (this._totalItems = newTotal));
   }
 
   dispose(): void {
@@ -178,7 +197,7 @@ export class PaginationService {
     this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
-  getCurrentPagination(): CurrentPagination & { pageSizes: number[]; } {
+  getCurrentPagination(): CurrentPagination & { pageSizes: number[] } {
     return {
       pageNumber: this._pageNumber,
       pageSize: this._itemsPerPage,
@@ -217,7 +236,11 @@ export class PaginationService {
     this._pageNumber = 1;
     if (triggerChangeEvent) {
       return this.isCursorBased && this._cursorPageInfo
-        ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage })
+        ? this.processOnPageChanged(this._pageNumber, event, {
+            newPage: this._pageNumber,
+            pageSize: this._itemsPerPage,
+            first: this._itemsPerPage,
+          })
         : this.processOnPageChanged(this._pageNumber, event);
     }
     return Promise.resolve(this.getFullPagination());
@@ -227,7 +250,11 @@ export class PaginationService {
     this._pageNumber = this._pageCount || 1;
     if (triggerChangeEvent) {
       return this.isCursorBased && this._cursorPageInfo
-        ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage })
+        ? this.processOnPageChanged(this._pageNumber, event, {
+            newPage: this._pageNumber,
+            pageSize: this._itemsPerPage,
+            last: this._itemsPerPage,
+          })
         : this.processOnPageChanged(this._pageNumber, event);
     }
     return Promise.resolve(this.getFullPagination());
@@ -238,7 +265,12 @@ export class PaginationService {
       this._pageNumber++;
       if (triggerChangeEvent) {
         return this.isCursorBased && this._cursorPageInfo
-          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, after: this._cursorPageInfo.endCursor })
+          ? this.processOnPageChanged(this._pageNumber, event, {
+              newPage: this._pageNumber,
+              pageSize: this._itemsPerPage,
+              first: this._itemsPerPage,
+              after: this._cursorPageInfo.endCursor,
+            })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
         return Promise.resolve(this.getFullPagination());
@@ -274,7 +306,12 @@ export class PaginationService {
       this._pageNumber--;
       if (triggerChangeEvent) {
         return this.isCursorBased && this._cursorPageInfo
-          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._cursorPageInfo.startCursor })
+          ? this.processOnPageChanged(this._pageNumber, event, {
+              newPage: this._pageNumber,
+              pageSize: this._itemsPerPage,
+              last: this._itemsPerPage,
+              before: this._cursorPageInfo.startCursor,
+            })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
         return Promise.resolve(this.getFullPagination());
@@ -294,6 +331,7 @@ export class PaginationService {
         if (this._isLocalGrid) {
           this._itemsPerPage = pagination.pageSize;
         } else {
+          // prettier-ignore
           this._itemsPerPage = +((this._backendServiceApi?.options?.paginationOptions?.first) ? this._backendServiceApi.options.paginationOptions.first : pagination.pageSize);
         }
       }
@@ -337,7 +375,12 @@ export class PaginationService {
       this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
     }
     const pagination = this.getFullPagination();
-    this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
+    this._previousPagination = {
+      pageNumber: pagination.pageNumber,
+      pageSize: pagination.pageSize,
+      pageSizes: pagination.pageSizes,
+      totalItems: this.totalItems,
+    };
   }
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
@@ -383,7 +426,11 @@ export class PaginationService {
     }
   }
 
-  processOnPageChanged(pageNumber: number, event?: Event | undefined, cursorArgs?: PaginationCursorChangedArgs): Promise<PaginationMetadata> {
+  processOnPageChanged(
+    pageNumber: number,
+    event?: Event | undefined,
+    cursorArgs?: PaginationCursorChangedArgs
+  ): Promise<PaginationMetadata> {
     console.assert(!this.isCursorBased || cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
 
     if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {
@@ -411,18 +458,32 @@ export class PaginationService {
         }
 
         if (this._backendServiceApi?.process) {
-          const query = this.isCursorBased && cursorArgs
-            ? this._backendServiceApi.service.processOnPaginationChanged(event, cursorArgs)
-            : this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
+          const query =
+            this.isCursorBased && cursorArgs
+              ? this._backendServiceApi.service.processOnPaginationChanged(event, cursorArgs)
+              : this._backendServiceApi.service.processOnPaginationChanged(event, {
+                  newPage: pageNumber,
+                  pageSize: itemsPerPage,
+                });
 
           // the processes can be Promises
           const process = this._backendServiceApi.process(query);
           if (process instanceof Promise) {
             process
               .then((processResult: any) => {
-                this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems);
+                this.backendUtilities?.executeBackendProcessesCallback(
+                  startTime,
+                  processResult,
+                  this._backendServiceApi as BackendServiceApi,
+                  this._totalItems
+                );
                 const pagination = this.getFullPagination();
-                this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
+                this._previousPagination = {
+                  pageNumber: pagination.pageNumber,
+                  pageSize: pagination.pageSize,
+                  pageSizes: pagination.pageSizes,
+                  totalItems: this.totalItems,
+                };
                 resolve(this.getFullPagination());
               })
               .catch((error) => {
@@ -437,8 +498,20 @@ export class PaginationService {
               (process as Observable<any>).subscribe(
                 (processResult: any) => {
                   const pagination = this.getFullPagination();
-                  this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
-                  resolve(this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems));
+                  this._previousPagination = {
+                    pageNumber: pagination.pageNumber,
+                    pageSize: pagination.pageSize,
+                    pageSizes: pagination.pageSizes,
+                    totalItems: this.totalItems,
+                  };
+                  resolve(
+                    this.backendUtilities?.executeBackendProcessesCallback(
+                      startTime,
+                      processResult,
+                      this._backendServiceApi as BackendServiceApi,
+                      this._totalItems
+                    )
+                  );
                 },
                 (error: any) => {
                   this.resetToPreviousPagination();
@@ -460,7 +533,7 @@ export class PaginationService {
 
   recalculateFromToIndexes(): void {
     // when page is out of boundaries, reset it to page 1
-    if (((this._pageNumber - 1) * this._itemsPerPage > this._totalItems) || (this._totalItems > 0 && this._pageNumber === 0)) {
+    if ((this._pageNumber - 1) * this._itemsPerPage > this._totalItems || (this._totalItems > 0 && this._pageNumber === 0)) {
       this._pageNumber = 1;
     }
 
@@ -469,8 +542,8 @@ export class PaginationService {
       this._dataTo = 1;
       this._pageNumber = 0;
     } else {
-      this._dataFrom = this._pageNumber > 1 ? ((this._pageNumber * this._itemsPerPage) - this._itemsPerPage + 1) : 1;
-      this._dataTo = (this._totalItems < this._itemsPerPage) ? this._totalItems : ((this._pageNumber || 1) * this._itemsPerPage);
+      this._dataFrom = this._pageNumber > 1 ? this._pageNumber * this._itemsPerPage - this._itemsPerPage + 1 : 1;
+      this._dataTo = this._totalItems < this._itemsPerPage ? this._totalItems : (this._pageNumber || 1) * this._itemsPerPage;
       if (this._dataTo > this._totalItems) {
         this._dataTo = this._totalItems;
       }
@@ -503,6 +576,7 @@ export class PaginationService {
     // and re-update the Backend query string without triggering an actual query
     if (hasPageNumberChange || hasPageSizeChange) {
       this.refreshPagination();
+      // prettier-ignore
       this._backendServiceApi?.service?.updatePagination?.(this._previousPagination?.pageNumber ?? 0, this._previousPagination?.pageSize ?? 0);
     }
   }
@@ -543,7 +617,7 @@ export class PaginationService {
     if (items !== null) {
       const previousDataTo = this._dataTo;
       const itemCount = Array.isArray(items) ? items.length : 1;
-      const itemCountWithDirection = isItemAdded ? +(itemCount) : -(itemCount);
+      const itemCountWithDirection = isItemAdded ? +itemCount : -itemCount;
 
       // refresh the total count in the pagination and in the UI
       this._totalItems += itemCountWithDirection;

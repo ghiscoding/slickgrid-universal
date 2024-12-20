@@ -51,7 +51,10 @@ describe('DataWrapper Service', () => {
     });
 
     it('should call getDataItems() method and expect items to be returned via SlickGrid.getData()', () => {
-      const itemsMock = [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Smith' }];
+      const itemsMock = [
+        { id: 1, firstName: 'John', lastName: 'Doe' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith' },
+      ];
       const getDataItemsSpy = vi.spyOn(gridStub, 'getData').mockReturnValueOnce(itemsMock);
 
       const result = service.getDataItems();
@@ -61,7 +64,10 @@ describe('DataWrapper Service', () => {
     });
 
     it('should call getDataLength() method and expect items length returned via SlickGrid.getItemCount()', () => {
-      const itemsMock = [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Smith' }];
+      const itemsMock = [
+        { id: 1, firstName: 'John', lastName: 'Doe' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith' },
+      ];
       const getDataLengthSpy = vi.spyOn(gridStub, 'getDataLength').mockReturnValueOnce(itemsMock.length);
 
       const result = service.getDataLength();
@@ -71,7 +77,10 @@ describe('DataWrapper Service', () => {
     });
 
     it('should call setDataItems() method and expect items to be set via SlickGrid.setData()', () => {
-      const itemsMock = [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Smith' }];
+      const itemsMock = [
+        { id: 1, firstName: 'John', lastName: 'Doe' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith' },
+      ];
       const setDataItemsSpy = vi.spyOn(gridStub, 'setData');
 
       service.setDataItems(itemsMock);
@@ -99,7 +108,10 @@ describe('DataWrapper Service', () => {
     });
 
     it('should call getDataItems() method and expect items to be returned via DataView.getItems()', () => {
-      const itemsMock = [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Smith' }];
+      const itemsMock = [
+        { id: 1, firstName: 'John', lastName: 'Doe' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith' },
+      ];
       const getDataItemsSpy = vi.spyOn(dataViewStub, 'getItems').mockReturnValueOnce(itemsMock);
 
       const result = service.getDataItems();
@@ -109,7 +121,10 @@ describe('DataWrapper Service', () => {
     });
 
     it('should call getDataLength() method and expect items length returned via DataView.getItemCount()', () => {
-      const itemsMock = [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Smith' }];
+      const itemsMock = [
+        { id: 1, firstName: 'John', lastName: 'Doe' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith' },
+      ];
       const getItemCountSpy = vi.spyOn(dataViewStub, 'getItemCount').mockReturnValueOnce(itemsMock.length);
 
       const result = service.getDataLength();
@@ -119,7 +134,10 @@ describe('DataWrapper Service', () => {
     });
 
     it('should call setDataItems() method and expect items to be set via DataView.setItems()', () => {
-      const itemsMock = [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Smith' }];
+      const itemsMock = [
+        { id: 1, firstName: 'John', lastName: 'Doe' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith' },
+      ];
       const setItemsSpy = vi.spyOn(dataViewStub, 'setItems');
 
       service.setDataItems(itemsMock);

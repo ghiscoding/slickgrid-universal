@@ -43,7 +43,7 @@ describe('avgAggregator', () => {
       dataset.forEach((row) => aggregator.accumulate(row));
       aggregator.storeResult(groupTotals);
 
-      const avg = (55 + 87 + 60 + (-2) + 15) / 5;
+      const avg = (55 + 87 + 60 + -2 + 15) / 5;
       expect(aggregator.field).toBe(fieldName);
       expect(aggregator.type).toBe('avg');
       expect(groupTotals.avg[fieldName]).toBe(avg);

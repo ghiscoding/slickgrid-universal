@@ -40,7 +40,7 @@ describe('InputPasswordFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new InputPasswordFilter({} as any);

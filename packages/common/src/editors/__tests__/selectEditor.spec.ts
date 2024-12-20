@@ -80,63 +80,81 @@ describe('SelectEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
-      try {
-        editor = new SelectEditor(null as any, true);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-        done();
-      }
-    }));
+    it('should throw an error when trying to call init without any arguments', () =>
+      new Promise((done: any) => {
+        try {
+          editor = new SelectEditor(null as any, true);
+        } catch (e) {
+          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
+          done();
+        }
+      }));
 
-    it('should throw an error when there is no collection provided in the editor property', () => new Promise((done: any) => {
-      try {
-        mockColumn.editor!.collection = undefined;
-        editor = new SelectEditor(editorArguments, true);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.`);
-        done();
-      }
-    }));
+    it('should throw an error when there is no collection provided in the editor property', () =>
+      new Promise((done: any) => {
+        try {
+          mockColumn.editor!.collection = undefined;
+          editor = new SelectEditor(editorArguments, true);
+        } catch (e) {
+          expect(e.toString()).toContain(
+            `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.`
+          );
+          done();
+        }
+      }));
 
-    it('should throw an error when collection is not a valid array', () => new Promise((done: any) => {
-      try {
-        mockColumn.editor!.collection = { hello: 'world' } as any;
-        editor = new SelectEditor(editorArguments, true);
-      } catch (e) {
-        expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
-        done();
-      }
-    }));
+    it('should throw an error when collection is not a valid array', () =>
+      new Promise((done: any) => {
+        try {
+          mockColumn.editor!.collection = { hello: 'world' } as any;
+          editor = new SelectEditor(editorArguments, true);
+        } catch (e) {
+          expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
+          done();
+        }
+      }));
 
-    it('should throw an error when collection is not a valid value/label pair array', () => new Promise((done: any) => {
-      try {
-        mockColumn.editor!.collection = [{ hello: 'world' }];
-        editor = new SelectEditor(editorArguments, true);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
-        done();
-      }
-    }));
+    it('should throw an error when collection is not a valid value/label pair array', () =>
+      new Promise((done: any) => {
+        try {
+          mockColumn.editor!.collection = [{ hello: 'world' }];
+          editor = new SelectEditor(editorArguments, true);
+        } catch (e) {
+          expect(e.toString()).toContain(
+            `[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`
+          );
+          done();
+        }
+      }));
 
-    it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', () => new Promise((done: any) => {
-      try {
-        translateService = undefined as any;
-        mockColumn.editor!.enableTranslateLabel = true;
-        mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-        editor = new SelectEditor(editorArguments, true);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`);
-        done();
-      }
-    }));
+    it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', () =>
+      new Promise((done: any) => {
+        try {
+          translateService = undefined as any;
+          mockColumn.editor!.enableTranslateLabel = true;
+          mockColumn.editor!.collection = [
+            { value: 'male', label: 'male' },
+            { value: 'female', label: 'female' },
+          ];
+          editor = new SelectEditor(editorArguments, true);
+        } catch (e) {
+          expect(e.toString()).toContain(
+            `[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`
+          );
+          done();
+        }
+      }));
   });
 
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, gender: 'male', isActive: true };
       mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+        { value: 'other', label: 'other' },
+      ];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -147,7 +165,10 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       gridOptionMock.translater = translateService;
       editor = new SelectEditor(editorArguments, true);
       editor.focus();
@@ -191,7 +212,7 @@ describe('SelectEditor', () => {
 
     it('should initialize the editor with minHeight define in global default user editor options', () => {
       gridOptionMock.defaultEditorOptions = {
-        select: { minHeight: 243 }
+        select: { minHeight: 243 },
       };
       editor = new SelectEditor(editorArguments, true);
 
@@ -201,7 +222,10 @@ describe('SelectEditor', () => {
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
       mockColumn.editor!.placeholder = testValue;
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
 
       editor = new SelectEditor(editorArguments, true);
       const editorElm = divContainer.querySelector('.ms-filter.editor-gender .ms-placeholder') as HTMLSpanElement;
@@ -211,7 +235,10 @@ describe('SelectEditor', () => {
 
     it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () => {
       gridOptionMock.darkMode = true;
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
 
       editor = new SelectEditor(editorArguments, true);
       const editorElm = divContainer.querySelector('.ms-parent.editor-gender') as HTMLSpanElement;
@@ -220,7 +247,10 @@ describe('SelectEditor', () => {
     });
 
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       mockColumn.editor!.placeholder = 'test placeholder';
 
       editor = new SelectEditor(editorArguments, true);
@@ -252,7 +282,10 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       mockColumn.editor!.collectionOptions = { addBlankEntry: true };
 
       editor = new SelectEditor(editorArguments, true, 0);
@@ -268,7 +301,10 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a custom entry at the beginning of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       mockColumn.editor!.collectionOptions = { addCustomFirstEntry: { value: null as any, label: '' } };
 
       editor = new SelectEditor(editorArguments, true, 0);
@@ -284,7 +320,10 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a custom entry at the end of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       mockColumn.editor!.collectionOptions = { addCustomLastEntry: { value: null as any, label: '' } };
 
       editor = new SelectEditor(editorArguments, true, 0);
@@ -452,9 +491,19 @@ describe('SelectEditor', () => {
       });
 
       it('should parse the value as a float when field type is defined as float then apply the value', () => {
-        mockColumn = { id: 'age', field: 'age', type: FieldType.boolean, editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
+        mockColumn = {
+          id: 'age',
+          field: 'age',
+          type: FieldType.boolean,
+          editable: true,
+          editor: { model: Editors.multipleSelect },
+          editorClass: {} as Editor,
+        } as Column;
         mockItemData = { id: 1, gender: 'male', isActive: true, age: 26 };
-        mockColumn.editor!.collection = [{ value: 20, label: '20' }, { value: 25, label: '25' }];
+        mockColumn.editor!.collection = [
+          { value: 20, label: '20' },
+          { value: 25, label: '25' },
+        ];
 
         editorArguments.column = mockColumn;
         editor = new SelectEditor(editorArguments, true);
@@ -516,8 +565,14 @@ describe('SelectEditor', () => {
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
-        expect(output).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
-        expect(editor.currentValues).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+        expect(output).toEqual([
+          { label: 'male', value: 'male' },
+          { label: 'other', value: 'other' },
+        ]);
+        expect(editor.currentValues).toEqual([
+          { label: 'male', value: 'male' },
+          { label: 'other', value: 'other' },
+        ]);
       });
 
       it('should return all object values when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "object"', () => {
@@ -528,8 +583,14 @@ describe('SelectEditor', () => {
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
-        expect(output).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
-        expect(editor.currentValues).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+        expect(output).toEqual([
+          { label: 'male', value: 'male' },
+          { label: 'other', value: 'other' },
+        ]);
+        expect(editor.currentValues).toEqual([
+          { label: 'male', value: 'male' },
+          { label: 'other', value: 'other' },
+        ]);
       });
 
       it('should return a single object value when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "object"', () => {
@@ -564,7 +625,10 @@ describe('SelectEditor', () => {
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
-        expect(output).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+        expect(output).toEqual([
+          { label: 'male', value: 'male' },
+          { label: 'other', value: 'other' },
+        ]);
       });
     });
 
@@ -718,8 +782,8 @@ describe('SelectEditor', () => {
           collection: ['other', 'male', 'female'],
           collectionSortBy: {
             sortDesc: true,
-            fieldType: FieldType.string
-          }
+            fieldType: FieldType.string,
+          },
         };
 
         editor = new SelectEditor(editorArguments, true, 0);
@@ -735,11 +799,15 @@ describe('SelectEditor', () => {
 
       it('should create the multi-select editor and sort the value/label pair collection when "collectionSortBy" is set', () => {
         mockColumn.editor = {
-          collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
+          collection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
           collectionSortBy: {
             property: 'value',
             sortDesc: false,
-            fieldType: FieldType.string
+            fieldType: FieldType.string,
           },
           customStructure: {
             value: 'value',
@@ -765,8 +833,8 @@ describe('SelectEditor', () => {
           collection: ['other', 'male', 'female'],
           collectionFilterBy: {
             operator: OperatorType.equal,
-            value: 'other'
-          }
+            value: 'other',
+          },
         };
 
         editor = new SelectEditor(editorArguments, true, 0);
@@ -780,10 +848,14 @@ describe('SelectEditor', () => {
 
       it('should create the multi-select editor and filter the value/label pair collection when "collectionFilterBy" is set', () => {
         mockColumn.editor = {
-          collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
+          collection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
           collectionFilterBy: [
             { property: 'value', operator: OperatorType.notEqual, value: 'other' },
-            { property: 'value', operator: OperatorType.notEqual, value: 'male' }
+            { property: 'value', operator: OperatorType.notEqual, value: 'male' },
           ],
           customStructure: {
             value: 'value',
@@ -802,13 +874,17 @@ describe('SelectEditor', () => {
 
       it('should create the multi-select editor and filter the value/label pair collection when "collectionFilterBy" is set and "filterResultAfterEachPass" is set to "merge"', () => {
         mockColumn.editor = {
-          collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
+          collection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
           collectionFilterBy: [
             { property: 'value', operator: OperatorType.equal, value: 'other' },
-            { property: 'value', operator: OperatorType.equal, value: 'male' }
+            { property: 'value', operator: OperatorType.equal, value: 'male' },
           ],
           collectionOptions: {
-            filterResultAfterEachPass: 'merge'
+            filterResultAfterEachPass: 'merge',
           },
           customStructure: {
             value: 'value',
@@ -831,7 +907,7 @@ describe('SelectEditor', () => {
       it('should create the multi-select editor and expect a different collection outputed when using the override', () => {
         mockColumn.editor = {
           collection: ['other', 'male', 'female'],
-          collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')
+          collectionOverride: (inputCollection) => inputCollection.filter((item) => item !== 'other'),
         };
 
         editor = new SelectEditor(editorArguments, true, 0);
@@ -848,9 +924,17 @@ describe('SelectEditor', () => {
     describe('collectionInsideObjectProperty setting', () => {
       it('should create the multi-select editor with a value/label pair collection that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () => {
         mockColumn.editor = {
-          collection: { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } } as any,
+          collection: {
+            deep: {
+              myCollection: [
+                { value: 'other', description: 'other' },
+                { value: 'male', description: 'male' },
+                { value: 'female', description: 'female' },
+              ],
+            },
+          } as any,
           collectionOptions: {
-            collectionInsideObjectProperty: 'deep.myCollection'
+            collectionInsideObjectProperty: 'deep.myCollection',
           },
           customStructure: {
             value: 'value',
@@ -874,7 +958,10 @@ describe('SelectEditor', () => {
       it('should create the multi-select editor with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
+          collection: [
+            { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` },
+            { value: false, label: 'False' },
+          ],
           customStructure: {
             value: 'isEffort',
             label: 'label',
@@ -894,7 +981,10 @@ describe('SelectEditor', () => {
       it('should create the multi-select editor with a default search term and have the HTML rendered when "enableRenderHtml" is set and has <script> tag', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
+          collection: [
+            { isEffort: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` },
+            { isEffort: false, label: 'False' },
+          ],
           collectionOptions: {
             separatorBetweenTextLabels: ': ',
             includePrefixSuffixToSelectedValues: true,
@@ -930,7 +1020,11 @@ describe('SelectEditor', () => {
 
       mockItemData = { id: 1, gender: 'male', isActive: true };
       mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+        { value: 'other', label: 'other' },
+      ];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -944,24 +1038,32 @@ describe('SelectEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       editor = new SelectEditor(editorArguments, true);
       editor.setValue(['male'], true);
       editor.msInstance?.close();
 
       expect(editor.getValue()).toEqual(['male']);
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: ['male'] }, editors: {}, triggeredBy: 'system',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { gender: ['male'] },
+          editors: {},
+          triggeredBy: 'system',
+        },
+        expect.anything()
+      );
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
 
       editor = new SelectEditor(editorArguments, true);
@@ -969,7 +1071,14 @@ describe('SelectEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -977,10 +1086,10 @@ describe('SelectEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
 
       editor = new SelectEditor(editorArguments, true);
@@ -990,11 +1099,26 @@ describe('SelectEditor', () => {
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: [] }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { gender: [] },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editorBtnElm.classList.contains('disabled')).toEqual(true);
       expect(editor.msInstance!.getSelects()).toEqual([]);
@@ -1004,13 +1128,13 @@ describe('SelectEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new SelectEditor(editorArguments, true);
@@ -1020,11 +1144,26 @@ describe('SelectEditor', () => {
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: {},
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editorBtnElm.classList.contains('disabled')).toEqual(true);
       expect(editor.msInstance!.getSelects()).toEqual([]);
@@ -1034,10 +1173,10 @@ describe('SelectEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, gender: ['male'], isActive: true };
@@ -1052,11 +1191,26 @@ describe('SelectEditor', () => {
       editor.msInstance?.close();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: ['male'] }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { gender: ['male'] },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
     });
 
     describe('collectionOverride callback option', () => {
@@ -1064,20 +1218,32 @@ describe('SelectEditor', () => {
         const activeCellMock = { row: 0, cell: 0 };
         vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-          getReturnValue: () => false
+          getReturnValue: () => false,
         } as any);
         mockColumn.editor = {
-          collection: [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }],
-          collectionOverride: (inputCollection) => inputCollection.filter(item => item.value !== 'other')
+          collection: [
+            { value: 'male', label: 'male' },
+            { value: 'female', label: 'female' },
+            { value: 'other', label: 'other' },
+          ],
+          collectionOverride: (inputCollection) => inputCollection.filter((item) => item.value !== 'other'),
         };
         editor = new SelectEditor(editorArguments, true);
         editor.setValue(['male'], true);
 
         expect(editor.getValue()).toEqual(['male']);
-        expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-          ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-          formValues: { gender: ['male'] }, editors: {}, triggeredBy: 'system',
-        }, expect.anything());
+        expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+          {
+            ...activeCellMock,
+            column: mockColumn,
+            item: mockItemData,
+            grid: gridStub,
+            formValues: { gender: ['male'] },
+            editors: {},
+            triggeredBy: 'system',
+          },
+          expect.anything()
+        );
       });
     });
   });

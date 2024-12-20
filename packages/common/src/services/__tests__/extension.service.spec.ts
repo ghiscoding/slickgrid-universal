@@ -171,16 +171,16 @@ const extensionStub = {
   create: vi.fn(),
   dispose: vi.fn(),
   getAddonInstance: vi.fn(),
-  register: vi.fn()
+  register: vi.fn(),
 };
 const extensionGridMenuStub = {
   ...extensionStub,
   refreshBackendDataset: vi.fn(),
-  translateGridMenu: vi.fn()
+  translateGridMenu: vi.fn(),
 };
 const extensionColumnPickerStub = {
   ...extensionStub,
-  translateColumnPicker: vi.fn()
+  translateColumnPicker: vi.fn(),
 };
 
 describe('ExtensionService', () => {
@@ -331,8 +331,8 @@ describe('ExtensionService', () => {
           enableRowBasedEdit: true,
           editable: true,
           rowBasedEditOptions: {
-            onExtensionRegistered: onRegisteredMock
-          }
+            onExtensionRegistered: onRegisteredMock,
+          },
         } as GridOption;
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
@@ -355,8 +355,8 @@ describe('ExtensionService', () => {
           enableRowBasedEdit: true,
           editable: true,
           rowBasedEditOptions: {
-            onExtensionRegistered: onRegisteredMock
-          }
+            onExtensionRegistered: onRegisteredMock,
+          },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
@@ -395,8 +395,8 @@ describe('ExtensionService', () => {
         const gridOptionsMock = {
           enableColumnPicker: true,
           columnPicker: {
-            onExtensionRegistered: onRegisteredMock
-          }
+            onExtensionRegistered: onRegisteredMock,
+          },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
@@ -434,8 +434,8 @@ describe('ExtensionService', () => {
         const gridOptionsMock = {
           enableGridMenu: true,
           gridMenu: {
-            onExtensionRegistered: onRegisteredMock
-          }
+            onExtensionRegistered: onRegisteredMock,
+          },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
@@ -470,8 +470,8 @@ describe('ExtensionService', () => {
         const gridOptionsMock = {
           enableCheckboxSelector: true,
           checkboxSelector: {
-            onExtensionRegistered: onRegisteredMock
-          }
+            onExtensionRegistered: onRegisteredMock,
+          },
         } as GridOption;
         const extCreateSpy = vi.spyOn(mockCheckboxSelectColumn, 'create').mockReturnValueOnce(mockCheckboxSelectColumn);
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
@@ -644,18 +644,21 @@ describe('ExtensionService', () => {
       });
 
       it('should call RowMoveManager create when "enableRowMoveManager" is set in the grid options provided', () => {
-        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }, { id: 'field2', field: 'field2', width: 50, }] as Column[];
+        const columnsMock = [
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
+          { id: 'field2', field: 'field2', width: 50 },
+        ] as Column[];
         const gridOptionsMock = {
-          enableCheckboxSelector: true, enableRowSelection: true,
+          enableCheckboxSelector: true,
+          enableRowSelection: true,
           checkboxSelector: { columnIndexPosition: 1 },
           enableRowMoveManager: true,
-          rowMoveManager: { columnIndexPosition: 0 }
+          rowMoveManager: { columnIndexPosition: 0 },
         } as GridOption;
         const extCheckSelectSpy = vi.spyOn(mockCheckboxSelectColumn, 'create');
         const extRowMoveSpy = vi.spyOn(mockRowMoveManager, 'create');
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
-
 
         expect(extCheckSelectSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(extRowMoveSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
@@ -673,14 +676,18 @@ describe('ExtensionService', () => {
           }
         }
 
-        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }, { id: 'field2', field: 'field2', width: 50, }] as Column[];
+        const columnsMock = [
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
+          { id: 'field2', field: 'field2', width: 50 },
+        ] as Column[];
         const gridOptionsMock = {
-          enableCheckboxSelector: true, enableRowSelection: true,
+          enableCheckboxSelector: true,
+          enableRowSelection: true,
           checkboxSelector: { columnIndexPosition: 1 },
           preRegisterExternalExtensions: () => {
             const ext = new ExternalExtension();
             return [{ name: ExtensionName.rowDetailView, instance: ext }];
-          }
+          },
         } as GridOption;
         const extCheckSelectSpy = vi.spyOn(mockCheckboxSelectColumn, 'create');
 
@@ -696,8 +703,15 @@ describe('ExtensionService', () => {
     });
 
     it('should call hideColumn and expect "visibleColumns" to be updated accordingly', () => {
-      const columnsMock = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const updatedColumnsMock = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const columnsMock = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
+      const updatedColumnsMock = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       sharedService.slickGrid = gridStub;
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -745,8 +759,15 @@ describe('ExtensionService', () => {
     });
 
     it('should call removeColumnByIndex and return input array without the item at index position', () => {
-      const columnsMock = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const updatedColumnsMock = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const columnsMock = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
+      const updatedColumnsMock = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       const output = service.removeColumnByIndex(columnsMock, 1);
       expect(output).toEqual(updatedColumnsMock);
     });
@@ -791,7 +812,7 @@ describe('ExtensionService', () => {
     it('should call the translateGridMenu method on the GridMenu Extension when service with same method name is called', () => {
       const columnsMock = [
         { id: 'field1', field: 'field1', nameKey: 'HELLO' },
-        { id: 'field2', field: 'field2', nameKey: 'WORLD' }
+        { id: 'field2', field: 'field2', nameKey: 'WORLD' },
       ] as Column[];
       const gridOptionsMock = { enableGridMenu: true } as GridOption;
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
@@ -883,7 +904,7 @@ describe('ExtensionService', () => {
       it('should override "allColumns" on the Shared Service and call "setColumns" with the collection provided as argument', () => {
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
-          { id: 'field2', field: 'field2', nameKey: 'WORLD' }
+          { id: 'field2', field: 'field2', nameKey: 'WORLD' },
         ] as Column[];
         sharedService.slickGrid = gridStub;
         const allColsSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'set');
@@ -897,9 +918,7 @@ describe('ExtensionService', () => {
 
       it(`should call "setColumns" with the collection provided as argument but NOT override "allColumns" on the Shared Service
     when collection provided is smaller than "allColumns" that already exists`, () => {
-        const columnsMock = [
-          { id: 'field1', field: 'field1', nameKey: 'HELLO' }
-        ] as Column[];
+        const columnsMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
         sharedService.slickGrid = gridStub;
         const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -911,7 +930,7 @@ describe('ExtensionService', () => {
       it('should replace the Column Picker columns when plugin is enabled and method is called with new column definition collection provided as argument', () => {
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
-          { id: 'field2', field: 'field2', nameKey: 'WORLD' }
+          { id: 'field2', field: 'field2', nameKey: 'WORLD' },
         ] as Column[];
         const instanceMock = { translateColumnPicker: vi.fn() };
         const gridOptionsMock = { enableColumnPicker: true } as GridOption;
@@ -930,7 +949,7 @@ describe('ExtensionService', () => {
       it('should replace the Grid Menu columns when plugin is enabled and method is called with new column definition collection provided as argument', () => {
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
-          { id: 'field2', field: 'field2', nameKey: 'WORLD' }
+          { id: 'field2', field: 'field2', nameKey: 'WORLD' },
         ] as Column[];
         const instanceMock = { translateGridMenu: vi.fn() };
         const gridOptionsMock = { enableGridMenu: true } as GridOption;
@@ -959,7 +978,7 @@ describe('ExtensionService', () => {
         sharedService,
         sortServiceStub,
         treeDataServiceStub,
-        translateService,
+        translateService
       );
 
       const gridOptionsMock = { enableTranslate: true } as GridOption;
@@ -967,23 +986,23 @@ describe('ExtensionService', () => {
     });
 
     it('should throw an error if "enableTranslate" is set but the Translate Service is null and "translateColumnHeaders" method is called', () => {
-      expect(() => service.translateColumnHeaders())
-        .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+      expect(() => service.translateColumnHeaders()).toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
     });
 
-    it('should throw an error if "enableTranslate" is set but the Translate Service is null and "translateItems" private method is called', () => new Promise((done: any) => {
-      try {
-        const gridOptionsMock = { enableTranslate: true } as GridOption;
-        const columnBeforeTranslate = { id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' };
-        const columnsMock = [columnBeforeTranslate] as Column[];
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+    it('should throw an error if "enableTranslate" is set but the Translate Service is null and "translateItems" private method is called', () =>
+      new Promise((done: any) => {
+        try {
+          const gridOptionsMock = { enableTranslate: true } as GridOption;
+          const columnBeforeTranslate = { id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' };
+          const columnsMock = [columnBeforeTranslate] as Column[];
+          vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
-        service.bindDifferentExtensions();
-      } catch (e) {
-        expect(e.message).toContain('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
-        done();
-      }
-    }));
+          service.bindDifferentExtensions();
+        } catch (e) {
+          expect(e.message).toContain('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+          done();
+        }
+      }));
   });
 });

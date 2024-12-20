@@ -24,7 +24,14 @@ describe('the Collection Formatter', () => {
 
   it('should return a CSV string when value passed is an array of objects', () => {
     const valueArray = [1, 2];
-    const columnDef = { params: { collection: [{ value: 1, label: 'foo' }, { value: 2, label: 'bar' }] } } as Column;
+    const columnDef = {
+      params: {
+        collection: [
+          { value: 1, label: 'foo' },
+          { value: 2, label: 'bar' },
+        ],
+      },
+    } as Column;
     const result = collectionFormatter(0, 0, valueArray, columnDef, {}, {} as any);
     const outputCsv = 'foo, bar';
     expect((result as HTMLElement).outerHTML).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
@@ -34,9 +41,12 @@ describe('the Collection Formatter', () => {
     const valueArray = [1, 2];
     const columnDef = {
       params: {
-        collection: [{ id: 1, name: 'John' }, { id: 2, name: 'Bob' }],
-        customStructure: { label: 'name', value: 'id' }
-      }
+        collection: [
+          { id: 1, name: 'John' },
+          { id: 2, name: 'Bob' },
+        ],
+        customStructure: { label: 'name', value: 'id' },
+      },
     } as Column;
     const result = collectionFormatter(0, 0, valueArray, columnDef, {}, {} as any);
     const outputCsv = 'John, Bob';
@@ -45,14 +55,28 @@ describe('the Collection Formatter', () => {
 
   it('should return a string when value passed is an object', () => {
     const inputValue = 2;
-    const columnDef = { params: { collection: [{ value: 1, label: 'foo' }, { value: 2, label: 'bar' }] } } as Column;
+    const columnDef = {
+      params: {
+        collection: [
+          { value: 1, label: 'foo' },
+          { value: 2, label: 'bar' },
+        ],
+      },
+    } as Column;
     const result = collectionFormatter(0, 0, inputValue, columnDef, {}, {} as any);
     expect(result).toBe('bar');
   });
 
   it('should return an empty string when value passed is an object that is not part of the collection', () => {
     const inputValue = 4;
-    const columnDef = { params: { collection: [{ value: 1, label: 'foo' }, { value: 2, label: 'bar' }] } } as Column;
+    const columnDef = {
+      params: {
+        collection: [
+          { value: 1, label: 'foo' },
+          { value: 2, label: 'bar' },
+        ],
+      },
+    } as Column;
     const result = collectionFormatter(0, 0, inputValue, columnDef, {}, {} as any);
     expect(result).toBe('');
   });

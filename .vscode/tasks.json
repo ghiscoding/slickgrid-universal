@@ -16,7 +16,7 @@
     {
       "label": "Run Vitest Test Coverage",
       "type": "shell",
-      "command": "pnpm test",
+      "command": "pnpm test:coverage",
       "problemMatcher": []
     },
     {

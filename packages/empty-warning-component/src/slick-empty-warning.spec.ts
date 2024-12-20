@@ -56,7 +56,7 @@ describe('Slick-Empty-Warning Component', () => {
 
     mockGridOptions.emptyDataWarning = {
       message: 'No data to display.',
-      messageKey: 'EMPTY_DATA_WARNING_MESSAGE'
+      messageKey: 'EMPTY_DATA_WARNING_MESSAGE',
     };
   });
 
@@ -82,8 +82,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(false);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -96,8 +100,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -114,8 +122,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.showEmptyDataMessage(true);
       component.showEmptyDataMessage(false);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -134,8 +146,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -155,8 +171,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -178,8 +198,12 @@ describe('Slick-Empty-Warning Component', () => {
       mockGridOptions.rowHeight = 55;
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
       const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
 
       expect(component).toBeTruthy();
@@ -210,8 +234,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.showEmptyDataMessage(false);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
       const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
 
       expect(component).toBeTruthy();
@@ -239,8 +267,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.showEmptyDataMessage(true);
       component.showEmptyDataMessage(false);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
       const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
 
       expect(component).toBeTruthy();
@@ -265,8 +297,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -287,8 +323,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -309,8 +349,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -331,8 +375,12 @@ describe('Slick-Empty-Warning Component', () => {
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
-      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
+      ) as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>(
+        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
+      ) as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -344,7 +392,12 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to change some options and display a different message when provided as an option', () => {
-      const mockOptions = { message: '<span class="mdi mdi-alert text-color-warning"></span> No Record found.', className: 'custom-class', marginTop: 22, marginLeft: 11 };
+      const mockOptions = {
+        message: '<span class="mdi mdi-alert text-color-warning"></span> No Record found.',
+        className: 'custom-class',
+        marginTop: 22,
+        marginLeft: 11,
+      };
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
       component.showEmptyDataMessage(true, mockOptions);

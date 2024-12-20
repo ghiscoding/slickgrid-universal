@@ -1,5 +1,5 @@
 import { type SelectionModel } from '../enums/index.js';
-import type { GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption, } from '../interfaces/index.js';
+import type { GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption } from '../interfaces/index.js';
 import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector.js';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index.js';
 
@@ -19,7 +19,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     autoScrollWhenDrag: true,
     cellRangeSelector: undefined,
     dragToSelect: false,
-    selectActiveRow: true
+    selectActiveRow: true,
   } as RowSelectionModelOption;
 
   constructor(options?: RowSelectionModelOption) {
@@ -54,7 +54,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     if (!this._selector && this._options.dragToSelect) {
       this._selector = new SlickCellRangeSelector({
         selectionCss: { border: 'none' } as CSSStyleDeclaration,
-        autoScroll: this._options.autoScrollWhenDrag
+        autoScroll: this._options.autoScrollWhenDrag,
       });
       this.addonOptions.cellRangeSelector = this._selector;
     }
@@ -141,7 +141,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     return rows;
   }
 
-  protected handleBeforeCellRangeSelected(e: SlickEventData, cell: { row: number; cell: number; }): boolean | void {
+  protected handleBeforeCellRangeSelected(e: SlickEventData, cell: { row: number; cell: number }): boolean | void {
     let isRowMoveColumn = false;
     if (this.gridOptions.enableRowMoveManager) {
       isRowMoveColumn = this.isHandlerColumn(cell.cell) ?? false;
@@ -153,7 +153,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     this._grid.setActiveCell(cell.row, cell.cell);
   }
 
-  protected handleCellRangeSelected(_e: SlickEventData, args: { range: SlickRange; }): boolean | void {
+  protected handleCellRangeSelected(_e: SlickEventData, args: { range: SlickRange }): boolean | void {
     if (!this.gridOptions.multiSelect || !this.addonOptions.selectActiveRow) {
       return false;
     }
@@ -172,8 +172,7 @@ export class SlickRowSelectionModel implements SelectionModel {
       return false;
     }
 
-    if (!this.gridOptions.multiSelect || (
-      !e.ctrlKey && !e.shiftKey && !e.metaKey)) {
+    if (!this.gridOptions.multiSelect || (!e.ctrlKey && !e.shiftKey && !e.metaKey)) {
       return false;
     }
 
@@ -210,8 +209,13 @@ export class SlickRowSelectionModel implements SelectionModel {
   protected handleKeyDown(e: SlickEventData): void {
     const activeRow = this._grid.getActiveCell();
 
-    if (this.gridOptions.multiSelect && activeRow &&
-      e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey &&
+    if (
+      this.gridOptions.multiSelect &&
+      activeRow &&
+      e.shiftKey &&
+      !e.ctrlKey &&
+      !e.altKey &&
+      !e.metaKey &&
       (e.key === 'ArrowUp' || e.key === 'ArrowDown')
     ) {
       let selectedRows = this.getSelectedRows();
@@ -226,7 +230,7 @@ export class SlickRowSelectionModel implements SelectionModel {
       let bottom = selectedRows[selectedRows.length - 1];
 
       if (e.key === 'ArrowDown') {
-        active = (activeRow.row < bottom || top === bottom) ? ++bottom : ++top;
+        active = activeRow.row < bottom || top === bottom ? ++bottom : ++top;
       } else {
         active = activeRow.row < bottom ? --bottom : --top;
       }
@@ -261,7 +265,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   protected rowsToRanges(rows: number[]): SlickRange[] {
     const ranges: SlickRange[] = [];
     const lastCell = this._grid.getColumns().length - 1;
-    rows.forEach(row => ranges.push(new SlickRange(row, 0, row, lastCell)));
+    rows.forEach((row) => ranges.push(new SlickRange(row, 0, row, lastCell)));
     return ranges;
   }
 }

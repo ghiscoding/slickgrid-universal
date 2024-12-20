@@ -37,13 +37,19 @@ describe('Service/Utilies', () => {
     it('should add an item to the array when input item has an "id" and is not in the array', () => {
       const array = [{ id: 1, firstName: 'John' }];
       addToArrayWhenNotExists(array, { id: 2, firstName: 'Jane' });
-      expect(array).toEqual([{ id: 1, firstName: 'John' }, { id: 2, firstName: 'Jane' }]);
+      expect(array).toEqual([
+        { id: 1, firstName: 'John' },
+        { id: 2, firstName: 'Jane' },
+      ]);
     });
 
     it('should add an item to the array when input item has custom Id property and is not in the array', () => {
       const array = [{ customId: 1, firstName: 'John' }];
       addToArrayWhenNotExists(array, { customId: 2, firstName: 'Jane' });
-      expect(array).toEqual([{ customId: 1, firstName: 'John' }, { customId: 2, firstName: 'Jane' }]);
+      expect(array).toEqual([
+        { customId: 1, firstName: 'John' },
+        { customId: 2, firstName: 'Jane' },
+      ]);
     });
 
     it('should add an item to the array when input item is not an object and and is not in the array', () => {
@@ -82,8 +88,15 @@ describe('Service/Utilies', () => {
 
   describe('arrayRemoveItemByIndex() method', () => {
     it('should remove an item from the array', () => {
-      const input = [{ field: 'field1', name: 'Field 1' }, { field: 'field2', name: 'Field 2' }, { field: 'field3', name: 'Field 3' }];
-      const expected = [{ field: 'field1', name: 'Field 1' }, { field: 'field3', name: 'Field 3' }];
+      const input = [
+        { field: 'field1', name: 'Field 1' },
+        { field: 'field2', name: 'Field 2' },
+        { field: 'field3', name: 'Field 3' },
+      ];
+      const expected = [
+        { field: 'field1', name: 'Field 1' },
+        { field: 'field3', name: 'Field 3' },
+      ];
 
       const output = arrayRemoveItemByIndex(input, 1);
       expect(output).toEqual(expected);
@@ -113,12 +126,14 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['input', 'args']);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(
+        removeExtraSpaces(`
         if (input.length > 1) {
           return true;
         };
         return input["age"].toString().includes(args.searchString)
-      `));
+      `)
+      );
     });
 
     test('regular async function with arguments', () => {
@@ -132,12 +147,14 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['input', 'args']);
       expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(
+        removeExtraSpaces(`
         if (input.length > 1) {
           return true;
         };
         return input["age"].toString().includes(args.searchString)
-      `));
+      `)
+      );
     });
 
     test('nested ES6 arrow async functions with arguments', () => {
@@ -146,9 +163,11 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['x']);
       expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(
+        removeExtraSpaces(`
         return async (y) => async (z) => z(x)(y)
-      `));
+      `)
+      );
     });
 
     test('ES6 arrow function returning object in brackets', () => {
@@ -157,9 +176,11 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual([]);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(
+        removeExtraSpaces(`
         return { status: 200, body: "hello world" }
-      `));
+      `)
+      );
     });
 
     test('ES6 arrow function returning object in brackets minified without spaces', () => {
@@ -168,30 +189,34 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual([]);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(
+        removeExtraSpaces(`
         return {status: 200, body: 'hello world'}
-      `));
+      `)
+      );
     });
 
     test('ES6 arrow async function and spread arguments', () => {
-      const fn = (async (a: number, b: number, ...rest: number[]) => {
+      const fn = async (a: number, b: number, ...rest: number[]) => {
         let sum = a + b;
         for (const n of rest) {
           sum += n;
         }
         return sum;
-      });
+      };
       const result = getFunctionDetails(fn);
 
       expect(result.params).toEqual(['a', 'b', '...rest']);
       expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(
+        removeExtraSpaces(`
         let sum = a + b;
         for (const n of rest) {
           sum += n;
         };
         return sum;
-      `));
+      `)
+      );
     });
 
     test('one liner ES6 arrow function without arguments', () => {
@@ -203,7 +228,7 @@ describe('Service/Utilies', () => {
     });
 
     test('one liner ES6 arrow function with arguments', () => {
-      const fn = (input) => input ? input.lenght > 1 : false;
+      const fn = (input) => (input ? input.lenght > 1 : false);
       const result = getFunctionDetails(fn);
 
       expect(result.params).toEqual(['input']);
@@ -222,12 +247,14 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual(['input', 'args']);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`
+      expect(removeExtraSpaces(result.body)).toContain(
+        removeExtraSpaces(`
         if (input.length > 1) {
           return true;
         };
         return input["age"].toString().includes(args.searchString);
-      `));
+      `)
+      );
     });
   });
 
@@ -548,9 +575,11 @@ describe('Service/Utilies', () => {
 
       const output = deepMerge(input1, input2);
       expect(output).toEqual({
-        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        a: 1,
+        b: 2,
+        c: { x: 1, y: 2, z: 2 },
         d: [1, 1, 2, 2],
-        e: 2
+        e: 2,
       });
     });
 
@@ -561,9 +590,11 @@ describe('Service/Utilies', () => {
 
       const output = deepMerge(input1, input2, input3);
       expect(output).toEqual({
-        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        a: 1,
+        b: 2,
+        c: { x: 1, y: 2, z: 2 },
         d: [1, 1, 2, 2],
-        e: 2
+        e: 2,
       });
     });
 
@@ -574,9 +605,11 @@ describe('Service/Utilies', () => {
 
       const output = deepMerge(deepMerge(input1, input2), input3);
       expect(output).toEqual({
-        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        a: 1,
+        b: 2,
+        c: { x: 1, y: 2, z: 2 },
         d: [1, 1, 2, 2],
-        e: 2
+        e: 2,
       });
     });
   });
@@ -683,10 +716,30 @@ describe('Service/Utilies', () => {
     });
 
     it('should be able to update a property that has some properties with array as value', () => {
-      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 123, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } };
+      obj = {
+        id: 1,
+        user: {
+          firstName: 'John',
+          lastName: 'Doe',
+          addresses: [
+            { number: 123, street: 'Broadway' },
+            { number: 234, street: 'Beverly' },
+          ],
+        },
+      };
       setDeepValue(obj, 'id', 76);
       expect(obj.id).toBe(76);
-      expect(obj).toEqual({ id: 76, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 123, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } });
+      expect(obj).toEqual({
+        id: 76,
+        user: {
+          firstName: 'John',
+          lastName: 'Doe',
+          addresses: [
+            { number: 123, street: 'Broadway' },
+            { number: 234, street: 'Beverly' },
+          ],
+        },
+      });
     });
 
     it('should be able to set a property even when its original value is undefined', () => {
@@ -696,17 +749,57 @@ describe('Service/Utilies', () => {
     });
 
     it('should be able to update a property of an array inside a complex object', () => {
-      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: null, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } };
+      obj = {
+        id: 1,
+        user: {
+          firstName: 'John',
+          lastName: 'Doe',
+          addresses: [
+            { number: null, street: 'Broadway' },
+            { number: 234, street: 'Beverly' },
+          ],
+        },
+      };
       setDeepValue(obj, 'user.addresses.0.number', 111);
       expect(obj.user.addresses[0].number).toBe(111);
-      expect(obj).toEqual({ id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 111, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } });
+      expect(obj).toEqual({
+        id: 1,
+        user: {
+          firstName: 'John',
+          lastName: 'Doe',
+          addresses: [
+            { number: 111, street: 'Broadway' },
+            { number: 234, street: 'Beverly' },
+          ],
+        },
+      });
     });
 
     it('should be able to update a property of an array inside a complex object', () => {
-      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ doorNumber: 123, street: 'Broadway' }, { doorNumber: ['234-B'], street: 'Beverly' }] } };
+      obj = {
+        id: 1,
+        user: {
+          firstName: 'John',
+          lastName: 'Doe',
+          addresses: [
+            { doorNumber: 123, street: 'Broadway' },
+            { doorNumber: ['234-B'], street: 'Beverly' },
+          ],
+        },
+      };
       setDeepValue(obj, 'user.addresses.1.doorNumber', ['234-AA', '234-B']);
       expect(obj.user.addresses[1].doorNumber).toEqual(['234-AA', '234-B']);
-      expect(obj).toEqual({ id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ doorNumber: 123, street: 'Broadway' }, { doorNumber: ['234-AA', '234-B'], street: 'Beverly' }] } });
+      expect(obj).toEqual({
+        id: 1,
+        user: {
+          firstName: 'John',
+          lastName: 'Doe',
+          addresses: [
+            { doorNumber: 123, street: 'Broadway' },
+            { doorNumber: ['234-AA', '234-B'], street: 'Beverly' },
+          ],
+        },
+      });
     });
   });
 
@@ -893,7 +986,11 @@ describe('Service/Utilies', () => {
     });
 
     it('should return unique values when input array has duplicate objects', () => {
-      const collection = [{ id: 9, name: 'a', order: 3 }, { id: 22, name: 'def', order: 45 }, { id: 9, name: 'a', order: 3 }];
+      const collection = [
+        { id: 9, name: 'a', order: 3 },
+        { id: 22, name: 'def', order: 45 },
+        { id: 9, name: 'a', order: 3 },
+      ];
       const output = uniqueObjectArray(collection, 'id');
       expect(output).toHaveLength(2);
     });

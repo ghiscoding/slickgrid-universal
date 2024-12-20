@@ -15,13 +15,13 @@ const mockPubSub = {
   publish: vi.fn(),
   subscribe: (eventName, fn) => {
     const eventNames = Array.isArray(eventName) ? eventName : [eventName];
-    eventNames.forEach(eventName => fnCallbacks[eventName] = fn);
+    eventNames.forEach((eventName) => (fnCallbacks[eventName] = fn));
   },
   unsubscribe: vi.fn(),
   unsubscribeAll: vi.fn(),
 };
 vi.mock('@slickgrid-universal/event-pub-sub', () => ({
-  BasePubSubService: () => mockPubSub
+  BasePubSubService: () => mockPubSub,
 }));
 
 const backendUtilityServiceStub = {
@@ -57,13 +57,13 @@ const mockGridOption = {
     options: {
       columnDefinitions: [{ id: 'name', field: 'name' }] as Column[],
       datasetName: 'user',
-    }
+    },
   },
   pagination: {
     pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
     pageSize: 25,
-    totalItems: 85
-  }
+    totalItems: 85,
+  },
 } as GridOption;
 
 const mockGridOptionWithCursorPaginationBackend = {
@@ -75,12 +75,15 @@ const mockGridOptionWithCursorPaginationBackend = {
       columnDefinitions: [{ id: 'name', field: 'name' }] as Column[],
       datasetName: 'user',
       useCursor: true,
-    }
+    },
   },
 } as GridOption;
 
 const mockCursorPageInfo = {
-  startCursor: "b", endCursor: "c", hasNextPage: true, hasPreviousPage: true, // b-c simulates page 2
+  startCursor: 'b',
+  endCursor: 'c',
+  hasNextPage: true,
+  hasPreviousPage: true, // b-c simulates page 2
 } as CursorPageInfo;
 
 const gridStub = {
@@ -322,7 +325,7 @@ describe('PaginationService', () => {
       expect(service.dataFrom).toBe(51);
       expect(service.dataTo).toBe(75);
       expect(service.getCurrentPageNumber()).toBe(3);
-      expect(spy).toHaveBeenCalledWith(3, undefined, { first: 25, after: "c", newPage: 3, pageSize: 25 });
+      expect(spy).toHaveBeenCalledWith(3, undefined, { first: 25, after: 'c', newPage: 3, pageSize: 25 });
     });
 
     it('should expect page to increment by 1 and "processOnPageChanged" method NOT to be called', () => {
@@ -372,7 +375,7 @@ describe('PaginationService', () => {
       expect(service.dataFrom).toBe(1);
       expect(service.dataTo).toBe(25);
       expect(service.getCurrentPageNumber()).toBe(1);
-      expect(spy).toHaveBeenCalledWith(1, undefined, { last: 25, before: "b", newPage: 1, pageSize: 25 });
+      expect(spy).toHaveBeenCalledWith(1, undefined, { last: 25, before: 'b', newPage: 1, pageSize: 25 });
     });
 
     it('should expect page to decrement by 1 and "processOnPageChanged" method NOT to be called', () => {
@@ -589,7 +592,13 @@ describe('PaginationService', () => {
 
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 25, pageNum: 0 });
       expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
-        dataFrom: 26, dataTo: 50, pageSize: 25, pageCount: 4, pageNumber: 2, totalItems: 85, pageSizes: mockGridOption.pagination!.pageSizes,
+        dataFrom: 26,
+        dataTo: 50,
+        pageSize: 25,
+        pageCount: 4,
+        pageNumber: 2,
+        totalItems: 85,
+        pageSizes: mockGridOption.pagination!.pageSizes,
       });
     });
   });
@@ -640,7 +649,7 @@ describe('PaginationService', () => {
         options: {
           columnDefinitions: [{ id: 'name', field: 'name' }] as Column[],
           datasetName: 'user',
-        }
+        },
       };
     });
 
@@ -648,16 +657,17 @@ describe('PaginationService', () => {
       vi.clearAllMocks();
     });
 
-    it('should throw an error when backendServiceApi is defined without a "process" method', () => new Promise((done: any) => {
-      try {
-        mockGridOption.backendServiceApi = {} as BackendServiceApi;
-        service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-        service.refreshPagination();
-      } catch (e) {
-        expect(e.toString()).toContain(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);
-        done();
-      }
-    }));
+    it('should throw an error when backendServiceApi is defined without a "process" method', () =>
+      new Promise((done: any) => {
+        try {
+          mockGridOption.backendServiceApi = {} as BackendServiceApi;
+          service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+          service.refreshPagination();
+        } catch (e) {
+          expect(e.toString()).toContain(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);
+          done();
+        }
+      }));
 
     it('should call refreshPagination when "onFilterCleared" is triggered and Pagination is enabled', () => {
       const resetSpy = vi.spyOn(service, 'resetPagination');
@@ -679,7 +689,13 @@ describe('PaginationService', () => {
       fnCallbacks['onFilterChanged']({ columnId: 'field1', operator: '=', searchTerms: [] });
 
       expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
-        dataFrom: 1, dataTo: 25, pageCount: 4, pageNumber: 1, pageSize: 25, pageSizes: [5, 10, 15, 20], totalItems: 85
+        dataFrom: 1,
+        dataTo: 25,
+        pageCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        pageSizes: [5, 10, 15, 20],
+        totalItems: 85,
       });
       expect(resetSpy).toHaveBeenCalled();
       expect(refreshSpy).toHaveBeenCalledWith(true, true);
@@ -809,7 +825,13 @@ describe('PaginationService', () => {
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
       expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
-        dataFrom: 26, dataTo: (50 + 1), pageSize: 25, pageCount: 4, pageNumber: 2, totalItems: (85 + 1), pageSizes: mockGridOption.pagination!.pageSizes
+        dataFrom: 26,
+        dataTo: 50 + 1,
+        pageSize: 25,
+        pageCount: 4,
+        pageNumber: 2,
+        totalItems: 85 + 1,
+        pageSizes: mockGridOption.pagination!.pageSizes,
       });
       expect(service.dataFrom).toBe(26);
       expect(service.dataTo).toBe(50 + 1);
@@ -825,7 +847,13 @@ describe('PaginationService', () => {
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
       expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
-        dataFrom: 26, dataTo: (50 + mockItems.length), pageSize: 25, pageCount: 4, pageNumber: 2, totalItems: (85 + mockItems.length), pageSizes: mockGridOption.pagination!.pageSizes
+        dataFrom: 26,
+        dataTo: 50 + mockItems.length,
+        pageSize: 25,
+        pageCount: 4,
+        pageNumber: 2,
+        totalItems: 85 + mockItems.length,
+        pageSizes: mockGridOption.pagination!.pageSizes,
       });
       expect(service.dataFrom).toBe(26);
       expect(service.dataTo).toBe(50 + mockItems.length);
@@ -853,7 +881,13 @@ describe('PaginationService', () => {
       // called 2x times by init() then by processOnItemAddedOrRemoved()
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
       expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
-        dataFrom: 26, dataTo: (50 - 1), pageSize: 25, pageCount: 4, pageNumber: 2, totalItems: (85 - 1), pageSizes: mockGridOption.pagination!.pageSizes
+        dataFrom: 26,
+        dataTo: 50 - 1,
+        pageSize: 25,
+        pageCount: 4,
+        pageNumber: 2,
+        totalItems: 85 - 1,
+        pageSizes: mockGridOption.pagination!.pageSizes,
       });
       expect(service.dataFrom).toBe(26);
       expect(service.dataTo).toBe(50 - 1);
@@ -869,7 +903,13 @@ describe('PaginationService', () => {
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2); // called 2x times by init() then by processOnItemAddedOrRemoved()
       expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
-        dataFrom: 26, dataTo: (50 - mockItems.length), pageSize: 25, pageCount: 4, pageNumber: 2, totalItems: (85 - mockItems.length), pageSizes: mockGridOption.pagination!.pageSizes
+        dataFrom: 26,
+        dataTo: 50 - mockItems.length,
+        pageSize: 25,
+        pageCount: 4,
+        pageNumber: 2,
+        totalItems: 85 - mockItems.length,
+        pageSizes: mockGridOption.pagination!.pageSizes,
       });
     });
 
@@ -975,7 +1015,7 @@ describe('PaginationService', () => {
     it('should trigger "onShowPaginationChanged" without calling the DataView when using Backend Services', () => {
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const setPagingSpy = vi.spyOn(dataviewStub, 'setPagingOptions');
-      const expectedPagination = { dataFrom: 26, dataTo: 50, pageCount: 4, pageNumber: 2, pageSize: 25, pageSizes: [5, 10, 15, 20,], totalItems: 85, };
+      const expectedPagination = { dataFrom: 26, dataTo: 50, pageCount: 4, pageNumber: 2, pageSize: 25, pageSizes: [5, 10, 15, 20], totalItems: 85 };
       mockGridOption.backendServiceApi = {
         service: mockBackendService,
         process: vi.fn(),

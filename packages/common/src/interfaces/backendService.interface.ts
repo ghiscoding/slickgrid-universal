@@ -34,7 +34,12 @@ export interface BackendService {
   clearSorters?: () => void;
 
   /** initialize the backend service with certain options */
-  init?: (serviceOptions?: BackendServiceOption | any, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService) => void;
+  init?: (
+    serviceOptions?: BackendServiceOption | any,
+    pagination?: Pagination,
+    grid?: SlickGrid,
+    sharedService?: SharedService
+  ) => void;
 
   /** Get the dataset name */
   getDatasetName?: () => string;
@@ -71,7 +76,10 @@ export interface BackendService {
   processOnFilterChanged: (event: Event | KeyboardEvent | undefined, args: FilterChangedArgs) => string;
 
   /** Execute when the pagination changed */
-  processOnPaginationChanged: (event: Event | undefined, args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)) => string;
+  processOnPaginationChanged: (
+    event: Event | undefined,
+    args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)
+  ) => string;
 
   /** Execute when any of the sorters changed */
   processOnSortChanged: (event: Event | undefined, args: SingleColumnSort | MultiColumnSort) => string;

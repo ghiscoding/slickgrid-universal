@@ -11,8 +11,11 @@ describe('the CollectionEditor Formatter', () => {
     columnDef = {
       editor: {
         model: Editors.singleSelect,
-        collection: [{ value: 1, label: 'foo' }, { value: 2, label: 'bar' }]
-      }
+        collection: [
+          { value: 1, label: 'foo' },
+          { value: 2, label: 'bar' },
+        ],
+      },
     } as unknown as Column;
     columnDef.editorClass = columnDef.editor?.model;
   });
@@ -54,7 +57,10 @@ describe('the CollectionEditor Formatter', () => {
 
   it('should return a CSV string when provided collection is an array of objects', () => {
     const valueArray = [1, 2];
-    columnDef.editor!.collection = [{ id: 1, name: 'John' }, { id: 2, name: 'Bob' }];
+    columnDef.editor!.collection = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Bob' },
+    ];
     columnDef.editor!.customStructure = { label: 'name', value: 'id' };
 
     const result = collectionEditorFormatter(0, 0, valueArray, columnDef, {}, {} as any);

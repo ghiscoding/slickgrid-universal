@@ -1,7 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { type FilterService, GridService, type GridStateService, type PaginationService, SharedService, type SortService, type TreeDataService } from '../index.js';
+import {
+  type FilterService,
+  GridService,
+  type GridStateService,
+  type PaginationService,
+  SharedService,
+  type SortService,
+  type TreeDataService,
+} from '../index.js';
 import type { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index.js';
 import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index.js';
@@ -109,7 +117,15 @@ describe('Grid Service', () => {
   vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
-    service = new GridService(gridStateServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub, treeDataServiceStub);
+    service = new GridService(
+      gridStateServiceStub,
+      filterServiceStub,
+      pubSubServiceStub,
+      paginationServiceStub,
+      sharedService,
+      sortServiceStub,
+      treeDataServiceStub
+    );
     service.init(gridStub);
   });
 
@@ -137,7 +153,10 @@ describe('Grid Service', () => {
 
   describe('getAllColumnDefinitions method', () => {
     it('should call "allColumns" GETTER ', () => {
-      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const mockColumns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       const getSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
 
       const output = service.getAllColumnDefinitions();
@@ -149,7 +168,10 @@ describe('Grid Service', () => {
 
   describe('getVisibleColumnDefinitions method', () => {
     it('should call "visibleColumns" GETTER ', () => {
-      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const mockColumns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       const getSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(mockColumns);
 
       const output = service.getVisibleColumnDefinitions();
@@ -169,7 +191,9 @@ describe('Grid Service', () => {
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
-      expect(() => service.upsertItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "id" property');
+      expect(() => service.upsertItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "id" property'
+      );
     });
 
     it('should expect the service to call the "addItem" when calling "upsertItem" with the item not being found in the grid', () => {
@@ -183,14 +207,24 @@ describe('Grid Service', () => {
       expect(upsertRow).toEqual({ added: 0, updated: undefined });
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(dataviewSpy).toHaveBeenCalledWith(0);
-      expect(addSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
+      expect(addSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: true,
+        position: 'top',
+        resortGrid: false,
+        selectRow: false,
+        scrollRowIntoView: false,
+        skipError: false,
+        triggerEvent: true,
+      });
       expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpserted`, mockItem);
     });
 
     it('should expect the service to call the DataView "addItem" when calling "upsertItem" with an item and the option "position" set to "bottom"', () => {
       const expectationNewRowPosition = 1000;
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(undefined as any).mockReturnValueOnce(expectationNewRowPosition);
+      vi.spyOn(dataviewStub, 'getRowById')
+        .mockReturnValueOnce(undefined as any)
+        .mockReturnValueOnce(expectationNewRowPosition);
       const addSpy = vi.spyOn(dataviewStub, 'addItem');
       const scrollSpy = vi.spyOn(gridStub, 'scrollRowIntoView');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -205,8 +239,17 @@ describe('Grid Service', () => {
     });
 
     it('should expect the service to call the "updateItem" multiple times when calling "upsertItems" with the items found in the grid', () => {
-      const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(1);
+      const mockItems = [
+        { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
+        { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
+      ];
+      const dataviewSpy = vi
+        .spyOn(dataviewStub, 'getRowById')
+        .mockReturnValue(0)
+        .mockReturnValueOnce(0)
+        .mockReturnValueOnce(0)
+        .mockReturnValueOnce(1)
+        .mockReturnValueOnce(1);
       const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
@@ -217,20 +260,48 @@ describe('Grid Service', () => {
 
       expect(beginUpdateSpy).toHaveBeenCalled();
       expect(endUpdateSpy).toHaveBeenCalled();
-      expect(upsertRows).toEqual([{ added: undefined as any, updated: 0 }, { added: undefined as any, updated: 1 }]);
+      expect(upsertRows).toEqual([
+        { added: undefined as any, updated: 0 },
+        { added: undefined as any, updated: 1 },
+      ]);
       expect(dataviewSpy).toHaveBeenCalledTimes(4); // called 4x times, 2x by the upsert itself and 2x by the updateItem
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(2);
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], { highlightRow: false, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: false });
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], { highlightRow: false, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], {
+        highlightRow: false,
+        resortGrid: false,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], {
+        highlightRow: false,
+        resortGrid: false,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 1]);
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onItemUpserted`, mockItems);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onItemUpdated`, [{ added: undefined as any, updated: 0 }, { added: undefined as any, updated: 1 }]);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onItemUpdated`, [
+        { added: undefined as any, updated: 0 },
+        { added: undefined as any, updated: 1 },
+      ]);
     });
 
     it('should expect the service to call both "addItem" and "updateItem" when calling "upsertItems" with first item found but second not found', () => {
-      const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
+      const mockItems = [
+        { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
+        { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
+      ];
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
-      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any).mockReturnValueOnce(undefined as any).mockReturnValueOnce(15).mockReturnValueOnce(15);
+      const dataviewSpy = vi
+        .spyOn(dataviewStub, 'getRowById')
+        .mockReturnValue(undefined as any)
+        .mockReturnValueOnce(undefined as any)
+        .mockReturnValueOnce(15)
+        .mockReturnValueOnce(15);
       const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
@@ -242,11 +313,28 @@ describe('Grid Service', () => {
 
       expect(beginUpdateSpy).toHaveBeenCalled();
       expect(endUpdateSpy).toHaveBeenCalled();
-      expect(upsertRows).toEqual([{ added: 0, updated: undefined }, { added: undefined as any, updated: 15 }]);
+      expect(upsertRows).toEqual([
+        { added: 0, updated: undefined },
+        { added: undefined as any, updated: 15 },
+      ]);
       expect(dataviewSpy).toHaveBeenCalledTimes(3); // called 4x times, 2x by the upsert itself and 2x by the updateItem
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(2);
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], { highlightRow: false, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: false });
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], { highlightRow: false, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], {
+        highlightRow: false,
+        resortGrid: false,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], {
+        highlightRow: false,
+        resortGrid: false,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 15]);
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onItemUpserted`, mockItems);
       expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onItemAdded`, [{ added: 0, updated: undefined }]);
@@ -256,7 +344,13 @@ describe('Grid Service', () => {
 
     it('should expect the service to call the "upsertItem" when calling "upsertItems" with a single item object and without triggering an event', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(1);
+      const dataviewSpy = vi
+        .spyOn(dataviewStub, 'getRowById')
+        .mockReturnValue(0)
+        .mockReturnValueOnce(0)
+        .mockReturnValueOnce(0)
+        .mockReturnValueOnce(1)
+        .mockReturnValueOnce(1);
       const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
@@ -271,7 +365,14 @@ describe('Grid Service', () => {
       expect(upsertRows).toEqual([{ added: undefined as any, updated: 0 }]);
       expect(dataviewSpy).toHaveBeenCalledTimes(2);
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(1);
-      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, resortGrid: true, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: true,
+        resortGrid: true,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledTimes(0);
       expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemUpserted`, mockItem);
@@ -294,19 +395,30 @@ describe('Grid Service', () => {
       expect(endUpdateSpy).toHaveBeenCalled();
       expect(dataviewSpy).toHaveBeenCalledTimes(2);
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(1);
-      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: false,
+        resortGrid: false,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
       expect(serviceHighlightSpy).toHaveBeenCalled();
       expect(selectSpy).toHaveBeenCalledWith([1]);
     });
 
     it('should throw an error when calling "upsertItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      expect(() => service.upsertItemById(undefined as any, mockItem)).toThrow('[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property');
+      expect(() => service.upsertItemById(undefined as any, mockItem)).toThrow(
+        '[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property'
+      );
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "upsertItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      expect(() => service.upsertItemById(undefined as any, mockItem, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property');
+      expect(() => service.upsertItemById(undefined as any, mockItem, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property'
+      );
     });
 
     it('should call the "upsertItemById" method and expect it to call the "addItem" with default boolean flags', () => {
@@ -320,7 +432,14 @@ describe('Grid Service', () => {
 
       expect(dataviewSpy).toHaveBeenCalledWith(0);
       expect(serviceAddItemSpy).toHaveBeenCalled();
-      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: true });
+      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: true,
+        resortGrid: false,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: true,
+      });
       expect(serviceHighlightSpy).toHaveBeenCalledWith(0);
       expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpserted`, mockItem);
     });
@@ -336,7 +455,14 @@ describe('Grid Service', () => {
 
       expect(dataviewSpy).toHaveBeenCalledWith(0);
       expect(serviceAddItemSpy).toHaveBeenCalled();
-      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, resortGrid: true, selectRow: true, scrollRowIntoView: true, skipError: false, triggerEvent: false });
+      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: false,
+        resortGrid: true,
+        selectRow: true,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemUpserted`, mockItem);
     });
@@ -370,7 +496,9 @@ describe('Grid Service', () => {
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
-      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "id" property');
+      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Calling Update of an item requires the item to include an "id" property'
+      );
     });
 
     it('should expect the service to call the "updateItemById" when calling "updateItem"', () => {
@@ -387,7 +515,13 @@ describe('Grid Service', () => {
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
       expect(serviceHighlightSpy).toHaveBeenCalled();
-      expect(updateSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
+      expect(updateSpy).toHaveBeenCalledWith(mockItem.id, mockItem, {
+        highlightRow: true,
+        selectRow: false,
+        scrollRowIntoView: false,
+        skipError: false,
+        triggerEvent: true,
+      });
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
 
@@ -442,7 +576,13 @@ describe('Grid Service', () => {
       expect(getRowIdSpy).toHaveBeenCalledTimes(1);
       expect(getRowIndexSpy).toHaveBeenCalledTimes(1);
       expect(serviceUpdateSpy).toHaveBeenCalledTimes(1);
-      expect(serviceUpdateSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
+      expect(serviceUpdateSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: true,
+        selectRow: false,
+        scrollRowIntoView: false,
+        skipError: false,
+        triggerEvent: true,
+      });
       expect(serviceHighlightSpy).toHaveBeenCalledWith(0);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
@@ -489,7 +629,13 @@ describe('Grid Service', () => {
       expect(getRowIndexSpy).toHaveBeenCalledWith(mockItemId);
       expect(scrollSpy).toHaveBeenCalledWith(mockRowNumber);
       expect(updateByIdSpy).toHaveBeenCalled();
-      expect(updateByIdSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: false, selectRow: true, scrollRowIntoView: true, skipError: false, triggerEvent: true });
+      expect(updateByIdSpy).toHaveBeenCalledWith(mockItem.id, mockItem, {
+        highlightRow: false,
+        selectRow: true,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: true,
+      });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
@@ -507,7 +653,13 @@ describe('Grid Service', () => {
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
-      expect(updateSpy).toHaveBeenCalledWith(mockItem.customId, mockItem, { highlightRow: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
+      expect(updateSpy).toHaveBeenCalledWith(mockItem.customId, mockItem, {
+        highlightRow: false,
+        selectRow: false,
+        scrollRowIntoView: false,
+        skipError: false,
+        triggerEvent: true,
+      });
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
 
       delete mockGridOptions.datasetIdPropertyName;
@@ -526,18 +678,24 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      expect(() => service.updateItemById(undefined as any, mockItem, { skipError: true })).not.toThrow('[Slickgrid-Universal] Cannot update a row without a valid "id"');
+      expect(() => service.updateItemById(undefined as any, mockItem, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Cannot update a row without a valid "id"'
+      );
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" and not finding the item in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
-      expect(() => service.updateItemById(5, mockItem, { skipError: true })).not.toThrow('[Slickgrid-Universal] The item to update in the grid was not found with id: 5');
+      expect(() => service.updateItemById(5, mockItem, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] The item to update in the grid was not found with id: 5'
+      );
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.updateItem(null as any)).toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
+      expect(() => service.updateItem(null as any)).toThrow(
+        '[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property'
+      );
 
       // reset mock
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -545,7 +703,9 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property');
+      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Calling Update of an item requires the item to include an "customId" property'
+      );
 
       // reset mock
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -555,11 +715,17 @@ describe('Grid Service', () => {
       const mockUpdatedItem = { id: 1, file: 'vacation.txt', size: 2.2, parentId: 0 };
       const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockUpdatedItem];
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockUpdatedItem] }];
-      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+      const mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
 
       vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({
+        flat: mockFlatDataset as any[],
+        hierarchical: mockHierarchical as any[],
+      });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
@@ -580,11 +746,17 @@ describe('Grid Service', () => {
       const mockUpdatedItem = { id: 1, file: 'vacation.txt', size: 2.2, parentId: 0 };
       const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockUpdatedItem];
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockUpdatedItem] }];
-      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+      const mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
 
       vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({
+        flat: mockFlatDataset as any[],
+        hierarchical: mockHierarchical as any[],
+      });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
@@ -625,8 +797,12 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing or "id" is missing', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
-      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "id" property');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Adding an item requires the item to include an "id" property'
+      );
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Adding an item requires the item to include an "id" property'
+      );
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
@@ -640,8 +816,12 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
-      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Adding an item requires the item to include an "customId" property'
+      );
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Adding an item requires the item to include an "customId" property'
+      );
 
       // reset mock
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -649,7 +829,9 @@ describe('Grid Service', () => {
 
     it('should throw an error when addItem and a position is provided when used with Tree Data', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true } as GridOption);
-      expect(() => service.addItem({ id: 0, user: 'John' }, { position: 'top' })).toThrow('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.');
+      expect(() => service.addItem({ id: 0, user: 'John' }, { position: 'top' })).toThrow(
+        '[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.'
+      );
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({}); // reset mock
     });
 
@@ -772,7 +954,10 @@ describe('Grid Service', () => {
     });
 
     it('should expect to call the DataView "insertItems" once when calling the service "addItems" with an array of items and no position is provided (defaults to insert "top")', () => {
-      const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
+      const mockItems = [
+        { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
+        { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
+      ];
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(0).mockReturnValueOnce(1);
       const insertItemsSpy = vi.spyOn(dataviewStub, 'insertItems');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
@@ -794,10 +979,11 @@ describe('Grid Service', () => {
     it('should expect to call the DataView "addItems" once when calling the service "addItems" with an array of items and the option "position" set to "bottom"', () => {
       const expectationNewRowPosition1 = 1000;
       const expectationNewRowPosition2 = 1001;
-      const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
-      vi.spyOn(dataviewStub, 'getRowById')
-        .mockReturnValueOnce(expectationNewRowPosition1)
-        .mockReturnValueOnce(expectationNewRowPosition2);
+      const mockItems = [
+        { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
+        { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
+      ];
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(expectationNewRowPosition1).mockReturnValueOnce(expectationNewRowPosition2);
       const addItemsSpy = vi.spyOn(dataviewStub, 'addItems');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
@@ -828,7 +1014,14 @@ describe('Grid Service', () => {
       expect(beginUpdateSpy).not.toHaveBeenCalled();
       expect(endUpdateSpy).not.toHaveBeenCalled();
       expect(serviceAddSpy).toHaveBeenCalledTimes(1);
-      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, selectRow: false, resortGrid: false, scrollRowIntoView: true, skipError: false, triggerEvent: true });
+      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: true,
+        selectRow: false,
+        resortGrid: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: true,
+      });
       expect(serviceHighlightSpy).toHaveBeenCalledTimes(1);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
     });
@@ -848,13 +1041,23 @@ describe('Grid Service', () => {
       expect(endUpdateSpy).not.toHaveBeenCalled();
       expect(serviceAddSpy).toHaveBeenCalled();
       expect(resortSpy).toHaveBeenCalled();
-      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, resortGrid: true, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: false });
+      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, {
+        highlightRow: false,
+        resortGrid: true,
+        selectRow: false,
+        scrollRowIntoView: true,
+        skipError: false,
+        triggerEvent: false,
+      });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemAdded`);
     });
 
     it('should add a single item by calling "addItems" method and expect to call a grid resort & highlight but without triggering an event', () => {
-      const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
+      const mockItems = [
+        { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
+        { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
+      ];
       const insertItemsSpy = vi.spyOn(dataviewStub, 'insertItems');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
@@ -900,7 +1103,7 @@ describe('Grid Service', () => {
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({
         enableRowSelection: true,
-        selectRow: true
+        selectRow: true,
       } as GridOption);
       const addSpy = vi.spyOn(dataviewStub, 'insertItem');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
@@ -947,12 +1150,18 @@ describe('Grid Service', () => {
       const mockItem = { id: 3, file: 'blah.txt', size: 2, parentId: 0 };
       const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockItem];
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
-      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+      const mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
 
       vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
       vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
-      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({
+        flat: mockFlatDataset as any[],
+        hierarchical: mockHierarchical as any[],
+      });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
@@ -975,12 +1184,18 @@ describe('Grid Service', () => {
       const mockItem = { id: 3, file: 'blah.txt', size: 2, parentId: 0 };
       const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockItem];
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
-      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+      const mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
 
       vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
       vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: false }]);
-      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({
+        flat: mockFlatDataset as any[],
+        hierarchical: mockHierarchical as any[],
+      });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
@@ -1003,12 +1218,18 @@ describe('Grid Service', () => {
       const mockItem = { id: 3, file: 'blah.txt', size: 2, parentId: 0 };
       const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockItem];
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
-      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+      const mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
 
       vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
       vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
-      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({
+        flat: mockFlatDataset as any[],
+        hierarchical: mockHierarchical as any[],
+      });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
@@ -1031,12 +1252,18 @@ describe('Grid Service', () => {
       const mockItem = { id: 3, file: 'blah.txt', size: 2, parentId: 0 };
       const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockItem];
       const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
-      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+      const mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
 
       vi.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
       vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce([{ columnId: 'title', sortCol: mockColumns[0], sortAsc: true }]);
-      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({
+        flat: mockFlatDataset as any[],
+        hierarchical: mockHierarchical as any[],
+      });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
@@ -1067,8 +1294,12 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
-      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Adding an item requires the item to include an "customId" property'
+      );
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Adding an item requires the item to include an "customId" property'
+      );
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
@@ -1083,8 +1314,12 @@ describe('Grid Service', () => {
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "deleteItem" method and 1st argument for the item object is missing or "id" is missing', () => {
-      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
-      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "id" property');
+      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Deleting an item requires the item to include an "id" property'
+      );
+      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Deleting an item requires the item to include an "id" property'
+      );
     });
 
     it('should throw an error when calling "deleteItemById" without a valid "id" as argument', () => {
@@ -1141,7 +1376,10 @@ describe('Grid Service', () => {
     });
 
     it('should expect the service to call the DataView "deleteItems" once with array of item Ids when calling "deleteItems" with an array of items', () => {
-      const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
+      const mockItems = [
+        { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
+        { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
+      ];
       const deleteItemsSpy = vi.spyOn(dataviewStub, 'deleteItems');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
       const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
@@ -1192,7 +1430,10 @@ describe('Grid Service', () => {
     });
 
     it('should delete multiple items by calling "deleteItems" method and expect to trigger a single an event', () => {
-      const mockItems = [{ id: 0, user: { firstName: 'John', lastName: 'Doe' } }, { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } }];
+      const mockItems = [
+        { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
+        { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
+      ];
       const deleteItemsSpy = vi.spyOn(dataviewStub, 'deleteItems');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
       const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
@@ -1277,8 +1518,12 @@ describe('Grid Service', () => {
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
-      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
-      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrow('[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property');
+      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property'
+      );
+      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrow(
+        '[Slickgrid-Universal] Deleting an item requires the item to include an "customId" property'
+      );
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;
@@ -1299,7 +1544,10 @@ describe('Grid Service', () => {
   });
 
   describe('Pinning methods', () => {
-    const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
+    const columnsMock: Column[] = [
+      { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
+      { id: 'field2', field: 'field2', width: 75 },
+    ];
 
     it('should call "clearPinning" and expect SlickGrid "setOptions" and "setColumns" to be called with frozen options being reset', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
@@ -1366,22 +1614,28 @@ describe('Grid Service', () => {
   describe('getColumnFromEventArguments method', () => {
     it('should throw an error when slickgrid getColumns method is not available', () => {
       gridStub.getColumns = undefined as any;
-      expect(() => service.getColumnFromEventArguments({} as CellArgs))
-        .toThrow('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
+      expect(() => service.getColumnFromEventArguments({} as CellArgs)).toThrow(
+        '[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)'
+      );
 
       gridStub.getColumns = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should throw an error when slickgrid getDataItem method is not available', () => {
       gridStub.getDataItem = undefined as any;
-      expect(() => service.getColumnFromEventArguments({} as CellArgs))
-        .toThrow('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
+      expect(() => service.getColumnFromEventArguments({} as CellArgs)).toThrow(
+        '[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)'
+      );
 
       gridStub.getDataItem = vi.fn(); // put it back as a valid mock for later tests
     });
 
     it('should return an object including all extra properties', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       const mockItem = { id: 3, user: { firstName: 'John', lastName: 'Doe' } };
       const args = { row: 3, cell: 1, grid: gridStub } as CellArgs;
       const mockOutput = { row: 3, cell: 1, columnDef: mockColumns[1], dataContext: mockItem, dataView: dataviewStub, grid: gridStub } as OnEventArgs;
@@ -1420,8 +1674,7 @@ describe('Grid Service', () => {
 
     it('should throw an error when the grid "getDataItem" method is not available', () => {
       gridStub.getDataItem = undefined as any;
-      expect(() => service.getDataItemByRowIndex(0))
-        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
+      expect(() => service.getDataItemByRowIndex(0)).toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
     });
 
     it('should return data item object when method is called', () => {
@@ -1442,18 +1695,24 @@ describe('Grid Service', () => {
 
     it('should throw an error when the grid "getDataItem" method is not available', () => {
       gridStub.getDataItem = undefined as any;
-      expect(() => service.getDataItemByRowIndexes([0]))
-        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
+      expect(() => service.getDataItemByRowIndexes([0])).toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
     });
 
     it('should return data item object when method is called', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       const spy = vi.spyOn(gridStub, 'getDataItem').mockReturnValueOnce(mockColumns[0]).mockReturnValueOnce(mockColumns[2]);
 
       const output = service.getDataItemByRowIndexes([0, 2]);
 
       expect(spy).toHaveBeenCalled();
-      expect(output).toEqual([{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }]);
+      expect(output).toEqual([
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ]);
     });
   });
 
@@ -1464,8 +1723,7 @@ describe('Grid Service', () => {
 
     it('should throw an error when the grid "getSelectedRows" method is not available', () => {
       gridStub.getSelectedRows = undefined as any;
-      expect(() => service.getSelectedRows())
-        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+      expect(() => service.getSelectedRows()).toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
     });
 
     it('should return selected row indexes', () => {
@@ -1484,12 +1742,14 @@ describe('Grid Service', () => {
 
     it('should throw an error when the grid "getSelectedRows" method is not available', () => {
       gridStub.getSelectedRows = undefined as any;
-      expect(() => service.getSelectedRowsDataItem())
-        .toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+      expect(() => service.getSelectedRowsDataItem()).toThrow('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
     });
 
     it('should return selected row indexes', () => {
-      const mockSelectedColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockSelectedColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       const gridSpy = vi.spyOn(sharedService.slickGrid, 'getSelectedRows').mockReturnValue([0, 2]);
       const serviceSpy = vi.spyOn(service, 'getDataItemByRowIndexes').mockReturnValue(mockSelectedColumns);
 
@@ -1503,7 +1763,11 @@ describe('Grid Service', () => {
 
   describe('hideColumnById method', () => {
     it('should return -1 when the column id is not found in the list of loaded column definitions', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const setColSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -1514,8 +1778,15 @@ describe('Grid Service', () => {
     });
 
     it('should set new columns minus the column to hide and it should keep new set as the new "visibleColumns"', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
+      const mockWithoutColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
@@ -1534,8 +1805,15 @@ describe('Grid Service', () => {
     });
 
     it('should set new columns minus the column to hide but without triggering an event when set to False', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
+      const mockWithoutColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
@@ -1551,8 +1829,15 @@ describe('Grid Service', () => {
     });
 
     it('should set new columns minus the column to hide but without resize the columns when "autoResizeColumns" is set to False', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
+      const mockWithoutColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
@@ -1568,8 +1853,15 @@ describe('Grid Service', () => {
     });
 
     it('should set new columns minus the column to hide AND also hide the column from the column picker when "hideFromColumnPicker" is set to False', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
+      const mockWithoutColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
@@ -1580,13 +1872,24 @@ describe('Grid Service', () => {
 
       expect(autoSizeSpy).toHaveBeenCalled();
       expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
-      expect(mockColumns).toEqual([{ id: 'field1', width: 100 }, { id: 'field2', width: 150, excludeFromColumnPicker: true }, { id: 'field3', field: 'field3' }]);
+      expect(mockColumns).toEqual([
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150, excludeFromColumnPicker: true },
+        { id: 'field3', field: 'field3' },
+      ]);
       expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
     });
 
     it('should set new columns minus the column to hide AND also hide the column from the column picker when "hideFromColumnPicker" is set to False', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
-      const mockWithoutColumns = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
+      const mockWithoutColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
@@ -1597,14 +1900,22 @@ describe('Grid Service', () => {
 
       expect(autoSizeSpy).not.toHaveBeenCalled();
       expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
-      expect(mockColumns).toEqual([{ id: 'field1', width: 100 }, { id: 'field2', width: 150, excludeFromGridMenu: true }, { id: 'field3', field: 'field3' }]);
+      expect(mockColumns).toEqual([
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150, excludeFromGridMenu: true },
+        { id: 'field3', field: 'field3' },
+      ]);
       expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
     });
   });
 
   describe('hideColumnByIds method', () => {
     it('should loop through the Ids provided and call hideColumnById on each of them with same options', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1614,8 +1925,20 @@ describe('Grid Service', () => {
       service.hideColumnByIds(['field2', 'field3']);
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: false,
+        hideFromGridMenu: false,
+        triggerEvent: false,
+      });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: false,
+        hideFromGridMenu: false,
+        triggerEvent: false,
+      });
       expect(autoSizeSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: expect.any(Array) });
       expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: expect.any(Array) });
@@ -1623,7 +1946,11 @@ describe('Grid Service', () => {
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options BUT not auto size columns neither trigger when both are disabled', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1633,41 +1960,89 @@ describe('Grid Service', () => {
       service.hideColumnByIds(['field2', 'field3'], { autoResizeColumns: false, triggerEvent: false });
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: false,
+        hideFromGridMenu: false,
+        triggerEvent: false,
+      });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: false,
+        hideFromGridMenu: false,
+        triggerEvent: false,
+      });
       expect(autoSizeSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).not.toHaveBeenCalled();
       expect(setColSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options and hide from column picker when "hideFromColumnPicker" is enabled', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
 
       service.hideColumnByIds(['field2', 'field3'], { hideFromColumnPicker: true });
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: true,
+        hideFromGridMenu: false,
+        triggerEvent: false,
+      });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: true,
+        hideFromGridMenu: false,
+        triggerEvent: false,
+      });
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options and hide from column picker when "hideFromColumnPicker" is enabled', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
 
       service.hideColumnByIds(['field2', 'field3'], { hideFromGridMenu: true });
 
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: true, triggerEvent: false });
-      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', { applySetColumns: false, autoResizeColumns: false, hideFromColumnPicker: false, hideFromGridMenu: true, triggerEvent: false });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: false,
+        hideFromGridMenu: true,
+        triggerEvent: false,
+      });
+      expect(hideByIdSpy).toHaveBeenNthCalledWith(2, 'field3', {
+        applySetColumns: false,
+        autoResizeColumns: false,
+        hideFromColumnPicker: false,
+        hideFromGridMenu: true,
+        triggerEvent: false,
+      });
     });
   });
 
   describe('showColumnByIds method', () => {
     it('should loop through the Ids provided and call setColumns() with columns found from allColumns reference', () => {
-      const mockAllColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockAllColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockAllColumns);
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const setColSpy = vi.spyOn(gridStub, 'setColumns');
@@ -1712,7 +2087,11 @@ describe('Grid Service', () => {
 
   describe('resetGrid method', () => {
     it('should call a reset and expect a few grid methods to be called', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
       const allColumnSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setColSpy = vi.spyOn(gridStub, 'setColumns');
@@ -1734,7 +2113,11 @@ describe('Grid Service', () => {
     });
 
     it('should call a reset and expect the grid "resetColumns" method to be called with the column definitions provided to the method', () => {
-      const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
+      const mockColumns = [
+        { id: 'field1', width: 100 },
+        { id: 'field2', width: 150 },
+        { id: 'field3', field: 'field3' },
+      ] as Column[];
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
       const allColumnSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setColSpy = vi.spyOn(gridStub, 'setColumns');

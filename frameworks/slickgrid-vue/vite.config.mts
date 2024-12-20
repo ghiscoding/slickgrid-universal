@@ -14,14 +14,14 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       rollupTypes: process.env.NODE_ENV !== 'development',
-      tsconfigPath: './tsconfig.app.json'
-    })
+      tsconfigPath: './tsconfig.app.json',
+    }),
   ],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       formats: ['es'],
-      fileName: format => format === 'cjs' ? 'index.cjs' : 'index.mjs',
+      fileName: (format) => (format === 'cjs' ? 'index.cjs' : 'index.mjs'),
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
@@ -51,5 +51,5 @@ export default defineConfig({
   server: {
     open: true,
     cors: true,
-  }
+  },
 });

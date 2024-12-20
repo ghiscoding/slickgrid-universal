@@ -23,9 +23,28 @@ import type { TreeDataService } from './treeData.service.js';
 import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js';
 
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
-const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: true };
-const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true };
-const HideColumnOptionDefaults: HideColumnOption = { applySetColumns: true, autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
+const GridServiceInsertOptionDefaults: GridServiceInsertOption = {
+  highlightRow: true,
+  resortGrid: false,
+  selectRow: false,
+  scrollRowIntoView: true,
+  skipError: false,
+  triggerEvent: true,
+};
+const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = {
+  highlightRow: false,
+  selectRow: false,
+  scrollRowIntoView: false,
+  skipError: false,
+  triggerEvent: true,
+};
+const HideColumnOptionDefaults: HideColumnOption = {
+  applySetColumns: true,
+  autoResizeColumns: true,
+  triggerEvent: true,
+  hideFromColumnPicker: false,
+  hideFromGridMenu: false,
+};
 const ShowColumnOptionDefaults: ShowColumnOption = { autoResizeColumns: true, triggerEvent: true };
 
 export class GridService {
@@ -39,8 +58,8 @@ export class GridService {
     protected readonly paginationService: PaginationService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
-    protected readonly treeDataService: TreeDataService,
-  ) { }
+    protected readonly treeDataService: TreeDataService
+  ) {}
 
   /** Getter of SlickGrid DataView object */
   protected get _dataView(): SlickDataView {
@@ -74,7 +93,12 @@ export class GridService {
   /** Clear all the pinning (frozen) options */
   clearPinning(resetColumns = true): void {
     const visibleColumns = [...this.sharedService.visibleColumns];
-    this.sharedService.slickGrid.setOptions({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
+    this.sharedService.slickGrid.setOptions({
+      frozenColumn: -1,
+      frozenRow: -1,
+      frozenBottom: false,
+      enableMouseWheelScrollHandler: false,
+    });
 
     // SlickGrid seems to be somehow resetting the columns to their original positions,
     // so let's re-fix them to the position we kept as reference
@@ -90,7 +114,12 @@ export class GridService {
    * @param {Boolean} suppressRender - do we want to supress the grid re-rendering? (defaults to false)
    * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via "setColumns()" method? (defaults to false)
    */
-  setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true, suppressRender = false, suppressColumnSet = true): void {
+  setPinning(
+    pinningOptions: CurrentPinning,
+    shouldAutosizeColumns = true,
+    suppressRender = false,
+    suppressColumnSet = true
+  ): void {
     if (isObjectEmpty(pinningOptions)) {
       this.clearPinning();
     } else {
@@ -126,7 +155,9 @@ export class GridService {
    */
   getColumnFromEventArguments(args: CellArgs): OnEventArgs {
     if (!args || !args.grid || !args.grid.getColumns || !args.grid.getDataItem) {
-      throw new Error('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
+      throw new Error(
+        '[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)'
+      );
     }
 
     return {
@@ -135,7 +166,7 @@ export class GridService {
       columnDef: args.grid.getColumns()[args.cell],
       dataContext: args.grid.getDataItem(args.row),
       dataView: this._dataView,
-      grid: this._grid
+      grid: this._grid,
     };
   }
 
@@ -201,7 +232,7 @@ export class GridService {
     if (this._grid) {
       options = { ...HideColumnOptionDefaults, ...options };
       const currentColumns = this._grid.getColumns();
-      const colIndexFound = currentColumns.findIndex(col => col.id === columnId);
+      const colIndexFound = currentColumns.findIndex((col) => col.id === columnId);
 
       if (colIndexFound >= 0) {
         const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, colIndexFound);
@@ -212,7 +243,7 @@ export class GridService {
           this._grid.setColumns(visibleColumns);
         }
 
-        const columnIndexFromAllColumns = this.sharedService.allColumns.findIndex(col => col.id === columnId);
+        const columnIndexFromAllColumns = this.sharedService.allColumns.findIndex((col) => col.id === columnId);
         if (columnIndexFromAllColumns) {
           if (options?.hideFromColumnPicker) {
             this.sharedService.allColumns[columnIndexFromAllColumns].excludeFromColumnPicker = true;
@@ -237,7 +268,7 @@ export class GridService {
    */
   hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption): void {
     if (Array.isArray(columnIds)) {
-      const finalVisibileColumns = this._grid.getColumns().filter(c => !columnIds.includes(c.id));
+      const finalVisibileColumns = this._grid.getColumns().filter((c) => !columnIds.includes(c.id));
       options = { ...HideColumnOptionDefaults, ...options };
       for (const columnId of columnIds) {
         // hide each column by its id but wait after the for loop to auto resize columns in the grid
@@ -262,7 +293,7 @@ export class GridService {
   showColumnByIds(columnIds: Array<string | number>, options?: ShowColumnOption): void {
     if (this._grid) {
       options = { ...ShowColumnOptionDefaults, ...options };
-      const columns = this.sharedService.allColumns.filter(c => columnIds.includes(c.id));
+      const columns = this.sharedService.allColumns.filter((c) => columnIds.includes(c.id));
       this._grid.setColumns(columns);
       this.sharedService.visibleColumns = columns;
 
@@ -271,7 +302,11 @@ export class GridService {
     }
   }
 
-  protected executeVisibilityCommands(options: { autoResizeColumns?: boolean; triggerEvent?: boolean; }, eventNames: string[], columns: Column[]): void {
+  protected executeVisibilityCommands(
+    options: { autoResizeColumns?: boolean; triggerEvent?: boolean },
+    eventNames: string[],
+    columns: Column[]
+  ): void {
     // do we want to auto-resize the columns in the grid after hidding/showing columns?
     if (options?.autoResizeColumns) {
       this._grid.autosizeColumns();
@@ -279,7 +314,7 @@ export class GridService {
 
     // do we want to trigger an event after showing
     if (options?.triggerEvent) {
-      eventNames.forEach(name => this.pubSubService.publish(name, { columns }));
+      eventNames.forEach((name) => this.pubSubService.publish(name, { columns }));
     }
   }
 
@@ -297,7 +332,7 @@ export class GridService {
 
     duration ||= this._gridOptions.rowHighlightDuration;
     if (Array.isArray(rowNumber)) {
-      rowNumber.forEach(row => this._grid.highlightRow(row));
+      rowNumber.forEach((row) => this._grid.highlightRow(row));
     } else {
       this._grid.highlightRow(rowNumber, duration);
     }
@@ -374,7 +409,9 @@ export class GridService {
     }
 
     if (this._gridOptions?.enableTreeData && options?.position === 'top') {
-      throw new Error('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.');
+      throw new Error(
+        '[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.'
+      );
     }
 
     const insertPosition = insertOptions?.position;
@@ -407,7 +444,7 @@ export class GridService {
       rowNumber = this._dataView.getRowById(itemId);
     } else {
       // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
-      rowNumber = (insertPosition === 'bottom') ? this._dataView.getRowById(itemId) : 0;
+      rowNumber = insertPosition === 'bottom' ? this._dataView.getRowById(itemId) : 0;
       if (insertOptions.scrollRowIntoView) {
         this._grid.scrollRowIntoView(rowNumber ?? 0);
       }
@@ -419,7 +456,12 @@ export class GridService {
     }
 
     // if row selection (checkbox selector) is enabled, we'll select the row in the grid
-    if (rowNumber !== undefined && insertOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (
+      rowNumber !== undefined &&
+      insertOptions.selectRow &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+    ) {
       this.setSelectedRow(rowNumber);
     }
 
@@ -429,7 +471,7 @@ export class GridService {
     }
 
     // when using Pagination in a local grid, we need to either go to first page or last page depending on which position user want to insert the new row
-    const isLocalGrid = !(this._gridOptions?.backendServiceApi);
+    const isLocalGrid = !this._gridOptions?.backendServiceApi;
     if (isLocalGrid && this._gridOptions.enablePagination) {
       insertPosition === 'bottom' ? this.paginationService.goToLastPage() : this.paginationService.goToFirstPage();
     }
@@ -488,7 +530,9 @@ export class GridService {
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
-    items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById(item[idPropName as keyof T] as string | number) as number));
+    items.forEach((item: T) =>
+      rowNumbers.push(this._dataView.getRowById(item[idPropName as keyof T] as string | number) as number)
+    );
 
     // if user wanted to see highlighted row
     if (insertOptions.highlightRow) {
@@ -496,7 +540,11 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (insertOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (
+      insertOptions.selectRow &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+    ) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -577,8 +625,13 @@ export class GridService {
     }
 
     // when user has row selection enabled, we should clear any selection to avoid confusion after a delete
-    const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
-    if (!isSyncGridSelectionEnabled && this._grid && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    const isSyncGridSelectionEnabled = (this.gridStateService && this.gridStateService.needToPreserveRowSelection()) || false;
+    if (
+      !isSyncGridSelectionEnabled &&
+      this._grid &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+    ) {
       this.setSelectedRows([]);
     }
 
@@ -632,7 +685,7 @@ export class GridService {
   updateItem<T = any>(item: T, options?: GridServiceUpdateOption): number | undefined {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    const itemId = (!item || !item.hasOwnProperty(idPropName)) ? undefined : (item as any)[idPropName];
+    const itemId = !item || !item.hasOwnProperty(idPropName) ? undefined : (item as any)[idPropName];
 
     if (!options?.skipError && itemId === undefined) {
       throw new Error(`[Slickgrid-Universal] Calling Update of an item requires the item to include an "${idPropName}" property`);
@@ -664,7 +717,7 @@ export class GridService {
     const rowNumbers: number[] = [];
     const itemIds: Array<string | number> = [];
     items.forEach((item: T) => {
-      const itemId = (!item || !item.hasOwnProperty(idPropName)) ? undefined : (item as any)[idPropName];
+      const itemId = !item || !item.hasOwnProperty(idPropName) ? undefined : (item as any)[idPropName];
       itemIds.push(itemId);
 
       if (this._dataView.getIdxById(itemId) !== undefined) {
@@ -694,7 +747,11 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (
+      options.selectRow &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+    ) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -721,7 +778,7 @@ export class GridService {
     const rowNumber = this._dataView.getRowById(itemId) as number;
 
     // when using pagination the item to update might not be on current page, so we bypass this condition
-    if (!options?.skipError && (!item && !this._gridOptions.enablePagination)) {
+    if (!options?.skipError && !item && !this._gridOptions.enablePagination) {
       throw new Error(`[Slickgrid-Universal] The item to update in the grid was not found with id: ${itemId}`);
     }
 
@@ -748,7 +805,12 @@ export class GridService {
       }
 
       // select the row in the grid
-      if (rowNumber !== undefined && options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+      if (
+        rowNumber !== undefined &&
+        options.selectRow &&
+        this._gridOptions &&
+        (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+      ) {
         this.setSelectedRow(rowNumber);
       }
 
@@ -765,10 +827,10 @@ export class GridService {
    * @param item object which must contain a unique "id" property and any other suitable properties
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    */
-  upsertItem<T = any>(item: T, options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined; } {
+  upsertItem<T = any>(item: T, options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined } {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    const itemId = (!item || !item.hasOwnProperty(idPropName)) ? undefined : (item as any)[idPropName];
+    const itemId = !item || !item.hasOwnProperty(idPropName) ? undefined : (item as any)[idPropName];
 
     if (!options?.skipError && itemId === undefined) {
       throw new Error(`[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "${idPropName}" property`);
@@ -783,7 +845,10 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return row numbers in the grid
    */
-  upsertItems<T = any>(items: T | T[], options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined; }[] {
+  upsertItems<T = any>(
+    items: T | T[],
+    options?: GridServiceInsertOption
+  ): { added: number | undefined; updated: number | undefined }[] {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     // when it's not an array, we can call directly the single item upsert
     if (!Array.isArray(items)) {
@@ -793,15 +858,19 @@ export class GridService {
     // begin bulk transaction
     this._dataView.beginUpdate(true);
 
-    const upsertedRows: { added: number | undefined, updated: number | undefined; }[] = [];
+    const upsertedRows: { added: number | undefined; updated: number | undefined }[] = [];
     items.forEach((item: T) => {
-      upsertedRows.push(this.upsertItem<T>(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false }));
+      upsertedRows.push(
+        this.upsertItem<T>(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false })
+      );
     });
 
     // end the bulk transaction since we're all done
     this._dataView.endUpdate();
 
-    const rowNumbers = upsertedRows.map((upsertRow) => upsertRow.added !== undefined ? upsertRow.added : upsertRow.updated) as number[];
+    const rowNumbers = upsertedRows.map((upsertRow) =>
+      upsertRow.added !== undefined ? upsertRow.added : upsertRow.updated
+    ) as number[];
 
     // only highlight at the end, all at once
     // we have to do this because doing highlight 1 by 1 would only re-select the last highlighted row which is wrong behavior
@@ -810,7 +879,11 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (
+      options.selectRow &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+    ) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -836,11 +909,17 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return grid row number in the grid
    */
-  upsertItemById<T = any>(itemId: number | string, item: T, options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined; } {
+  upsertItemById<T = any>(
+    itemId: number | string,
+    item: T,
+    options?: GridServiceInsertOption
+  ): { added: number | undefined; updated: number | undefined } {
     let isItemAdded = false;
     options = { ...GridServiceInsertOptionDefaults, ...options };
-    if (!options?.skipError && (itemId === undefined && !this.hasRowSelectionEnabled())) {
-      throw new Error(`[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property`);
+    if (!options?.skipError && itemId === undefined && !this.hasRowSelectionEnabled()) {
+      throw new Error(
+        `[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property`
+      );
     }
 
     let rowNumberAdded: number | undefined;
@@ -849,7 +928,11 @@ export class GridService {
       rowNumberAdded = this.addItem<T>(item, options);
       isItemAdded = true;
     } else {
-      rowNumberUpdated = this.updateItem<T>(item, { highlightRow: options.highlightRow, selectRow: options.selectRow, triggerEvent: options.triggerEvent });
+      rowNumberUpdated = this.updateItem<T>(item, {
+        highlightRow: options.highlightRow,
+        selectRow: options.selectRow,
+        triggerEvent: options.triggerEvent,
+      });
       isItemAdded = false;
     }
 
@@ -872,7 +955,12 @@ export class GridService {
     if (this._gridOptions?.enableTreeData && this.treeDataService) {
       const inputItems = items ?? this._dataView.getItems();
       const sortCols = this.sortService.getCurrentColumnSorts();
-      const sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(inputItems || [], this.sharedService.allColumns, this._gridOptions, sortCols);
+      const sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
+        inputItems || [],
+        this.sharedService.allColumns,
+        this._gridOptions,
+        sortCols
+      );
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       this.filterService.refreshTreeDataFilters(items);
       this._dataView.setItems(sortedDatasetResult.flat);
@@ -888,6 +976,6 @@ export class GridService {
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
     const isRowSelectionEnabled = !!(this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector);
-    return (isRowSelectionEnabled && !!selectionModel);
+    return isRowSelectionEnabled && !!selectionModel;
   }
 }

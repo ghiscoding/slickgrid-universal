@@ -14,16 +14,24 @@ export const sumTotalsCurrencyFormatter: GroupTotalsFormatter = (totals: any, co
   const currencyPrefix = params?.groupFormatterCurrencyPrefix || '';
   const currencySuffix = params?.groupFormatterCurrencySuffix || '';
 
-  const {
-    minDecimal,
-    maxDecimal,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'group');
+  const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
+    columnDef,
+    grid,
+    'currency',
+    'group'
+  );
 
   if (isNumber(val)) {
-    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, currencyPrefix, currencySuffix, decimalSeparator, thousandSeparator);
+    const formattedNumber = formatNumber(
+      val,
+      minDecimal,
+      maxDecimal,
+      wrapNegativeNumber,
+      currencyPrefix,
+      currencySuffix,
+      decimalSeparator,
+      thousandSeparator
+    );
     return `${prefix}${formattedNumber}${suffix}`;
   }
   return '';

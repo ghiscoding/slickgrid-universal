@@ -1,4 +1,3 @@
-
 /**
  * @typedef {('left'|'right')} xAllowed
  * @typedef {('top'|'bottom')} yAllowed
@@ -21,7 +20,7 @@ const POSITION = Object.freeze({
   TOP: 'top',
   BOTTOM: 'bottom',
   LEFT: 'left',
-  RIGHT: 'right'
+  RIGHT: 'right',
 });
 
 /**

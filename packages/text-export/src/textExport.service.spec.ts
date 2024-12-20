@@ -35,8 +35,8 @@ const pubSubServiceStub = {
 // URL object is not supported in JSDOM, we can simply mock it
 (global as any).URL.createObjectURL = vi.fn();
 
-const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: `<b>${value}</b>` } : null as any;
-const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null as any;
+const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => (value !== null ? { text: `<b>${value}</b>` } : (null as any));
+const myUppercaseFormatter: Formatter = (_row, _cell, value) => (value ? { text: value.toUpperCase() } : (null as any));
 const myCustomObjectFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext) => {
   let textValue = value && value.hasOwnProperty('text') ? value.text : value;
   const toolTip = value && value.hasOwnProperty('toolTip') ? value.toolTip : '';
@@ -101,7 +101,7 @@ describe('ExportService', () => {
       mockExportTxtOptions = {
         delimiter: DelimiterType.semicolon,
         filename: 'export',
-        format: FileType.txt
+        format: FileType.txt,
       };
 
       service = new TextExportService();
@@ -139,23 +139,41 @@ describe('ExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', width: 100 },
-          { id: 'order', field: 'order', width: 100, exportWithFormatter: true, formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+          {
+            id: 'order',
+            field: 'order',
+            width: 100,
+            exportWithFormatter: true,
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+          },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
-      it('should throw an error when trying call exportToFile" without a grid and/or dataview object initialized', () => new Promise((done: any) => {
-        try {
-          service.init(null as any, container);
-          service.exportToFile(mockExportTxtOptions);
-        } catch (e) {
-          expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?');
-          done();
-        }
-      }));
+      it('should throw an error when trying call exportToFile" without a grid and/or dataview object initialized', () =>
+        new Promise((done: any) => {
+          try {
+            service.init(null as any, container);
+            service.exportToFile(mockExportTxtOptions);
+          } catch (e) {
+            expect(e.toString()).toContain(
+              '[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?'
+            );
+            done();
+          }
+        }));
 
       it('should trigger an event before exporting the file', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -239,8 +257,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
 
         service.init(gridStub, container);
@@ -261,8 +278,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id";;"FirstName";;"LastName";;"Position";;"Order"
+        const contentExpectation = `"User Id";;"FirstName";;"LastName";;"Position";;"Order"
               ="1E06";;"John";;"Z";;"SALES_REP";;"<b>10</b>"`;
 
         service.init(gridStub, container);
@@ -283,8 +299,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
 
         service.init(gridStub, container);
@@ -304,8 +319,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
 
         service.init(gridStub, container);
@@ -325,8 +339,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="3C2","Ava Luna","","HUMAN_RESOURCES","<b>3</b>"`;
 
         service.init(gridStub, container);
@@ -346,8 +359,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="","Ava","LUNA","HUMAN_RESOURCES","<b>3</b>"`;
 
         service.init(gridStub, container);
@@ -367,8 +379,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="3C2","Ava","LUNA","HUMAN_RESOURCES",""`;
 
         service.init(gridStub, container);
@@ -380,7 +391,7 @@ describe('ExportService', () => {
       });
 
       it(`should have the UserId as empty string when its input value is null`, async () => {
-        mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 },];
+        mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -388,8 +399,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="","","CASH","SALES_REP","<b>3</b>"`;
 
         service.init(gridStub, container);
@@ -410,8 +420,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","1"`;
 
         service.init(gridStub, container);
@@ -433,8 +442,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
 
         service.init(gridStub, container);
@@ -469,8 +477,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"First Name","Last Name","Position"
+        const contentExpectation = `"First Name","Last Name","Position"
               "John","Z","SALES_REP"`;
 
         service.init(gridStub, container);
@@ -484,7 +491,7 @@ describe('ExportService', () => {
       it(`should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object`, async () => {
         mockCollection = [
           { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 },
-          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 } }
+          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 } },
         ];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
@@ -493,8 +500,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"First Name","Last Name","Position"
+        const contentExpectation = `"First Name","Last Name","Position"
               "John","Z","SALES_REP"`;
 
         service.init(gridStub, container);
@@ -517,9 +523,25 @@ describe('ExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
           { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
-          { id: 'order', field: 'order', width: 100, exportWithFormatter: true, formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+          {
+            id: 'order',
+            field: 'order',
+            width: 100,
+            exportWithFormatter: true,
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+          },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -539,8 +561,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","First Name","Last Name","Position","Order"
+        const contentExpectation = `"User Id","First Name","Last Name","Position","Order"
           ="1E06","John","Z","Sales Rep.","<b>10</b>"`;
 
         service.init(gridStub, container);
@@ -568,12 +589,23 @@ describe('ExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', width: 100 },
           {
-            id: 'order', field: 'order', type: FieldType.number,
+            id: 'order',
+            field: 'order',
+            type: FieldType.number,
             exportWithFormatter: true,
-            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
           },
         ] as Column[];
@@ -582,7 +614,7 @@ describe('ExportService', () => {
           aggregateChildGroups: false,
           aggregateCollapsed: false,
           aggregateEmpty: false,
-          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
@@ -597,7 +629,12 @@ describe('ExportService', () => {
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
-          collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
@@ -621,8 +658,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"Group By","User Id","FirstName","LastName","Position","Order"
+        const contentExpectation = `"Group By","User Id","FirstName","LastName","Position","Order"
           "Order: 20 (2 items)"
              "",="1E06","John","Z","SALES_REP","10"
              "",="2B02","Jane","DOE","FINANCE_MANAGER","10"
@@ -642,8 +678,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.txt', format: 'txt', mimeType: 'text/plain', useUtf8WithBom: true };
-        const contentExpectation =
-          `Group By;User Id;FirstName;LastName;Position;Order
+        const contentExpectation = `Group By;User Id;FirstName;LastName;Position;Order
           Order: 20 (2 items)
              ;=1E06;John;Z;SALES_REP;10
              ;=2B02;Jane;DOE;FINANCE_MANAGER;10
@@ -674,12 +709,24 @@ describe('ExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
           { id: 'firstName', field: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
           {
-            id: 'order', field: 'order', type: FieldType.number,
+            id: 'order',
+            field: 'order',
+            type: FieldType.number,
             exportWithFormatter: true,
-            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
           },
         ] as Column[];
@@ -688,7 +735,7 @@ describe('ExportService', () => {
           aggregateChildGroups: false,
           aggregateCollapsed: false,
           aggregateEmpty: false,
-          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
@@ -703,7 +750,12 @@ describe('ExportService', () => {
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
-          collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
@@ -727,8 +779,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"Grouped By","User Id","First Name","Last Name","Position","Order"
+        const contentExpectation = `"Grouped By","User Id","First Name","Last Name","Position","Order"
           "Order: 20 (2 items)"
              "",="1E06","John","Z","Sales Rep.","10"
              "",="2B02","Jane","DOE","Finance Manager","10"
@@ -748,8 +799,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.txt', format: 'txt', mimeType: 'text/plain', useUtf8WithBom: true };
-        const contentExpectation =
-          `Grouped By;User Id;First Name;Last Name;Position;Order
+        const contentExpectation = `Grouped By;User Id;First Name;Last Name;Position;Order
           Order: 20 (2 items)
              ;=1E06;John;Z;Sales Rep.;10
              ;=2B02;Jane;DOE;Finance Manager;10
@@ -782,12 +832,24 @@ describe('ExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
           { id: 'firstName', field: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
           {
-            id: 'order', field: 'order', type: FieldType.number,
+            id: 'order',
+            field: 'order',
+            type: FieldType.number,
             exportWithFormatter: true,
-            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
           },
         ] as Column[];
@@ -796,7 +858,7 @@ describe('ExportService', () => {
           aggregateChildGroups: false,
           aggregateCollapsed: false,
           aggregateEmpty: false,
-          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
@@ -811,19 +873,34 @@ describe('ExportService', () => {
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
-          collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
         mockGroup2 = {
-          collapsed: 0, count: 2, groupingKey: '10:|:Z', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10:|:Z',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Last Name: Z <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup3 = {
-          collapsed: 0, count: 2, groupingKey: '10:|:Doe', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10:|:Doe',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Last Name: Doe <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
@@ -831,7 +908,11 @@ describe('ExportService', () => {
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         mockCollection = [
-          mockGroup1, mockGroup2, mockItem1, mockGroup3, mockItem2,
+          mockGroup1,
+          mockGroup2,
+          mockItem1,
+          mockGroup3,
+          mockItem2,
           { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 },
           { __groupTotals: true, initialized: true, sum: { order: 10 }, group: mockGroup2 },
         ];
@@ -854,8 +935,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"Grouped By","User Id","First Name","Last Name","Position","Order"
+        const contentExpectation = `"Grouped By","User Id","First Name","Last Name","Position","Order"
           "Order: 20 (2 items)"
           "     Last Name: Z (1 items)"
              "",="1E06","John","Z","Sales Rep.","10"
@@ -878,8 +958,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.txt', format: 'txt', mimeType: 'text/plain', useUtf8WithBom: true };
-        const contentExpectation =
-          `Grouped By;User Id;First Name;Last Name;Position;Order
+        const contentExpectation = `Grouped By;User Id;First Name;Last Name;Position;Order
           Order: 20 (2 items)
             Last Name: Z (1 items)
             ;=1E06;John;Z;Sales Rep.;10
@@ -907,10 +986,27 @@ describe('ExportService', () => {
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, columnGroup: 'User Profile' },
-          { id: 'lastName', field: 'lastName', width: 100, columnGroup: 'User Profile', formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            width: 100,
+            columnGroup: 'User Profile',
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true, columnGroup: 'Company Profile' },
           { id: 'position', field: 'position', width: 100, columnGroup: 'Company Profile' },
-          { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroup: 'Sales', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+          {
+            id: 'order',
+            field: 'order',
+            width: 100,
+            exportWithFormatter: true,
+            columnGroup: 'Sales',
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+          },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -926,8 +1022,7 @@ describe('ExportService', () => {
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Profile","User Profile","Company Profile","Company Profile","Sales"
+        const contentExpectation = `"User Profile","User Profile","Company Profile","Company Profile","Sales"
           "FirstName","LastName","User Id","Position","Order"
           "John","Z",="1E06","SALES_REP","<b>10</b>"`;
 
@@ -949,10 +1044,36 @@ describe('ExportService', () => {
           mockColumns = [
             { id: 'id', field: 'id', excludeFromExport: true },
             { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, columnGroupKey: 'USER_PROFILE', formatter: myBoldHtmlFormatter },
-            { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, columnGroupKey: 'USER_PROFILE', formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+            {
+              id: 'lastName',
+              field: 'lastName',
+              nameKey: 'LAST_NAME',
+              width: 100,
+              columnGroupKey: 'USER_PROFILE',
+              formatter: myBoldHtmlFormatter,
+              exportCustomFormatter: myUppercaseFormatter,
+              sanitizeDataExport: true,
+              exportWithFormatter: true,
+            },
             { id: 'userId', field: 'userId', name: 'User Id', width: 100, columnGroupKey: 'COMPANY_PROFILE', exportCsvForceToKeepAsString: true },
-            { id: 'position', field: 'position', name: 'Position', width: 100, columnGroupKey: 'COMPANY_PROFILE', formatter: Formatters.translate, exportWithFormatter: true },
-            { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroupKey: 'SALES', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+            {
+              id: 'position',
+              field: 'position',
+              name: 'Position',
+              width: 100,
+              columnGroupKey: 'COMPANY_PROFILE',
+              formatter: Formatters.translate,
+              exportWithFormatter: true,
+            },
+            {
+              id: 'order',
+              field: 'order',
+              width: 100,
+              exportWithFormatter: true,
+              columnGroupKey: 'SALES',
+              formatter: Formatters.multiple,
+              params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            },
           ] as Column[];
           vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         });
@@ -971,8 +1092,7 @@ describe('ExportService', () => {
           const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
           const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-          const contentExpectation =
-            `"User Profile","User Profile","Company Profile","Company Profile","Sales"
+          const contentExpectation = `"User Profile","User Profile","Company Profile","Company Profile","Sales"
             "First Name","Last Name","User Id","Position","Order"
             "John","Z",="1E06","Sales Rep.","<b>10</b>"`;
 
@@ -997,14 +1117,23 @@ describe('ExportService', () => {
         mockGridOptions.textExportOptions = {};
         mockGridOptions.createPreHeaderPanel = false;
         mockGridOptions.showPreHeaderPanel = false;
-        mockGridOptions.colspanCallback = (item: any) => (item.id % 2 === 1) ? evenMetatadata : oddMetatadata;
+        mockGridOptions.colspanCallback = (item: any) => (item.id % 2 === 1 ? evenMetatadata : oddMetatadata);
 
         mockColumns = [
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
           { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
-          { id: 'order', field: 'order', width: 100, },
+          { id: 'order', field: 'order', width: 100 },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -1021,15 +1150,22 @@ describe('ExportService', () => {
           { id: 2, userId: '2ABC', firstName: 'Sponge', lastName: 'Bob', position: 'IT_ADMIN', order: 33 },
         ];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]).mockReturnValueOnce(mockCollection[2]);
-        vi.spyOn(dataViewStub, 'getItemMetadata').mockReturnValue(oddMetatadata).mockReturnValueOnce(evenMetatadata).mockReturnValueOnce(oddMetatadata).mockReturnValueOnce(evenMetatadata);
+        vi.spyOn(dataViewStub, 'getItem')
+          .mockReturnValue(null)
+          .mockReturnValueOnce(mockCollection[0])
+          .mockReturnValueOnce(mockCollection[1])
+          .mockReturnValueOnce(mockCollection[2]);
+        vi.spyOn(dataViewStub, 'getItemMetadata')
+          .mockReturnValue(oddMetatadata)
+          .mockReturnValueOnce(evenMetatadata)
+          .mockReturnValueOnce(oddMetatadata)
+          .mockReturnValueOnce(evenMetatadata);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = vi.spyOn(URL, 'createObjectURL');
         const spyDownload = vi.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
-        const contentExpectation =
-          `"User Id","First Name","Last Name","Position","Order"
+        const contentExpectation = `"User Id","First Name","Last Name","Position","Order"
               ="1E06",,,,
               ="1E09","Jane","DOE",,"15"
               ="2ABC",,,,`;
@@ -1051,10 +1187,17 @@ describe('ExportService', () => {
     });
 
     it('should throw an error if "enableTranslate" is set but the Translater Service is null', () => {
-      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, translater: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
+      const gridOptionsMock = {
+        enableTranslate: true,
+        enableGridMenu: true,
+        translater: undefined as any,
+        gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' },
+      } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub, container)).toThrow('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
+      expect(() => service.init(gridStub, container)).toThrow(
+        '[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.'
+      );
     });
   });
 });

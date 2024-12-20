@@ -1,9 +1,17 @@
 import type { Column, GridOption, SortComparer } from '../interfaces/index.js';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
 
-export const objectStringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: SortDirectionNumber = SortDirectionNumber.neutral, sortColumn?: Column, gridOptions?: GridOption) => {
+export const objectStringSortComparer: SortComparer = (
+  value1: any,
+  value2: any,
+  sortDirection: SortDirectionNumber = SortDirectionNumber.neutral,
+  sortColumn?: Column,
+  gridOptions?: GridOption
+) => {
   if (!sortColumn || !sortColumn.dataKey) {
-    throw new Error('Sorting a "FieldType.object" requires you to provide the "dataKey" (object property name) of the object so that we can use it to sort correctly');
+    throw new Error(
+      'Sorting a "FieldType.object" requires you to provide the "dataKey" (object property name) of the object so that we can use it to sort correctly'
+    );
   }
 
   const stringValue1 = value1?.hasOwnProperty(sortColumn.dataKey) ? value1[sortColumn.dataKey] : value1;

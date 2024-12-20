@@ -5,7 +5,7 @@ import {
   type ExternalResource,
   type GridOption,
   type SlickGrid,
-  type TranslaterService
+  type TranslaterService,
 } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent implements ExternalResource {
@@ -57,9 +57,11 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
     const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 0;
     const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 0;
-    const isFrozenGrid = (this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0);
-    const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
-    const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
+    const isFrozenGrid = this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0;
+    const leftViewportMarginLeft =
+      typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
+    const rightViewportMarginLeft =
+      typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
@@ -77,7 +79,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
           // use when height with rows more that 100px
           // AutoHeight option collapse dataview to 100px when show message without data in huge grid
           // (default autoHeight for message - 100px you can add as param if needed)
-          let leftPaneMinHeight = (leftPaneHeight !== null && leftPaneHeight < 100) ? leftPaneHeight : 100;
+          let leftPaneMinHeight = leftPaneHeight !== null && leftPaneHeight < 100 ? leftPaneHeight : 100;
           leftPaneMinHeight += filterRowHeight + preHeaderRowHeight; // add preHeader & filter height when enabled
           leftPaneElm.style.minHeight = `${leftPaneMinHeight}px`;
           gridCanvasLeftElm.style.minHeight = `${cellRowHeight}px`;
@@ -112,12 +114,13 @@ export class SlickEmptyWarningComponent implements ExternalResource {
       // display/hide right/left messages
       let leftDisplay = isShowing ? 'flex' : 'none';
       if (isFrozenGrid && isShowing) {
-        leftDisplay = (mergedOptions.hideFrozenLeftWarning) ? 'none' : 'flex';
+        leftDisplay = mergedOptions.hideFrozenLeftWarning ? 'none' : 'flex';
       }
       this._warningLeftElement.style.display = leftDisplay;
 
       // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
-      const leftFrozenMarginLeft = typeof leftElementFrozenMarginLeft === 'string' ? leftElementFrozenMarginLeft : `${leftElementFrozenMarginLeft}px`;
+      const leftFrozenMarginLeft =
+        typeof leftElementFrozenMarginLeft === 'string' ? leftElementFrozenMarginLeft : `${leftElementFrozenMarginLeft}px`;
       this._warningLeftElement.style.marginLeft = isFrozenGrid ? leftFrozenMarginLeft : leftViewportMarginLeft;
     }
 
@@ -125,12 +128,13 @@ export class SlickEmptyWarningComponent implements ExternalResource {
       // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
       let rightDisplay = isShowing ? 'flex' : 'none';
       if (isFrozenGrid && isShowing) {
-        rightDisplay = (mergedOptions.hideFrozenRightWarning) ? 'none' : 'flex';
+        rightDisplay = mergedOptions.hideFrozenRightWarning ? 'none' : 'flex';
       }
       this._warningRightElement.style.display = rightDisplay;
 
       // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
-      const rightFrozenMarginLeft = typeof rightElementFrozenMarginLeft === 'string' ? rightElementFrozenMarginLeft : `${rightElementFrozenMarginLeft}px`;
+      const rightFrozenMarginLeft =
+        typeof rightElementFrozenMarginLeft === 'string' ? rightElementFrozenMarginLeft : `${rightElementFrozenMarginLeft}px`;
       this._warningRightElement.style.marginLeft = isFrozenGrid ? rightFrozenMarginLeft : rightViewportMarginLeft;
     }
 

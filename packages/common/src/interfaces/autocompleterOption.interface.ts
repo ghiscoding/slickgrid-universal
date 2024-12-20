@@ -9,9 +9,11 @@ export interface AutoCompleterRenderItemDefinition {
   templateCallback: (item: any) => string;
 }
 
-export type AutocompleteSearchItem = {
-  [labelName: string]: string;
-} | string;
+export type AutocompleteSearchItem =
+  | {
+      [labelName: string]: string;
+    }
+  | string;
 
 export interface AutocompleterOption<T extends AutocompleteItem = any> extends Partial<AutocompleteSettings<T>> {
   /** defaults to false, force the user to start typing a value in the search input */

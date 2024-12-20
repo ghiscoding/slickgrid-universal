@@ -1,13 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  type Column,
-  FieldType,
-  type Formatter,
-  Formatters,
-  type GridOption,
-  GroupTotalFormatters,
-  type SlickGrid
-} from '@slickgrid-universal/common';
+import { type Column, FieldType, type Formatter, Formatters, type GridOption, GroupTotalFormatters, type SlickGrid } from '@slickgrid-universal/common';
 import { type StyleSheet } from 'excel-builder-vanilla';
 
 import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils.js';
@@ -32,7 +24,7 @@ const stylesheetStub = {
 describe('excelUtils', () => {
   const mockedFormatId = 135;
   let createFormatSpy: any;
-  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
+  const myBoldFormatter: Formatter = (_row, _cell, value) => (value ? `<b>${value}</b>` : '');
 
   beforeEach(() => {
     createFormatSpy = vi.spyOn(stylesheetStub, 'createFormat').mockReturnValue({ id: mockedFormatId });
@@ -44,34 +36,65 @@ describe('excelUtils', () => {
 
   describe('getExcelNumberCallback() method', () => {
     it('should return same data when input not a number', () => {
-      const output = getExcelNumberCallback('something else', { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
+      const output = getExcelNumberCallback('something else', {
+        columnDef: {} as Column,
+        excelFormatId: 3,
+        gridOptions: mockGridOptions,
+        dataRowIdx: 0,
+        stylesheet: stylesheetStub,
+        dataContext: {},
+      });
       expect(output).toEqual({ metadata: { style: 3 }, value: 'something else' });
     });
 
     it('should return same data when input value is already a number', () => {
-      const output = getExcelNumberCallback(9.33, { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
+      const output = getExcelNumberCallback(9.33, {
+        columnDef: {} as Column,
+        excelFormatId: 3,
+        gridOptions: mockGridOptions,
+        dataRowIdx: 0,
+        stylesheet: stylesheetStub,
+        dataContext: {},
+      });
       expect(output).toEqual({ metadata: { style: 3 }, value: 9.33 });
     });
 
     it('should return parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('$1,209.33', { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
+      const output = getExcelNumberCallback('$1,209.33', {
+        columnDef: {} as Column,
+        excelFormatId: 3,
+        gridOptions: mockGridOptions,
+        dataRowIdx: 0,
+        stylesheet: stylesheetStub,
+        dataContext: {},
+      });
       expect(output).toEqual({ metadata: { style: 3 }, value: 1209.33 });
     });
 
     it('should return negative parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('-$1,209.33', { columnDef: {} as Column, excelFormatId: 3, gridOptions: mockGridOptions, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {} });
+      const output = getExcelNumberCallback('-$1,209.33', {
+        columnDef: {} as Column,
+        excelFormatId: 3,
+        gridOptions: mockGridOptions,
+        dataRowIdx: 0,
+        stylesheet: stylesheetStub,
+        dataContext: {},
+      });
       expect(output).toEqual({ metadata: { style: 3 }, value: -1209.33 });
     });
 
     it('should be able to provide a number with different decimal separator as formatter options and return parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback(
-        '1 244 209,33€',
-        {
-          columnDef: {} as Column, excelFormatId: 3, gridOptions: {
-            ...mockGridOptions, formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' }
-          }, dataRowIdx: 0, stylesheet: stylesheetStub, dataContext: {}
-        }
-      );
+      const output = getExcelNumberCallback('1 244 209,33€', {
+        columnDef: {} as Column,
+        excelFormatId: 3,
+        gridOptions: {
+          ...mockGridOptions,
+          formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' },
+        },
+        dataRowIdx: 0,
+        stylesheet: stylesheetStub,
+        dataContext: {},
+      });
       expect(output).toEqual({ metadata: { style: 3 }, value: 1244209.33 });
     });
   });
@@ -122,7 +145,11 @@ describe('excelUtils', () => {
     });
 
     it('should call createFormat with a format of "#,##0.00 USD;(#,##0.00 USD)" when a number is provided displayNegativeNumberWithParentheses, thousandSeparator & numberSuffix formatter options', () => {
-      const column = { type: FieldType.number, formatter: Formatters.decimal, params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',', numberSuffix: ' USD' } } as Column;
+      const column = {
+        type: FieldType.number,
+        formatter: Formatters.decimal,
+        params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',', numberSuffix: ' USD' },
+      } as Column;
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '#,##0.00" USD";(#,##0.00" USD")' });
@@ -134,8 +161,10 @@ describe('excelUtils', () => {
     describe('with GroupTotalFormatters', () => {
       it('should get formatter options for GroupTotalFormatters.avgTotalsDollar', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotalsDollar,
-          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',', numberSuffix: ' USD' }
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.avgTotalsDollar,
+          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',', numberSuffix: ' USD' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -154,8 +183,10 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.sumTotalsDollarColoredBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColoredBold,
-          params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' }
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColoredBold,
+          params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -174,7 +205,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.sumTotalsDollarColored', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColored,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColored,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -193,7 +226,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.sumTotalsDollarBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -212,7 +247,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.sumTotalsDollar', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -231,7 +268,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.avgTotalsPercentage', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -250,7 +289,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.avgTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotals,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.avgTotals,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -269,7 +310,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.minTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.minTotals,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.minTotals,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -288,7 +331,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.maxTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.maxTotals,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.maxTotals,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -307,7 +352,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.sumTotalsColored', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
@@ -326,7 +373,8 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.sumTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
           groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
@@ -346,7 +394,8 @@ describe('excelUtils', () => {
 
       it('should get formatter options for GroupTotalFormatters.sumTotalsBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
           groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'group');
@@ -368,8 +417,9 @@ describe('excelUtils', () => {
     describe('with regular Formatters', () => {
       it('should get formatter options for Formatters.dollarColoredBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.dollarColoredBold,
-          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+          type: FieldType.number,
+          formatter: Formatters.dollarColoredBold,
+          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -388,8 +438,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.dollarColoredBold when using Formatters.multiple and 1 of its formatter is dollarColoredBold formatter', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.multiple,
-          params: { formatters: [Formatters.dollarColoredBold, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+          type: FieldType.number,
+          formatter: Formatters.multiple,
+          params: { formatters: [Formatters.dollarColoredBold, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -408,8 +459,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.dollarColored', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.dollarColored,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          type: FieldType.number,
+          formatter: Formatters.dollarColored,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -428,8 +480,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.dollar', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.dollar,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          type: FieldType.number,
+          formatter: Formatters.dollar,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -448,8 +501,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.percent', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.percent,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          type: FieldType.number,
+          formatter: Formatters.percent,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -468,8 +522,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.percent when using Formatters.multiple and 1 of its formatter is percent formatter', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.multiple,
-          params: { formatters: [Formatters.percent, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+          type: FieldType.number,
+          formatter: Formatters.multiple,
+          params: { formatters: [Formatters.percent, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -488,8 +543,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.percentComplete', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.percentComplete,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          type: FieldType.number,
+          formatter: Formatters.percentComplete,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -508,8 +564,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.percentSymbol', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.percentSymbol,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          type: FieldType.number,
+          formatter: Formatters.percentSymbol,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -528,8 +585,9 @@ describe('excelUtils', () => {
 
       it('should get formatter options for Formatters.decimal', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ', numberPrefix: 'Dollar ', numberSuffix: ' USD' }
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ', numberPrefix: 'Dollar ', numberSuffix: ' USD' },
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -553,8 +611,9 @@ describe('excelUtils', () => {
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotalsPercentage', () => {
         const column = {
           type: FieldType.number,
-          formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
-          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',', numberSuffix: ' USD' }
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
+          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',', numberSuffix: ' USD' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -564,8 +623,9 @@ describe('excelUtils', () => {
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotalsCurrency', () => {
         const column = {
           type: FieldType.number,
-          formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotalsCurrency,
-          params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' }
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.avgTotalsCurrency,
+          params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' },
         } as Column;
 
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
@@ -576,8 +636,9 @@ describe('excelUtils', () => {
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotalsDollar', () => {
         const column = {
           type: FieldType.number,
-          formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotalsDollar,
-          params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' }
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.avgTotalsDollar,
+          params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' },
         } as Column;
 
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
@@ -587,7 +648,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotals,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.avgTotals,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -596,7 +659,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.minTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.minTotals,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.minTotals,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -605,7 +670,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.maxTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.maxTotals,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.maxTotals,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -614,7 +681,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsColored', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -623,7 +692,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsCurrencyColored', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrencyColored,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrencyColored,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -632,7 +703,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarColoredBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColoredBold,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColoredBold,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -641,7 +714,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarColored', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColored,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColored,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -650,7 +725,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -659,7 +736,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollar', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -668,7 +747,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotals', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotals,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -677,7 +758,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
+          groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -686,7 +769,8 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style with regular number format when a custom GroupTotalFormatters is provided', () => {
         const columnDef = {
-          type: FieldType.number, formatter: Formatters.decimal,
+          type: FieldType.number,
+          formatter: Formatters.decimal,
           groupTotalsFormatter: (totals: any, _columnDef: Column, _grid: SlickGrid) => `Some Total: ${totals.sum}`,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormat: { id: 3 } }, columnDef, gridStub, 'group');
@@ -700,7 +784,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.currency,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -711,7 +795,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.dollar,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -722,7 +806,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.dollarColored,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -731,8 +815,9 @@ describe('excelUtils', () => {
 
       it('should get excel excel metadata style format for Formatters.dollarColoredBold', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.dollarColoredBold,
-          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+          type: FieldType.number,
+          formatter: Formatters.dollarColoredBold,
+          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -743,7 +828,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.percent,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -754,7 +839,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.percentComplete,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -765,7 +850,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.percentSymbol,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -776,7 +861,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.decimal,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ', numberPrefix: 'Dollar ', numberSuffix: ' USD' }
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ', numberPrefix: 'Dollar ', numberSuffix: ' USD' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -797,7 +882,7 @@ describe('excelUtils', () => {
         const columnDef = {
           type: FieldType.number,
           formatter: Formatters.multiple,
-          params: { formatters: [() => `Something rendered`, myBoldFormatter], },
+          params: { formatters: [() => `Something rendered`, myBoldFormatter] },
         } as unknown as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormat: { id: 3 } }, columnDef, gridStub, 'cell');
 
@@ -808,7 +893,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.multiple,
-          params: { formatters: [Formatters.currency, myBoldFormatter], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { formatters: [Formatters.currency, myBoldFormatter], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -819,7 +904,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.multiple,
-          params: { formatters: [myBoldFormatter, Formatters.dollar], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { formatters: [myBoldFormatter, Formatters.dollar], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 

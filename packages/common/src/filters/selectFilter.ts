@@ -1,8 +1,13 @@
-import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
+import {
+  multipleSelect,
+  type MultipleSelectInstance,
+  type MultipleSelectOption,
+  type OptionRowData,
+} from 'multiple-select-vanilla';
 import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
-import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index.js';
+import { type OperatorString, OperatorType, type SearchTerm } from '../enums/index.js';
 import type {
   CollectionCustomStructure,
   CollectionOption,
@@ -24,7 +29,7 @@ import type { SlickGrid } from '../core/index.js';
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
   protected _collectionLength = 0;
-  protected _collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
+  protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
   protected _locales!: Locale;
   protected _msInstance?: MultipleSelectInstance;
   protected _shouldTriggerQuery = true;
@@ -131,8 +136,15 @@ export class SelectFilter implements Filter {
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
     this.filterContainerElm = args.filterContainerElm;
 
-    if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.collectionAsync)) {
-      throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.multipleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`);
+    if (
+      !this.grid ||
+      !this.columnDef ||
+      !this.columnFilter ||
+      (!this.columnFilter.collection && !this.columnFilter.collectionAsync)
+    ) {
+      throw new Error(
+        `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.multipleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`
+      );
     }
 
     this.enableTranslateLabel = this.columnFilter?.enableTranslateLabel ?? false;
@@ -143,7 +155,9 @@ export class SelectFilter implements Filter {
     this.valueName = this.customStructure?.value ?? 'value';
 
     if (this.enableTranslateLabel && (!this.translaterService || typeof this.translaterService.translate !== 'function')) {
-      throw new Error(`[select-filter] The Translate Service is required for the Select Filter to work correctly when "enableTranslateLabel" is set.`);
+      throw new Error(
+        `[select-filter] The Translate Service is required for the Select Filter to work correctly when "enableTranslateLabel" is set.`
+      );
     }
 
     // get locales provided by user in main file or else use default English locales via the Constants
@@ -177,7 +191,13 @@ export class SelectFilter implements Filter {
         if (this.columnFilter.collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
           // we do this because Http Fetch will throw an error saying body was already read and its streaming is locked
-          collectionOutput = renderCollectionOptionsAsync(this.columnFilter.collectionAsync, this.columnDef, this.renderDomElement.bind(this), this.rxjs, this.subscriptions);
+          collectionOutput = renderCollectionOptionsAsync(
+            this.columnFilter.collectionAsync,
+            this.columnDef,
+            this.renderDomElement.bind(this),
+            this.rxjs,
+            this.subscriptions
+          );
           resolve(collectionOutput);
         } else {
           collectionOutput = newCollection;
@@ -205,7 +225,11 @@ export class SelectFilter implements Filter {
       this.updateFilterStyle(false);
       this.searchTerms = [];
       this._shouldTriggerQuery = shouldTriggerQuery;
-      this.callback(undefined, { columnDef: this.columnDef, clearFilterTriggered: true, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(undefined, {
+        columnDef: this.columnDef,
+        clearFilterTriggered: true,
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      });
       this._shouldTriggerQuery = true; // reset flag for next use
     }
   }
@@ -235,9 +259,7 @@ export class SelectFilter implements Filter {
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     if (values !== undefined && this._msInstance) {
-      values = Array.isArray(values)
-        ? values.every(x => isPrimitiveValue(x)) ? values.map(String) : values
-        : [values];
+      values = Array.isArray(values) ? (values.every((x) => isPrimitiveValue(x)) ? values.map(String) : values) : [values];
       this._msInstance.setSelects(values);
     }
 
@@ -285,7 +307,8 @@ export class SelectFilter implements Filter {
     // user might want to sort the collection
     if (this.columnFilter && this.columnFilter.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
+      outputCollection =
+        this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
     }
 
     return outputCollection;
@@ -299,9 +322,7 @@ export class SelectFilter implements Filter {
   protected watchCollectionChanges(): void {
     if (this.columnFilter?.collection) {
       // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
-      this._collectionObservers.push(
-        collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this))
-      );
+      this._collectionObservers.push(collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this)));
 
       // observe for any "collection" changes (array replace)
       // then simply recreate/re-render the Select (dropdown) DOM Element
@@ -314,9 +335,7 @@ export class SelectFilter implements Filter {
 
     // when new assignment arrives, we need to also reassign observer to the new reference
     if (this.columnFilter.collection) {
-      this._collectionObservers.push(
-        collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this))
-      );
+      this._collectionObservers.push(collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this)));
     }
   }
 
@@ -341,12 +360,22 @@ export class SelectFilter implements Filter {
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
-    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
+    if (
+      this.collectionOptions?.addBlankEntry &&
+      Array.isArray(collection) &&
+      collection.length > 0 &&
+      collection[0][this.valueName] !== ''
+    ) {
       collection.unshift(this.createBlankEntry());
     }
 
     // user can optionally add his own custom entry at the beginning of the collection
-    if (this.collectionOptions?.addCustomFirstEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== this.collectionOptions.addCustomFirstEntry[this.valueName]) {
+    if (
+      this.collectionOptions?.addCustomFirstEntry &&
+      Array.isArray(collection) &&
+      collection.length > 0 &&
+      collection[0][this.valueName] !== this.collectionOptions.addCustomFirstEntry[this.valueName]
+    ) {
       collection.unshift(this.collectionOptions.addCustomFirstEntry);
     }
 
@@ -387,7 +416,7 @@ export class SelectFilter implements Filter {
   protected createBlankEntry(): any {
     const blankEntry = {
       [this.labelName]: '',
-      [this.valueName]: ''
+      [this.valueName]: '',
     };
     if (this.labelPrefixName) {
       blankEntry[this.labelPrefixName] = '';
@@ -438,7 +467,7 @@ export class SelectFilter implements Filter {
       name: `${columnId}`,
       container: 'body',
       darkMode: !!this.gridOptions.darkMode,
-      filter: false,  // input search term on top of the select option list
+      filter: false, // input search term on top of the select option list
       maxHeight: 275,
       single: true,
       singleRadio: true,
@@ -457,11 +486,26 @@ export class SelectFilter implements Filter {
       options.showOkButton = true;
       options.displayTitle = true; // show tooltip of all selected items while hovering the filter
       const translationPrefix = getTranslationPrefix(this.gridOptions);
-      options.countSelectedText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`) : this._locales?.TEXT_X_OF_Y_SELECTED;
-      options.allSelectedText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}ALL_SELECTED`) : this._locales?.TEXT_ALL_SELECTED;
-      options.noMatchesFoundText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}NO_MATCHES_FOUND`) : this._locales?.TEXT_NO_MATCHES_FOUND;
-      options.okButtonText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}OK`) : this._locales?.TEXT_OK;
-      options.selectAllText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}SELECT_ALL`) : this._locales?.TEXT_SELECT_ALL;
+      options.countSelectedText =
+        isTranslateEnabled && this.translaterService?.translate
+          ? this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`)
+          : this._locales?.TEXT_X_OF_Y_SELECTED;
+      options.allSelectedText =
+        isTranslateEnabled && this.translaterService?.translate
+          ? this.translaterService.translate(`${translationPrefix}ALL_SELECTED`)
+          : this._locales?.TEXT_ALL_SELECTED;
+      options.noMatchesFoundText =
+        isTranslateEnabled && this.translaterService?.translate
+          ? this.translaterService.translate(`${translationPrefix}NO_MATCHES_FOUND`)
+          : this._locales?.TEXT_NO_MATCHES_FOUND;
+      options.okButtonText =
+        isTranslateEnabled && this.translaterService?.translate
+          ? this.translaterService.translate(`${translationPrefix}OK`)
+          : this._locales?.TEXT_OK;
+      options.selectAllText =
+        isTranslateEnabled && this.translaterService?.translate
+          ? this.translaterService.translate(`${translationPrefix}SELECT_ALL`)
+          : this._locales?.TEXT_SELECT_ALL;
     }
     this.defaultOptions = options;
   }
@@ -469,9 +513,16 @@ export class SelectFilter implements Filter {
   protected onTriggerEvent(): void {
     if (this._msInstance) {
       const selectedItems = this.getValues();
-      this.updateFilterStyle(Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== ''));
+      this.updateFilterStyle(
+        (Array.isArray(selectedItems) && selectedItems.length > 1) || (selectedItems.length === 1 && selectedItems[0] !== '')
+      );
       this.searchTerms = selectedItems;
-      this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: selectedItems, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(undefined, {
+        columnDef: this.columnDef,
+        operator: this.operator,
+        searchTerms: selectedItems,
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      });
       // reset flag for next use
       this._shouldTriggerQuery = true;
     }

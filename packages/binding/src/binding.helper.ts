@@ -24,12 +24,19 @@ export class BindingHelper {
     this._observers = [];
   }
 
-  addElementBinding<T extends Element = Element>(variable: any, property: string, selector: string, attribute: string, events?: string | string[], callback?: (val: any) => void): void {
+  addElementBinding<T extends Element = Element>(
+    variable: any,
+    property: string,
+    selector: string,
+    attribute: string,
+    events?: string | string[],
+    callback?: (val: any) => void
+  ): void {
     const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
 
     // before creating a new observer, first check if the variable already has an associated observer
     // if we can't find an observer then we'll create a new one for it
-    let observer = this._observers.find(bind => bind.property === variable);
+    let observer = this._observers.find((bind) => bind.property === variable);
     if (!observer) {
       observer = new BindingService({ variable, property });
     }
@@ -37,7 +44,7 @@ export class BindingHelper {
     // add event(s) binding
     // when having multiple events, we'll loop through through them and add a binding for each
     if (Array.isArray(events)) {
-      events.forEach(eventName => observer?.bind<T>(elements, attribute, eventName, callback));
+      events.forEach((eventName) => observer?.bind<T>(elements, attribute, eventName, callback));
     } else {
       observer?.bind<T>(elements, attribute, events, callback);
     }
@@ -46,10 +53,15 @@ export class BindingHelper {
   }
 
   /** From a DOM element selector, which could be zero or multiple elements, add an event listener   */
-  bindEventHandler<T extends Element = Element>(selector: string, eventName: string, callback: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void {
+  bindEventHandler<T extends Element = Element>(
+    selector: string,
+    eventName: string,
+    callback: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ): void {
     const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
 
-    elements.forEach(elm => {
+    elements.forEach((elm) => {
       if (elm?.addEventListener) {
         elm.addEventListener(eventName, callback, options);
       }
@@ -63,7 +75,7 @@ export class BindingHelper {
   setElementAttributeValue<T extends Element = Element>(selector: string, attribute: string, value: any): void {
     const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
 
-    elements.forEach(elm => {
+    elements.forEach((elm) => {
       elm.textContent = '';
       if (elm && attribute in elm) {
         elm[attribute as keyof T] = value;

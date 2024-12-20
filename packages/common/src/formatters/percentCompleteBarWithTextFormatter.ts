@@ -22,5 +22,10 @@ export const percentCompleteBarWithTextFormatter: Formatter = (_row, _cell, valu
     color = 'green';
   }
 
-  return createDomElement('div', { className: 'percent-complete-bar-with-text', title: `${inputNumber}%`, textContent: `${inputNumber}%`, style: { background: color, width: `${inputNumber}%` } });
+  return createDomElement('div', {
+    className: 'percent-complete-bar-with-text',
+    title: `${inputNumber}%`,
+    textContent: `${inputNumber}%`,
+    style: { background: color, width: `${inputNumber}%` },
+  });
 };

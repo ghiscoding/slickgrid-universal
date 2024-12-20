@@ -24,5 +24,5 @@ export interface ItemMetadata {
   columns?: {
     // properties describing metadata related to individual columns
     [colIdOrIdx in string | number]: Pick<Column, 'colspan' | 'editorClass' | 'focusable' | 'formatter' | 'selectable'>;
-  }
+  };
 }

@@ -18,7 +18,7 @@ export function sliderValidator(inputValue: any, options: SliderValidatorOptions
   const errorMsg = options.errorMessage;
   const mapValidation = {
     '{{minValue}}': minValue,
-    '{{maxValue}}': maxValue
+    '{{maxValue}}': maxValue,
   };
 
   if (options.validator) {
@@ -26,16 +26,23 @@ export function sliderValidator(inputValue: any, options: SliderValidatorOptions
   } else if (isRequired && inputValue === '') {
     return {
       valid: false,
-      msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD
+      msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD,
     };
-  } else if (minValue !== undefined && maxValue !== undefined && inputValue !== null && (inputValue < minValue || inputValue > maxValue)) {
+  } else if (
+    minValue !== undefined &&
+    maxValue !== undefined &&
+    inputValue !== null &&
+    (inputValue < minValue || inputValue > maxValue)
+  ) {
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
     return {
       valid: false,
-      msg: errorMsg || Constants.VALIDATION_EDITOR_NUMBER_BETWEEN.replace(/{{minValue}}|{{maxValue}}/gi, (matched) => {
-        return (mapValidation as any)[matched];
-      })
+      msg:
+        errorMsg ||
+        Constants.VALIDATION_EDITOR_NUMBER_BETWEEN.replace(/{{minValue}}|{{maxValue}}/gi, (matched) => {
+          return (mapValidation as any)[matched];
+        }),
     };
   }
 

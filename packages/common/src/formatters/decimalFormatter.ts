@@ -10,18 +10,20 @@ import { retrieveFormatterOptions } from './formatterUtilities.js';
  * For example:: `{ formatter: Formatters.decimal, params: { minDecimal: 2, maxDecimal: 4 }}`
  */
 export const decimalFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const {
-    minDecimal,
-    maxDecimal,
-    numberPrefix,
-    numberSuffix,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber,
-  } = retrieveFormatterOptions(columnDef, grid, 'decimal', 'cell');
+  const { minDecimal, maxDecimal, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator, wrapNegativeNumber } =
+    retrieveFormatterOptions(columnDef, grid, 'decimal', 'cell');
 
   if (isNumber(value)) {
-    return formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator);
+    return formatNumber(
+      value,
+      minDecimal,
+      maxDecimal,
+      wrapNegativeNumber,
+      numberPrefix,
+      numberSuffix,
+      decimalSeparator,
+      thousandSeparator
+    );
   }
   return value;
 };

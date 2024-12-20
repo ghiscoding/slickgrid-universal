@@ -62,8 +62,7 @@ const mockExtensionUtility = {
 vi.useFakeTimers();
 
 // define a <div> container to simulate the grid container
-const template =
-  `<div id="${containerId}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
+const template = `<div id="${containerId}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%">
       <div class="slick-pane slick-pane-header slick-pane-left" tabindex="0" style="width: 100%;">
@@ -220,8 +219,8 @@ describe('HeaderGroupingService', () => {
 
       expect(preHeaderLeftSpy).toHaveBeenCalledTimes(1);
       expect(preHeaderRightSpy).toHaveBeenCalledTimes(1);
-      expect(headerGroupSpy).toHaveBeenNthCalledWith(1, expect.anything(), 0, (frozenColumns + 1));
-      expect(headerGroupSpy).toHaveBeenNthCalledWith(2, expect.anything(), (frozenColumns + 1), mockColumns.length);
+      expect(headerGroupSpy).toHaveBeenNthCalledWith(1, expect.anything(), 0, frozenColumns + 1);
+      expect(headerGroupSpy).toHaveBeenNthCalledWith(2, expect.anything(), frozenColumns + 1, mockColumns.length);
       expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
       expect(divHeaderColumns.length).toBeGreaterThan(2);

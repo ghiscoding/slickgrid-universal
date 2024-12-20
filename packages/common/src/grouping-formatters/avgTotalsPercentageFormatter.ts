@@ -11,13 +11,12 @@ export const avgTotalsPercentageFormatter: GroupTotalsFormatter = (totals: any, 
   const params = columnDef?.params;
   let prefix = params?.groupFormatterPrefix || '';
   const suffix = params?.groupFormatterSuffix || '';
-  const {
-    minDecimal,
-    maxDecimal,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'percent', 'group');
+  const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
+    columnDef,
+    grid,
+    'percent',
+    'group'
+  );
 
   if (isNumber(val)) {
     if (val < 0) {

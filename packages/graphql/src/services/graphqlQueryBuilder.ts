@@ -14,7 +14,10 @@ export default class GraphqlQueryBuilder {
   body: any;
 
   /* Constructor, query/mutator you wish to use, and an alias or filter arguments. */
-  constructor(protected queryFnName: string, aliasOrFilter?: string | object | undefined) {
+  constructor(
+    protected queryFnName: string,
+    aliasOrFilter?: string | object | undefined
+  ) {
     if (typeof aliasOrFilter === 'string') {
       this.alias = aliasOrFilter;
     } else if (typeof aliasOrFilter === 'object') {
@@ -22,7 +25,9 @@ export default class GraphqlQueryBuilder {
     } else if (aliasOrFilter === undefined && arguments.length === 2) {
       throw new TypeError(`You have passed undefined as Second argument to "Query"`);
     } else if (aliasOrFilter !== undefined) {
-      throw new TypeError(`Second argument to "Query" should be an alias name(String) or filter arguments(Object). What was passed is: ${aliasOrFilter}`);
+      throw new TypeError(
+        `Second argument to "Query" should be an alias name(String) or filter arguments(Object). What was passed is: ${aliasOrFilter}`
+      );
     }
   }
 
@@ -48,13 +53,14 @@ export default class GraphqlQueryBuilder {
    * Outlines the properties you wish to be returned from the query.
    * @param properties representing each attribute you want Returned
    */
-  find(...searches: any[]): this { // THIS NEED TO BE A "FUNCTION" to scope 'arguments'
+  find(...searches: any[]): this {
+    // THIS NEED TO BE A "FUNCTION" to scope 'arguments'
     if (!searches || !Array.isArray(searches) || searches.length === 0) {
       throw new TypeError(`find value can not be >>falsy<<`);
     }
     // if its a string.. it may have other values
     // else it sould be an Object or Array of maped values
-    const searchKeys = (searches.length === 1 && Array.isArray(searches[0])) ? searches[0] : searches;
+    const searchKeys = searches.length === 1 && Array.isArray(searches[0]) ? searches[0] : searches;
     this.body = this.parceFind(searchKeys);
     return this;
   }
@@ -76,7 +82,7 @@ export default class GraphqlQueryBuilder {
       throw new ReferenceError(`return properties are not defined. use the 'find' function to defined them`);
     }
 
-    return `${(this.alias) ? (this.alias + ':') : ''} ${this.queryFnName} ${(this.head.length > 0) ? '(' + this.head.join(',') + ')' : ''}  { ${this.body} }`;
+    return `${this.alias ? this.alias + ':' : ''} ${this.queryFnName} ${this.head.length > 0 ? '(' + this.head.join(',') + ')' : ''}  { ${this.body} }`;
   }
 
   // --
@@ -115,9 +121,11 @@ export default class GraphqlQueryBuilder {
     if (typeof value === 'string') {
       value = JSON.stringify(value);
     } else if (Array.isArray(value)) {
-      value = value.map(item => {
-        return this.getGraphQLValue(item);
-      }).join();
+      value = value
+        .map((item) => {
+          return this.getGraphQLValue(item);
+        })
+        .join();
       value = `[${value}]`;
     } else if (value instanceof Date) {
       value = JSON.stringify(value);

@@ -67,9 +67,9 @@ const pubSubServiceStub = {
 describe('SlickRowMoveManager Plugin', () => {
   let plugin: SlickRowMoveManager;
   const mockColumns = [
-    { id: 'firstName', field: 'firstName', name: 'First Name', },
-    { id: 'lastName', field: 'lastName', name: 'Last Name', },
-    { id: 'age', field: 'age', name: 'Age', },
+    { id: 'firstName', field: 'firstName', name: 'First Name' },
+    { id: 'lastName', field: 'lastName', name: 'Last Name' },
+    { id: 'age', field: 'age', name: 'Age' },
   ] as Column[];
   const gridContainerElm = document.createElement('div');
   gridContainerElm.className = GRID_UID;
@@ -157,13 +157,25 @@ describe('SlickRowMoveManager Plugin', () => {
     plugin.create(mockColumns, { rowMoveManager: { columnId: 'move-id' } });
 
     expect(plugin).toBeTruthy();
-    expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', { columns: expect.arrayContaining([{ ...rowMoveColumnMock, formatter: expect.any(Function) }]), pluginName: 'RowMoveManager' });
+    expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', {
+      columns: expect.arrayContaining([{ ...rowMoveColumnMock, formatter: expect.any(Function) }]),
+      pluginName: 'RowMoveManager',
+    });
     expect(mockColumns[0]).toEqual(rowMoveColumnMock);
   });
 
   it('should create the plugin and call "setOptions" and expect options changed', () => {
     plugin.init(gridStub);
-    plugin.setOptions({ cssClass: 'some-class', hideRowMoveShadow: false, rowMoveShadowMarginLeft: 2, rowMoveShadowMarginTop: 5, rowMoveShadowOpacity: 1, rowMoveShadowScale: 0.9, singleRowMove: true, width: 20 });
+    plugin.setOptions({
+      cssClass: 'some-class',
+      hideRowMoveShadow: false,
+      rowMoveShadowMarginLeft: 2,
+      rowMoveShadowMarginTop: 5,
+      rowMoveShadowOpacity: 1,
+      rowMoveShadowScale: 0.9,
+      singleRowMove: true,
+      width: 20,
+    });
 
     expect(plugin.addonOptions).toEqual({
       autoScroll: true,
@@ -205,7 +217,14 @@ describe('SlickRowMoveManager Plugin', () => {
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when usabilityOverride is provided as plugin option and is returning False', () => {
     plugin.init(gridStub, { usabilityOverride: () => false });
-    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(
+      0,
+      0,
+      null,
+      { id: '_move', field: '' } as Column,
+      { firstName: 'John', lastName: 'Doe', age: 33 },
+      gridStub
+    );
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual('');
@@ -214,7 +233,14 @@ describe('SlickRowMoveManager Plugin', () => {
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when usabilityOverride is defined and returning False', () => {
     plugin.usabilityOverride(() => false);
     plugin.create(mockColumns, {});
-    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(
+      0,
+      0,
+      null,
+      { id: '_move', field: '' } as Column,
+      { firstName: 'John', lastName: 'Doe', age: 33 },
+      gridStub
+    );
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual('');
@@ -226,7 +252,14 @@ describe('SlickRowMoveManager Plugin', () => {
 
     plugin.init(gridStub);
     plugin.usabilityOverride(() => true);
-    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(
+      0,
+      0,
+      null,
+      { id: '_move', field: '' } as Column,
+      { firstName: 'John', lastName: 'Doe', age: 33 },
+      gridStub
+    );
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual({ addClasses: 'cell-reorder dnd', html: iconElm });
@@ -238,7 +271,14 @@ describe('SlickRowMoveManager Plugin', () => {
 
     plugin.init(gridStub);
     plugin.usabilityOverride(null as any);
-    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(
+      0,
+      0,
+      null,
+      { id: '_move', field: '' } as Column,
+      { firstName: 'John', lastName: 'Doe', age: 33 },
+      gridStub
+    );
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual({ addClasses: 'cell-reorder dnd', html: iconElm });
@@ -250,9 +290,20 @@ describe('SlickRowMoveManager Plugin', () => {
     const divElm = document.createElement('div');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
-    gridStub.onDragInit.notify({
-      count: 1, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3, proxy: document.createElement('div'), guide: document.createElement('div'), row: 2, rows: [2],
-    } as unknown as DragRowMove, mouseEvent);
+    gridStub.onDragInit.notify(
+      {
+        count: 1,
+        deltaX: 0,
+        deltaY: 1,
+        offsetX: 2,
+        offsetY: 3,
+        proxy: document.createElement('div'),
+        guide: document.createElement('div'),
+        row: 2,
+        rows: [2],
+      } as unknown as DragRowMove,
+      mouseEvent
+    );
 
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
   });
@@ -264,8 +315,14 @@ describe('SlickRowMoveManager Plugin', () => {
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
-      deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
-      row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
       canMove: true,
       proxy: document.createElement('div'),
       guide: document.createElement('div'),
@@ -295,8 +352,14 @@ describe('SlickRowMoveManager Plugin', () => {
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
-      deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
-      row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
       canMove: true,
     } as any;
     gridStub.onDragStart.notify(mockArgs, mouseEvent);
@@ -313,8 +376,8 @@ describe('SlickRowMoveManager Plugin', () => {
     expect(canvasTL.querySelector('.slick-reorder-shadow-row')).toBeTruthy();
 
     gridStub.onDragEnd.notify(mockArgs, mouseEvent);
-    expect(onMoveRowNotifySpy).toHaveBeenCalledWith({ insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub, });
-    expect(mockOnMoveRows).toHaveBeenCalledWith(expect.anything(), { insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub, });
+    expect(onMoveRowNotifySpy).toHaveBeenCalledWith({ insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub });
+    expect(mockOnMoveRows).toHaveBeenCalledWith(expect.anything(), { insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub });
     expect(stopImmediatePropagationSpy).toHaveBeenCalledTimes(2);
   });
 
@@ -332,8 +395,15 @@ describe('SlickRowMoveManager Plugin', () => {
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
-      canMove: true, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
-      row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
+      canMove: true,
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
     } as any;
     const output = gridStub.onDragStart.notify(mockArgs, mouseEvent).getReturnValue();
 
@@ -355,8 +425,15 @@ describe('SlickRowMoveManager Plugin', () => {
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
-      canMove: true, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
-      row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
+      canMove: true,
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
     } as any;
     gridStub.onDragStart.notify(mockArgs, mouseEvent);
     gridStub.onDrag.notify(mockArgs, mouseEvent);
@@ -384,8 +461,14 @@ describe('SlickRowMoveManager Plugin', () => {
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
-      deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
-      row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
       canMove: true,
     } as any;
     gridStub.onDragStart.notify(mockArgs, mouseEvent);
@@ -432,8 +515,14 @@ describe('SlickRowMoveManager Plugin', () => {
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
-      deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
-      row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
       canMove: true,
     } as any;
     gridStub.onDragStart.notify(mockArgs, mouseEvent);
@@ -459,5 +548,4 @@ describe('SlickRowMoveManager Plugin', () => {
     expect(mockArgs.canMove).toBe(false);
     expect(mockArgs.guide.style.top).toBe('-1000px');
   });
-
 });

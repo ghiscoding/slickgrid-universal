@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { autoAddEditorFormatterToColumnsWithEditor, exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities.js';
+import {
+  autoAddEditorFormatterToColumnsWithEditor,
+  exportWithFormatterWhenDefined,
+  getAssociatedDateFormatter,
+  getValueFromParamsOrFormatterOptions,
+} from '../formatterUtilities.js';
 import { FieldType } from '../../enums/index.js';
 import { Editors } from '../../editors/index.js';
 import type { Column, Formatter, GridOption } from '../../interfaces/index.js';
@@ -10,23 +15,29 @@ import { type SlickGrid } from '../../core/index.js';
 
 describe('formatterUtilities', () => {
   const gridStub = {
-    getOptions: vi.fn()
+    getOptions: vi.fn(),
   } as unknown as SlickGrid;
 
   describe('autoAddEditorFormatterToColumnsWithEditor', () => {
     let columnDefinitions: Column[];
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
       const isEditableItem = !!columnDef.editor;
-      value = (value === null || value === undefined) ? '' : value;
+      value = value === null || value === undefined ? '' : value;
       return isEditableItem ? `<div class="editing-field">${value}</div>` : value;
     };
-    const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
-    const myItalicFormatter: Formatter = (_row, _cell, value) => value ? `<i>${value}</i>` : '';
+    const myBoldFormatter: Formatter = (_row, _cell, value) => (value ? `<b>${value}</b>` : '');
+    const myItalicFormatter: Formatter = (_row, _cell, value) => (value ? `<i>${value}</i>` : '');
 
     beforeEach(() => {
       columnDefinitions = [
         { id: 'firstName', field: 'firstName', editor: { model: Editors.text } },
-        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [myItalicFormatter, myBoldFormatter] } },
+        {
+          id: 'lastName',
+          field: 'lastName',
+          editor: { model: Editors.text },
+          formatter: multipleFormatter,
+          params: { formatters: [myItalicFormatter, myBoldFormatter] },
+        },
         { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
         { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: complexObjectFormatter },
         { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
@@ -38,9 +49,21 @@ describe('formatterUtilities', () => {
 
       expect(columnDefinitions).toEqual([
         { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
-        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] } },
+        {
+          id: 'lastName',
+          field: 'lastName',
+          editor: { model: Editors.text },
+          formatter: multipleFormatter,
+          params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] },
+        },
         { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
-        { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: multipleFormatter, params: { formatters: [complexObjectFormatter, customEditableInputFormatter] } },
+        {
+          id: 'address',
+          field: 'address.street',
+          editor: { model: Editors.longText },
+          formatter: multipleFormatter,
+          params: { formatters: [complexObjectFormatter, customEditableInputFormatter] },
+        },
         { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
       ]);
     });
@@ -51,9 +74,21 @@ describe('formatterUtilities', () => {
 
       expect(columnDefinitions).toEqual([
         { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
-        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] } },
+        {
+          id: 'lastName',
+          field: 'lastName',
+          editor: { model: Editors.text },
+          formatter: multipleFormatter,
+          params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] },
+        },
         { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
-        { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: multipleFormatter, params: { formatters: [complexObjectFormatter, customEditableInputFormatter] } },
+        {
+          id: 'address',
+          field: 'address.street',
+          editor: { model: Editors.longText },
+          formatter: multipleFormatter,
+          params: { formatters: [complexObjectFormatter, customEditableInputFormatter] },
+        },
         { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
       ]);
     });
@@ -115,13 +150,13 @@ describe('formatterUtilities', () => {
   describe('Export Utilities', () => {
     let mockItem;
     let mockColumn: Column;
-    const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: value ? `<b>${value}</b>` : '' } : null as any;
+    const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => (value !== null ? { text: value ? `<b>${value}</b>` : '' } : (null as any));
     const myUppercaseFormatter: Formatter = (_row, _cell, value) => {
       const fragment = new DocumentFragment();
       if (value) {
         fragment.textContent = value.toUpperCase();
       }
-      return value ? { html: fragment } : null as any;
+      return value ? { html: fragment } : (null as any);
     };
 
     beforeEach(() => {
@@ -146,17 +181,33 @@ describe('formatterUtilities', () => {
       });
 
       it('should provide a exportCustomFormatter in the column definition and expect the output to be formatted', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter }, mockItem, gridStub as SlickGrid, { exportWithFormatter: true });
+        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter }, mockItem, gridStub as SlickGrid, {
+          exportWithFormatter: true,
+        });
         expect(output).toBe('<b>John</b>');
       });
 
       it('should provide a exportCustomFormatter in the column definition and expect empty string when associated item property is null', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter }, { ...mockItem, firstName: null }, gridStub as SlickGrid, { exportWithFormatter: true });
+        const output = exportWithFormatterWhenDefined(
+          1,
+          1,
+          { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter },
+          { ...mockItem, firstName: null },
+          gridStub as SlickGrid,
+          { exportWithFormatter: true }
+        );
         expect(output).toBe('');
       });
 
       it('should provide a exportCustomFormatter in the column definition and expect empty string when associated item property is undefined', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter }, { ...mockItem, firstName: undefined }, gridStub as SlickGrid, { exportWithFormatter: true });
+        const output = exportWithFormatterWhenDefined(
+          1,
+          1,
+          { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter },
+          { ...mockItem, firstName: undefined },
+          gridStub as SlickGrid,
+          { exportWithFormatter: true }
+        );
         expect(output).toBe('');
       });
 
@@ -179,7 +230,9 @@ describe('formatterUtilities', () => {
 
       it('should enable exportWithFormatter as a grid option and expect empty string when associated item property is undefined', () => {
         mockColumn.exportWithFormatter = true;
-        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: undefined }, gridStub as SlickGrid, { exportWithFormatter: true });
+        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: undefined }, gridStub as SlickGrid, {
+          exportWithFormatter: true,
+        });
         expect(output).toBe('');
       });
 

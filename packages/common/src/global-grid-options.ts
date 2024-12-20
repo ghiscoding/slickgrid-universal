@@ -20,18 +20,18 @@ export const GlobalGridOptions: Partial<GridOption> = {
     bottomPadding: 20,
     minHeight: 180,
     minWidth: 300,
-    rightPadding: 0
+    rightPadding: 0,
   },
   cellHighlightCssClass: 'slick-cell-modified',
   checkboxSelector: {
     cssClass: 'slick-cell-checkboxsel',
-    width: 40
+    width: 40,
   },
   columnGroupSeparator: ' - ',
   columnPicker: {
     hideForceFitButton: false,
     hideSyncResizeButton: true,
-    headerColumnValueExtractor: pickerHeaderColumnValueExtractor
+    headerColumnValueExtractor: pickerHeaderColumnValueExtractor,
   },
   cellMenu: {
     autoAdjustDrop: true,
@@ -91,8 +91,8 @@ export const GlobalGridOptions: Partial<GridOption> = {
     metricTexts: {
       itemsKey: 'ITEMS',
       ofKey: 'OF',
-      itemsSelectedKey: 'ITEMS_SELECTED'
-    }
+      itemsSelectedKey: 'ITEMS_SELECTED',
+    },
   },
   customTooltip: {
     tooltipTextMaxLength: 700,
@@ -102,7 +102,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     // when enabled, this will preserve the row selection even after filtering/sorting/grouping
     syncGridSelection: {
       preserveHidden: false,
-      preserveHiddenOnSelectionChange: true
+      preserveHiddenOnSelectionChange: true,
     },
     syncGridSelectionWithBackendService: false, // but disable it when using backend services
   },
@@ -167,7 +167,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     groupingColumnHeaderTitle: 'Group By',
     groupingAggregatorRowText: '',
     sanitizeDataExport: true,
-    useUtf8WithBom: true
+    useUtf8WithBom: true,
   },
   eventNamingStyle: EventNamingStyle.lowerCase,
   forceFitColumns: false,
@@ -213,7 +213,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     resizeOnShowHeaderRow: true,
     showBulletWhenIconMissing: true,
     subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
-    headerColumnValueExtractor: pickerHeaderColumnValueExtractor
+    headerColumnValueExtractor: pickerHeaderColumnValueExtractor,
   },
   headerMenu: {
     autoAlign: true,
@@ -244,7 +244,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   pagination: {
     pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
     pageSize: 25,
-    totalItems: 0
+    totalItems: 0,
   },
   headerRowHeight: 35,
   rowHeight: 35,
@@ -265,7 +265,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   treeDataOptions: {
     exportIndentMarginLeft: 5,
     exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',
-  } as unknown as TreeDataOption
+  } as unknown as TreeDataOption,
 };
 
 /**

@@ -13,7 +13,7 @@ import { BackendUtilityService } from '../../services/backendUtility.service.js'
 const gridUid = 'slickgrid_124343';
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getGridPosition: vi.fn(),
@@ -100,7 +100,9 @@ describe('ColumnPickerControl', () => {
     it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
       const mockRowSelection = [0, 3, 5];
       vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
@@ -121,7 +123,9 @@ describe('ColumnPickerControl', () => {
     it('should open the Column Picker and then expect it to hide when clicking anywhere in the DOM body', () => {
       const mockRowSelection = [0, 3, 5];
       vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
       gridOptionsMock.enableRowSelection = true;
@@ -143,7 +147,9 @@ describe('ColumnPickerControl', () => {
 
     it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
       const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
       gridOptionsMock.frozenColumn = 0;
@@ -166,7 +172,9 @@ describe('ColumnPickerControl', () => {
 
     it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
       const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
       gridOptionsMock.columnPicker!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
@@ -186,7 +194,9 @@ describe('ColumnPickerControl', () => {
 
     it('should return custom label when columnPickerLabel is defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(0);
       const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
       control.columns = columnsMock;
@@ -205,7 +215,9 @@ describe('ColumnPickerControl', () => {
 
     it('should open the column picker via "onPreHeaderContextMenu" and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
 
       gridOptionsMock.columnPicker!.hideForceFitButton = false;
       gridOptionsMock.forceFitColumns = true;
@@ -213,7 +225,11 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       const groupElm = createDomElement('div', { className: 'slick-column-name' });
-      gridStub.onPreHeaderContextMenu.notify({ node: groupElm, grid: gridStub }, { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm } as any, gridStub);
+      gridStub.onPreHeaderContextMenu.notify(
+        { node: groupElm, grid: gridStub },
+        { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm } as any,
+        gridStub
+      );
       control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
       const inputForcefitElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
@@ -229,7 +245,9 @@ describe('ColumnPickerControl', () => {
 
     it('should open the column picker via "onHeaderContextMenu" and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
 
       gridOptionsMock.columnPicker!.hideForceFitButton = false;
       gridOptionsMock.forceFitColumns = true;
@@ -251,7 +269,9 @@ describe('ColumnPickerControl', () => {
 
     it('should open the column picker via "onHeaderContextMenu" and expect "Sync Resize" to be checked when "hideSyncResizeButton" is false', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
 
       gridOptionsMock.columnPicker!.hideSyncResizeButton = false;
       gridOptionsMock.syncColumnCellResize = true;
@@ -275,7 +295,9 @@ describe('ColumnPickerControl', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const onColChangedMock = vi.fn();
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
 
       gridOptionsMock.columnPicker!.onColumnsChanged = onColChangedMock;
       control.columns = columnsMock;
@@ -301,7 +323,9 @@ describe('ColumnPickerControl', () => {
 
     it('should open the column picker via "onHeaderContextMenu", click on "Force Fit Columns" checkbox and expect "setOptions" and "setColumns" to be called with previous visible columns', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
       vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
@@ -327,7 +351,9 @@ describe('ColumnPickerControl', () => {
 
     it('should open the column picker via "onHeaderContextMenu", click on "syncresize" checkbox and expect "setOptions" to be called with "syncColumnCellResize" property', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
       vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
 
@@ -351,7 +377,9 @@ describe('ColumnPickerControl', () => {
     });
 
     it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening column picker', () => {
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
       vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
 
       gridOptionsMock.darkMode = true;
@@ -365,12 +393,18 @@ describe('ColumnPickerControl', () => {
 
     it('should reposition menu to the left when no available space on the right', () => {
       vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ left: 50, top: 0, right: 0, bottom: 200, height: 22, width: 300, visible: true });
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
 
       control.init();
 
       const groupElm = createDomElement('div', { className: 'slick-column-name' });
-      gridStub.onPreHeaderContextMenu.notify({ node: groupElm, grid: gridStub }, { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm, pageX: 305 } as any, gridStub);
+      gridStub.onPreHeaderContextMenu.notify(
+        { node: groupElm, grid: gridStub },
+        { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm, pageX: 305 } as any,
+        gridStub
+      );
       vi.spyOn(control, 'createPickerMenu').mockImplementation(() => {
         if (control.menuElement) {
           Object.defineProperty(control.menuElement, 'clientWidth', { writable: true, value: 122 });
@@ -378,7 +412,11 @@ describe('ColumnPickerControl', () => {
         }
         return document.createElement('div');
       });
-      gridStub.onPreHeaderContextMenu.notify({ node: groupElm, grid: gridStub }, { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm, pageX: 305 } as any, gridStub);
+      gridStub.onPreHeaderContextMenu.notify(
+        { node: groupElm, grid: gridStub },
+        { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm, pageX: 305 } as any,
+        gridStub
+      );
       Object.defineProperty(control.menuElement, 'clientWidth', { writable: true, value: 122 });
       expect(control.menuElement?.style.left).toBe('183px');
     });
@@ -389,15 +427,18 @@ describe('ColumnPickerControl', () => {
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
-          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
+          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
         ];
         const columnsMock: Column[] = [
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
-          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
+          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
         ];
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValueOnce(0).mockReturnValueOnce(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValueOnce(0)
+          .mockReturnValueOnce(1);
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
 
         control.columns = columnsUnorderedMock;
@@ -422,7 +463,9 @@ describe('ColumnPickerControl', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       const utilitySpy = vi.spyOn(extensionUtility, 'getPickerTitleOutputString');
       const translateSpy = vi.spyOn(extensionUtility, 'translateItems');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
 
       gridOptionsMock.columnPicker!.hideForceFitButton = false;
       gridOptionsMock.syncColumnCellResize = true;
@@ -448,7 +491,7 @@ describe('ColumnPickerControl', () => {
         { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
         { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
-        { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
+        { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
       ]);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);

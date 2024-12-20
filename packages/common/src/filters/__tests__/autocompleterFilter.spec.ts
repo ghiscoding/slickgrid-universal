@@ -24,7 +24,7 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -38,7 +38,7 @@ describe('AutocompleterFilter', () => {
   let filter: AutocompleterFilter;
   let filterArguments: FilterArguments;
   let spyGetHeaderRow;
-  let mockColumn: Column & { filter: ColumnFilter; };
+  let mockColumn: Column & { filter: ColumnFilter };
   let collectionService: CollectionService;
   const http = new HttpStub();
 
@@ -52,16 +52,18 @@ describe('AutocompleterFilter', () => {
     spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
-      id: 'gender', field: 'gender', filterable: true,
+      id: 'gender',
+      field: 'gender',
+      filterable: true,
       filter: {
         model: Filters.autocompleter,
-      }
+      },
     };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new AutocompleterFilter(translaterService, collectionService);
@@ -76,18 +78,24 @@ describe('AutocompleterFilter', () => {
     expect(() => filter.init(null as any)).toThrow('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
-  it('should throw an error when there is no collection provided in the filter property', () => new Promise((done: any) => {
-    try {
-      mockColumn.filter.collection = undefined;
-      filter.init(filterArguments);
-    } catch (e) {
-      expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.`);
-      done();
-    }
-  }));
+  it('should throw an error when there is no collection provided in the filter property', () =>
+    new Promise((done: any) => {
+      try {
+        mockColumn.filter.collection = undefined;
+        filter.init(filterArguments);
+      } catch (e) {
+        expect(e.toString()).toContain(
+          `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.`
+        );
+        done();
+      }
+    }));
 
   it('should initialize the filter', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
 
@@ -98,16 +106,22 @@ describe('AutocompleterFilter', () => {
 
   it('should initialize the filter even when user define his own global filter options', () => {
     gridOptionMock.defaultFilterOptions = {
-      autocompleter: { minLength: 3 }
+      autocompleter: { minLength: 3 },
     };
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     filter.init(filterArguments);
 
     expect(filter.autocompleterOptions.minLength).toEqual(3);
   });
 
   it('should initialize the filter even when user define his own filter options', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
@@ -119,7 +133,10 @@ describe('AutocompleterFilter', () => {
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
     mockColumn.filter.placeholder = testValue;
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
 
     filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.search-filter.filter-gender') as HTMLInputElement;
@@ -129,7 +146,10 @@ describe('AutocompleterFilter', () => {
 
   it('should call "setValues" and expect that value to be in the callback when triggered and triggerOnEveryKeyStroke is enabled', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
 
     filter.init(filterArguments);
@@ -147,7 +167,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options and triggerOnEveryKeyStroke is enabled', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = true;
     const spyCallback = vi.spyOn(filterArguments, 'callback');
@@ -165,7 +188,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableTrimWhiteSpace" is enabled in the column filter and triggerOnEveryKeyStroke is enabled', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter.enableTrimWhiteSpace = true;
@@ -184,7 +210,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should be able to call "setValues" and call an event trigger', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter.enableTrimWhiteSpace = true;
@@ -199,7 +228,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should trigger the callback method when user types something in the input and triggerOnEveryKeyStroke is enabled', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
@@ -214,7 +246,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -224,7 +259,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should expect the input not to have the "filled" css class when the search term provided is an empty string', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     filterArguments.searchTerms = [''];
 
     filter.init(filterArguments);
@@ -236,7 +274,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
@@ -251,7 +292,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should expect "clear" method be called when input "blur" event is triggered', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
@@ -269,7 +313,10 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
@@ -306,7 +353,10 @@ describe('AutocompleterFilter', () => {
 
   it('should add custom render callback and expect it to be called when a search is triggered', async () => {
     const renderSpy = vi.spyOn(filter, 'renderDomElement');
-    const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
+    const mockDataResponse = [
+      { value: 'female', label: 'Female' },
+      { value: 'male', label: 'Male' },
+    ];
     const callbackMock = vi.fn().mockReturnValue(mockDataResponse);
 
     mockColumn.filter = {
@@ -315,8 +365,8 @@ describe('AutocompleterFilter', () => {
         showOnFocus: true,
         fetch: (searchText) => {
           callbackMock(searchText);
-        }
-      }
+        },
+      },
     };
 
     filterArguments.searchTerms = ['female'];
@@ -332,13 +382,16 @@ describe('AutocompleterFilter', () => {
   });
 
   it('should add custom "fetch" call and expect "renderRegularItem" callback be called when focusing on the autocomplete input', async () => {
-    const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+    const mockDataResponse = [
+      { value: 'female', label: 'Female' },
+      { value: 'undefined', label: 'Undefined' },
+    ];
 
     mockColumn.filter = {
       filterOptions: {
         showOnFocus: true,
-        fetch: (_, updateCallback) => updateCallback(mockDataResponse)
-      }
+        fetch: (_, updateCallback) => updateCallback(mockDataResponse),
+      },
     };
 
     filterArguments.searchTerms = ['female'];
@@ -358,13 +411,16 @@ describe('AutocompleterFilter', () => {
 
   it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', async () => {
     gridOptionMock.darkMode = true;
-    const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+    const mockDataResponse = [
+      { value: 'female', label: 'Female' },
+      { value: 'undefined', label: 'Undefined' },
+    ];
 
     mockColumn.filter = {
       filterOptions: {
         showOnFocus: true,
-        fetch: (_, updateCallback) => updateCallback(mockDataResponse)
-      }
+        fetch: (_, updateCallback) => updateCallback(mockDataResponse),
+      },
     };
 
     filterArguments.searchTerms = ['female'];
@@ -429,7 +485,7 @@ describe('AutocompleterFilter', () => {
   it('should create the filter and filter the string collection when "collectionFilterBy" is set', () => {
     mockColumn.filter = {
       collection: ['other', 'male', 'female'],
-      collectionFilterBy: { operator: OperatorType.equal, value: 'other' }
+      collectionFilterBy: { operator: OperatorType.equal, value: 'other' },
     };
 
     filter.init(filterArguments);
@@ -441,12 +497,16 @@ describe('AutocompleterFilter', () => {
 
   it('should create the filter and filter the value/label pair collection when "collectionFilterBy" is set', () => {
     mockColumn.filter = {
-      collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
+      collection: [
+        { value: 'other', description: 'other' },
+        { value: 'male', description: 'male' },
+        { value: 'female', description: 'female' },
+      ],
       collectionFilterBy: [
         { property: 'value', operator: OperatorType.notEqual, value: 'other' },
-        { property: 'value', operator: OperatorType.notEqual, value: 'male' }
+        { property: 'value', operator: OperatorType.notEqual, value: 'male' },
       ],
-      customStructure: { value: 'value', label: 'description', },
+      customStructure: { value: 'value', label: 'description' },
     };
 
     filter.init(filterArguments);
@@ -458,13 +518,17 @@ describe('AutocompleterFilter', () => {
 
   it('should create the filter and filter the value/label pair collection when "collectionFilterBy" is set and "filterResultAfterEachPass" is set to "merge"', () => {
     mockColumn.filter = {
-      collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
+      collection: [
+        { value: 'other', description: 'other' },
+        { value: 'male', description: 'male' },
+        { value: 'female', description: 'female' },
+      ],
       collectionFilterBy: [
         { property: 'value', operator: OperatorType.equal, value: 'other' },
-        { property: 'value', operator: OperatorType.equal, value: 'male' }
+        { property: 'value', operator: OperatorType.equal, value: 'male' },
       ],
       collectionOptions: { filterResultAfterEachPass: 'merge' },
-      customStructure: { value: 'value', label: 'description', },
+      customStructure: { value: 'value', label: 'description' },
     };
 
     filter.init(filterArguments);
@@ -477,9 +541,17 @@ describe('AutocompleterFilter', () => {
 
   it('should create the filter with a value/label pair collection that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () => {
     mockColumn.filter = {
-      collection: { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } } as any,
+      collection: {
+        deep: {
+          myCollection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
+        },
+      } as any,
       collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
-      customStructure: { value: 'value', label: 'description', },
+      customStructure: { value: 'value', label: 'description' },
     };
 
     filter.init(filterArguments);
@@ -493,7 +565,15 @@ describe('AutocompleterFilter', () => {
 
   it('should create the filter with a value/label pair collection that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () => {
     mockColumn.filter = {
-      collection: { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } } as any,
+      collection: {
+        deep: {
+          myCollection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
+        },
+      } as any,
       collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
     };
     mockColumn.type = FieldType.object;
@@ -511,11 +591,19 @@ describe('AutocompleterFilter', () => {
 
   it('should create the filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', async () => {
     try {
-      const mockCollection = { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } };
+      const mockCollection = {
+        deep: {
+          myCollection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
+        },
+      };
       mockColumn.filter = {
         collectionAsync: Promise.resolve(mockCollection),
         collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
-        customStructure: { value: 'value', label: 'description', },
+        customStructure: { value: 'value', label: 'description' },
       };
 
       await filter.init(filterArguments);
@@ -535,8 +623,8 @@ describe('AutocompleterFilter', () => {
       collection: ['other', 'male', 'female'],
       collectionSortBy: {
         sortDesc: true,
-        fieldType: FieldType.string
-      }
+        fieldType: FieldType.string,
+      },
     };
 
     filter.init(filterArguments);
@@ -550,11 +638,15 @@ describe('AutocompleterFilter', () => {
 
   it('should create the filter and sort the value/label pair collection when "collectionSortBy" is set', () => {
     mockColumn.filter = {
-      collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
+      collection: [
+        { value: 'other', description: 'other' },
+        { value: 'male', description: 'male' },
+        { value: 'female', description: 'female' },
+      ],
       collectionSortBy: {
         property: 'value',
         sortDesc: false,
-        fieldType: FieldType.string
+        fieldType: FieldType.string,
       },
       customStructure: {
         value: 'value',
@@ -586,7 +678,10 @@ describe('AutocompleterFilter', () => {
     it('should expect the "handleSelect" method to be called when the callback method is triggered', () => {
       const spy = vi.spyOn(filter, 'handleSelect');
 
-      mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.filter.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       filter.init(filterArguments);
       filter.autocompleterOptions.onSelect({ item: 'fem' });
 
@@ -596,7 +691,10 @@ describe('AutocompleterFilter', () => {
     it('should initialize the filter with filterOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
       const spy = vi.spyOn(filter, 'handleSelect');
 
-      mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.filter.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
       filter.init(filterArguments);
       filter.autocompleterOptions.onSelect({ item: 'fem' });
@@ -606,8 +704,14 @@ describe('AutocompleterFilter', () => {
 
     it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
       const renderSpy = vi.spyOn(filter, 'renderDomElement');
-      const newCollection = [{ value: 'val1', label: 'label1' }, { value: 'val2', label: 'label2' }];
-      const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
+      const newCollection = [
+        { value: 'val1', label: 'label1' },
+        { value: 'val2', label: 'label2' },
+      ];
+      const mockDataResponse = [
+        { value: 'female', label: 'Female' },
+        { value: 'male', label: 'Male' },
+      ];
 
       mockColumn.filter = {
         collection: [],
@@ -627,7 +731,10 @@ describe('AutocompleterFilter', () => {
 
     it('should trigger a re-render of the DOM element when collection changes', async () => {
       const renderSpy = vi.spyOn(filter, 'renderDomElement');
-      const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
+      const mockDataResponse = [
+        { value: 'female', label: 'Female' },
+        { value: 'male', label: 'Male' },
+      ];
 
       mockColumn.filter = {
         collection: [],
@@ -654,7 +761,7 @@ describe('AutocompleterFilter', () => {
         showOnFocus: true,
         renderItem: {
           layout: 'fourCorners',
-          templateCallback: mockTemplateCallback
+          templateCallback: mockTemplateCallback,
         },
       } as AutocompleterOption;
 
@@ -673,22 +780,25 @@ describe('AutocompleterFilter', () => {
       expect(autocompleteListElms[0].innerHTML).toContain(mockTemplateString);
     });
 
-    it('should throw an error when "collectionAsync" Promise does not return a valid array', () => new Promise((done: any) => {
-      const promise = Promise.resolve({ hello: 'world' });
-      mockColumn.filter.collectionAsync = promise;
-      mockColumn.filter.filterOptions = { showOnFocus: true } as AutocompleterOption;
-      filter.init(filterArguments).catch((e) => {
-        expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
-        done();
-      });
-    }));
+    it('should throw an error when "collectionAsync" Promise does not return a valid array', () =>
+      new Promise((done: any) => {
+        const promise = Promise.resolve({ hello: 'world' });
+        mockColumn.filter.collectionAsync = promise;
+        mockColumn.filter.filterOptions = { showOnFocus: true } as AutocompleterOption;
+        filter.init(filterArguments).catch((e) => {
+          expect(e.toString()).toContain(
+            `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
+          );
+          done();
+        });
+      }));
   });
 
   describe('AutocompleterFilter using RxJS Observables', () => {
     let divContainer: HTMLDivElement;
     let filter: AutocompleterFilter;
     let filterArguments: FilterArguments;
-    let mockColumn: Column & { filter: ColumnFilter; };
+    let mockColumn: Column & { filter: ColumnFilter };
     let collectionService: CollectionService;
     let rxjs: RxJsResourceStub;
     let translaterService: TranslateServiceStub;
@@ -704,16 +814,18 @@ describe('AutocompleterFilter', () => {
       spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
       mockColumn = {
-        id: 'gender', field: 'gender', filterable: true,
+        id: 'gender',
+        field: 'gender',
+        filterable: true,
         filter: {
           model: Filters.autocompleter,
-        }
+        },
       };
       filterArguments = {
         grid: gridStub,
         columnDef: mockColumn,
         callback: vi.fn(),
-        filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+        filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
       };
 
       filter = new AutocompleterFilter(translaterService, collectionService, rxjs);
@@ -761,7 +873,6 @@ describe('AutocompleterFilter', () => {
       filterElm.focus();
       filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', bubbles: true, cancelable: true }));
 
-
       // after await (or timeout delay) we'll get the Subject Observable
       mockCollection.push('other');
       (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection);
@@ -777,9 +888,17 @@ describe('AutocompleterFilter', () => {
 
     it('should create the filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', async () => {
       mockColumn.filter = {
-        collectionAsync: of({ deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } }),
+        collectionAsync: of({
+          deep: {
+            myCollection: [
+              { value: 'other', description: 'other' },
+              { value: 'male', description: 'male' },
+              { value: 'female', description: 'female' },
+            ],
+          },
+        }),
         collectionOptions: {
-          collectionInsideObjectProperty: 'deep.myCollection'
+          collectionInsideObjectProperty: 'deep.myCollection',
         },
         customStructure: {
           value: 'value',
@@ -798,12 +917,15 @@ describe('AutocompleterFilter', () => {
       expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
     });
 
-    it('should throw an error when "collectionAsync" Observable does not return a valid array', () => new Promise((done: any) => {
-      mockColumn.filter.collectionAsync = of({ hello: 'world' });
-      filter.init(filterArguments).catch((e) => {
-        expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
-        done();
-      });
-    }));
+    it('should throw an error when "collectionAsync" Observable does not return a valid array', () =>
+      new Promise((done: any) => {
+        mockColumn.filter.collectionAsync = of({ hello: 'world' });
+        filter.init(filterArguments).catch((e) => {
+          expect(e.toString()).toContain(
+            `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
+          );
+          done();
+        });
+      }));
   });
 });

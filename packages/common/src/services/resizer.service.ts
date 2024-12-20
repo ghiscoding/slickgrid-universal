@@ -2,14 +2,8 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { getInnerSize, getOffset, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 
-import { FieldType, } from '../enums/index.js';
-import type {
-  AutoResizeOption,
-  Column,
-  GridOption,
-  GridSize,
-  ResizeByContentOption,
-} from '../interfaces/index.js';
+import { FieldType } from '../enums/index.js';
+import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities.js';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
@@ -103,16 +97,21 @@ export class ResizerService {
 
     this._grid = grid;
     this._gridContainerElm = gridParentContainerElm;
-    const fixedGridSizes = (this.gridOptions?.gridHeight || this.gridOptions?.gridWidth) ? { height: this.gridOptions?.gridHeight, width: this.gridOptions?.gridWidth } : undefined;
+    const fixedGridSizes =
+      this.gridOptions?.gridHeight || this.gridOptions?.gridWidth
+        ? { height: this.gridOptions?.gridHeight, width: this.gridOptions?.gridWidth }
+        : undefined;
     this._autoResizeOptions = this.gridOptions?.autoResize ?? { container: 'grid1', bottomPadding: 0 };
 
     if (fixedGridSizes?.width && gridParentContainerElm?.style) {
-      gridParentContainerElm.style.width = typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
+      gridParentContainerElm.style.width =
+        typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
     }
 
     this._gridDomElm = grid.getContainerNode() as HTMLDivElement;
 
     if (typeof this._autoResizeOptions.container === 'string') {
+      // prettier-ignore
       this._pageContainerElm = typeof this._autoResizeOptions.container === 'string' ? document.querySelector(this._autoResizeOptions.container) as HTMLElement : this._autoResizeOptions.container;
     } else {
       this._pageContainerElm = this._autoResizeOptions.container!;
@@ -139,9 +138,9 @@ export class ResizerService {
     // the same action can be called from a double-click and/or from column header menu
     if (this.gridOptions.enableColumnResizeOnDoubleClick) {
       this._subscriptions.push(
-        this.pubSubService.subscribe('onHeaderMenuColumnResizeByContent', (data => {
+        this.pubSubService.subscribe('onHeaderMenuColumnResizeByContent', (data) => {
           this.handleSingleColumnResizeByContent(data.columnId);
-        }))
+        })
       );
 
       this._eventHandler.subscribe(this._grid.onColumnsResizeDblClick, (_e, args) => {
@@ -216,7 +215,8 @@ export class ResizerService {
 
     // calculate bottom padding
     // if using pagination, we need to add the pagination height to this bottom padding
-    let bottomPadding = (autoResizeOptions?.bottomPadding !== undefined) ? autoResizeOptions.bottomPadding : DATAGRID_BOTTOM_PADDING;
+    let bottomPadding =
+      autoResizeOptions?.bottomPadding !== undefined ? autoResizeOptions.bottomPadding : DATAGRID_BOTTOM_PADDING;
     if (bottomPadding && gridOptions.enablePagination) {
       bottomPadding += DATAGRID_PAGINATION_HEIGHT;
     }
@@ -248,7 +248,7 @@ export class ResizerService {
     const minWidth = autoResizeOptions?.minWidth ?? DATAGRID_MIN_WIDTH;
 
     let newHeight = availableHeight;
-    let newWidth = (autoResizeOptions?.rightPadding) ? availableWidth - autoResizeOptions.rightPadding : availableWidth;
+    let newWidth = autoResizeOptions?.rightPadding ? availableWidth - autoResizeOptions.rightPadding : availableWidth;
 
     // optionally (when defined), make sure that grid height & width are within their thresholds
     if (newHeight < minHeight) {
@@ -267,7 +267,7 @@ export class ResizerService {
     // return the new dimensions unless a fixed height/width was defined
     return {
       height: this._fixedHeight || newHeight,
-      width: this._fixedWidth || newWidth
+      width: this._fixedWidth || newWidth,
     };
   }
 
@@ -295,7 +295,7 @@ export class ResizerService {
    * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
    */
   resizeGrid(delay?: number, newSizes?: GridSize): Promise<GridSize | undefined> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // because of the javascript async nature, we might want to delay the resize a little bit
       delay = delay || 0;
 
@@ -314,7 +314,10 @@ export class ResizerService {
 
     // we can call our resize by content here (when enabled)
     // since the core SlickResizer plugin only supports the "autosizeColumns"
-    if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || dimensions?.width !== this._lastDimensions?.width)) {
+    if (
+      this.gridOptions.enableAutoResizeColumnsByCellContent &&
+      (!this._lastDimensions?.width || dimensions?.width !== this._lastDimensions?.width)
+    ) {
       this.resizeColumnsByCellContent(false);
     }
     this._lastDimensions = dimensions;
@@ -330,8 +333,8 @@ export class ResizerService {
       // get the new sizes, if new sizes are passed (not 0), we will use them else use available space
       // basically if user passes 1 of the dimension, let say he passes just the height,
       // we will use the height as a fixed height but the width will be resized by it's available space
-      const newHeight = (newSizes?.height) ? newSizes.height : availableDimensions?.height;
-      const newWidth = (newSizes?.width) ? newSizes.width : availableDimensions?.width;
+      const newHeight = newSizes?.height ? newSizes.height : availableDimensions?.height;
+      const newWidth = newSizes?.width ? newSizes.width : availableDimensions?.width;
 
       // apply these new height/width to the datagrid
       if (!this.gridOptions.autoHeight) {
@@ -356,7 +359,10 @@ export class ResizerService {
             this._grid.autosizeColumns();
           }
         }
-      } else if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || newWidth !== this._lastDimensions?.width)) {
+      } else if (
+        this.gridOptions.enableAutoResizeColumnsByCellContent &&
+        (!this._lastDimensions?.width || newWidth !== this._lastDimensions?.width)
+      ) {
         // we can call our resize by content here (when enabled)
         // since the core SlickResizer plugin only supports the "autosizeColumns"
         this.resizeColumnsByCellContent(false);
@@ -365,7 +371,7 @@ export class ResizerService {
       // keep last resized dimensions & resolve them to the Promise
       this._lastDimensions = {
         height: newHeight || 0,
-        width: newWidth || 0
+        width: newWidth || 0,
       };
     }
 
@@ -387,18 +393,26 @@ export class ResizerService {
   resizeColumnsByCellContent(recalculateColumnsTotalWidth = false): void {
     const columnDefinitions = this._grid.getColumns();
     const dataset = this.dataView.getItems() as any[];
-    const columnWidths: { [columnId in string | number]: number; } = {};
+    const columnWidths: { [columnId in string | number]: number } = {};
     let reRender = false;
     let readItemCount = 0;
     const viewportWidth = this._gridContainerElm?.offsetWidth ?? 0;
 
     // if our columns total width is smaller than the grid viewport, we can call the column autosize directly without the need to recalculate all column widths
-    if ((!Array.isArray(dataset) || dataset.length === 0) || (!recalculateColumnsTotalWidth && this._totalColumnsWidthByContent > 0 && this._totalColumnsWidthByContent < viewportWidth)) {
+    if (
+      !Array.isArray(dataset) ||
+      dataset.length === 0 ||
+      (!recalculateColumnsTotalWidth && this._totalColumnsWidthByContent > 0 && this._totalColumnsWidthByContent < viewportWidth)
+    ) {
       this._grid.autosizeColumns();
       return;
     }
 
-    if ((this._hasResizedByContentAtLeastOnce && this.gridOptions?.resizeByContentOnlyOnFirstLoad && !recalculateColumnsTotalWidth)) {
+    if (
+      this._hasResizedByContentAtLeastOnce &&
+      this.gridOptions?.resizeByContentOnlyOnFirstLoad &&
+      !recalculateColumnsTotalWidth
+    ) {
       return;
     }
 
@@ -413,12 +427,17 @@ export class ResizerService {
       }
 
       // calculate cell width by reading all data from dataset and also parse through any Formatter(s) when exist
-      readItemCount = this.calculateCellWidthByReadingDataset(columnDefinitions, columnWidths, this.resizeByContentOptions.maxItemToInspectCellContentWidth);
+      readItemCount = this.calculateCellWidthByReadingDataset(
+        columnDefinitions,
+        columnWidths,
+        this.resizeByContentOptions.maxItemToInspectCellContentWidth
+      );
 
       // finally loop through all column definitions one last time to apply new calculated `width` on each elligible column
       let totalColsWidth = 0;
       for (const column of columnDefinitions) {
-        const resizeAlwaysRecalculateWidth = column.resizeAlwaysRecalculateWidth ?? this.resizeByContentOptions.alwaysRecalculateColumnWidth ?? false;
+        const resizeAlwaysRecalculateWidth =
+          column.resizeAlwaysRecalculateWidth ?? this.resizeByContentOptions.alwaysRecalculateColumnWidth ?? false;
 
         if (column.originalWidth && !resizeAlwaysRecalculateWidth) {
           column.width = column.originalWidth;
@@ -441,7 +460,7 @@ export class ResizerService {
     this._grid.setColumns(columnDefinitions);
     this._hasResizedByContentAtLeastOnce = true;
 
-    const calculateColumnWidths: { [columnId in string | number]: number | undefined; } = {};
+    const calculateColumnWidths: { [columnId in string | number]: number | undefined } = {};
     for (const columnDef of columnDefinitions) {
       calculateColumnWidths[columnDef.id] = columnDef.width;
     }
@@ -464,7 +483,12 @@ export class ResizerService {
    * @param columnIndexOverride - an optional column index, if provided it will override the column index position
    * @returns - count of items that was read
    */
-  protected calculateCellWidthByReadingDataset(columnOrColumns: Column | Column[], columnWidths: { [columnId in string | number]: number; }, maxItemToInspect = 1000, columnIndexOverride?: number): number {
+  protected calculateCellWidthByReadingDataset(
+    columnOrColumns: Column | Column[],
+    columnWidths: { [columnId in string | number]: number },
+    maxItemToInspect = 1000,
+    columnIndexOverride?: number
+  ): number {
     const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
     const dataset = this.dataView.getItems() as any[];
 
@@ -476,7 +500,13 @@ export class ResizerService {
       if (Array.isArray(columnDefinitions)) {
         if (typeof columnWidths === 'object') {
           columnDefinitions.forEach((columnDef, colIdx) => {
-            const newColumnWidth = this.calculateCellWidthByContent(item, columnDef, rowIdx, columnIndexOverride ?? colIdx, columnWidths[columnDef.id]);
+            const newColumnWidth = this.calculateCellWidthByContent(
+              item,
+              columnDef,
+              rowIdx,
+              columnIndexOverride ?? colIdx,
+              columnWidths[columnDef.id]
+            );
             if (newColumnWidth !== undefined) {
               columnWidths[columnDef.id] = newColumnWidth;
             }
@@ -499,7 +529,13 @@ export class ResizerService {
    * @param {Number} initialMininalColumnWidth - initial width, could be coming from `minWidth` or a default `width`
    * @returns - column width
    */
-  protected calculateCellWidthByContent(item: any, columnDef: Column, rowIdx: number, colIdx: number, initialMininalColumnWidth?: number): number | undefined {
+  protected calculateCellWidthByContent(
+    item: any,
+    columnDef: Column,
+    rowIdx: number,
+    colIdx: number,
+    initialMininalColumnWidth?: number
+  ): number | undefined {
     const resizeCellCharWidthInPx = this.resizeByContentOptions.cellCharWidthInPx ?? 7; // width in pixels of a string character, this can vary depending on which font family/size is used & cell padding
 
     if (!columnDef.originalWidth) {
@@ -509,9 +545,12 @@ export class ResizerService {
       const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
       const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
       if (columnDef && (initialMininalColumnWidth === undefined || formattedTextWidthInPx > initialMininalColumnWidth)) {
-        initialMininalColumnWidth = (resizeMaxWidthThreshold !== undefined && formattedTextWidthInPx > resizeMaxWidthThreshold)
-          ? resizeMaxWidthThreshold
-          : (columnDef.maxWidth !== undefined && formattedTextWidthInPx > columnDef.maxWidth) ? columnDef.maxWidth : formattedTextWidthInPx;
+        initialMininalColumnWidth =
+          resizeMaxWidthThreshold !== undefined && formattedTextWidthInPx > resizeMaxWidthThreshold
+            ? resizeMaxWidthThreshold
+            : columnDef.maxWidth !== undefined && formattedTextWidthInPx > columnDef.maxWidth
+              ? columnDef.maxWidth
+              : formattedTextWidthInPx;
       }
     }
     return initialMininalColumnWidth;
@@ -534,7 +573,7 @@ export class ResizerService {
 
     // apply optional ratio which is typically 1, except for string where we use a ratio of around ~0.9 since we have more various thinner characters like (i, l, t, ...)
     const stringWidthRatio = column?.resizeCalcWidthRatio ?? this.resizeByContentOptions.defaultRatioForStringType ?? 0.9;
-    newColWidth *= (fieldType === 'string' ? stringWidthRatio : 1);
+    newColWidth *= fieldType === 'string' ? stringWidthRatio : 1;
 
     // apply extra cell padding, custom padding & editor formatter padding
     // --
@@ -558,6 +597,7 @@ export class ResizerService {
     newColWidth = Math.ceil(newColWidth);
 
     // finally only apply the new width if user didn't yet provide one and/or if user really wants to specifically ask for a recalculate
+    // prettier-ignore
     if (column.originalWidth === undefined || column.resizeAlwaysRecalculateWidth === true || this.resizeByContentOptions.alwaysRecalculateColumnWidth === true) {
       column.width = this.readjustNewColumnWidthWhenOverLimit(column, newColWidth);
     }
@@ -565,14 +605,19 @@ export class ResizerService {
 
   protected handleSingleColumnResizeByContent(columnId: string): void {
     const columnDefinitions = this._grid.getColumns();
-    const columnDefIdx = columnDefinitions.findIndex(col => col.id === columnId);
+    const columnDefIdx = columnDefinitions.findIndex((col) => col.id === columnId);
 
     if (columnDefIdx >= 0) {
       // provide the initial column width by reference to the calculation and the result will also be returned by reference
       const columnDef = columnDefinitions[columnDefIdx];
       const columnWidths = { [columnId]: columnDef.originalWidth ?? columnDef.minWidth ?? 0 };
       columnDef.originalWidth = undefined; // reset original width since we want to recalculate it
-      this.calculateCellWidthByReadingDataset(columnDef, columnWidths, this.resizeByContentOptions.maxItemToInspectSingleColumnWidthByContent, columnDefIdx);
+      this.calculateCellWidthByReadingDataset(
+        columnDef,
+        columnWidths,
+        this.resizeByContentOptions.maxItemToInspectSingleColumnWidthByContent,
+        columnDefIdx
+      );
       this.applyNewCalculatedColumnWidthByReference(columnDef, columnWidths[columnId]);
 
       // finally call the re-render for the UI to render the new column width
@@ -590,21 +635,28 @@ export class ResizerService {
    */
   protected readjustNewColumnWidthWhenOverLimit(column: Column, newColumnWidth: number): number {
     const frozenColumnIdx = this.gridOptions.frozenColumn ?? -1;
-    const columnIdx = this._grid.getColumns().findIndex(col => col.id === column.id) ?? 0;
+    const columnIdx = this._grid.getColumns().findIndex((col) => col.id === column.id) ?? 0;
     let adjustedWidth = newColumnWidth;
 
     if (frozenColumnIdx >= 0 && columnIdx <= frozenColumnIdx) {
       const allViewports = Array.from(this._grid.getViewports() as HTMLElement[]);
       if (allViewports) {
-        const leftViewportWidth = allViewports.find(viewport => viewport.classList.contains('slick-viewport-left'))?.clientWidth ?? 0;
-        const rightViewportWidth = allViewports.find(viewport => viewport.classList.contains('slick-viewport-right'))?.clientWidth ?? 0;
+        const leftViewportWidth =
+          allViewports.find((viewport) => viewport.classList.contains('slick-viewport-left'))?.clientWidth ?? 0;
+        const rightViewportWidth =
+          allViewports.find((viewport) => viewport.classList.contains('slick-viewport-right'))?.clientWidth ?? 0;
         const viewportFullWidth = leftViewportWidth + rightViewportWidth;
         const leftViewportWidthMinusCurrentCol = leftViewportWidth - (column.width ?? 0);
-        const isGreaterThanFullViewportWidth = (leftViewportWidthMinusCurrentCol + newColumnWidth) > viewportFullWidth;
+        const isGreaterThanFullViewportWidth = leftViewportWidthMinusCurrentCol + newColumnWidth > viewportFullWidth;
 
         if (isGreaterThanFullViewportWidth) {
-          const resizeWidthToRemoveFromExceededWidthReadjustment = this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
-          adjustedWidth = (leftViewportWidth - leftViewportWidthMinusCurrentCol + rightViewportWidth - resizeWidthToRemoveFromExceededWidthReadjustment);
+          const resizeWidthToRemoveFromExceededWidthReadjustment =
+            this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
+          adjustedWidth =
+            leftViewportWidth -
+            leftViewportWidthMinusCurrentCol +
+            rightViewportWidth -
+            resizeWidthToRemoveFromExceededWidthReadjustment;
         }
       }
     }
@@ -633,7 +685,7 @@ export class ResizerService {
   protected resizeGridWhenStylingIsBrokenUntilCorrected(): void {
     // how many time we want to check before really stopping the resize check?
     // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
-    const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (5 * 60 * 60); // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
+    const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? 5 * 60 * 60; // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
     const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 5;
 
     const headerElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-header`);
@@ -652,7 +704,11 @@ export class ResizerService {
         if (this.gridOptions?.enableFiltering && this.gridOptions.headerRowHeight) {
           headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
         }
-        if (this.gridOptions?.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
+        if (
+          this.gridOptions?.createPreHeaderPanel &&
+          this.gridOptions.showPreHeaderPanel &&
+          this.gridOptions.preHeaderPanelHeight
+        ) {
           headerOffsetTop += this.gridOptions.preHeaderPanelHeight; // header grouping titles row height
         }
         headerOffsetTop += headerTitleRowHeight; // header title row height
@@ -664,7 +720,12 @@ export class ResizerService {
         // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
         const containerElmOffset = getOffset(this._gridContainerElm);
-        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset.left === 0 && containerElmOffset.top === 0)) ? true : false;
+        let isResizeRequired =
+          headerPos?.top === 0 ||
+          headerOffsetTop - viewportOffsetTop > 2 ||
+          (containerElmOffset.left === 0 && containerElmOffset.top === 0)
+            ? true
+            : false;
 
         // another condition for a required resize is when the grid is hidden (not in current tab) then its "rightPx" rendered range will be 0px
         // if that's the case then we know the grid is still hidden and we need to resize it whenever it becomes visible (when its "rightPx" becomes greater than 0 then it's visible)
@@ -698,7 +759,11 @@ export class ResizerService {
           resizeGoodCount++;
         }
 
-        if (this.checkIsGridShown() && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {
+        if (
+          this.checkIsGridShown() &&
+          !isResizeRequired &&
+          (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)
+        ) {
           window.clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, this.intervalRetryDelay);

@@ -4,7 +4,14 @@ import { SortComparers } from './index.js';
 import { getAssociatedDateSortComparer } from './dateUtilities.js';
 import { isColumnDateType } from '../services/utilities.js';
 
-export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldType], value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column, gridOptions?: GridOption): number {
+export function sortByFieldType(
+  fieldType: (typeof FieldType)[keyof typeof FieldType],
+  value1: any,
+  value2: any,
+  sortDirection: number | SortDirectionNumber,
+  sortColumn?: Column,
+  gridOptions?: GridOption
+): number {
   let sortResult = 0;
 
   if (isColumnDateType(fieldType)) {

@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
-import { ExtensionName, GridStateType, } from '../enums/index.js';
+import { ExtensionName, GridStateType } from '../enums/index.js';
 import type {
   Column,
   CurrentColumn,
@@ -35,7 +35,7 @@ export class GridStateService {
     protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
-    protected readonly treeDataService: TreeDataService,
+    protected readonly treeDataService: TreeDataService
   ) {
     this._eventHandler = new SlickEventHandler();
   }
@@ -90,14 +90,18 @@ export class GridStateService {
    * @param {Boolean} triggerAutoSizeColumns - True by default, do we also want to call the "autosizeColumns()" method to make the columns fit in the grid?
    * @param {Boolean} triggerColumnsFullResizeByContent - False by default, do we also want to call full columns resize by their content?
    */
-  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
+  changeColumnsArrangement(
+    definedColumns: CurrentColumn[],
+    triggerAutoSizeColumns = true,
+    triggerColumnsFullResizeByContent = false
+  ): void {
     if (Array.isArray(definedColumns) && definedColumns.length > 0) {
       const newArrangedColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
 
       if (newArrangedColumns && Array.isArray(newArrangedColumns) && newArrangedColumns.length > 0) {
         // make sure that the checkbox selector is still visible in the list when it is enabled
         if (Array.isArray(this.sharedService.allColumns)) {
-          const dynamicAddonColumnByIndexPositionList: { columnId: string; columnIndexPosition: number; }[] = [];
+          const dynamicAddonColumnByIndexPositionList: { columnId: string; columnIndexPosition: number }[] = [];
 
           if (this._gridOptions.enableCheckboxSelector) {
             const columnIndexPosition = this._gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
@@ -113,12 +117,16 @@ export class GridStateService {
           }
 
           // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
-          this.addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList, this.sharedService.allColumns, newArrangedColumns);
+          this.addColumnDynamicWhenFeatureEnabled(
+            dynamicAddonColumnByIndexPositionList,
+            this.sharedService.allColumns,
+            newArrangedColumns
+          );
         }
 
         // keep copy the original optional `width` properties optionally provided by the user.
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        newArrangedColumns.forEach(col => col.originalWidth = col.width || col.originalWidth);
+        newArrangedColumns.forEach((col) => (col.originalWidth = col.width || col.originalWidth));
 
         // finally set the new presets columns (including checkbox selector if need be)
         this._grid.setColumns(newArrangedColumns);
@@ -127,7 +135,10 @@ export class GridStateService {
         // resize the columns to fit the grid canvas
         if (triggerAutoSizeColumns) {
           this._grid.autosizeColumns();
-        } else if (triggerColumnsFullResizeByContent || (this._gridOptions.enableAutoResizeColumnsByCellContent && !this._gridOptions.autosizeColumnsByCellContentOnFirstLoad)) {
+        } else if (
+          triggerColumnsFullResizeByContent ||
+          (this._gridOptions.enableAutoResizeColumnsByCellContent && !this._gridOptions.autosizeColumnsByCellContentOnFirstLoad)
+        ) {
           this.pubSubService.publish('onFullResizeByContentRequested', { caller: 'GridStateService' });
         }
       }
@@ -194,7 +205,7 @@ export class GridStateService {
             columnId: column.id as string,
             cssClass: column.cssClass || '',
             headerCssClass: column.headerCssClass || '',
-            width: column.width || 0
+            width: column.width || 0,
           });
         }
       });
@@ -223,7 +234,7 @@ export class GridStateService {
             // for the width we will only pull the custom width or else nothing
             // since we don't want to use the default width that SlickGrid uses internally (which is 60px),
             // because that would cancel any column resize done by Slickgrid-Universal (like autoResizeColumnsByCellContent)
-            width: currentColumn.width
+            width: currentColumn.width,
           });
         }
       });
@@ -284,7 +295,7 @@ export class GridStateService {
       return {
         gridRowIndexes: this._grid.getSelectedRows() || [],
         dataContextIds: this._dataView.getAllSelectedIds() || [],
-        filteredDataContextIds: this._dataView.getAllSelectedFilteredIds() || []
+        filteredDataContextIds: this._dataView.getAllSelectedFilteredIds() || [],
       };
     }
     return null;
@@ -330,7 +341,11 @@ export class GridStateService {
 
       // if the result is True but the grid is using a Backend Service, we will do an extra flag check the reason is because it might have some unintended behaviors
       // with the BackendServiceApi because technically the data in the page changes the DataView on every page.
-      if (preservedRowSelection && this._gridOptions.backendServiceApi && this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')) {
+      if (
+        preservedRowSelection &&
+        this._gridOptions.backendServiceApi &&
+        this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')
+      ) {
         preservedRowSelection = this._gridOptions.dataView.syncGridSelectionWithBackendService as boolean;
       }
     }
@@ -340,7 +355,10 @@ export class GridStateService {
   resetColumns(columnDefinitions?: Column[]): void {
     const columns: Column[] = columnDefinitions || this._columns;
     const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
-    this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
+    this.pubSubService.publish('onGridStateChanged', {
+      change: { newValues: currentColumns, type: GridStateType.columns },
+      gridState: this.getCurrentGridState(),
+    });
   }
 
   /**
@@ -359,7 +377,10 @@ export class GridStateService {
 
   /** if we use Row Selection or the Checkbox Selector, we need to reset any selection */
   resetRowSelectionWhenRequired(): void {
-    if (!this.needToPreserveRowSelection() && (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector)) {
+    if (
+      !this.needToPreserveRowSelection() &&
+      (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector)
+    ) {
       // this also requires the Row Selection Model to be registered as well
       const rowSelectionExtension = this.extensionService?.getExtensionByName?.(ExtensionName.rowSelection);
       if (rowSelectionExtension?.instance) {
@@ -375,9 +396,12 @@ export class GridStateService {
   subscribeToAllGridChanges(grid: SlickGrid): void {
     // Subscribe to Event Emitter of Filter changed
     this._subscriptions.push(
-      this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', currentFilters => {
+      this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', (currentFilters) => {
         this.resetRowSelectionWhenRequired();
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentFilters, type: GridStateType.filter }, gridState: this.getCurrentGridState() });
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: currentFilters, type: GridStateType.filter },
+          gridState: this.getCurrentGridState(),
+        });
       })
     );
 
@@ -385,22 +409,31 @@ export class GridStateService {
     this._subscriptions.push(
       this.pubSubService.subscribe('onFilterCleared', () => {
         this.resetRowSelectionWhenRequired();
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: [], type: GridStateType.filter }, gridState: this.getCurrentGridState() });
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: [], type: GridStateType.filter },
+          gridState: this.getCurrentGridState(),
+        });
       })
     );
 
     // Subscribe to Event Emitter of Sort changed
     this._subscriptions.push(
-      this.pubSubService.subscribe<CurrentSorter[]>('onSortChanged', currentSorters => {
+      this.pubSubService.subscribe<CurrentSorter[]>('onSortChanged', (currentSorters) => {
         this.resetRowSelectionWhenRequired();
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentSorters, type: GridStateType.sorter }, gridState: this.getCurrentGridState() });
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: currentSorters, type: GridStateType.sorter },
+          gridState: this.getCurrentGridState(),
+        });
       })
     );
     // Subscribe to Event Emitter of Sort cleared
     this._subscriptions.push(
       this.pubSubService.subscribe('onSortCleared', () => {
         this.resetRowSelectionWhenRequired();
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: [], type: GridStateType.sorter }, gridState: this.getCurrentGridState() });
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: [], type: GridStateType.sorter },
+          gridState: this.getCurrentGridState(),
+        });
       })
     );
 
@@ -421,32 +454,52 @@ export class GridStateService {
         this.selectedRowDataContextIds = args.filteredIds;
         this._selectedRowIndexes = args.rows;
 
+        // prettier-ignore
         if (!dequal(this.selectedRowDataContextIds, previousSelectedFilteredRowDataContextIds) || !dequal(this._selectedRowIndexes, previousSelectedRowIndexes)) {
-          const newValues = { gridRowIndexes: this._selectedRowIndexes || [], dataContextIds: args.selectedRowIds, filteredDataContextIds: args.filteredIds } as CurrentRowSelection;
-          this.pubSubService.publish('onGridStateChanged', { change: { newValues, type: GridStateType.rowSelection }, gridState: this.getCurrentGridState() });
+          const newValues = {
+            gridRowIndexes: this._selectedRowIndexes || [],
+            dataContextIds: args.selectedRowIds,
+            filteredDataContextIds: args.filteredIds,
+          } as CurrentRowSelection;
+          this.pubSubService.publish('onGridStateChanged', {
+            change: { newValues, type: GridStateType.rowSelection },
+            gridState: this.getCurrentGridState(),
+          });
         }
       });
     }
 
     // subscribe to HeaderMenu & GridService show/hide column(s)
     this._subscriptions.push(
-      this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column; }>(['onHeaderMenuHideColumns', 'onHideColumns', 'onShowColumns'], data => {
-        const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
-      })
+      this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column }>(
+        ['onHeaderMenuHideColumns', 'onHideColumns', 'onShowColumns'],
+        (data) => {
+          const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
+          this.pubSubService.publish('onGridStateChanged', {
+            change: { newValues: currentColumns, type: GridStateType.columns },
+            gridState: this.getCurrentGridState(),
+          });
+        }
+      )
     );
 
     // subscribe to Tree Data toggle items changes
     this._subscriptions.push(
-      this.pubSubService.subscribe<TreeToggleStateChange>('onTreeItemToggled', toggleChange => {
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: toggleChange, type: GridStateType.treeData }, gridState: this.getCurrentGridState() });
+      this.pubSubService.subscribe<TreeToggleStateChange>('onTreeItemToggled', (toggleChange) => {
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: toggleChange, type: GridStateType.treeData },
+          gridState: this.getCurrentGridState(),
+        });
       })
     );
 
     // subscribe to Tree Data full tree toggle changes
     this._subscriptions.push(
-      this.pubSubService.subscribe<Omit<TreeToggleStateChange, 'fromItemId'>>('onTreeFullToggleEnd', toggleChange => {
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: toggleChange, type: GridStateType.treeData }, gridState: this.getCurrentGridState() });
+      this.pubSubService.subscribe<Omit<TreeToggleStateChange, 'fromItemId'>>('onTreeFullToggleEnd', (toggleChange) => {
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: toggleChange, type: GridStateType.treeData },
+          gridState: this.getCurrentGridState(),
+        });
       })
     );
   }
@@ -464,18 +517,24 @@ export class GridStateService {
    * @param {Array<Column>} fullColumnDefinitions - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
    * @param {Array<Column>} newArrangedColumns - output array that will be use to show in the UI (it could have less columns than fullColumnDefinitions array since user might hide some columns)
    */
-  protected addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number; }>, fullColumnDefinitions: Column[], newArrangedColumns: Column[]): void {
+  protected addColumnDynamicWhenFeatureEnabled(
+    dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number }>,
+    fullColumnDefinitions: Column[],
+    newArrangedColumns: Column[]
+  ): void {
     // 1- first step is to sort them by their index position
     dynamicAddonColumnByIndexPositionList.sort((feat1, feat2) => feat1.columnIndexPosition - feat2.columnIndexPosition);
 
     // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
-    dynamicAddonColumnByIndexPositionList.forEach(feature => {
-      const pluginColumnIdx = fullColumnDefinitions.findIndex(col => col.id === feature.columnId);
-      const associatedGridCheckboxColumnIdx = newArrangedColumns.findIndex(col => col.id === feature.columnId);
+    dynamicAddonColumnByIndexPositionList.forEach((feature) => {
+      const pluginColumnIdx = fullColumnDefinitions.findIndex((col) => col.id === feature.columnId);
+      const associatedGridCheckboxColumnIdx = newArrangedColumns.findIndex((col) => col.id === feature.columnId);
 
       if (pluginColumnIdx >= 0 && associatedGridCheckboxColumnIdx === -1) {
         const pluginColumn = fullColumnDefinitions[pluginColumnIdx];
-        pluginColumnIdx === 0 ? newArrangedColumns.unshift(pluginColumn) : newArrangedColumns.splice(pluginColumnIdx, 0, pluginColumn);
+        pluginColumnIdx === 0
+          ? newArrangedColumns.unshift(pluginColumn)
+          : newArrangedColumns.splice(pluginColumnIdx, 0, pluginColumn);
       }
     });
   }
@@ -493,7 +552,10 @@ export class GridStateService {
       this._eventHandler.subscribe(slickEvent, (_e, args) => {
         const columns: Column[] = args?.columns;
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: currentColumns, type: GridStateType.columns },
+          gridState: this.getCurrentGridState(),
+        });
       });
     }
   }
@@ -510,7 +572,10 @@ export class GridStateService {
       this._eventHandler.subscribe(slickGridEvent, () => {
         const columns: Column[] = grid.getColumns();
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: currentColumns, type: GridStateType.columns },
+          gridState: this.getCurrentGridState(),
+        });
       });
     }
   }
@@ -522,13 +587,21 @@ export class GridStateService {
   protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid): void {
     const onSetOptionsHandler = grid.onSetOptions;
     this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
-      const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
+      const {
+        frozenBottom: frozenBottomBefore,
+        frozenColumn: frozenColumnBefore,
+        frozenRow: frozenRowBefore,
+      } = args.optionsBefore;
       const { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter } = args.optionsAfter;
 
+      // prettier-ignore
       if ((frozenBottomBefore !== frozenBottomAfter) || (frozenColumnBefore !== frozenColumnAfter) || (frozenRowBefore !== frozenRowAfter)) {
         const newValues = { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter };
         const currentGridState = this.getCurrentGridState();
-        this.pubSubService.publish('onGridStateChanged', { change: { newValues, type: GridStateType.pinning }, gridState: currentGridState });
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues, type: GridStateType.pinning },
+          gridState: currentGridState,
+        });
       }
     });
   }
@@ -537,6 +610,6 @@ export class GridStateService {
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
     const isRowSelectionEnabled = !!(this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector);
-    return (isRowSelectionEnabled && !!selectionModel);
+    return isRowSelectionEnabled && !!selectionModel;
   }
 }

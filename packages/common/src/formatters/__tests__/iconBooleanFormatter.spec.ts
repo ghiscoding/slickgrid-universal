@@ -5,8 +5,9 @@ import { iconBooleanFormatter } from '../iconBooleanFormatter.js';
 
 describe('the Checkmark Formatter', () => {
   it('should throw an error when omitting to pass "params.cssClass"', () => {
-    expect(() => iconBooleanFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrow('Slickgrid-Universal] When using `Formatters.iconBoolean`, you must provide You must provide the "cssClass"');
+    expect(() => iconBooleanFormatter(0, 0, 'anything', {} as Column, {}, {} as any)).toThrow(
+      'Slickgrid-Universal] When using `Formatters.iconBoolean`, you must provide You must provide the "cssClass"'
+    );
   });
 
   it('should return an empty string when no value is passed', () => {

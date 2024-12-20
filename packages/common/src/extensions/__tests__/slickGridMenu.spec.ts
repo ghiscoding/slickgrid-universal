@@ -4,7 +4,14 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { DelimiterType, FileType } from '../../enums/index.js';
 import type { Column, DOMEvent, GridMenu, GridOption } from '../../interfaces/index.js';
 import { SlickGridMenu } from '../slickGridMenu.js';
-import { BackendUtilityService, type ExcelExportService, type FilterService, SharedService, type SortService, type TextExportService, } from '../../services/index.js';
+import {
+  BackendUtilityService,
+  type ExcelExportService,
+  type FilterService,
+  SharedService,
+  type SortService,
+  type TextExportService,
+} from '../../services/index.js';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
@@ -44,7 +51,7 @@ const dataViewStub = {
 } as unknown as SlickDataView;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   autosizeColumns: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
@@ -68,8 +75,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 // define a <div> container to simulate the grid container
-const template =
-  `<div id="${containerId}" style="height: 800px; width: 600px;">
+const template = `<div id="${containerId}" style="height: 800px; width: 600px;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid} slickgrid-container" style="width: 100%">
         <div class="slick-pane slick-pane-header slick-pane-left">
@@ -117,11 +123,11 @@ describe('GridMenuControl', () => {
     hideSyncResizeButton: true,
     hideToggleDarkModeCommand: true,
     onExtensionRegistered: vi.fn(),
-    onCommand: () => { },
-    onColumnsChanged: () => { },
-    onAfterMenuShow: () => { },
-    onBeforeMenuShow: () => { },
-    onMenuClose: () => { },
+    onCommand: () => {},
+    onColumnsChanged: () => {},
+    onAfterMenuShow: () => {},
+    onBeforeMenuShow: () => {},
+    onMenuClose: () => {},
   };
   const gridOptionsMock = {
     enableAutoSizeColumns: true,
@@ -138,11 +144,11 @@ describe('GridMenuControl', () => {
     },
     gridMenu: gridMenuOptionsMock,
     pagination: {
-      totalItems: 0
+      totalItems: 0,
     },
     showHeaderRow: false,
     showTopPanel: false,
-    showPreHeaderPanel: false
+    showPreHeaderPanel: false,
   } as unknown as GridOption;
   let div;
 
@@ -202,7 +208,9 @@ describe('GridMenuControl', () => {
       it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
         const mockRowSelection = [0, 3, 5];
         vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
         const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
@@ -224,7 +232,9 @@ describe('GridMenuControl', () => {
       it('should open the Grid Menu and then expect it to hide when clicking anywhere in the DOM body', () => {
         const mockRowSelection = [0, 3, 5];
         vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
         gridOptionsMock.enableRowSelection = true;
@@ -253,7 +263,9 @@ describe('GridMenuControl', () => {
 
       it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.frozenColumn = 0;
@@ -277,7 +289,9 @@ describe('GridMenuControl', () => {
 
       it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.frozenColumn = 0;
@@ -299,16 +313,26 @@ describe('GridMenuControl', () => {
         sharedService.slickGrid = gridStub;
 
         control.initEventHandlers();
-        gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 2 } }, new SlickEventData(), gridStub);
+        gridStub.onSetOptions.notify(
+          { grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 2 } },
+          new SlickEventData(),
+          gridStub
+        );
         expect(recreateSpy).toHaveBeenCalledTimes(1);
 
-        gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: 2 }, optionsAfter: { frozenColumn: -1 } }, new SlickEventData(), gridStub);
+        gridStub.onSetOptions.notify(
+          { grid: gridStub, optionsBefore: { frozenColumn: 2 }, optionsAfter: { frozenColumn: -1 } },
+          new SlickEventData(),
+          gridStub
+        );
         expect(recreateSpy).toHaveBeenCalledTimes(2);
       });
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
@@ -330,7 +354,9 @@ describe('GridMenuControl', () => {
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called from default option when it is not provided', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = null as any;
@@ -351,7 +377,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu and expect its minWidth and height to be overriden when provided as grid menu options', () => {
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.contentMinWidth = 200;
         gridOptionsMock.gridMenu!.height = 300;
@@ -365,7 +393,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Grid Menu', () => {
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
 
         gridOptionsMock.darkMode = true;
         gridOptionsMock.gridMenu!.contentMinWidth = 200;
@@ -381,7 +411,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on left when defined', () => {
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         const repositionSpy = vi.spyOn(control, 'repositionMenu');
 
         control.init();
@@ -400,7 +432,9 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on right when defined', () => {
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         const repositionSpy = vi.spyOn(control, 'repositionMenu');
 
         control.init();
@@ -420,7 +454,9 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
         gridOptionsMock.forceFitColumns = true;
@@ -443,7 +479,9 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and expect "Sync Resize" to be checked when "hideSyncResizeButton" is false', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
         gridOptionsMock.syncColumnCellResize = true;
@@ -468,7 +506,9 @@ describe('GridMenuControl', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const onColChangedMock = vi.fn();
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
 
         gridOptionsMock.gridMenu!.onColumnsChanged = onColChangedMock;
         control.columns = columnsMock;
@@ -495,7 +535,9 @@ describe('GridMenuControl', () => {
 
       it('should open the grid menu via its hamburger menu and click on "Force Fit Columns" checkbox and expect "setOptions" and "setColumns" to be called with previous visible columns', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any as any)
+          .mockReturnValue(1);
         vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
         const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
         const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
@@ -522,7 +564,9 @@ describe('GridMenuControl', () => {
 
       it('should open the grid menu via its hamburger menu and click on "syncresize" checkbox and expect "setOptions" to be called with "syncColumnCellResize" property', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
         vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
         const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
 
@@ -575,7 +619,7 @@ describe('GridMenuControl', () => {
           menu: null,
           allColumns: columnsMock,
           columns: columnsMock,
-          visibleColumns: columnsMock
+          visibleColumns: columnsMock,
         });
       });
 
@@ -614,7 +658,7 @@ describe('GridMenuControl', () => {
           menu: null,
           allColumns: columnsMock,
           columns: columnsMock,
-          visibleColumns: columnsMock
+          visibleColumns: columnsMock,
         });
       });
 
@@ -641,7 +685,7 @@ describe('GridMenuControl', () => {
           grid: gridStub,
           menu: document.querySelector('.slick-grid-menu'),
           allColumns: columnsMock,
-          visibleColumns: columnsMock
+          visibleColumns: columnsMock,
         });
       });
 
@@ -719,7 +763,7 @@ describe('GridMenuControl', () => {
           command: 'help',
           item: { command: 'help', title: 'Help', action: helpFnMock },
           allColumns: columnsMock,
-          visibleColumns: columnsMock
+          visibleColumns: columnsMock,
         };
         expect(helpFnMock).toHaveBeenCalled();
         expect(onCommandMock).toHaveBeenCalledWith(clickEvent, expectedCallbackArgs);
@@ -781,9 +825,9 @@ describe('GridMenuControl', () => {
         expect(onCommandMock).toHaveBeenCalledWith(clickEvent, {
           grid: gridStub,
           command: 'help',
-          item: { command: 'help', title: 'Help', action: helpFnMock, disabled: false, itemUsabilityOverride: expect.any(Function), },
+          item: { command: 'help', title: 'Help', action: helpFnMock, disabled: false, itemUsabilityOverride: expect.any(Function) },
           allColumns: columnsMock,
-          visibleColumns: columnsMock
+          visibleColumns: columnsMock,
         });
       });
 
@@ -917,21 +961,27 @@ describe('GridMenuControl', () => {
           mockCommandItems = [
             { command: 'help', title: 'Help', textCssClass: 'red bold' },
             {
-              command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', action: actionMock, commandItems: [
-                { command: 'command3', title: 'Command 3', positionOrder: 70, },
-                { command: 'command4', title: 'Command 4', positionOrder: 71, },
+              command: 'sub-commands',
+              title: 'Sub Commands',
+              subMenuTitle: 'Sub Command Title',
+              action: actionMock,
+              commandItems: [
+                { command: 'command3', title: 'Command 3', positionOrder: 70 },
+                { command: 'command4', title: 'Command 4', positionOrder: 71 },
                 {
-                  command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
-                    { command: 'command5', title: 'Command 5', positionOrder: 72, },
-                  ]
-                }
-              ]
+                  command: 'more-sub-commands',
+                  title: 'More Sub Commands',
+                  subMenuTitle: 'Sub Command Title 2',
+                  subMenuTitleCssClass: 'text-color-warning',
+                  commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
+                },
+              ],
             },
             {
-              command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
-                { command: 'command33', title: 'Command 33', positionOrder: 70, },
-              ]
-            }
+              command: 'sub-commands2',
+              title: 'Sub Commands 2',
+              commandItems: [{ command: 'command33', title: 'Command 33', positionOrder: 70 }],
+            },
           ];
         });
 
@@ -1097,34 +1147,72 @@ describe('GridMenuControl', () => {
         });
 
         it('should expect menu related to "Unfreeze Columns/Rows"', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, hideToggleDarkModeCommand: true, } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, hideToggleDarkModeCommand: true },
+          } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-pin-off-outline', titleKey: 'CLEAR_PINNING', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
+            {
+              iconCssClass: 'mdi mdi-pin-off-outline',
+              titleKey: 'CLEAR_PINNING',
+              title: 'Dégeler les colonnes/rangées',
+              disabled: false,
+              command: 'clear-pinning',
+              positionOrder: 52,
+            },
           ]);
         });
 
         it('should expect all menu related to Filter when "enableFilering" is set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
-            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
-            { iconCssClass: 'mdi mdi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
+            {
+              iconCssClass: 'mdi mdi-filter-remove-outline',
+              titleKey: 'CLEAR_ALL_FILTERS',
+              title: 'Supprimer tous les filtres',
+              disabled: false,
+              command: 'clear-filter',
+              positionOrder: 50,
+            },
+            {
+              iconCssClass: 'mdi mdi-flip-vertical',
+              titleKey: 'TOGGLE_FILTER_ROW',
+              title: 'Basculer la ligne des filtres',
+              disabled: false,
+              command: 'toggle-filter',
+              positionOrder: 53,
+            },
+            {
+              iconCssClass: 'mdi mdi-sync',
+              titleKey: 'REFRESH_DATASET',
+              title: 'Rafraîchir les données',
+              disabled: false,
+              command: 'refresh-dataset',
+              positionOrder: 58,
+            },
           ]);
         });
 
         it('should have only 1 menu "clear-filter" when all other menus are defined as hidden & when "enableFilering" is set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideToggleFilterCommand: true, hideRefreshDatasetCommand: true, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            enableFiltering: true,
+            showHeaderRow: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideToggleFilterCommand: true,
+              hideRefreshDatasetCommand: true,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1132,15 +1220,29 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
+            {
+              iconCssClass: 'mdi mdi-filter-remove-outline',
+              titleKey: 'CLEAR_ALL_FILTERS',
+              title: 'Supprimer tous les filtres',
+              disabled: false,
+              command: 'clear-filter',
+              positionOrder: 50,
+            },
           ]);
         });
 
         it('should have only 1 menu "toggle-filter" when all other menus are defined as hidden & when "enableFilering" is set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleDarkModeCommand: true, hideRefreshDatasetCommand: true
-            }
+            ...gridOptionsMock,
+            enableFiltering: true,
+            showHeaderRow: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideClearAllFiltersCommand: true,
+              hideToggleDarkModeCommand: true,
+              hideRefreshDatasetCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1148,16 +1250,28 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            {
+              iconCssClass: 'mdi mdi-flip-vertical',
+              titleKey: 'TOGGLE_FILTER_ROW',
+              title: 'Basculer la ligne des filtres',
+              disabled: false,
+              command: 'toggle-filter',
+              positionOrder: 53,
+            },
           ]);
         });
 
         it('should have only 1 menu "toggle-dark-mode" when all other menus are defined as hidden', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true,
-              hideClearAllFiltersCommand: true, hideToggleFilterCommand: true, hideToggleDarkModeCommand: false, hideRefreshDatasetCommand: true
-            }
+            ...gridOptionsMock,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideClearAllFiltersCommand: true,
+              hideToggleFilterCommand: true,
+              hideToggleDarkModeCommand: false,
+              hideRefreshDatasetCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1165,15 +1279,29 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-brightness-4', titleKey: 'TOGGLE_DARK_MODE', title: 'Basculer le mode clair/sombre', disabled: false, command: 'toggle-dark-mode', positionOrder: 54 },
+            {
+              iconCssClass: 'mdi mdi-brightness-4',
+              titleKey: 'TOGGLE_DARK_MODE',
+              title: 'Basculer le mode clair/sombre',
+              disabled: false,
+              command: 'toggle-dark-mode',
+              positionOrder: 54,
+            },
           ]);
         });
 
         it('should have only 1 menu "refresh-dataset" when all other menus are defined as hidden & when "enableFilering" is set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleDarkModeCommand: true, hideToggleFilterCommand: true
-            }
+            ...gridOptionsMock,
+            enableFiltering: true,
+            showHeaderRow: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideClearAllFiltersCommand: true,
+              hideToggleDarkModeCommand: true,
+              hideToggleFilterCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1181,7 +1309,14 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
+            {
+              iconCssClass: 'mdi mdi-sync',
+              titleKey: 'REFRESH_DATASET',
+              title: 'Rafraîchir les données',
+              disabled: false,
+              command: 'refresh-dataset',
+              positionOrder: 58,
+            },
           ]);
         });
 
@@ -1193,15 +1328,27 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_PRE_HEADER_ROW', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
+            {
+              iconCssClass: 'mdi mdi-flip-vertical',
+              titleKey: 'TOGGLE_PRE_HEADER_ROW',
+              title: 'Basculer la ligne de pré-en-tête',
+              disabled: false,
+              command: 'toggle-preheader',
+              positionOrder: 53,
+            },
           ]);
         });
 
         it('should not have the "toggle-preheader" menu command when "showPreHeaderPanel" and "hideTogglePreHeaderCommand" are set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, showPreHeaderPanel: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideTogglePreHeaderCommand: true, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            showPreHeaderPanel: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideTogglePreHeaderCommand: true,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1219,15 +1366,27 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-sort-variant-off', titleKey: 'CLEAR_ALL_SORTING', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
+            {
+              iconCssClass: 'mdi mdi-sort-variant-off',
+              titleKey: 'CLEAR_ALL_SORTING',
+              title: 'Supprimer tous les tris',
+              disabled: false,
+              command: 'clear-sorting',
+              positionOrder: 51,
+            },
           ]);
         });
 
         it('should not have the "clear-sorting" menu command when "enableSorting" and "hideClearAllSortingCommand" are set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableSorting: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllSortingCommand: true, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            enableSorting: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideClearAllSortingCommand: true,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1239,9 +1398,15 @@ describe('GridMenuControl', () => {
 
         it('should have the "export-csv" menu command when "enableTextExport" is set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableTextExport: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            enableTextExport: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideExportExcelCommand: true,
+              hideExportTextDelimitedCommand: true,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1249,15 +1414,29 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-download', titleKey: 'EXPORT_TO_CSV', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 55 }
+            {
+              iconCssClass: 'mdi mdi-download',
+              titleKey: 'EXPORT_TO_CSV',
+              title: 'Exporter en format CSV',
+              disabled: false,
+              command: 'export-csv',
+              positionOrder: 55,
+            },
           ]);
         });
 
         it('should not have the "export-csv" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableTextExport: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            enableTextExport: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideExportExcelCommand: true,
+              hideExportCsvCommand: true,
+              hideExportTextDelimitedCommand: true,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1269,9 +1448,16 @@ describe('GridMenuControl', () => {
 
         it('should have the "export-excel" menu command when "enableTextExport" is set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableExcelExport: true, enableTextExport: false, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            enableExcelExport: true,
+            enableTextExport: false,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideExportCsvCommand: true,
+              hideExportExcelCommand: false,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1279,15 +1465,28 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-file-excel-outline text-success', titleKey: 'EXPORT_TO_EXCEL', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 56 }
+            {
+              iconCssClass: 'mdi mdi-file-excel-outline text-success',
+              titleKey: 'EXPORT_TO_EXCEL',
+              title: 'Exporter vers Excel',
+              disabled: false,
+              command: 'export-excel',
+              positionOrder: 56,
+            },
           ]);
         });
 
         it('should have the "export-text-delimited" menu command when "enableTextExport" is set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableTextExport: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            enableTextExport: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideExportCsvCommand: true,
+              hideExportExcelCommand: true,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1295,15 +1494,29 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'mdi mdi-download', titleKey: 'EXPORT_TO_TAB_DELIMITED', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 57 }
+            {
+              iconCssClass: 'mdi mdi-download',
+              titleKey: 'EXPORT_TO_TAB_DELIMITED',
+              title: 'Exporter en format texte (délimité par tabulation)',
+              disabled: false,
+              command: 'export-text-delimited',
+              positionOrder: 57,
+            },
           ]);
         });
 
         it('should not have the "export-text-delimited" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
           const copyGridOptionsMock = {
-            ...gridOptionsMock, enableTextExport: true, gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
-            }
+            ...gridOptionsMock,
+            enableTextExport: true,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideExportExcelCommand: true,
+              hideExportCsvCommand: true,
+              hideExportTextDelimitedCommand: true,
+              hideToggleDarkModeCommand: true,
+            },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1325,7 +1538,10 @@ describe('GridMenuControl', () => {
           const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
           const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-          const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false },
+          } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -1345,7 +1561,7 @@ describe('GridMenuControl', () => {
           const filterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
           const refreshSpy = vi.spyOn(sharedService.dataView, 'refresh');
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -1365,7 +1581,7 @@ describe('GridMenuControl', () => {
           const sortSpy = vi.spyOn(sortServiceStub, 'clearSorting');
           const refreshSpy = vi.spyOn(sharedService.dataView, 'refresh');
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-          const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -1382,7 +1598,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
@@ -1393,11 +1609,13 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-excel]')!.dispatchEvent(clickEvent);
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu.'));
+          expect(consoleErrorSpy).toHaveBeenCalledWith(
+            expect.stringContaining('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu.')
+          );
         });
 
         it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportCsvCommand: false, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportCsvCommand: false } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
@@ -1408,11 +1626,13 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-csv]')!.dispatchEvent(clickEvent);
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.'));
+          expect(consoleErrorSpy).toHaveBeenCalledWith(
+            expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.')
+          );
         });
 
         it('should call "exportToFile" with Text Delimited and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportTextDelimitedCommand: false, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportTextDelimitedCommand: false } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
@@ -1423,12 +1643,14 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-text-delimited]')!.dispatchEvent(clickEvent);
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.'));
+          expect(consoleErrorSpy).toHaveBeenCalledWith(
+            expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.')
+          );
         });
 
         it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
           const excelExportSpy = vi.spyOn(excelExportServiceStub, 'exportToExcel');
-          const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([excelExportServiceStub]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1445,7 +1667,7 @@ describe('GridMenuControl', () => {
 
         it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
           const exportSpy = vi.spyOn(textExportServiceStub, 'exportToFile');
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([textExportServiceStub]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1492,7 +1714,12 @@ describe('GridMenuControl', () => {
         });
 
         it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter"', () => {
-          let copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: false, hideToggleFilterCommand: false } as unknown as GridOption;
+          let copyGridOptionsMock = {
+            ...gridOptionsMock,
+            enableFiltering: true,
+            showHeaderRow: false,
+            hideToggleFilterCommand: false,
+          } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
@@ -1543,7 +1770,12 @@ describe('GridMenuControl', () => {
 
         it('should call "refreshBackendDataset" method when the command triggered is "refresh-dataset"', () => {
           const refreshSpy = vi.spyOn(extensionUtility, 'refreshBackendDataset');
-          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, hideHeaderRowAfterPageLoad: false, hideRefreshDatasetCommand: false, } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            enableFiltering: true,
+            hideHeaderRowAfterPageLoad: false,
+            hideRefreshDatasetCommand: false,
+          } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -1570,7 +1802,10 @@ describe('GridMenuControl', () => {
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing', excludeFromGridMenu: true },
         ];
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValueOnce(0).mockReturnValueOnce(1);
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValueOnce(0)
+          .mockReturnValueOnce(1);
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
 
         control.columns = columnsUnorderedMock;
@@ -1603,7 +1838,9 @@ describe('GridMenuControl', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       const utilitySpy = vi.spyOn(extensionUtility, 'getPickerTitleOutputString');
       const translateSpy = vi.spyOn(extensionUtility, 'translateItems');
-      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
 
       translateService.use('fr');
       gridOptionsMock.gridMenu!.hideForceFitButton = false;

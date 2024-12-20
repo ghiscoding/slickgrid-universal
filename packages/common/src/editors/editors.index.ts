@@ -50,5 +50,5 @@ export const Editors: Record<string, EditorConstructor> = {
   slider: SliderEditor,
 
   /** text Editor using an input of type "text" (this is the default editor when no type is provided) */
-  text: InputEditor
+  text: InputEditor,
 };

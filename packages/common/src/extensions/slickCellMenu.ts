@@ -37,8 +37,8 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   pluginName: 'CellMenu' = 'CellMenu' as const;
 
   protected _defaults = {
-    autoAdjustDrop: true,     // dropup/dropdown
-    autoAlignSide: true,      // left/right
+    autoAdjustDrop: true, // dropup/dropdown
+    autoAlignSide: true, // left/right
     autoAdjustDropOffset: 0,
     autoAlignSideOffset: 0,
     hideMenuOnScroll: true,
@@ -49,7 +49,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
     protected readonly pubSubService: BasePubSubService,
-    protected readonly sharedService: SharedService,
+    protected readonly sharedService: SharedService
   ) {
     super(extensionUtility, pubSubService, sharedService);
     this._camelPluginName = 'cellMenu';
@@ -79,16 +79,21 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
 
     if (gridOptions?.enableTranslate && Array.isArray(columnDefinitions)) {
       columnDefinitions.forEach((columnDef: Column) => {
-        if (columnDef?.cellMenu && (Array.isArray(columnDef.cellMenu.commandItems) || Array.isArray(columnDef.cellMenu.optionItems))) {
+        if (
+          columnDef?.cellMenu &&
+          (Array.isArray(columnDef.cellMenu.commandItems) || Array.isArray(columnDef.cellMenu.optionItems))
+        ) {
           // get both items list
           const columnCellMenuCommandItems: Array<MenuCommandItem | 'divider'> = columnDef.cellMenu.commandItems || [];
           const columnCellMenuOptionItems: Array<MenuOptionItem | 'divider'> = columnDef.cellMenu.optionItems || [];
 
           // translate their titles only if they have a titleKey defined
           if (columnDef.cellMenu.commandTitleKey) {
+            // prettier-ignore
             columnDef.cellMenu.commandTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(columnDef.cellMenu.commandTitleKey, 'TEXT_COMMANDS') || columnDef.cellMenu.commandTitle;
           }
           if (columnDef.cellMenu.optionTitleKey) {
+            // prettier-ignore
             columnDef.cellMenu.optionTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(columnDef.cellMenu.optionTitleKey, 'TEXT_COMMANDS') || columnDef.cellMenu.optionTitle;
           }
 
@@ -146,7 +151,6 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
     }
   }
-
 
   // --
   // protected functions

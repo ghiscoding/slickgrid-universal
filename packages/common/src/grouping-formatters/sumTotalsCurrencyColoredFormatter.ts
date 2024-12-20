@@ -13,17 +13,25 @@ export const sumTotalsCurrencyColoredFormatter: GroupTotalsFormatter = (totals: 
   const suffix = params?.groupFormatterSuffix || '';
   const currencyPrefix = params?.groupFormatterCurrencyPrefix || '';
   const currencySuffix = params?.groupFormatterCurrencySuffix || '';
-  const {
-    minDecimal,
-    maxDecimal,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'group');
+  const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
+    columnDef,
+    grid,
+    'currency',
+    'group'
+  );
 
   if (isNumber(val)) {
-    const colorStyle = (val >= 0) ? 'green' : 'red';
-    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, currencyPrefix, currencySuffix, decimalSeparator, thousandSeparator);
+    const colorStyle = val >= 0 ? 'green' : 'red';
+    const formattedNumber = formatNumber(
+      val,
+      minDecimal,
+      maxDecimal,
+      wrapNegativeNumber,
+      currencyPrefix,
+      currencySuffix,
+      decimalSeparator,
+      thousandSeparator
+    );
     return createDomElement('span', { style: { color: colorStyle }, textContent: `${prefix}${formattedNumber}${suffix}` });
   }
   return '';

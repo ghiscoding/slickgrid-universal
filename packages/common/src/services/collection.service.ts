@@ -21,22 +21,26 @@ type ParsingDateDetails = {
 };
 
 export class CollectionService<T = any> {
-  constructor(protected readonly translaterService?: TranslaterService | undefined) { }
+  constructor(protected readonly translaterService?: TranslaterService | undefined) {}
 
   /**
    * Filter 1 or more items from a collection
    * @param collection
    * @param filterByOptions
    */
-  filterCollection(collection: T[], filterByOptions: CollectionFilterBy | CollectionFilterBy[], filterResultBy: FilterMultiplePassType | FilterMultiplePassTypeString | null = FilterMultiplePassType.chain): T[] {
+  filterCollection(
+    collection: T[],
+    filterByOptions: CollectionFilterBy | CollectionFilterBy[],
+    filterResultBy: FilterMultiplePassType | FilterMultiplePassTypeString | null = FilterMultiplePassType.chain
+  ): T[] {
     let filteredCollection: T[] = [];
 
     // when it's array, we will use the new filtered collection after every pass
     // basically if input collection has 10 items on 1st pass and 1 item is filtered out, then on 2nd pass the input collection will be 9 items
     if (Array.isArray(filterByOptions)) {
-      filteredCollection = (filterResultBy === FilterMultiplePassType.merge) ? [] : [...collection];
+      filteredCollection = filterResultBy === FilterMultiplePassType.merge ? [] : [...collection];
 
-      filterByOptions.forEach(filter => {
+      filterByOptions.forEach((filter) => {
         if (filterResultBy === FilterMultiplePassType.merge) {
           const filteredPass = this.singleFilterCollection(collection, filter);
           filteredCollection = uniqueArray([...filteredCollection, ...filteredPass]);
@@ -54,7 +58,7 @@ export class CollectionService<T = any> {
   /** Pre-parse date items as `Date` object to improve Date Sort considerably */
   preParseByMutationDateItems(items: any[], grid: SlickGrid, preParseDateColumns: boolean | string): void {
     const parsingProps: ParsingDateDetails[] = [];
-    grid.getColumns().forEach(col => {
+    grid.getColumns().forEach((col) => {
       const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
 
       // loop through all date columns only once and keep parsing info
@@ -63,7 +67,7 @@ export class CollectionService<T = any> {
       }
     });
 
-    items.forEach(item => {
+    items.forEach((item) => {
       parsingProps.forEach(({ columnId, dateFormat, queryFieldName }) => {
         this.reassignDateWhenValid(item, columnId, dateFormat, queryFieldName);
       });
@@ -72,7 +76,7 @@ export class CollectionService<T = any> {
 
   parseSingleDateItem(item: any, grid: SlickGrid, preParseDateColumns: boolean | string): void {
     if (preParseDateColumns) {
-      grid.getColumns().forEach(col => {
+      grid.getColumns().forEach((col) => {
         const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
 
         // loop through all date columns only once and keep parsing info
@@ -107,16 +111,24 @@ export class CollectionService<T = any> {
           break;
         case OperatorType.contains:
           if (objectProperty) {
-            filteredCollection = collection.filter((item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) !== -1);
+            filteredCollection = collection.filter(
+              (item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) !== -1
+            );
           } else {
-            filteredCollection = collection.filter((item: any) => (item !== null && item !== undefined) && item.toString().indexOf(value.toString()) !== -1);
+            filteredCollection = collection.filter(
+              (item: any) => item !== null && item !== undefined && item.toString().indexOf(value.toString()) !== -1
+            );
           }
           break;
         case OperatorType.notContains:
           if (objectProperty) {
-            filteredCollection = collection.filter((item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) === -1);
+            filteredCollection = collection.filter(
+              (item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) === -1
+            );
           } else {
-            filteredCollection = collection.filter((item: any) => (item !== null && item !== undefined) && item.toString().indexOf(value.toString()) === -1);
+            filteredCollection = collection.filter(
+              (item: any) => item !== null && item !== undefined && item.toString().indexOf(value.toString()) === -1
+            );
           }
           break;
         case OperatorType.notEqual:
@@ -138,9 +150,16 @@ export class CollectionService<T = any> {
    * @param sortByOptions
    * @param enableTranslateLabel
    */
-  sortCollection(columnDef: Column, collection: T[], sortByOptions: CollectionSortBy | CollectionSortBy[], enableTranslateLabel?: boolean): T[] {
+  sortCollection(
+    columnDef: Column,
+    collection: T[],
+    sortByOptions: CollectionSortBy | CollectionSortBy[],
+    enableTranslateLabel?: boolean
+  ): T[] {
     if (enableTranslateLabel && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     }
 
     let sortedCollection: T[] = [];
@@ -157,8 +176,12 @@ export class CollectionService<T = any> {
               const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
               const objectProperty = sortBy.property;
               const fieldType = sortBy?.fieldType ?? columnDef?.type ?? FieldType.string;
-              const value1 = (enableTranslateLabel) ? this.translaterService?.translate?.((dataRow1[objectProperty as keyof T] || ' ') as string) : dataRow1[objectProperty as keyof T];
-              const value2 = (enableTranslateLabel) ? this.translaterService?.translate?.((dataRow2[objectProperty as keyof T] || ' ') as string) : dataRow2[objectProperty as keyof T];
+              const value1 = enableTranslateLabel
+                ? this.translaterService?.translate?.((dataRow1[objectProperty as keyof T] || ' ') as string)
+                : dataRow1[objectProperty as keyof T];
+              const value2 = enableTranslateLabel
+                ? this.translaterService?.translate?.((dataRow2[objectProperty as keyof T] || ' ') as string)
+                : dataRow2[objectProperty as keyof T];
 
               const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
               if (sortResult !== SortDirectionNumber.neutral) {
@@ -176,8 +199,14 @@ export class CollectionService<T = any> {
         const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? FieldType.string;
 
         sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
-          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow1[objectProperty as keyof T] || ' ') as string) : dataRow1[objectProperty as keyof T];
-          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow2[objectProperty as keyof T] || ' ') as string) : dataRow2[objectProperty as keyof T];
+          const value1 = enableTranslateLabel
+            ? this.translaterService?.translate &&
+              this.translaterService.translate((dataRow1[objectProperty as keyof T] || ' ') as string)
+            : dataRow1[objectProperty as keyof T];
+          const value2 = enableTranslateLabel
+            ? this.translaterService?.translate &&
+              this.translaterService.translate((dataRow2[objectProperty as keyof T] || ' ') as string)
+            : dataRow2[objectProperty as keyof T];
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {
             return sortResult;
@@ -189,8 +218,12 @@ export class CollectionService<T = any> {
         const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? FieldType.string;
 
         sortedCollection = collection.sort((dataRow1: any, dataRow2: any) => {
-          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow1 || ' ') : dataRow1;
-          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow2 || ' ') : dataRow2;
+          const value1 = enableTranslateLabel
+            ? this.translaterService?.translate && this.translaterService.translate(dataRow1 || ' ')
+            : dataRow1;
+          const value2 = enableTranslateLabel
+            ? this.translaterService?.translate && this.translaterService.translate(dataRow2 || ' ')
+            : dataRow2;
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {
             return sortResult;
@@ -213,9 +246,7 @@ export class CollectionService<T = any> {
     if (isColumnDateType(fieldType) && preParseDateColumns) {
       // preparsing could be a boolean (reassign and overwrite same property)
       // OR a prefix string to assign it into a new item property
-      const queryFieldName = typeof preParseDateColumns === 'string'
-        ? `${preParseDateColumns}${col.id}`
-        : `${col.id}`;
+      const queryFieldName = typeof preParseDateColumns === 'string' ? `${preParseDateColumns}${col.id}` : `${col.id}`;
 
       return { columnId: col.id, dateFormat, queryFieldName };
     }

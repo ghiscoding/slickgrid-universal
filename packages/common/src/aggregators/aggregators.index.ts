@@ -28,5 +28,5 @@ export const Aggregators: Record<string, AggregatorConstructor> = {
   Max: MaxAggregator,
 
   /** Sum Aggregator which calculate the sum of a given group */
-  Sum: SumAggregator
+  Sum: SumAggregator,
 };

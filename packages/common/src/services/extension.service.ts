@@ -1,7 +1,14 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type { Column, ExtensionModel, GridOption } from '../interfaces/index.js';
-import { type ColumnReorderFunction, type ExtensionList, ExtensionName, type InferExtensionByName, type SlickControlList, type SlickPluginList } from '../enums/index.js';
+import {
+  type ColumnReorderFunction,
+  type ExtensionList,
+  ExtensionName,
+  type InferExtensionByName,
+  type SlickControlList,
+  type SlickPluginList,
+} from '../enums/index.js';
 import type { SharedService } from './shared.service.js';
 import type { TranslaterService } from './translater.service.js';
 import {
@@ -19,7 +26,7 @@ import {
   SlickHeaderMenu,
   SlickRowBasedEdit,
   SlickRowMoveManager,
-  SlickRowSelectionModel
+  SlickRowSelectionModel,
 } from '../extensions/index.js';
 import type { FilterService } from './filter.service.js';
 import type { SortService } from './sort.service.js';
@@ -61,7 +68,7 @@ export class ExtensionService {
     protected readonly treeDataService: TreeDataService,
     protected readonly translaterService?: TranslaterService | undefined,
     protected readonly lazyGridService?: () => GridService
-  ) { }
+  ) {}
 
   /** Dispose of all the controls & plugins */
   dispose(): void {
@@ -72,16 +79,18 @@ export class ExtensionService {
       const extensionNames = Object.keys(this._extensionList);
 
       // dispose each extension
-      extensionNames.forEach(extensionName => {
+      extensionNames.forEach((extensionName) => {
         if (this._extensionList.hasOwnProperty(extensionName)) {
-          const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any>>] as ExtensionModel<any>;
+          const extension = this._extensionList[
+            extensionName as keyof Record<ExtensionName, ExtensionModel<any>>
+          ] as ExtensionModel<any>;
           if (typeof extension?.instance?.dispose === 'function') {
             extension.instance.dispose();
           }
         }
       });
       // delete the extension from the _extensionList object
-      extensionNames.forEach(key => {
+      extensionNames.forEach((key) => {
         delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any>>];
       });
     }
@@ -105,7 +114,7 @@ export class ExtensionService {
    * @param {String} name
    * @param {Object} extension
    */
-  addExtensionToList<T = any>(name: ExtensionName, extension: { name: ExtensionName; instance: T; }): void {
+  addExtensionToList<T = any>(name: ExtensionName, extension: { name: ExtensionName; instance: T }): void {
     this._extensionList[name] = extension;
   }
 
@@ -123,7 +132,9 @@ export class ExtensionService {
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
    *  @param name
    */
-  getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any>(name: ExtensionName): ExtensionModel<P> | undefined {
+  getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(
+    name: ExtensionName
+  ): ExtensionModel<P> | undefined {
     if (this._extensionCreatedList?.hasOwnProperty(name)) {
       return this._extensionCreatedList[name];
     }
@@ -135,7 +146,7 @@ export class ExtensionService {
    * NOTE: it's preferable to @use `getExtensionInstanceByName` if you just want the instance since it will automatically infer the extension.
    * @param name
    */
-  getExtensionByName<P extends (SlickControlList | SlickPluginList) = any>(name: ExtensionName): ExtensionModel<P> | undefined {
+  getExtensionByName<P extends SlickControlList | SlickPluginList = any>(name: ExtensionName): ExtensionModel<P> | undefined {
     return this._extensionList?.[name];
   }
 
@@ -163,7 +174,9 @@ export class ExtensionService {
 
       // Row Based Edit Plugin
       if (this.gridOptions.enableRowBasedEdit) {
-        this._rowBasedEdit = this._rowBasedEdit || new SlickRowBasedEdit(this.extensionUtility, this.pubSubService, this.gridOptions.rowBasedEditOptions);
+        this._rowBasedEdit =
+          this._rowBasedEdit ||
+          new SlickRowBasedEdit(this.extensionUtility, this.pubSubService, this.gridOptions.rowBasedEditOptions);
         const gridService = this.lazyGridService?.();
         if (!gridService) {
           throw new Error('[Slickgrid-Universal] the RowBasedEdit Plugin requires a GridService to be configured and available');
@@ -186,11 +199,17 @@ export class ExtensionService {
       // Cell External Copy Manager Plugin (Excel Like)
       if (this.gridOptions.enableExcelCopyBuffer) {
         this._cellExcelCopyManagerPlugin = new SlickCellExcelCopyManager();
-        this._cellExcelCopyManagerPlugin.init(this.sharedService.slickGrid, this.sharedService.gridOptions.excelCopyBufferOptions);
+        this._cellExcelCopyManagerPlugin.init(
+          this.sharedService.slickGrid,
+          this.sharedService.gridOptions.excelCopyBufferOptions
+        );
         if (this.gridOptions.excelCopyBufferOptions?.onExtensionRegistered) {
           this.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._cellExcelCopyManagerPlugin);
         }
-        this._extensionList[ExtensionName.cellExternalCopyManager] = { name: ExtensionName.cellExternalCopyManager, instance: this._cellExcelCopyManagerPlugin };
+        this._extensionList[ExtensionName.cellExternalCopyManager] = {
+          name: ExtensionName.cellExternalCopyManager,
+          instance: this._cellExcelCopyManagerPlugin,
+        };
       }
 
       // (Action) Cell Menu Plugin
@@ -204,7 +223,13 @@ export class ExtensionService {
 
       // Row Selection Plugin
       // this extension should be registered BEFORE the CheckboxSelector, RowDetail or RowMoveManager since it can be use by these 2 plugins
-      if (!this._rowSelectionModel && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowDetailView || this.gridOptions.enableRowMoveManager)) {
+      if (
+        !this._rowSelectionModel &&
+        (this.gridOptions.enableRowSelection ||
+          this.gridOptions.enableCheckboxSelector ||
+          this.gridOptions.enableRowDetailView ||
+          this.gridOptions.enableRowMoveManager)
+      ) {
         if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
           const rowSelectionOptions = this.gridOptions.rowSelectionOptions ?? {};
           if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
@@ -218,7 +243,8 @@ export class ExtensionService {
 
       // Checkbox Selector Plugin
       if (this.gridOptions.enableCheckboxSelector) {
-        this._checkboxSelectColumn = this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.pubSubService, this.gridOptions.checkboxSelector);
+        this._checkboxSelectColumn =
+          this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.pubSubService, this.gridOptions.checkboxSelector);
         this._checkboxSelectColumn.init(this.sharedService.slickGrid);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
         const instance = createdExtension?.instance;
@@ -226,7 +252,10 @@ export class ExtensionService {
           if (this.gridOptions.checkboxSelector?.onExtensionRegistered) {
             this.gridOptions.checkboxSelector.onExtensionRegistered(instance);
           }
-          this._extensionList[ExtensionName.checkboxSelector] = { name: ExtensionName.checkboxSelector, instance: this._checkboxSelectColumn };
+          this._extensionList[ExtensionName.checkboxSelector] = {
+            name: ExtensionName.checkboxSelector,
+            instance: this._checkboxSelectColumn,
+          };
         }
       }
 
@@ -236,12 +265,20 @@ export class ExtensionService {
         if (this.gridOptions.columnPicker?.onExtensionRegistered) {
           this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
         }
-        this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, instance: this._columnPickerControl };
+        this._extensionList[ExtensionName.columnPicker] = {
+          name: ExtensionName.columnPicker,
+          instance: this._columnPickerControl,
+        };
       }
 
       // Context Menu Control
       if (this.gridOptions.enableContextMenu) {
-        this._contextMenuPlugin = new SlickContextMenu(this.extensionUtility, this.pubSubService, this.sharedService, this.treeDataService);
+        this._contextMenuPlugin = new SlickContextMenu(
+          this.extensionUtility,
+          this.pubSubService,
+          this.sharedService,
+          this.treeDataService
+        );
         if (this.gridOptions.contextMenu?.onExtensionRegistered) {
           this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
         }
@@ -255,14 +292,26 @@ export class ExtensionService {
           if (this.gridOptions.draggableGrouping?.onExtensionRegistered) {
             this.gridOptions.draggableGrouping.onExtensionRegistered(this._draggleGroupingPlugin);
           }
-          this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, instance: this._draggleGroupingPlugin };
+          this._extensionList[ExtensionName.contextMenu] = {
+            name: ExtensionName.contextMenu,
+            instance: this._draggleGroupingPlugin,
+          };
         }
-        this._extensionList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin };
+        this._extensionList[ExtensionName.draggableGrouping] = {
+          name: ExtensionName.draggableGrouping,
+          instance: this._draggleGroupingPlugin,
+        };
       }
 
       // Grid Menu Control
       if (this.gridOptions.enableGridMenu) {
-        this._gridMenuControl = new SlickGridMenu(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
+        this._gridMenuControl = new SlickGridMenu(
+          this.extensionUtility,
+          this.filterService,
+          this.pubSubService,
+          this.sharedService,
+          this.sortService
+        );
         if (this.gridOptions.gridMenu?.onExtensionRegistered) {
           this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
         }
@@ -280,7 +329,13 @@ export class ExtensionService {
 
       // Header Menu Plugin
       if (this.gridOptions.enableHeaderMenu) {
-        this._headerMenuPlugin = new SlickHeaderMenu(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
+        this._headerMenuPlugin = new SlickHeaderMenu(
+          this.extensionUtility,
+          this.filterService,
+          this.pubSubService,
+          this.sharedService,
+          this.sortService
+        );
         if (this.gridOptions.headerMenu?.onExtensionRegistered) {
           this.gridOptions.headerMenu.onExtensionRegistered(this._headerMenuPlugin);
         }
@@ -294,12 +349,15 @@ export class ExtensionService {
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowMoveManager); // get the instance from when it was really created earlier
         const instance = createdExtension?.instance;
         if (instance) {
-          this._extensionList[ExtensionName.rowMoveManager] = { name: ExtensionName.rowMoveManager, instance: this._rowMoveManagerPlugin };
+          this._extensionList[ExtensionName.rowMoveManager] = {
+            name: ExtensionName.rowMoveManager,
+            instance: this._rowMoveManagerPlugin,
+          };
         }
       }
 
       if (this._requireInitExternalExtensions.length) {
-        this._requireInitExternalExtensions.forEach(extension => {
+        this._requireInitExternalExtensions.forEach((extension) => {
           extension.instance.init(this.sharedService.slickGrid, undefined as any);
         });
       }
@@ -319,27 +377,42 @@ export class ExtensionService {
     // we push them into a array and we'll process them by their position (if provided, else use same order that they were inserted)
     if (gridOptions.enableCheckboxSelector) {
       if (!this.getCreatedExtensionByName(ExtensionName.checkboxSelector)) {
-        this._checkboxSelectColumn = new SlickCheckboxSelectColumn(this.pubSubService, this.sharedService.gridOptions.checkboxSelector);
-        featureWithColumnIndexPositions.push({ name: ExtensionName.checkboxSelector, instance: this._checkboxSelectColumn, columnIndexPosition: gridOptions?.checkboxSelector?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+        this._checkboxSelectColumn = new SlickCheckboxSelectColumn(
+          this.pubSubService,
+          this.sharedService.gridOptions.checkboxSelector
+        );
+        featureWithColumnIndexPositions.push({
+          name: ExtensionName.checkboxSelector,
+          instance: this._checkboxSelectColumn,
+          columnIndexPosition: gridOptions?.checkboxSelector?.columnIndexPosition ?? featureWithColumnIndexPositions.length,
+        });
       }
     }
     if (gridOptions.enableRowMoveManager) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowMoveManager)) {
         this._rowMoveManagerPlugin = new SlickRowMoveManager(this.pubSubService);
-        featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, instance: this._rowMoveManagerPlugin, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+        featureWithColumnIndexPositions.push({
+          name: ExtensionName.rowMoveManager,
+          instance: this._rowMoveManagerPlugin,
+          columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length,
+        });
       }
     }
     if (gridOptions.enableRowBasedEdit) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowBasedEdit)) {
         this._rowBasedEdit = new SlickRowBasedEdit(this.extensionUtility, this.pubSubService);
-        featureWithColumnIndexPositions.push({ name: ExtensionName.rowBasedEdit, instance: this._rowBasedEdit, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+        featureWithColumnIndexPositions.push({
+          name: ExtensionName.rowBasedEdit,
+          instance: this._rowBasedEdit,
+          columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length,
+        });
       }
     }
 
     // user could also optionally preRegister some external resources (extensions)
     if (gridOptions.preRegisterExternalExtensions) {
       const extraExtensions = gridOptions.preRegisterExternalExtensions(this.pubSubService);
-      extraExtensions.forEach(extension => {
+      extraExtensions.forEach((extension) => {
         featureWithColumnIndexPositions.push(extension);
         this._requireInitExternalExtensions.push(extension);
         if (!this._extensionList[extension.name]) {
@@ -355,8 +428,13 @@ export class ExtensionService {
       if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
         this._draggleGroupingPlugin = new SlickDraggableGrouping(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this._draggleGroupingPlugin) {
-          gridOptions.enableColumnReorder = this._draggleGroupingPlugin.setupColumnReorder.bind(this._draggleGroupingPlugin) as ColumnReorderFunction;
-          this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin };
+          gridOptions.enableColumnReorder = this._draggleGroupingPlugin.setupColumnReorder.bind(
+            this._draggleGroupingPlugin
+          ) as ColumnReorderFunction;
+          this._extensionCreatedList[ExtensionName.draggableGrouping] = {
+            name: ExtensionName.draggableGrouping,
+            instance: this._draggleGroupingPlugin,
+          };
         }
       }
     }
@@ -443,8 +521,15 @@ export class ExtensionService {
    * @param new column definitions (optional)
    */
   translateColumnHeaders(locale?: string, newColumnDefinitions?: Column[]): void {
-    if (this.sharedService && this.gridOptions && this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    if (
+      this.sharedService &&
+      this.gridOptions &&
+      this.gridOptions.enableTranslate &&
+      (!this.translaterService || !this.translaterService.translate)
+    ) {
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     }
 
     if (locale && this.translaterService?.use && this.translaterService.getCurrentLanguage() !== locale) {
@@ -507,12 +592,16 @@ export class ExtensionService {
    * @param columnDefinitions
    * @param gridOptions
    */
-  protected createExtensionByTheirColumnIndex(featureWithIndexPositions: Array<ExtensionModel<any>>, columnDefinitions: Column[], gridOptions: GridOption): void {
+  protected createExtensionByTheirColumnIndex(
+    featureWithIndexPositions: Array<ExtensionModel<any>>,
+    columnDefinitions: Column[],
+    gridOptions: GridOption
+  ): void {
     // 1- first step is to sort them by their index position
     featureWithIndexPositions.sort((feat1, feat2) => (feat1?.columnIndexPosition ?? 0) - (feat2?.columnIndexPosition ?? 0));
 
     // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
-    featureWithIndexPositions.forEach(feature => {
+    featureWithIndexPositions.forEach((feature) => {
       const instance = feature.instance.create(columnDefinitions, gridOptions);
       if (instance) {
         this._extensionCreatedList[feature.name] = { name: feature.name, instance };
@@ -522,8 +611,10 @@ export class ExtensionService {
 
   /** Translate an array of items from an input key and assign translated value to the output key */
   protected translateItems(items: any[], inputKey: string, outputKey: string): void {
-    if (this.gridOptions?.enableTranslate && !(this.translaterService?.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    if (this.gridOptions?.enableTranslate && !this.translaterService?.translate) {
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     }
 
     this.extensionUtility.translateItems(items, inputKey, outputKey);

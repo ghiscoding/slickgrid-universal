@@ -24,7 +24,7 @@ let gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -54,7 +54,7 @@ describe('CompoundSliderFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
     gridOptionMock = {
       enableFiltering: true,
@@ -92,7 +92,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should initialize the filter with slider value define in global default user filter options', () => {
     gridOptionMock.defaultFilterOptions = {
-      slider: { sliderStartValue: 2 }
+      slider: { sliderStartValue: 2 },
     };
     filter.init(filterArguments);
 
@@ -269,7 +269,7 @@ describe('CompoundSliderFilter', () => {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
-      }
+      },
     };
 
     filter.init(filterArguments);
@@ -316,12 +316,12 @@ describe('CompoundSliderFilter', () => {
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
-    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub, } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
     mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
-      }
+      },
     };
 
     filter.init(filterArgs);
@@ -396,7 +396,7 @@ describe('CompoundSliderFilter', () => {
     filterArguments.searchTerms = ['9'];
     gridOptionMock.compoundOperatorAltTexts = {
       numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
-      text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+      text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } },
     };
 
     filter.init(filterArguments);
@@ -424,8 +424,8 @@ describe('CompoundSliderFilter', () => {
     gridOptionMock.compoundOperatorAltTexts = {
       numeric: {
         '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' },
-        'Custom': { operatorAlt: '%', descAlt: 'alternate SQL LIKE' }
-      }
+        Custom: { operatorAlt: '%', descAlt: 'alternate SQL LIKE' },
+      },
     };
 
     filter.init(filterArguments);

@@ -52,7 +52,7 @@ const extensionServiceStub = {
   translateGridMenu: vi.fn(),
   translateHeaderMenu: vi.fn(),
 } as unknown as ExtensionService;
-Object.defineProperty(extensionServiceStub, 'extensionList', { get: vi.fn(() => { }), set: vi.fn(), configurable: true });
+Object.defineProperty(extensionServiceStub, 'extensionList', { get: vi.fn(() => {}), set: vi.fn(), configurable: true });
 
 const mockExtensionUtility = {
   translateItems: vi.fn(),
@@ -71,7 +71,6 @@ const backendUtilityServiceStub = {
   onBackendError: vi.fn(),
   refreshBackendDataset: vi.fn(),
 } as unknown as BackendUtilityService;
-
 
 const collectionServiceStub = {
   filterCollection: vi.fn(),
@@ -132,7 +131,7 @@ const resizerServiceStub = {
 
 Object.defineProperty(paginationServiceStub, 'totalItems', {
   get: vi.fn(() => 0),
-  set: vi.fn()
+  set: vi.fn(),
 });
 
 const sortServiceStub = {
@@ -192,7 +191,7 @@ const mockGetEditorLock = {
 } as unknown as SlickEditorLock;
 
 const mockGrid = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   autosizeColumns: vi.fn(),
   destroy: vi.fn(),
   init: vi.fn(),
@@ -245,7 +244,7 @@ const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
 
 vi.mock('@slickgrid-universal/common', async (importOriginal) => {
-  const actual = await importOriginal() as any;
+  const actual = (await importOriginal()) as any;
   return {
     ...actual,
     autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
@@ -292,32 +291,25 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
     dataset = [];
 
-    component = new VanillaForceGridBundle(
-      divContainer,
-      columnDefinitions,
-      gridOptions,
-      dataset,
-      undefined,
-      {
-        backendUtilityService: backendUtilityServiceStub,
-        collectionService: collectionServiceStub,
-        eventPubSubService,
-        extensionService: extensionServiceStub,
-        extensionUtility: mockExtensionUtility,
-        filterService: filterServiceStub,
-        gridEventService: gridEventServiceStub,
-        gridService: gridServiceStub,
-        gridStateService: gridStateServiceStub,
-        headerGroupingService: headerGroupingServiceStub,
-        paginationService: paginationServiceStub,
-        resizerService: resizerServiceStub,
-        sharedService,
-        sortService: sortServiceStub,
-        treeDataService: treeDataServiceStub,
-        translaterService: translateService as unknown as TranslaterService,
-        universalContainerService: container,
-      }
-    );
+    component = new VanillaForceGridBundle(divContainer, columnDefinitions, gridOptions, dataset, undefined, {
+      backendUtilityService: backendUtilityServiceStub,
+      collectionService: collectionServiceStub,
+      eventPubSubService,
+      extensionService: extensionServiceStub,
+      extensionUtility: mockExtensionUtility,
+      filterService: filterServiceStub,
+      gridEventService: gridEventServiceStub,
+      gridService: gridServiceStub,
+      gridStateService: gridStateServiceStub,
+      headerGroupingService: headerGroupingServiceStub,
+      paginationService: paginationServiceStub,
+      resizerService: resizerServiceStub,
+      sharedService,
+      sortService: sortServiceStub,
+      treeDataService: treeDataServiceStub,
+      translaterService: translateService as unknown as TranslaterService,
+      universalContainerService: container,
+    });
   });
 
   afterEach(() => {
@@ -406,7 +398,10 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         mockGrid.getOptions = () => null as any;
         const setOptionSpy = vi.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
-        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        const mockData = [
+          { firstName: 'John', lastName: 'Doe' },
+          { firstName: 'Jane', lastName: 'Smith' },
+        ];
         const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
         component.gridOptions = mockGridOptions;
@@ -422,7 +417,10 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         mockGrid.getOptions = () => null as any;
         const setOptionSpy = vi.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
-        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        const mockData = [
+          { firstName: 'John', lastName: 'Doe' },
+          { firstName: 'Jane', lastName: 'Smith' },
+        ];
         const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
         component.gridOptions = mockGridOptions;
@@ -550,11 +548,14 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         const expectedTotalItems = 2;
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
 
-        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        const mockData = [
+          { firstName: 'John', lastName: 'Doe' },
+          { firstName: 'Jane', lastName: 'Smith' },
+        ];
         vi.spyOn(mockDataView, 'getItems').mockReturnValueOnce(mockData);
         component.gridOptions = {
           enablePagination: true,
-          presets: { pagination: { pageSize: 2, pageNumber: expectedPageNumber } }
+          presets: { pagination: { pageSize: 2, pageNumber: expectedPageNumber } },
         };
         component.paginationOptions = undefined;
         component.paginationOptions = { pageSize: 2, pageNumber: 2, pageSizes: [2, 10, 25, 50], totalItems: 100 };
@@ -574,13 +575,18 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         const expectedPageNumber = 3;
         const expectedTotalItems = 15;
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
-        const getPagingSpy = vi.spyOn(mockDataView, 'getPagingInfo').mockReturnValue({ pageNum: 1, totalRows: expectedTotalItems, pageSize: 10, totalPages: 15, dataView: mockDataView });
+        const getPagingSpy = vi
+          .spyOn(mockDataView, 'getPagingInfo')
+          .mockReturnValue({ pageNum: 1, totalRows: expectedTotalItems, pageSize: 10, totalPages: 15, dataView: mockDataView });
 
-        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        const mockData = [
+          { firstName: 'John', lastName: 'Doe' },
+          { firstName: 'Jane', lastName: 'Smith' },
+        ];
         component.gridOptions = {
           enableFiltering: true,
           enablePagination: true,
-          presets: { pagination: { pageSize: 10, pageNumber: expectedPageNumber } }
+          presets: { pagination: { pageSize: 10, pageNumber: expectedPageNumber } },
         };
         component.paginationOptions = { pageSize: 10, pageNumber: 2, pageSizes: [10, 25, 50], totalItems: 100 };
 
@@ -632,17 +638,25 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should change flat dataset and expect "convertFlatParentChildToTreeDatasetAndSort" being called with other methods', () => {
-        const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
+        const mockFlatDataset = [
+          { id: 0, file: 'documents' },
+          { id: 1, file: 'vacation.txt', parentId: 0 },
+        ];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
         const hierarchicalSpy = vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-        const treeConvertAndSortSpy = vi.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
+        const treeConvertAndSortSpy = vi
+          .spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort')
+          .mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
         const refreshTreeSpy = vi.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
         component.gridOptions = {
-          enableTreeData: true, treeDataOptions: {
-            columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files',
-            initialSort: { columndId: 'file', direction: 'ASC' }
-          }
+          enableTreeData: true,
+          treeDataOptions: {
+            columnId: 'file',
+            parentPropName: 'parentId',
+            childrenPropName: 'files',
+            initialSort: { columndId: 'file', direction: 'ASC' },
+          },
         } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockFlatDataset;

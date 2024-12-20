@@ -36,7 +36,7 @@ const mockPubSub = {
   publish: vi.fn(),
   subscribe: (eventName, fn) => {
     if (Array.isArray(eventName)) {
-      eventName.forEach(ev => fnCallbacks[ev as string] = fn);
+      eventName.forEach((ev) => (fnCallbacks[ev as string] = fn));
     } else {
       fnCallbacks[eventName as string] = fn;
     }
@@ -45,7 +45,7 @@ const mockPubSub = {
   unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 vi.mock('@slickgrid-universal/event-pub-sub', () => ({
-  PubSubService: () => mockPubSub
+  PubSubService: () => mockPubSub,
 }));
 
 const gridOptionMock = {
@@ -89,14 +89,12 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 const extensionServiceStub = {
-  getExtensionByName: (_name: string) => { }
+  getExtensionByName: (_name: string) => {},
 } as ExtensionService;
 
-const filterServiceStub = {
-} as FilterService;
+const filterServiceStub = {} as FilterService;
 
-const sortServiceStub = {
-} as SortService;
+const sortServiceStub = {} as SortService;
 
 const treeDataServiceStub = {
   getCurrentToggleState: vi.fn(),
@@ -462,11 +460,14 @@ describe('GridStateService', () => {
     });
 
     it('should call "getCurrentGridState" method and return Pagination', () => {
-      const gridOptionsMock = { enablePagination: true, frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableTreeData: true, } as GridOption;
+      const gridOptionsMock = { enablePagination: true, frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableTreeData: true } as GridOption;
       const paginationMock = { pageNumber: 2, pageSize: 50 } as CurrentPagination;
       const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
-      const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
+      const sorterMock = [
+        { columnId: 'field1', direction: 'ASC' },
+        { columnId: 'field2', direction: 'DESC' },
+      ] as CurrentSorter[];
       const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
       const treeDataMock = { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null } as TreeToggleStateChange;
 
@@ -485,7 +486,14 @@ describe('GridStateService', () => {
       expect(sorterSpy).toHaveBeenCalled();
       expect(paginationSpy).toHaveBeenCalled();
       expect(treeDataSpy).toHaveBeenCalled();
-      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, pagination: paginationMock, pinning: pinningMock, treeData: treeDataMock } as GridState);
+      expect(output).toEqual({
+        columns: columnMock,
+        filters: filterMock,
+        sorters: sorterMock,
+        pagination: paginationMock,
+        pinning: pinningMock,
+        treeData: treeDataMock,
+      } as GridState);
     });
   });
 
@@ -514,7 +522,10 @@ describe('GridStateService', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
-      const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
+      const sorterMock = [
+        { columnId: 'field1', direction: 'ASC' },
+        { columnId: 'field2', direction: 'DESC' },
+      ] as CurrentSorter[];
       const selectionMock = { gridRowIndexes: selectedGridRows, dataContextIds: selectedRowIds } as CurrentRowSelection;
 
       const columnSpy = vi.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
@@ -528,7 +539,7 @@ describe('GridStateService', () => {
       expect(filterSpy).toHaveBeenCalled();
       expect(sorterSpy).toHaveBeenCalled();
       expect(selectionSpy).toHaveBeenCalled();
-      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, rowSelection: selectionMock, pinning: pinningMock, } as GridState);
+      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, rowSelection: selectionMock, pinning: pinningMock } as GridState);
     });
 
     it('should call the "mapIdsToRows" from the DataView and get the data IDs from the "selectedRowDataContextIds" array', () => {
@@ -578,7 +589,14 @@ describe('GridStateService', () => {
         service.init(gridStub);
         service.selectedRowDataContextIds = mockPreviousDataIds;
 
-        dataViewStub.onSelectedRowIdsChanged.notify({ rows: mockNewRowIndexes, filteredIds: mockNewDataIds, ids: mockNewDataIds, selectedRowIds: mockNewDataIds, dataView: dataViewStub, grid: gridStub });
+        dataViewStub.onSelectedRowIdsChanged.notify({
+          rows: mockNewRowIndexes,
+          filteredIds: mockNewDataIds,
+          ids: mockNewDataIds,
+          selectedRowIds: mockNewDataIds,
+          dataView: dataViewStub,
+          grid: gridStub,
+        });
 
         vi.runAllTimers();
 
@@ -595,7 +613,7 @@ describe('GridStateService', () => {
             pagination: paginationMock,
             pinning: pinningMock,
             rowSelection: { gridRowIndexes: mockNewRowIndexes, dataContextIds: mockNewDataIds, filteredDataContextIds: mockNewDataIds },
-          }
+          },
         });
       });
     });
@@ -617,7 +635,10 @@ describe('GridStateService', () => {
 
     it('should return Sorters when a BackendService is used', () => {
       const gridOptionsMock = { backendServiceApi: { service: backendServiceStub } } as GridOption;
-      const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
+      const sorterMock = [
+        { columnId: 'field1', direction: 'ASC' },
+        { columnId: 'field2', direction: 'DESC' },
+      ] as CurrentSorter[];
       const gridSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const backendSpy = vi.spyOn(backendServiceStub, 'getCurrentSorters');
       (backendSpy as Mock).mockReturnValue(sorterMock);
@@ -630,7 +651,10 @@ describe('GridStateService', () => {
     });
 
     it('should return Sorters when Local grid is set and no BackendService is used', () => {
-      const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
+      const sorterMock = [
+        { columnId: 'field1', direction: 'ASC' },
+        { columnId: 'field2', direction: 'DESC' },
+      ] as CurrentSorter[];
       sortServiceStub.getCurrentLocalSorters = () => sorterMock;
       const gridSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
       const sortSpy = vi.spyOn(sortServiceStub, 'getCurrentLocalSorters').mockReturnValue(sorterMock);
@@ -700,7 +724,10 @@ describe('GridStateService', () => {
 
     it('should return Sorters when a BackendService is used', () => {
       const gridOptionsMock = { backendServiceApi: { service: backendServiceStub } } as GridOption;
-      const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }, { columnId: 'field2', operator: '>=', searchTerms: [2] }] as CurrentFilter[];
+      const filterMock = [
+        { columnId: 'field1', operator: 'EQ', searchTerms: [] },
+        { columnId: 'field2', operator: '>=', searchTerms: [2] },
+      ] as CurrentFilter[];
       const gridSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const backendSpy = vi.spyOn(backendServiceStub, 'getCurrentFilters');
       (backendSpy as Mock).mockReturnValue(filterMock);
@@ -713,7 +740,10 @@ describe('GridStateService', () => {
     });
 
     it('should return Sorters when Local grid is set and no BackendService is used', () => {
-      const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }, { columnId: 'field2', operator: '>=', searchTerms: [2] }] as CurrentFilter[];
+      const filterMock = [
+        { columnId: 'field1', operator: 'EQ', searchTerms: [] },
+        { columnId: 'field2', operator: '>=', searchTerms: [2] },
+      ] as CurrentFilter[];
       filterServiceStub.getCurrentLocalFilters = () => filterMock;
       const gridSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
       const filterSpy = vi.spyOn(filterServiceStub, 'getCurrentLocalFilters').mockReturnValue(filterMock);
@@ -761,7 +791,7 @@ describe('GridStateService', () => {
           service: backendServiceStub,
           process: vi.fn(),
         },
-        enableRowSelection: true
+        enableRowSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -777,7 +807,7 @@ describe('GridStateService', () => {
           service: backendServiceStub,
           process: vi.fn(),
         },
-        enableRowSelection: true
+        enableRowSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -789,7 +819,7 @@ describe('GridStateService', () => {
     it('should return true when the "dataView" grid option is provided as an object', () => {
       const gridOptionsMock = {
         dataView: { syncGridSelection: { preserveHidden: true, preserveHiddenOnSelectionChange: false } },
-        enableRowSelection: true
+        enableRowSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -891,7 +921,10 @@ describe('GridStateService', () => {
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
       columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }, { columnId: 'field2', operator: '>=', searchTerms: [2] }] as CurrentFilter[];
+      filterMock = [
+        { columnId: 'field1', operator: 'EQ', searchTerms: [] },
+        { columnId: 'field2', operator: '>=', searchTerms: [2] },
+      ] as CurrentFilter[];
       sorterMock = [{ columnId: 'field1', direction: 'ASC' }] as CurrentSorter[];
       currentColumnsMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
 
@@ -959,7 +992,12 @@ describe('GridStateService', () => {
     });
 
     it('should trigger a "onGridStateChanged" event when "onTreeItemToggled" is triggered', () => {
-      const toggleChangeMock = { type: 'toggle-expand', fromItemId: 2, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 2, isCollapsed: true }] } as TreeToggleStateChange;
+      const toggleChangeMock = {
+        type: 'toggle-expand',
+        fromItemId: 2,
+        previousFullToggleType: 'full-collapse',
+        toggledItems: [{ itemId: 2, isCollapsed: true }],
+      } as TreeToggleStateChange;
       const gridStateMock = { columns: [], filters: [], sorters: [], treeData: toggleChangeMock } as GridState;
       const stateChangeMock = { change: { newValues: toggleChangeMock, type: GridStateType.treeData }, gridState: gridStateMock } as GridStateChange;
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');

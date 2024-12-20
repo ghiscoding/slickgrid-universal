@@ -8,17 +8,17 @@ describe('Example 20 - Basic grid inside a Shadow DOM', () => {
   });
 
   it('should have a grid with size 800 * 450px', () => {
-    cy.get('#host').shadow()
-      .find('.grid20')
-      .should('have.css', 'width', '800px');
+    cy.get('#host').shadow().find('.grid20').should('have.css', 'width', '800px');
 
-    cy.get('#host').shadow()
+    cy.get('#host')
+      .shadow()
       .find('.grid20 > .slickgrid-container')
-      .should($el => expect(parseInt(`${$el.height()}`, 10)).to.eq(450));
+      .should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(450));
   });
 
   it('should have exact column titles in grid', () => {
-    cy.get('#host').shadow()
+    cy.get('#host')
+      .shadow()
       .find('.grid20')
       .find('.slick-header-columns')
       .children()
@@ -26,32 +26,14 @@ describe('Example 20 - Basic grid inside a Shadow DOM', () => {
   });
 
   it('should click on the "Title" column to "Sort Ascending"', () => {
-    cy.get('#host').shadow()
-      .find('.grid20')
-      .find('.slick-header-column')
-      .first()
-      .click();
+    cy.get('#host').shadow().find('.grid20').find('.slick-header-column').first().click();
 
-    cy.get('#host').shadow()
-      .find('.slick-row')
-      .first()
-      .children('.slick-cell')
-      .first()
-      .should('contain', 'Task 0');
+    cy.get('#host').shadow().find('.slick-row').first().children('.slick-cell').first().should('contain', 'Task 0');
   });
 
   it('should click again on the "Title" column to "Sort Descending"', () => {
-    cy.get('#host').shadow()
-      .find('.grid20')
-      .find('.slick-header-column')
-      .first()
-      .click();
+    cy.get('#host').shadow().find('.grid20').find('.slick-header-column').first().click();
 
-    cy.get('#host').shadow()
-      .find('.slick-row')
-      .first()
-      .children('.slick-cell')
-      .first()
-      .should('contain', 'Task 99');
+    cy.get('#host').shadow().find('.slick-row').first().children('.slick-cell').first().should('contain', 'Task 99');
   });
 });

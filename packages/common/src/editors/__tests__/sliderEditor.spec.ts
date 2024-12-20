@@ -71,14 +71,15 @@ describe('SliderEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
-      try {
-        editor = new SliderEditor(null as any);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-        done();
-      }
-    }));
+    it('should throw an error when trying to call init without any arguments', () =>
+      new Promise((done: any) => {
+        try {
+          editor = new SliderEditor(null as any);
+        } catch (e) {
+          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
+          done();
+        }
+      }));
   });
 
   describe('with valid Editor instance', () => {
@@ -110,7 +111,7 @@ describe('SliderEditor', () => {
 
     it('should initialize the editor with slider value define in global default user editor options', () => {
       gridOptionMock.defaultEditorOptions = {
-        slider: { sliderStartValue: 2 }
+        slider: { sliderStartValue: 2 },
       };
       editor = new SliderEditor(editorArguments);
 
@@ -559,7 +560,9 @@ describe('SliderEditor', () => {
       const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
       editorElm.dispatchEvent(new Event('change'));
 
-      expect(editor.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 45%, #eee 45%)');
+      expect(editor.sliderOptions?.sliderTrackBackground).toBe(
+        'linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 45%, #eee 45%)'
+      );
     });
 
     it('should click on the slider track and expect handle to move to the new position', () => {
@@ -599,23 +602,31 @@ describe('SliderEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       editor = new SliderEditor(editorArguments);
       editor.setValue(95, true);
 
       expect(editor.getValue()).toBe('95');
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 95 }, editors: {}, triggeredBy: 'system',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { price: 95 },
+          editors: {},
+          triggeredBy: 'system',
+        },
+        expect.anything()
+      );
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
 
       editor = new SliderEditor(editorArguments);
@@ -623,7 +634,14 @@ describe('SliderEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -631,10 +649,10 @@ describe('SliderEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
 
       editor = new SliderEditor(editorArguments);
@@ -643,11 +661,26 @@ describe('SliderEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 0 }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { price: 0 },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorInputDomElement.disabled).toBeTruthy();
       expect(editor.editorInputDomElement.value).toEqual('0');
@@ -657,13 +690,13 @@ describe('SliderEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new SliderEditor(editorArguments);
@@ -672,11 +705,26 @@ describe('SliderEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: {},
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorInputDomElement.disabled).toBeTruthy();
       expect(editor.editorInputDomElement.value).toEqual('0');
@@ -686,10 +734,10 @@ describe('SliderEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, price: 93, isActive: true };
@@ -702,11 +750,26 @@ describe('SliderEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 93 }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { price: 93 },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
     });
   });
 });

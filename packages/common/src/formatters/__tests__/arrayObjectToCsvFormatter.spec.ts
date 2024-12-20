@@ -4,7 +4,10 @@ import type { Column } from '../../interfaces/index.js';
 import { arrayObjectToCsvFormatter } from '../arrayObjectToCsvFormatter.js';
 
 describe('the ArrayObjectToCsv Formatter', () => {
-  const allRoles = [{ roleId: 0, name: 'Administrator' }, { roleId: 1, name: 'Regular User' }];
+  const allRoles = [
+    { roleId: 0, name: 'Administrator' },
+    { roleId: 1, name: 'Regular User' },
+  ];
 
   const dataset = [
     { id: 0, firstName: 'John', lastName: 'Smith', email: 'john.smith@movie.com', roles: allRoles },
@@ -13,8 +16,9 @@ describe('the ArrayObjectToCsv Formatter', () => {
   ];
 
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
-    expect(() => arrayObjectToCsvFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrow('Formatters.arrayObjectToCsv requires you to pass an array of "propertyNames"');
+    expect(() => arrayObjectToCsvFormatter(0, 0, 'anything', {} as Column, {}, {} as any)).toThrow(
+      'Formatters.arrayObjectToCsv requires you to pass an array of "propertyNames"'
+    );
   });
 
   it('should return original input value when the "propertyNames" is not found in the given object', () => {
@@ -29,14 +33,14 @@ describe('the ArrayObjectToCsv Formatter', () => {
     expect(result).toBe('anything');
   });
 
-  it('should return csv string in a span (with it\'s content and title attribute to be the same) when multiple input values are passed', () => {
+  it("should return csv string in a span (with it's content and title attribute to be the same) when multiple input values are passed", () => {
     const params = { propertyNames: ['name'] };
     const expectedOutput = 'Administrator, Regular User';
     const result = arrayObjectToCsvFormatter(0, 0, 'anything', { field: 'roles', params } as Column, dataset[0], {} as any);
     expect((result as HTMLElement).outerHTML).toBe(`<span title="${expectedOutput}">${expectedOutput}</span>`);
   });
 
-  it('should return regular string in a span (with it\'s content and title attribute to be the same) when 1 input value is passed', () => {
+  it("should return regular string in a span (with it's content and title attribute to be the same) when 1 input value is passed", () => {
     const params = { propertyNames: ['name'] };
     const expectedOutput = 'Regular User';
     const result = arrayObjectToCsvFormatter(0, 0, 'anything', { field: 'roles', params } as Column, dataset[1], {} as any);

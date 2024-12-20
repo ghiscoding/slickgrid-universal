@@ -1,8 +1,28 @@
 describe('Example 04 - Frozen Grid', () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
-  const withTitleRowTitles = ['Sel', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
-  const withoutTitleRowTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const withTitleRowTitles = [
+    'Sel',
+    'Title',
+    '% Complete',
+    'Start',
+    'Finish',
+    'Completed',
+    'Cost | Duration',
+    'City of Origin',
+    'Action',
+  ];
+  const withoutTitleRowTitles = [
+    '',
+    'Title',
+    '% Complete',
+    'Start',
+    'Finish',
+    'Completed',
+    'Cost | Duration',
+    'City of Origin',
+    'Action',
+  ];
   const GRID_ROW_HEIGHT = 45;
 
   it('should display Example title', () => {
@@ -26,8 +46,12 @@ describe('Example 04 - Frozen Grid', () => {
 
   it('should have a frozen grid with 4 containers on page load with 3 columns on the left and 6 columns on the right', () => {
     cy.get('[style="top: 0px;"]').should('have.length', 2 * 2);
-    cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
+    cy.get('.grid-canvas-left > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 3 * 2);
+    cy.get('.grid-canvas-right > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 6 * 2);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').should('contain', 'Task 0');
@@ -39,9 +63,7 @@ describe('Example 04 - Frozen Grid', () => {
   it('should hide "Title" column from Grid Menu and expect last frozen column to be "% Complete"', () => {
     const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
-    cy.get('.grid4')
-      .find('button.slick-grid-menu-button')
-      .click({ force: true });
+    cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.grid4')
       .get('.slick-grid-menu:visible')
@@ -56,8 +78,12 @@ describe('Example 04 - Frozen Grid', () => {
       .children()
       .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
 
-    cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 2 * 2);
-    cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
+    cy.get('.grid-canvas-left > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 2 * 2);
+    cy.get('.grid-canvas-right > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 6 * 2);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
 
@@ -74,18 +100,19 @@ describe('Example 04 - Frozen Grid', () => {
       .should('contain', 'Title')
       .click({ force: true });
 
-    cy.get('.grid4')
-      .get('.slick-grid-menu:visible')
-      .find('.close')
-      .click({ force: true });
+    cy.get('.grid4').get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
     cy.get('.grid4')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
-    cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
+    cy.get('.grid-canvas-left > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 3 * 2);
+    cy.get('.grid-canvas-right > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 6 * 2);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').should('contain', 'Task 0');
@@ -116,8 +143,12 @@ describe('Example 04 - Frozen Grid', () => {
       .children()
       .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
 
-    cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 2 * 2);
-    cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
+    cy.get('.grid-canvas-left > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 2 * 2);
+    cy.get('.grid-canvas-right > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 6 * 2);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
 
@@ -126,11 +157,7 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should show again "Title" column from Column Picker and expect last frozen column to still be "% Complete"', () => {
-    cy.get('.grid4')
-      .find('.slick-header-column:nth(4)')
-      .trigger('mouseover')
-      .trigger('contextmenu')
-      .invoke('show');
+    cy.get('.grid4').find('.slick-header-column:nth(4)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
@@ -139,18 +166,19 @@ describe('Example 04 - Frozen Grid', () => {
       .should('contain', 'Title')
       .click();
 
-    cy.get('.slick-column-picker:visible')
-      .find('.close')
-      .trigger('click')
-      .click();
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
 
     cy.get('.grid4')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
-    cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
+    cy.get('.grid-canvas-left > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 3 * 2);
+    cy.get('.grid-canvas-right > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 6 * 2);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').should('contain', 'Task 0');
@@ -160,11 +188,12 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should click on the "Remove Frozen Columns" button to switch to a regular grid without frozen columns and expect 7 columns on the left container', () => {
-    cy.get('[data-test=remove-frozen-column-button]')
-      .click({ force: true });
+    cy.get('[data-test=remove-frozen-column-button]').click({ force: true });
 
     cy.get('[style="top: 0px;"]').should('have.length', 1 * 2);
-    cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 9 * 2);
+    cy.get('.grid-canvas-left > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 9 * 2);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').should('contain', 'Task 0');
@@ -181,12 +210,15 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should click on the "Set 3 Frozen Columns" button to switch frozen columns grid and expect 3 frozen columns on the left and 4 columns on the right', () => {
-    cy.get('[data-test=set-3frozen-columns]')
-      .click({ force: true });
+    cy.get('[data-test=set-3frozen-columns]').click({ force: true });
 
     cy.get('[style="top: 0px;"]').should('have.length', 2 * 2);
-    cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
+    cy.get('.grid-canvas-left > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 3 * 2);
+    cy.get('.grid-canvas-right > [style="top: 0px;"]')
+      .children()
+      .should('have.length', 6 * 2);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').should('contain', 'Task 0');
@@ -203,12 +235,9 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should click on the Grid Menu command "Unfreeze Columns/Rows" to switch to a regular grid without frozen columns/rows', () => {
-    cy.get('.grid4')
-      .find('button.slick-grid-menu-button')
-      .click({ force: true });
+    cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
 
-    cy.contains('Unfreeze Columns/Rows')
-      .click({ force: true });
+    cy.contains('Unfreeze Columns/Rows').click({ force: true });
 
     cy.get('[style="top: 0px;"]').should('have.length', 1);
     cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 9);
@@ -222,30 +251,58 @@ describe('Example 04 - Frozen Grid', () => {
 
   it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark icon', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`)
+      .find('.checkmark-icon')
+      .should('have.length', 0);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`)
+      .find('.checkmark-icon')
+      .should('have.length', 0);
 
-    cy.get('.grid4').find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.grid4')
+      .find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`)
+      .contains('Action')
+      .click({ force: true });
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-    cy.get('.grid4').find(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.grid4')
+      .find(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`)
+      .contains('Action')
+      .click({ force: true });
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(5)`)
+      .find('.checkmark-icon')
+      .should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(5)`)
+      .find('.checkmark-icon')
+      .should('have.length', 1);
   });
 
   it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "False" and expect the cell to be updated and no longer have checkmark', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(5)`)
+      .find('.checkmark-icon')
+      .should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(5)`)
+      .find('.checkmark-icon')
+      .should('have.length', 1);
 
-    cy.get('.grid4').find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.grid4')
+      .find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`)
+      .contains('Action')
+      .click({ force: true });
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
-    cy.get('.grid4').find(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.grid4')
+      .find(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`)
+      .contains('Action')
+      .click({ force: true });
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 0);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(5)`)
+      .find('.checkmark-icon')
+      .should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(5)`)
+      .find('.checkmark-icon')
+      .should('have.length', 0);
   });
 
   it('should open the Cell Menu and delete Row 3 and 4 from the Cell Menu', () => {
@@ -255,16 +312,20 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
 
-    cy.get('.grid4').find(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item').contains('Delete Row').click()
+    cy.get('.grid4')
+      .find(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(8)`)
+      .contains('Action')
+      .click({ force: true });
+    cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item')
+      .contains('Delete Row')
+      .click()
       .then(() => expect(confirmStub.getCall(0)).to.be.calledWith('Do you really want to delete row (4) with "Task 3"?'));
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
   });
 
   it('should filter autocomplete by typing Vancouver in the "City of Origin" and expect only filtered rows to show up', () => {
-    cy.get('.search-filter.filter-cityOfOrigin')
-      .type('Vancouver');
+    cy.get('.search-filter.filter-cityOfOrigin').type('Vancouver');
 
     cy.get('.slick-autocomplete').should('be.visible');
     cy.get('.slick-autocomplete div').should('have.length', 2);
@@ -278,23 +339,14 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should Clear all Filters', () => {
-    cy.get('.grid4')
-      .find('button.slick-grid-menu-button')
-      .trigger('click')
-      .click({ force: true });
+    cy.get('.grid4').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
-    cy.get(`.slick-grid-menu:visible`)
-      .find('.slick-menu-item')
-      .first()
-      .find('span')
-      .contains('Clear all Filters')
-      .click();
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
   });
 
   it('should edit first row (Task 1) and change its city by choosing it inside the autocomplete editor list', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).click();
-    cy.get('input.autocomplete.editor-cityOfOrigin')
-      .type('Sydney');
+    cy.get('input.autocomplete.editor-cityOfOrigin').type('Sydney');
 
     cy.get('.slick-autocomplete').should('be.visible');
     cy.get('.slick-autocomplete div').should('have.length', 3);
@@ -305,13 +357,9 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should open Context Menu hover "% Complete" column then select "Not Started (0%)" option and expect Task to be at 0', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
-      .rightclick();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).rightclick();
 
-    cy.get('.slick-context-menu .slick-menu-option-list')
-      .should('exist')
-      .contains('Not Started (0%)')
-      .click();
+    cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('Not Started (0%)').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
   });
@@ -320,8 +368,7 @@ describe('Example 04 - Frozen Grid', () => {
     const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
-      .rightclick();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
       .find('.slick-menu-item .slick-menu-content')
@@ -335,10 +382,7 @@ describe('Example 04 - Frozen Grid', () => {
       .find('.slick-menu-item .slick-menu-content')
       .each(($command, index) => expect($command.text()).to.eq(subOptions[index]));
 
-    cy.get('@subMenuList')
-      .find('.slick-menu-item .slick-menu-content')
-      .contains('Half Completed (50%)')
-      .click();
+    cy.get('@subMenuList').find('.slick-menu-item .slick-menu-content').contains('Half Completed (50%)').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '50');
   });
@@ -349,8 +393,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.on('window:alert', stub);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
-      .rightclick();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
@@ -376,8 +419,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.on('window:alert', stub);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
-      .rightclick();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
@@ -396,9 +438,7 @@ describe('Example 04 - Frozen Grid', () => {
 
     cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list').as('subMenuList2');
 
-    cy.get('@subMenuList2')
-      .find('.slick-menu-title')
-      .contains('available formats');
+    cy.get('@subMenuList2').find('.slick-menu-title').contains('available formats');
 
     cy.get('@subMenuList2')
       .should('exist')
@@ -418,8 +458,7 @@ describe('Example 04 - Frozen Grid', () => {
     const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
-      .rightclick();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
@@ -448,9 +487,7 @@ describe('Example 04 - Frozen Grid', () => {
 
     cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
 
-    cy.get('@optionSubList2')
-      .find('.slick-menu-title')
-      .contains('Set Percent Complete');
+    cy.get('@optionSubList2').find('.slick-menu-title').contains('Set Percent Complete');
 
     cy.get('@optionSubList2')
       .should('exist')
@@ -467,8 +504,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.on('window:alert', stub);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
-      .rightclick({ force: true });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).rightclick({ force: true });
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
@@ -518,18 +554,14 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should toggle Select All checkbox and expect back "Sel" column title to show when Select All checkbox is shown in the header row', () => {
-    cy.get('.slick-header-column:nth(0)')
-      .find('.slick-column-name')
-      .should('contain', 'Sel');
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('contain', 'Sel');
     cy.get('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
     cy.get('[data-test="toggle-select-all-row"]').click();
 
-    cy.get('.slick-header-column:nth(0)')
-      .find('.slick-column-name')
-      .should('not.contain', 'Sel');
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('not.contain', 'Sel');
 
     cy.get('.slick-header-columns')
       .children()
@@ -539,18 +571,14 @@ describe('Example 04 - Frozen Grid', () => {
   it('should toggle back Select All checkbox and expect back "Sel" column title to show when Select All checkbox is shown in the header row', () => {
     cy.get('[data-test="toggle-select-all-row"]').click();
 
-    cy.get('.slick-header-column:nth(0)')
-      .find('.slick-column-name')
-      .should('contain', 'Sel');
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('contain', 'Sel');
     cy.get('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
     cy.get('[data-test="toggle-select-all-row"]').click();
 
-    cy.get('.slick-header-column:nth(0)')
-      .find('.slick-column-name')
-      .should('not.contain', 'Sel');
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('not.contain', 'Sel');
 
     cy.get('.slick-header-columns')
       .children()
@@ -559,19 +587,14 @@ describe('Example 04 - Frozen Grid', () => {
 
   describe('Test UI rendering after Scrolling with large columns', () => {
     it('should unfreeze all columns/rows', () => {
-      cy.get('.grid4')
-        .find('button.slick-grid-menu-button')
-        .click({ force: true });
+      cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
 
-      cy.contains('Unfreeze Columns/Rows')
-        .click({ force: true });
+      cy.contains('Unfreeze Columns/Rows').click({ force: true });
     });
 
     it('should resize all columns and make them wider', () => {
       // resize CityOfOrigin column
-      cy.get('.slick-header-columns')
-        .children('.slick-header-column:nth(7)')
-        .should('contain', 'City of Origin');
+      cy.get('.slick-header-columns').children('.slick-header-column:nth(7)').should('contain', 'City of Origin');
 
       cy.get('.slick-resizable-handle:nth(7)')
         .trigger('mousedown', { which: 1, force: true })
@@ -582,9 +605,7 @@ describe('Example 04 - Frozen Grid', () => {
         .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
       // resize Cost|Duration column
-      cy.get('.slick-header-columns')
-        .children('.slick-header-column:nth(6)')
-        .should('contain', 'Cost | Duration');
+      cy.get('.slick-header-columns').children('.slick-header-column:nth(6)').should('contain', 'Cost | Duration');
 
       cy.get('.slick-resizable-handle:nth(6)')
         .trigger('mousedown', { which: 1, force: true })
@@ -595,9 +616,7 @@ describe('Example 04 - Frozen Grid', () => {
         .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
       // resize Completed column
-      cy.get('.slick-header-columns')
-        .children('.slick-header-column:nth(5)')
-        .should('contain', 'Completed');
+      cy.get('.slick-header-columns').children('.slick-header-column:nth(5)').should('contain', 'Completed');
 
       cy.get('.slick-resizable-handle:nth(5)')
         .trigger('mousedown', { which: 1, force: true })
@@ -608,9 +627,7 @@ describe('Example 04 - Frozen Grid', () => {
         .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
       // resize Finish column
-      cy.get('.slick-header-columns')
-        .children('.slick-header-column:nth(4)')
-        .should('contain', 'Finish');
+      cy.get('.slick-header-columns').children('.slick-header-column:nth(4)').should('contain', 'Finish');
 
       cy.get('.slick-resizable-handle:nth(4)')
         .trigger('mousedown', { which: 1, force: true })
@@ -621,9 +638,7 @@ describe('Example 04 - Frozen Grid', () => {
         .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
       // resize Start column
-      cy.get('.slick-header-columns')
-        .children('.slick-header-column:nth(3)')
-        .should('contain', 'Start');
+      cy.get('.slick-header-columns').children('.slick-header-column:nth(3)').should('contain', 'Start');
 
       cy.get('.slick-resizable-handle:nth(3)')
         .trigger('mousedown', { which: 1, force: true })
@@ -634,9 +649,7 @@ describe('Example 04 - Frozen Grid', () => {
         .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
       // resize %Complete column
-      cy.get('.slick-header-columns')
-        .children('.slick-header-column:nth(2)')
-        .should('contain', '% Complete');
+      cy.get('.slick-header-columns').children('.slick-header-column:nth(2)').should('contain', '% Complete');
 
       cy.get('.slick-resizable-handle:nth(2)')
         .trigger('mousedown', { which: 1, force: true })
@@ -647,9 +660,7 @@ describe('Example 04 - Frozen Grid', () => {
         .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
       // resize Title column
-      cy.get('.slick-header-columns')
-        .children('.slick-header-column:nth(1)')
-        .should('contain', 'Title');
+      cy.get('.slick-header-columns').children('.slick-header-column:nth(1)').should('contain', 'Title');
 
       cy.get('.slick-resizable-handle:nth(1)')
         .trigger('mousedown', { which: 1, force: true })
@@ -668,8 +679,7 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell.l2`).contains(/[0-9]*/);
 
       // horizontal scroll to right
-      cy.get('.slick-viewport-top.slick-viewport-left')
-        .scrollTo('100%', '0%', { duration: 1500 });
+      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('100%', '0%', { duration: 1500 });
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l3`).should('contain', '2009-01-01');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l4`).should('contain', '2009-05-05');
@@ -684,8 +694,7 @@ describe('Example 04 - Frozen Grid', () => {
 
     it('should scroll vertically to the middle of the grid and expect all cell to be rendered', () => {
       // vertical scroll to middle
-      cy.get('.slick-viewport-top.slick-viewport-left')
-        .scrollTo('100%', '40%', { duration: 1500 });
+      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('100%', '40%', { duration: 1500 });
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 195}px;"] > .slick-cell.l3`).should('contain', '2009-01-01');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 195}px;"] > .slick-cell.l4`).should('contain', '2009-05-05');

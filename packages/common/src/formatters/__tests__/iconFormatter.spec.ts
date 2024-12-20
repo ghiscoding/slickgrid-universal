@@ -5,8 +5,9 @@ import { iconFormatter } from '../iconFormatter.js';
 
 describe('the Icon Formatter', () => {
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
-    expect(() => iconFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrow('[Slickgrid-Universal] When using `Formatters.icon`, you must provide the "iconCssClass" via the generic "params"');
+    expect(() => iconFormatter(0, 0, 'anything', {} as Column, {}, {} as any)).toThrow(
+      '[Slickgrid-Universal] When using `Formatters.icon`, you must provide the "iconCssClass" via the generic "params"'
+    );
   });
 
   it('should always return a <i> with the icon class name provided in the "icon" property from "params"', () => {

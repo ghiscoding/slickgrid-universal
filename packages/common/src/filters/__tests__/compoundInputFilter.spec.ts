@@ -23,7 +23,7 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: vi.fn(),
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -52,7 +52,7 @@ describe('CompoundInputFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new CompoundInputFilter(translateService);
@@ -307,7 +307,7 @@ describe('CompoundInputFilter', () => {
     gridOptionMock.defaultBackendServiceFilterTypingDebounce = 2;
     gridOptionMock.backendServiceApi = {
       filterTypingDebounce: 2,
-      service: {}
+      service: {},
     } as unknown as BackendServiceApi;
 
     filter.init(filterArguments);
@@ -385,7 +385,6 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.filter-duration.filled');
 
-
     expect(filterInputElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
@@ -399,7 +398,6 @@ describe('CompoundInputFilter', () => {
     filter.clear(false);
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.filter-duration.filled');
-
 
     expect(filterInputElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
@@ -429,10 +427,11 @@ describe('CompoundInputFilter', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['xyz'];
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({
-      ...gridOptionMock, compoundOperatorAltTexts: {
+      ...gridOptionMock,
+      compoundOperatorAltTexts: {
         numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
-        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
-      }
+        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } },
+      },
     });
 
     filter.init(filterArguments);
@@ -458,12 +457,13 @@ describe('CompoundInputFilter', () => {
       { operator: 'Custom', desc: 'SQL LIKE' },
     ];
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({
-      ...gridOptionMock, compoundOperatorAltTexts: {
+      ...gridOptionMock,
+      compoundOperatorAltTexts: {
         text: {
           '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' },
-          'Custom': { operatorAlt: '%', descAlt: 'alternate SQL LIKE' }
-        }
-      }
+          Custom: { operatorAlt: '%', descAlt: 'alternate SQL LIKE' },
+        },
+      },
     });
 
     filter.init(filterArguments);

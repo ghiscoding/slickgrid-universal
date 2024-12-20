@@ -99,7 +99,12 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     return this.pageNumber === this.pageCount || this.totalItems === 0;
   }
 
-  init(grid: SlickGrid, paginationService: PaginationService, pubSubService: PubSubService, translaterService?: TranslaterService | undefined): void {
+  init(
+    grid: SlickGrid,
+    paginationService: PaginationService,
+    pubSubService: PubSubService,
+    translaterService?: TranslaterService | undefined
+  ): void {
     this._grid = grid;
     this._pubSubService = pubSubService;
     this._translaterService = translaterService;
@@ -109,25 +114,27 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
 
     if (this._enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     }
     this.translatePaginationTexts();
 
     if (this._enableTranslate && this._pubSubService?.subscribe) {
       const translateEventName = this._translaterService?.eventName ?? 'onLanguageChange';
-      this._subscriptions.push(
-        this._pubSubService.subscribe(translateEventName, () => this.translatePaginationTexts())
-      );
+      this._subscriptions.push(this._pubSubService.subscribe(translateEventName, () => this.translatePaginationTexts()));
     }
 
     // Anytime the pagination is initialized or has changes,
     // we'll copy the data into a local object so that we can add binding to this local object
     this._subscriptions.push(
-      this._pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', paginationChanges => {
-        Object.keys(paginationChanges).forEach(key => (this.currentPagination as any)[key] = paginationChanges[key as keyof PaginationMetadata]);
+      this._pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', (paginationChanges) => {
+        Object.keys(paginationChanges).forEach(
+          (key) => ((this.currentPagination as any)[key] = paginationChanges[key as keyof PaginationMetadata])
+        );
         this.updatePageButtonsUsability();
         if (this._spanInfoFromToElm?.style) {
-          this._spanInfoFromToElm.style.display = (this.currentPagination.totalItems === 0) ? 'none' : '';
+          this._spanInfoFromToElm.style.display = this.currentPagination.totalItems === 0 ? 'none' : '';
         }
       }),
       this._pubSubService.subscribe('onPaginationSetCursorBased', () => {
@@ -160,9 +167,13 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const leftNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const leftUlElm = createDomElement('ul', { className: 'pagination' });
     this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
-    this._seekFirstElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' }));
+    this._seekFirstElm.appendChild(
+      createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' })
+    );
     this._seekPrevElm = createDomElement('li', { className: 'page-item seek-prev' }, leftUlElm);
-    this._seekPrevElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' }));
+    this._seekPrevElm.appendChild(
+      createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
+    );
     leftNavElm.appendChild(leftUlElm);
 
     const pageNumberSectionElm = this.createPageNumberSection();
@@ -171,9 +182,13 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const rightNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const rightUlElm = createDomElement('ul', { className: 'pagination' });
     this._seekNextElm = createDomElement('li', { className: 'page-item seek-next' }, rightUlElm);
-    this._seekNextElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-next', ariaLabel: 'Next Page', role: 'button' }));
+    this._seekNextElm.appendChild(
+      createDomElement('a', { className: 'page-link icon-seek-next', ariaLabel: 'Next Page', role: 'button' })
+    );
     this._seekEndElm = createDomElement('li', { className: 'page-item seek-end' }, rightUlElm);
-    this._seekEndElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-end', ariaLabel: 'Last Page', role: 'button' }));
+    this._seekEndElm.appendChild(
+      createDomElement('a', { className: 'page-link icon-seek-end', ariaLabel: 'Last Page', role: 'button' })
+    );
     rightNavElm.appendChild(rightUlElm);
 
     // append both navs to container
@@ -218,7 +233,14 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     this._bindingHelper.addElementBinding(this.currentPagination, 'pageSize', 'select.items-per-page', 'value');
     this._paginationService.isCursorBased
       ? this._bindingHelper.addElementBinding(this.currentPagination, 'pageNumber', 'span.page-number', 'textContent')
-      : this._bindingHelper.addElementBinding(this.currentPagination, 'pageNumber', 'input.page-number', 'value', 'change', this.changeToCurrentPage.bind(this));
+      : this._bindingHelper.addElementBinding(
+          this.currentPagination,
+          'pageNumber',
+          'input.page-number',
+          'value',
+          'change',
+          this.changeToCurrentPage.bind(this)
+        );
 
     // locale text changes
     this._bindingHelper.addElementBinding(this, 'textItems', 'span.text-items', 'textContent');
@@ -264,7 +286,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     this._paginationService.goToPageNumber(+pageNumber);
   }
 
-  updateItemsPerPage(event: & { target: any; }): void {
+  updateItemsPerPage(event: { target: any }): void {
     this.itemsPerPage = +(event?.target?.value ?? 0);
   }
 
@@ -291,7 +313,8 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   /** Create the Pagination Container */
   protected createPaginationContainer(): HTMLDivElement {
     const paginationContainerElm = createDomElement('div', {
-      id: 'pager', className: `slick-pagination-container ${this.gridUid} pager`,
+      id: 'pager',
+      className: `slick-pagination-container ${this.gridUid} pager`,
       style: { width: '100%' },
     });
 
@@ -308,21 +331,30 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     divElm.appendChild(document.createTextNode(' '));
     if (this._paginationService.isCursorBased) {
       // cursor based navigation cannot jump to an arbitrary page. Simply display current page number.
-      createDomElement('span', {
-        className: 'page-number',
-        ariaLabel: 'Page Number',
-        dataset: { test: 'page-number-label' },
-        textContent: '1',
-      }, divElm);
+      createDomElement(
+        'span',
+        {
+          className: 'page-number',
+          ariaLabel: 'Page Number',
+          dataset: { test: 'page-number-label' },
+          textContent: '1',
+        },
+        divElm
+      );
     } else {
       // offset based navigation can jump to any page. Allow editing of current page number.
-      createDomElement('input', {
-        type: 'text',
-        className: 'form-control page-number',
-        ariaLabel: 'Page Number',
-        value: '1', size: 1,
-        dataset: { test: 'page-number-input' },
-      }, divElm);
+      createDomElement(
+        'input',
+        {
+          type: 'text',
+          className: 'form-control page-number',
+          ariaLabel: 'Page Number',
+          value: '1',
+          size: 1,
+          dataset: { test: 'page-number-input' },
+        },
+        divElm
+      );
     }
 
     divElm.appendChild(document.createTextNode(' '));
@@ -335,21 +367,37 @@ export class SlickPaginationComponent implements BasePaginationComponent {
 
   protected createPaginationSettingsSection(): HTMLSpanElement {
     const spanContainerElm = createDomElement('span', { className: 'slick-pagination-settings' });
-    this._itemPerPageElm = createDomElement('select', { id: 'items-per-page-label', ariaLabel: 'Items per Page', className: 'items-per-page' }, spanContainerElm);
+    this._itemPerPageElm = createDomElement(
+      'select',
+      { id: 'items-per-page-label', ariaLabel: 'Items per Page', className: 'items-per-page' },
+      spanContainerElm
+    );
     spanContainerElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-item-per-page', textContent: 'items per page' }, spanContainerElm);
     spanContainerElm.appendChild(document.createTextNode(', '));
 
     const spanPaginationCount = createDomElement('span', { className: 'slick-pagination-count' }, spanContainerElm);
     this._spanInfoFromToElm = createDomElement('span', { className: 'page-info-from-to' }, spanPaginationCount);
-    createDomElement('span', { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } }, this._spanInfoFromToElm);
+    createDomElement(
+      'span',
+      { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } },
+      this._spanInfoFromToElm
+    );
     this._spanInfoFromToElm.appendChild(document.createTextNode('-'));
-    createDomElement('span', { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } }, this._spanInfoFromToElm);
+    createDomElement(
+      'span',
+      { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } },
+      this._spanInfoFromToElm
+    );
     this._spanInfoFromToElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-of', textContent: 'of' }, this._spanInfoFromToElm);
     this._spanInfoFromToElm.appendChild(document.createTextNode(' '));
     const spanInfoTotalElm = createDomElement('span', { className: 'page-info-total-items' }, spanPaginationCount);
-    createDomElement('span', { className: 'total-items', ariaLabel: 'Total Items', dataset: { test: 'total-items' } }, spanInfoTotalElm);
+    createDomElement(
+      'span',
+      { className: 'total-items', ariaLabel: 'Total Items', dataset: { test: 'total-items' } },
+      spanInfoTotalElm
+    );
     spanInfoTotalElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-items', textContent: 'items' }, spanInfoTotalElm);
     spanInfoTotalElm.appendChild(document.createTextNode(' '));

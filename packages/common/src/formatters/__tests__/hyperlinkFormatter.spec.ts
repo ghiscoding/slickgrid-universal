@@ -7,7 +7,7 @@ import type { SlickGrid } from '../../core/index.js';
 const gridStub = {
   getData: vi.fn(),
   getOptions: vi.fn(),
-  sanitizeHtmlString: (str) => str
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('the Hyperlink Formatter', () => {
@@ -55,7 +55,6 @@ describe('the Hyperlink Formatter', () => {
     const result2 = hyperlinkFormatter(0, 0, inputValue2, {} as Column, {}, gridStub);
     const result3 = hyperlinkFormatter(0, 0, inputValue3, {} as Column, {}, gridStub);
 
-
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${inputValue1}">${inputValue1}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${inputValue2}">${inputValue2}</a>`);
     expect((result3 as HTMLElement).outerHTML).toBe(`<a href="${inputValue3}">${inputValue3}</a>`);
@@ -71,7 +70,6 @@ describe('the Hyperlink Formatter', () => {
     const result2 = hyperlinkFormatter(0, 0, inputValue2, { params: { hyperlinkText: linkText } } as Column, {}, gridStub);
     const result3 = hyperlinkFormatter(0, 0, inputValue3, { params: { hyperlinkText: linkText } } as Column, {}, gridStub);
 
-
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${inputValue1}">${linkText}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${inputValue2}">${linkText}</a>`);
     expect((result3 as HTMLElement).outerHTML).toBe(`<a href="${inputValue3}">${linkText}</a>`);
@@ -86,7 +84,6 @@ describe('the Hyperlink Formatter', () => {
     const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1 } } as Column, {}, gridStub);
     const result2 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl2 } } as Column, {}, gridStub);
     const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3 } } as Column, {}, gridStub);
-
 
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl1}">${inputValue}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl2}">${inputValue}</a>`);

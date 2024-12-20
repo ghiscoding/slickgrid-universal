@@ -6,7 +6,7 @@ import type { SlickGrid } from '../../core/index.js';
 
 describe('the Currency Formatter', () => {
   const gridStub = {
-    getOptions: vi.fn()
+    getOptions: vi.fn(),
   } as unknown as SlickGrid;
 
   beforeEach(() => {
@@ -141,19 +141,36 @@ describe('the Currency Formatter', () => {
 
   it('should display a negative number with parentheses when "displayNegativeNumberWithParentheses" is enabled and thousand separator in the "params"', () => {
     const input = -12345678.4;
-    const output = currencyFormatter(1, 1, input, { params: { currencyPrefix: '€', numberPrefix: 'Price ', currencySuffix: ' EUR', numberSuffix: ' /item', displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {}, {} as any);
+    const output = currencyFormatter(
+      1,
+      1,
+      input,
+      {
+        params: {
+          currencyPrefix: '€',
+          numberPrefix: 'Price ',
+          currencySuffix: ' EUR',
+          numberSuffix: ' /item',
+          displayNegativeNumberWithParentheses: true,
+          thousandSeparator: ',',
+        },
+      } as Column,
+      {},
+      {} as any
+    );
     expect(output).toBe(`Price (€12,345,678.40 EUR) /item`);
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2 } } as GridOption);
+    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2 } }) as GridOption;
     const input = -2.4;
     const output = currencyFormatter(1, 1, input, {} as Column, {}, gridStub);
     expect(output).toBe(`(2.40)`);
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled and thousand separator in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' } } as GridOption);
+    gridStub.getOptions = () =>
+      ({ formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' } }) as GridOption;
     const input = -12345678.4;
     const output = currencyFormatter(1, 1, input, {} as Column, {}, gridStub);
     expect(output).toBe(`(12 345 678,40)`);

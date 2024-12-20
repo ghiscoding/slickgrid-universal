@@ -9,7 +9,7 @@ import type {
   TreeDataOption,
   DOMMouseOrTouchEvent,
 } from '../interfaces/index.js';
-import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index.js';
+import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString } from '../enums/index.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
 import type { CollectionService } from './collection.service.js';
 import { getDescendantProperty, flattenToParentChildArray, isColumnDateType } from './utilities.js';
@@ -31,7 +31,7 @@ export class SortService {
     protected readonly sharedService: SharedService,
     protected readonly pubSubService: BasePubSubService,
     protected readonly backendUtilities?: BackendUtilityService | undefined,
-    protected rxjs?: RxJsFacade | undefined,
+    protected rxjs?: RxJsFacade | undefined
   ) {
     this._eventHandler = new SlickEventHandler();
     if (this.rxjs) {
@@ -109,7 +109,7 @@ export class SortService {
   preParseSingleDateItem(item: any): void {
     if (this._gridOptions.preParseDateColumns) {
       const items = Array.isArray(item) ? item : [item];
-      items.forEach(itm => this.collectionService.parseSingleDateItem(itm, this._grid, this._gridOptions.preParseDateColumns!));
+      items.forEach((itm) => this.collectionService.parseSingleDateItem(itm, this._grid, this._gridOptions.preParseDateColumns!));
     }
   }
 
@@ -125,13 +125,13 @@ export class SortService {
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort): void {
     // multiSort and singleSort are not exactly the same, but we want to structure it the same so that the `for` loop works the same,
     // and also to avoid having to rewrite the `for` loop in the sort, so we will make the singleSort an array of 1 object
-    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort)
+    const sortColumns: Array<SingleColumnSort> = args.multiColumnSort
       ? (args as MultiColumnSort).sortCols
       : new Array({
-        columnId: (args as SingleColumnSort).sortCol?.id ?? '',
-        sortAsc: (args as SingleColumnSort).sortAsc,
-        sortCol: (args as SingleColumnSort).sortCol
-      });
+          columnId: (args as SingleColumnSort).sortCol?.id ?? '',
+          sortAsc: (args as SingleColumnSort).sortAsc,
+          sortCol: (args as SingleColumnSort).sortCol,
+        });
 
     // keep current sorters
     this._currentLocalSorters = []; // reset current local sorters
@@ -140,7 +140,7 @@ export class SortService {
         if (sortColumn.sortCol) {
           this._currentLocalSorters.push({
             columnId: sortColumn.sortCol.id,
-            direction: sortColumn.sortAsc ? SortDirection.ASC : SortDirection.DESC
+            direction: sortColumn.sortAsc ? SortDirection.ASC : SortDirection.DESC,
           });
         }
       });
@@ -155,7 +155,11 @@ export class SortService {
     const allSortedCols = this.getCurrentColumnSorts() as ColumnSort[];
     const sortedColsWithoutCurrent = this.getCurrentColumnSorts(`${columnId}`) as ColumnSort[];
 
-    if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
+    if (
+      Array.isArray(allSortedCols) &&
+      Array.isArray(sortedColsWithoutCurrent) &&
+      allSortedCols.length !== sortedColsWithoutCurrent.length
+    ) {
       if (this._gridOptions.backendServiceApi) {
         this.onBackendSortChanged(event, { multiColumnSort: true, sortCols: sortedColsWithoutCurrent, grid: this._grid });
       } else if (this._dataView) {
@@ -163,6 +167,7 @@ export class SortService {
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
         const isMultiSort = this._gridOptions.multiColumnSort || false;
+        // prettier-ignore
         const sortOutput = isMultiSort ? sortedColsWithoutCurrent as unknown as MultiColumnSort : sortedColsWithoutCurrent[0] as unknown as SingleColumnSort;
         this._grid.onSort.notify(sortOutput);
       }
@@ -202,7 +207,12 @@ export class SortService {
       // however for a local grid, we need to pass a sort column and so we will sort by the 1st column
       if (triggerQueryEvent) {
         if (this._isBackendGrid) {
-          this.onBackendSortChanged(undefined, { grid: this._grid, multiColumnSort: true, sortCols: [], clearSortTriggered: true });
+          this.onBackendSortChanged(undefined, {
+            grid: this._grid,
+            multiColumnSort: true,
+            sortCols: [],
+            clearSortTriggered: true,
+          });
         } else {
           if (this._columnDefinitions && Array.isArray(this._columnDefinitions) && this._columnDefinitions.length > 0) {
             this.sortLocalGridByDefaultSortFieldId();
@@ -242,7 +252,9 @@ export class SortService {
       updatedColumnDefinitions = this.disableAllSortingCommands(true);
     } else {
       updatedColumnDefinitions = this.disableAllSortingCommands(false);
-      this._eventHandler.subscribe(this._grid.onSort, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
+      this._eventHandler.subscribe(this._grid.onSort, (e, args) =>
+        this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort)
+      );
     }
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
     this.sharedService.gridOptions = this._gridOptions;
@@ -300,7 +312,11 @@ export class SortService {
       if (Array.isArray(oldSortColumns)) {
         const sortedCols = oldSortColumns.reduce((cols: ColumnSort[], col: SingleColumnSort | MultiColumnSort) => {
           if (col && (!excludedColumnId || (col as SingleColumnSort).columnId !== excludedColumnId)) {
-            cols.push({ columnId: (col as SingleColumnSort).columnId || '', sortCol: this._columnDefinitions[this._grid.getColumnIndex((col as SingleColumnSort).columnId || '')], sortAsc: (col as SingleColumnSort).sortAsc });
+            cols.push({
+              columnId: (col as SingleColumnSort).columnId || '',
+              sortCol: this._columnDefinitions[this._grid.getColumnIndex((col as SingleColumnSort).columnId || '')],
+              sortAsc: (col as SingleColumnSort).sortAsc,
+            });
           }
           return cols;
         }, []);
@@ -323,28 +339,30 @@ export class SortService {
         const column = this._columnDefinitions.find((col: Column) => col.id === sorter.columnId);
         if (column) {
           if (!column.sortable) {
-            let errorMsg = '[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column or remove it from your list of columns to sort.';
+            let errorMsg =
+              '[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column or remove it from your list of columns to sort.';
             if (this._gridOptions.enableTreeData) {
-              errorMsg += ' Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.';
+              errorMsg +=
+                ' Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.';
             }
             throw new Error(errorMsg);
           }
           sortCols.push({
             columnId: column.id,
-            sortAsc: ((sorter.direction.toUpperCase() === SortDirection.ASC) ? true : false),
-            sortCol: column
+            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC ? true : false,
+            sortCol: column,
           });
 
           // keep current sorters
           this._currentLocalSorters.push({
             columnId: String(column.id),
-            direction: sorter.direction.toUpperCase() as SortDirectionString
+            direction: sorter.direction.toUpperCase() as SortDirectionString,
           });
         }
       });
 
       this.onLocalSortChanged(this._grid, sortCols);
-      this._grid.setSortColumns(sortCols.map(col => ({ columnId: col.columnId, sortAsc: col.sortAsc }))); // use this to add sort icon(s) in UI
+      this._grid.setSortColumns(sortCols.map((col) => ({ columnId: col.columnId, sortAsc: col.sortAsc }))); // use this to add sort icon(s) in UI
     }
     return sortCols;
   }
@@ -365,7 +383,11 @@ export class SortService {
           const initialSortColumnId = treeDataOptions.initialSort.columnId;
           const initialSortColumn = this._columnDefinitions.find((col: Column) => col.id === initialSortColumnId);
           sortDirection = (treeDataOptions.initialSort.direction || SortDirection.ASC).toUpperCase() as SortDirection;
-          sortTreeLevelColumn = { columnId: initialSortColumnId, sortCol: initialSortColumn, sortAsc: (sortDirection === SortDirection.ASC) } as ColumnSort;
+          sortTreeLevelColumn = {
+            columnId: initialSortColumnId,
+            sortCol: initialSortColumn,
+            sortAsc: sortDirection === SortDirection.ASC,
+          } as ColumnSort;
         }
 
         // when we have a valid column with Tree Data, we can sort by that column
@@ -382,9 +404,14 @@ export class SortService {
    * @param args - sort event arguments
    * @returns - False since we'll apply the sort icon(s) manually only after server responded
    */
-  onBackendSortChanged(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, args: (SingleColumnSort | MultiColumnSort) & { clearSortTriggered?: boolean; }): void {
+  onBackendSortChanged(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined,
+    args: (SingleColumnSort | MultiColumnSort) & { clearSortTriggered?: boolean }
+  ): void {
     if (!args || !args.grid) {
-      throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
+      throw new Error(
+        'Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly'
+      );
     }
     const gridOptions: GridOption = args.grid?.getOptions() ?? {};
     const backendApi = gridOptions.backendServiceApi;
@@ -410,19 +437,24 @@ export class SortService {
         this._grid.setSortColumns(args.previousSortColumns || []);
 
         // we also need to provide the `sortCol` when using the backend service `updateSorters` method
-        const sorterData = args.previousSortColumns?.map(cs => ({
+        const sorterData = args.previousSortColumns?.map((cs) => ({
           columnId: cs.columnId,
           sortAsc: cs.sortAsc,
-          sortCol: this._columnDefinitions.find(col => col.id === cs.columnId) as Column
+          sortCol: this._columnDefinitions.find((col) => col.id === cs.columnId) as Column,
         }));
         backendApi?.service?.updateSorters?.(sorterData || []);
       },
-      httpCancelRequestSubject: this.httpCancelRequests$
+      httpCancelRequestSubject: this.httpCancelRequests$,
     });
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false): Promise<void> {
+  async onLocalSortChanged(
+    grid: SlickGrid,
+    sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean }>,
+    forceReSort = false,
+    emitSortChanged = false
+  ): Promise<void> {
     const datasetIdPropertyName = this._gridOptions.datasetIdPropertyName || 'id';
     const isTreeDataEnabled = this._gridOptions.enableTreeData || false;
     const dataView = grid.getData<SlickDataView>();
@@ -430,7 +462,11 @@ export class SortService {
 
     if (grid && dataView) {
       // when Date pre-parsing is enabled but not yet parsed, let's execute the Dates parsing
-      if (this._gridOptions.preParseDateColumns && !this.sharedService.isItemsDateParsed && sortColumns.some(c => isColumnDateType(c.sortCol?.type))) {
+      if (
+        this._gridOptions.preParseDateColumns &&
+        !this.sharedService.isItemsDateParsed &&
+        sortColumns.some((c) => isColumnDateType(c.sortCol?.type))
+      ) {
         this.preParseAllDateItems();
       }
 
@@ -448,7 +484,13 @@ export class SortService {
         // also trigger a row count changed to avoid having an invalid filtered item count in the grid footer
         // basically without this the item count in the footer is incorrect and shows the full dataset length instead of the previous filtered count
         // that happens because we just overwrote the entire dataset the DataView.refresh() doesn't detect a row count change so we trigger it manually
-        this._dataView.onRowCountChanged.notify({ previous: this._dataView.getFilteredItemCount(), current: this._dataView.getLength(), itemCount: this._dataView.getItemCount(), dataView: this._dataView, callingOnRowsChanged: true });
+        this._dataView.onRowCountChanged.notify({
+          previous: this._dataView.getFilteredItemCount(),
+          current: this._dataView.getLength(),
+          itemCount: this._dataView.getItemCount(),
+          dataView: this._dataView,
+          callingOnRowsChanged: true,
+        });
       } else {
         dataView.sort(this.sortComparers.bind(this, sortColumns));
       }
@@ -456,12 +498,15 @@ export class SortService {
       grid.invalidate();
 
       if (emitSortChanged) {
-        this.emitSortChanged(EmitterType.local, sortColumns.map(col => {
-          return {
-            columnId: col.sortCol?.id ?? 'id',
-            direction: col.sortAsc ? SortDirection.ASC : SortDirection.DESC
-          };
-        }));
+        this.emitSortChanged(
+          EmitterType.local,
+          sortColumns.map((col) => {
+            return {
+              columnId: col.sortCol?.id ?? 'id',
+              direction: col.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+            };
+          })
+        );
       }
     }
   }
@@ -470,17 +515,25 @@ export class SortService {
    * Takes a hierarchical dataset and sort it recursively by reference and returns both flat & hierarchical sorted datasets.
    * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
    */
-  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, emitSortChanged = false): { hierarchical: T[]; flat: any[]; } {
+  sortHierarchicalDataset<T>(
+    hierarchicalDataset: T[],
+    sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean }>,
+    emitSortChanged = false
+  ): { hierarchical: T[]; flat: any[] } {
     this.sortTreeData(hierarchicalDataset, sortColumns);
     const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName || 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions.treeDataOptions || { columnId: '' };
-    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
+    const treeDataOptions = {
+      ...treeDataOpt,
+      identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier,
+      shouldAddTreeLevelNumber: true,
+    };
     const sortedFlatArray = flattenToParentChildArray(hierarchicalDataset, treeDataOptions);
 
     if (emitSortChanged) {
       // update current sorters
       this._currentLocalSorters = [];
-      sortColumns.forEach(sortCol => {
+      sortColumns.forEach((sortCol) => {
         this._currentLocalSorters.push({ columnId: sortCol.columnId, direction: sortCol.sortAsc ? 'ASC' : 'DESC' });
       });
       const emitterType = this._gridOptions.backendServiceApi ? EmitterType.remote : EmitterType.local;
@@ -492,9 +545,15 @@ export class SortService {
 
   /** Call a local grid sort by its default sort field id (user can customize default field by configuring "defaultColumnSortFieldId" in the grid options, defaults to "id") */
   sortLocalGridByDefaultSortFieldId(): void {
-    const sortColFieldId = this._gridOptions && this._gridOptions.defaultColumnSortFieldId || this._gridOptions.datasetIdPropertyName || 'id';
+    const sortColFieldId =
+      (this._gridOptions && this._gridOptions.defaultColumnSortFieldId) || this._gridOptions.datasetIdPropertyName || 'id';
     const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
-    this.onLocalSortChanged(this._grid, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }), false, true);
+    this.onLocalSortChanged(
+      this._grid,
+      new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }),
+      false,
+      true
+    );
   }
 
   sortComparers(sortColumns: ColumnSort[], dataRow1: any, dataRow2: any): number {
@@ -517,7 +576,10 @@ export class SortService {
       let queryFieldName1 = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
 
       if (this._gridOptions.preParseDateColumns && isColumnDateType(fieldType) && sortColumn?.columnId) {
-        queryFieldName1 = typeof this._gridOptions.preParseDateColumns === 'string' ? `${this._gridOptions.preParseDateColumns}${sortColumn.columnId}` : `${sortColumn.columnId}`;
+        queryFieldName1 =
+          typeof this._gridOptions.preParseDateColumns === 'string'
+            ? `${this._gridOptions.preParseDateColumns}${sortColumn.columnId}`
+            : `${sortColumn.columnId}`;
       }
       let queryFieldName2 = queryFieldName1;
 
@@ -556,7 +618,7 @@ export class SortService {
 
   sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>): void {
     if (Array.isArray(sortColumns)) {
-      sortColumns.forEach(sortColumn => {
+      sortColumns.forEach((sortColumn) => {
         this.sortTreeChildren(treeArray, sortColumn, 0);
       });
     }
@@ -568,7 +630,7 @@ export class SortService {
     treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     // when item has a child, we'll sort recursively
-    treeArray.forEach(item => {
+    treeArray.forEach((item) => {
       if (item) {
         const hasChildren = item.hasOwnProperty(childrenPropName) && Array.isArray(item[childrenPropName]);
         // when item has a child, we'll sort recursively
@@ -593,7 +655,9 @@ export class SortService {
    */
   updateSorting(sorters: CurrentSorter[], emitChangedEvent = true, triggerBackendQuery = true): void {
     if (!this._gridOptions || !this._gridOptions.enableSorting) {
-      throw new Error('[Slickgrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid and "enableSorting" set in your Grid Options');
+      throw new Error(
+        '[Slickgrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid and "enableSorting" set in your Grid Options'
+      );
     }
 
     if (Array.isArray(sorters)) {
@@ -639,7 +703,7 @@ export class SortService {
         col.sortable = !isDisabling;
       }
       if (col?.header?.menu) {
-        (col.header.menu.commandItems)?.forEach(menuItem => {
+        col.header.menu.commandItems?.forEach((menuItem) => {
           if (menuItem && typeof menuItem !== 'string') {
             const menuCommand = menuItem.command;
             if (menuCommand === 'sort-asc' || menuCommand === 'sort-desc' || menuCommand === 'clear-sort') {

@@ -10,22 +10,26 @@ import { findOrDefault } from '../services/index.js';
  * const dataset = [1, 2];
  */
 export const collectionFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  if (!value || !columnDef || !columnDef.params || !columnDef.params.collection
-    || !columnDef.params.collection.length) {
+  if (!value || !columnDef || !columnDef.params || !columnDef.params.collection || !columnDef.params.collection.length) {
     return value;
   }
 
-  const { params, params: { collection } } = columnDef;
-  const labelName = (params.customStructure) ? params.customStructure.label : 'label';
-  const valueName = (params.customStructure) ? params.customStructure.value : 'value';
+  const {
+    params,
+    params: { collection },
+  } = columnDef;
+  const labelName = params.customStructure ? params.customStructure.label : 'label';
+  const valueName = params.customStructure ? params.customStructure.value : 'value';
 
   if (Array.isArray(value)) {
-    return arrayToCsvFormatter(row,
+    return arrayToCsvFormatter(
+      row,
       cell,
       value.map((v: any) => findOrDefault(collection, (c: any) => c[valueName] === v)[labelName]),
       columnDef,
       dataContext,
-      grid);
+      grid
+    );
   }
 
   return findOrDefault(collection, (c: any) => c[valueName] === value)[labelName] || '';

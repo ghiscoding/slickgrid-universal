@@ -6,7 +6,7 @@ import type { SlickGrid } from '../../core/index.js';
 
 describe('the DollarColored Formatter', () => {
   const gridStub = {
-    getOptions: vi.fn()
+    getOptions: vi.fn(),
   } as unknown as SlickGrid;
 
   it('should return an empty string when no value is provided', () => {
@@ -69,18 +69,26 @@ describe('the DollarColored Formatter', () => {
 
   it('should display a negative number with parentheses when "displayNegativeNumberWithParentheses" is enabled and thousand separator in the "params"', () => {
     const input = -12345678.4;
-    const output = dollarColoredFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {}, {} as any);
+    const output = dollarColoredFormatter(
+      1,
+      1,
+      input,
+      { params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
+      {},
+      {} as any
+    );
     expect((output as HTMLElement).outerHTML).toBe(`<span aria-hidden="true" style="color: red;">($12,345,678.40)</span>`);
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
+    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true } }) as GridOption;
     const input = -2.4;
     const output = dollarColoredFormatter(1, 1, input, {} as Column, {}, gridStub);
     expect((output as HTMLElement).outerHTML).toBe(`<span aria-hidden="true" style="color: red;">($2.40)</span>`);
   });
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled and thousand separator in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' } } as GridOption);
+    gridStub.getOptions = () =>
+      ({ formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' } }) as GridOption;
     const input = -12345678.4;
     const output = dollarColoredFormatter(1, 1, input, {} as Column, {}, gridStub);
     expect((output as HTMLElement).outerHTML).toBe(`<span aria-hidden="true" style="color: red;">($12 345 678,40)</span>`);

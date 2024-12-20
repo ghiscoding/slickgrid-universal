@@ -8,7 +8,6 @@ import type { SlickCellMenu } from '../extensions/slickCellMenu.js';
 import type { SlickEventData } from '../core/slickCore.js';
 
 export interface CellMenu extends CellMenuOption {
-
   // --
   // Events
 

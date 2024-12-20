@@ -13,14 +13,16 @@ import { type Formatter } from './../interfaces/index.js';
  * For example: { id: 'link', field: 'link', params: {  hyperlinkText: 'Company Website', hyperlinkUrl: 'http://www.somewhere.com' } } will display "<a href="http://www.somewhere.com">Company Website</a>"
  */
 export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const columnParams = columnDef && columnDef.params || {};
+  const columnParams = (columnDef && columnDef.params) || {};
   let displayedText = columnParams.hyperlinkText ? columnParams.hyperlinkText : value;
   displayedText = grid.sanitizeHtmlString(displayedText);
 
   let outputLink = columnParams.hyperlinkUrl ? columnParams.hyperlinkUrl : value;
   outputLink = grid.sanitizeHtmlString(outputLink);
 
-  const matchUrl = outputLink.match(/^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&amp;:/~+#]*[\w\-@?^=%&amp;/~+#])?/i);
+  const matchUrl = outputLink.match(
+    /^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&amp;:/~+#]*[\w\-@?^=%&amp;/~+#])?/i
+  );
 
   if (matchUrl && Array.isArray(matchUrl) && matchUrl.length > 0) {
     const finalUrl = matchUrl[0];

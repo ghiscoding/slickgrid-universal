@@ -5,7 +5,10 @@ export class MultipleSelectEditor extends SelectEditor {
   /**
    * Initialize the Editor
    */
-  constructor(protected readonly args: EditorArguments, public delayOpening = 0) {
+  constructor(
+    protected readonly args: EditorArguments,
+    public delayOpening = 0
+  ) {
     super(args, true, delayOpening);
   }
 }

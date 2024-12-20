@@ -23,10 +23,13 @@ export class SlickCellRangeDecorator {
       border: '2px dashed red',
       zIndex: '9999',
     },
-    offset: { top: -1, left: -1, height: -2, width: -2 }
+    offset: { top: -1, left: -1, height: -2, width: -2 },
   } as CellRangeDecoratorOption;
 
-  constructor(protected readonly grid: SlickGrid, options?: Partial<CellRangeDecoratorOption>) {
+  constructor(
+    protected readonly grid: SlickGrid,
+    options?: Partial<CellRangeDecoratorOption>
+  ) {
     this._options = deepMerge(this._defaults, options);
   }
 
@@ -43,7 +46,7 @@ export class SlickCellRangeDecorator {
     this.hide();
   }
 
-  init(): void { }
+  init(): void {}
 
   hide(): void {
     this._elem?.remove();
@@ -54,7 +57,8 @@ export class SlickCellRangeDecorator {
     if (!this._elem) {
       this._elem = createDomElement('div', { className: this._options.selectionCssClass });
       Object.keys(this._options.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {
-        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = this._options.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
+        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] =
+          this._options.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
       });
       this._elem.style.position = 'absolute';
       this.grid.getActiveCanvasNode()?.appendChild(this._elem);

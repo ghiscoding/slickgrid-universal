@@ -17,7 +17,11 @@ export class BindingService {
     this._binding = binding;
     this._property = binding.property || '';
     this._elementBindings = [];
-    if (binding.property && binding.variable && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
+    if (
+      binding.property &&
+      binding.variable &&
+      (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)
+    ) {
       this._value = binding.variable[binding.property];
     } else {
       this._value = binding.variable;
@@ -26,7 +30,7 @@ export class BindingService {
     if (typeof binding.variable === 'object') {
       Object.defineProperty(binding.variable, binding.property, {
         get: this.valueGetter.bind(this),
-        set: this.valueSetter.bind(this)
+        set: this.valueSetter.bind(this),
       });
     }
   }
@@ -70,10 +74,15 @@ export class BindingService {
    * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
-  bind<T extends Element = Element>(elements: T | NodeListOf<T> | null, attribute: string, eventName?: string, eventCallback?: (val: any) => any): this {
+  bind<T extends Element = Element>(
+    elements: T | NodeListOf<T> | null,
+    attribute: string,
+    eventName?: string,
+    eventCallback?: (val: any) => any
+  ): this {
     if (elements && (elements as NodeListOf<T>).forEach) {
       // multiple DOM elements coming from a querySelectorAll() call
-      (elements as NodeListOf<T>).forEach(elm => this.bindSingleElement(elm, attribute, eventName, eventCallback));
+      (elements as NodeListOf<T>).forEach((elm) => this.bindSingleElement(elm, attribute, eventName, eventCallback));
     } else if (elements) {
       // single DOM element coming from a querySelector() call
       this.bindSingleElement(elements as T, attribute, eventName, eventCallback);
@@ -83,10 +92,16 @@ export class BindingService {
   }
 
   /** Unbind (remove) an element event listener */
-  unbind(element: Element | null, eventName: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions, eventUid?: string): void {
+  unbind(
+    element: Element | null,
+    eventName: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+    eventUid?: string
+  ): void {
     if (element) {
       element.removeEventListener(eventName, listener, options);
-      const eventIdx = this._boundedEventWithListeners.findIndex(be => be.uid === eventUid);
+      const eventIdx = this._boundedEventWithListeners.findIndex((be) => be.uid === eventUid);
       if (eventIdx >= 0) {
         this._boundedEventWithListeners.splice(eventIdx, 1);
       }
@@ -110,7 +125,12 @@ export class BindingService {
    * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
-  protected bindSingleElement<T extends Element = Element>(element: T | null, attribute: string, eventName?: string, eventCallback?: (val: any) => any): void {
+  protected bindSingleElement<T extends Element = Element>(
+    element: T | null,
+    attribute: string,
+    eventName?: string,
+    eventCallback?: (val: any) => any
+  ): void {
     const binding: ElementBinding<T> | ElementBindingWithListener<T> = { element, attribute };
     if (element) {
       if (eventName) {
@@ -142,8 +162,8 @@ export class BindingService {
   /** Generate a UUID version 4 RFC compliant */
   protected generateUuidV4(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }

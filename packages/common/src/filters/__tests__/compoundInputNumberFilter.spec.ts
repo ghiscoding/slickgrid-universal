@@ -17,7 +17,7 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -45,7 +45,7 @@ describe('CompoundInputNumberFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new CompoundInputNumberFilter(translateService);

@@ -76,7 +76,10 @@ describe('MultipleSelectEditor', () => {
     beforeEach(() => {
       mockItemData = { id: 1, gender: 'male', isActive: true };
       mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -87,7 +90,10 @@ describe('MultipleSelectEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       gridOptionMock.translater = translateService;
       editor = new MultipleSelectEditor(editorArguments, 0);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;

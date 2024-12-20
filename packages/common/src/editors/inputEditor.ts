@@ -39,7 +39,10 @@ export class InputEditor implements Editor {
   /** Grid options */
   gridOptions: GridOption;
 
-  constructor(protected readonly args: EditorArguments, inputType = 'text') {
+  constructor(
+    protected readonly args: EditorArguments,
+    inputType = 'text'
+  ) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -57,7 +60,7 @@ export class InputEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor || {} as ColumnEditor;
+    return this.columnDef?.editor || ({} as ColumnEditor);
   }
 
   /** Getter for the item data context object */
@@ -94,7 +97,9 @@ export class InputEditor implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
     this._input = createDomElement('input', {
-      type: this._inputType || 'text', autocomplete: 'off', ariaAutoComplete: 'none',
+      type: this._inputType || 'text',
+      autocomplete: 'off',
+      ariaAutoComplete: 'none',
       ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`,
       className: `editor-text editor-${columnId}`,
       placeholder: this.columnEditor?.placeholder ?? '',
@@ -103,7 +108,7 @@ export class InputEditor implements Editor {
 
     // add "step" attribute when editor type is integer/float
     if (this.inputType === 'number') {
-      this._input.step = `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps()}`;
+      this._input.step = `${this.columnEditor.valueStep !== undefined ? this.columnEditor.valueStep : this.getInputDecimalSteps()}`;
     }
 
     const cellContainer = this.args.container;
@@ -115,7 +120,7 @@ export class InputEditor implements Editor {
     this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
       this._isValueTouched = true;
       this._lastInputKeyEvent = event;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === "Home" || event.key === "End") {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End') {
         event.stopImmediatePropagation();
       }
     }) as EventListener);
@@ -175,7 +180,7 @@ export class InputEditor implements Editor {
     if (rtn === undefined) {
       rtn = DEFAULT_DECIMAL_PLACES;
     }
-    return (!rtn && rtn !== 0 ? null : rtn);
+    return !rtn && rtn !== 0 ? null : rtn;
   }
 
   /** when editor is a float input editor, we'll want to know how many decimals to show */
@@ -227,7 +232,7 @@ export class InputEditor implements Editor {
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(null, state);
-      const newValue = (validation?.valid) ? state : '';
+      const newValue = validation?.valid ? state : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -247,7 +252,10 @@ export class InputEditor implements Editor {
     if (this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
-    return (!(elmValue === '' && (this._originalValue === null || this._originalValue === undefined))) && (elmValue !== this._originalValue);
+    return (
+      !(elmValue === '' && (this._originalValue === null || this._originalValue === undefined)) &&
+      elmValue !== this._originalValue
+    );
   }
 
   isValueTouched(): boolean {
@@ -260,7 +268,9 @@ export class InputEditor implements Editor {
     if (item && fieldName !== undefined && this._input) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
-      const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName] || '');
+      const value = isComplexObject
+        ? getDescendantProperty(item, fieldName)
+        : (item.hasOwnProperty(fieldName) && item[fieldName]) || '';
 
       this._originalValue = value;
       this._input.value = this._originalValue as string;
@@ -315,7 +325,7 @@ export class InputEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this._input && this._input.value;
+    const elmValue = inputValue !== undefined ? inputValue : this._input && this._input.value;
     return textValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
@@ -334,13 +344,25 @@ export class InputEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({
-      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    }).getReturnValue();
+    const isCellEditable = this.grid.onBeforeEditCell
+      .notify({
+        ...activeCell,
+        item: this.dataContext,
+        column: this.args.column,
+        grid: this.grid,
+        target: 'composite',
+        compositeEditorOptions: this.args.compositeEditorOptions,
+      })
+      .getReturnValue();
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
+  protected handleChangeOnCompositeEditor(
+    event: Event | null,
+    compositeEditorOptions: CompositeEditorOption,
+    triggeredBy: 'user' | 'system' = 'user',
+    isCalledByClearValue = false
+  ): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -355,11 +377,22 @@ export class InputEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
+    if (
+      isCalledByClearValue ||
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+    ) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
-      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      {
+        ...activeCell,
+        item,
+        grid,
+        column,
+        formValues: compositeEditorOptions.formValues,
+        editors: compositeEditorOptions.editors,
+        triggeredBy,
+      },
       new SlickEventData(event)
     );
   }

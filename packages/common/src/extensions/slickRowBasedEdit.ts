@@ -60,7 +60,7 @@ export class SlickRowBasedEdit {
 
   private _existingEditCommandHandler: ((item: any, column: Column<any>, command: EditCommand) => void) | undefined;
   protected _currentLang = 'en';
-  private _translations: { [locale: string]: ButtonTranslation; } = {};
+  private _translations: { [locale: string]: ButtonTranslation } = {};
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -364,10 +364,7 @@ export class SlickRowBasedEdit {
 
       this.toggleEditmode(dataContext, false);
       this._gridService.deleteItem(dataContext);
-    } else if (
-      target.classList.contains(BTN_ACTION_EDIT) ||
-      target.parentElement?.classList.contains(BTN_ACTION_EDIT)
-    ) {
+    } else if (target.classList.contains(BTN_ACTION_EDIT) || target.parentElement?.classList.contains(BTN_ACTION_EDIT)) {
       if (!this._addonOptions?.allowMultipleRows && this._editedRows.size > 0) {
         return;
       }
@@ -377,10 +374,7 @@ export class SlickRowBasedEdit {
       }
 
       this.toggleEditmode(dataContext, true);
-    } else if (
-      target.classList.contains(BTN_ACTION_UPDATE) ||
-      target.parentElement?.classList.contains(BTN_ACTION_UPDATE)
-    ) {
+    } else if (target.classList.contains(BTN_ACTION_UPDATE) || target.parentElement?.classList.contains(BTN_ACTION_UPDATE)) {
       if (
         this._addonOptions?.actionButtons?.updateButtonPrompt &&
         (targetRow?.editCommands.length || 0) > 0 &&
@@ -403,10 +397,7 @@ export class SlickRowBasedEdit {
 
       this.removeUnsavedStylingFromRow(args.row);
       this.toggleEditmode(dataContext, false);
-    } else if (
-      target.classList.contains(BTN_ACTION_CANCEL) ||
-      target.parentElement?.classList.contains(BTN_ACTION_CANCEL)
-    ) {
+    } else if (target.classList.contains(BTN_ACTION_CANCEL) || target.parentElement?.classList.contains(BTN_ACTION_CANCEL)) {
       if (
         this._addonOptions?.actionButtons?.cancelButtonPrompt &&
         (targetRow?.editCommands.length || 0) > 0 &&
@@ -420,7 +411,13 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected actionColumnFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any): DocumentFragment {
+  protected actionColumnFormatter(
+    _row: number,
+    _cell: number,
+    _value: any,
+    _columnDef: Column,
+    dataContext: any
+  ): DocumentFragment {
     const options = this.gridOptions;
     const isInEditMode = this._editedRows.has(dataContext?.[options.datasetIdPropertyName ?? 'id']);
     const buttonTitles = this._translations[this._currentLang] ?? this.translate();
@@ -430,8 +427,8 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${options.rowBasedEditOptions?.actionButtons?.editButtonClassName || 'button-style padding-1px mr-2'
-            } action-btns ` + BTN_ACTION_EDIT,
+            `${options.rowBasedEditOptions?.actionButtons?.editButtonClassName || 'button-style padding-1px mr-2'} action-btns ` +
+            BTN_ACTION_EDIT,
           title: buttonTitles.btnEditTitle,
           style: { display: isInEditMode ? 'none' : '' },
         })
@@ -446,23 +443,23 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName || 'button-style padding-1px'
-            } action-btns ` + BTN_ACTION_DELETE,
+            `${options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName || 'button-style padding-1px'} action-btns ` +
+            BTN_ACTION_DELETE,
           title: buttonTitles.btnDeleteTitle,
           style: { display: isInEditMode ? 'none' : '' },
         })
       )
       .appendChild(
         createDomElement('span', {
-          className:
-            options.rowBasedEditOptions?.actionButtons?.iconDeleteButtonClassName || 'mdi mdi-close text-color-danger',
+          className: options.rowBasedEditOptions?.actionButtons?.iconDeleteButtonClassName || 'mdi mdi-close text-color-danger',
         })
       );
     actionFragment
       .appendChild(
         createDomElement('span', {
           className:
-            `${options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
+            `${
+              options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_UPDATE,
           title: buttonTitles.btnUpdateTitle,
           style: { display: !isInEditMode ? 'none' : '' },
@@ -478,16 +475,15 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName || 'button-style padding-1px'
-            } action-btns ` + BTN_ACTION_CANCEL,
+            `${options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName || 'button-style padding-1px'} action-btns ` +
+            BTN_ACTION_CANCEL,
           title: buttonTitles.btnCancelTitle,
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
       .appendChild(
         createDomElement('span', {
-          className:
-            options.rowBasedEditOptions?.actionButtons?.iconCancelButtonClassName || 'mdi mdi-cancel text-color-danger',
+          className: options.rowBasedEditOptions?.actionButtons?.iconCancelButtonClassName || 'mdi mdi-cancel text-color-danger',
         })
       );
 
@@ -513,7 +509,7 @@ export class SlickRowBasedEdit {
     this._grid.invalidate();
   }
 
-  protected updateItemMetadata(previousItemMetadata: any): (rowNumber: number) => { cssClasses: string; } {
+  protected updateItemMetadata(previousItemMetadata: any): (rowNumber: number) => { cssClasses: string } {
     return (rowNumber: number) => {
       const item = this._grid.getData().getItem(rowNumber);
       let meta = {
@@ -530,10 +526,7 @@ export class SlickRowBasedEdit {
         const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
         if (this._editedRows.has(item[idProperty]) && !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)) {
           meta.cssClasses = (meta.cssClasses || '') + ' ' + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS;
-        } else if (
-          !this._editedRows.has(item[idProperty]) &&
-          meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)
-        ) {
+        } else if (!this._editedRows.has(item[idProperty]) && meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)) {
           meta.cssClasses = meta.cssClasses.replace(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS, '');
         }
       }
@@ -555,9 +548,7 @@ export class SlickRowBasedEdit {
     const actionBtnOptions = this.gridOptions.rowBasedEditOptions?.actionButtons;
     return (
       (actionBtnOptions?.[(key + 'Key') as ActionButtonTitleKeys] &&
-        this.extensionUtility.translaterService?.translate?.(
-          actionBtnOptions?.[(key + 'Key') as ActionButtonTitleKeys] || ''
-        )) ||
+        this.extensionUtility.translaterService?.translate?.(actionBtnOptions?.[(key + 'Key') as ActionButtonTitleKeys] || '')) ||
       actionBtnOptions?.[key] ||
       defaultTitle
     );

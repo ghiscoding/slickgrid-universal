@@ -47,7 +47,7 @@ describe('SingleSliderFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new SingleSliderFilter(translateService);
@@ -177,7 +177,7 @@ describe('SingleSliderFilter', () => {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
-      }
+      },
     };
 
     filter.init(filterArgs);
@@ -228,7 +228,7 @@ describe('SingleSliderFilter', () => {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
-      }
+      },
     };
 
     filter.init(filterArgs);

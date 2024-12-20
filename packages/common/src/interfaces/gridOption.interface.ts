@@ -46,7 +46,7 @@ import type {
   TreeDataOption,
   VanillaCalendarOption,
 } from './index.js';
-import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index.js';
+import type { ColumnReorderFunction, OperatorString, OperatorType } from '../enums/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type { DataViewOption, SlickEditorLock } from '../core/index.js';
 
@@ -64,7 +64,7 @@ export interface CustomDataView<T = any> {
 }
 
 export interface CssStyleHash {
-  [prop: number | string]: { [columnId: number | string]: any; };
+  [prop: number | string]: { [columnId: number | string]: any };
 }
 
 /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
@@ -261,7 +261,7 @@ export interface GridOption<C extends Column = Column> {
      * You can optionally provide preserve options (object) instead of a boolean value, there are 2 available flag options (preserveHidden, preserveHiddenOnSelectionChange)
      * The default Grid Option is to have the flags `preserveHidden` as disabled and `preserveHiddenOnSelectionChange` as enabled.
      */
-    syncGridSelection?: boolean | { preserveHidden: boolean; preserveHiddenOnSelectionChange: boolean; };
+    syncGridSelection?: boolean | { preserveHidden: boolean; preserveHiddenOnSelectionChange: boolean };
 
     /**
      * Defaults to false, do we also want to keep the row selections kept between the pages when using BackendServiceApi?
@@ -282,34 +282,34 @@ export interface GridOption<C extends Column = Column> {
   /** Provide default options to be used by the editor(s) for the entire grid column */
   defaultEditorOptions?: {
     /** Default option(s) to use by the Autocompleter editor */
-    autocompleter?: AutocompleterOption,
+    autocompleter?: AutocompleterOption;
 
     /** Default option(s) to use by both the CompoundDate and/or DateRange editors */
-    date?: Partial<VanillaCalendarOption>,
+    date?: Partial<VanillaCalendarOption>;
 
     /** Default option(s) to use by the LongText editor */
-    longText?: LongTextEditorOption,
+    longText?: LongTextEditorOption;
 
     /** Default option(s) to use by both the CompoundSelect and/or SelectRange editors */
-    select?: Partial<MultipleSelectOption>,
+    select?: Partial<MultipleSelectOption>;
 
     /** Default option(s) to use by both the CompoundSlider and/or SliderRange editors */
-    slider?: SliderOption | SliderRangeOption,
+    slider?: SliderOption | SliderRangeOption;
   };
 
   /** Provide default options to be used by the filter(s) for the entire grid column */
   defaultFilterOptions?: {
     /** Default option(s) to use by the Autocompleter filter */
-    autocompleter?: AutocompleterOption,
+    autocompleter?: AutocompleterOption;
 
     /** Default option(s) to use by both the CompoundDate and/or DateRange filters */
-    date?: Partial<VanillaCalendarOption>,
+    date?: Partial<VanillaCalendarOption>;
 
     /** Default option(s) to use by both the CompoundSelect and/or SelectRange filters */
-    select?: Partial<MultipleSelectOption>,
+    select?: Partial<MultipleSelectOption>;
 
     /** Default option(s) to use by both the CompoundSlider and/or SliderRange filters */
-    slider?: SliderOption | SliderRangeOption,
+    slider?: SliderOption | SliderRangeOption;
   };
 
   /** The default filter model to use when none is specified (defaults to input text filter). */
@@ -330,7 +330,6 @@ export interface GridOption<C extends Column = Column> {
   /** Do we have paging enabled? */
   doPaging?: boolean;
 
-
   /** Draggable Grouping Plugin options & events */
   draggableGrouping?: DraggableGrouping;
 
@@ -344,7 +343,7 @@ export interface GridOption<C extends Column = Column> {
   editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
 
   /** Editor classes factory */
-  editorFactory?: null | { getEditor: (col: C) => EditorConstructor; };
+  editorFactory?: null | { getEditor: (col: C) => EditorConstructor };
 
   /** a global singleton editor lock. */
   editorLock?: SlickEditorLock;
@@ -564,7 +563,7 @@ export interface GridOption<C extends Column = Column> {
   forceSyncScrolling?: boolean;
 
   /** Formatter class factory */
-  formatterFactory?: { getFormatter: (col: C) => Formatter; } | null;
+  formatterFactory?: { getFormatter: (col: C) => Formatter } | null;
 
   /** Formatter options that are defined and used for the entire grid */
   formatterOptions?: FormatterOption;

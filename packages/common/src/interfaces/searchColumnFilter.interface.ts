@@ -1,5 +1,5 @@
-import type { FieldType, OperatorString, OperatorType, } from '../enums/index.js';
-import type { Column, } from './index.js';
+import type { FieldType, OperatorString, OperatorType } from '../enums/index.js';
+import type { Column } from './index.js';
 import type { SearchTerm } from '../enums/searchTerm.type.js';
 
 export interface SearchColumnFilter {
@@ -31,7 +31,7 @@ export interface SearchColumnFilter {
   searchInputLastChar?: string;
 
   /** What is the Field Type that can be used by the Filter (as precedence over the "type" defined in the column definition) */
-  type: typeof FieldType[keyof typeof FieldType];
+  type: (typeof FieldType)[keyof typeof FieldType];
 
   /** DOM target element selector from which the filter was triggered from. */
   targetSelector?: string;

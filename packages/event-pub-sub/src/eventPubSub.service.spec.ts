@@ -86,7 +86,7 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
 
       const obj: any = { nativeEvent: null };
-      const publishResult = service.publish('onClick', { name: 'John' }, undefined, (evt) => obj.nativeEvent = evt);
+      const publishResult = service.publish('onClick', { name: 'John' }, undefined, (evt) => (obj.nativeEvent = evt));
 
       expect(obj.nativeEvent).toBeInstanceOf(CustomEvent);
       expect(publishResult).toBeTruthy();

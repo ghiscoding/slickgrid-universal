@@ -22,8 +22,8 @@ describe('CountAggregator', () => {
       const fieldName = 'title';
       const groupTotals = {
         group: {
-          rows: dataset.filter((item) => item['title'] === 'Product 1')
-        }
+          rows: dataset.filter((item) => item['title'] === 'Product 1'),
+        },
       };
       aggregator = new CountAggregator(fieldName);
       aggregator.init();
@@ -41,8 +41,8 @@ describe('CountAggregator', () => {
       const groupTotals = {
         count: {},
         group: {
-          rows: dataset
-        }
+          rows: dataset,
+        },
       };
       aggregator = new CountAggregator(fieldName);
       aggregator.init();

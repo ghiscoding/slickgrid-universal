@@ -44,7 +44,7 @@ describe('sumAggregator', () => {
       dataset.forEach((row) => aggregator.accumulate(row));
       aggregator.storeResult(groupTotals);
 
-      const total = (55 + 87 + 60 + (-2) + 15);
+      const total = 55 + 87 + 60 + -2 + 15;
       expect(groupTotals.sum[fieldName]).toBe(total);
     });
 

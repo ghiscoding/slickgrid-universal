@@ -123,7 +123,7 @@ export interface Editor {
 }
 
 export type EditorConstructor = {
-  new(args: EditorArguments): Editor;
+  new (args: EditorArguments): Editor;
 
   /** Static flag used in makeActiveCellEditable. */
   suppressClearOnEdit?: boolean;

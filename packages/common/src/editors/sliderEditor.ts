@@ -60,7 +60,7 @@ export class SliderEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor ?? {} as ColumnEditor;
+    return this.columnDef?.editor ?? ({} as ColumnEditor);
   }
 
   /** Getter for the item data context object */
@@ -112,8 +112,16 @@ export class SliderEditor implements Editor {
 
       // watch on change event
       this._cellContainerElm.appendChild(this._editorElm);
-      this._bindEventService.bind(this._sliderTrackElm, ['click', 'mouseup'], this.sliderTrackClicked.bind(this) as EventListener);
-      this._bindEventService.bind(this._inputElm, ['change', 'mouseup', 'touchend'], this.handleChangeEvent.bind(this) as EventListener);
+      this._bindEventService.bind(
+        this._sliderTrackElm,
+        ['click', 'mouseup'],
+        this.sliderTrackClicked.bind(this) as EventListener
+      );
+      this._bindEventService.bind(
+        this._inputElm,
+        ['change', 'mouseup', 'touchend'],
+        this.handleChangeEvent.bind(this) as EventListener
+      );
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
@@ -197,7 +205,7 @@ export class SliderEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       const validation = this.validate(undefined, state);
-      const newValue = (validation && validation.valid) ? state : '';
+      const newValue = validation && validation.valid ? state : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -217,7 +225,10 @@ export class SliderEditor implements Editor {
    * @param {string} optionName - Slider editor option name
    * @param {newValue} newValue - Slider editor new option value
    */
-  changeEditorOption<T extends keyof Required<(CurrentSliderOption & SliderOption)>, K extends Required<(CurrentSliderOption & SliderOption)>[T]>(optionName: T, newValue: K): void {
+  changeEditorOption<
+    T extends keyof Required<CurrentSliderOption & SliderOption>,
+    K extends Required<CurrentSliderOption & SliderOption>[T],
+  >(optionName: T, newValue: K): void {
     if (this.columnEditor) {
       this.columnEditor.editorOptions ??= {};
       this.columnEditor.editorOptions[optionName] = newValue;
@@ -242,7 +253,7 @@ export class SliderEditor implements Editor {
 
   isValueChanged(): boolean {
     const elmValue = this._inputElm?.value ?? '';
-    return (!(elmValue === '' && this._originalValue === undefined)) && (+elmValue !== this._originalValue);
+    return !(elmValue === '' && this._originalValue === undefined) && +elmValue !== this._originalValue;
   }
 
   isValueTouched(): boolean {
@@ -255,6 +266,7 @@ export class SliderEditor implements Editor {
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
+      // prettier-ignore
       let value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) ? item[fieldName] : this._defaultValue);
 
       if (value === '' || value === null || value === undefined) {
@@ -322,7 +334,7 @@ export class SliderEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this._inputElm?.value;
+    const elmValue = inputValue !== undefined ? inputValue : this._inputElm?.value;
     return sliderValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
@@ -351,8 +363,12 @@ export class SliderEditor implements Editor {
 
     this._sliderTrackElm = createDomElement('div', { className: 'slider-track' });
     this._inputElm = createDomElement('input', {
-      type: 'range', title,
-      defaultValue: `${defaultValue}`, value: `${defaultValue}`, min: `${minValue}`, max: `${maxValue}`,
+      type: 'range',
+      title,
+      defaultValue: `${defaultValue}`,
+      value: `${defaultValue}`,
+      min: `${minValue}`,
+      max: `${maxValue}`,
       step: `${this.columnEditor.valueStep ?? Constants.SLIDER_DEFAULT_STEP}`,
       ariaLabel: this.columnEditor.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
       className: `slider-editor-input editor-${columnId}`,
@@ -388,9 +404,16 @@ export class SliderEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({
-      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    }).getReturnValue();
+    const isCellEditable = this.grid.onBeforeEditCell
+      .notify({
+        ...activeCell,
+        item: this.dataContext,
+        column: this.args.column,
+        grid: this.grid,
+        target: 'composite',
+        compositeEditorOptions: this.args.compositeEditorOptions,
+      })
+      .getReturnValue();
     this.disable(isCellEditable === false);
   }
 
@@ -415,16 +438,18 @@ export class SliderEditor implements Editor {
 
       // trigger mouse enter event on the editor for optionally hooked SlickCustomTooltip
       if (!this.args?.compositeEditorOptions) {
-        this.grid.onMouseEnter.notify(
-          { column: this.columnDef, grid: this.grid },
-          new SlickEventData(event)
-        );
+        this.grid.onMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(event));
       }
     }
     this.updateTrackFilledColorWhenEnabled();
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
+  protected handleChangeOnCompositeEditor(
+    event: Event | null,
+    compositeEditorOptions: CompositeEditorOption,
+    triggeredBy: 'user' | 'system' = 'user',
+    isCalledByClearValue = false
+  ): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -439,11 +464,22 @@ export class SliderEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
+    if (
+      isCalledByClearValue ||
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+    ) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
-      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      {
+        ...activeCell,
+        item,
+        grid,
+        column,
+        formValues: compositeEditorOptions.formValues,
+        editors: compositeEditorOptions.editors,
+        triggeredBy,
+      },
       new SlickEventData(event)
     );
   }
@@ -452,7 +488,7 @@ export class SliderEditor implements Editor {
     e.preventDefault();
     const sliderTrackX = e.offsetX;
     const sliderTrackWidth = this._sliderTrackElm.offsetWidth;
-    const trackPercentPosition = (sliderTrackX + 0) * 100 / sliderTrackWidth;
+    const trackPercentPosition = ((sliderTrackX + 0) * 100) / sliderTrackWidth;
 
     if (this._inputElm) {
       // automatically move to calculated clicked percentage
@@ -465,10 +501,14 @@ export class SliderEditor implements Editor {
   protected updateTrackFilledColorWhenEnabled(): void {
     if (this.editorOptions.enableSliderTrackColoring && this._inputElm) {
       const percent1 = 0;
-      const percent2 = ((+this.getValue() - +this._inputElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._inputElm.min)) * 100;
+      const percent2 =
+        ((+this.getValue() - +this._inputElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._inputElm.min)) * 100;
       const bg = 'linear-gradient(to right, %b %p1, %c %p1, %c %p2, %b %p2)'
         .replace(/%b/g, '#eee')
-        .replace(/%c/g, (this.editorOptions?.sliderTrackFilledColor ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
+        .replace(
+          /%c/g,
+          (this.editorOptions?.sliderTrackFilledColor ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string
+        )
         .replace(/%p1/g, `${percent1}%`)
         .replace(/%p2/g, `${percent2}%`);
 

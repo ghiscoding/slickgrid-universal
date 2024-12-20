@@ -15,23 +15,98 @@ describe('Tree Export Formatter', () => {
 
   beforeEach(() => {
     dataset = [
-      { id: 0, firstName: 'John', lastName: 'Smith', fullName: 'John Smith', email: 'john.smith@movie.com', address: { zip: 123456 }, parentId: null, indent: 0, __collapsed: false, __hasChildren: true },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', fullName: 'Jane Doe', email: 'jane.doe@movie.com', address: { zip: 222222 }, parentId: 0, indent: 1, __collapsed: false, __hasChildren: true },
-      { id: 2, firstName: 'Bob', lastName: 'Cane', fullName: 'Bob Cane', email: 'bob.cane@movie.com', address: { zip: 333333 }, parentId: 1, indent: 2, __collapsed: true, __hasChildren: true },
-      { id: 3, firstName: 'Barbara', lastName: 'Cane', fullName: 'Barbara Cane', email: 'barbara.cane@movie.com', address: { zip: 444444 }, parentId: null, indent: 0, __hasChildren: false },
-      { id: 4, firstName: 'Anonymous', lastName: 'Doe', fullName: 'Anonymous < Doe', email: 'anonymous.doe@anom.com', address: { zip: 556666 }, parentId: null, indent: 0, __collapsed: true, __hasChildren: true },
-      { id: 5, firstName: 'Sponge', lastName: 'Bob', fullName: 'Sponge Bob', email: 'sponge.bob@cartoon.com', address: { zip: 888888 }, parentId: 2, indent: 3, __hasChildren: false },
-      { id: 6, firstName: 'Bobby', lastName: 'Blown', fullName: 'Bobby Blown', email: 'bobby.blown@dynamite.com', address: { zip: 998877 }, parentId: 4, indent: 1, __hasChildren: false },
+      {
+        id: 0,
+        firstName: 'John',
+        lastName: 'Smith',
+        fullName: 'John Smith',
+        email: 'john.smith@movie.com',
+        address: { zip: 123456 },
+        parentId: null,
+        indent: 0,
+        __collapsed: false,
+        __hasChildren: true,
+      },
+      {
+        id: 1,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        fullName: 'Jane Doe',
+        email: 'jane.doe@movie.com',
+        address: { zip: 222222 },
+        parentId: 0,
+        indent: 1,
+        __collapsed: false,
+        __hasChildren: true,
+      },
+      {
+        id: 2,
+        firstName: 'Bob',
+        lastName: 'Cane',
+        fullName: 'Bob Cane',
+        email: 'bob.cane@movie.com',
+        address: { zip: 333333 },
+        parentId: 1,
+        indent: 2,
+        __collapsed: true,
+        __hasChildren: true,
+      },
+      {
+        id: 3,
+        firstName: 'Barbara',
+        lastName: 'Cane',
+        fullName: 'Barbara Cane',
+        email: 'barbara.cane@movie.com',
+        address: { zip: 444444 },
+        parentId: null,
+        indent: 0,
+        __hasChildren: false,
+      },
+      {
+        id: 4,
+        firstName: 'Anonymous',
+        lastName: 'Doe',
+        fullName: 'Anonymous < Doe',
+        email: 'anonymous.doe@anom.com',
+        address: { zip: 556666 },
+        parentId: null,
+        indent: 0,
+        __collapsed: true,
+        __hasChildren: true,
+      },
+      {
+        id: 5,
+        firstName: 'Sponge',
+        lastName: 'Bob',
+        fullName: 'Sponge Bob',
+        email: 'sponge.bob@cartoon.com',
+        address: { zip: 888888 },
+        parentId: 2,
+        indent: 3,
+        __hasChildren: false,
+      },
+      {
+        id: 6,
+        firstName: 'Bobby',
+        lastName: 'Blown',
+        fullName: 'Bobby Blown',
+        email: 'bobby.blown@dynamite.com',
+        address: { zip: 998877 },
+        parentId: 4,
+        indent: 1,
+        __hasChildren: false,
+      },
     ];
     mockGridOptions = {
-      treeDataOptions: { levelPropName: 'indent' }
+      treeDataOptions: { levelPropName: 'indent' },
     } as GridOption;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
 
   it('should throw an error when oarams are mmissing', () => {
-    expect(() => treeExportFormatter(1, 1, 'blah', {} as Column, {}, gridStub))
-      .toThrow('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
+    expect(() => treeExportFormatter(1, 1, 'blah', {} as Column, {}, gridStub)).toThrow(
+      '[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.'
+    );
   });
 
   it('should return empty string when value is null', () => {

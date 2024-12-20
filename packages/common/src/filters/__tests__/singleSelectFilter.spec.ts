@@ -45,18 +45,23 @@ describe('SelectFilter', () => {
     spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
-      id: 'gender', field: 'gender', filterable: true,
+      id: 'gender',
+      field: 'gender',
+      filterable: true,
       filter: {
         model: Filters.multipleSelect,
-        collection: [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
-      }
+        collection: [
+          { value: 'male', label: 'male' },
+          { value: 'female', label: 'female' },
+        ],
+      },
     };
 
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new SingleSelectFilter(translateService, collectionService);
@@ -67,7 +72,10 @@ describe('SelectFilter', () => {
   });
 
   it('should be a single-select filter', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     filter = new SingleSelectFilter(translateService, collectionService);
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('select.ms-filter.search-filter.filter-gender').length;
@@ -79,7 +87,11 @@ describe('SelectFilter', () => {
   });
 
   it('should create the select filter with empty search term when passed an empty string as a filter argument and not expect "filled" css class either', () => {
-    mockColumn.filter!.collection = [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [
+      { value: '', label: '' },
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
 
     filterArguments.searchTerms = [''];
     filter.init(filterArguments);
@@ -92,7 +104,10 @@ describe('SelectFilter', () => {
 
   it('should trigger single select change event and expect the callback to be called when we select a single search term from dropdown list', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
@@ -116,9 +131,9 @@ describe('SelectFilter', () => {
       collection: [
         { value: 'other', labelKey: 'OTHER' },
         { value: 'male', labelKey: 'MALE' },
-        { value: 'female', labelKey: 'FEMALE' }
+        { value: 'female', labelKey: 'FEMALE' },
       ],
-      filterOptions: { minimumCountSelected: 1 }
+      filterOptions: { minimumCountSelected: 1 },
     };
 
     filterArguments.searchTerms = ['male', 'female'];
@@ -147,9 +162,9 @@ describe('SelectFilter', () => {
       collection: [
         { value: 'other', labelKey: 'OTHER' },
         { value: 'male', labelKey: 'MALE' },
-        { value: 'female', labelKey: 'FEMALE' }
+        { value: 'female', labelKey: 'FEMALE' },
       ],
-      filterOptions: { minimumCountSelected: 1 }
+      filterOptions: { minimumCountSelected: 1 },
     };
 
     filterArguments.searchTerms = ['male', 'female'];

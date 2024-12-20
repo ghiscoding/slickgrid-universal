@@ -32,18 +32,18 @@ export interface BasePaginationModel {
 }
 
 export class BasePaginationComponent {
-  constructor(_elmRef?: any) { }
+  constructor(_elmRef?: any) {}
 
-  dispose(): void { }
+  dispose(): void {}
 
   init(
     _grid: SlickGrid,
     _paginationService: PaginationService,
     _pubSubService: BasePubSubService,
     _translaterService?: TranslaterService | undefined
-  ): void { }
+  ): void {}
 
-  renderPagination(_containerElm: HTMLElement): void { }
+  renderPagination(_containerElm: HTMLElement): void {}
 }
 
 export interface PaginationMetadata extends Pagination {

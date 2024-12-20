@@ -1,4 +1,12 @@
-import type { Column, GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs, GridMenuLabel, GridOption, MenuCallbackArgs, MenuCommandItem, } from './index.js';
+import type {
+  Column,
+  GridMenuCallbackArgs,
+  GridMenuCommandItemCallbackArgs,
+  GridMenuLabel,
+  GridOption,
+  MenuCallbackArgs,
+  MenuCommandItem,
+} from './index.js';
 
 export interface GridMenuOption {
   /**

@@ -31,13 +31,25 @@ describe('executeCollectionSearchFilterCondition method', () => {
   });
 
   it('should return True when the cell value is equal to at least 1 of the searchTerms', () => {
-    const options = { dataKey: '', operator: 'IN', cellValue: 'foo', fieldType: FieldType.string, searchTerms: ['bar', 'foo', 'John'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN',
+      cellValue: 'foo',
+      fieldType: FieldType.string,
+      searchTerms: ['bar', 'foo', 'John'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return True when the cell value is equal to at least 1 of the searchTerms and called by the "executeFilterConditionTest"', () => {
-    const options = { dataKey: '', operator: 'IN', cellValue: 'foo', fieldType: FieldType.string, searchTerms: ['bar', 'foo', 'John'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN',
+      cellValue: 'foo',
+      fieldType: FieldType.string,
+      searchTerms: ['bar', 'foo', 'John'],
+    } as FilterConditionOption;
     const output = executeFilterConditionTest(options);
     expect(output).toBe(true);
   });
@@ -72,14 +84,32 @@ describe('executeCollectionSearchFilterCondition method', () => {
   });
 
   it('should return True when input value contains searchTerms content', () => {
-    const options = { dataKey: '', operator: 'IN_CONTAINS', cellValue: 'Task2,Task3', fieldType: FieldType.string, searchTerms: ['Task2', 'Task3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN_CONTAINS',
+      cellValue: 'Task2,Task3',
+      fieldType: FieldType.string,
+      searchTerms: ['Task2', 'Task3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return True when input value is not found when using "not in contains" searchTerms content', () => {
-    const options1 = { dataKey: '', operator: 'NIN_CONTAINS', cellValue: 'Task11,Task22,Task33', fieldType: FieldType.string, searchTerms: ['Task1', 'Task2', 'Task3'] } as FilterConditionOption;
-    const options2 = { dataKey: '', operator: 'NOT_IN_CONTAINS', cellValue: 'Task11,Task22,Task33', fieldType: FieldType.string, searchTerms: ['Task1', 'Task2', 'Task3'] } as FilterConditionOption;
+    const options1 = {
+      dataKey: '',
+      operator: 'NIN_CONTAINS',
+      cellValue: 'Task11,Task22,Task33',
+      fieldType: FieldType.string,
+      searchTerms: ['Task1', 'Task2', 'Task3'],
+    } as FilterConditionOption;
+    const options2 = {
+      dataKey: '',
+      operator: 'NOT_IN_CONTAINS',
+      cellValue: 'Task11,Task22,Task33',
+      fieldType: FieldType.string,
+      searchTerms: ['Task1', 'Task2', 'Task3'],
+    } as FilterConditionOption;
     const output1 = executeCollectionSearchFilterCondition(options1);
     const output2 = executeCollectionSearchFilterCondition(options2);
 
@@ -88,8 +118,20 @@ describe('executeCollectionSearchFilterCondition method', () => {
   });
 
   it('should return False when input value not in contains searchTerms content', () => {
-    const options1 = { dataKey: '', operator: 'NIN_CONTAINS', cellValue: 'Task1,Task3', fieldType: FieldType.string, searchTerms: ['Task1', 'Task2', 'Task3'] } as FilterConditionOption;
-    const options2 = { dataKey: '', operator: 'NOT_IN_CONTAINS', cellValue: 'Task1,Task3', fieldType: FieldType.string, searchTerms: ['Task1', 'Task2', 'Task3'] } as FilterConditionOption;
+    const options1 = {
+      dataKey: '',
+      operator: 'NIN_CONTAINS',
+      cellValue: 'Task1,Task3',
+      fieldType: FieldType.string,
+      searchTerms: ['Task1', 'Task2', 'Task3'],
+    } as FilterConditionOption;
+    const options2 = {
+      dataKey: '',
+      operator: 'NOT_IN_CONTAINS',
+      cellValue: 'Task1,Task3',
+      fieldType: FieldType.string,
+      searchTerms: ['Task1', 'Task2', 'Task3'],
+    } as FilterConditionOption;
     const output1 = executeCollectionSearchFilterCondition(options1);
     const output2 = executeCollectionSearchFilterCondition(options2);
 
@@ -98,73 +140,145 @@ describe('executeCollectionSearchFilterCondition method', () => {
   });
 
   it('should return True when input value is found when using "InCollection" searchTerms content (string)', () => {
-    const options = { dataKey: '', operator: 'IN_COLLECTION', cellValue: ['Task2', 'Task3'], fieldType: FieldType.string, searchTerms: ['Task2', 'Task3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN_COLLECTION',
+      cellValue: ['Task2', 'Task3'],
+      fieldType: FieldType.string,
+      searchTerms: ['Task2', 'Task3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return True when input value is found when using "InCollection" searchTerms content (number)', () => {
-    const options = { dataKey: '', operator: 'IN_COLLECTION', cellValue: [2, 3], fieldType: FieldType.number, searchTerms: ['2', '3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN_COLLECTION',
+      cellValue: [2, 3],
+      fieldType: FieldType.number,
+      searchTerms: ['2', '3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return True when input value is found when using "InCollection" searchTerms content (boolean)', () => {
-    const options = { dataKey: '', operator: 'IN_COLLECTION', cellValue: [true], fieldType: FieldType.boolean, searchTerms: ['true', 'false'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN_COLLECTION',
+      cellValue: [true],
+      fieldType: FieldType.boolean,
+      searchTerms: ['true', 'false'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return False when input value is not found when using "InCollection" searchTerms content (string)', () => {
-    const options = { dataKey: '', operator: 'IN_COLLECTION', cellValue: ['Task11', 'Task22', 'Task33'], fieldType: FieldType.string, searchTerms: ['Task1', 'Task2', 'Task3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN_COLLECTION',
+      cellValue: ['Task11', 'Task22', 'Task33'],
+      fieldType: FieldType.string,
+      searchTerms: ['Task1', 'Task2', 'Task3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(false);
   });
 
   it('should return False when input value is not found when using "InCollection" searchTerms content (number)', () => {
-    const options = { dataKey: '', operator: 'IN_COLLECTION', cellValue: [2, 3], fieldType: FieldType.number, searchTerms: ['4', '5'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN_COLLECTION',
+      cellValue: [2, 3],
+      fieldType: FieldType.number,
+      searchTerms: ['4', '5'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(false);
   });
 
   it('should return False when input value is not found when using "InCollection" searchTerms content (boolean)', () => {
-    const options = { dataKey: '', operator: 'IN_COLLECTION', cellValue: [true], fieldType: FieldType.boolean, searchTerms: ['false'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'IN_COLLECTION',
+      cellValue: [true],
+      fieldType: FieldType.boolean,
+      searchTerms: ['false'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(false);
   });
 
   it('should return True when input value is not found when using "NotInCollection" searchTerms content (string)', () => {
-    const options = { dataKey: '', operator: 'NOT_IN_COLLECTION', cellValue: ['Task22', 'Task33'], fieldType: FieldType.string, searchTerms: ['Task2', 'Task3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'NOT_IN_COLLECTION',
+      cellValue: ['Task22', 'Task33'],
+      fieldType: FieldType.string,
+      searchTerms: ['Task2', 'Task3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return True when input value is not found when using "NotInCollection" searchTerms content (number)', () => {
-    const options = { dataKey: '', operator: 'NOT_IN_COLLECTION', cellValue: [22, 33], fieldType: FieldType.number, searchTerms: ['2', '3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'NOT_IN_COLLECTION',
+      cellValue: [22, 33],
+      fieldType: FieldType.number,
+      searchTerms: ['2', '3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return True when input value is not found when using "NotInCollection" searchTerms content (boolean)', () => {
-    const options = { dataKey: '', operator: 'NOT_IN_COLLECTION', cellValue: [true], fieldType: FieldType.boolean, searchTerms: ['false'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'NOT_IN_COLLECTION',
+      cellValue: [true],
+      fieldType: FieldType.boolean,
+      searchTerms: ['false'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(true);
   });
 
   it('should return False when input value is found when using "NotInCollection" searchTerms content (string)', () => {
-    const options = { dataKey: '', operator: 'NOT_IN_COLLECTION', cellValue: ['Task2', 'Task3'], fieldType: FieldType.string, searchTerms: ['Task2', 'Task3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'NOT_IN_COLLECTION',
+      cellValue: ['Task2', 'Task3'],
+      fieldType: FieldType.string,
+      searchTerms: ['Task2', 'Task3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(false);
   });
 
   it('should return False when input value is found when using "NotInCollection" searchTerms content (number)', () => {
-    const options = { dataKey: '', operator: 'NOT_IN_COLLECTION', cellValue: [2, 3], fieldType: FieldType.number, searchTerms: ['2', '3'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'NOT_IN_COLLECTION',
+      cellValue: [2, 3],
+      fieldType: FieldType.number,
+      searchTerms: ['2', '3'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(false);
   });
 
   it('should return False when input value is found when using "NotInCollection" searchTerms content (boolean)', () => {
-    const options = { dataKey: '', operator: 'NOT_IN_COLLECTION', cellValue: [true, false], fieldType: FieldType.boolean, searchTerms: ['true', 'false'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'NOT_IN_COLLECTION',
+      cellValue: [true, false],
+      fieldType: FieldType.boolean,
+      searchTerms: ['true', 'false'],
+    } as FilterConditionOption;
     const output = executeCollectionSearchFilterCondition(options);
     expect(output).toBe(false);
   });

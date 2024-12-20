@@ -27,13 +27,14 @@ export class SlickCellSelectionModel implements SelectionModel {
     selectActiveCell: true,
   };
 
-  constructor(options?: { selectActiveCell: boolean; cellRangeSelector: SlickCellRangeSelector; }) {
+  constructor(options?: { selectActiveCell: boolean; cellRangeSelector: SlickCellRangeSelector }) {
     this.onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
     this._eventHandler = new SlickEventHandler();
 
-    this._selector = (options === undefined || options.cellRangeSelector === undefined)
-      ? new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration })
-      : options.cellRangeSelector;
+    this._selector =
+      options === undefined || options.cellRangeSelector === undefined
+        ? new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration })
+        : options.cellRangeSelector;
 
     this._addonOptions = options;
   }
@@ -53,7 +54,9 @@ export class SlickCellSelectionModel implements SelectionModel {
   init(grid: SlickGrid): void {
     this._grid = grid;
     if (this._addonOptions === undefined || this._addonOptions.cellRangeSelector === undefined) {
-      this._selector = new SlickCellRangeSelector({ selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? "white" : "black"}` } as CSSStyleDeclaration });
+      this._selector = new SlickCellRangeSelector({
+        selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? 'white' : 'black'}` } as CSSStyleDeclaration,
+      });
     }
 
     if (grid.hasDataView()) {
@@ -96,13 +99,14 @@ export class SlickCellSelectionModel implements SelectionModel {
   }
 
   rangesAreEqual(range1: SlickRange[], range2: SlickRange[]): boolean {
-    let areDifferent = (range1.length !== range2.length);
+    let areDifferent = range1.length !== range2.length;
     if (!areDifferent) {
       for (let i = 0; i < range1.length; i++) {
-        if (range1[i].fromCell !== range2[i].fromCell
-          || range1[i].fromRow !== range2[i].fromRow
-          || range1[i].toCell !== range2[i].toCell
-          || range1[i].toRow !== range2[i].toRow
+        if (
+          range1[i].fromCell !== range2[i].fromCell ||
+          range1[i].fromRow !== range2[i].fromRow ||
+          range1[i].toCell !== range2[i].toCell ||
+          range1[i].toRow !== range2[i].toRow
         ) {
           areDifferent = true;
           break;
@@ -171,21 +175,25 @@ export class SlickCellSelectionModel implements SelectionModel {
     const cell = this._grid.getCellFromEvent(e);
     const activeCell = this._grid.getActiveCell();
 
-    if (this._grid.getEditorLock().isActive()
-      && (activeCell && cell && activeCell.row === cell.row && activeCell.cell === cell.cell)
+    if (
+      this._grid.getEditorLock().isActive() &&
+      activeCell &&
+      cell &&
+      activeCell.row === cell.row &&
+      activeCell.cell === cell.cell
     ) {
       e.stopPropagation();
       return false;
     }
   }
 
-  protected handleCellRangeSelected(_e: SlickEventData, args: { range: SlickRange; }): void {
+  protected handleCellRangeSelected(_e: SlickEventData, args: { range: SlickRange }): void {
     this._grid.setActiveCell(args.range.fromRow, args.range.fromCell, false, false, true);
     this.setSelectedRanges([args.range]);
   }
 
   protected isKeyAllowed(key: string): boolean {
-    return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'Home', 'End'].some(k => k === key);
+    return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'Home', 'End'].some((k) => k === key);
   }
 
   protected handleKeyDown(e: SlickEventData): void {

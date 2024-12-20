@@ -34,7 +34,11 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   pluginName: 'HeaderButtons' = 'HeaderButtons' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService) {
+  constructor(
+    protected readonly extensionUtility: ExtensionUtility,
+    protected readonly pubSubService: BasePubSubService,
+    protected readonly sharedService: SharedService
+  ) {
     super(extensionUtility, pubSubService, sharedService);
     this._menuCssPrefix = 'slick-header-button';
     this._camelPluginName = 'headerButtons';
@@ -72,7 +76,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose(): void {
     super.dispose();
-    this._buttonElms.forEach(elm => elm.remove());
+    this._buttonElms.forEach((elm) => elm.remove());
   }
 
   // --
@@ -91,7 +95,14 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
       let i = column.header.buttons.length;
       while (i--) {
         const buttonItem = column.header.buttons[i];
-        const itemElm = this.populateSingleCommandOrOptionItem('command', this.addonOptions, null, buttonItem, args, this.handleButtonClick.bind(this));
+        const itemElm = this.populateSingleCommandOrOptionItem(
+          'command',
+          this.addonOptions,
+          null,
+          buttonItem,
+          args,
+          this.handleButtonClick.bind(this)
+        );
 
         // Header Button can have an optional handler
         if (itemElm && buttonItem.handler && !buttonItem.disabled) {
@@ -112,7 +123,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
    * @param {Object} event - The event
    * @param {Object} args.column - The column definition
    */
-  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement; }): void {
+  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement }): void {
     const column = args.column;
 
     if (column.header?.buttons && this._addonOptions?.buttonCssClass) {
@@ -121,12 +132,18 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
       //       you must also clean them up here to avoid memory leaks.
       const buttonCssClass = (this._addonOptions?.buttonCssClass || '').replace(/(\s+)/g, '.');
       if (buttonCssClass) {
-        args.node.querySelectorAll(`.${buttonCssClass}`).forEach(elm => elm.remove());
+        args.node.querySelectorAll(`.${buttonCssClass}`).forEach((elm) => elm.remove());
       }
     }
   }
 
-  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, button: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column): void {
+  protected handleButtonClick(
+    event: DOMEvent<HTMLDivElement>,
+    _type: MenuType,
+    button: ExtractMenuType<ExtendableItemTypes, MenuType>,
+    level: number,
+    columnDef?: Column
+  ): void {
     if ((button as HeaderButtonItem).command && !(button as HeaderButtonItem).disabled) {
       const command = (button as HeaderButtonItem).command || '';
 

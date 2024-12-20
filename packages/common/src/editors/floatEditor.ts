@@ -12,11 +12,10 @@ export class FloatEditor extends InputEditor {
     const fieldName = this.columnDef?.field;
 
     if (fieldName !== undefined) {
-
       if (item && fieldName !== undefined && this._input) {
         // is the field a complex object, "address.streetNumber"
         const isComplexObject = fieldName?.indexOf('.') > 0;
-        const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
+        const value = isComplexObject ? getDescendantProperty(item, fieldName) : item[fieldName];
 
         this._originalValue = value;
         const decPlaces = this.getDecimalPlaces();
@@ -55,7 +54,7 @@ export class FloatEditor extends InputEditor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this._input?.value;
+    const elmValue = inputValue !== undefined ? inputValue : this._input?.value;
     return floatValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,

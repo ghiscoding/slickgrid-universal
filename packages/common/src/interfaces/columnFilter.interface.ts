@@ -1,4 +1,4 @@
-import type { FieldType, OperatorString, OperatorType, SearchTerm, } from '../enums/index.js';
+import type { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
 import type {
   CollectionCustomStructure,
   CollectionFilterBy,
@@ -107,7 +107,12 @@ export interface ColumnFilter {
    * these shortcuts will simply prefill the column filter values with the shortcuts defined by the user.
    * For example: `filterShortcuts: { command: 'blanks', title: 'Blanks', searchTerms: ['< a'] }`
    */
-  filterShortcuts?: Array<Omit<MenuCommandItem, 'command' | 'divider' | 'action'> & { searchTerms: SearchTerm[]; operator?: OperatorType | OperatorString; }>;
+  filterShortcuts?: Array<
+    Omit<MenuCommandItem, 'command' | 'divider' | 'action'> & {
+      searchTerms: SearchTerm[];
+      operator?: OperatorType | OperatorString;
+    }
+  >;
 
   /**
    * Use "params" to pass any type of arguments to your Custom Filter
@@ -150,7 +155,7 @@ export interface ColumnFilter {
   targetSelector?: string;
 
   /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
-  type?: typeof FieldType[keyof typeof FieldType];
+  type?: (typeof FieldType)[keyof typeof FieldType];
 
   /** Step value of the filter, works only with Filters supporting it (input text, number, float, range, slider) */
   valueStep?: number | string;

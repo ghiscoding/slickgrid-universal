@@ -90,7 +90,11 @@ describe('Service/domUtilies', () => {
       const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
       createDomElement('div', { className: 'red bold', innerHTML: '<input />' });
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('div', { innerHTML: 'some html'})"`));
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('div', { innerHTML: 'some html'})"`
+        )
+      );
     });
   });
 
@@ -99,7 +103,7 @@ describe('Service/domUtilies', () => {
       const obj = {
         age: 20,
         elm: document.createElement('div'),
-        elms: [document.createElement('div')]
+        elms: [document.createElement('div')],
       };
       destroyAllElementProps(obj);
 

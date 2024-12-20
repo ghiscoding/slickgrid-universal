@@ -36,7 +36,11 @@ describe('extensionUtility', () => {
 
     describe('getPickerTitleOutputString method', () => {
       it('should translate titleKey when there is one', () => {
-        const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
+        const gridOptionsMock = {
+          enableTranslate: true,
+          enableGridMenu: true,
+          gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' },
+        } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         const output = utility.getPickerTitleOutputString('columnTitle', 'gridMenu');
@@ -45,7 +49,11 @@ describe('extensionUtility', () => {
       });
 
       it('should return undefined when the given property is not found', () => {
-        const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true } } as GridOption;
+        const gridOptionsMock = {
+          enableTranslate: true,
+          enableGridMenu: true,
+          gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true },
+        } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         const output = utility.getPickerTitleOutputString('unknown', 'gridMenu');
@@ -77,8 +85,16 @@ describe('extensionUtility', () => {
 
     describe('sortItems method', () => {
       it('should sort the items by their order property', () => {
-        const inputArray = [{ field: 'field1', order: 3 }, { field: 'field2', order: 1 }, { field: 'field3', order: 2 }];
-        const expectedArray = [{ field: 'field2', order: 1 }, { field: 'field3', order: 2 }, { field: 'field1', order: 3 }];
+        const inputArray = [
+          { field: 'field1', order: 3 },
+          { field: 'field2', order: 1 },
+          { field: 'field3', order: 2 },
+        ];
+        const expectedArray = [
+          { field: 'field2', order: 1 },
+          { field: 'field3', order: 2 },
+          { field: 'field1', order: 3 },
+        ];
 
         utility.sortItems(inputArray, 'order');
 
@@ -109,10 +125,10 @@ describe('extensionUtility', () => {
       it('should translate nested translation keys by providing a sub-items key', () => {
         const commandItem1 = { command: 'clear-filter', titleKey: 'CLEAR_ALL_FILTERS' } as MenuCommandItem;
         const commandItem2 = {
-          command: 'group-by', titleKey: 'GROUP_BY', subMenuTitleKey: 'CONTAINS',
-          commandItems: [
-            { command: 'percent-complete', titleKey: 'FINANCE_MANAGER' }
-          ]
+          command: 'group-by',
+          titleKey: 'GROUP_BY',
+          subMenuTitleKey: 'CONTAINS',
+          commandItems: [{ command: 'percent-complete', titleKey: 'FINANCE_MANAGER' }],
         } as MenuCommandItem;
 
         utility.translateMenuItemsFromTitleKey([commandItem1, commandItem2], 'commandItems');
@@ -204,29 +220,47 @@ describe('extensionUtility', () => {
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
-      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
+      const gridOptionsMock = {
+        enableTranslate: true,
+        enableGridMenu: true,
+        gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' },
+      } as GridOption;
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
-      expect(() => utility.getPickerTitleOutputString('columnTitle', 'gridMenu')).toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
+      expect(() => utility.getPickerTitleOutputString('columnTitle', 'gridMenu')).toThrow(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured'
+      );
     });
 
     describe('translateWhenEnabledAndServiceExist method', () => {
       it('should use the Locales Constants when found', () => {
-        const gridOptionsMock = { enableTranslate: false, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' } } as GridOption;
+        const gridOptionsMock = {
+          enableTranslate: false,
+          enableGridMenu: true,
+          gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' },
+        } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'TEXT_COMMANDS');
         expect(output).toBe('Commands');
       });
 
       it('should return the same key passed as argument when not found in the Locales Constants', () => {
-        const gridOptionsMock = { enableTranslate: false, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' } } as GridOption;
+        const gridOptionsMock = {
+          enableTranslate: false,
+          enableGridMenu: true,
+          gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' },
+        } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'NOT_EXIST');
         expect(output).toBe('NOT_EXIST');
       });
 
       it('should return the same text when provided as the 3rd argument', () => {
-        const gridOptionsMock = { enableTranslate: false, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' } } as GridOption;
+        const gridOptionsMock = {
+          enableTranslate: false,
+          enableGridMenu: true,
+          gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' },
+        } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'NOT_EXIST', 'last argument wins');
         expect(output).toBe('last argument wins');

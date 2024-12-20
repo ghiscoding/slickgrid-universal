@@ -3,7 +3,6 @@ import type { SlickColumnPicker } from '../extensions/slickColumnPicker.js';
 import type { SlickGrid } from '../core/index.js';
 
 export interface ColumnPicker extends ColumnPickerOption {
-
   // --
   // Events
 

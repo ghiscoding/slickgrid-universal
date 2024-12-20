@@ -1,5 +1,5 @@
 import { Constants } from '../constants.js';
-import type { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index.js';
+import type { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem } from '../interfaces/index.js';
 import type { BackendUtilityService } from '../services/backendUtility.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -10,7 +10,7 @@ export class ExtensionUtility {
     private readonly sharedService: SharedService,
     private readonly backendUtilities?: BackendUtilityService | undefined,
     public readonly translaterService?: TranslaterService | undefined
-  ) { }
+  ) {}
 
   /**
    * From a Grid Menu object property name, we will return the correct title output string following this order
@@ -19,8 +19,10 @@ export class ExtensionUtility {
    * 3- else if nothing is provided use text defined as constants
    */
   getPickerTitleOutputString(propName: string, pickerName: 'gridMenu' | 'columnPicker'): string {
-    if (this.sharedService.gridOptions?.enableTranslate && (!this.translaterService?.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    if (this.sharedService.gridOptions?.enableTranslate && !this.translaterService?.translate) {
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     }
 
     let output = '';
@@ -40,16 +42,36 @@ export class ExtensionUtility {
     } else {
       switch (propName) {
         case 'commandTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS`) || locales?.TEXT_COMMANDS;
+          output =
+            title ||
+            (enableTranslate &&
+              this.translaterService?.getCurrentLanguage &&
+              this.translaterService?.translate(`${translationPrefix}COMMANDS`)) ||
+            locales?.TEXT_COMMANDS;
           break;
         case 'columnTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COLUMNS`) || locales?.TEXT_COLUMNS;
+          output =
+            title ||
+            (enableTranslate &&
+              this.translaterService?.getCurrentLanguage &&
+              this.translaterService?.translate(`${translationPrefix}COLUMNS`)) ||
+            locales?.TEXT_COLUMNS;
           break;
         case 'forceFitTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS`) || locales?.TEXT_FORCE_FIT_COLUMNS;
+          output =
+            title ||
+            (enableTranslate &&
+              this.translaterService?.getCurrentLanguage &&
+              this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS`)) ||
+            locales?.TEXT_FORCE_FIT_COLUMNS;
           break;
         case 'syncResizeTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE`) || locales?.TEXT_SYNCHRONOUS_RESIZE;
+          output =
+            title ||
+            (enableTranslate &&
+              this.translaterService?.getCurrentLanguage &&
+              this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE`)) ||
+            locales?.TEXT_SYNCHRONOUS_RESIZE;
           break;
         default:
           output = title;
@@ -69,7 +91,9 @@ export class ExtensionUtility {
    */
   readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number, allColumns: Column[], visibleColumns: Column[]): void {
     if (frozenColumnIndex >= 0) {
-      const recalculatedFrozenColumnIndex = visibleColumns.findIndex(col => col.id === this.sharedService.frozenVisibleColumnId);
+      const recalculatedFrozenColumnIndex = visibleColumns.findIndex(
+        (col) => col.id === this.sharedService.frozenVisibleColumnId
+      );
       if (recalculatedFrozenColumnIndex >= 0 && recalculatedFrozenColumnIndex !== frozenColumnIndex) {
         this.sharedService.gridOptions.frozenColumn = recalculatedFrozenColumnIndex;
         this.sharedService.slickGrid.setOptions({ frozenColumn: recalculatedFrozenColumnIndex });
@@ -97,7 +121,7 @@ export class ExtensionUtility {
   /** Run the Override function when it exists, if it returns True then it is usable/visible */
   runOverrideFunctionWhenExists<T = any>(overrideFn: ((args: any) => boolean) | undefined, args: T): boolean {
     if (typeof overrideFn === 'function') {
-      return !!(overrideFn.call(this, args));
+      return !!overrideFn.call(this, args);
     }
     return true;
   }
@@ -135,7 +159,10 @@ export class ExtensionUtility {
    * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
    * @param {Object} gridOptions - Grid Options
    */
-  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>, subMenuItemsKey = 'commandItems'): void {
+  translateMenuItemsFromTitleKey(
+    items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>,
+    subMenuItemsKey = 'commandItems'
+  ): void {
     for (const item of items) {
       // translate `titleKey` and also `subMenuTitleKey` if exists
       if (typeof item === 'object') {

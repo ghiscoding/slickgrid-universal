@@ -8,7 +8,12 @@ export class FilterFactory {
   /** The options from the SlickgridConfig */
   protected _options: any;
 
-  constructor(protected config: SlickgridConfig, protected readonly translaterService?: TranslaterService | undefined, protected readonly collectionService?: CollectionService | undefined, protected rxjs?: RxJsFacade | undefined) {
+  constructor(
+    protected config: SlickgridConfig,
+    protected readonly translaterService?: TranslaterService | undefined,
+    protected readonly collectionService?: CollectionService | undefined,
+    protected rxjs?: RxJsFacade | undefined
+  ) {
     this._options = this.config?.options ?? {};
   }
 
@@ -21,6 +26,7 @@ export class FilterFactory {
     let filter: Filter | undefined;
 
     if (columnFilter?.model) {
+      // prettier-ignore
       filter = typeof columnFilter.model === 'function' ? new columnFilter.model(this.translaterService, this.collectionService, this.rxjs) : columnFilter.model;
     }
 

@@ -59,17 +59,23 @@ export interface CheckboxSelectorOption {
   onExtensionRegistered?: (plugin: SlickCheckboxSelectColumn) => void;
 
   /** Optional callback method to be executed when the row checkbox gets clicked but prior to the actual toggling itself. */
-  onRowToggleStart?: (e: SlickEventData | Event | null, args: { row: number; previousSelectedRows: number[]; }) => void;
+  onRowToggleStart?: (e: SlickEventData | Event | null, args: { row: number; previousSelectedRows: number[] }) => void;
 
   /** Optional callback method to be executed after the row checkbox toggle is completed. */
-  onRowToggleEnd?: (e: SlickEventData | Event | null, args: { row: number; previousSelectedRows: number[]; }) => void;
+  onRowToggleEnd?: (e: SlickEventData | Event | null, args: { row: number; previousSelectedRows: number[] }) => void;
 
   /**
    * Optional callback method to be executed when the "Select All" gets clicked but prior to the actual toggling itself.
    * For example we could expand all Groups or Tree prior to the selection so that we also have the chance to even include Group/Tree children in the selection.
    */
-  onSelectAllToggleStart?: (e: SlickEventData | Event | null, args: { previousSelectedRows: number[]; caller: 'click.selectAll' | 'click.unselectAll'; }) => void;
+  onSelectAllToggleStart?: (
+    e: SlickEventData | Event | null,
+    args: { previousSelectedRows: number[]; caller: 'click.selectAll' | 'click.unselectAll' }
+  ) => void;
 
   /** Optional callback method to be executed when the "Select All" toggled action is completed. */
-  onSelectAllToggleEnd?: (e: SlickEventData | Event | null, args: { rows: number[]; previousSelectedRows: number[]; caller: 'click.selectAll' | 'click.unselectAll'; }) => void;
+  onSelectAllToggleEnd?: (
+    e: SlickEventData | Event | null,
+    args: { rows: number[]; previousSelectedRows: number[]; caller: 'click.selectAll' | 'click.unselectAll' }
+  ) => void;
 }

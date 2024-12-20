@@ -11,30 +11,36 @@ import { findOrDefault } from '../services/index.js';
  * const dataset = [1, 2];
  */
 export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  if (!value || !columnDef || !columnDef.editor || !columnDef.editor.collection
-    || !columnDef.editor.collection.length) {
+  if (!value || !columnDef || !columnDef.editor || !columnDef.editor.collection || !columnDef.editor.collection.length) {
     return value;
   }
 
-  const { editor, editor: { collection } } = columnDef;
-  const labelName = (editor.customStructure) ? editor.customStructure.label : 'label';
-  const valueName = (editor.customStructure) ? editor.customStructure.value : 'value';
+  const {
+    editor,
+    editor: { collection },
+  } = columnDef;
+  const labelName = editor.customStructure ? editor.customStructure.label : 'label';
+  const valueName = editor.customStructure ? editor.customStructure.value : 'value';
 
   if (Array.isArray(value)) {
     if (collection.every((x: any) => typeof x === 'string')) {
-      return arrayToCsvFormatter(row,
+      return arrayToCsvFormatter(
+        row,
         cell,
         value.map((v: any) => findOrDefault(collection, (c: any) => c === v)),
         columnDef,
         dataContext,
-        grid);
+        grid
+      );
     } else {
-      return arrayToCsvFormatter(row,
+      return arrayToCsvFormatter(
+        row,
         cell,
         value.map((v: any) => findOrDefault(collection, (c: any) => c[valueName] === v)[labelName]),
         columnDef,
         dataContext,
-        grid);
+        grid
+      );
     }
   }
 

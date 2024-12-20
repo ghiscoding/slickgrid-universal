@@ -10,7 +10,7 @@ describe('the Translate Boolean Formatter', () => {
 
   // stub some methods of the SlickGrid Grid instance
   const gridStub = {
-    getOptions: vi.fn()
+    getOptions: vi.fn(),
   } as unknown as SlickGrid;
 
   beforeEach(() => {

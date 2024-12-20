@@ -19,5 +19,5 @@ export interface Aggregator {
 }
 
 export type AggregatorConstructor = {
-  new(field: number | string): Aggregator;
+  new (field: number | string): Aggregator;
 };

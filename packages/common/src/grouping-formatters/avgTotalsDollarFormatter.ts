@@ -11,16 +11,24 @@ export const avgTotalsDollarFormatter: GroupTotalsFormatter = (totals: any, colu
   const params = columnDef?.params;
   const prefix = params?.groupFormatterPrefix || '';
   const suffix = params?.groupFormatterSuffix || '';
-  const {
-    minDecimal,
-    maxDecimal,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'group');
+  const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
+    columnDef,
+    grid,
+    'currency',
+    'group'
+  );
 
   if (isNumber(val)) {
-    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
+    const formattedNumber = formatNumber(
+      val,
+      minDecimal,
+      maxDecimal,
+      wrapNegativeNumber,
+      '$',
+      '',
+      decimalSeparator,
+      thousandSeparator
+    );
     return `${prefix}${formattedNumber}${suffix}`;
   }
   return '';

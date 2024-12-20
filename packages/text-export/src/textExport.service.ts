@@ -56,10 +56,10 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly className = 'TextExportService';
 
-  constructor() { }
+  constructor() {}
 
   protected get _datasetIdPropName(): string {
-    return this._gridOptions && this._gridOptions.datasetIdPropertyName || 'id';
+    return (this._gridOptions && this._gridOptions.datasetIdPropertyName) || 'id';
   }
 
   /** Getter of SlickGrid DataView object */
@@ -69,7 +69,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() ?? {} as GridOption;
+    return this._grid?.getOptions() ?? ({} as GridOption);
   }
 
   dispose(): void {
@@ -86,11 +86,13 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
-    this._locales = this._gridOptions && this._gridOptions.locales || Constants.locales;
+    this._locales = (this._gridOptions && this._gridOptions.locales) || Constants.locales;
     this._translaterService = this._gridOptions?.translater;
 
     if (this._gridOptions.enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, translater: this.translaterService })');
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, translater: this.translaterService })'
+      );
     }
   }
 
@@ -105,10 +107,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    */
   exportToFile(options?: TextExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView || !this._pubSubService) {
-      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?');
+      throw new Error(
+        '[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?'
+      );
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this._pubSubService?.publish(`onBeforeExportToTextFile`, true);
       this._exportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
@@ -124,7 +128,8 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
           filename: `${this._exportOptions.filename}.${this._fileFormat}`,
           format: this._fileFormat || FileType.csv,
           mimeType: this._exportOptions.mimeType || 'text/plain',
-          useUtf8WithBom: (this._exportOptions && this._exportOptions.hasOwnProperty('useUtf8WithBom')) ? this._exportOptions.useUtf8WithBom : true
+          // prettier-ignore
+          useUtf8WithBom: (this._exportOptions && this._exportOptions.hasOwnProperty('useUtf8WithBom')) ? this._exportOptions.useUtf8WithBom : true,
         };
 
         // start downloading but add the content property only on the start download not on the event itself
@@ -158,7 +163,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     // create a Blob object for the download
     const blob = new Blob([options.useUtf8WithBom ? '\uFEFF' : '', outputData], {
-      type: options.mimeType
+      type: options.mimeType,
     });
 
     // when using IE/Edge, then use different download call
@@ -193,14 +198,19 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
     let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;
-    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
+    if (
+      !groupByColumnHeader &&
+      this._gridOptions.enableTranslate &&
+      this._translaterService?.translate &&
+      this._translaterService?.getCurrentLanguage?.()
+    ) {
       groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
     } else if (!groupByColumnHeader) {
       groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
     }
 
     // a CSV needs double quotes wrapper, the other types do not need any wrapper
-    this._exportQuoteWrapper = (this._fileFormat === FileType.csv) ? '"' : '';
+    this._exportQuoteWrapper = this._fileFormat === FileType.csv ? '"' : '';
 
     // data variable which will hold all the fields data of a row
     let outputDataString = '';
@@ -210,18 +220,27 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     const grouping = this._dataView.getGrouping();
     if (grouping && Array.isArray(grouping) && grouping.length > 0) {
       this._hasGroupedItems = true;
-      outputDataString += (this._fileFormat === FileType.csv) ? `"${groupByColumnHeader}"${this._delimiter}` : `${groupByColumnHeader}${this._delimiter}`;
+      outputDataString +=
+        this._fileFormat === FileType.csv
+          ? `"${groupByColumnHeader}"${this._delimiter}`
+          : `${groupByColumnHeader}${this._delimiter}`;
     } else {
       this._hasGroupedItems = false;
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    if (this._gridOptions.createPreHeaderPanel && this._gridOptions.showPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
+    if (
+      this._gridOptions.createPreHeaderPanel &&
+      this._gridOptions.showPreHeaderPanel &&
+      !this._gridOptions.enableDraggableGrouping
+    ) {
       this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
       if (this._groupedColumnHeaders && Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
         // add the header row + add a new line at the end of the row
-        const outputGroupedHeaderTitles = this._groupedColumnHeaders.map((header) => `${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`);
-        outputDataString += (outputGroupedHeaderTitles.join(this._delimiter) + this._lineCarriageReturn);
+        const outputGroupedHeaderTitles = this._groupedColumnHeaders.map(
+          (header) => `${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`
+        );
+        outputDataString += outputGroupedHeaderTitles.join(this._delimiter) + this._lineCarriageReturn;
       }
     }
 
@@ -229,8 +248,10 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      const outputHeaderTitles = this._columnHeaders.map((header) => stripTags(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`));
-      outputDataString += (outputHeaderTitles.join(this._delimiter) + this._lineCarriageReturn);
+      const outputHeaderTitles = this._columnHeaders.map((header) =>
+        stripTags(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`)
+      );
+      outputDataString += outputHeaderTitles.join(this._delimiter) + this._lineCarriageReturn;
     }
 
     // Populate the rest of the Grid Data
@@ -281,7 +302,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';
-        if (columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
+        if (
+          columnDef.columnGroupKey &&
+          this._gridOptions.enableTranslate &&
+          this._translaterService?.translate &&
+          this._translaterService?.getCurrentLanguage?.()
+        ) {
           groupedHeaderTitle = this._translaterService.translate(columnDef.columnGroupKey);
         } else {
           groupedHeaderTitle = columnDef.columnGroup || '';
@@ -292,7 +318,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
           groupedColumnHeaders.push({
             key: (columnDef.field || columnDef.id) as string,
-            title: groupedHeaderTitle || ''
+            title: groupedHeaderTitle || '',
           });
         }
       });
@@ -311,8 +337,13 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       // Populate the Column Header, pull the name defined
       columns.forEach((columnDef) => {
         let headerTitle = '';
-        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
-          headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
+        if (
+          (columnDef.nameKey || columnDef.nameKey) &&
+          this._gridOptions.enableTranslate &&
+          this._translaterService?.translate &&
+          this._translaterService?.getCurrentLanguage?.()
+        ) {
+          headerTitle = this._translaterService.translate(columnDef.nameKey || columnDef.nameKey);
         } else {
           headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
         }
@@ -322,7 +353,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
           columnHeaders.push({
             key: (columnDef.field || columnDef.id) as string,
-            title: headerTitle || ''
+            title: headerTitle || '',
           });
         }
       });
@@ -371,9 +402,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         }
       }
 
-      if ((prevColspan === '*' && col > 0) || ((!isNaN(prevColspan as number) && +prevColspan > 1) && columnDef.id !== colspanColumnId)) {
+      if (
+        (prevColspan === '*' && col > 0) ||
+        (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)
+      ) {
         rowOutputStrings.push('');
-        if ((!isNaN(prevColspan as number) && +prevColspan > 1)) {
+        if (!isNaN(prevColspan as number) && +prevColspan > 1) {
           (prevColspan as number)--;
         }
       } else {

@@ -3,7 +3,7 @@ import type { SlickCellRangeDecorator } from '../extensions/slickCellRangeDecora
 export interface CellRangeDecoratorOption {
   selectionCssClass: string;
   selectionCss: CSSStyleDeclaration;
-  offset: { top: number; left: number; height: number; width: number; };
+  offset: { top: number; left: number; height: number; width: number };
 }
 
 export interface CellRangeSelectorOption {

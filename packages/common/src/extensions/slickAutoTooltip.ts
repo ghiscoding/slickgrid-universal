@@ -1,4 +1,3 @@
-
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import type { AutoTooltipOption, Column } from '../interfaces/index.js';
@@ -21,7 +20,7 @@ export class SlickAutoTooltip {
     enableForCells: true,
     enableForHeaderCells: false,
     maxToolTipLength: undefined,
-    replaceExisting: true
+    replaceExisting: true,
   } as AutoTooltipOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
@@ -92,15 +91,15 @@ export class SlickAutoTooltip {
    * @param {SlickEventData} event - The event
    * @param {Object} args.column - The column definition
    */
-  protected handleHeaderMouseEnter(event: SlickEventData, args: { column: Column; }): void {
+  protected handleHeaderMouseEnter(event: SlickEventData, args: { column: Column }): void {
     const column = args.column;
     let node: HTMLDivElement | null;
-    const targetElm = (event.target as HTMLDivElement);
+    const targetElm = event.target as HTMLDivElement;
 
     if (targetElm) {
       node = targetElm.closest<HTMLDivElement>('.slick-header-column');
-      if (node && !(column?.toolTip)) {
-        const titleVal = (targetElm.clientWidth < node.clientWidth) ? column?.name ?? '' : '';
+      if (node && !column?.toolTip) {
+        const titleVal = targetElm.clientWidth < node.clientWidth ? (column?.name ?? '') : '';
         node.title = stripTags(getHtmlStringOutput(titleVal, 'innerHTML'));
       }
     }
