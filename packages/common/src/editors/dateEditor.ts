@@ -344,11 +344,7 @@ export class DateEditor implements Editor {
     const fieldName = this.columnDef?.field;
     if (this.columnDef && fieldName !== undefined) {
       const saveFieldType =
-        this.columnDef.saveOutputType ||
-        this.columnDef.outputType ||
-        this.columnEditor.type ||
-        this.columnDef.type ||
-        FieldType.dateUtc;
+        this.columnDef.saveOutputType || this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
       const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
@@ -373,18 +369,12 @@ export class DateEditor implements Editor {
     const elmDateStr = this.getValue();
 
     const lastEventKey = this._lastInputKeyEvent?.key;
-    if (
-      this.columnEditor.editorOptions?.allowInput === true &&
-      this.columnEditor?.alwaysSaveOnEnterKey &&
-      lastEventKey === 'Enter'
-    ) {
+    if (this.columnEditor.editorOptions?.allowInput === true && this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
 
     if (this.columnDef) {
-      isChanged =
-        this._lastTriggeredByClearDate ||
-        (!(elmDateStr === '' && this._originalDate === '') && elmDateStr !== this._originalDate);
+      isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && this._originalDate === '') && elmDateStr !== this._originalDate);
     }
 
     return isChanged;

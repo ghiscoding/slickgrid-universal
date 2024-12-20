@@ -193,13 +193,7 @@ export class SlickCustomTooltip {
    * Async process callback will hide any prior tooltip & then merge the new result with the item `dataContext` under a `__params` property
    * (unless a new prop name is provided) to provice as dataContext object to the asyncPostFormatter.
    */
-  protected asyncProcessCallback(
-    asyncResult: any,
-    cell: { row: number; cell: number },
-    value: any,
-    columnDef: Column,
-    dataContext: any
-  ): void {
+  protected asyncProcessCallback(asyncResult: any, cell: { row: number; cell: number }, value: any, columnDef: Column, dataContext: any): void {
     this.hideTooltip();
     const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
     if (this._cellAddonOptions?.useRegularTooltip) {
@@ -299,10 +293,7 @@ export class SlickCustomTooltip {
           const cellValue = this._grid.getEditorLock().isActive() ? null : value;
 
           // when there aren't any formatter OR when user specifically want to use a regular tooltip (via "title" attribute)
-          if (
-            (this._cellAddonOptions.useRegularTooltip && !this._cellAddonOptions?.asyncProcess) ||
-            !this._cellAddonOptions?.formatter
-          ) {
+          if ((this._cellAddonOptions.useRegularTooltip && !this._cellAddonOptions?.asyncProcess) || !this._cellAddonOptions?.formatter) {
             this.renderRegularTooltip(columnDef.formatter, cell, cellValue, columnDef, item);
           } else {
             // when we aren't using regular tooltip and we do have a tooltip formatter, let's render it
@@ -364,9 +355,7 @@ export class SlickCustomTooltip {
       const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
       // prettier-ignore
       const formatterText = isPrimitiveOrHTML(tooltipResult) ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text;
-      return this._grid.sanitizeHtmlString(
-        (formatterText instanceof HTMLElement ? formatterText.textContent : (formatterText as string)) || ''
-      );
+      return this._grid.sanitizeHtmlString((formatterText instanceof HTMLElement ? formatterText.textContent : (formatterText as string)) || '');
     } else if (typeof formatterOrText === 'string') {
       return this._grid.sanitizeHtmlString(formatterOrText);
     }
@@ -391,9 +380,7 @@ export class SlickCustomTooltip {
 
     let tmpTitleElm: HTMLElement | null | undefined;
     const cellElm =
-      this._cellAddonOptions?.useRegularTooltipFromCellTextOnly || !this._mouseTarget
-        ? (this._cellNodeElm as HTMLElement)
-        : this._mouseTarget;
+      this._cellAddonOptions?.useRegularTooltipFromCellTextOnly || !this._mouseTarget ? (this._cellNodeElm as HTMLElement) : this._mouseTarget;
 
     let tooltipText = columnDef?.toolTip ?? '';
     if (!tooltipText) {
@@ -523,8 +510,7 @@ export class SlickCustomTooltip {
       const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
       // first calculate the default (top/left) position
-      let newPositionTop =
-        (cellPosition.top || 0) - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
+      let newPositionTop = (cellPosition.top || 0) - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
       let newPositionLeft = (cellPosition.left || 0) - (this._cellAddonOptions?.offsetRight ?? 0);
 
       // user could explicitely use a "left-align" arrow position, (when user knows his column is completely on the right in the grid)
@@ -557,8 +543,7 @@ export class SlickCustomTooltip {
         position === 'bottom' ||
         ((position === 'auto' || position !== 'top') && calculatedTooltipHeight > calculateAvailableSpace(this._cellNodeElm).top)
       ) {
-        newPositionTop =
-          (cellPosition.top || 0) + (this.gridOptions.rowHeight ?? 0) + (this._cellAddonOptions?.offsetTopBottom ?? 0);
+        newPositionTop = (cellPosition.top || 0) + (this.gridOptions.rowHeight ?? 0) + (this._cellAddonOptions?.offsetTopBottom ?? 0);
         finalTooltipPosition = `bottom-${finalTooltipPosition}`;
         this._tooltipElm.classList.remove('arrow-down');
         this._tooltipElm.classList.add('arrow-up');
@@ -575,10 +560,7 @@ export class SlickCustomTooltip {
           newPositionLeft = mouseElmOffset.left - (this._addonOptions?.offsetArrow ?? 3);
         } else if (finalTooltipPosition.includes('right')) {
           newPositionLeft =
-            mouseElmOffset.left -
-            calculatedTooltipWidth +
-            (this._mouseTarget?.offsetWidth ?? 0) +
-            (this._addonOptions?.offsetArrow ?? 3);
+            mouseElmOffset.left - calculatedTooltipWidth + (this._mouseTarget?.offsetWidth ?? 0) + (this._addonOptions?.offsetArrow ?? 3);
         }
       }
 

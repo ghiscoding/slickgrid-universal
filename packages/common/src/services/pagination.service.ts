@@ -426,11 +426,7 @@ export class PaginationService {
     }
   }
 
-  processOnPageChanged(
-    pageNumber: number,
-    event?: Event | undefined,
-    cursorArgs?: PaginationCursorChangedArgs
-  ): Promise<PaginationMetadata> {
+  processOnPageChanged(pageNumber: number, event?: Event | undefined, cursorArgs?: PaginationCursorChangedArgs): Promise<PaginationMetadata> {
     console.assert(!this.isCursorBased || cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
 
     if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {

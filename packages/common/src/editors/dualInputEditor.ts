@@ -123,8 +123,7 @@ export class DualInputEditor implements Editor {
       containerElm.appendChild(this._rightInput);
     }
 
-    this._bindEventService.bind(this._leftInput, 'keydown', ((event: KeyboardEvent) =>
-      this.handleKeyDown(event, 'leftInput')) as EventListener);
+    this._bindEventService.bind(this._leftInput, 'keydown', ((event: KeyboardEvent) => this.handleKeyDown(event, 'leftInput')) as EventListener);
     this._bindEventService.bind(this._rightInput, 'keydown', ((event: KeyboardEvent) =>
       this.handleKeyDown(event, 'rightInput')) as EventListener);
 
@@ -138,16 +137,8 @@ export class DualInputEditor implements Editor {
 
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
-      this._bindEventService.bind(
-        this._leftInput,
-        'input',
-        this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener
-      );
-      this._bindEventService.bind(
-        this._rightInput,
-        'input',
-        this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener
-      );
+      this._bindEventService.bind(this._leftInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
+      this._bindEventService.bind(this._rightInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
     } else {
       window.setTimeout(() => this._leftInput.select(), 50);
     }
@@ -179,13 +170,7 @@ export class DualInputEditor implements Editor {
       this._isRightValueTouched = true;
     }
     this._lastInputKeyEvent = event;
-    if (
-      event.key === 'ArrowLeft' ||
-      event.key === 'ArrowRight' ||
-      event.key === 'Home' ||
-      event.key === 'End' ||
-      event.key === 'Tab'
-    ) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End' || event.key === 'Tab') {
       event.stopImmediatePropagation();
     }
   }
@@ -269,11 +254,9 @@ export class DualInputEditor implements Editor {
     const leftInputValue = this._leftInput.value;
     const rightInputValue = this._rightInput.value;
     const isLeftInputTypeNumber =
-      this.editorParams.leftInput &&
-      (this.editorParams.leftInput.type === 'float' || this.editorParams.leftInput.type === 'integer');
+      this.editorParams.leftInput && (this.editorParams.leftInput.type === 'float' || this.editorParams.leftInput.type === 'integer');
     const isRightInputTypeNumber =
-      this.editorParams.rightInput &&
-      (this.editorParams.rightInput.type === 'float' || this.editorParams.rightInput.type === 'integer');
+      this.editorParams.rightInput && (this.editorParams.rightInput.type === 'float' || this.editorParams.rightInput.type === 'integer');
     const resultLeftValue = leftInputValue !== '' && isLeftInputTypeNumber ? +this._leftInput.value : leftInputValue || '';
     const resultRightValue = rightInputValue !== '' && isRightInputTypeNumber ? +this._rightInput.value : rightInputValue || '';
     setDeepValue(obj, this._leftFieldName, resultLeftValue);
@@ -330,8 +313,7 @@ export class DualInputEditor implements Editor {
     const rightEditorParams = this.editorParams?.rightInput;
     const lastEventKey = this._lastInputKeyEvent?.key;
     if (
-      ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey) ||
-        (rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey)) &&
+      ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey) || (rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey)) &&
       lastEventKey === 'Enter'
     ) {
       return true;
@@ -474,10 +456,7 @@ export class DualInputEditor implements Editor {
     return '1';
   }
 
-  validate(
-    _targetElm?: any,
-    inputValidation?: { position: 'leftInput' | 'rightInput'; inputValue: any }
-  ): EditorValidationResult {
+  validate(_targetElm?: any, inputValidation?: { position: 'leftInput' | 'rightInput'; inputValue: any }): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();

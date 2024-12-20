@@ -59,12 +59,7 @@ export default class Example27 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid27`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
@@ -118,9 +113,7 @@ export default class Example27 {
         filterable: true,
         filter: {
           model: Filters.multipleSelect,
-          collection: this.jsonData
-            .sort((a, b) => (a.company < b.company ? -1 : 1))
-            .map((m) => ({ value: m.company, label: m.company })),
+          collection: this.jsonData.sort((a, b) => (a.company < b.company ? -1 : 1)).map((m) => ({ value: m.company, label: m.company })),
           filterOptions: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,
@@ -354,9 +347,7 @@ export default class Example27 {
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
       this.tagDataClass =
-        this.metricsItemCount === this.metricsTotalItemCount
-          ? 'tag tag-data is-primary fully-loaded'
-          : 'tag tag-data is-primary partial-load';
+        this.metricsItemCount === this.metricsTotalItemCount ? 'tag tag-data is-primary fully-loaded' : 'tag tag-data is-primary partial-load';
     }
   }
 

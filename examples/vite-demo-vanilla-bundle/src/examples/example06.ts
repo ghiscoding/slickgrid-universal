@@ -184,10 +184,7 @@ export default class Example06 {
         // Note: only 5 are currently supported: Avg, Sum, Min, Max and Count
         // Note 2: also note that Avg Aggregator will automatically give you the "avg", "count" and "sum" so if you need these 3 then simply calling Avg will give you better perf
         // aggregators: [new Aggregators.Sum('size')]
-        aggregators: [
-          new Aggregators.Avg('size'),
-          new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */,
-        ],
+        aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */],
 
         // should we auto-recalc Tree Totals (when using Aggregators) anytime a filter changes
         // it is disabled by default for perf reason, by default it will only calculate totals on first load
@@ -207,8 +204,7 @@ export default class Example06 {
 
   changeAutoApproveParentItem(checked: boolean) {
     this.isAutoApproveParentItemWhenTreeColumnIsValid = checked;
-    this.gridOptions.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid =
-      this.isAutoApproveParentItemWhenTreeColumnIsValid;
+    this.gridOptions.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = this.isAutoApproveParentItemWhenTreeColumnIsValid;
     this.sgb.slickGrid?.setOptions(this.gridOptions);
     this.sgb.filterService.refreshTreeDataFilters();
     return true;

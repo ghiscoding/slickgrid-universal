@@ -60,9 +60,7 @@ export class SlickCellExternalCopyManager {
     this.onCopyCells = new SlickEvent<{ ranges: SlickRange[] }>('onCopyCells');
     this.onCopyCancelled = new SlickEvent<{ ranges: SlickRange[] }>('onCopyCancelled');
     this.onPasteCells = new SlickEvent<{ ranges: SlickRange[] }>('onPasteCells');
-    this.onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any }>(
-      'onBeforePasteCell'
-    );
+    this.onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any }>('onBeforePasteCell');
     this._eventHandler = new SlickEventHandler();
   }
 
@@ -371,9 +369,8 @@ export class SlickCellExternalCopyManager {
               const dt = this._dataWrapper.getDataItem(desty);
 
               if (
-                this._grid
-                  .triggerEvent(this.onBeforePasteCell, { row: desty, cell: destx, dt, column, target: 'grid' })
-                  .getReturnValue() === false
+                this._grid.triggerEvent(this.onBeforePasteCell, { row: desty, cell: destx, dt, column, target: 'grid' }).getReturnValue() ===
+                false
               ) {
                 continue;
               }
@@ -503,9 +500,7 @@ export class SlickCellExternalCopyManager {
               for (let j = range.fromCell; j < range.toCell + 1; j++) {
                 if (columns[j]) {
                   const colName: string =
-                    columns[j].name instanceof HTMLElement
-                      ? stripTags((columns[j].name as HTMLElement).innerHTML)
-                      : (columns[j].name as string);
+                    columns[j].name instanceof HTMLElement ? stripTags((columns[j].name as HTMLElement).innerHTML) : (columns[j].name as string);
                   if (colName.length > 0 && !columns[j].hidden) {
                     clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], i, j, e));
                   }
@@ -547,10 +542,7 @@ export class SlickCellExternalCopyManager {
       ) {
         // CTRL+V or Shift+INS
         const textBoxElm = this.createTextBox('');
-        window.setTimeout(
-          () => this.decodeTabularData(this._grid, textBoxElm),
-          this.addonOptions?.clipboardPasteDelay ?? CLIPBOARD_PASTE_DELAY
-        );
+        window.setTimeout(() => this.decodeTabularData(this._grid, textBoxElm), this.addonOptions?.clipboardPasteDelay ?? CLIPBOARD_PASTE_DELAY);
         return false;
       }
     }

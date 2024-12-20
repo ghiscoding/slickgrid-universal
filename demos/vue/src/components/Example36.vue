@@ -143,10 +143,7 @@ function excelGroupCellParser(totals: SlickGroupTotals, { columnDef, excelFormat
 }
 
 /**  We'll use a generic parser to reuse similar logic for all 3 calculable columns (SubTotal, Taxes, Total) */
-function excelRegularCellParser(
-  _data: any,
-  { columnDef, excelFormatId, dataRowIdx, dataContext }: ExcelCellValueParserArgs<GroceryItem>
-) {
+function excelRegularCellParser(_data: any, { columnDef, excelFormatId, dataRowIdx, dataContext }: ExcelCellValueParserArgs<GroceryItem>) {
   // assuming that we want to calculate: (Price * Qty) => Sub-Total
   const colOffset = !isDataGrouped.value ? 1 : 0; // col offset of 1x because we skipped 1st column OR 0 offset if we use a Group because the Group column replaces the skip
   const rowOffset = 3; // row offset of 3x because: 1x Title, 1x Headers and Excel row starts at 1 => 3
@@ -250,10 +247,7 @@ function defineGrid() {
       formatter: Formatters.multiple,
       groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
       params: {
-        formatters: [
-          (_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty,
-          Formatters.dollar,
-        ] as Formatter[],
+        formatters: [(_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty, Formatters.dollar] as Formatter[],
       },
       excelExportOptions: {
         style: {
@@ -521,12 +515,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -543,9 +532,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <li>The "Completed" column uses a the "onCellClick" event and a formatter to simulate a toggle action</li>
       </ul>
       <li>
-        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag.
-        Note that it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or
-        "TextExportOptions" or the column definition)
+        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that it
+        will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions" or the
+        column definition)
       </li>
       <li>This example also has auto-resize enabled, and we also demo how you can pause the resizer if you wish to</li>
     </ul>
@@ -557,8 +546,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
       target="_blank"
       >Wiki docs</a
     >). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via
-    <code>excelExportOptions.valueParserCallback</code> When Grouped we will also calculate the Group Totals in the UI via Group
-    Formatter and we again use Excel Formula to calculate the Group Totals (sum) dynamically. For Grouping we need to use
+    <code>excelExportOptions.valueParserCallback</code> When Grouped we will also calculate the Group Totals in the UI via Group Formatter and we
+    again use Excel Formula to calculate the Group Totals (sum) dynamically. For Grouping we need to use
     <code>groupTotalsExcelExportOptions.valueParserCallback</code> instead.
   </div>
 
@@ -579,9 +568,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <span class="ms-4 text-bold d-inline-flex align-items-center gap-4px">
         Tax Rate (%):
         <input v-model="taxRate" type="number" class="narrow input" step="0.25" data-test="taxrate" />
-        <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="update-btn" @click="updateTaxRate()">
-          Update
-        </button>
+        <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="update-btn" @click="updateTaxRate()">Update</button>
       </span>
     </div>
   </section>

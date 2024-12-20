@@ -56,8 +56,7 @@ export class MaxAggregator implements Aggregator {
           item.__treeTotals = {};
         }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
-        const parentMax =
-          item.__treeTotals[this._type][this._field] !== null ? parseFloat(item.__treeTotals[this._type][this._field]) : null;
+        const parentMax = item.__treeTotals[this._type][this._field] !== null ? parseFloat(item.__treeTotals[this._type][this._field]) : null;
         if (parentMax !== null && isNumber(parentMax) && (this._max === null || parentMax > this._max)) {
           this._max = parentMax;
         }

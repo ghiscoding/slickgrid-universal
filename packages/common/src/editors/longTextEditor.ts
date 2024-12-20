@@ -159,11 +159,7 @@ export class LongTextEditor implements Editor {
         { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText },
         editorFooterElm
       );
-      const saveBtnElm = createDomElement(
-        'button',
-        { className: 'btn btn-save btn-primary btn-xs', textContent: saveText },
-        editorFooterElm
-      );
+      const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText }, editorFooterElm);
       this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);
       this._bindEventService.bind(saveBtnElm, 'click', this.save.bind(this) as EventListener);
       this.position(this.args?.position as ElementPosition);
@@ -279,8 +275,7 @@ export class LongTextEditor implements Editor {
   isValueChanged(): boolean {
     const elmValue = this._textareaElm.value;
     return (
-      !(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined)) &&
-      elmValue !== this._defaultTextValue
+      !(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined)) && elmValue !== this._defaultTextValue
     );
   }
 
@@ -316,8 +311,7 @@ export class LongTextEditor implements Editor {
     const containerOffset = getOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
-    const calculatedEditorHeight =
-      this._wrapperElm.getBoundingClientRect().height || (this.args.position as ElementPosition).height;
+    const calculatedEditorHeight = this._wrapperElm.getBoundingClientRect().height || (this.args.position as ElementPosition).height;
     const calculatedEditorWidth = this._wrapperElm.getBoundingClientRect().width || (this.args.position as ElementPosition).width;
     const calculatedBodyHeight = document.body.offsetHeight || window.innerHeight; // body height/width might be 0 if so use the window height/width
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;

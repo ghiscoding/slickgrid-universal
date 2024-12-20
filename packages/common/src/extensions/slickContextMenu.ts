@@ -10,12 +10,7 @@ import type {
 } from '../interfaces/index.js';
 import type { SlickEventData, SlickGrid } from '../core/index.js';
 import { DelimiterType, FileType } from '../enums/index.js';
-import {
-  type ExcelExportService,
-  getCellValueFromQueryFieldGetter,
-  getTranslationPrefix,
-  type TextExportService,
-} from '../services/index.js';
+import { type ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, type TextExportService } from '../services/index.js';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
@@ -70,8 +65,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     this._addonOptions = { ...this._defaults, ...contextMenuOptions };
 
     // merge the original commands with the built-in internal commands
-    const originalCommandItems =
-      this._addonOptions && Array.isArray(this._addonOptions.commandItems) ? this._addonOptions.commandItems : [];
+    const originalCommandItems = this._addonOptions && Array.isArray(this._addonOptions.commandItems) ? this._addonOptions.commandItems : [];
     this._addonOptions.commandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
     this._addonOptions = { ...this._addonOptions };
     this.sharedService.gridOptions.contextMenu = this._addonOptions;
@@ -176,9 +170,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // show context menu: Copy (cell value)
     if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
       const commandName = 'copy';
-      if (
-        !originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)
-      ) {
+      if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
           iconCssClass: contextMenu.iconCopyCellValueCommand || 'mdi mdi-content-copy',
           titleKey: `${translationPrefix}COPY`,
@@ -198,11 +190,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
                 return true;
               }
             } else if (columnDef && dataContext.hasOwnProperty(columnDef.field)) {
-              return (
-                dataContext[columnDef.field] !== '' &&
-                dataContext[columnDef.field] !== null &&
-                dataContext[columnDef.field] !== undefined
-              );
+              return dataContext[columnDef.field] !== '' && dataContext[columnDef.field] !== null && dataContext[columnDef.field] !== undefined;
             }
             return false;
           },
@@ -213,9 +201,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // show context menu: Export to file
     if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportCsvCommand) {
       const commandName = 'export-csv';
-      if (
-        !originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)
-      ) {
+      if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
           iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-download',
           titleKey: `${translationPrefix}EXPORT_TO_CSV`,
@@ -224,9 +210,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 51,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: TextExportService = registedServices.find(
-              (service: any) => service.className === 'TextExportService'
-            );
+            const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: DelimiterType.comma,
@@ -245,9 +229,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // show context menu: Export to Excel
     if (gridOptions && gridOptions.enableExcelExport && contextMenu && !contextMenu.hideExportExcelCommand) {
       const commandName = 'export-excel';
-      if (
-        !originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)
-      ) {
+      if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
           iconCssClass: contextMenu.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
           titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
@@ -256,9 +238,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 52,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: ExcelExportService = registedServices.find(
-              (service: any) => service.className === 'ExcelExportService'
-            );
+            const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
             if (excelService?.exportToExcel) {
               excelService.exportToExcel();
             } else {
@@ -274,9 +254,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // show context menu: export to text file as tab delimited
     if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
-      if (
-        !originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)
-      ) {
+      if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
           iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-download',
           titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
@@ -285,9 +263,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 53,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: TextExportService = registedServices.find(
-              (service: any) => service.className === 'TextExportService'
-            );
+            const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: DelimiterType.tab,
@@ -313,11 +289,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
       if (gridOptions && !gridOptions.enableTreeData && contextMenu && !contextMenu.hideClearAllGrouping) {
         const commandName = 'clear-grouping';
-        if (
-          !originalCommandItems.some(
-            (item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName
-          )
-        ) {
+        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push({
             iconCssClass: contextMenu.iconClearGroupingCommand || 'mdi mdi-close',
             titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
@@ -340,11 +312,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       // show context menu: Collapse all Groups
       if (gridOptions && contextMenu && !contextMenu.hideCollapseAllGroups) {
         const commandName = 'collapse-all-groups';
-        if (
-          !originalCommandItems.some(
-            (item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName
-          )
-        ) {
+        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push({
             iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'mdi mdi-arrow-collapse',
             titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
@@ -374,11 +342,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       // show context menu: Expand all Groups
       if (gridOptions && contextMenu && !contextMenu.hideExpandAllGroups) {
         const commandName = 'expand-all-groups';
-        if (
-          !originalCommandItems.some(
-            (item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName
-          )
-        ) {
+        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push({
             iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'mdi mdi-arrow-expand',
             titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,

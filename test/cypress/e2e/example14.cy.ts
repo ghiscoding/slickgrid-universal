@@ -336,11 +336,7 @@ describe('Example 14 - Columns Resize by Content', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu.slick-menu-level-0')
-        .find('.slick-menu-item.slick-menu-item')
-        .contains('Hello')
-        .should('exist')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-0').find('.slick-menu-item.slick-menu-item').contains('Hello').should('exist').click();
 
       cy.get('.slick-submenu').should('have.length', 1);
       cy.get('.slick-header-menu.slick-menu-level-1.dropright') // right align
@@ -349,11 +345,7 @@ describe('Example 14 - Columns Resize by Content', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
 
       // click different sub-menu
-      cy.get('.slick-header-menu.slick-menu-level-0')
-        .find('.slick-menu-item.slick-menu-item')
-        .contains('Feedback')
-        .should('exist')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-0').find('.slick-menu-item.slick-menu-item').contains('Feedback').should('exist').click();
 
       cy.get('.slick-submenu').should('have.length', 1);
       cy.get('.slick-header-menu.slick-menu-level-1')

@@ -171,16 +171,8 @@ export class CustomPager implements BasePaginationComponent {
       'click',
       this.onPreviousPageClicked.bind(this) as EventListener
     );
-    this._bindingEventService.bind(
-      containerElm.querySelector('.icon-seek-next')!,
-      'click',
-      this.onNextPageClicked.bind(this) as EventListener
-    );
-    this._bindingEventService.bind(
-      containerElm.querySelector('.icon-seek-end')!,
-      'click',
-      this.onLastPageClicked.bind(this) as EventListener
-    );
+    this._bindingEventService.bind(containerElm.querySelector('.icon-seek-next')!, 'click', this.onNextPageClicked.bind(this) as EventListener);
+    this._bindingEventService.bind(containerElm.querySelector('.icon-seek-end')!, 'click', this.onLastPageClicked.bind(this) as EventListener);
   }
 
   onFirstPageClicked(event: MouseEvent): void {

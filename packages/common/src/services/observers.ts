@@ -4,10 +4,7 @@
  * @param {any[]} arr - array you want to listen to
  * @param {Function} callback function that will be called on any change inside array
  */
-export function collectionObserver(
-  arr: any[],
-  callback: (outputArray: any[], newValues: any[]) => void
-): null | { disconnect: () => void } {
+export function collectionObserver(arr: any[], callback: (outputArray: any[], newValues: any[]) => void): null | { disconnect: () => void } {
   if (Array.isArray(arr)) {
     // Add more methods here if you want to listen to them
     const mutationMethods = ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'];

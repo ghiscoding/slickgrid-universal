@@ -117,8 +117,7 @@ export default class Example01 {
         gridHeight: 255,
         headerRowHeight: 40,
         columnPicker: {
-          onColumnsChanged: (_e, args) =>
-            console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
+          onColumnsChanged: (_e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
         },
         gridMenu: {
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',

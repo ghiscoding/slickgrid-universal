@@ -62,9 +62,7 @@ function callParentMethod(model: Item) {
       <div class="col-3 detail-label">
         <label>Finish:</label> <span>{{ model.finish?.toISOString() }}</span>
       </div>
-      <div class="col-3 detail-label">
-        <label>Effort Driven:</label> <i :class="model.effortDriven ? 'mdi mdi-check' : ''"></i>
-      </div>
+      <div class="col-3 detail-label"><label>Effort Driven:</label> <i :class="model.effortDriven ? 'mdi mdi-check' : ''"></i></div>
     </div>
 
     <hr />
@@ -73,18 +71,14 @@ function callParentMethod(model: Item) {
       <h4>
         Find out who is the Assignee
         <small>
-          <button class="btn btn-primary btn-sm" data-test="assignee-btn" @click="alertAssignee(model.assignee || '')">
-            Click Me
-          </button>
+          <button class="btn btn-primary btn-sm" data-test="assignee-btn" @click="alertAssignee(model.assignee || '')">Click Me</button>
         </small>
       </h4>
     </div>
 
     <div class="col-sm-4">
       <button class="btn btn-primary btn-danger btn-sm" data-test="delete-btn" @click="deleteRow(model)">Delete Row</button>
-      <button class="btn btn-outline-secondary btn-sm" data-test="parent-btn" @click="callParentMethod(model)">
-        Call Parent Method
-      </button>
+      <button class="btn btn-outline-secondary btn-sm" data-test="parent-btn" @click="callParentMethod(model)">Call Parent Method</button>
     </div>
   </div>
 </template>

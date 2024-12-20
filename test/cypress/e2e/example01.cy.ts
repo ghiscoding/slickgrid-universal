@@ -36,13 +36,7 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should hover over the "Title" column header menu of 1st grid and click on "Sort Descending" command', () => {
-    cy.get('.grid1')
-      .find('.slick-header-column')
-      .first()
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid1').find('.slick-header-column').first().trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
@@ -67,13 +61,7 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should hover over the "Title" column of 2nd grid and click on "Sort Ascending" command', () => {
-    cy.get('.grid2')
-      .find('.slick-header-column')
-      .first()
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid2').find('.slick-header-column').first().trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
@@ -103,17 +91,9 @@ describe('Example 01 - Basic Grids', () => {
       .children('.slick-menu-item:nth-of-type(4)')
       .click();
 
-    cy.get('.grid2')
-      .find('.slick-sort-indicator-asc')
-      .should('have.length', 1)
-      .siblings('.slick-sort-indicator-numbered')
-      .contains('1');
+    cy.get('.grid2').find('.slick-sort-indicator-asc').should('have.length', 1).siblings('.slick-sort-indicator-numbered').contains('1');
 
-    cy.get('.grid2')
-      .find('.slick-sort-indicator-desc')
-      .should('have.length', 1)
-      .siblings('.slick-sort-indicator-numbered')
-      .contains('2');
+    cy.get('.grid2').find('.slick-sort-indicator-desc').should('have.length', 1).siblings('.slick-sort-indicator-numbered').contains('2');
   });
 
   it('should clear sorting of grid2 using the Grid Menu "Clear all Sorting" command', () => {
@@ -128,11 +108,7 @@ describe('Example 01 - Basic Grids', () => {
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-grid-menu.${gridUid}.dropleft`)
-          .find('.slick-menu-item:nth(1)')
-          .find('span')
-          .contains('Clear all Sorting')
-          .click();
+        cy.get(`.slick-grid-menu.${gridUid}.dropleft`).find('.slick-menu-item:nth(1)').find('span').contains('Clear all Sorting').click();
       });
 
     cy.window().then((win) => {
@@ -186,11 +162,7 @@ describe('Example 01 - Basic Grids', () => {
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-grid-menu.${gridUid}.dropright`)
-          .find('.slick-menu-item:nth(0)')
-          .find('span')
-          .contains('Clear all Filters')
-          .click();
+        cy.get(`.slick-grid-menu.${gridUid}.dropright`).find('.slick-menu-item:nth(0)').find('span').contains('Clear all Filters').click();
       });
 
     cy.window().then((win) => {
@@ -556,11 +528,7 @@ describe('Example 01 - Basic Grids', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
 
       // click different sub-menu
-      cy.get('.slick-grid-menu.slick-menu-level-0')
-        .find('.slick-menu-item')
-        .contains('Feedback')
-        .should('exist')
-        .trigger('mouseover'); // mouseover or click should work
+      cy.get('.slick-grid-menu.slick-menu-level-0').find('.slick-menu-item').contains('Feedback').should('exist').trigger('mouseover'); // mouseover or click should work
 
       cy.get('.slick-submenu').should('have.length', 1);
       cy.get('.slick-grid-menu.slick-menu-level-1')

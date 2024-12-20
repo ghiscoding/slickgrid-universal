@@ -167,13 +167,9 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const leftNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const leftUlElm = createDomElement('ul', { className: 'pagination' });
     this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
-    this._seekFirstElm.appendChild(
-      createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' })
-    );
+    this._seekFirstElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' }));
     this._seekPrevElm = createDomElement('li', { className: 'page-item seek-prev' }, leftUlElm);
-    this._seekPrevElm.appendChild(
-      createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
-    );
+    this._seekPrevElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' }));
     leftNavElm.appendChild(leftUlElm);
 
     const pageNumberSectionElm = this.createPageNumberSection();
@@ -182,13 +178,9 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const rightNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const rightUlElm = createDomElement('ul', { className: 'pagination' });
     this._seekNextElm = createDomElement('li', { className: 'page-item seek-next' }, rightUlElm);
-    this._seekNextElm.appendChild(
-      createDomElement('a', { className: 'page-link icon-seek-next', ariaLabel: 'Next Page', role: 'button' })
-    );
+    this._seekNextElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-next', ariaLabel: 'Next Page', role: 'button' }));
     this._seekEndElm = createDomElement('li', { className: 'page-item seek-end' }, rightUlElm);
-    this._seekEndElm.appendChild(
-      createDomElement('a', { className: 'page-link icon-seek-end', ariaLabel: 'Last Page', role: 'button' })
-    );
+    this._seekEndElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-end', ariaLabel: 'Last Page', role: 'button' }));
     rightNavElm.appendChild(rightUlElm);
 
     // append both navs to container
@@ -378,26 +370,14 @@ export class SlickPaginationComponent implements BasePaginationComponent {
 
     const spanPaginationCount = createDomElement('span', { className: 'slick-pagination-count' }, spanContainerElm);
     this._spanInfoFromToElm = createDomElement('span', { className: 'page-info-from-to' }, spanPaginationCount);
-    createDomElement(
-      'span',
-      { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } },
-      this._spanInfoFromToElm
-    );
+    createDomElement('span', { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } }, this._spanInfoFromToElm);
     this._spanInfoFromToElm.appendChild(document.createTextNode('-'));
-    createDomElement(
-      'span',
-      { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } },
-      this._spanInfoFromToElm
-    );
+    createDomElement('span', { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } }, this._spanInfoFromToElm);
     this._spanInfoFromToElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-of', textContent: 'of' }, this._spanInfoFromToElm);
     this._spanInfoFromToElm.appendChild(document.createTextNode(' '));
     const spanInfoTotalElm = createDomElement('span', { className: 'page-info-total-items' }, spanPaginationCount);
-    createDomElement(
-      'span',
-      { className: 'total-items', ariaLabel: 'Total Items', dataset: { test: 'total-items' } },
-      spanInfoTotalElm
-    );
+    createDomElement('span', { className: 'total-items', ariaLabel: 'Total Items', dataset: { test: 'total-items' } }, spanInfoTotalElm);
     spanInfoTotalElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-items', textContent: 'items' }, spanInfoTotalElm);
     spanInfoTotalElm.appendChild(document.createTextNode(' '));

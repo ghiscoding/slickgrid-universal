@@ -111,9 +111,10 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="collapse-all-btn"]').click();
 
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`
-      ).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
+        'have.length',
+        1
+      );
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
         'contain',
         'Duration: 0'
@@ -142,9 +143,10 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="expand-all-btn"]').click();
 
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`
-      ).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+        'have.length',
+        1
+      );
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
         'contain',
         'Duration: 0'
@@ -164,21 +166,24 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get(
         `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`
       ).should('have.length', 1);
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`
-      ).should('contain', 'Duration: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should(
+        'contain',
+        'Duration: 0'
+      );
 
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.collapsed`
-      ).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.collapsed`).should(
+        'have.length',
+        1
+      );
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-title`).should(
         'contain',
         'Effort-Driven: False'
       );
 
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-totals.slick-group-level-0 .slick-cell:nth(2)`
-      ).should('contain', 'Total: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-totals.slick-group-level-0 .slick-cell:nth(2)`).should(
+        'contain',
+        'Total: 0'
+      );
     });
 
     it('should "Group by Duration then Effort-Driven then Percent" and expect fist 2 rows to be expanded, 3rd row to be collapsed then 4th row to have group total', () => {
@@ -187,28 +192,29 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.get(
         `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`
       ).should('have.length', 1);
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`
-      ).should('contain', 'Duration: 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should(
+        'contain',
+        'Duration: 0'
+      );
 
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.expanded`
-      ).should('have.length', 1);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.expanded`).should(
+        'have.length',
+        1
+      );
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-title`).should(
         'contain',
         'Effort-Driven: False'
       );
 
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-level-2 .slick-group-toggle.collapsed`
-      ).should('have.length', 1);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-level-2 .slick-group-title`).contains(
-        /^% Complete: [0-9]/
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-level-2 .slick-group-toggle.collapsed`).should(
+        'have.length',
+        1
       );
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"].slick-group-level-2 .slick-group-title`).contains(/^% Complete: [0-9]/);
 
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`
-      ).contains(/^Avg: [0-9]%$/);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`).contains(
+        /^Avg: [0-9]%$/
+      );
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"].slick-group-totals.slick-group-level-2`)
         .find('.slick-cell:nth(3)')
         .contains('Avg: ');
@@ -310,17 +316,13 @@ describe('Example 02 - Grouping & Aggregators', () => {
     it('should open Column Picker and have a "Custom Label" as the 1st column label', () => {
       cy.get('.grid2').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list li:nth-child(1) .checkbox-label')
-        .should('have.text', 'Custom Label');
+      cy.get('.slick-column-picker').find('.slick-column-picker-list li:nth-child(1) .checkbox-label').should('have.text', 'Custom Label');
     });
 
     it('should open Grid Menu and have a "Custom Label" as the 1st column label', () => {
       cy.get('.grid2').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
-      cy.get(`.slick-grid-menu:visible`)
-        .find('.slick-column-picker-list li:nth-child(1) .checkbox-label')
-        .should('have.text', 'Custom Label');
+      cy.get(`.slick-grid-menu:visible`).find('.slick-column-picker-list li:nth-child(1) .checkbox-label').should('have.text', 'Custom Label');
 
       cy.get('[data-dismiss="slick-grid-menu"]').click();
     });

@@ -188,10 +188,7 @@ function defineGrid() {
       // Note: only 5 are currently supported: Avg, Sum, Min, Max and Count
       // Note 2: also note that Avg Aggregator will automatically give you the "avg", "count" and "sum" so if you need these 3 then simply calling Avg will give you better perf
       // aggregators: [new Aggregators.Sum('size')]
-      aggregators: [
-        new Aggregators.Avg('size'),
-        new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */,
-      ],
+      aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */],
 
       // should we auto-recalc Tree Totals (when using Aggregators) anytime a filter changes
       // it is disabled by default for perf reason, by default it will only calculate totals on first load
@@ -214,8 +211,7 @@ function defineGrid() {
 
 function changeAutoApproveParentItem() {
   isAutoApproveParentItemWhenTreeColumnIsValid.value = !isAutoApproveParentItemWhenTreeColumnIsValid.value;
-  gridOptions.value!.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid =
-    isAutoApproveParentItemWhenTreeColumnIsValid.value;
+  gridOptions.value!.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = isAutoApproveParentItemWhenTreeColumnIsValid.value;
   vueGrid.slickGrid.setOptions(gridOptions.value!);
   vueGrid.filterService.refreshTreeDataFilters();
   return true;
@@ -452,12 +448,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -471,8 +462,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
           "convertHierarchicalViewToParentChildArray()"
         </li>
         <li>
-          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in
-          the next Hierarchical Example
+          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in the next
+          Hierarchical Example
         </li>
       </ul>
     </ul>
@@ -505,11 +496,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-close"></span>
         <span>Clear Filters</span>
       </button>
-      <button
-        class="btn btn-outline-secondary btn-xs btn-icon"
-        title="console.log of the Flat dataset"
-        @click="logFlatStructure()"
-      >
+      <button class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset" @click="logFlatStructure()">
         <span>Log Flat Structure</span>
       </button>
       <button
@@ -532,11 +519,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
           data-test="search-string"
           @input="searchStringChanged(($event.target as HTMLInputElement).value)"
         />
-        <button
-          class="btn btn-sm btn-outline-secondary d-flex align-items-center"
-          data-test="clear-search-string"
-          @click="clearSearch()"
-        >
+        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" data-test="clear-search-string" @click="clearSearch()">
           <span class="icon mdi mdi-close-thick"></span>
         </button>
       </div>
@@ -582,9 +565,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         :checked="isAutoRecalcTotalsOnFilterChange"
         @click="changeAutoRecalcTotalsOnFilterChange()"
       />
-      <span
-        title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default."
-      >
+      <span title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default.">
         auto-recalc Tree Data totals on filter changed
       </span>
     </label>

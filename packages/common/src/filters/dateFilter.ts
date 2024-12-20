@@ -5,15 +5,7 @@ import VanillaCalendar from 'vanilla-calendar-pro';
 import type { IOptions } from 'vanilla-calendar-pro/types';
 
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
-import type {
-  Column,
-  ColumnFilter,
-  Filter,
-  FilterArguments,
-  FilterCallback,
-  GridOption,
-  OperatorDetail,
-} from '../interfaces/index.js';
+import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
@@ -65,9 +57,7 @@ export class DateFilter implements Filter {
 
   /** Getter to know what would be the default operator when none is specified */
   get defaultOperator(): OperatorType | OperatorString {
-    return this.inputFilterType === 'compound'
-      ? OperatorType.empty
-      : this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
+    return this.inputFilterType === 'compound' ? OperatorType.empty : this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
   }
 
   /** Getter for the date picker options */
@@ -203,10 +193,7 @@ export class DateFilter implements Filter {
       pickerValues = Array.isArray(values) ? values[0] : values;
     } else {
       // get the picker values, if it's a string with the "..", we'll do the split else we'll use the array of search terms
-      if (
-        typeof values === 'string' ||
-        (Array.isArray(values) && typeof values[0] === 'string' && (values[0] as string).indexOf('..') > 0)
-      ) {
+      if (typeof values === 'string' || (Array.isArray(values) && typeof values[0] === 'string' && (values[0] as string).indexOf('..') > 0)) {
         pickerValues = typeof values === 'string' ? [values as string] : (values[0] as string).split('..');
       } else if (Array.isArray(values)) {
         pickerValues = values;
@@ -251,11 +238,7 @@ export class DateFilter implements Filter {
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
     // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
-    if (
-      outputFormat &&
-      this.inputFilterType !== 'range' &&
-      (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))
-    ) {
+    if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
     const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
@@ -532,8 +515,7 @@ export class DateFilter implements Filter {
           this.gridOptions.skipCompoundOperatorFilterWithNullInput ??
           this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
         const hasSkipNullValChanged =
-          (skipNullInput && isDefined(this._currentDateOrDates)) ||
-          (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
+          (skipNullInput && isDefined(this._currentDateOrDates)) || (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
 
         if (!skipNullInput || !skipNullInput || hasSkipNullValChanged) {
           this.callback(e, {

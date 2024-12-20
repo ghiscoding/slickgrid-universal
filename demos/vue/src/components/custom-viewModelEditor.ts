@@ -1,11 +1,4 @@
-import {
-  type Column,
-  type Editor,
-  type EditorValidator,
-  type EditorValidationResult,
-  type GridOption,
-  type SlickGrid,
-} from 'slickgrid-vue';
+import { type Column, type Editor, type EditorValidator, type EditorValidationResult, type GridOption, type SlickGrid } from 'slickgrid-vue';
 import { type App, type ComponentPublicInstance, createApp } from 'vue';
 
 interface Props {
@@ -168,8 +161,7 @@ export class CustomVueComponentEditor implements Editor {
 
   isValueChanged() {
     return (
-      !(this.selectedItem.id === '' && (this.defaultId === null || this.defaultId === undefined)) &&
-      this.selectedItem.id !== this.defaultId
+      !(this.selectedItem.id === '' && (this.defaultId === null || this.defaultId === undefined)) && this.selectedItem.id !== this.defaultId
     );
   }
 

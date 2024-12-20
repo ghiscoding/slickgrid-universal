@@ -131,12 +131,7 @@ export function retrieveFormatterOptions(
  * 2- Grid Options "formatterOptions"
  * 3- nothing found, return default value provided
  */
-export function getValueFromParamsOrFormatterOptions(
-  optionName: string,
-  columnDef: Column,
-  gridOptions: GridOption,
-  defaultValue?: any
-): any {
+export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, gridOptions: GridOption, defaultValue?: any): any {
   const params = columnDef && columnDef.params;
 
   if (params && params.hasOwnProperty(optionName)) {
@@ -148,10 +143,7 @@ export function getValueFromParamsOrFormatterOptions(
 }
 
 /** From a FieldType, return the associated date Formatter */
-export function getAssociatedDateFormatter(
-  fieldType: (typeof FieldType)[keyof typeof FieldType],
-  defaultSeparator: string
-): Formatter {
+export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof typeof FieldType], defaultSeparator: string): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {

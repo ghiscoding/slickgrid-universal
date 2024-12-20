@@ -331,12 +331,7 @@ defineExpose({
           <span class="mdi mdi-link-variant"></span> code
         </a>
       </span>
-      <button
-        class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-        type="button"
-        data-test="toggle-subtitle"
-        @click="toggleSubTitle()"
-      >
+      <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
         <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
       </button>
     </h2>
@@ -348,14 +343,11 @@ defineExpose({
         >Wiki docs</a
       >)
       <ul>
-        <li>
-          Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick:
-          false")
-        </li>
+        <li>Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick: false")</li>
         <li>Pass a View/Model as a Template to the Row Detail</li>
         <li>
-          You can use "expandableOverride()" callback to override logic to display expand icon on every row (for example only show
-          it every 2nd row)
+          You can use "expandableOverride()" callback to override logic to display expand icon on every row (for example only show it every 2nd
+          row)
         </li>
       </ul>
     </div>

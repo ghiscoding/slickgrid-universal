@@ -368,12 +368,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -392,9 +387,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <ul>
         <li>Why can't we use Vue Component as Customer Formatter and why do I see a slight delay in loading the data?</li>
         <li>
-          It's totally normal since SlickGrid Formatters only accept strings (synchronously), so we cannot use that (Vue requires
-          at least 1 full cycle to render the element), so we are left with SlickGrid "asyncPostRender" and it works but as the
-          name suggest it's async users might see noticeable delay in loading the data
+          It's totally normal since SlickGrid Formatters only accept strings (synchronously), so we cannot use that (Vue requires at least 1 full
+          cycle to render the element), so we are left with SlickGrid "asyncPostRender" and it works but as the name suggest it's async users
+          might see noticeable delay in loading the data
         </li>
       </ul>
     </ul>
@@ -408,14 +403,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <div class="row">
           <div class="col">
             <label class="radio-inline control-label me-1" for="radioTrue">
-              <input
-                type="radio"
-                name="inlineRadioOptions"
-                id="radioTrue"
-                checked
-                v-model="isAutoEdit"
-                @click="setAutoEdit(true)"
-              />
+              <input type="radio" name="inlineRadioOptions" id="radioTrue" checked v-model="isAutoEdit" @click="setAutoEdit(true)" />
               ON (single-click)
             </label>
             <label class="radio-inline control-label" for="radioFalse">
@@ -445,18 +433,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </span>
       <div class="row" style="margin-top: 5px">
         <div class="col">
-          <button
-            class="btn btn-outline-secondary btn-sm btn-icon"
-            data-test="clear-filters"
-            @click="vueGrid.filterService.clearFilters()"
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" @click="vueGrid.filterService.clearFilters()">
             Clear Filters
           </button>
-          <button
-            class="btn btn-outline-secondary btn-sm btn-icon mx-1"
-            data-test="clear-sorting"
-            @click="vueGrid.sortService.clearSorting()"
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="clear-sorting" @click="vueGrid.sortService.clearSorting()">
             Clear Sorting
           </button>
         </div>
@@ -464,9 +444,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </div>
 
     <div class="col-sm-6">
-      <div class="alert alert-info" v-show="updatedObject">
-        <strong>Updated Item:</strong> {{ JSON.stringify(updatedObject, null, 2) }}
-      </div>
+      <div class="alert alert-info" v-show="updatedObject"><strong>Updated Item:</strong> {{ JSON.stringify(updatedObject, null, 2) }}</div>
       <div class="alert alert-warning" v-show="alertWarning">
         {{ alertWarning }}
       </div>

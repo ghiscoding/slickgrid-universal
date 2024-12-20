@@ -1,9 +1,4 @@
-import {
-  multipleSelect,
-  type MultipleSelectInstance,
-  type MultipleSelectOption,
-  type OptionRowData,
-} from 'multiple-select-vanilla';
+import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
@@ -136,12 +131,7 @@ export class SelectFilter implements Filter {
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
     this.filterContainerElm = args.filterContainerElm;
 
-    if (
-      !this.grid ||
-      !this.columnDef ||
-      !this.columnFilter ||
-      (!this.columnFilter.collection && !this.columnFilter.collectionAsync)
-    ) {
+    if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.collectionAsync)) {
       throw new Error(
         `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.multipleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`
       );
@@ -307,8 +297,7 @@ export class SelectFilter implements Filter {
     // user might want to sort the collection
     if (this.columnFilter && this.columnFilter.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection =
-        this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
+      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
     }
 
     return outputCollection;
@@ -360,12 +349,7 @@ export class SelectFilter implements Filter {
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
-    if (
-      this.collectionOptions?.addBlankEntry &&
-      Array.isArray(collection) &&
-      collection.length > 0 &&
-      collection[0][this.valueName] !== ''
-    ) {
+    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
       collection.unshift(this.createBlankEntry());
     }
 

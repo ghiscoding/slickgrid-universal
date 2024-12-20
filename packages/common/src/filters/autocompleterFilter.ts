@@ -1,14 +1,7 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import {
-  classNameToList,
-  createDomElement,
-  emptyElement,
-  isPrimitiveValue,
-  toKebabCase,
-  toSentenceCase,
-} from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, emptyElement, isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
@@ -304,8 +297,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // user might want to filter certain items of the collection
     if (this.columnFilter && this.columnFilter.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
-      const filterCollectionBy =
-        (this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass) || null;
+      const filterCollectionBy = (this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass) || null;
       outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
     }
 
@@ -323,8 +315,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // user might want to sort the collection
     if (this.columnFilter && this.columnFilter.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection =
-        this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
+      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
     }
 
     return outputCollection;

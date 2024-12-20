@@ -41,18 +41,9 @@ export default class Example16 {
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid16`) as HTMLDivElement;
 
-    this._bindingEventService.bind(
-      gridContainerElm,
-      'onbeforeexporttoexcel',
-      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px')
-    );
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px'));
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
@@ -90,10 +81,7 @@ export default class Example16 {
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(
-                () => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }),
-                this.serverApiDelay
-              );
+              window.setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
             }),
           asyncPostFormatter: this.tooltipTaskAsyncFormatter,
 
@@ -355,8 +343,7 @@ export default class Example16 {
         minWidth: 55,
         maxWidth: 55,
         cssClass: 'justify-center flex',
-        formatter: () =>
-          `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         excludeFromExport: true,
         // customTooltip: {
         //   formatter: () => `Click to open Cell Menu`, // return empty so it won't show any pre-tooltip
@@ -548,14 +535,7 @@ export default class Example16 {
 
   tooltipFormatter(row, cell, _value, column, dataContext, grid) {
     const tooltipTitle = 'Custom Tooltip';
-    const effortDrivenHtml = Formatters.checkmarkMaterial(
-      row,
-      cell,
-      dataContext.effortDriven,
-      column,
-      dataContext,
-      grid
-    ) as HTMLElement;
+    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid) as HTMLElement;
 
     return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
@@ -601,8 +581,7 @@ export default class Example16 {
       iconCount = 5;
     }
     for (let i = 0; i < iconCount; i++) {
-      const iconColor =
-        iconCount === 5 ? 'text-color-success' : iconCount >= 3 ? 'text-color-alt-warning' : 'text-color-se-secondary-light';
+      const iconColor = iconCount === 5 ? 'text-color-success' : iconCount >= 3 ? 'text-color-alt-warning' : 'text-color-se-secondary-light';
       output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;

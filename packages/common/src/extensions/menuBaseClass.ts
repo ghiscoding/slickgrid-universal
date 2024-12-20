@@ -121,10 +121,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // protected functions
   // ------------------
 
-  protected addSubMenuTitleWhenExists(
-    item: ExtractMenuType<ExtendableItemTypes, MenuType>,
-    commandOrOptionMenu: HTMLDivElement
-  ): void {
+  protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement): void {
     if (item !== 'divider' && (item as MenuCommandItem | MenuOptionItem | GridMenuItem)?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
       subMenuTitleElm.className = 'slick-menu-title';
@@ -175,19 +172,13 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   }
 
   /** Add the Command/Options Title when necessary. */
-  protected populateCommandOrOptionTitle(
-    itemType: MenuType,
-    menuOptions: M,
-    commandOrOptionMenuElm: HTMLElement,
-    level: number
-  ): void {
+  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number): void {
     if (menuOptions) {
       const isSubMenu = level > 0;
 
       // return or create a title container
       const menuHeaderElm =
-        this._menuElm?.querySelector(`.slick-${itemType}-header`) ??
-        createDomElement('div', { className: `slick-${itemType}-header` });
+        this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
 
       // user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
@@ -316,8 +307,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       this._bindEventService.bind(
         commandLiElm,
         'click',
-        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
-          itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
+        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
         undefined,
         eventGroupName
       );

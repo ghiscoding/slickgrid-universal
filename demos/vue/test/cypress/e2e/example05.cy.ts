@@ -327,9 +327,7 @@ describe('Example 5 - OData Grid', () => {
       cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
-        expect($span.text()).to.eq(
-          `$count=true&$top=10&$orderby=Name asc&$filter=(Name ge 'Anthony%20Joyner' and Name le 'Ayers%20Hood')`
-        );
+        expect($span.text()).to.eq(`$count=true&$top=10&$orderby=Name asc&$filter=(Name ge 'Anthony%20Joyner' and Name le 'Ayers%20Hood')`);
       });
 
       cy.get('#grid5').find('.slick-row').should('have.length', 3);
@@ -777,9 +775,7 @@ describe('Example 5 - OData Grid', () => {
       cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
-        expect($span.text()).to.eq(
-          `$top=10&$orderby=Category/name asc&$select=id,name,gender,company&$expand=category($select=name)`
-        );
+        expect($span.text()).to.eq(`$top=10&$orderby=Category/name asc&$select=id,name,gender,company&$expand=category($select=name)`);
       });
 
       cy.get('input.search-filter.filter-category_name').type('Silver');

@@ -104,8 +104,7 @@ export class ResizerService {
     this._autoResizeOptions = this.gridOptions?.autoResize ?? { container: 'grid1', bottomPadding: 0 };
 
     if (fixedGridSizes?.width && gridParentContainerElm?.style) {
-      gridParentContainerElm.style.width =
-        typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
+      gridParentContainerElm.style.width = typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
     }
 
     this._gridDomElm = grid.getContainerNode() as HTMLDivElement;
@@ -129,9 +128,7 @@ export class ResizerService {
     // Events
     if (this.gridOptions.autoResize) {
       // resize by content could be called from the outside by other services via pub/sub event
-      this._subscriptions.push(
-        this.pubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true))
-      );
+      this._subscriptions.push(this.pubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true)));
     }
 
     // on double-click resize, should we resize the cell by its cell content?
@@ -215,8 +212,7 @@ export class ResizerService {
 
     // calculate bottom padding
     // if using pagination, we need to add the pagination height to this bottom padding
-    let bottomPadding =
-      autoResizeOptions?.bottomPadding !== undefined ? autoResizeOptions.bottomPadding : DATAGRID_BOTTOM_PADDING;
+    let bottomPadding = autoResizeOptions?.bottomPadding !== undefined ? autoResizeOptions.bottomPadding : DATAGRID_BOTTOM_PADDING;
     if (bottomPadding && gridOptions.enablePagination) {
       bottomPadding += DATAGRID_PAGINATION_HEIGHT;
     }
@@ -408,11 +404,7 @@ export class ResizerService {
       return;
     }
 
-    if (
-      this._hasResizedByContentAtLeastOnce &&
-      this.gridOptions?.resizeByContentOnlyOnFirstLoad &&
-      !recalculateColumnsTotalWidth
-    ) {
+    if (this._hasResizedByContentAtLeastOnce && this.gridOptions?.resizeByContentOnlyOnFirstLoad && !recalculateColumnsTotalWidth) {
       return;
     }
 
@@ -641,22 +633,16 @@ export class ResizerService {
     if (frozenColumnIdx >= 0 && columnIdx <= frozenColumnIdx) {
       const allViewports = Array.from(this._grid.getViewports() as HTMLElement[]);
       if (allViewports) {
-        const leftViewportWidth =
-          allViewports.find((viewport) => viewport.classList.contains('slick-viewport-left'))?.clientWidth ?? 0;
-        const rightViewportWidth =
-          allViewports.find((viewport) => viewport.classList.contains('slick-viewport-right'))?.clientWidth ?? 0;
+        const leftViewportWidth = allViewports.find((viewport) => viewport.classList.contains('slick-viewport-left'))?.clientWidth ?? 0;
+        const rightViewportWidth = allViewports.find((viewport) => viewport.classList.contains('slick-viewport-right'))?.clientWidth ?? 0;
         const viewportFullWidth = leftViewportWidth + rightViewportWidth;
         const leftViewportWidthMinusCurrentCol = leftViewportWidth - (column.width ?? 0);
         const isGreaterThanFullViewportWidth = leftViewportWidthMinusCurrentCol + newColumnWidth > viewportFullWidth;
 
         if (isGreaterThanFullViewportWidth) {
-          const resizeWidthToRemoveFromExceededWidthReadjustment =
-            this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
+          const resizeWidthToRemoveFromExceededWidthReadjustment = this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
           adjustedWidth =
-            leftViewportWidth -
-            leftViewportWidthMinusCurrentCol +
-            rightViewportWidth -
-            resizeWidthToRemoveFromExceededWidthReadjustment;
+            leftViewportWidth - leftViewportWidthMinusCurrentCol + rightViewportWidth - resizeWidthToRemoveFromExceededWidthReadjustment;
         }
       }
     }
@@ -704,11 +690,7 @@ export class ResizerService {
         if (this.gridOptions?.enableFiltering && this.gridOptions.headerRowHeight) {
           headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
         }
-        if (
-          this.gridOptions?.createPreHeaderPanel &&
-          this.gridOptions.showPreHeaderPanel &&
-          this.gridOptions.preHeaderPanelHeight
-        ) {
+        if (this.gridOptions?.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
           headerOffsetTop += this.gridOptions.preHeaderPanelHeight; // header grouping titles row height
         }
         headerOffsetTop += headerTitleRowHeight; // header title row height
@@ -721,9 +703,7 @@ export class ResizerService {
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
         const containerElmOffset = getOffset(this._gridContainerElm);
         let isResizeRequired =
-          headerPos?.top === 0 ||
-          headerOffsetTop - viewportOffsetTop > 2 ||
-          (containerElmOffset.left === 0 && containerElmOffset.top === 0)
+          headerPos?.top === 0 || headerOffsetTop - viewportOffsetTop > 2 || (containerElmOffset.left === 0 && containerElmOffset.top === 0)
             ? true
             : false;
 

@@ -291,37 +291,22 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
-    Grid State & Preset (<a
-      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset"
-      target="_blank"
+    Grid State & Preset (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank"
       >Wiki docs</a
     >)
     <br />
     <ul class="small">
-      <li>
-        Uses Local Storage to persist the Grid State and uses Grid Options "presets" to put the grid back to it's previous state
-      </li>
+      <li>Uses Local Storage to persist the Grid State and uses Grid Options "presets" to put the grid back to it's previous state</li>
       <ul>
-        <li>
-          to demo this, simply change any columns (position reorder, visibility, size, filter, sort), then refresh your browser
-          with (F5)
-        </li>
+        <li>to demo this, simply change any columns (position reorder, visibility, size, filter, sort), then refresh your browser with (F5)</li>
       </ul>
-      <li>
-        Local Storage is just one option, you can use whichever is more convenient for you (Local Storage, Session Storage, DB,
-        ...)
-      </li>
+      <li>Local Storage is just one option, you can use whichever is more convenient for you (Local Storage, Session Storage, DB, ...)</li>
     </ul>
   </div>
 

@@ -16,9 +16,9 @@
 <div class="columns">
   <div class="column is-three-quarters">
     <p class="italic example-details">
-      The grid below uses the optional resize by cell content (with a fixed 1000px for demo purposes), you can click on the 2
-      buttons to see the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by
-      cell content is optional because it requires to read the first thousand rows and do extra width calculation.
+      The grid below uses the optional resize by cell content (with a fixed 1000px for demo purposes), you can click on the 2 buttons to see the
+      difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional because
+      it requires to read the first thousand rows and do extra width calculation.
     </p>
   </div>
 </div>
@@ -29,11 +29,7 @@
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button
-        class.bind="classDefaultResizeButton"
-        onclick.delegate="handleDefaultResizeColumns()"
-        data-test="autosize-columns-btn"
-      >
+      <button class.bind="classDefaultResizeButton" onclick.delegate="handleDefaultResizeColumns()" data-test="autosize-columns-btn">
         <span class="mdi mdi-arrow-expand"></span>
         <span>(default resize) "autosizeColumns"</span>
       </button>

@@ -122,12 +122,7 @@ export class SlickFooterComponent {
 
     // locale text changes
     if (this.customFooterOptions.metricTexts?.lastUpdate) {
-      this._bindingHelper.addElementBinding(
-        this.customFooterOptions.metricTexts,
-        'lastUpdate',
-        'span.text-last-update',
-        'textContent'
-      );
+      this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'lastUpdate', 'span.text-last-update', 'textContent');
     }
     this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'items', 'span.text-items', 'textContent');
     this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'of', 'span.text-of', 'textContent');
@@ -164,8 +159,7 @@ export class SlickFooterComponent {
       this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
       this.customFooterOptions.metricTexts.lastUpdate =
         this.customFooterOptions.metricTexts.lastUpdate || this.locales?.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
-      this.customFooterOptions.metricTexts.items =
-        this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
+      this.customFooterOptions.metricTexts.items = this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
       this.customFooterOptions.metricTexts.itemsSelected =
         this.customFooterOptions.metricTexts.itemsSelected || this.locales?.TEXT_ITEMS_SELECTED || 'TEXT_ITEMS_SELECTED';
       this.customFooterOptions.metricTexts.of = this.customFooterOptions.metricTexts.of || this.locales?.TEXT_OF || 'TEXT_OF';
@@ -217,9 +211,7 @@ export class SlickFooterComponent {
       }
 
       // last update elements
-      rightFooterElm.appendChild(
-        createDomElement('span', { className: 'item-count', textContent: `${this.metrics?.itemCount ?? '0'}` })
-      );
+      rightFooterElm.appendChild(createDomElement('span', { className: 'item-count', textContent: `${this.metrics?.itemCount ?? '0'}` }));
 
       // total count element (unless hidden)
       if (!this.customFooterOptions.hideTotalItemCount) {
@@ -259,9 +251,7 @@ export class SlickFooterComponent {
 
     lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'text-last-update', textContent: lastUpdateText }));
     lastUpdateContainerElm.appendChild(document.createTextNode('\r\n'));
-    lastUpdateContainerElm.appendChild(
-      createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp })
-    );
+    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp }));
     lastUpdateContainerElm.appendChild(
       createDomElement('span', { className: 'separator', textContent: ` ${this.customFooterOptions.metricSeparator || ''} ` })
     );
@@ -276,21 +266,14 @@ export class SlickFooterComponent {
    */
   protected registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption): void {
     const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
-    if (
-      isRowSelectionEnabled &&
-      customFooterOptions &&
-      !customFooterOptions.hideRowSelectionCount &&
-      this._isLeftFooterOriginallyEmpty
-    ) {
+    if (isRowSelectionEnabled && customFooterOptions && !customFooterOptions.hideRowSelectionCount && this._isLeftFooterOriginallyEmpty) {
       this._isLeftFooterDisplayingSelectionRowCount = true;
-      const selectedCountText =
-        customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+      const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
       customFooterOptions.leftFooterText = `0 ${selectedCountText}`;
 
       this._eventHandler.subscribe(this.grid.onSelectedRowsChanged, (_e, args) => {
         this._selectedRowCount = args.rows.length;
-        const selectedCountText2 =
-          customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+        const selectedCountText2 = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
         this.leftFooterText = `${this._selectedRowCount} ${selectedCountText2}`;
       });
     }

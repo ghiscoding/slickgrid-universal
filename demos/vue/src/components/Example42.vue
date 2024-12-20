@@ -209,20 +209,15 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
     You can create a Custom Pagination by passing an Vue Custom Component and it must be an instance of type
-    <code>DefineComponent&lt;any, BasePaginationModel&gt;</code> which must implements all necessary functions. The pagination can
-    be located anywhere on the page (top or bottom). pagination elements).
+    <code>DefineComponent&lt;any, BasePaginationModel&gt;</code> which must implements all necessary functions. The pagination can be located
+    anywhere on the page (top or bottom). pagination elements).
   </div>
 
   <div>

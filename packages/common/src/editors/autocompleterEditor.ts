@@ -1,14 +1,7 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import {
-  classNameToList,
-  createDomElement,
-  isObject,
-  isPrimitiveValue,
-  setDeepValue,
-  toKebabCase,
-} from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants.js';
 import { FieldType } from '../enums/index.js';
@@ -272,8 +265,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
           (collectionItem: any) => {
             if (collectionItem && isObject(state) && collectionItem.hasOwnProperty(this.valueName)) {
               return (
-                collectionItem[this.valueName].toString() ===
-                (state.hasOwnProperty(this.valueName) && (state as any)[this.valueName].toString())
+                collectionItem[this.valueName].toString() === (state.hasOwnProperty(this.valueName) && (state as any)[this.valueName].toString())
               );
             } else if (collectionItem && typeof state === 'string' && collectionItem.hasOwnProperty(this.valueName)) {
               return collectionItem[this.valueName].toString() === state;
@@ -310,8 +302,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       return true;
     }
     const isValueChanged =
-      !(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined)) &&
-      elmValue !== this._defaultTextValue;
+      !(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined)) && elmValue !== this._defaultTextValue;
     return this._lastTriggeredByClearInput || isValueChanged;
   }
 

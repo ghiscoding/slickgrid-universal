@@ -51,12 +51,7 @@ export default class Example26 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid26`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      []
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
@@ -191,13 +186,7 @@ export default class Example26 {
     }
   }
 
-  getCustomerCallback(data: {
-    '@odata.count': number;
-    infiniteScrollBottomHit: boolean;
-    metrics: Metrics;
-    query: string;
-    value: any[];
-  }) {
+  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[] }) {
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
@@ -460,9 +449,7 @@ export default class Example26 {
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
       this.tagDataClass =
-        this.metricsItemCount === this.metricsTotalItemCount
-          ? 'tag tag-data is-primary fully-loaded'
-          : 'tag tag-data is-primary partial-load';
+        this.metricsItemCount === this.metricsTotalItemCount ? 'tag tag-data is-primary fully-loaded' : 'tag tag-data is-primary partial-load';
     }
   }
 

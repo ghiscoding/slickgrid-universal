@@ -135,9 +135,7 @@ export class SliderFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       const lowestValue = +(this.filterOptions?.sliderStartValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE) as number;
-      const highestValue = +(
-        (this.filterOptions as SliderRangeOption)?.sliderEndValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE
-      ) as number;
+      const highestValue = +((this.filterOptions as SliderRangeOption)?.sliderEndValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE) as number;
 
       if (this.sliderType === 'double') {
         if (this._sliderLeftInputElm) {
@@ -408,30 +406,14 @@ export class SliderFilter implements Filter {
 
     // attach events
     this._bindEventService.bind(this._sliderTrackElm, 'click', this.sliderTrackClicked.bind(this) as EventListener);
-    this._bindEventService.bind(
-      this._sliderRightInputElm,
-      ['input', 'change'],
-      this.slideRightInputChanged.bind(this) as EventListener
-    );
-    this._bindEventService.bind(
-      this._sliderRightInputElm,
-      ['change', 'mouseup', 'touchend'],
-      this.onValueChanged.bind(this) as EventListener
-    );
+    this._bindEventService.bind(this._sliderRightInputElm, ['input', 'change'], this.slideRightInputChanged.bind(this) as EventListener);
+    this._bindEventService.bind(this._sliderRightInputElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
 
     if (this.sliderType === 'compound' && this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, ['change'], this.onValueChanged.bind(this) as EventListener);
     } else if (this.sliderType === 'double' && this._sliderLeftInputElm) {
-      this._bindEventService.bind(
-        this._sliderLeftInputElm,
-        ['input', 'change'],
-        this.slideLeftInputChanged.bind(this) as EventListener
-      );
-      this._bindEventService.bind(
-        this._sliderLeftInputElm,
-        ['change', 'mouseup', 'touchend'],
-        this.onValueChanged.bind(this) as EventListener
-      );
+      this._bindEventService.bind(this._sliderLeftInputElm, ['input', 'change'], this.slideLeftInputChanged.bind(this) as EventListener);
+      this._bindEventService.bind(this._sliderLeftInputElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
     }
 
     return this._divContainerFilterElm;
@@ -522,8 +504,7 @@ export class SliderFilter implements Filter {
 
     if (
       this._sliderLeftInputElm &&
-      sliderRightVal - sliderLeftVal <=
-        ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
+      sliderRightVal - sliderLeftVal <= ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
     ) {
       this._sliderLeftInputElm.value = String(
         sliderLeftVal - ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
@@ -553,8 +534,7 @@ export class SliderFilter implements Filter {
     if (
       this.sliderType === 'double' &&
       this._sliderRightInputElm &&
-      sliderRightVal - sliderLeftVal <=
-        ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
+      sliderRightVal - sliderLeftVal <= ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
     ) {
       this._sliderRightInputElm.value = String(
         sliderLeftVal + ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
@@ -573,8 +553,7 @@ export class SliderFilter implements Filter {
     let triggerEvent = true;
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
-    this._sliderRangeContainElm.title =
-      this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
+    this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
 
     //  left or right value should never be above each others
     // override the min value with max when then happens (or the inverse)

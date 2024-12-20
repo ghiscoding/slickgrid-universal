@@ -451,9 +451,7 @@ function defineGrid() {
       const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
         ? editCommand.prevSerializedValue
         : [editCommand.prevSerializedValue];
-      const serializedValues = Array.isArray(editCommand.serializedValue)
-        ? editCommand.serializedValue
-        : [editCommand.serializedValue];
+      const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
       const editorColumns = columnDefinitions.value.filter((col) => col.editor !== undefined);
 
       const modifiedColumns: Column[] = [];
@@ -833,20 +831,15 @@ function renderItemCallbackWith4Corners(item: any): string {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
-    The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons
-    to see the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell
-    content is optional because it requires to read the first thousand rows and do extra width calculation.
+    The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons to see the
+    difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional because it
+    requires to read the first thousand rows and do extra width calculation.
   </div>
 
   <h4 class="ml-3">Container Width (950px)</h4>
@@ -854,32 +847,12 @@ function renderItemCallbackWith4Corners(item: any): string {
   <div class="row">
     <div class="ml-2 mb-2 mr-2">
       <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
-        <label
-          class="btn btn-sm btn-outline-secondary btn-icon"
-          :class="isUsingDefaultResize ? 'active' : ''"
-          data-test="autosize-columns-btn"
-        >
-          <input
-            type="radio"
-            class="btn-check"
-            name="options"
-            :checked="isUsingDefaultResize"
-            @click="handleDefaultResizeColumns()"
-          />
+        <label class="btn btn-sm btn-outline-secondary btn-icon" :class="isUsingDefaultResize ? 'active' : ''" data-test="autosize-columns-btn">
+          <input type="radio" class="btn-check" name="options" :checked="isUsingDefaultResize" @click="handleDefaultResizeColumns()" />
           <i class="mdi mdi-arrow-expand"></i> (default resize) by "autosizeColumns"
         </label>
-        <label
-          class="btn btn-sm btn-outline-secondary btn-icon"
-          :class="isUsingDefaultResize ? '' : 'active'"
-          data-test="resize-by-content-btn"
-        >
-          <input
-            type="radio"
-            class="btn-check"
-            name="options"
-            :checked="!isUsingDefaultResize"
-            @click="handleNewResizeColumns()"
-          />
+        <label class="btn btn-sm btn-outline-secondary btn-icon" :class="isUsingDefaultResize ? '' : 'active'" data-test="resize-by-content-btn">
+          <input type="radio" class="btn-check" name="options" :checked="!isUsingDefaultResize" @click="handleNewResizeColumns()" />
           <i class="mdi mdi-arrow-expand"></i> Resize by Cell Content
         </label>
       </div>
@@ -896,12 +869,7 @@ function renderItemCallbackWith4Corners(item: any): string {
         >
           <span>Change Row Selection</span>
         </button>
-        <button
-          type="button"
-          class="btn btn-outline-secondary btn-icon"
-          data-test="toggle-readonly-btn"
-          @click="toggleGridEditReadonly()"
-        >
+        <button type="button" class="btn btn-outline-secondary btn-icon" data-test="toggle-readonly-btn" @click="toggleGridEditReadonly()">
           <i class="mdi mdi-table-edit"></i> Toggle Readonly
         </button>
         <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn" @click="undoLastEdit()">

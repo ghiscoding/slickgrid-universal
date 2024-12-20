@@ -274,9 +274,7 @@ function displaySpinner(isProcessing: boolean, isError?: boolean) {
   if (isError) {
     status.value = { text: 'ERROR!!!', class: 'alert alert-danger' };
   } else {
-    status.value = isProcessing
-      ? { text: 'processing...', class: 'alert alert-warning' }
-      : { text: 'finished', class: 'alert alert-success' };
+    status.value = isProcessing ? { text: 'processing...', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
   }
 }
 
@@ -467,28 +465,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
     Use it when you need to support Pagination with a GraphQL endpoint (for simple JSON, use a regular grid).
-    <br />Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/graphql" target="_blank"
-      >Wiki docs</a
-    >)
+    <br />Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/graphql" target="_blank">Wiki docs</a>)
     <ul class="small">
-      <li>
-        <span class="red bold">(*) NO DATA SHOWN</span> - just change filters &amp; page and look at the "GraphQL Query" changing
-      </li>
-      <li>
-        Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported
-      </li>
+      <li><span class="red bold">(*) NO DATA SHOWN</span> - just change filters &amp; page and look at the "GraphQL Query" changing</li>
+      <li>Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported</li>
       <li>String column also support operator (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *)</li>
       <ul>
         <li>The (*) can be used as startsWith (ex.: "abc*" => startsWith "abc") / endsWith (ex.: "*xyz" => endsWith "xyz")</li>
@@ -496,19 +483,15 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </ul>
       <li>
         You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
-        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank"
-          >Wiki - Grid Preset</a
-        >
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank">Wiki - Grid Preset</a>
       </li>
       <li>
-        Also note that the column Name has a filter with a custom %% operator that behaves like an SQL LIKE operator supporting %
-        wildcards.
+        Also note that the column Name has a filter with a custom %% operator that behaves like an SQL LIKE operator supporting % wildcards.
       </li>
       <li>
         Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura
-        <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex" target="_blank">_regex</a>)
-        or you could add your own implementation (e.g. see this SO
-        <a href="https://stackoverflow.com/a/37981802/1212166">Question</a>).
+        <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex" target="_blank">_regex</a>) or you could
+        add your own implementation (e.g. see this SO <a href="https://stackoverflow.com/a/37981802/1212166">Question</a>).
       </li>
     </ul>
   </div>
@@ -533,25 +516,13 @@ function vueGridReady(grid: SlickgridVueInstance) {
             <i class="mdi mdi-filter-remove-outline"></i>
             Clear all Filter & Sorts
           </button>
-          <button
-            class="btn btn-outline-secondary btn-sm btn-icon mx-1"
-            data-test="set-dynamic-filter"
-            @click="setFiltersDynamically()"
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-dynamic-filter" @click="setFiltersDynamically()">
             Set Filters Dynamically
           </button>
-          <button
-            class="btn btn-outline-secondary btn-sm btn-icon"
-            data-test="set-dynamic-sorting"
-            @click="setSortingDynamically()"
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
             Set Sorting Dynamically
           </button>
-          <button
-            class="btn btn-outline-secondary btn-sm btn-icon mx-1"
-            data-test="reset-presets"
-            @click="resetToOriginalPresets()"
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="reset-presets" @click="resetToOriginalPresets()">
             Reset Original Presets
           </button>
           <label for="serverdelay" class="ml-4">Server Delay: </label>
@@ -594,14 +565,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
               Offset
             </label>
             <label class="ms-1 radio-inline control-label" for="radioCursor">
-              <input
-                id="radioCursor"
-                type="radio"
-                name="inlineRadioOptions"
-                data-test="cursor"
-                :value="true"
-                @click="setIsWithCursor(true)"
-              />
+              <input id="radioCursor" type="radio" name="inlineRadioOptions" data-test="cursor" :value="true" @click="setIsWithCursor(true)" />
               Cursor
             </label>
           </span>

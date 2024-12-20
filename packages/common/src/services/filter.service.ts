@@ -221,10 +221,7 @@ export class FilterService {
     this.subscribeToOnHeaderRowCellRendered(grid);
   }
 
-  async clearFilterByColumnId(
-    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
-    columnId: number | string
-  ): Promise<boolean> {
+  async clearFilterByColumnId(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, columnId: number | string): Promise<boolean> {
     await this.pubSubService.publish('onBeforeFilterClear', { columnId }, 0);
 
     const isBackendApi = this._gridOptions.backendServiceApi ?? false;
@@ -394,10 +391,7 @@ export class FilterService {
           // in the rare case of an empty search term (it can happen when creating an external grid global search)
           // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
           if (parsedSearchTerms === undefined) {
-            parsedSearchTerms = getParsedSearchTermsByFieldType(
-              searchColFilter.searchTerms,
-              searchColFilter.columnDef.type || FieldType.string
-            ); // parsed term could be a single value or an array of values
+            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, searchColFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
             if (parsedSearchTerms !== undefined) {
               searchColFilter.parsedSearchTerms = parsedSearchTerms;
             }
@@ -437,8 +431,7 @@ export class FilterService {
       fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
 
       // run regex to find possible filter operators unless the user disabled the feature
-      const autoParseInputFilterOperator =
-        columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+      const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
 
       // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
       matches =
@@ -493,11 +486,7 @@ export class FilterService {
    * @param grid - SlickGrid object
    * @returns FilterConditionOption or boolean
    */
-  preProcessFilterConditionOnDataContext(
-    item: any,
-    columnFilter: SearchColumnFilter,
-    grid: SlickGrid
-  ): FilterConditionOption | true {
+  preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGrid): FilterConditionOption | true {
     const columnDef = columnFilter.columnDef;
     const columnId = columnFilter.columnId;
     let columnIndex = grid.getColumnIndex(columnId) as number;
@@ -521,8 +510,7 @@ export class FilterService {
       }
     }
 
-    let queryFieldName =
-      columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || '';
+    let queryFieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || '';
     if (typeof columnDef.queryFieldNameGetterFn === 'function') {
       queryFieldName = columnDef.queryFieldNameGetterFn(item);
     }
@@ -557,8 +545,7 @@ export class FilterService {
     // when using localization (i18n), the user might want to use the formatted output to do its filtering
     if (columnDef?.params?.useFormatterOuputToFilter === true) {
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-      const rowIndex =
-        this._dataView && typeof this._dataView.getIdxById === 'function' ? this._dataView.getIdxById(item[idPropName]) : 0;
+      const rowIndex = this._dataView && typeof this._dataView.getIdxById === 'function' ? this._dataView.getIdxById(item[idPropName]) : 0;
       // prettier-ignore
       const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
       cellValue = stripTags(formattedCellValue as string);
@@ -651,12 +638,7 @@ export class FilterService {
 
             // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
             // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)
-            if (
-              conditionResult &&
-              isNotExcludingChildAndValidateOnlyTreeColumn &&
-              hasChildren &&
-              columnFilter.columnId === treeDataColumnId
-            ) {
+            if (conditionResult && isNotExcludingChildAndValidateOnlyTreeColumn && hasChildren && columnFilter.columnId === treeDataColumnId) {
               filteredParents.set(item[primaryDataId], true);
               break;
             }
@@ -674,11 +656,7 @@ export class FilterService {
             } else {
               // when it's a Parent item AND its Parent isn't valid AND we aren't on the Tree column
               // we'll keep reference of the parent via a Map key/value pair and make its value as False because this Parent item is considered invalid
-              if (
-                hasChildren &&
-                filteredParents.get(item[parentPropName]) !== true &&
-                columnFilter.columnId !== treeDataColumnId
-              ) {
+              if (hasChildren && filteredParents.get(item[parentPropName]) !== true && columnFilter.columnId !== treeDataColumnId) {
                 filteredParents.set(item[primaryDataId], false);
               }
             }
@@ -786,10 +764,7 @@ export class FilterService {
     }
   }
 
-  async onBackendFilterChange(
-    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
-    args: OnSearchChangeEventArgs
-  ): Promise<void> {
+  async onBackendFilterChange(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnSearchChangeEventArgs): Promise<void> {
     const isTriggeringQueryEvent = args?.shouldTriggerQuery;
 
     if (isTriggeringQueryEvent) {
@@ -972,12 +947,7 @@ export class FilterService {
     triggerBackendQuery = true,
     triggerOnSearchChangeEvent = false
   ): Promise<boolean> {
-    if (
-      !this._filtersMetadata ||
-      this._filtersMetadata.length === 0 ||
-      !this._gridOptions ||
-      !this._gridOptions.enableFiltering
-    ) {
+    if (!this._filtersMetadata || this._filtersMetadata.length === 0 || !this._gridOptions || !this._gridOptions.enableFiltering) {
       throw new Error(
         '[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid and "enableFiltering" set in your Grid Options'
       );
@@ -1057,8 +1027,7 @@ export class FilterService {
 
       if (
         Array.isArray(filter.searchTerms) &&
-        (filter.searchTerms.length > 1 ||
-          (filter.searchTerms.length === 1 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')))
+        (filter.searchTerms.length > 1 || (filter.searchTerms.length === 1 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')))
       ) {
         // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
         this._columnFilters[filter.columnId] = {
@@ -1169,10 +1138,7 @@ export class FilterService {
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  protected addFilterTemplateToHeaderRow(
-    args: { column: Column; grid: SlickGrid; node: HTMLElement },
-    isFilterFirstRender = true
-  ): void {
+  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true): void {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
@@ -1228,8 +1194,7 @@ export class FilterService {
   protected callbackSearchEvent(event: Event | undefined, args: FilterCallbackArg): void {
     if (args) {
       const searchTerm = event?.target ? (event.target as HTMLInputElement).value : undefined;
-      const searchTerms =
-        args.searchTerms && Array.isArray(args.searchTerms) ? args.searchTerms : searchTerm ? [searchTerm] : undefined;
+      const searchTerms = args.searchTerms && Array.isArray(args.searchTerms) ? args.searchTerms : searchTerm ? [searchTerm] : undefined;
       const columnDef = args.columnDef || null;
       const columnId = columnDef?.id ?? '';
       const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
@@ -1275,15 +1240,11 @@ export class FilterService {
 
       // event might have been created as a CustomEvent (e.g. CompoundDateFilter), without being a valid SlickEventData,
       // if so we will create a new SlickEventData and merge it with that CustomEvent to avoid having SlickGrid errors
-      const eventData =
-        event && typeof (event as any).isPropagationStopped !== 'function' ? extend({}, new SlickEventData(), event) : event;
+      const eventData = event && typeof (event as any).isPropagationStopped !== 'function' ? extend({}, new SlickEventData(), event) : event;
 
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = (event as KeyboardEvent)?.key;
-      if (
-        this._onSearchChange &&
-        (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))
-      ) {
+      if (this._onSearchChange && (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))) {
         const eventArgs = {
           clearFilterTriggered: args.clearFilterTriggered,
           shouldTriggerQuery: args.shouldTriggerQuery,
@@ -1393,18 +1354,12 @@ export class FilterService {
    */
   protected subscribeToOnHeaderRowCellRendered(grid: SlickGrid): void {
     this._eventHandler.subscribe(grid.onBeforeHeaderRowCellDestroy, (_e, args) => {
-      const colFilter: Filter | undefined = this._filtersMetadata.find(
-        (filter: Filter) => filter.columnDef.id === args.column.id
-      );
+      const colFilter: Filter | undefined = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === args.column.id);
       colFilter?.destroy?.();
     });
   }
 
-  protected updateColumnFilters(
-    searchTerms: SearchTerm[] | undefined,
-    columnDef: any,
-    operator?: OperatorType | OperatorString
-  ): void {
+  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString): void {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
     const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 

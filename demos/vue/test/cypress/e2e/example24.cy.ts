@@ -152,11 +152,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
 
       cy.get('.slick-cell-menu.dropleft').should('exist');
 
-      cy.get('.slick-cell-menu')
-        .find('.slick-menu-option-list')
-        .find('.slick-menu-item.italic')
-        .find('.slick-menu-content')
-        .contains('null');
+      cy.get('.slick-cell-menu').find('.slick-menu-option-list').find('.slick-menu-item.italic').find('.slick-menu-content').contains('null');
     });
 
     it('should open the Action Cell Menu and not expect the Completed "null" option when this Effort is set to True', () => {
@@ -280,18 +276,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should expect the Context Menu to not have the "Aide" menu when there is Completed set to False', () => {
-      const commands = [
-        'Copier',
-        'Exporter vers Excel',
-        '',
-        'Supprimer la ligne',
-        '',
-        'Aide',
-        'Commande désactivée',
-        '',
-        'Exports',
-        'Feedback',
-      ];
+      const commands = ['Copier', 'Exporter vers Excel', '', 'Supprimer la ligne', '', 'Aide', 'Commande désactivée', '', 'Exports', 'Feedback'];
 
       cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Tâche 1');
 
@@ -335,18 +320,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should expect the Context Menu now have the "Aide" menu when Completed is set to False', () => {
-      const commands = [
-        'Copier',
-        'Exporter vers Excel',
-        '',
-        'Supprimer la ligne',
-        '',
-        'Aide',
-        'Commande désactivée',
-        '',
-        'Exports',
-        'Feedback',
-      ];
+      const commands = ['Copier', 'Exporter vers Excel', '', 'Supprimer la ligne', '', 'Aide', 'Commande désactivée', '', 'Exports', 'Feedback'];
 
       cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Tâche 1');
 
@@ -414,11 +388,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
 
       cy.get('.slick-cell-menu.dropleft').should('exist');
 
-      cy.get('.slick-cell-menu')
-        .find('.slick-menu-option-list')
-        .find('.slick-menu-item.italic')
-        .find('.slick-menu-content')
-        .contains('null');
+      cy.get('.slick-cell-menu').find('.slick-menu-option-list').find('.slick-menu-item.italic').find('.slick-menu-content').contains('null');
     });
 
     it('should open the Action Cell Menu and not expect the Completed "null" option when this Effort is set to True', () => {
@@ -438,17 +408,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should click on the "Show Action Commands Only" button and see both list when opening Context Menu', () => {
-      const commands = [
-        'Command 1',
-        'Command 2',
-        '',
-        'Supprimer la ligne',
-        'Aide',
-        'Commande désactivée',
-        '',
-        'Exports',
-        'Feedback',
-      ];
+      const commands = ['Command 1', 'Command 2', '', 'Supprimer la ligne', 'Aide', 'Commande désactivée', '', 'Exports', 'Feedback'];
 
       cy.get('[data-test=cell-menu-commands-and-options-false-button]').click();
 

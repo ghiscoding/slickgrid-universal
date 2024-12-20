@@ -62,18 +62,9 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    this._bindingEventService.bind(
-      gridContainerElm,
-      'onbeforeexporttoexcel',
-      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px')
-    );
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px'));
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
@@ -129,9 +120,7 @@ export default class Example03 {
           getter: 'duration',
           formatter: (g) => `Duration: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           comparer: (a, b) => {
-            return this.durationOrderByCount
-              ? a.count - b.count
-              : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
+            return this.durationOrderByCount ? a.count - b.count : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
           aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
@@ -252,8 +241,7 @@ export default class Example03 {
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
-          formatter: (g) =>
-            `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
           collapsed: false,
         },

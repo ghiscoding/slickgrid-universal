@@ -41,11 +41,7 @@ export function cancellablePromise<T = any>(inputPromise: Promise<T>): Cancellab
  * @param object which could be of type Promise or Observable
  * @param fromServiceName string representing the caller service name and will be used if we throw a casting problem error
  */
-export function castObservableToPromise<T>(
-  rxjs: RxJsFacade,
-  input: Promise<T> | Observable<T> | Subject<T>,
-  fromServiceName = ''
-): Promise<T> {
+export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> | Observable<T> | Subject<T>, fromServiceName = ''): Promise<T> {
   let promise: any = input;
 
   if (input instanceof Promise) {
@@ -56,9 +52,7 @@ export function castObservableToPromise<T>(
   }
 
   if (!(promise instanceof Promise)) {
-    throw new Error(
-      `Something went wrong, Slickgrid-Universal ${fromServiceName} is not able to convert the Observable into a Promise.`
-    );
+    throw new Error(`Something went wrong, Slickgrid-Universal ${fromServiceName} is not able to convert the Observable into a Promise.`);
   }
 
   return promise;
@@ -226,12 +220,7 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
     const item = all[id];
-    if (
-      !(parentPropName in item) ||
-      item[parentPropName] === null ||
-      item[parentPropName] === undefined ||
-      item[parentPropName] === ''
-    ) {
+    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
       roots.push(item);
     } else if (item[parentPropName] in all) {
       const p = all[item[parentPropName]];
@@ -649,10 +638,7 @@ export function objectWithoutKey<T = any>(obj: T, omitKey: keyof T): T {
  * @param separator default to comma ","
  * @returns string
  */
-export function thousandSeparatorFormatted(
-  inputValue: string | number | null,
-  separator: ',' | '_' | '.' | ' ' | '' = ','
-): string | null {
+export function thousandSeparatorFormatted(inputValue: string | number | null, separator: ',' | '_' | '.' | ' ' | '' = ','): string | null {
   if (inputValue !== null && inputValue !== undefined) {
     const stringValue = `${inputValue}`;
     const decimalSplit = stringValue.split('.');

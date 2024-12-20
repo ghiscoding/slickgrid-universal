@@ -1,12 +1,4 @@
-import type {
-  Column,
-  CompositeEditorOption,
-  CssStyleHash,
-  Editor,
-  EditorConstructor,
-  EditorValidationResult,
-  GridOption,
-} from './index.js';
+import type { Column, CompositeEditorOption, CssStyleHash, Editor, EditorConstructor, EditorValidationResult, GridOption } from './index.js';
 import type { SlickGrid } from '../core/index.js';
 
 export interface SlickGridArg {

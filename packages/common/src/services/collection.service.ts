@@ -1,12 +1,6 @@
 import { uniqueArray } from '@slickgrid-universal/utils';
 
-import {
-  FilterMultiplePassType,
-  type FilterMultiplePassTypeString,
-  FieldType,
-  OperatorType,
-  SortDirectionNumber,
-} from './../enums/index.js';
+import { FilterMultiplePassType, type FilterMultiplePassTypeString, FieldType, OperatorType, SortDirectionNumber } from './../enums/index.js';
 import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
@@ -111,9 +105,7 @@ export class CollectionService<T = any> {
           break;
         case OperatorType.contains:
           if (objectProperty) {
-            filteredCollection = collection.filter(
-              (item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) !== -1
-            );
+            filteredCollection = collection.filter((item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) !== -1);
           } else {
             filteredCollection = collection.filter(
               (item: any) => item !== null && item !== undefined && item.toString().indexOf(value.toString()) !== -1
@@ -122,9 +114,7 @@ export class CollectionService<T = any> {
           break;
         case OperatorType.notContains:
           if (objectProperty) {
-            filteredCollection = collection.filter(
-              (item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) === -1
-            );
+            filteredCollection = collection.filter((item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) === -1);
           } else {
             filteredCollection = collection.filter(
               (item: any) => item !== null && item !== undefined && item.toString().indexOf(value.toString()) === -1
@@ -150,12 +140,7 @@ export class CollectionService<T = any> {
    * @param sortByOptions
    * @param enableTranslateLabel
    */
-  sortCollection(
-    columnDef: Column,
-    collection: T[],
-    sortByOptions: CollectionSortBy | CollectionSortBy[],
-    enableTranslateLabel?: boolean
-  ): T[] {
+  sortCollection(columnDef: Column, collection: T[], sortByOptions: CollectionSortBy | CollectionSortBy[], enableTranslateLabel?: boolean): T[] {
     if (enableTranslateLabel && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error(
         '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
@@ -200,12 +185,10 @@ export class CollectionService<T = any> {
 
         sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
           const value1 = enableTranslateLabel
-            ? this.translaterService?.translate &&
-              this.translaterService.translate((dataRow1[objectProperty as keyof T] || ' ') as string)
+            ? this.translaterService?.translate && this.translaterService.translate((dataRow1[objectProperty as keyof T] || ' ') as string)
             : dataRow1[objectProperty as keyof T];
           const value2 = enableTranslateLabel
-            ? this.translaterService?.translate &&
-              this.translaterService.translate((dataRow2[objectProperty as keyof T] || ' ') as string)
+            ? this.translaterService?.translate && this.translaterService.translate((dataRow2[objectProperty as keyof T] || ' ') as string)
             : dataRow2[objectProperty as keyof T];
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {

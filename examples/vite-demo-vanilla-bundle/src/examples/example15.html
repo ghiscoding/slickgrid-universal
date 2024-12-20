@@ -13,9 +13,9 @@
 </h3>
 
 <h6 class="italic content example-details">
-  <span class="has-text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its
-  only purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state
-  before you did the action). Also changing Page Size to 50,000 will also throw which again is for demo purposes.
+  <span class="has-text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only purpose
+  is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state before you did the action).
+  Also changing Page Size to 50,000 will also throw which again is for demo purposes.
 </h6>
 
 <div class="row mb-2">
@@ -28,25 +28,12 @@
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter & Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter-btn" onclick.delegate="setFiltersDynamically()">
-    Set Filters Dynamically
-  </button>
-  <button class="button is-small" data-test="set-dynamic-sorting-btn" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
-  <button
-    class="button is-small ml-1"
-    data-test="add-gender-btn"
-    onclick.delegate="addOtherGender()"
-    disabled.bind="isOtherGenderAdded"
-  >
+  <button class="button is-small" data-test="set-dynamic-filter-btn" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting-btn" onclick.delegate="setSortingDynamically()">Set Sorting Dynamically</button>
+  <button class="button is-small ml-1" data-test="add-gender-btn" onclick.delegate="addOtherGender()" disabled.bind="isOtherGenderAdded">
     Add Other Gender via RxJS
   </button>
-  <button
-    class="button is-small is-danger is-outlined ml-6"
-    data-test="throw-page-error-btn"
-    onclick.delegate="throwPageChangeError()"
-  >
+  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.delegate="throwPageChangeError()">
     <span>Throw Error Going to Last Page... </span>
     <i class="mdi mdi-page-last"></i>
   </button>
@@ -68,14 +55,7 @@
       <label>OData Version: </label>
       <span data-test="radioVersion">
         <label class="radio-inline control-label" for="radio2">
-          <input
-            type="radio"
-            name="inlineRadioOptions"
-            data-test="version2"
-            id="radio2"
-            checked
-            onclick.delegate="setOdataVersion(2)"
-          />
+          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.delegate="setOdataVersion(2)" />
           2
         </label>
         <label class="radio-inline control-label" for="radio4">

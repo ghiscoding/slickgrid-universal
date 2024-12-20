@@ -51,18 +51,7 @@ describe('Example 20 - Frozen Grid', () => {
   });
 
   it('should hide "Title" column from Grid Menu and expect last frozen column to be "% Complete"', () => {
-    const newColumnList = [
-      '#',
-      '% Complete',
-      'Start',
-      'Finish',
-      'Cost | Duration',
-      'Effort Driven',
-      'Title 1',
-      'Title 2',
-      'Title 3',
-      'Title 4',
-    ];
+    const newColumnList = ['#', '% Complete', 'Start', 'Finish', 'Cost | Duration', 'Effort Driven', 'Title 1', 'Title 2', 'Title 3', 'Title 4'];
 
     cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -123,18 +112,7 @@ describe('Example 20 - Frozen Grid', () => {
   });
 
   it('should hide "Title" column from Header Menu and expect last frozen column to be "% Complete"', () => {
-    const newColumnList = [
-      '#',
-      '% Complete',
-      'Start',
-      'Finish',
-      'Cost | Duration',
-      'Effort Driven',
-      'Title 1',
-      'Title 2',
-      'Title 3',
-      'Title 4',
-    ];
+    const newColumnList = ['#', '% Complete', 'Start', 'Finish', 'Cost | Duration', 'Effort Driven', 'Title 1', 'Title 2', 'Title 3', 'Title 4'];
 
     cy.get('#grid20')
       .find('.slick-header-column:nth(1)')

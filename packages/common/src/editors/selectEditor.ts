@@ -1,11 +1,6 @@
 import { emptyElement, setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import {
-  multipleSelect,
-  type MultipleSelectInstance,
-  type MultipleSelectOption,
-  type OptionRowData,
-} from 'multiple-select-vanilla';
+import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 
 import { Constants } from '../constants.js';
 import { FieldType } from './../enums/index.js';
@@ -332,11 +327,7 @@ export class SelectEditor implements Editor {
   }
 
   init(): void {
-    if (
-      !this.columnDef ||
-      !this.columnDef.editor ||
-      (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)
-    ) {
+    if (!this.columnDef || !this.columnDef.editor || (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.
       Also each option should include a value/label pair (or value/labelKey when using Locale).
       For example: { editor: { collection: [{ value: true, label: 'True' },{ value: false, label: 'False'}] } }`);
@@ -417,10 +408,7 @@ export class SelectEditor implements Editor {
 
     if (fieldName !== undefined) {
       // when the provided user defined the column field type as a possible number then try parsing the state value as that
-      if (
-        (fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) &&
-        !isNaN(parseFloat(state))
-      ) {
+      if ((fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) && !isNaN(parseFloat(state))) {
         newValue = parseFloat(state);
       }
 
@@ -452,13 +440,7 @@ export class SelectEditor implements Editor {
   destroy(): void {
     // when autoCommitEdit is enabled, we might end up leaving an editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
-    if (
-      this._msInstance &&
-      this.hasAutoCommitEdit &&
-      this.isValueChanged() &&
-      !this._isDisposingOrCallingSave &&
-      !this.isCompositeEditor
-    ) {
+    if (this._msInstance && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposingOrCallingSave && !this.isCompositeEditor) {
       this._isDisposingOrCallingSave = true; // change destroying flag to avoid infinite loop
       this.save(true);
     }
@@ -549,8 +531,7 @@ export class SelectEditor implements Editor {
 
         // clear select when it's newly disabled and not yet empty
         const currentValues: string | number | Array<string | number> = this.getValue();
-        const isValueBlank =
-          Array.isArray(currentValues) && this.isMultipleSelect ? currentValues?.[0] === '' : currentValues === '';
+        const isValueBlank = Array.isArray(currentValues) && this.isMultipleSelect ? currentValues?.[0] === '' : currentValues === '';
         if (prevIsDisabled !== isDisabled && this.isCompositeEditor && !isValueBlank) {
           this.reset('', true, true);
         }
@@ -696,12 +677,7 @@ export class SelectEditor implements Editor {
     // user might want to sort the collection
     if (this.columnDef && this.columnEditor && this.columnEditor.collectionSortBy) {
       const sortBy = this.columnEditor.collectionSortBy;
-      outputCollection = this._collectionService.sortCollection(
-        this.columnDef,
-        outputCollection,
-        sortBy,
-        this.enableTranslateLabel
-      );
+      outputCollection = this._collectionService.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel);
     }
 
     return outputCollection;
@@ -724,12 +700,7 @@ export class SelectEditor implements Editor {
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
-    if (
-      this.collectionOptions?.addBlankEntry &&
-      Array.isArray(collection) &&
-      collection.length > 0 &&
-      collection[0][this.valueName] !== ''
-    ) {
+    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
       collection.unshift(this.createBlankEntry());
       this.collection.unshift(this.createBlankEntry()); // also make the change on the original collection
     }

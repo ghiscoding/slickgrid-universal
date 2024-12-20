@@ -10,14 +10,7 @@ import type {
   OnScrollEventArgs,
 } from '../interfaces/index.js';
 import { SlickCellRangeDecorator } from './index.js';
-import {
-  SlickEvent,
-  type SlickEventData,
-  SlickEventHandler,
-  type SlickGrid,
-  SlickRange,
-  Utils as SlickUtils,
-} from '../core/index.js';
+import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index.js';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
@@ -209,11 +202,9 @@ export class SlickCellRangeSelector {
 
   protected handleDragOutsideViewport(): void {
     this._xDelayForNextCell =
-      this.addonOptions.maxIntervalToShowNextCell -
-      Math.abs(this._draggingMouseOffset.offset.x) * this.addonOptions.accelerateInterval;
+      this.addonOptions.maxIntervalToShowNextCell - Math.abs(this._draggingMouseOffset.offset.x) * this.addonOptions.accelerateInterval;
     this._yDelayForNextCell =
-      this.addonOptions.maxIntervalToShowNextCell -
-      Math.abs(this._draggingMouseOffset.offset.y) * this.addonOptions.accelerateInterval;
+      this.addonOptions.maxIntervalToShowNextCell - Math.abs(this._draggingMouseOffset.offset.y) * this.addonOptions.accelerateInterval;
 
     // only one timer is created to handle the case that cursor outside the viewport
     if (!this._autoScrollTimerId) {
@@ -295,8 +286,7 @@ export class SlickCellRangeSelector {
       // ... or frozen row(s)
       if (
         this._gridOptions.frozenRow! >= 0 &&
-        ((!this._isBottomCanvas && end.row >= this._gridOptions.frozenRow!) ||
-          (this._isBottomCanvas && end.row < this._gridOptions.frozenRow!))
+        ((!this._isBottomCanvas && end.row >= this._gridOptions.frozenRow!) || (this._isBottomCanvas && end.row < this._gridOptions.frozenRow!))
       ) {
         return;
       }
@@ -377,10 +367,7 @@ export class SlickCellRangeSelector {
     const cell = this._grid.getCellFromEvent(e);
     const activeCell = this._grid.getActiveCell();
 
-    if (
-      !this._grid.getEditorLock().isActive() ||
-      !(activeCell && cell && activeCell.row === cell.row && activeCell.cell === cell.cell)
-    ) {
+    if (!this._grid.getEditorLock().isActive() || !(activeCell && cell && activeCell.row === cell.row && activeCell.cell === cell.cell)) {
       e.stopImmediatePropagation();
       e.preventDefault();
     }

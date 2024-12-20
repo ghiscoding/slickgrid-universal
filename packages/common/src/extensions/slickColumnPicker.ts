@@ -116,13 +116,7 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onClick, this.disposeMenu.bind(this));
 
     // Hide the menu on outside click.
-    this._bindEventService.bind(
-      document.body,
-      'mousedown',
-      this.handleBodyMouseDown.bind(this) as EventListener,
-      undefined,
-      'body'
-    );
+    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, undefined, 'body');
 
     // destroy the picker if user leaves the page
     this._bindEventService.bind(document.body, 'beforeunload', this.dispose.bind(this) as EventListener, undefined, 'body');
@@ -155,13 +149,7 @@ export class SlickColumnPicker {
     addCloseButtomElement.call(this, menuElm);
 
     this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
-    this._bindEventService.bind(
-      menuElm,
-      'click',
-      handleColumnPickerItemClick.bind(this) as EventListener,
-      undefined,
-      'parent-menu'
-    );
+    this._bindEventService.bind(menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
 
     document.body.appendChild(menuElm);
 
@@ -249,10 +237,7 @@ export class SlickColumnPicker {
       this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
       this._menuElm.style.left = `${menuOffsetLeft}px`;
       this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
-      this._menuElm.style.maxHeight = findWidthOrDefault(
-        this.addonOptions.maxHeight,
-        `${window.innerHeight - targetEvent.clientY}px`
-      );
+      this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
       this._menuElm.style.display = 'block';
       this._menuElm.ariaExpanded = 'true';
       this._menuElm.appendChild(this._listElm);

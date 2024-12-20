@@ -24,9 +24,7 @@ describe('Example 03 - Draggable Grouping', () => {
   });
 
   it('should have a draggable dropzone on top of the grid in the top-header section', () => {
-    cy.get('.grid3')
-      .find('.slick-topheader-panel .slick-dropzone:visible')
-      .contains('Drop a column header here to group by the column');
+    cy.get('.grid3').find('.slick-topheader-panel .slick-dropzone:visible').contains('Drop a column header here to group by the column');
   });
 
   it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark to be enabled', () => {
@@ -100,10 +98,7 @@ describe('Example 03 - Draggable Grouping', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="collapse-all-btn"]').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
-        'have.length',
-        1
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 1');
@@ -114,46 +109,25 @@ describe('Example 03 - Draggable Grouping', () => {
 
     it('should click on the group by Duration sort icon and expect data to become sorted as descending order with all rows being expanded', () => {
       cy.get('.mdi-arrow-up:nth(0)').click();
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
     });
 
     it('should collapse all rows and make sure Duration group is sorted in descending order', () => {
       cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 100'
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 99'
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 98'
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 100');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 99');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 98');
     });
 
     it('should click on the group by Duration sort icon and now expect data to become sorted as ascending order with all rows being expanded', () => {
       cy.get('.mdi-arrow-down:nth(0)').click();
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
     });
 
     it('should collapse all rows again and make sure Duration group is sorted in descending order', () => {
       cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
-        'have.length',
-        1
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 1');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 2');
@@ -164,10 +138,7 @@ describe('Example 03 - Draggable Grouping', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="expand-all-btn"]').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task');
@@ -181,22 +152,17 @@ describe('Example 03 - Draggable Grouping', () => {
     it('should "Group by Duration then Effort-Driven" and expect 1st row to be expanded, 2nd row to be expanded and 3rd row to be a regular row', () => {
       cy.get('[data-test="group-duration-effort-btn"]').click();
 
-      cy.get(
-        `[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`
-      ).should('have.length', 1);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+        'have.length',
+        1
+      );
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should(
         'contain',
         'Duration: 0'
       );
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: False'
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-title`).should('contain', 'Effort-Driven: False');
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(2)`).should('contain', '0');
@@ -215,18 +181,16 @@ describe('Example 03 - Draggable Grouping', () => {
     });
 
     it('should expect the grouping to be swapped as well in the grid', () => {
-      cy.get(
-        `[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`
-      ).should('have.length', 1);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+        'have.length',
+        1
+      );
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should(
         'contain',
         'Effort-Driven: False'
       );
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.expanded`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-title`).should('contain', 'Duration: 0');
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task');
@@ -236,18 +200,9 @@ describe('Example 03 - Draggable Grouping', () => {
     it('should use the topheader Toggle All button and expect all groups to now be collapsed', () => {
       cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: False'
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: True'
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: True');
     });
 
     it('should expand all rows with "Expand All" from context menu and expect all the Groups to be expanded and the Toogle All icon to be collapsed', () => {
@@ -289,14 +244,8 @@ describe('Example 03 - Draggable Grouping', () => {
     it('should use the topheader Toggle All button and expect all groups to now be expanded', () => {
       cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: False'
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
         .should('have.css', 'marginLeft')
@@ -309,18 +258,9 @@ describe('Example 03 - Draggable Grouping', () => {
     it('should use the topheader Toggle All button again and expect all groups to now be collapsed', () => {
       cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: False'
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: True'
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: True');
     });
 
     it('should clear all groups with "Clear all Grouping" from context menu and expect all the Groups to be collapsed and the Toogle All icon to be collapsed', () => {
@@ -441,11 +381,7 @@ describe('Example 03 - Draggable Grouping', () => {
         'Action',
       ];
 
-      cy.get('.grid3')
-        .find('.slick-header-column:nth(1) .slick-column-name')
-        .trigger('mouseover')
-        .trigger('contextmenu')
-        .invoke('show');
+      cy.get('.grid3').find('.slick-header-column:nth(1) .slick-column-name').trigger('mouseover').trigger('contextmenu').invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -496,11 +432,7 @@ describe('Example 03 - Draggable Grouping', () => {
         'Action',
       ];
 
-      cy.get('.grid3')
-        .find('.slick-preheader-panel .slick-header-column:nth(1)')
-        .trigger('mouseover')
-        .trigger('contextmenu')
-        .invoke('show');
+      cy.get('.grid3').find('.slick-preheader-panel .slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -535,11 +467,7 @@ describe('Example 03 - Draggable Grouping', () => {
         'Action',
       ];
 
-      cy.get('.grid3')
-        .find('.slick-preheader-panel .slick-header-column:nth(1)')
-        .trigger('mouseover')
-        .trigger('contextmenu')
-        .invoke('show');
+      cy.get('.grid3').find('.slick-preheader-panel .slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -562,17 +490,7 @@ describe('Example 03 - Draggable Grouping', () => {
 
     it('should expect header titles to show again Title/Duration and pre-headers with Common Factor Group header titles', () => {
       const preHeadersWithFactor = ['', 'Common Factor', 'Period', 'Analysis', ''];
-      const titlesWithTitleDuration = [
-        '',
-        'Title',
-        'Duration',
-        'Start',
-        'Finish',
-        'Cost',
-        '% Complete',
-        'Effort-Driven',
-        'Action',
-      ];
+      const titlesWithTitleDuration = ['', 'Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven', 'Action'];
 
       // Column Pre-Headers without Common Factor group
       cy.get('.grid3')

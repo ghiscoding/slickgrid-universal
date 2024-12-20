@@ -1,11 +1,6 @@
 import { Renderer } from '../renderer.js';
 
-export function loadComponent<T = any>(
-  containerElement: HTMLDivElement,
-  htmlView: string,
-  vmModule: any,
-  bindings?: any
-): T | null {
+export function loadComponent<T = any>(containerElement: HTMLDivElement, htmlView: string, vmModule: any, bindings?: any): T | null {
   if (containerElement) {
     const renderer = new Renderer(containerElement);
     const viewModel = renderer.loadViewModel(vmModule);

@@ -129,10 +129,7 @@ export class TreeDataService {
       // we wait for 1 CPU cycle to make sure that we only run it after filtering and grid initialization of tree & grid is over
       if (typeof this._treeDataRecalcHandler === 'function' && this._isOneCpuCyclePassed) {
         window.clearTimeout(this._timer);
-        this._timer = window.setTimeout(
-          () => this._treeDataRecalcHandler?.(),
-          this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0
-        );
+        this._timer = window.setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
       }
     });
   }
@@ -296,8 +293,7 @@ export class TreeDataService {
 
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
     // also note that multi-column is not currently supported with Tree Data and so we'll take only the first Sort column
-    const columnSort =
-      Array.isArray(columnSorts) && columnSorts.length ? columnSorts[0] : this.getInitialSort(columnDefinitions, gridOptions);
+    const columnSort = Array.isArray(columnSorts) && columnSorts.length ? columnSorts[0] : this.getInitialSort(columnDefinitions, gridOptions);
     const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort], true);
 
     // and finally add the sorting icon (this has to be done manually in SlickGrid) to the column we used for the sorting
@@ -313,10 +309,7 @@ export class TreeDataService {
    * @param {Object} gridOptions - grid options
    * @returns {Array<Object>} - tree dataset
    */
-  convertFlatParentChildToTreeDataset<P, T extends P & { [childrenPropName: string]: P[] }>(
-    flatDataset: P[],
-    gridOptions: GridOption
-  ): T[] {
+  convertFlatParentChildToTreeDataset<P, T extends P & { [childrenPropName: string]: P[] }>(flatDataset: P[], gridOptions: GridOption): T[] {
     const dataViewIdIdentifier = gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = gridOptions?.treeDataOptions ?? { columnId: 'id' };
     const treeDataOptions = {
@@ -368,10 +361,7 @@ export class TreeDataService {
    * @param {ColumnSort | ColumnSort[]} [inputColumnSorts] - column sort(s)
    * @returns {Object} sort result object that includes both the flat & tree data arrays
    */
-  sortHierarchicalDataset<T>(
-    hierarchicalDataset: T[],
-    inputColumnSorts?: ColumnSort | ColumnSort[]
-  ): { hierarchical: T[]; flat: any[] } {
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], inputColumnSorts?: ColumnSort | ColumnSort[]): { hierarchical: T[]; flat: any[] } {
     const columnSorts = inputColumnSorts ?? this.getInitialSort(this.sharedService.allColumns, this.gridOptions);
     const finalColumnSorts = Array.isArray(columnSorts) ? columnSorts : [columnSorts];
     return this.sortService.sortHierarchicalDataset(hierarchicalDataset, finalColumnSorts);
@@ -457,11 +447,7 @@ export class TreeDataService {
             // since we always keep 2 arrays as reference (flat + hierarchical)
             // we also need to update the hierarchical array with the new toggle flag
             const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[idPropName] === itemId;
-            const treeItemFound = findItemInTreeStructure(
-              this.sharedService.hierarchicalDataset || [],
-              searchTreePredicate,
-              childrenPropName
-            );
+            const treeItemFound = findItemInTreeStructure(this.sharedService.hierarchicalDataset || [], searchTreePredicate, childrenPropName);
             if (treeItemFound) {
               treeItemFound[collapsedPropName] = isCollapsed;
             }
@@ -502,13 +488,8 @@ export class TreeDataService {
 
       // also update the hierarchical tree item
       if (shouldUpdateTree) {
-        const searchTreePredicate = (treeItemToSearch: any) =>
-          treeItemToSearch[dataViewIdIdentifier] === item[dataViewIdIdentifier];
-        const treeItemFound = findItemInTreeStructure(
-          this.sharedService.hierarchicalDataset || [],
-          searchTreePredicate,
-          childrenPropName
-        );
+        const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[dataViewIdIdentifier] === item[dataViewIdIdentifier];
+        const treeItemFound = findItemInTreeStructure(this.sharedService.hierarchicalDataset || [], searchTreePredicate, childrenPropName);
         if (treeItemFound) {
           treeItemFound[collapsedPropName] = isCollapsed;
         }

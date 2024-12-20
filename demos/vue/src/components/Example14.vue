@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import {
-  type GridOption,
-  type ItemMetadata,
-  type SlickgridVueInstance,
-  type Column,
-  FieldType,
-  SlickgridVue,
-} from 'slickgrid-vue';
+import { type GridOption, type ItemMetadata, type SlickgridVueInstance, type Column, FieldType, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const NB_ITEMS = 500;
@@ -180,12 +173,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -194,8 +182,8 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
     This example demonstrates how to easily span a row over multiple columns & how to group header titles.
     <ul>
       <li>
-        Note that you can add Sort but remember that it will sort by the data which the row contains, even if the data is visually
-        hidden by colspan it will still sort it
+        Note that you can add Sort but remember that it will sort by the data which the row contains, even if the data is visually hidden by
+        colspan it will still sort it
       </li>
     </ul>
   </div>
@@ -216,11 +204,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
   <h3>Grid 2 <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small></h3>
 
   <div class="col-sm 12">
-    <button
-      class="btn btn-outline-secondary btn-sm btn-icon"
-      data-test="remove-frozen-column-button"
-      @click="setFrozenColumns2(-1)"
-    >
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-frozen-column-button" @click="setFrozenColumns2(-1)">
       <i class="mdi mdi-close"></i> Remove Frozen Columns
     </button>
     <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="set-3frozen-columns" @click="setFrozenColumns2(2)">

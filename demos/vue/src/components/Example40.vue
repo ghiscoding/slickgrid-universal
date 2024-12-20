@@ -26,9 +26,7 @@ const shouldResetOnSort = ref(false);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
 
-const getMetricsEndTime = computed(() =>
-  metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''
-);
+const getMetricsEndTime = computed(() => (metrics.value?.endTime ? dateFormatter(metrics.value.endTime, 'DD MMM, h:mm:ss a') : ''));
 
 onBeforeMount(() => {
   defineGrid();
@@ -221,12 +219,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -234,12 +227,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <h6 class="title italic content">
     <ul>
       <li>
-        Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In
-        its simplest form, the more the user scrolls down, the more rows get loaded.
+        Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest
+        form, the more the user scrolls down, the more rows get loaded.
       </li>
       <li>
-        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply
-        because since we keep appending data, we always have to start from index zero (no offset).
+        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we
+        keep appending data, we always have to start from index zero (no offset).
       </li>
     </ul>
   </h6>
@@ -261,9 +254,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
         Set Sorting Dynamically
       </button>
-      <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-duration" @click="groupByDuration()">
-        Group by Duration
-      </button>
+      <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-duration" @click="groupByDuration()">Group by Duration</button>
 
       <label class="ml-4">Reset Dataset <code>onSort</code>:</label>
       <button class="btn btn-outline-secondary btn-sm mx-1" data-test="onsort-on" @click="onSortReset(true)">ON</button>

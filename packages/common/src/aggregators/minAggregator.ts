@@ -56,8 +56,7 @@ export class MinAggregator implements Aggregator {
           item.__treeTotals = {};
         }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
-        const parentMin =
-          item.__treeTotals[this._type][this._field] !== null ? parseFloat(item.__treeTotals[this._type][this._field]) : null;
+        const parentMin = item.__treeTotals[this._type][this._field] !== null ? parseFloat(item.__treeTotals[this._type][this._field]) : null;
         if (parentMin !== null && isNumber(parentMin) && (this._min === null || parentMin < this._min)) {
           this._min = parentMin;
         }

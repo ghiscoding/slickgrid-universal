@@ -365,9 +365,7 @@ function dynamicallyToggledFirstParent() {
   const parentItemFound = vueGrid.dataView.getItemByIdx(childItemFound[parentPropName]);
 
   if (childItemFound && parentItemFound) {
-    vueGrid.treeDataService.dynamicallyToggleItemState([
-      { itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed },
-    ]);
+    vueGrid.treeDataService.dynamicallyToggleItemState([{ itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed }]);
   }
 }
 
@@ -403,12 +401,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -422,8 +415,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
           "convertHierarchicalViewToParentChildArray()"
         </li>
         <li>
-          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in
-          the next Hierarchical Example
+          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in the next
+          Hierarchical Example
         </li>
       </ul>
     </ul>
@@ -431,25 +424,13 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="row" style="margin-bottom: 4px">
     <div class="col-md-12">
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">
-        500 rows
-      </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(25000)">
-        25k rows
-      </button>
-      <button
-        class="btn btn-outline-secondary btn-xs btn-icon"
-        data-test="change-filter-dynamically"
-        @click="dynamicallyChangeFilter()"
-      >
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">500 rows</button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(25000)">25k rows</button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="change-filter-dynamically" @click="dynamicallyChangeFilter()">
         <span class="mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
-      <button
-        class="btn btn-outline-secondary btn-xs btn-icon mx-1"
-        data-test="collapse-all-noevent-btn"
-        @click="collapseAllWithoutEvent()"
-      >
+      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="collapse-all-noevent-btn" @click="collapseAllWithoutEvent()">
         <span class="mdi mdi-arrow-collapse"></span>
         <span>Collapse All (without triggering event)</span>
       </button>
@@ -491,11 +472,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-arrow-expand"></span>
         <span>Expand All</span>
       </button>
-      <button
-        class="btn btn-outline-secondary btn-xs btn-icon"
-        title="console.log of the Flat dataset"
-        @click="logFlatStructure()"
-      >
+      <button class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset" @click="logFlatStructure()">
         <span>Log Flat Structure</span>
       </button>
       <button

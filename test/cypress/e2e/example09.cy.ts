@@ -333,9 +333,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
-        expect($span.text()).to.eq(
-          `$count=true&$top=10&$orderby=Name asc&$filter=(Name ge 'Anthony%20Joyner' and Name le 'Ayers%20Hood')`
-        );
+        expect($span.text()).to.eq(`$count=true&$top=10&$orderby=Name asc&$filter=(Name ge 'Anthony%20Joyner' and Name le 'Ayers%20Hood')`);
       });
 
       cy.get('.grid9').find('.slick-row').should('have.length', 3);
@@ -775,9 +773,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
-        expect($span.text()).to.eq(
-          `$top=10&$orderby=Category/name asc&$select=id,name,gender,company&$expand=category($select=name)`
-        );
+        expect($span.text()).to.eq(`$top=10&$orderby=Category/name asc&$select=id,name,gender,company&$expand=category($select=name)`);
       });
 
       cy.get('input.search-filter.filter-category_name').type('Silver');
@@ -826,12 +822,7 @@ describe('Example 09 - OData Grid', () => {
     });
 
     it('should hide column from header menu and expect grid state change to reflect that', () => {
-      cy.get('.grid9')
-        .find('.slick-header-column:nth(2)')
-        .trigger('mouseover')
-        .children('.slick-header-menu-button')
-        .invoke('show')
-        .click();
+      cy.get('.grid9').find('.slick-header-column:nth(2)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')

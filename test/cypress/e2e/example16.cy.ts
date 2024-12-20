@@ -116,10 +116,7 @@ describe('Example 16 - Regular & Custom Tooltips', () => {
       'not.contain',
       `regular tooltip (from title attribute)\nTask 6 cell value:\n\nThis is a sample task description.\nIt can be multiline\n\nAnother line...`
     );
-    cy.get('.slick-custom-tooltip').should(
-      'contain',
-      `This is a sample task description.\nIt can be multiline\n\nAnother line...`
-    );
+    cy.get('.slick-custom-tooltip').should('contain', `This is a sample task description.\nIt can be multiline\n\nAnother line...`);
 
     cy.get('@desc6-cell').trigger('mouseout');
   });

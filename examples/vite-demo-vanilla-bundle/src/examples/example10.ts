@@ -11,12 +11,7 @@ import {
   SortDirection,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import {
-  GraphqlService,
-  type GraphqlPaginatedResult,
-  type GraphqlServiceApi,
-  type GraphqlServiceOption,
-} from '@slickgrid-universal/graphql';
+import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, type GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
@@ -65,12 +60,7 @@ export default class Example10 {
 
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
     this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     document.body.classList.add('material-theme');
   }

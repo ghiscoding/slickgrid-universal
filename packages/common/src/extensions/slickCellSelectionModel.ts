@@ -175,13 +175,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     const cell = this._grid.getCellFromEvent(e);
     const activeCell = this._grid.getActiveCell();
 
-    if (
-      this._grid.getEditorLock().isActive() &&
-      activeCell &&
-      cell &&
-      activeCell.row === cell.row &&
-      activeCell.cell === cell.cell
-    ) {
+    if (this._grid.getEditorLock().isActive() && activeCell && cell && activeCell.row === cell.row && activeCell.cell === cell.cell) {
       e.stopPropagation();
       return false;
     }

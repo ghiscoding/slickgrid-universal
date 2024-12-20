@@ -121,14 +121,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
     // make sure there's at least something to show before creating the Menu
     if (this._camelPluginName === 'contextMenu') {
-      isColumnOptionAllowed = this.checkIsColumnAllowed(
-        (this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [],
-        columnDef.id
-      );
-      isColumnCommandAllowed = this.checkIsColumnAllowed(
-        (this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [],
-        columnDef.id
-      );
+      isColumnOptionAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [], columnDef.id);
+      isColumnCommandAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [], columnDef.id);
       if (!columnDef || ((!isColumnCommandAllowed || !commandItems.length) && (!isColumnOptionAllowed || !optionItems.length))) {
         this.hideMenu();
         return;
@@ -140,9 +134,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
-      `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
-    );
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`);
 
     // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
     if (bodyMenuElm) {
@@ -166,12 +158,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
     }
 
-    const maxHeight = isNaN(this.addonOptions.maxHeight as any)
-      ? this.addonOptions.maxHeight
-      : `${this.addonOptions.maxHeight ?? 0}px`;
-    const maxWidth = isNaN(this.addonOptions.maxWidth as any)
-      ? this.addonOptions.maxWidth
-      : `${this.addonOptions.maxWidth ?? 0}px`;
+    const maxHeight = isNaN(this.addonOptions.maxHeight as any) ? this.addonOptions.maxHeight : `${this.addonOptions.maxHeight ?? 0}px`;
+    const maxWidth = isNaN(this.addonOptions.maxWidth as any) ? this.addonOptions.maxWidth : `${this.addonOptions.maxWidth ?? 0}px`;
 
     if (maxHeight) {
       menuElm.style.maxHeight = maxHeight as string;
@@ -263,10 +251,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     return menuElm;
   }
 
-  closeMenu(
-    e: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
-    args: { grid: SlickGrid } | MenuFromCellCallbackArgs
-  ): void {
+  closeMenu(e: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: { grid: SlickGrid } | MenuFromCellCallbackArgs): void {
     if (this.menuElement) {
       if (
         typeof this.addonOptions?.onBeforeMenuClose === 'function' &&
@@ -307,10 +292,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         isMenuClicked = true;
       }
 
-      if (
-        (this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented) ||
-        (e.target.className === 'close' && parentMenuElm)
-      ) {
+      if ((this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented) || (e.target.className === 'close' && parentMenuElm)) {
         this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
       }
     }
@@ -328,12 +310,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     level = 0
   ): void {
-    if (
-      (item as never)?.[type] !== undefined &&
-      item !== 'divider' &&
-      !item.disabled &&
-      !(item as MenuCommandItem | MenuOptionItem).divider
-    ) {
+    if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider) {
       if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
         this.repositionSubMenu(item, type, level, e);
         this._lastMenuTypeClicked = type;
