@@ -1,11 +1,14 @@
-<h3 class="title is-3">Example 06 - Tree Data with Aggregators
+<h3 class="title is-3">
+  Example 06 - Tree Data with Aggregators
   <span class="mdi mdi-file-tree mdi-25px"></span>
   <span class="subtitle">(from a Hierarchical Dataset)</span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
-    <a class="is-size-5"
-       target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example06.ts">
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example06.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
@@ -14,8 +17,9 @@
 <h6 class="italic content example-details">
   NOTE #1: The grid will automatically sort in Ascending order with the column that has the Tree Data, you could add a
   "sortByFieldId" in your column "treeData" option if you wish to sort on a different column
-<br/>
-  NOTE #2: Tree Totals are only calculated once and are <b>NOT</b> recalculated while filtering data, if you do want that feature then you will need to enable <code>autoRecalcTotalsOnFilterChange</code> <i>(see checkbox below)</i>
+  <br />
+  NOTE #2: Tree Totals are only calculated once and are <b>NOT</b> recalculated while filtering data, if you do want that feature
+  then you will need to enable <code>autoRecalcTotalsOnFilterChange</code> <i>(see checkbox below)</i>
 </h6>
 <div class="columns">
   <div class="column">
@@ -23,7 +27,12 @@
       <span class="mdi mdi-plus"></span>
       <span>Add New Pop Song</span>
     </button>
-    <button onclick.delegate="deleteFile()" class="button is-small" data-test="remove-item-btn" disabled.bind="isRemoveLastInsertedPopSongDisabled">
+    <button
+      onclick.delegate="deleteFile()"
+      class="button is-small"
+      data-test="remove-item-btn"
+      disabled.bind="isRemoveLastInsertedPopSongDisabled"
+    >
       <span class="mdi mdi-minus"></span>
       <span>Remove Last Inserted Pop Song</span>
     </button>
@@ -42,8 +51,11 @@
     <button onclick.delegate="logFlatStructure()" class="button is-small" title="console.log of the Flat dataset">
       <span>Log Flat Structure</span>
     </button>
-    <button onclick.delegate="logHierarchicalStructure()" class="button is-small"
-            title="console.log of the Hierarchical Tree dataset">
+    <button
+      onclick.delegate="logHierarchicalStructure()"
+      class="button is-small"
+      title="console.log of the Hierarchical Tree dataset"
+    >
       <span>Log Hierarchical Structure</span>
     </button>
     <!-- <button onclick.delegate="displaySumAggregator()" class="button is-small">
@@ -59,8 +71,7 @@
         <div class="field is-expanded">
           <div class="field has-addons">
             <p class="control is-expanded">
-              <input type="text" class="input search is-small" data-test="search-string"
-                     onkeyup.delegate="searchFile(event)">
+              <input type="text" class="input search is-small" data-test="search-string" onkeyup.delegate="searchFile(event)" />
             </p>
             <p class="control pointer" onclick.delegate="clearSearch()" data-test="clear-search-string">
               <a class="button is-static is-small">
@@ -76,35 +87,49 @@
 
 <div>
   <label class="checkbox-inline control-label ml-3" for="excludeChildWhenFiltering">
-    <input type="checkbox" id="excludeChildWhenFiltering" data-test="exclude-child-when-filtering"
-           checked.bind="isExcludingChildWhenFiltering"
-           onclick.delegate="changeExcludeChildWhenFiltering(event.target.checked)">
+    <input
+      type="checkbox"
+      id="excludeChildWhenFiltering"
+      data-test="exclude-child-when-filtering"
+      checked.bind="isExcludingChildWhenFiltering"
+      onclick.delegate="changeExcludeChildWhenFiltering(event.target.checked)"
+    />
     <span
-          title="for example if we filter the word 'pop' and we exclude children, then only the folder 'pop' will show up without any content unless we uncheck this flag">
+      title="for example if we filter the word 'pop' and we exclude children, then only the folder 'pop' will show up without any content unless we uncheck this flag"
+    >
       Exclude Children when Filtering Tree
     </span>
   </label>
   <label class="checkbox-inline control-label ml-3" for="autoApproveParentItem">
-    <input type="checkbox" id="autoApproveParentItem" data-test="auto-approve-parent-item"
-           checked.bind="isAutoApproveParentItemWhenTreeColumnIsValid"
-           onclick.delegate="changeAutoApproveParentItem(event.target.checked)">
+    <input
+      type="checkbox"
+      id="autoApproveParentItem"
+      data-test="auto-approve-parent-item"
+      checked.bind="isAutoApproveParentItemWhenTreeColumnIsValid"
+      onclick.delegate="changeAutoApproveParentItem(event.target.checked)"
+    />
     <span
-          title="for example in this demo if we filter with 'music' and size '> 70' nothing will show up unless we have this flag enabled
+      title="for example in this demo if we filter with 'music' and size '> 70' nothing will show up unless we have this flag enabled
           because none of the files have both criteria at the same time, however the column with the tree 'file' does pass the filter criteria 'music'
-          and with this flag we tell the lib to skip any other filter(s) as soon as the with the tree (file in this demo) passes its own filter criteria">
+          and with this flag we tell the lib to skip any other filter(s) as soon as the with the tree (file in this demo) passes its own filter criteria"
+    >
       Skip Other Filter Criteria when Parent with Tree is valid
     </span>
   </label>
   <label class="checkbox-inline control-label ml-3" for="autoRecalcTotalsOnFilterChange">
-    <input type="checkbox" id="autoRecalcTotalsOnFilterChange" data-test="auto-recalc-totals"
-           checked.bind="isAutoRecalcTotalsOnFilterChange"
-           onclick.delegate="changeAutoRecalcTotalsOnFilterChange(event.target.checked)">
+    <input
+      type="checkbox"
+      id="autoRecalcTotalsOnFilterChange"
+      data-test="auto-recalc-totals"
+      checked.bind="isAutoRecalcTotalsOnFilterChange"
+      onclick.delegate="changeAutoRecalcTotalsOnFilterChange(event.target.checked)"
+    />
     <span
-          title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default.">
+      title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default."
+    >
       auto-recalc Tree Data totals on filter changed
     </span>
   </label>
 </div>
 
-<div class="grid6">
-</div>
+<div class="grid6"></div>
