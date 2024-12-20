@@ -36,7 +36,7 @@ export class GridEventService {
           dataView,
           grid,
           columnDef: column,
-          dataContext: grid.getDataItem(args.row!)
+          dataContext: grid.getDataItem(args.row!),
         };
 
         // finally call up the Slick column.onBeforeEditCells.... function
@@ -65,7 +65,7 @@ export class GridEventService {
           dataView,
           grid,
           columnDef: column,
-          dataContext: grid.getDataItem(args.row)
+          dataContext: grid.getDataItem(args.row),
         };
 
         // finally call up the Slick column.onCellChanges.... function
@@ -93,7 +93,7 @@ export class GridEventService {
           dataView,
           grid,
           columnDef: column,
-          dataContext: grid.getDataItem(args.row)
+          dataContext: grid.getDataItem(args.row),
         };
 
         // finally call up the Slick column.onCellClick.... function

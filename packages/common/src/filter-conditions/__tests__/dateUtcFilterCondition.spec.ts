@@ -92,21 +92,39 @@ describe('dateUtcFilterCondition method', () => {
 
   it('should return True when input value equals the search terms min inclusive value and operator is set to "rangeInclusive"', () => {
     const searchTerms = ['1993-12-01T10:22:33.128Z..1993-12-31T12:27:27.127Z'];
-    const options = { dataKey: '', operator: 'RangeInclusive', cellValue: '1993-12-01T10:22:33.128Z', fieldType: FieldType.dateUtc, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'RangeInclusive',
+      cellValue: '1993-12-01T10:22:33.128Z',
+      fieldType: FieldType.dateUtc,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUtc));
     expect(output).toBe(true);
   });
 
   it('should return False when input value equals the search terms min inclusive value and operator is set to "RangeExclusive"', () => {
     const searchTerms = ['1993-12-01T10:22:33.128Z..1993-12-31T12:27:27.127Z'];
-    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '1993-12-07:50:50.108Z', fieldType: FieldType.dateUtc, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'RangeExclusive',
+      cellValue: '1993-12-07:50:50.108Z',
+      fieldType: FieldType.dateUtc,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUtc));
     expect(output).toBe(false);
   });
 
   it('should return False when any of the 2 search term value is not a valid date', () => {
     const searchTerms = ['1993-12-01T10:22:33.128Z..1993-12-60T12:27:27.127Z'];
-    const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '1993-12-05T10:50:50.108Z', fieldType: FieldType.dateUtc, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'RangeExclusive',
+      cellValue: '1993-12-05T10:50:50.108Z',
+      fieldType: FieldType.dateUtc,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateUtc));
     expect(output).toBe(false);
   });

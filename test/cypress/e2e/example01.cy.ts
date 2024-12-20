@@ -8,7 +8,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.setCookie('serve-mode', 'cypress');
 
     // create a console.log spy for later use
-    cy.window().then(win => cy.spy(win.console, 'log'));
+    cy.window().then((win) => cy.spy(win.console, 'log'));
   });
 
   it('should display Example title', () => {
@@ -19,17 +19,13 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should have 2 grids of size 800 * 225px and 800 * 255px', () => {
-    cy.get('.grid1')
-      .should('have.css', 'width', '800px');
+    cy.get('.grid1').should('have.css', 'width', '800px');
 
-    cy.get('.grid1 > .slickgrid-container')
-      .should($el => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
+    cy.get('.grid1 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
 
-    cy.get('.grid2')
-      .should('have.css', 'width', '800px');
+    cy.get('.grid2').should('have.css', 'width', '800px');
 
-    cy.get('.grid2 > .slickgrid-container')
-      .should($el => expect(parseInt(`${$el.height()}`, 10)).to.eq(255));
+    cy.get('.grid2 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(255));
   });
 
   it('should have exact column titles on 1st grid', () => {
@@ -55,17 +51,13 @@ describe('Example 01 - Basic Grids', () => {
       .should('contain', 'Sort Descending')
       .click();
 
-    cy.get('.slick-row')
-      .first()
-      .children('.slick-cell')
-      .first()
-      .should('contain', 'Task 994');
+    cy.get('.slick-row').first().children('.slick-cell').first().should('contain', 'Task 994');
   });
 
   it('should have a Grid Preset Filter on 1st Title column and expect all rows to be filtered as well', () => {
     cy.get('input.search-filter.filter-title')
       .invoke('val')
-      .then(text => expect(text).to.eq('2'));
+      .then((text) => expect(text).to.eq('2'));
 
     cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 122');
     cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 123');
@@ -125,16 +117,14 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should clear sorting of grid2 using the Grid Menu "Clear all Sorting" command', () => {
-    cy.get('.grid2')
-      .find('button.slick-grid-menu-button')
-      .click();
+    cy.get('.grid2').find('button.slick-grid-menu-button').click();
 
     let gridUid = '';
 
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find(className => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -155,13 +145,9 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should have no sorting in 2nd grid (back to default sorted by id)', () => {
-    cy.get('.grid2')
-      .find('.slick-sort-indicator-asc')
-      .should('have.length', 0);
+    cy.get('.grid2').find('.slick-sort-indicator-asc').should('have.length', 0);
 
-    cy.get('.grid2')
-      .find('.slick-sort-indicator-desc')
-      .should('have.length', 0);
+    cy.get('.grid2').find('.slick-sort-indicator-desc').should('have.length', 0);
 
     cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 23');
     cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 24');
@@ -171,39 +157,32 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should retain sorting in 1st grid', () => {
-    cy.get('.grid1')
-      .find('.slick-sort-indicator-desc')
-      .should('have.length', 1);
+    cy.get('.grid1').find('.slick-sort-indicator-desc').should('have.length', 1);
   });
 
   it('should have Pagination displayed and set on Grid2', () => {
     cy.get('[data-test=page-number-input]')
       .invoke('val')
-      .then(pageNumber => expect(pageNumber).to.eq('2'));
+      .then((pageNumber) => expect(pageNumber).to.eq('2'));
 
-    cy.get('[data-test=page-count]')
-      .contains('55');
+    cy.get('[data-test=page-count]').contains('55');
 
-    cy.get('[data-test=item-from]')
-      .contains('6');
+    cy.get('[data-test=item-from]').contains('6');
 
-    cy.get('[data-test=item-to]')
-      .contains('10');
+    cy.get('[data-test=item-to]').contains('10');
 
-    cy.get('[data-test=total-items]')
-      .contains('271');
+    cy.get('[data-test=total-items]').contains('271');
   });
 
   it('should clear filters of grid2 using the Grid Menu "Clear all Filters" command', () => {
-    cy.get('[data-test="external-gridmenu2-btn"]')
-      .click();
+    cy.get('[data-test="external-gridmenu2-btn"]').click();
 
     let gridUid = '';
 
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find(className => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -224,34 +203,25 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should change Page Number 52 and expect the Pagination to have correct values', () => {
-    cy.get('[data-test=page-number-input]')
-      .clear()
-      .type('52')
-      .type('{enter}');
+    cy.get('[data-test=page-number-input]').clear().type('52').type('{enter}');
 
-    cy.get('[data-test=page-count]')
-      .contains('199');
+    cy.get('[data-test=page-count]').contains('199');
 
-    cy.get('[data-test=item-from]')
-      .contains('256');
+    cy.get('[data-test=item-from]').contains('256');
 
-    cy.get('[data-test=item-to]')
-      .contains('260');
+    cy.get('[data-test=item-to]').contains('260');
 
-    cy.get('[data-test=total-items]')
-      .contains('995');
+    cy.get('[data-test=total-items]').contains('995');
   });
 
   it('should open the Grid Menu on 1st Grid and expect all Columns to be checked', () => {
     let gridUid = '';
-    cy.get('.grid1')
-      .find('button.slick-grid-menu-button')
-      .click({ force: true });
+    cy.get('.grid1').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.grid1 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find(className => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -279,10 +249,7 @@ describe('Example 01 - Basic Grids', () => {
       .should('contain', 'Title')
       .click({ force: true });
 
-    cy.get('.grid1')
-      .get('.slick-grid-menu:visible')
-      .find('.close')
-      .click({ force: true });
+    cy.get('.grid1').get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
     cy.get('.grid1')
       .find('.slick-header-columns')
@@ -292,14 +259,12 @@ describe('Example 01 - Basic Grids', () => {
 
   it('should open the Grid Menu off 2nd Grid and expect all Columns to still be all checked', () => {
     let gridUid = '';
-    cy.get('.grid2')
-      .find('button.slick-grid-menu-button')
-      .click({ force: true });
+    cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find(className => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -327,10 +292,7 @@ describe('Example 01 - Basic Grids', () => {
       .should('contain', '% Complete')
       .click({ force: true });
 
-    cy.get('.grid2')
-      .get('.slick-grid-menu:visible')
-      .find('.close')
-      .click({ force: true });
+    cy.get('.grid2').get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
     cy.get('.grid2')
       .find('.slick-header-columns')
@@ -339,9 +301,7 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should go back to 1st Grid and open its Grid Menu and we expect this grid to stil have the "Title" column be hidden (unchecked)', () => {
-    cy.get('.grid1')
-      .find('button.slick-grid-menu-button')
-      .click({ force: true });
+    cy.get('.grid1').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.slick-column-picker-list')
       .children('li')
@@ -369,10 +329,7 @@ describe('Example 01 - Basic Grids', () => {
       .should('contain', 'Start')
       .click({ force: true });
 
-    cy.get('.grid1')
-      .get('.slick-grid-menu:visible')
-      .find('.close')
-      .click({ force: true });
+    cy.get('.grid1').get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
     cy.get('.grid1')
       .find('.slick-header-columns')
@@ -381,12 +338,7 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should open Column Picker of 2nd Grid and show the "% Complete" column back to visible', () => {
-    cy.get('.grid2')
-      .find('.slick-header-column')
-      .first()
-      .trigger('mouseover')
-      .trigger('contextmenu')
-      .invoke('show');
+    cy.get('.grid2').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
@@ -404,10 +356,7 @@ describe('Example 01 - Basic Grids', () => {
       .should('contain', '% Complete')
       .click();
 
-    cy.get('.grid2')
-      .get('.slick-column-picker:visible')
-      .find('.close')
-      .click();
+    cy.get('.grid2').get('.slick-column-picker:visible').find('.close').click();
 
     cy.get('.grid2')
       .find('.slick-header-columns')
@@ -426,14 +375,12 @@ describe('Example 01 - Basic Grids', () => {
 
   it('should open the Grid Menu on 2nd Grid and expect all Columns to be checked', () => {
     let gridUid = '';
-    cy.get('.grid2')
-      .find('button.slick-grid-menu-button')
-      .click({ force: true });
+    cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find(className => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -462,14 +409,12 @@ describe('Example 01 - Basic Grids', () => {
 
   it('should open the Grid Menu on 1st Grid and also expect to only have 4 columns checked (visible)', () => {
     let gridUid = '';
-    cy.get('.grid1')
-      .find('button.slick-grid-menu-button')
-      .click({ force: true });
+    cy.get('.grid1').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.grid1 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find(className => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -490,34 +435,22 @@ describe('Example 01 - Basic Grids', () => {
           });
       });
 
-    cy.get('.grid1')
-      .get('.slick-grid-menu:visible')
-      .find('.close')
-      .click({ force: true });
+    cy.get('.grid1').get('.slick-grid-menu:visible').find('.close').click({ force: true });
   });
 
   it('should toggle (remove) Pagination from 2nd grid and not expect any Pagination DOM element', () => {
     // sort by Title
-    cy.get('.grid2 .slick-header-column:nth(0)')
-      .click();
+    cy.get('.grid2 .slick-header-column:nth(0)').click();
 
-    cy.get('.grid2 .slick-pagination')
-      .should('exist');
+    cy.get('.grid2 .slick-pagination').should('exist');
 
-    cy.get('[data-text="toggle-pagination-btn"]')
-      .click();
+    cy.get('[data-text="toggle-pagination-btn"]').click();
 
-    cy.get('.grid2 .slick-pagination')
-      .should('not.exist');
+    cy.get('.grid2 .slick-pagination').should('not.exist');
 
-    cy.get('.search-filter.filter-title')
-      .clear()
-      .type('44');
+    cy.get('.search-filter.filter-title').clear().type('44');
 
-    cy.get('.grid2')
-      .find('.slick-viewport-top.slick-viewport-left')
-      .scrollTo('bottom')
-      .wait(10);
+    cy.get('.grid2').find('.slick-viewport-top.slick-viewport-left').scrollTo('bottom').wait(10);
 
     cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 14}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 544');
     cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 644');
@@ -527,36 +460,24 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should toggle again (show) the Pagination and expect to see it show it again below the grid at Page 1', () => {
-    cy.get('[data-text="toggle-pagination-btn"]')
-      .click();
+    cy.get('[data-text="toggle-pagination-btn"]').click();
 
-    cy.get('.grid2 .slick-pagination')
-      .should('exist');
+    cy.get('.grid2 .slick-pagination').should('exist');
 
     cy.get('.grid2')
       .find('[data-test=page-number-input]')
       .invoke('val')
-      .then(pageNumber => expect(pageNumber).to.eq('1'));
+      .then((pageNumber) => expect(pageNumber).to.eq('1'));
 
-    cy.get('.grid2')
-      .find('[data-test=page-number-input]')
-      .click();
+    cy.get('.grid2').find('[data-test=page-number-input]').click();
 
-    cy.get('.grid2')
-      .find('[data-test=page-count]')
-      .contains('4');
+    cy.get('.grid2').find('[data-test=page-count]').contains('4');
 
-    cy.get('.grid2')
-      .find('[data-test=item-from]')
-      .contains('1');
+    cy.get('.grid2').find('[data-test=item-from]').contains('1');
 
-    cy.get('.grid2')
-      .find('[data-test=item-to]')
-      .contains('5');
+    cy.get('.grid2').find('[data-test=item-to]').contains('5');
 
-    cy.get('.grid2')
-      .find('[data-test=total-items]')
-      .contains('19');
+    cy.get('.grid2').find('[data-test=total-items]').contains('19');
   });
 
   describe('Grid Menu with sub-menus', () => {
@@ -565,14 +486,9 @@ describe('Example 01 - Basic Grids', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get('.grid2')
-        .find('button.slick-grid-menu-button')
-        .click({ force: true });
+      cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
-      cy.get('.slick-grid-menu.slick-menu-level-0 .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .contains('Exports')
-        .click();
+      cy.get('.slick-grid-menu.slick-menu-level-0 .slick-menu-command-list').find('.slick-menu-item').contains('Exports').click();
 
       cy.get('.slick-grid-menu.slick-menu-level-1 .slick-menu-command-list')
         .should('exist')
@@ -592,14 +508,9 @@ describe('Example 01 - Basic Grids', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get('.grid2')
-        .find('button.slick-grid-menu-button')
-        .click({ force: true });
+      cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
-      cy.get('.slick-grid-menu.slick-menu-level-0 .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .contains('Exports')
-        .click();
+      cy.get('.slick-grid-menu.slick-menu-level-0 .slick-menu-command-list').find('.slick-menu-item').contains('Exports').click();
 
       cy.get('.slick-grid-menu.slick-menu-level-1 .slick-menu-command-list')
         .should('exist')
@@ -607,16 +518,11 @@ describe('Example 01 - Basic Grids', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
 
       cy.get('.slick-submenu').should('have.length', 1);
-      cy.get('.slick-grid-menu.slick-menu-level-1 .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .contains('Excel')
-        .click();
+      cy.get('.slick-grid-menu.slick-menu-level-1 .slick-menu-command-list').find('.slick-menu-item').contains('Excel').click();
 
       cy.get('.slick-grid-menu.slick-menu-level-2 .slick-menu-command-list').as('subMenuList2');
 
-      cy.get('@subMenuList2')
-        .find('.slick-menu-title')
-        .contains('available formats');
+      cy.get('@subMenuList2').find('.slick-menu-title').contains('available formats');
 
       cy.get('@subMenuList2')
         .should('exist')
@@ -640,13 +546,9 @@ describe('Example 01 - Basic Grids', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get('[data-test="external-gridmenu2-btn"]')
-        .click();
+      cy.get('[data-test="external-gridmenu2-btn"]').click();
 
-      cy.get('.slick-grid-menu.slick-menu-level-0 .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .contains('Export')
-        .click();
+      cy.get('.slick-grid-menu.slick-menu-level-0 .slick-menu-command-list').find('.slick-menu-item').contains('Export').click();
 
       cy.get('.slick-grid-menu.slick-menu-level-1 .slick-menu-command-list')
         .should('exist')

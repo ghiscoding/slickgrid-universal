@@ -1,4 +1,14 @@
-import { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, SlickGlobalEditorLock, SortComparers, Utilities } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  Editors,
+  Enums,
+  Filters,
+  Formatters,
+  GroupTotalFormatters,
+  SlickGlobalEditorLock,
+  SortComparers,
+  Utilities,
+} from '@slickgrid-universal/common';
 import { BindingService } from '@slickgrid-universal/binding';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';

@@ -5,7 +5,7 @@ import { deepCopy } from '@slickgrid-universal/utils';
 
 import type { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
 import { SlickCellMenu } from '../slickCellMenu.js';
-import { BackendUtilityService, SharedService, } from '../../services/index.js';
+import { BackendUtilityService, SharedService } from '../../services/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
@@ -36,19 +36,19 @@ const gridOptionsMock = {
     maxWidth: 'none',
     width: 175,
     onExtensionRegistered: vi.fn(),
-    onCommand: () => { },
-    onAfterMenuShow: () => { },
-    onBeforeMenuShow: () => { },
-    onBeforeMenuClose: () => { },
-    onOptionSelected: () => { },
+    onCommand: () => {},
+    onAfterMenuShow: () => {},
+    onBeforeMenuShow: () => {},
+    onBeforeMenuClose: () => {},
+    onOptionSelected: () => {},
   },
   multiColumnSort: true,
   pagination: {
-    totalItems: 0
+    totalItems: 0,
   },
   showHeaderRow: false,
   showTopPanel: false,
-  showPreHeaderPanel: false
+  showPreHeaderPanel: false,
 } as unknown as GridOption;
 
 const getEditorLockMock = {
@@ -85,56 +85,72 @@ const pubSubServiceStub = {
 } as BasePubSubService;
 
 const commandItemsMock = [
-  { command: 'command2', title: 'Command 2', positionOrder: 62, },
+  { command: 'command2', title: 'Command 2', positionOrder: 62 },
   { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
   { divider: true, command: '', positionOrder: 63 },
   {
-    command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-    iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+    command: 'delete-row',
+    title: 'Delete Row',
+    positionOrder: 64,
+    iconCssClass: 'mdi mdi-close',
+    cssClass: 'red',
+    textCssClass: 'bold',
   },
   'divider',
   {
-    command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', commandItems: [
-      { command: 'command3', title: 'Command 3', positionOrder: 70, },
-      { command: 'command4', title: 'Command 4', positionOrder: 71, },
+    command: 'sub-commands',
+    title: 'Sub Commands',
+    subMenuTitle: 'Sub Command Title',
+    commandItems: [
+      { command: 'command3', title: 'Command 3', positionOrder: 70 },
+      { command: 'command4', title: 'Command 4', positionOrder: 71 },
       {
-        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
-          { command: 'command5', title: 'Command 5', positionOrder: 72, },
-        ]
-      }
-    ]
+        command: 'more-sub-commands',
+        title: 'More Sub Commands',
+        subMenuTitle: 'Sub Command Title 2',
+        subMenuTitleCssClass: 'text-color-warning',
+        commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
+      },
+    ],
   },
   {
-    command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
-      { command: 'command33', title: 'Command 33', positionOrder: 70, },
-    ]
-  }
+    command: 'sub-commands2',
+    title: 'Sub Commands 2',
+    commandItems: [{ command: 'command33', title: 'Command 33', positionOrder: 70 }],
+  },
 ] as MenuCommandItem[];
 const optionItemsMock = [
-  { option: 'option2', title: 'Option 2', positionOrder: 62, },
+  { option: 'option2', title: 'Option 2', positionOrder: 62 },
   { option: 'option1', title: 'Option 1', cssClass: 'purple', positionOrder: 61 },
   { divider: true, option: '', positionOrder: 63 },
   {
-    option: 'delete-row', title: 'Delete Row', positionOrder: 64,
-    iconCssClass: 'mdi mdi-checked', cssClass: 'sky', textCssClass: 'underline',
+    option: 'delete-row',
+    title: 'Delete Row',
+    positionOrder: 64,
+    iconCssClass: 'mdi mdi-checked',
+    cssClass: 'sky',
+    textCssClass: 'underline',
   },
   'divider',
   {
-    option: 'sub-options', title: 'Sub Options', subMenuTitle: 'Sub Title', optionItems: [
-      { option: 'option3', title: 'Option 3', positionOrder: 70, },
-      { option: 'option4', title: 'Option 4', positionOrder: 71, },
-    ]
-  }
+    option: 'sub-options',
+    title: 'Sub Options',
+    subMenuTitle: 'Sub Title',
+    optionItems: [
+      { option: 'option3', title: 'Option 3', positionOrder: 70 },
+      { option: 'option4', title: 'Option 4', positionOrder: 71 },
+    ],
+  },
 ] as MenuOptionItem[];
 const cellMenuMockWithCommands = { commandItems: deepCopy(commandItemsMock) } as CellMenu;
 const cellMenuMockWithOptions = { optionItems: deepCopy(optionItemsMock) } as CellMenu;
 
 const columnsMock: Column[] = [
-  { id: 'firstName', field: 'firstName', name: 'First Name', width: 100, },
+  { id: 'firstName', field: 'firstName', name: 'First Name', width: 100 },
   { id: 'lastName', field: 'lastName', name: 'Last Name', width: 75, nameKey: 'LAST_NAME', sortable: true, filterable: true },
-  { id: 'age', field: 'age', name: 'Age', width: 50, },
-  { id: 'action', field: 'action', name: 'Action', width: 50, cellMenu: cellMenuMockWithCommands, },
-  { id: 'action2', field: 'action2', name: 'Action2', width: 50, cellMenu: cellMenuMockWithOptions, },
+  { id: 'age', field: 'age', name: 'Age', width: 50 },
+  { id: 'action', field: 'action', name: 'Action', width: 50, cellMenu: cellMenuMockWithCommands },
+  { id: 'action2', field: 'action2', name: 'Action2', width: 50, cellMenu: cellMenuMockWithOptions },
 ];
 
 describe('CellMenu Plugin', () => {
@@ -171,12 +187,12 @@ describe('CellMenu Plugin', () => {
     plugin.init();
 
     expect(plugin.addonOptions).toEqual({
-      autoAdjustDrop: true,     // dropup/dropdown
-      autoAlignSide: true,      // left/right
+      autoAdjustDrop: true, // dropup/dropdown
+      autoAlignSide: true, // left/right
       autoAdjustDropOffset: 0,
       autoAlignSideOffset: 0,
       hideMenuOnScroll: true,
-      subMenuOpenByEvent: 'mouseover'
+      subMenuOpenByEvent: 'mouseover',
     });
   });
 
@@ -228,7 +244,7 @@ describe('CellMenu Plugin', () => {
     it('should open the Cell Menu and then expect it to hide when clicking anywhere in the DOM body', () => {
       const hideMenuSpy = vi.spyOn(plugin, 'hideMenu');
       const closeSpy = vi.spyOn(plugin, 'closeMenu');
-      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true });
 
       plugin.dispose();
       plugin.init();
@@ -287,7 +303,7 @@ describe('CellMenu Plugin', () => {
       it('should not populate and automatically return when the Cell Menu item "commandItems" array of the cell menu is undefined', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu!.commandItems) = undefined as any;
+        columnsMock[3].cellMenu!.commandItems = undefined as any;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -309,8 +325,9 @@ describe('CellMenu Plugin', () => {
         expect(cellMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
-        expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropleft" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
+        expect(removeExtraSpaces(document.body.innerHTML)).toBe(
+          removeExtraSpaces(
+            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropleft" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
             <div class="slick-menu-command-list" role="menu">
               <div class="slick-command-header no-title with-close">
                 <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
@@ -340,7 +357,9 @@ describe('CellMenu Plugin', () => {
                 <span class="sub-item-chevron">⮞</span>
               </li>
           </div>
-        </div>`));
+        </div>`
+          )
+        );
       });
 
       it('should expect a Cell Menu to be created when cell is clicked with a list of commands defined but without "Command 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return undefined', () => {
@@ -777,7 +796,7 @@ describe('CellMenu Plugin', () => {
       it('should not populate and automatically return when the Cell Menu item "optionItems" array of the cell menu is undefined', () => {
         plugin.dispose();
         plugin.init({ onAfterMenuShow: undefined });
-        (columnsMock[4].cellMenu!.optionItems) = undefined;
+        columnsMock[4].cellMenu!.optionItems = undefined;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -798,8 +817,9 @@ describe('CellMenu Plugin', () => {
 
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
-        expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright slick-dark-mode" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
+        expect(removeExtraSpaces(document.body.innerHTML)).toBe(
+          removeExtraSpaces(
+            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright slick-dark-mode" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list" role="menu">
               <div class="slick-option-header no-title with-close">
                 <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
@@ -824,7 +844,9 @@ describe('CellMenu Plugin', () => {
                 <span class="sub-item-chevron">⮞</span>
               </li>
           </div>
-        </div>`));
+        </div>`
+          )
+        );
       });
 
       it('should expect a Cell Menu to be created when cell is clicked with a list of commands defined but without "Option 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return undefined', () => {

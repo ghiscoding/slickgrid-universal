@@ -32,7 +32,7 @@ export class CloneAggregator implements Aggregator {
   }
 
   accumulate(item: any): void {
-    const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
+    const val = item && item.hasOwnProperty(this._field) ? item[this._field] : null;
     if (val !== null && val !== '') {
       this._data = val;
     }

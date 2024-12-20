@@ -28,7 +28,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   focus: vi.fn(),
   getActiveCell: vi.fn(),
   getOptions: () => gridOptionMock,
@@ -77,21 +77,25 @@ describe('AutocompleterEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
-      try {
-        editor = new AutocompleterEditor(null as any);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-        done();
-      }
-    }));
+    it('should throw an error when trying to call init without any arguments', () =>
+      new Promise((done: any) => {
+        try {
+          editor = new AutocompleterEditor(null as any);
+        } catch (e) {
+          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
+          done();
+        }
+      }));
   });
 
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 123, gender: 'male', isActive: true };
       mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.autocompleter }, editorClass: {} as Editor } as Column;
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -137,7 +141,7 @@ describe('AutocompleterEditor', () => {
 
     it('should initialize the editor even when user define his own global editor options', () => {
       gridOptionMock.defaultEditorOptions = {
-        autocompleter: { minLength: 3 }
+        autocompleter: { minLength: 3 },
       };
       editor = new AutocompleterEditor(editorArguments);
 
@@ -196,7 +200,7 @@ describe('AutocompleterEditor', () => {
       expect(editor.getValue()).toBe('male');
     });
 
-    ["ArrowLeft", "ArrowRight", "Home", "End"].forEach((key: string) => {
+    ['ArrowLeft', 'ArrowRight', 'Home', 'End'].forEach((key: string) => {
       it(`should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using ${key} key`, () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
         const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
@@ -212,7 +216,10 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should render the DOM element with different key/value pair when user provide its own customStructure', () => {
-      mockColumn.editor!.collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
+      mockColumn.editor!.collection = [
+        { option: 'male', text: 'Male' },
+        { option: 'female', text: 'Female' },
+      ];
       mockColumn.editor!.customStructure = { value: 'option', label: 'text' };
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
@@ -222,7 +229,10 @@ describe('AutocompleterEditor', () => {
       editorElm.focus();
       editorElm.dispatchEvent(event);
 
-      expect(editor.elementCollection).toEqual([{ value: 'male', label: 'Male', labelPrefix: '', labelSuffix: '' }, { value: 'female', label: 'Female', labelPrefix: '', labelSuffix: '' }]);
+      expect(editor.elementCollection).toEqual([
+        { value: 'male', label: 'Male', labelPrefix: '', labelSuffix: '' },
+        { value: 'female', label: 'Female', labelPrefix: '', labelSuffix: '' },
+      ]);
     });
 
     it('should return True when calling "isValueChanged()" method with previously dispatched keyboard event being char "a"', () => {
@@ -277,8 +287,12 @@ describe('AutocompleterEditor', () => {
     describe('collectionOverride callback option', () => {
       it('should create the editor and expect a different collection outputed when using the override', () => {
         mockColumn.editor = {
-          collection: [{ value: 'other', label: 'Other' }, { value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }],
-          collectionOverride: (inputCollection) => inputCollection.filter(item => item.value !== 'other')
+          collection: [
+            { value: 'other', label: 'Other' },
+            { value: 'male', label: 'Male' },
+            { value: 'female', label: 'Female' },
+          ],
+          collectionOverride: (inputCollection) => inputCollection.filter((item) => item.value !== 'other'),
         };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -287,7 +301,10 @@ describe('AutocompleterEditor', () => {
         const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
 
         expect(editorCount).toBe(1);
-        expect(editor.elementCollection).toEqual([{ value: 'male', label: 'Male', labelPrefix: '', labelSuffix: '' }, { value: 'female', label: 'Female', labelPrefix: '', labelSuffix: '' }]);
+        expect(editor.elementCollection).toEqual([
+          { value: 'male', label: 'Male', labelPrefix: '', labelSuffix: '' },
+          { value: 'female', label: 'Female', labelPrefix: '', labelSuffix: '' },
+        ]);
       });
     });
 
@@ -342,7 +359,7 @@ describe('AutocompleterEditor', () => {
 
     describe('forceUserInput flag', () => {
       it('should return DOM element value when "forceUserInput" is enabled and loaded value length is greater then minLength defined when calling "serializeValue"', () => {
-        mockColumn.editor!.editorOptions = { forceUserInput: true, };
+        mockColumn.editor!.editorOptions = { forceUserInput: true };
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -366,7 +383,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return loaded value when "forceUserInput" is enabled and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
-        mockColumn.editor!.editorOptions = { forceUserInput: true, } as AutocompleterOption;
+        mockColumn.editor!.editorOptions = { forceUserInput: true } as AutocompleterOption;
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -379,7 +396,7 @@ describe('AutocompleterEditor', () => {
 
       it('should return loaded value when "forceUserInput" is enabled via global default editorOptions and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
         gridOptionMock.defaultEditorOptions = {
-          autocompleter: { forceUserInput: true }
+          autocompleter: { forceUserInput: true },
         };
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
@@ -394,7 +411,10 @@ describe('AutocompleterEditor', () => {
 
     describe('serializeValue method', () => {
       it('should return correct object value even when defining a "customStructure" when calling "serializeValue"', () => {
-        mockColumn.editor!.collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
+        mockColumn.editor!.collection = [
+          { option: 'male', text: 'Male' },
+          { option: 'female', text: 'Female' },
+        ];
         mockColumn.editor!.customStructure = { value: 'option', label: 'text' };
         mockItemData = { id: 123, gender: { option: 'female', text: 'Female' }, isActive: true };
 
@@ -407,7 +427,10 @@ describe('AutocompleterEditor', () => {
 
       it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with default label/value', () => {
         mockColumn.type = FieldType.object;
-        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.collection = [
+          { value: 'm', label: 'Male' },
+          { value: 'f', label: 'Female' },
+        ];
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -419,7 +442,10 @@ describe('AutocompleterEditor', () => {
 
       it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with custom dataKey/labelKey pair', () => {
         mockColumn.type = FieldType.object;
-        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.collection = [
+          { value: 'm', label: 'Male' },
+          { value: 'f', label: 'Female' },
+        ];
         mockColumn.dataKey = 'id';
         mockColumn.labelKey = 'name';
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
@@ -630,7 +656,10 @@ describe('AutocompleterEditor', () => {
 
       it('should expect the "handleSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
-        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.collection = [
+          { value: 'm', label: 'Male' },
+          { value: 'f', label: 'Female' },
+        ];
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -644,7 +673,10 @@ describe('AutocompleterEditor', () => {
 
       it('should initialize the editor with editorOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
-        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.collection = [
+          { value: 'm', label: 'Male' },
+          { value: 'f', label: 'Female' },
+        ];
         mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
@@ -689,9 +721,9 @@ describe('AutocompleterEditor', () => {
             showOnFocus: true,
             renderItem: {
               layout: 'fourCorners',
-              templateCallback: mockTemplateCallback
+              templateCallback: mockTemplateCallback,
             },
-          } as AutocompleterOption
+          } as AutocompleterOption,
         };
         const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
         editor = new AutocompleterEditor(editorArguments);
@@ -722,12 +754,15 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should add custom "fetch" call and expect "renderCollectionItem" callback be called when focusing on the autocomplete input', async () => {
-      const mockCollection = [{ value: 'male', label: 'Male' }, { value: 'unknown', label: 'Unknown' }];
+      const mockCollection = [
+        { value: 'male', label: 'Male' },
+        { value: 'unknown', label: 'Unknown' },
+      ];
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.editor = {
         collection: mockCollection,
-        editorOptions: { showOnFocus: true } as AutocompleterOption
+        editorOptions: { showOnFocus: true } as AutocompleterOption,
       };
       editor = new AutocompleterEditor(editorArguments);
 
@@ -744,10 +779,13 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should call "clear" method when clear button is clicked', () => {
-      const mockCollection = [{ value: 'male', label: 'Male' }, { value: 'unknown', label: 'Unknown' }];
+      const mockCollection = [
+        { value: 'male', label: 'Male' },
+        { value: 'unknown', label: 'Unknown' },
+      ];
       mockColumn.editor = {
         collection: mockCollection,
-        editorOptions: { showOnFocus: true } as AutocompleterOption
+        editorOptions: { showOnFocus: true } as AutocompleterOption,
       };
       editor = new AutocompleterEditor(editorArguments);
       const clearSpy = vi.spyOn(editor, 'clear');
@@ -759,14 +797,17 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should add custom "fetch" call and expect "renderRegularItem" callback be called when focusing on the autocomplete input', async () => {
-      const mockCollection = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+      const mockCollection = [
+        { value: 'female', label: 'Female' },
+        { value: 'undefined', label: 'Undefined' },
+      ];
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.editor = {
         editorOptions: {
           showOnFocus: true,
-          fetch: (_, updateCallback) => updateCallback(mockCollection)
-        } as AutocompleterOption
+          fetch: (_, updateCallback) => updateCallback(mockCollection),
+        } as AutocompleterOption,
       };
       editor = new AutocompleterEditor(editorArguments);
 
@@ -784,14 +825,17 @@ describe('AutocompleterEditor', () => {
 
     it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
       gridOptionMock.darkMode = true;
-      const mockCollection = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+      const mockCollection = [
+        { value: 'female', label: 'Female' },
+        { value: 'undefined', label: 'Undefined' },
+      ];
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.editor = {
         editorOptions: {
           showOnFocus: true,
-          fetch: (_, updateCallback) => updateCallback(mockCollection)
-        } as AutocompleterOption
+          fetch: (_, updateCallback) => updateCallback(mockCollection),
+        } as AutocompleterOption,
       };
       editor = new AutocompleterEditor(editorArguments);
 
@@ -822,23 +866,31 @@ describe('AutocompleterEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       editor = new AutocompleterEditor(editorArguments);
       editor.setValue({ value: 'male', label: 'Male' }, true);
 
       expect(editor.getValue()).toBe('Male');
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: 'male' }, editors: {}, triggeredBy: 'system',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { gender: 'male' },
+          editors: {},
+          triggeredBy: 'system',
+        },
+        expect.anything()
+      );
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
 
       editor = new AutocompleterEditor(editorArguments);
@@ -846,7 +898,14 @@ describe('AutocompleterEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -854,10 +913,10 @@ describe('AutocompleterEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
 
       editor = new AutocompleterEditor(editorArguments);
@@ -866,11 +925,26 @@ describe('AutocompleterEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: '' }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { gender: '' },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toBe(true);
       expect(editor.editorDomElement.value).toEqual('');
@@ -880,13 +954,13 @@ describe('AutocompleterEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new AutocompleterEditor(editorArguments);
@@ -895,7 +969,14 @@ describe('AutocompleterEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(onCompositeEditorSpy).not.toHaveBeenCalled();
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toBe(true);
@@ -906,10 +987,10 @@ describe('AutocompleterEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new AutocompleterEditor(editorArguments);
@@ -918,10 +999,18 @@ describe('AutocompleterEditor', () => {
       editor.disable();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: {},
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(editor.editorDomElement.disabled).toBe(true);
       expect(editor.editorDomElement.value).toEqual('');
     });
@@ -930,10 +1019,10 @@ describe('AutocompleterEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new AutocompleterEditor(editorArguments);
@@ -942,10 +1031,18 @@ describe('AutocompleterEditor', () => {
       editor.reset('');
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: {},
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(editor.editorDomElement.disabled).toBe(true);
       expect(editor.editorDomElement.value).toEqual('');
     });
@@ -954,10 +1051,10 @@ describe('AutocompleterEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.autoCommitEdit = true;
       mockColumn.editor!.collection = ['male', 'female'];
@@ -970,11 +1067,26 @@ describe('AutocompleterEditor', () => {
       expect(output).toBe(false);
       expect(spySetValue).toHaveBeenCalledWith('female');
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: 'female' }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { gender: 'female' },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
     });
 
     describe('collectionOverride callback option', () => {
@@ -982,20 +1094,28 @@ describe('AutocompleterEditor', () => {
         const activeCellMock = { row: 0, cell: 0 };
         vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-          getReturnValue: () => false
+          getReturnValue: () => false,
         } as any);
         mockColumn.editor = {
           collection: ['Other', 'Male', 'Female'],
-          collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')
+          collectionOverride: (inputCollection) => inputCollection.filter((item) => item !== 'other'),
         };
         editor = new AutocompleterEditor(editorArguments);
         editor.setValue('Male', true);
 
         expect(editor.getValue()).toBe('Male');
-        expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-          ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-          formValues: { gender: 'Male' }, editors: {}, triggeredBy: 'system',
-        }, expect.anything());
+        expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+          {
+            ...activeCellMock,
+            column: mockColumn,
+            item: mockItemData,
+            grid: gridStub,
+            formValues: { gender: 'Male' },
+            editors: {},
+            triggeredBy: 'system',
+          },
+          expect.anything()
+        );
       });
     });
   });

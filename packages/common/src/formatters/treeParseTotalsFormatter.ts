@@ -8,7 +8,9 @@ export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef,
 
   // make sure that the user provided a total formatter or else it won't work
   if (!groupTotalsFormatter && !treeTotalsFormatter) {
-    throw new Error('[Slickgrid-Universal] When using Formatters.treeParseTotals, you must provide a total formatter via "groupTotalsFormatter" or "treeTotalsFormatter".');
+    throw new Error(
+      '[Slickgrid-Universal] When using Formatters.treeParseTotals, you must provide a total formatter via "groupTotalsFormatter" or "treeTotalsFormatter".'
+    );
   }
 
   // treeParseTotalsFormatter will auto-detect if it should execute GroupTotalsFormatter or a list of regular Formatters (it has to be either/or, never both at same time)

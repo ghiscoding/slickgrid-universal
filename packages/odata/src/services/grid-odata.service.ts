@@ -48,7 +48,7 @@ export class GridOdataService implements BackendService {
   defaultOptions: OdataOption = {
     top: DEFAULT_ITEMS_PER_PAGE,
     orderBy: '',
-    caseType: CaseType.pascalCase
+    caseType: CaseType.pascalCase,
   };
 
   /** Getter for the Column Definitions */
@@ -63,7 +63,7 @@ export class GridOdataService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() ?? {} as GridOption;
+    return this._grid?.getOptions() ?? ({} as GridOption);
   }
 
   constructor() {
@@ -80,11 +80,12 @@ export class GridOdataService implements BackendService {
       this._odataService.options = { ...mergedOptions, top: undefined };
       this._currentPagination = null;
     } else {
-      const topOption = (mergedOptions.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? pagination?.pageSize ?? this.defaultOptions.top;
+      const topOption =
+        (mergedOptions.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? pagination?.pageSize ?? this.defaultOptions.top;
       this._odataService.options = { ...mergedOptions, top: topOption };
       this._currentPagination = {
         pageNumber: 1,
-        pageSize: this._odataService.options.top || this.defaultOptions.top || DEFAULT_PAGE_SIZE
+        pageSize: this._odataService.options.top || this.defaultOptions.top || DEFAULT_PAGE_SIZE,
       };
     }
 
@@ -108,10 +109,12 @@ export class GridOdataService implements BackendService {
     const odataVersion = this._odataService.options.version ?? 2;
 
     if (this.pagination && this._odataService.options.enableCount) {
-      const countExtractor = this._odataService.options.countExtractor ??
-        odataVersion >= 4 ? (r: any) => r?.['@odata.count'] :
-        odataVersion === 3 ? (r: any) => r?.['__count'] :
-          (r: any) => r?.d?.['__count'];
+      const countExtractor =
+        (this._odataService.options.countExtractor ?? odataVersion >= 4)
+          ? (r: any) => r?.['@odata.count']
+          : odataVersion === 3
+            ? (r: any) => r?.['__count']
+            : (r: any) => r?.d?.['__count'];
       const count = countExtractor(processResult);
       if (typeof count === 'number') {
         this.pagination.totalItems = count;
@@ -119,15 +122,19 @@ export class GridOdataService implements BackendService {
     }
 
     if (this._odataService.options.enableExpand) {
-      const datasetExtractor = this._odataService.options.datasetExtractor ??
-        odataVersion >= 4 ? (r: any) => r?.value :
-        odataVersion === 3 ? (r: any) => r?.results :
-          (r: any) => r?.d?.results;
+      const datasetExtractor =
+        (this._odataService.options.datasetExtractor ?? odataVersion >= 4)
+          ? (r: any) => r?.value
+          : odataVersion === 3
+            ? (r: any) => r?.results
+            : (r: any) => r?.d?.results;
       const dataset = datasetExtractor(processResult);
       if (Array.isArray(dataset)) {
         // Flatten navigation fields (fields containing /) in the dataset (regardless of enableExpand).
         // E.g. given columndefinition 'product/name' and dataset [{id: 1,product:{'name':'flowers'}}], then flattens to [{id:1,'product/name':'flowers'}]
-        const navigationFields = new Set(this._columnDefinitions.flatMap(x => x.fields ?? [x.field]).filter(x => x.includes('/')));
+        const navigationFields = new Set(
+          this._columnDefinitions.flatMap((x) => x.fields ?? [x.field]).filter((x) => x.includes('/'))
+        );
         if (navigationFields.size > 0) {
           const navigations = new Set<string>();
           for (const item of dataset) {
@@ -232,7 +239,7 @@ export class GridOdataService implements BackendService {
    */
   resetPaginationOptions(): void {
     this._odataService.updateOptions({
-      skip: 0
+      skip: 0,
     });
   }
 
@@ -255,7 +262,9 @@ export class GridOdataService implements BackendService {
     this._currentFilters = this.castFilterToColumnFilters(args.columnFilters);
 
     if (!args || !args.grid) {
-      throw new Error('Something went wrong when trying create the GridOdataService, it seems that "args" is not populated correctly');
+      throw new Error(
+        'Something went wrong when trying create the GridOdataService, it seems that "args" is not populated correctly'
+      );
     }
 
     // loop through all columns to inspect filters & set the query
@@ -269,7 +278,11 @@ export class GridOdataService implements BackendService {
    * PAGINATION
    */
   processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs): string {
-    const pageSize = +((this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize || args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
+    const pageSize = +(
+      (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize ||
+      args.pageSize ||
+      (this.pagination ? this.pagination.pageSize : DEFAULT_PAGE_SIZE)
+    );
     this.updatePagination(args.newPage, pageSize);
 
     // build the OData query which we will use in the WebAPI callback
@@ -280,7 +293,13 @@ export class GridOdataService implements BackendService {
    * SORTING
    */
   processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort): string {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol?.id ?? '', sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+    const sortColumns = args.multiColumnSort
+      ? (args as MultiColumnSort).sortCols
+      : new Array({
+          columnId: (args as ColumnSort).sortCol?.id ?? '',
+          sortCol: (args as ColumnSort).sortCol,
+          sortAsc: (args as ColumnSort).sortAsc,
+        });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);
@@ -321,22 +340,32 @@ export class GridOdataService implements BackendService {
           columnDef = columnFilter.columnDef;
         }
         if (!columnDef) {
-          throw new Error('[GridOData Service]: Something went wrong in trying to get the column definition of the specified filter (or preset filters). Did you make a typo on the filter columnId?');
+          throw new Error(
+            '[GridOData Service]: Something went wrong in trying to get the column definition of the specified filter (or preset filters). Did you make a typo on the filter columnId?'
+          );
         }
 
-        let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        let fieldName =
+          columnDef.filter?.queryField ||
+          columnDef.queryFieldFilter ||
+          columnDef.queryField ||
+          columnDef.field ||
+          columnDef.name ||
+          '';
         if (fieldName instanceof HTMLElement) {
           fieldName = stripTags(fieldName.innerHTML);
         }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = (columnFilter?.searchTerms ? [...columnFilter.searchTerms] : null) || [];
-        let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';
+        let fieldSearchValue = Array.isArray(searchTerms) && searchTerms.length === 1 ? searchTerms[0] : '';
         if (typeof fieldSearchValue === 'undefined') {
           fieldSearchValue = '';
         }
 
         if (!fieldName) {
-          throw new Error(`GridOData filter could not find the field name to query the search, your column definition must include a valid "field" or "name" (optionally you can also use the "queryfield").`);
+          throw new Error(
+            `GridOData filter could not find the field name to query the search, your column definition must include a valid "field" or "name" (optionally you can also use the "queryfield").`
+          );
         }
 
         if (this._odataService.options.useVerbatimSearchTerms || columnFilter.verbatimSearchTerms) {
@@ -344,21 +373,23 @@ export class GridOdataService implements BackendService {
           continue;
         }
 
-        fieldSearchValue = (fieldSearchValue === undefined || fieldSearchValue === null) ? '' : `${fieldSearchValue}`; // make sure it's a string
+        fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
 
         // run regex to find possible filter operators unless the user disabled the feature
-        const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+        const autoParseInputFilterOperator =
+          columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
 
         // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
-        const matches = autoParseInputFilterOperator !== false
-          ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
-          : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
+        const matches =
+          autoParseInputFilterOperator !== false
+            ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
+            : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
 
         const comboStartsWith = matches?.[2] || '';
         const comboEndsWith = matches?.[3] || '';
         let operator = columnFilter.operator || matches?.[4];
         let searchValue = matches?.[1] || matches?.[5] || '';
-        const lastValueChar = matches?.[6] || (operator === '*z' || operator === OperatorType.endsWith) ? '*' : '';
+        const lastValueChar = matches?.[6] || operator === '*z' || operator === OperatorType.endsWith ? '*' : '';
         const bypassOdataQuery = columnFilter.bypassBackendQuery || false;
 
         // no need to query if search value is empty
@@ -371,7 +402,12 @@ export class GridOdataService implements BackendService {
         if (comboStartsWith && comboEndsWith) {
           searchTerms = [comboStartsWith, comboEndsWith];
           operator = OperatorType.startsWithEndsWith;
-        } else if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
+        } else if (
+          Array.isArray(searchTerms) &&
+          searchTerms.length === 1 &&
+          typeof searchTerms[0] === 'string' &&
+          searchTerms[0].indexOf('..') >= 0
+        ) {
           // range filter
           if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
             operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
@@ -379,11 +415,13 @@ export class GridOdataService implements BackendService {
 
           searchTerms = searchTerms[0].split('..', 2);
           if (searchTerms[0] === '') {
-            operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
+            operator =
+              operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
             searchTerms = searchTerms.slice(1);
             searchValue = searchTerms[0];
           } else if (searchTerms[1] === '') {
-            operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
+            operator =
+              operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
             searchTerms = searchTerms.slice(0, 1);
             searchValue = searchTerms[0];
           }
@@ -401,7 +439,12 @@ export class GridOdataService implements BackendService {
         }
 
         // Range with 1 searchterm should lead to equals for a date field.
-        if ((operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
+        if (
+          (operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) &&
+          Array.isArray(searchTerms) &&
+          searchTerms.length === 1 &&
+          fieldType === FieldType.date
+        ) {
           operator = OperatorType.equal;
         }
 
@@ -440,7 +483,7 @@ export class GridOdataService implements BackendService {
               operator,
               columnFilterOperator: columnFilter.operator,
               searchValues: searchTerms,
-              grid: this._grid
+              grid: this._grid,
             });
           }
 
@@ -454,7 +497,10 @@ export class GridOdataService implements BackendService {
             tmpSearchTerms.push(`startswith(${fieldName}, ${sw})`);
             tmpSearchTerms.push(`endswith(${fieldName}, ${ew})`);
             searchBy = tmpSearchTerms.join(' and ');
-          } else if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOTIN' || operator === 'NOT IN' || operator === 'NOT_IN')) {
+          } else if (
+            searchTerms?.length > 1 &&
+            (operator === 'IN' || operator === 'NIN' || operator === 'NOTIN' || operator === 'NOT IN' || operator === 'NOT_IN')
+          ) {
             // when having more than 1 search term (then check if we have a "IN" or "NOT IN" filter search)
             const tmpSearchTerms: string[] = [];
             if (operator === 'IN') {
@@ -473,14 +519,26 @@ export class GridOdataService implements BackendService {
             if (!(typeof searchBy === 'string' && searchBy[0] === '(' && searchBy.slice(-1) === ')')) {
               searchBy = `(${searchBy})`;
             }
-          } else if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*' || operator === OperatorType.startsWith || operator === OperatorType.endsWith) {
+          } else if (
+            operator === '*' ||
+            operator === 'a*' ||
+            operator === '*z' ||
+            lastValueChar === '*' ||
+            operator === OperatorType.startsWith ||
+            operator === OperatorType.endsWith
+          ) {
             // first/last character is a '*' will be a startsWith or endsWith
-            searchBy = (operator === '*' || operator === '*z' || operator === OperatorType.endsWith) ? `endswith(${fieldName}, ${searchValue})` : `startswith(${fieldName}, ${searchValue})`;
+            searchBy =
+              operator === '*' || operator === '*z' || operator === OperatorType.endsWith
+                ? `endswith(${fieldName}, ${searchValue})`
+                : `startswith(${fieldName}, ${searchValue})`;
           } else if (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive) {
             // example:: (Name >= 'Bob' and Name <= 'Jane')
             searchBy = this.filterBySearchTermRange(getHtmlStringOutput(fieldName), operator, searchTerms);
-          } else if ((operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
-            (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)) {
+          } else if (
+            (operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
+            (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)
+          ) {
             searchBy = odataVersion >= 4 ? `contains(${fieldName}, ${searchValue})` : `substringof(${searchValue}, ${fieldName})`;
             if (operator === OperatorType.notContains) {
               searchBy = `not ${searchBy}`;
@@ -501,8 +559,8 @@ export class GridOdataService implements BackendService {
 
     // update the service options with filters for the buildQuery() to work later
     this._odataService.updateOptions({
-      filter: (searchByArray.length > 0) ? searchByArray.join(' and ') : '',
-      skip: undefined
+      filter: searchByArray.length > 0 ? searchByArray.join(' and ') : '',
+      skip: undefined,
     });
   }
 
@@ -518,10 +576,15 @@ export class GridOdataService implements BackendService {
     };
 
     // unless user specifically set "enablePagination" to False, we'll update pagination options in every other cases
-    if (this._gridOptions && (this._gridOptions.enablePagination || !this._gridOptions.hasOwnProperty('enablePagination') || this.options?.infiniteScroll)) {
+    if (
+      this._gridOptions &&
+      (this._gridOptions.enablePagination ||
+        !this._gridOptions.hasOwnProperty('enablePagination') ||
+        this.options?.infiniteScroll)
+    ) {
       this._odataService.updateOptions({
         top: pageSize,
-        skip: (newPage - 1) * pageSize
+        skip: (newPage - 1) * pageSize,
       });
     }
   }
@@ -537,26 +600,26 @@ export class GridOdataService implements BackendService {
     if (!sortColumns && presetSorters) {
       // make the presets the current sorters, also make sure that all direction are in lowercase for OData
       currentSorters = presetSorters;
-      currentSorters.forEach((sorter) => sorter.direction = sorter.direction.toLowerCase() as SortDirectionString);
+      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toLowerCase() as SortDirectionString));
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
         const columnDef = this._columnDefinitions.find((column: Column) => column.id === sorter.columnId);
 
         odataSorters.push({
-          field: columnDef ? ((columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '') : (sorter.columnId + ''),
-          direction: sorter.direction
+          field: columnDef ? (columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '' : sorter.columnId + '',
+          direction: sorter.direction,
         });
 
         // return only the column(s) found in the Column Definitions ELSE null
         if (columnDef) {
           return {
             columnId: sorter.columnId,
-            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC
+            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC,
           };
         }
         return null;
-      }) as { columnId: string | number; sortAsc: boolean; }[] | null;
+      }) as { columnId: string | number; sortAsc: boolean }[] | null;
 
       // set the sort icons, but also make sure to filter out null values (that happens when columnDef is not found)
       if (Array.isArray(tmpSorterArray) && this._grid) {
@@ -571,9 +634,11 @@ export class GridOdataService implements BackendService {
         if (sortColumns) {
           for (const columnDef of sortColumns) {
             if (columnDef.sortCol) {
-              let fieldName = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field) + '';
+              let fieldName =
+                (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field) + '';
               let columnFieldName = (columnDef.sortCol.field || columnDef.sortCol.id) + '';
-              let queryField = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field || '') + '';
+              let queryField =
+                (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field || '') + '';
               if (this._odataService.options.caseType === CaseType.pascalCase) {
                 fieldName = titleCase(fieldName);
                 columnFieldName = titleCase(columnFieldName);
@@ -582,13 +647,13 @@ export class GridOdataService implements BackendService {
 
               currentSorters.push({
                 columnId: columnDef.sortCol.id,
-                direction: columnDef.sortAsc ? SortDirection.asc : SortDirection.desc
+                direction: columnDef.sortAsc ? SortDirection.asc : SortDirection.desc,
               });
 
               if (queryField !== '') {
                 odataSorters.push({
                   field: queryField,
-                  direction: columnDef.sortAsc ? SortDirection.ASC : SortDirection.DESC
+                  direction: columnDef.sortAsc ? SortDirection.ASC : SortDirection.DESC,
                 });
               }
             }
@@ -598,18 +663,20 @@ export class GridOdataService implements BackendService {
     }
 
     // transform the sortby array into a CSV string for OData
-    currentSorters = currentSorters || [] as CurrentSorter[];
-    const csvString = odataSorters.map((sorter) => {
-      let str = '';
-      if (sorter && sorter.field) {
-        const sortField = (this._odataService.options.caseType === CaseType.pascalCase) ? titleCase(sorter.field) : sorter.field;
-        str = `${sortField} ${sorter && sorter.direction && sorter.direction.toLowerCase() || ''}`;
-      }
-      return str;
-    }).join(',');
+    currentSorters = currentSorters || ([] as CurrentSorter[]);
+    const csvString = odataSorters
+      .map((sorter) => {
+        let str = '';
+        if (sorter && sorter.field) {
+          const sortField = this._odataService.options.caseType === CaseType.pascalCase ? titleCase(sorter.field) : sorter.field;
+          str = `${sortField} ${(sorter && sorter.direction && sorter.direction.toLowerCase()) || ''}`;
+        }
+        return str;
+      })
+      .join(',');
 
     this._odataService.updateOptions({
-      orderBy: csvString
+      orderBy: csvString,
     });
 
     // keep current Sorters and update the service options with the new sorting
@@ -628,7 +695,8 @@ export class GridOdataService implements BackendService {
    */
   protected castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
     // keep current filters & always save it as an array (columnFilters can be an object when it is dealt by SlickGrid Filter)
-    const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => (columnFilters as any)[key]) : columnFilters;
+    const filtersArray: ColumnFilter[] =
+      typeof columnFilters === 'object' ? Object.keys(columnFilters).map((key) => (columnFilters as any)[key]) : columnFilters;
 
     if (!Array.isArray(filtersArray)) {
       return [];
@@ -652,7 +720,11 @@ export class GridOdataService implements BackendService {
   /**
    * Filter by a range of searchTerms (2 searchTerms OR 1 string separated by 2 dots "value1..value2")
    */
-  protected filterBySearchTermRange(fieldName: string, operator: OperatorType | OperatorString, searchTerms: SearchTerm[]): string {
+  protected filterBySearchTermRange(
+    fieldName: string,
+    operator: OperatorType | OperatorString,
+    searchTerms: SearchTerm[]
+  ): string {
     let query = '';
     if (Array.isArray(searchTerms) && searchTerms.length === 2) {
       if (operator === OperatorType.rangeInclusive) {
@@ -677,7 +749,7 @@ export class GridOdataService implements BackendService {
   /**
    * Normalizes the search value according to field type and oData version.
    */
-  protected normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any, version: number): any {
+  protected normalizeSearchValue(fieldType: (typeof FieldType)[keyof typeof FieldType], searchValue: any, version: number): any {
     switch (fieldType) {
       case FieldType.date:
         searchValue = parseUtcDate(searchValue as string);

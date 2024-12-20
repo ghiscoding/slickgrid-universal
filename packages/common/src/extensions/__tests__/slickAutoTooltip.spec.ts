@@ -20,13 +20,14 @@ const gridStub = {
   onMouseEnter: new SlickEvent(),
 } as unknown as SlickGrid;
 
-const mockColumns = [      // The column definitions
+const mockColumns = [
+  // The column definitions
   { name: 'Short', field: 'short', width: 100 },
   { name: 'Medium', field: 'medium', width: 100 },
   { name: 'Long', field: 'long', width: 100 },
   { name: 'Mixed', field: 'mixed', width: 100 },
   { name: 'Long header creates tooltip', field: 'header', width: 50 },
-  { name: 'Long header with predefined tooltip', field: 'tooltipHeader', width: 50, toolTip: 'Already have a tooltip!' }
+  { name: 'Long header with predefined tooltip', field: 'tooltipHeader', width: 50, toolTip: 'Already have a tooltip!' },
 ] as Column[];
 
 describe('AutoTooltip Plugin', () => {
@@ -48,7 +49,7 @@ describe('AutoTooltip Plugin', () => {
       enableForCells: true,
       enableForHeaderCells: true,
       maxToolTipLength: 20,
-      replaceExisting: true
+      replaceExisting: true,
     });
   });
 

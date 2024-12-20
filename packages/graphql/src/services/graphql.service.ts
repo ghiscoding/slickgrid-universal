@@ -20,13 +20,7 @@ import type {
   SlickGrid,
   SortDirectionString,
 } from '@slickgrid-universal/common';
-import {
-  FieldType,
-  mapOperatorType,
-  mapOperatorByFieldType,
-  OperatorType,
-  SortDirection,
-} from '@slickgrid-universal/common';
+import { FieldType, mapOperatorType, mapOperatorByFieldType, OperatorType, SortDirection } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import type {
@@ -56,7 +50,7 @@ export class GraphqlService implements BackendService {
   pagination: Pagination | undefined;
   defaultPaginationOptions: GraphqlPaginationOption = {
     first: DEFAULT_ITEMS_PER_PAGE,
-    offset: 0
+    offset: 0,
   };
 
   /** Getter for the Column Definitions */
@@ -66,7 +60,7 @@ export class GraphqlService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() ?? {} as GridOption;
+    return this._grid?.getOptions() ?? ({} as GridOption);
   }
 
   /** Initialization of the service, which acts as a constructor */
@@ -151,14 +145,14 @@ export class GraphqlService implements BackendService {
 
       if (this.options.useCursor && this.options.paginationOptions) {
         datasetFilters = { ...this.options.paginationOptions };
-      }
-      else {
+      } else {
         const paginationOptions = this.options?.paginationOptions;
-        datasetFilters.first = (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize
-          ?? this.options?.paginationOptions?.first
-          ?? this.pagination?.pageSize
-          ?? this.defaultPaginationOptions.first;
-        datasetFilters.offset = (paginationOptions && 'offset' in paginationOptions) ? +paginationOptions.offset! : 0;
+        datasetFilters.first =
+          (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize ??
+          this.options?.paginationOptions?.first ??
+          this.pagination?.pageSize ??
+          this.defaultPaginationOptions.first;
+        datasetFilters.offset = paginationOptions && 'offset' in paginationOptions ? +paginationOptions.offset! : 0;
       }
     }
 
@@ -166,7 +160,11 @@ export class GraphqlService implements BackendService {
       // orderBy: [{ field:x, direction: 'ASC' }]
       datasetFilters.orderBy = this.options.sortingOptions;
     }
-    if (this.options.filteringOptions && Array.isArray(this.options.filteringOptions) && this.options.filteringOptions.length > 0) {
+    if (
+      this.options.filteringOptions &&
+      Array.isArray(this.options.filteringOptions) &&
+      this.options.filteringOptions.length > 0
+    ) {
       // filterBy: [{ field: date, operator: '>', value: '2000-10-10' }]
       datasetFilters.filterBy = this.options.filteringOptions;
     }
@@ -187,7 +185,11 @@ export class GraphqlService implements BackendService {
     queryQb.find(datasetQb);
 
     const enumSearchProperties = ['direction:', 'field:', 'operator:'];
-    return this.trimDoubleQuotesOnEnumField(queryQb.toString(), enumSearchProperties, this.options.keepArgumentFieldDoubleQuotes || false);
+    return this.trimDoubleQuotesOnEnumField(
+      queryQb.toString(),
+      enumSearchProperties,
+      this.options.keepArgumentFieldDoubleQuotes || false
+    );
   }
 
   postProcess(processResult: GraphqlPaginatedResult): void {
@@ -208,7 +210,6 @@ export class GraphqlService implements BackendService {
    * @param inputArray
    */
   buildFilterQuery(inputArray: string[]): string {
-
     const set = (o: any = {}, a: any) => {
       const k = a.shift();
       o[k] = a.length ? set(o[k] ?? {}, a) : null;
@@ -238,10 +239,9 @@ export class GraphqlService implements BackendService {
    * @return Pagination Options
    */
   getInitPaginationOptions(): GraphqlDatasetFilter {
-    const paginationFirst = (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? this.pagination?.pageSize ?? DEFAULT_ITEMS_PER_PAGE;
-    return this.options?.useCursor
-      ? { first: paginationFirst }
-      : { first: paginationFirst, offset: 0 };
+    const paginationFirst =
+      (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? this.pagination?.pageSize ?? DEFAULT_ITEMS_PER_PAGE;
+    return this.options?.useCursor ? { first: paginationFirst } : { first: paginationFirst, offset: 0 };
   }
 
   /** Get the GraphQL dataset name */
@@ -274,18 +274,22 @@ export class GraphqlService implements BackendService {
       paginationOptions = this.getInitPaginationOptions();
     } else {
       // first, last, offset
-      paginationOptions = ((this.options && this.options.paginationOptions) || this.getInitPaginationOptions()) as GraphqlPaginationOption;
+      paginationOptions = ((this.options && this.options.paginationOptions) ||
+        this.getInitPaginationOptions()) as GraphqlPaginationOption;
       (paginationOptions as GraphqlPaginationOption).offset = 0;
     }
 
     // save current pagination as Page 1 and page size as "first" set size
     this._currentPagination = {
       pageNumber: 1,
-      pageSize: paginationOptions.first || DEFAULT_PAGE_SIZE
+      pageSize: paginationOptions.first || DEFAULT_PAGE_SIZE,
     };
 
     // unless user specifically set "enablePagination" to False, we'll update pagination options in every other cases
-    if (this._gridOptions && (this._gridOptions.enablePagination || !('enablePagination' in this._gridOptions) || this.options?.infiniteScroll)) {
+    if (
+      this._gridOptions &&
+      (this._gridOptions.enablePagination || !('enablePagination' in this._gridOptions) || this.options?.infiniteScroll)
+    ) {
       this.updateOptions({ paginationOptions });
     }
   }
@@ -309,7 +313,9 @@ export class GraphqlService implements BackendService {
     this._currentFilters = this.castFilterToColumnFilters(args.columnFilters);
 
     if (!args || !args.grid) {
-      throw new Error('Something went wrong when trying create the GraphQL Backend Service, it seems that "args" is not populated correctly');
+      throw new Error(
+        'Something went wrong when trying create the GraphQL Backend Service, it seems that "args" is not populated correctly'
+      );
     }
 
     // loop through all columns to inspect filters & set the query
@@ -347,14 +353,20 @@ export class GraphqlService implements BackendService {
    *     }
    *   }
    */
-  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)): string {
-    const pageSize = +((this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize || args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
+  processOnPaginationChanged(
+    _event: Event | undefined,
+    args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)
+  ): string {
+    const pageSize = +(
+      (this.options?.infiniteScroll as InfiniteScrollOption)?.fetchSize ||
+      args.pageSize ||
+      (this.pagination ? this.pagination.pageSize : DEFAULT_PAGE_SIZE)
+    );
 
     // if first/last defined on args, then it is a cursor based pagination change
     'first' in args || 'last' in args
       ? this.updatePagination(args.newPage, pageSize, args)
       : this.updatePagination(args.newPage, pageSize);
-
 
     // build the GraphQL query which we will use in the WebAPI callback
     return this.buildQuery();
@@ -374,7 +386,13 @@ export class GraphqlService implements BackendService {
    *  }
    */
   processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort): string {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol?.id ?? '', sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+    const sortColumns = args.multiColumnSort
+      ? (args as MultiColumnSort).sortCols
+      : new Array({
+          columnId: (args as ColumnSort).sortCol?.id ?? '',
+          sortCol: (args as ColumnSort).sortCol,
+          sortAsc: (args as ColumnSort).sortAsc,
+        });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);
@@ -413,44 +431,60 @@ export class GraphqlService implements BackendService {
           columnDef = columnFilter.columnDef;
         }
         if (!columnDef) {
-          throw new Error('[GraphQL Service]: Something went wrong in trying to get the column definition of the specified filter (or preset filters). Did you make a typo on the filter columnId?');
+          throw new Error(
+            '[GraphQL Service]: Something went wrong in trying to get the column definition of the specified filter (or preset filters). Did you make a typo on the filter columnId?'
+          );
         }
 
-        let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        let fieldName =
+          columnDef.filter?.queryField ||
+          columnDef.queryFieldFilter ||
+          columnDef.queryField ||
+          columnDef.field ||
+          columnDef.name ||
+          '';
         if (fieldName instanceof HTMLElement) {
           fieldName = stripTags(fieldName.innerHTML);
         }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = columnFilter?.searchTerms ?? [];
-        let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';
+        let fieldSearchValue = Array.isArray(searchTerms) && searchTerms.length === 1 ? searchTerms[0] : '';
         if (typeof fieldSearchValue === 'undefined') {
           fieldSearchValue = '';
         }
 
         if (!fieldName) {
-          throw new Error(`GraphQL filter could not find the field name to query the search, your column definition must include a valid "field" or "name" (optionally you can also use the "queryfield").`);
+          throw new Error(
+            `GraphQL filter could not find the field name to query the search, your column definition must include a valid "field" or "name" (optionally you can also use the "queryfield").`
+          );
         }
 
         if (this.options?.useVerbatimSearchTerms || columnFilter.verbatimSearchTerms) {
-          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: columnFilter.operator, value: JSON.stringify(columnFilter.searchTerms) });
+          searchByArray.push({
+            field: getHtmlStringOutput(fieldName),
+            operator: columnFilter.operator,
+            value: JSON.stringify(columnFilter.searchTerms),
+          });
           continue;
         }
 
-        fieldSearchValue = (fieldSearchValue === undefined || fieldSearchValue === null) ? '' : `${fieldSearchValue}`; // make sure it's a string
+        fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
 
         // run regex to find possible filter operators unless the user disabled the feature
-        const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+        const autoParseInputFilterOperator =
+          columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
 
         // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
-        const matches = autoParseInputFilterOperator !== false
-          ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
-          : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
+        const matches =
+          autoParseInputFilterOperator !== false
+            ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
+            : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
 
         const comboStartsWith = matches?.[2] || '';
         const comboEndsWith = matches?.[3] || '';
         let operator = columnFilter.operator || matches?.[4];
         searchValue = matches?.[1] || matches?.[5] || '';
-        const lastValueChar = matches?.[6] || (operator === '*z' || operator === OperatorType.endsWith) ? '*' : '';
+        const lastValueChar = matches?.[6] || operator === '*z' || operator === OperatorType.endsWith ? '*' : '';
 
         // no need to query if search value is empty
         if (fieldName && searchValue === '' && searchTerms.length === 0) {
@@ -465,7 +499,7 @@ export class GraphqlService implements BackendService {
             operator,
             columnFilterOperator: columnFilter.operator,
             searchValues: searchTerms,
-            grid: this._grid
+            grid: this._grid,
           });
         }
 
@@ -478,17 +512,24 @@ export class GraphqlService implements BackendService {
           if (comboStartsWith && comboEndsWith) {
             searchTerms = [comboStartsWith, comboEndsWith];
             operator = OperatorType.startsWithEndsWith;
-          } else if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
+          } else if (
+            Array.isArray(searchTerms) &&
+            searchTerms.length === 1 &&
+            typeof searchTerms[0] === 'string' &&
+            searchTerms[0].indexOf('..') >= 0
+          ) {
             if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
               operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
             }
             searchTerms = searchTerms[0].split('..', 2);
             if (searchTerms[0] === '') {
-              operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
+              operator =
+                operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
               searchTerms = searchTerms.slice(1);
               searchValue = searchTerms[0];
             } else if (searchTerms[1] === '') {
-              operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
+              operator =
+                operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
               searchTerms = searchTerms.slice(0, 1);
               searchValue = searchTerms[0];
             }
@@ -496,7 +537,7 @@ export class GraphqlService implements BackendService {
 
           if (typeof searchValue === 'string') {
             if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*') {
-              operator = ((operator === '*' || operator === '*z') ? 'EndsWith' : 'StartsWith') as OperatorString;
+              operator = (operator === '*' || operator === '*z' ? 'EndsWith' : 'StartsWith') as OperatorString;
             }
           }
 
@@ -512,7 +553,12 @@ export class GraphqlService implements BackendService {
           }
 
           // Range with 1 searchterm should lead to equals for a date field.
-          if ((operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
+          if (
+            (operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) &&
+            Array.isArray(searchTerms) &&
+            searchTerms.length === 1 &&
+            fieldType === FieldType.date
+          ) {
             operator = OperatorType.equal;
           }
 
@@ -527,7 +573,11 @@ export class GraphqlService implements BackendService {
           // StartsWith + EndsWith combo
           if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
             // add 2 conditions (StartsWith A + EndsWith B) to the search array
-            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: OperatorType.startsWith, value: comboStartsWith });
+            searchByArray.push({
+              field: getHtmlStringOutput(fieldName),
+              operator: OperatorType.startsWith,
+              value: comboStartsWith,
+            });
             searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: OperatorType.endsWith, value: comboEndsWith });
             continue;
           }
@@ -535,9 +585,20 @@ export class GraphqlService implements BackendService {
           // when having more than 1 search term (we need to create a CSV string for GraphQL "IN" or "NOT IN" filter search)
           if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN')) {
             searchValue = searchTerms.join(',');
-          } else if (searchTerms?.length === 2 && (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)) {
-            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'GE' : 'GT'), value: searchTerms[0] });
-            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'LE' : 'LT'), value: searchTerms[1] });
+          } else if (
+            searchTerms?.length === 2 &&
+            (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)
+          ) {
+            searchByArray.push({
+              field: getHtmlStringOutput(fieldName),
+              operator: operator === OperatorType.rangeInclusive ? 'GE' : 'GT',
+              value: searchTerms[0],
+            });
+            searchByArray.push({
+              field: getHtmlStringOutput(fieldName),
+              operator: operator === OperatorType.rangeInclusive ? 'LE' : 'LT',
+              value: searchTerms[1],
+            });
             continue;
           }
 
@@ -565,7 +626,7 @@ export class GraphqlService implements BackendService {
   updatePagination(newPage: number, pageSize: number, cursorArgs?: PaginationCursorChangedArgs): void {
     this._currentPagination = {
       pageNumber: newPage,
-      pageSize
+      pageSize,
     };
 
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {};
@@ -585,7 +646,7 @@ export class GraphqlService implements BackendService {
       // use offset based pagination
       paginationOptions = {
         first: pageSize,
-        offset: (newPage > 1) ? ((newPage - 1) * pageSize) : 0 // recalculate offset but make sure the result is always over 0
+        offset: newPage > 1 ? (newPage - 1) * pageSize : 0, // recalculate offset but make sure the result is always over 0
       };
     }
 
@@ -602,30 +663,30 @@ export class GraphqlService implements BackendService {
     if (!sortColumns && presetSorters) {
       // make the presets the current sorters, also make sure that all direction are in uppercase for GraphQL
       currentSorters = presetSorters;
-      currentSorters.forEach((sorter) => sorter.direction = sorter.direction.toUpperCase() as SortDirectionString);
+      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toUpperCase() as SortDirectionString));
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
         const columnDef = this._columnDefinitions?.find((column: Column) => column.id === sorter.columnId);
 
         graphqlSorters.push({
-          field: columnDef ? ((columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '') : (sorter.columnId + ''),
-          direction: sorter.direction
+          field: columnDef ? (columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '' : sorter.columnId + '',
+          direction: sorter.direction,
         });
 
         // return only the column(s) found in the Column Definitions ELSE null
         if (columnDef) {
           return {
             columnId: sorter.columnId,
-            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC
+            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC,
           };
         }
         return null;
-      }) as { columnId: string | number; sortAsc: boolean; }[] | null;
+      }) as { columnId: string | number; sortAsc: boolean }[] | null;
 
       // set the sort icons, but also make sure to filter out null values (that happens when columnDef is not found)
       if (Array.isArray(tmpSorterArray) && this._grid) {
-        this._grid.setSortColumns(tmpSorterArray.filter(sorter => sorter) || []);
+        this._grid.setSortColumns(tmpSorterArray.filter((sorter) => sorter) || []);
       }
     } else if (sortColumns && !presetSorters) {
       // build the orderBy array, it could be multisort, example
@@ -635,14 +696,14 @@ export class GraphqlService implements BackendService {
           if (column && column.sortCol) {
             currentSorters.push({
               columnId: column.sortCol.id + '',
-              direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC
+              direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC,
             });
 
             const fieldName = (column.sortCol.queryFieldSorter || column.sortCol.queryField || column.sortCol.field || '') + '';
             if (fieldName) {
               graphqlSorters.push({
                 field: fieldName,
-                direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC
+                direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC,
               });
             }
           }
@@ -683,7 +744,7 @@ export class GraphqlService implements BackendService {
     // example with (field: & direction:):  /field:s?(".*?")|direction:s?(".*?")/
     const reg = new RegExp(patternRegex, 'g');
 
-    return inputStr.replace(reg, group1 => {
+    return inputStr.replace(reg, (group1) => {
       // remove double quotes except when the string starts with a "field:"
       let removeDoubleQuotes = true;
       if (group1.startsWith('field:') && keepArgumentFieldDoubleQuotes) {
@@ -703,7 +764,8 @@ export class GraphqlService implements BackendService {
    */
   protected castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
     // keep current filters & always save it as an array (columnFilters can be an object when it is dealt by SlickGrid Filter)
-    const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => (columnFilters as any)[key]) : columnFilters;
+    const filtersArray: ColumnFilter[] =
+      typeof columnFilters === 'object' ? Object.keys(columnFilters).map((key) => (columnFilters as any)[key]) : columnFilters;
 
     if (!Array.isArray(filtersArray)) {
       return [];
@@ -725,7 +787,7 @@ export class GraphqlService implements BackendService {
   }
 
   /** Normalizes the search value according to field type. */
-  protected normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any): any {
+  protected normalizeSearchValue(fieldType: (typeof FieldType)[keyof typeof FieldType], searchValue: any): any {
     switch (fieldType) {
       case FieldType.date:
       case FieldType.string:

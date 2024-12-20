@@ -1,5 +1,5 @@
 import type { Column, FilterArguments, FilterCallback } from './index.js';
-import type { OperatorType, OperatorString, SearchTerm, } from '../enums/index.js';
+import type { OperatorType, OperatorString, SearchTerm } from '../enums/index.js';
 import type { SlickGrid } from '../core/index.js';
 import type { CollectionService, RxJsFacade, TranslaterService } from '../services/index.js';
 
@@ -48,5 +48,5 @@ export interface Filter {
 }
 
 export type FilterConstructor = {
-  new(translaterService?: TranslaterService, collectionService?: CollectionService, rxjs?: RxJsFacade): Filter;
+  new (translaterService?: TranslaterService, collectionService?: CollectionService, rxjs?: RxJsFacade): Filter;
 };

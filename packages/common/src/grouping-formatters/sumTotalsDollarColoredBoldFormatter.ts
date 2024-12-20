@@ -11,18 +11,29 @@ export const sumTotalsDollarColoredBoldFormatter: GroupTotalsFormatter = (totals
   const params = columnDef?.params;
   const prefix = params?.groupFormatterPrefix || '';
   const suffix = params?.groupFormatterSuffix || '';
-  const {
-    minDecimal,
-    maxDecimal,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'group');
+  const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
+    columnDef,
+    grid,
+    'currency',
+    'group'
+  );
 
   if (isNumber(val)) {
-    const colorStyle = (val >= 0) ? 'green' : 'red';
-    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
-    return createDomElement('span', { style: { color: colorStyle, fontWeight: 'bold' }, textContent: `${prefix}${formattedNumber}${suffix}` });
+    const colorStyle = val >= 0 ? 'green' : 'red';
+    const formattedNumber = formatNumber(
+      val,
+      minDecimal,
+      maxDecimal,
+      wrapNegativeNumber,
+      '$',
+      '',
+      decimalSeparator,
+      thousandSeparator
+    );
+    return createDomElement('span', {
+      style: { color: colorStyle, fontWeight: 'bold' },
+      textContent: `${prefix}${formattedNumber}${suffix}`,
+    });
   }
   return '';
 };

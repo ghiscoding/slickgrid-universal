@@ -58,7 +58,11 @@ describe('GridEventService', () => {
       const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.bindOnBeforeEditCell(gridStub);
-      gridStub.onBeforeEditCell.notify({ cell: undefined as any, row: undefined as any, grid: gridStub, column: {} as Column, item: {} }, new SlickEventData(new Event('click')), gridStub);
+      gridStub.onBeforeEditCell.notify(
+        { cell: undefined as any, row: undefined as any, grid: gridStub, column: {} as Column, item: {} },
+        new SlickEventData(new Event('click')),
+        gridStub
+      );
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -69,7 +73,11 @@ describe('GridEventService', () => {
       const spyOnChange = vi.spyOn(mockColumn, 'onBeforeEditCell');
 
       service.bindOnBeforeEditCell(gridStub);
-      gridStub.onBeforeEditCell.notify({ cell: 0, row: 0, grid: gridStub, column: {} as Column, item: {}, target: 'grid' }, new SlickEventData(new Event('click')), gridStub);
+      gridStub.onBeforeEditCell.notify(
+        { cell: 0, row: 0, grid: gridStub, column: {} as Column, item: {}, target: 'grid' },
+        new SlickEventData(new Event('click')),
+        gridStub
+      );
 
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
@@ -79,7 +87,7 @@ describe('GridEventService', () => {
         dataView: dataViewStub,
         grid: gridStub,
         columnDef: mockColumn,
-        dataContext: mockRowData
+        dataContext: mockRowData,
       });
     });
   });
@@ -106,7 +114,11 @@ describe('GridEventService', () => {
       const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.bindOnCellChange(gridStub);
-      gridStub.onCellChange.notify({ cell: undefined as any, row: undefined as any, grid: gridStub, item: {}, column: {} as Column }, new SlickEventData(new Event('click')), gridStub);
+      gridStub.onCellChange.notify(
+        { cell: undefined as any, row: undefined as any, grid: gridStub, item: {}, column: {} as Column },
+        new SlickEventData(new Event('click')),
+        gridStub
+      );
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -127,7 +139,7 @@ describe('GridEventService', () => {
         dataView: dataViewStub,
         grid: gridStub,
         columnDef: mockColumn,
-        dataContext: mockRowData
+        dataContext: mockRowData,
       });
     });
   });
@@ -154,7 +166,7 @@ describe('GridEventService', () => {
       const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.bindOnClick(gridStub);
-      gridStub.onClick.notify({ cell: undefined as any, row: undefined as any, grid: gridStub, }, new SlickEventData(new Event('click')), gridStub);
+      gridStub.onClick.notify({ cell: undefined as any, row: undefined as any, grid: gridStub }, new SlickEventData(new Event('click')), gridStub);
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -176,7 +188,7 @@ describe('GridEventService', () => {
         dataView: dataViewStub,
         grid: gridStub,
         columnDef: mockColumn,
-        dataContext: mockRowData
+        dataContext: mockRowData,
       });
     });
   });

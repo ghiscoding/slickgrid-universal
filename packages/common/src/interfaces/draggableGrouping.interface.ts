@@ -1,4 +1,3 @@
-
 import type { Grouping } from './index.js';
 import type { DraggableGroupingOption } from './draggableGroupingOption.interface.js';
 import type { SlickDraggableGrouping } from '../extensions/slickDraggableGrouping.js';

@@ -69,23 +69,27 @@ describe('DualInputEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
-      try {
-        editor = new DualInputEditor(null as any);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-        done();
-      }
-    }));
+    it('should throw an error when trying to call init without any arguments', () =>
+      new Promise((done: any) => {
+        try {
+          editor = new DualInputEditor(null as any);
+        } catch (e) {
+          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
+          done();
+        }
+      }));
 
-    it('should throw an error when initialize the editor without the requires params leftInput/rightInput', () => new Promise((done: any) => {
-      try {
-        editor = new DualInputEditor({ grid: gridStub } as any);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput"`);
-        done();
-      }
-    }));
+    it('should throw an error when initialize the editor without the requires params leftInput/rightInput', () =>
+      new Promise((done: any) => {
+        try {
+          editor = new DualInputEditor({ grid: gridStub } as any);
+        } catch (e) {
+          expect(e.toString()).toContain(
+            `[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput"`
+          );
+          done();
+        }
+      }));
   });
 
   describe('with valid Editor instance', () => {
@@ -93,7 +97,10 @@ describe('DualInputEditor', () => {
       const editorParams = { leftInput: { field: 'from', type: 'float' }, rightInput: { field: 'to', type: 'float' } } as ColumnEditorDualInput;
       mockItemData = { id: 1, from: 1, to: 22, isActive: true };
       mockColumn = {
-        id: 'range', field: 'range', editable: true, editor: { model: Editors.dualInput, params: editorParams },
+        id: 'range',
+        field: 'range',
+        editable: true,
+        editor: { model: Editors.dualInput, params: editorParams },
       } as Column;
 
       editorArguments.column = mockColumn;
@@ -180,8 +187,8 @@ describe('DualInputEditor', () => {
           alwaysSaveOnEnterKey: false,
         },
         rightInput: {
-          field: 'to'
-        }
+          field: 'to',
+        },
       };
 
       editor = new DualInputEditor(editorArguments);
@@ -205,7 +212,7 @@ describe('DualInputEditor', () => {
       expect(editor.getValues()).toEqual({ from: 1, to: 22 });
     });
 
-    ["ArrowLeft", "ArrowRight", "Home", "End"].forEach((key: string) => {
+    ['ArrowLeft', 'ArrowRight', 'Home', 'End'].forEach((key: string) => {
       it(`should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using ${key} key`, () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
         const spyEvent = vi.spyOn(event, 'stopImmediatePropagation');
@@ -584,7 +591,15 @@ describe('DualInputEditor', () => {
 
         expect(editor.eventHandler).toBeTruthy();
         expect(editor.isValueSaveCalled).toBe(false);
-        gridStub.onValidationError.notify({ row: 0, cell: 0, validationResults: { valid: false, msg: 'Field is required' }, grid: gridStub, column: {} as Column, editor, cellNode: document.createElement('div') } as any);
+        gridStub.onValidationError.notify({
+          row: 0,
+          cell: 0,
+          validationResults: { valid: false, msg: 'Field is required' },
+          grid: gridStub,
+          column: {} as Column,
+          editor,
+          cellNode: document.createElement('div'),
+        } as any);
         expect(editor.isValueSaveCalled).toBe(true);
       });
 
@@ -837,7 +852,10 @@ describe('DualInputEditor', () => {
       const editorParams = { leftInput: { field: 'from', type: 'float' }, rightInput: { field: 'to', type: 'float' } } as ColumnEditorDualInput;
       mockItemData = { id: 1, from: 1, to: 22, isActive: true };
       mockColumn = {
-        id: 'range', field: 'range', editable: true, editor: { model: Editors.dualInput, params: editorParams },
+        id: 'range',
+        field: 'range',
+        editable: true,
+        editor: { model: Editors.dualInput, params: editorParams },
       } as Column;
 
       editorArguments.column = mockColumn;
@@ -852,7 +870,7 @@ describe('DualInputEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
 
       editor = new DualInputEditor(editorArguments);
@@ -860,7 +878,14 @@ describe('DualInputEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -868,10 +893,10 @@ describe('DualInputEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
 
       editor = new DualInputEditor(editorArguments);
@@ -880,11 +905,26 @@ describe('DualInputEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { from: '', to: '' }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { from: '', to: '' },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.leftInput.disabled).toEqual(true);
       expect(editor.editorDomElement.rightInput.disabled).toEqual(true);
@@ -896,13 +936,13 @@ describe('DualInputEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new DualInputEditor(editorArguments);
@@ -911,11 +951,26 @@ describe('DualInputEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: {},
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.leftInput.disabled).toEqual(true);
       expect(editor.editorDomElement.rightInput.disabled).toEqual(true);
@@ -928,10 +983,10 @@ describe('DualInputEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, from: 4, to: 5, isActive: true };
@@ -944,11 +999,26 @@ describe('DualInputEditor', () => {
       vi.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { from: 4, to: 5 }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { from: 4, to: 5 },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered from the right input and expect the new value showing up in its "formValues" object', () => {
@@ -956,10 +1026,10 @@ describe('DualInputEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, from: 4, to: 5, isActive: true };
@@ -973,11 +1043,26 @@ describe('DualInputEditor', () => {
       editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { from: 4, to: 5 }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { from: 4, to: 5 },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
     });
   });
 });

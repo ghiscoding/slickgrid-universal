@@ -51,13 +51,13 @@ describe('GridOdataService', () => {
     serviceOptions = {
       orderBy: '',
       top: 10,
-      caseType: CaseType.pascalCase
+      caseType: CaseType.pascalCase,
     };
     paginationOptions = {
       pageNumber: 1,
       pageSizes: [5, 10, 25, 50, 100],
       pageSize: 10,
-      totalItems: 100
+      totalItems: 100,
     };
 
     gridOptionMock = {
@@ -68,7 +68,7 @@ describe('GridOdataService', () => {
         preProcess: vi.fn(),
         process: vi.fn(),
         postProcess: vi.fn(),
-      }
+      },
     } as unknown as GridOption;
   });
 
@@ -88,7 +88,10 @@ describe('GridOdataService', () => {
     });
 
     it('should get the column definitions from "getColumns"', () => {
-      const columns = [{ id: 'field4', field: 'field4', width: 50 }, { id: 'field2', field: 'field2', width: 50 }];
+      const columns = [
+        { id: 'field4', field: 'field4', width: 50 },
+        { id: 'field2', field: 'field2', width: 50 },
+      ];
       const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
@@ -117,7 +120,7 @@ describe('GridOdataService', () => {
       const columns = [
         { id: 'field1', field: 'field1', width: 100 },
         { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true },
-        { id: 'field3', field: 'field3', fields: ['field4', 'field5', 'field6'], width: 100, excludeFieldFromQuery: true }
+        { id: 'field3', field: 'field3', fields: ['field4', 'field5', 'field6'], width: 100, excludeFieldFromQuery: true },
       ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
@@ -141,7 +144,10 @@ describe('GridOdataService', () => {
 
     it('should be able to provide "orderBy" through the "init" and see the query string include the sorting', () => {
       const expectation = `$top=20&$skip=40&$orderby=Name desc`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ orderBy: 'Name desc' }, paginationOptions, gridStub);
@@ -153,7 +159,10 @@ describe('GridOdataService', () => {
 
     it('should be able to provide "orderBy" through the "updateOptions" and see the query string include the sorting', () => {
       const expectation = `$top=20&$skip=40&$orderby=Name desc`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
@@ -166,7 +175,10 @@ describe('GridOdataService', () => {
 
     it('should be able to provide "filter" through the "init" and see the query string include the filter', () => {
       const expectation = `$top=20&$skip=40&$filter=(IsActive eq true)`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ filterBy: `IsActive eq true` }, paginationOptions, gridStub);
@@ -178,7 +190,10 @@ describe('GridOdataService', () => {
 
     it('should be able to provide "filter" through the "updateOptions" and see the query string include the filter', () => {
       const expectation = `$top=20&$skip=40&$filter=(IsActive eq true)`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
@@ -196,7 +211,10 @@ describe('GridOdataService', () => {
 
       it('should not add a "$top" option when "enablePagination" is set to False', () => {
         const expectation = '';
-        const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
+        const columns = [
+          { id: 'field1', field: 'field1', width: 100 },
+          { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true },
+        ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init(null as any, undefined, gridStub);
@@ -219,7 +237,10 @@ describe('GridOdataService', () => {
 
       it('should be able to provide "filter" through the "init" and see the query string include the filter but without pagination querying when "enablePagination" is set to False', () => {
         const expectation = `$filter=(IsActive eq true)`;
-        const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+        const columns = [
+          { id: 'field1', field: 'field1', width: 100 },
+          { id: 'field2', field: 'field2', width: 100 },
+        ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init({ filterBy: `IsActive eq true` }, paginationOptions, gridStub);
@@ -230,7 +251,10 @@ describe('GridOdataService', () => {
 
       it('should be able to provide "filter" through the "updateOptions" and see the query string include the filter but without pagination querying when "enablePagination" is set to False', () => {
         const expectation = `$filter=(IsActive eq true)`;
-        const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+        const columns = [
+          { id: 'field1', field: 'field1', width: 100 },
+          { id: 'field2', field: 'field2', width: 100 },
+        ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init(null as any, paginationOptions, gridStub);
@@ -284,8 +308,9 @@ describe('GridOdataService', () => {
     it('should throw an error when grid is undefined', () => {
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      expect(() => service.processOnFilterChanged(null as any, { grid: undefined as any } as any))
-        .toThrow('Something went wrong when trying create the GridOdataService');
+      expect(() => service.processOnFilterChanged(null as any, { grid: undefined as any } as any)).toThrow(
+        'Something went wrong when trying create the GridOdataService'
+      );
     });
 
     it('should return a query with the new filter', () => {
@@ -302,7 +327,7 @@ describe('GridOdataService', () => {
         operator: 'EQ',
         searchTerms: ['female'],
         shouldTriggerQuery: true,
-        targetSelector: 'div.some-classes'
+        targetSelector: 'div.some-classes',
       } as FilterChangedArgs;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -331,7 +356,7 @@ describe('GridOdataService', () => {
         operator: 'EQ',
         searchTerms: ['female'],
         shouldTriggerQuery: true,
-        targetSelector: 'div.some-classes'
+        targetSelector: 'div.some-classes',
       } as FilterChangedArgs;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -343,7 +368,7 @@ describe('GridOdataService', () => {
       expect(resetSpy).toHaveBeenCalled();
       expect(currentFilters).toEqual([
         { columnId: 'gender', operator: 'EQ', searchTerms: ['female'] },
-        { columnId: 'firstName', operator: 'EndsWith', searchTerms: ['John'] }
+        { columnId: 'firstName', operator: 'EndsWith', searchTerms: ['John'] },
       ]);
     });
 
@@ -366,7 +391,7 @@ describe('GridOdataService', () => {
           operator: 'EQ',
           searchTerms: ['female'],
           shouldTriggerQuery: true,
-          targetSelector: 'div.some-classes'
+          targetSelector: 'div.some-classes',
         } as FilterChangedArgs;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -385,8 +410,20 @@ describe('GridOdataService', () => {
         const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
-        const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
-        const mockColumnFilterName = { columnDef: mockColumnName, columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'], targetSelector: 'div.some-classes' } as ColumnFilter;
+        const mockColumnFilter = {
+          columnDef: mockColumn,
+          columnId: 'gender',
+          operator: 'EQ',
+          searchTerms: ['female'],
+          targetSelector: 'div.some-classes',
+        } as ColumnFilter;
+        const mockColumnFilterName = {
+          columnDef: mockColumnName,
+          columnId: 'firstName',
+          operator: 'StartsWith',
+          searchTerms: ['John'],
+          targetSelector: 'div.some-classes',
+        } as ColumnFilter;
         const mockFilterChangedArgs = {
           columnDef: mockColumn,
           columnId: 'gender',
@@ -394,7 +431,7 @@ describe('GridOdataService', () => {
           grid: gridStub,
           operator: 'EQ',
           searchTerms: ['female'],
-          shouldTriggerQuery: true
+          shouldTriggerQuery: true,
         } as FilterChangedArgs;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -406,7 +443,7 @@ describe('GridOdataService', () => {
         expect(resetSpy).toHaveBeenCalled();
         expect(currentFilters).toEqual([
           { columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' },
-          { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'], targetSelector: 'div.some-classes' }
+          { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'], targetSelector: 'div.some-classes' },
         ]);
       });
     });
@@ -535,18 +572,26 @@ describe('GridOdataService', () => {
 
   describe('updateFilters method', () => {
     beforeEach(() => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'name', field: 'name' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
     it('should throw an error when filter columnId is not found to be part of the column definitions', () => {
       const mockCurrentFilter = { columnDef: { id: 'city', field: 'city' }, columnId: 'city', operator: 'EQ', searchTerms: ['Boston'] } as CurrentFilter;
       service.init(serviceOptions, paginationOptions, gridStub);
-      expect(() => service.updateFilters([mockCurrentFilter], true)).toThrow('[GridOData Service]: Something went wrong in trying to get the column definition');
+      expect(() => service.updateFilters([mockCurrentFilter], true)).toThrow(
+        '[GridOData Service]: Something went wrong in trying to get the column definition'
+      );
     });
 
     it('should throw an error when neither "field" nor "name" are being part of the column definition', () => {
-      const mockColumnFilters = { gender: { columnId: 'gender', columnDef: { id: 'gender' }, searchTerms: ['female'], operator: 'EQ' }, } as unknown as ColumnFilters;
+      const mockColumnFilters = {
+        gender: { columnId: 'gender', columnDef: { id: 'gender' }, searchTerms: ['female'], operator: 'EQ' },
+      } as unknown as ColumnFilters;
       service.init(serviceOptions, paginationOptions, gridStub);
       expect(() => service.updateFilters(mockColumnFilters, false)).toThrow('GridOData filter could not find the field name to query the search');
     });
@@ -774,7 +819,7 @@ describe('GridOdataService', () => {
         name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: FieldType.string },
       } as ColumnFilters;
 
-      const sOptions = { ...serviceOptions, filterQueryOverride: () => 'foo eq \'bar\'' };
+      const sOptions = { ...serviceOptions, filterQueryOverride: () => "foo eq 'bar'" };
       service.init(sOptions, paginationOptions, gridStub);
       service.updateFilters(mockColumnFilters, false);
       const query = service.buildQuery();
@@ -1184,7 +1229,13 @@ describe('GridOdataService', () => {
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
         company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20..2001-02-28'], operator: 'RangeInclusive', type: FieldType.dateIso },
+        updatedDate: {
+          columnId: 'updatedDate',
+          columnDef: mockColumnUpdated,
+          searchTerms: ['2001-01-20..2001-02-28'],
+          operator: 'RangeInclusive',
+          type: FieldType.dateIso,
+        },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1200,7 +1251,13 @@ describe('GridOdataService', () => {
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
         company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20', '2001-02-28'], operator: 'RangeExclusive', type: FieldType.dateIso },
+        updatedDate: {
+          columnId: 'updatedDate',
+          columnDef: mockColumnUpdated,
+          searchTerms: ['2001-01-20', '2001-02-28'],
+          operator: 'RangeExclusive',
+          type: FieldType.dateIso,
+        },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1297,7 +1354,11 @@ describe('GridOdataService', () => {
   describe('updateFilters method with OData version 4', () => {
     beforeEach(() => {
       serviceOptions.version = 4;
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'name', field: 'name' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
@@ -1371,7 +1432,13 @@ describe('GridOdataService', () => {
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
         company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20..2001-02-28'], operator: 'RangeInclusive', type: FieldType.dateIso },
+        updatedDate: {
+          columnId: 'updatedDate',
+          columnDef: mockColumnUpdated,
+          searchTerms: ['2001-01-20..2001-02-28'],
+          operator: 'RangeInclusive',
+          type: FieldType.dateIso,
+        },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1387,7 +1454,13 @@ describe('GridOdataService', () => {
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
         company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20', '2001-02-28'], operator: 'RangeExclusive', type: FieldType.dateIso },
+        updatedDate: {
+          columnId: 'updatedDate',
+          columnDef: mockColumnUpdated,
+          searchTerms: ['2001-01-20', '2001-02-28'],
+          operator: 'RangeExclusive',
+          type: FieldType.dateIso,
+        },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1403,7 +1476,13 @@ describe('GridOdataService', () => {
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
         company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20'], operator: 'RangeExclusive', type: FieldType.dateIso },
+        updatedDate: {
+          columnId: 'updatedDate',
+          columnDef: mockColumnUpdated,
+          searchTerms: ['2001-01-20'],
+          operator: 'RangeExclusive',
+          type: FieldType.dateIso,
+        },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1502,7 +1581,11 @@ describe('GridOdataService', () => {
 
   describe('updateSorters method', () => {
     beforeEach(() => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'name', field: 'name' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
@@ -1510,7 +1593,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$orderby=Gender desc,FirstName asc`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true }
+        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1519,14 +1602,17 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'desc' },
+        { columnId: 'firstName', direction: 'asc' },
+      ]);
     });
 
     it('should return a query string using a different field to query when the column has a "queryField" defined in its definition', () => {
       const expectation = `$top=10&$orderby=Gender desc,FirstName asc`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'firstName' }, sortAsc: true }
+        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1535,14 +1621,17 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'name', direction: 'asc' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'desc' },
+        { columnId: 'name', direction: 'asc' },
+      ]);
     });
 
     it('should return a query string using a different field to query when the column has a "queryFieldSorter" defined in its definition', () => {
       const expectation = `$top=10&$orderby=Gender desc,LastName asc`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'isAfter', queryFieldSorter: 'lastName' }, sortAsc: true }
+        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'isAfter', queryFieldSorter: 'lastName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1551,14 +1640,17 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'name', direction: 'asc' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'desc' },
+        { columnId: 'name', direction: 'asc' },
+      ]);
     });
 
     it('should return a query without the field sorter when its field property is missing', () => {
       const expectation = `$top=10&$orderby=Gender desc`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'firstName', sortCol: { id: 'firstName' }, sortAsc: true }
+        { columnId: 'firstName', sortCol: { id: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1567,14 +1659,17 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'desc' },
+        { columnId: 'firstName', direction: 'asc' },
+      ]);
     });
 
     it('should return a query without any sorting after clearSorters was called', () => {
       const expectation = `$top=10`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true }
+        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1591,7 +1686,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$orderby=Gender asc,FirstName desc`;
       const mockCurrentSorter = [
         { columnId: 'gender', direction: 'asc' },
-        { columnId: 'firstName', direction: 'DESC' }
+        { columnId: 'firstName', direction: 'DESC' },
       ] as CurrentSorter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1600,7 +1695,10 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'asc' }, { columnId: 'firstName', direction: 'desc' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'asc' },
+        { columnId: 'firstName', direction: 'desc' },
+      ]);
     });
 
     describe('set "enablePagination" to False', () => {
@@ -1612,7 +1710,7 @@ describe('GridOdataService', () => {
         const expectation = `$orderby=Gender desc`;
         const mockColumnSort = [
           { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-          { columnId: 'firstName', sortCol: { id: 'firstName' }, sortAsc: true }
+          { columnId: 'firstName', sortCol: { id: 'firstName' }, sortAsc: true },
         ] as ColumnSort[];
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1621,14 +1719,17 @@ describe('GridOdataService', () => {
         const currentSorters = service.getCurrentSorters();
 
         expect(query).toBe(expectation);
-        expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
+        expect(currentSorters).toEqual([
+          { columnId: 'gender', direction: 'desc' },
+          { columnId: 'firstName', direction: 'asc' },
+        ]);
       });
 
       it('should return a query without any sorting after clearSorters was called but without pagination when "enablePagination" is set to False', () => {
         const expectation = '';
         const mockColumnSort = [
           { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-          { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true }
+          { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true },
         ] as ColumnSort[];
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1644,25 +1745,24 @@ describe('GridOdataService', () => {
   });
 
   describe('updateFilters method', () => {
-    describe("Verbatim ColumnFilters", () => {
+    describe('Verbatim ColumnFilters', () => {
       describe.each`
-        description                                             | verbatim | operator  | searchTerms            | expectation
-        ${"Verbatim false, Filter for null"}                    | ${false} | ${'EQ'}   | ${null}                | ${'$top=10'}
-        ${"Verbatim true,  Filter for null"}                    | ${true}  | ${'EQ'}   | ${null}                | ${'$top=10&$filter=(gender EQ null)'}
-        ${"Verbatim false, Empty string"}                       | ${false} | ${'EQ'}   | ${''}                  | ${'$top=10'}
-        ${"Verbatim true,  Empty string"}                       | ${true}  | ${'EQ'}   | ${''}                  | ${'$top=10&$filter=(gender EQ "")'}
-        ${"Verbatim false, Empty list"}                         | ${false} | ${'IN'}   | ${[]}                  | ${'$top=10'}
-        ${"Verbatim true,  Empty list"}                         | ${true}  | ${'IN'}   | ${[]}                  | ${'$top=10&$filter=(gender IN [])'}
-        ${"Verbatim false, Filter for null (in list)"}          | ${false} | ${'IN'}   | ${[null]}              | ${'$top=10'}
-        ${"Verbatim true,  Filter for null (in list)"}          | ${true}  | ${'IN'}   | ${[null]}              | ${'$top=10&$filter=(gender IN [null])'}
-        ${"Verbatim false, Filter for empty string (in list)"}  | ${false} | ${'IN'}   | ${['']}                | ${'$top=10'}
-        ${"Verbatim true,  Filter for empty string (in list)"}  | ${true}  | ${'IN'}   | ${['']}                | ${'$top=10&$filter=(gender IN [""])'}
-        ${"Verbatim false, Filter for female"}                  | ${false} | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(Gender eq \'female\')'}
-        ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(gender IN ["female"])'}
-        ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(Gender eq \'female\' or Gender eq \'male\')'}
-        ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(gender IN ["female","male"])'}
+        description                                            | verbatim | operator | searchTerms           | expectation
+        ${'Verbatim false, Filter for null'}                   | ${false} | ${'EQ'}  | ${null}               | ${'$top=10'}
+        ${'Verbatim true,  Filter for null'}                   | ${true}  | ${'EQ'}  | ${null}               | ${'$top=10&$filter=(gender EQ null)'}
+        ${'Verbatim false, Empty string'}                      | ${false} | ${'EQ'}  | ${''}                 | ${'$top=10'}
+        ${'Verbatim true,  Empty string'}                      | ${true}  | ${'EQ'}  | ${''}                 | ${'$top=10&$filter=(gender EQ "")'}
+        ${'Verbatim false, Empty list'}                        | ${false} | ${'IN'}  | ${[]}                 | ${'$top=10'}
+        ${'Verbatim true,  Empty list'}                        | ${true}  | ${'IN'}  | ${[]}                 | ${'$top=10&$filter=(gender IN [])'}
+        ${'Verbatim false, Filter for null (in list)'}         | ${false} | ${'IN'}  | ${[null]}             | ${'$top=10'}
+        ${'Verbatim true,  Filter for null (in list)'}         | ${true}  | ${'IN'}  | ${[null]}             | ${'$top=10&$filter=(gender IN [null])'}
+        ${'Verbatim false, Filter for empty string (in list)'} | ${false} | ${'IN'}  | ${['']}               | ${'$top=10'}
+        ${'Verbatim true,  Filter for empty string (in list)'} | ${true}  | ${'IN'}  | ${['']}               | ${'$top=10&$filter=(gender IN [""])'}
+        ${'Verbatim false, Filter for female'}                 | ${false} | ${'IN'}  | ${['female']}         | ${"$top=10&$filter=(Gender eq 'female')"}
+        ${'Verbatim true,  Filter for female'}                 | ${true}  | ${'IN'}  | ${['female']}         | ${'$top=10&$filter=(gender IN ["female"])'}
+        ${'Verbatim false, Filter for female/male'}            | ${false} | ${'IN'}  | ${['female', 'male']} | ${"$top=10&$filter=(Gender eq 'female' or Gender eq 'male')"}
+        ${'Verbatim true,  Filter for female/male'}            | ${true}  | ${'IN'}  | ${['female', 'male']} | ${'$top=10&$filter=(gender IN ["female","male"])'}
       `(`$description`, ({ verbatim, operator, searchTerms, expectation }) => {
-
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         let mockColumnFilters: ColumnFilters;
 
@@ -1705,7 +1805,11 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with a filter with range of numbers when the preset is a filter range with 2 dots (..) separator', () => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'duration', field: 'duration', type: FieldType.number },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Duration ge 4 and Duration le 88)`;
       const presetFilters = [{ columnId: 'duration', searchTerms: ['4..88'] }] as CurrentFilter[];
@@ -1720,7 +1824,11 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with all columns and search even when having hidden columns (basically when it is not part of the `getColumns()` return) when all passed are passed with the shared service', () => {
-      const mockColumns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
+      const mockColumns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'duration', field: 'duration', type: FieldType.number },
+      ];
       const expectation = `$top=10&$filter=(Duration ge 4 and Duration le 88)`;
       const presetFilters = [{ columnId: 'duration', searchTerms: ['4..88'] }] as CurrentFilter[];
       const mockColumnsCopy = [...mockColumns];
@@ -1742,12 +1850,14 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with a filter with range of numbers with decimals when the preset is a filter range with 2 dots (..) separator and range ends with a fraction', () => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'duration', field: 'duration', type: FieldType.number },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Duration ge 0.5 and Duration le 0.88)`;
-      const presetFilters = [
-        { columnId: 'duration', searchTerms: ['0.5...88'] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'duration', searchTerms: ['0.5...88'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1759,12 +1869,14 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with a filter with range of numbers when the preset is a filter range with 2 searchTerms', () => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'duration', field: 'duration', type: FieldType.number },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Duration ge 4 and Duration le 88)`;
-      const presetFilters = [
-        { columnId: 'duration', searchTerms: [4, 88], operator: 'RangeInclusive' },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'duration', searchTerms: [4, 88], operator: 'RangeInclusive' }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1776,12 +1888,14 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with a filter with range of dates when the preset is a filter range with 2 dots (..) separator', () => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'finish', field: 'finish', type: FieldType.date }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'finish', field: 'finish', type: FieldType.date },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Finish ge DateTime'2001-01-01T00:00:00Z' and Finish le DateTime'2001-01-31T00:00:00Z')`;
-      const presetFilters = [
-        { columnId: 'finish', searchTerms: ['2001-01-01..2001-01-31'] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'finish', searchTerms: ['2001-01-01..2001-01-31'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1793,12 +1907,14 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with a filter with range of dates when the preset is a filter range with 2 searchTerms', () => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'finish', field: 'finish', type: FieldType.date }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'finish', field: 'finish', type: FieldType.date },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Finish ge DateTime'2001-01-01T00:00:00Z' and Finish le DateTime'2001-01-31T00:00:00Z')`;
-      const presetFilters = [
-        { columnId: 'finish', searchTerms: ['2001-01-01', '2001-01-31'], operator: 'RangeInclusive' },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'finish', searchTerms: ['2001-01-01', '2001-01-31'], operator: 'RangeInclusive' }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1810,12 +1926,14 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with a filter with range of dates inclusive when the preset is a filter range with 2 searchTerms without an operator', () => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'finish', field: 'finish', type: FieldType.date }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'finish', field: 'finish', type: FieldType.date },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Finish ge DateTime'2001-01-01T00:00:00Z' and Finish le DateTime'2001-01-31T00:00:00Z')`;
-      const presetFilters = [
-        { columnId: 'finish', searchTerms: ['2001-01-01', '2001-01-31'] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'finish', searchTerms: ['2001-01-01', '2001-01-31'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1848,12 +1966,14 @@ describe('GridOdataService', () => {
       });
 
       it('should return a query with a filter with range of numbers when the preset is a filter range with 2 dots (..) separator but without pagination when "enablePagination" is set to False', () => {
-        const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
+        const columns = [
+          { id: 'company', field: 'company' },
+          { id: 'gender', field: 'gender' },
+          { id: 'duration', field: 'duration', type: FieldType.number },
+        ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
         const expectation = `$filter=(Duration ge 4 and Duration le 88)`;
-        const presetFilters = [
-          { columnId: 'duration', searchTerms: ['4..88'] },
-        ] as CurrentFilter[];
+        const presetFilters = [{ columnId: 'duration', searchTerms: ['4..88'] }] as CurrentFilter[];
 
         service.init(serviceOptions, paginationOptions, gridStub);
         service.updateFilters(presetFilters, true);
@@ -1970,21 +2090,21 @@ describe('GridOdataService', () => {
       service.postProcess([]);
     });
 
-    it('should extract d.results[\'__count\'] when oData version is not specified', () => {
+    it("should extract d.results['__count'] when oData version is not specified", () => {
       serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      service.postProcess({ d: { '__count': 20 } });
+      service.postProcess({ d: { __count: 20 } });
 
       expect(paginationOptions.totalItems).toBe(20);
     });
 
-    it('should set pagination totalItems from d.results[\'__count\'] with oData version 2', () => {
+    it("should set pagination totalItems from d.results['__count'] with oData version 2", () => {
       serviceOptions.version = 2;
       serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      service.postProcess({ d: { '__count': 20 } });
+      service.postProcess({ d: { __count: 20 } });
 
       expect(paginationOptions.totalItems).toBe(20);
     });
@@ -1994,7 +2114,7 @@ describe('GridOdataService', () => {
       serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      service.postProcess({ '__count': 20 });
+      service.postProcess({ __count: 20 });
 
       expect(paginationOptions.totalItems).toBe(20);
     });
@@ -2020,12 +2140,15 @@ describe('GridOdataService', () => {
     });
 
     it('should flatten navigation fields when oData version is not specified', () => {
-      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const columns = [
+        { id: 'id1', field: 'nav/fld1' },
+        { id: 'id1', field: 'nav/fld2' },
+      ];
       const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
+      const processResult = { d: { results: [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
       service.postProcess(processResult);
 
       expect(spy).toHaveBeenCalled();
@@ -2035,12 +2158,15 @@ describe('GridOdataService', () => {
     });
 
     it('should not flatten navigation fields when "enableExpand" is not set', () => {
-      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const columns = [
+        { id: 'id1', field: 'nav/fld1' },
+        { id: 'id1', field: 'nav/fld2' },
+      ];
       const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.enableExpand = false;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
+      const processResult = { d: { results: [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
       service.postProcess(processResult);
 
       expect(spy).toHaveBeenCalled();
@@ -2050,13 +2176,16 @@ describe('GridOdataService', () => {
     });
 
     it('should flatten navigation fields when oData version is v2', () => {
-      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const columns = [
+        { id: 'id1', field: 'nav/fld1' },
+        { id: 'id1', field: 'nav/fld2' },
+      ];
       const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 2;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
+      const processResult = { d: { results: [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
       service.postProcess(processResult);
 
       expect(spy).toHaveBeenCalled();
@@ -2066,13 +2195,16 @@ describe('GridOdataService', () => {
     });
 
     it('should flatten navigation fields when oData version is v3', () => {
-      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const columns = [
+        { id: 'id1', field: 'nav/fld1' },
+        { id: 'id1', field: 'nav/fld2' },
+      ];
       const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 3;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      const processResult = { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
+      const processResult = { results: [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
       service.postProcess(processResult);
 
       expect(spy).toHaveBeenCalled();
@@ -2082,13 +2214,16 @@ describe('GridOdataService', () => {
     });
 
     it('should flatten navigation fields when oData version is v4', () => {
-      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const columns = [
+        { id: 'id1', field: 'nav/fld1' },
+        { id: 'id1', field: 'nav/fld2' },
+      ];
       const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 4;
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      const processResult = { 'value': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
+      const processResult = { value: [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
       service.postProcess(processResult);
 
       expect(spy).toHaveBeenCalled();
@@ -2104,7 +2239,7 @@ describe('GridOdataService', () => {
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      const processResult = { 'value': [{ nav: { subnav: { fld1: 'val1' } } }] };
+      const processResult = { value: [{ nav: { subnav: { fld1: 'val1' } } }] };
       service.postProcess(processResult);
 
       expect(spy).toHaveBeenCalled();
@@ -2119,7 +2254,7 @@ describe('GridOdataService', () => {
       serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      const processResult = { 'value': [{ complex_obj: { fld1: 'val1' } }] };
+      const processResult = { value: [{ complex_obj: { fld1: 'val1' } }] };
       service.postProcess(processResult);
 
       expect(spy).toHaveBeenCalled();

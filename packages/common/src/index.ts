@@ -11,7 +11,7 @@ export {
   type BasePubSubService as PubSubService,
   EventNamingStyle,
   type EventSubscription,
-  type PubSubEvent
+  type PubSubEvent,
 } from '@slickgrid-universal/event-pub-sub';
 
 // Public classes.
@@ -40,7 +40,14 @@ export * from './sortComparers/sortComparers.index.js';
 export * from './services/index.js';
 export { Enums } from './enums/enums.index.js';
 
-const Utilities: any = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, ...Utils, deepAssign: Utils.deepMerge };
+const Utilities: any = {
+  ...BackendUtilities,
+  ...Observers,
+  ...ServiceUtilities,
+  ...SortUtilities,
+  ...Utils,
+  deepAssign: Utils.deepMerge,
+};
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config.js';
 

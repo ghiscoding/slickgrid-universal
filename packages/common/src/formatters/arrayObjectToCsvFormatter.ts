@@ -9,7 +9,7 @@ import type { Formatter } from './../interfaces/index.js';
  * params: { propertyNames: ['firtName', 'lastName'] } => 'John Doe, Jane Doe'
  */
 export const arrayObjectToCsvFormatter: Formatter = (_row, _cell, value, columnDef, dataContext) => {
-  const columnParams = columnDef && columnDef.params || {};
+  const columnParams = (columnDef && columnDef.params) || {};
   const propertyNames = columnParams.propertyNames;
   const isIncludingTitle = columnParams?.includeTitle ?? true;
   let parentObjectKeyName: string = columnParams.dataContextProperty;

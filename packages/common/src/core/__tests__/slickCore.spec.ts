@@ -187,7 +187,12 @@ describe('SlickCore file', () => {
       onClick.notify({ hello: 'world' }, ed);
 
       expect(ed.nativeEvent).toBeDefined();
-      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: expect.any(Object), args: { hello: 'world' } }, undefined, expect.any(Function));
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith(
+        'onClick',
+        { eventData: expect.any(Object), args: { hello: 'world' } },
+        undefined,
+        expect.any(Function)
+      );
     });
   });
 
@@ -361,7 +366,7 @@ describe('SlickCore file', () => {
     it('should activate an EditController and expect isActive() to be truthy', () => {
       const commitSpy = vi.fn();
       const cancelSpy = vi.fn();
-      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
+      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy } as EditController;
 
       const elock = new SlickEditorLock();
       elock.activate(ec);
@@ -375,8 +380,8 @@ describe('SlickCore file', () => {
       const cancelSpy = vi.fn();
       const commit2Spy = vi.fn();
       const cancel2Spy = vi.fn();
-      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
-      const ec2 = { commitCurrentEdit: commit2Spy, cancelCurrentEdit: cancel2Spy, } as EditController;
+      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy } as EditController;
+      const ec2 = { commitCurrentEdit: commit2Spy, cancelCurrentEdit: cancel2Spy } as EditController;
 
       const elock = new SlickEditorLock();
       elock.activate(ec);
@@ -386,7 +391,7 @@ describe('SlickCore file', () => {
 
     it('should throw when trying to call activate() with an EditController that forgot to implement commitCurrentEdit() method', () => {
       const cancelSpy = vi.fn();
-      const ec = { cancelCurrentEdit: cancelSpy, } as any;
+      const ec = { cancelCurrentEdit: cancelSpy } as any;
 
       const elock = new SlickEditorLock();
       expect(() => elock.activate(ec)).toThrow(`SlickEditorLock.activate: editController must implement .commitCurrentEdit()`);
@@ -394,7 +399,7 @@ describe('SlickCore file', () => {
 
     it('should throw when trying to call activate() with an EditController that forgot to implement cancelCurrentEdit() method', () => {
       const commitSpy = vi.fn();
-      const ec = { commitCurrentEdit: commitSpy, } as any;
+      const ec = { commitCurrentEdit: commitSpy } as any;
 
       const elock = new SlickEditorLock();
       expect(() => elock.activate(ec)).toThrow(`SlickEditorLock.activate: editController must implement .cancelCurrentEdit()`);
@@ -403,7 +408,7 @@ describe('SlickCore file', () => {
     it('should deactivate an EditController and expect isActive() to be falsy', () => {
       const commitSpy = vi.fn();
       const cancelSpy = vi.fn();
-      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
+      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy } as EditController;
 
       const elock = new SlickEditorLock();
       elock.activate(ec);
@@ -419,8 +424,8 @@ describe('SlickCore file', () => {
       const cancelSpy = vi.fn();
       const commit2Spy = vi.fn();
       const cancel2Spy = vi.fn();
-      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
-      const ec2 = { commitCurrentEdit: commit2Spy, cancelCurrentEdit: cancel2Spy, } as EditController;
+      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy } as EditController;
+      const ec2 = { commitCurrentEdit: commit2Spy, cancelCurrentEdit: cancel2Spy } as EditController;
 
       const elock = new SlickEditorLock();
       elock.activate(ec);
@@ -431,7 +436,7 @@ describe('SlickCore file', () => {
     it('should expect active EditController.commitCurrentEdit() being called when calling commitCurrentEdit() after it was activated', () => {
       const commitSpy = vi.fn().mockReturnValue(true);
       const cancelSpy = vi.fn().mockReturnValue(true);
-      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
+      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy } as EditController;
 
       const elock = new SlickEditorLock();
       elock.activate(ec);
@@ -446,7 +451,7 @@ describe('SlickCore file', () => {
     it('should expect active EditController.commitCurrentEdit() being called when calling commitCurrentEdit() after it was activated', () => {
       const commitSpy = vi.fn().mockReturnValue(true);
       const cancelSpy = vi.fn().mockReturnValue(true);
-      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy, } as EditController;
+      const ec = { commitCurrentEdit: commitSpy, cancelCurrentEdit: cancelSpy } as EditController;
 
       const elock = new SlickEditorLock();
       elock.activate(ec);
@@ -747,6 +752,5 @@ describe('SlickCore file', () => {
         });
       });
     });
-
   });
 });

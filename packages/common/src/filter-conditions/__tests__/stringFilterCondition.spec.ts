@@ -64,7 +64,13 @@ describe('executeStringFilterCondition method', () => {
 
   it('should return False when the cell value is equal to at least 1 of the searchTerms', () => {
     const searchTerms = [];
-    const options = { dataKey: '', operator: 'EQ', cellValue: 'foo', fieldType: FieldType.string, searchTerms: ['bar', 'foo', 'John'] } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'EQ',
+      cellValue: 'foo',
+      fieldType: FieldType.string,
+      searchTerms: ['bar', 'foo', 'John'],
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
   });
@@ -85,7 +91,13 @@ describe('executeStringFilterCondition method', () => {
 
   it('should return True when input value provided starts with same substring and the operator is startsWith', () => {
     const searchTerms = ['abb'];
-    const options = { dataKey: '', operator: OperatorType.startsWith, cellValue: 'abbostford', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: OperatorType.startsWith,
+      cellValue: 'abbostford',
+      fieldType: FieldType.string,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
@@ -135,14 +147,27 @@ describe('executeStringFilterCondition method', () => {
 
   it('should return True when input value provided starts with same substring and the operator is empty string & option "searchInputLastChar" is asterisk (*)', () => {
     const searchTerms = ['abb'];
-    const options = { dataKey: '', operator: '', searchInputLastChar: '*', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: '',
+      searchInputLastChar: '*',
+      cellValue: 'abbostford',
+      fieldType: FieldType.string,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
 
   it('should return True when input value provided ends with same substring and the operator is endsWith', () => {
     const searchTerms = ['Smith'];
-    const options = { dataKey: '', operator: OperatorType.endsWith, cellValue: 'John Smith', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: OperatorType.endsWith,
+      cellValue: 'John Smith',
+      fieldType: FieldType.string,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
@@ -156,14 +181,26 @@ describe('executeStringFilterCondition method', () => {
 
   it('should return True when input value is on the inclusive limit range of search terms using 2 dots (..) notation AND no operator provided except a defaultFilterRangeOperator is rangeInclusive', () => {
     const searchTerms = ['b..e'];
-    const options = { dataKey: '', defaultFilterRangeOperator: OperatorType.rangeInclusive, cellValue: 'b', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      defaultFilterRangeOperator: OperatorType.rangeInclusive,
+      cellValue: 'b',
+      fieldType: FieldType.string,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
 
   it('should return False when input value is on the inclusive limit range of search terms using 2 dots (..) notation AND no operator provided except a defaultFilterRangeOperator is rangeExclusive', () => {
     const searchTerms = ['b..e'];
-    const options = { dataKey: '', defaultFilterRangeOperator: OperatorType.rangeExclusive, cellValue: 'b', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      defaultFilterRangeOperator: OperatorType.rangeExclusive,
+      cellValue: 'b',
+      fieldType: FieldType.string,
+      searchTerms,
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
   });
@@ -191,16 +228,27 @@ describe('executeStringFilterCondition method', () => {
 
   it('should return True when input value contains accent is searchTerms value does not contain accent when "ignoreAccentOnStringFilterAndSort" is set in grid options', () => {
     const searchTerms = ['jose'];
-    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: true } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'EQ',
+      cellValue: 'José',
+      fieldType: FieldType.string,
+      ignoreAccentOnStringFilterAndSort: true,
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
 
   it('should return False when input value contains accent is searchTerms value does not contain accent when "ignoreAccentOnStringFilterAndSort" is not set in grid options', () => {
     const searchTerms = ['jose'];
-    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: false } as FilterConditionOption;
+    const options = {
+      dataKey: '',
+      operator: 'EQ',
+      cellValue: 'José',
+      fieldType: FieldType.string,
+      ignoreAccentOnStringFilterAndSort: false,
+    } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
   });
-
 });

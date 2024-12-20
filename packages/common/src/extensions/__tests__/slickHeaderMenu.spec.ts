@@ -10,7 +10,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 
-const mockEventCallback = () => { };
+const mockEventCallback = () => {};
 const gridOptionsMock = {
   enableAutoSizeColumns: true,
   enableColumnResizeOnDoubleClick: true,
@@ -36,11 +36,11 @@ const gridOptionsMock = {
   },
   multiColumnSort: true,
   pagination: {
-    totalItems: 0
+    totalItems: 0,
   },
   showHeaderRow: false,
   showTopPanel: false,
-  showPreHeaderPanel: false
+  showPreHeaderPanel: false,
 } as unknown as GridOption;
 
 const gridStub = {
@@ -105,13 +105,13 @@ const headerMock = {
         cssClass: 'mdi mdi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
-      }
-    ]
-  } as HeaderMenuItems
+      },
+    ],
+  } as HeaderMenuItems,
 } as HeaderButtonsOrMenu;
 
 const columnsMock: Column[] = [
-  { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: headerMock, },
+  { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: headerMock },
   { id: 'field2', field: 'field2', name: 'Field 2', width: 75, nameKey: 'TITLE', sortable: true, filterable: true },
   { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
 ];
@@ -156,14 +156,14 @@ describe('HeaderMenu Plugin', () => {
       hideSortCommands: false,
       minWidth: 100,
       title: '',
-      subMenuOpenByEvent: 'mouseover'
+      subMenuOpenByEvent: 'mouseover',
     });
   });
 
   it('should be able to change Header Menu options', () => {
     plugin.init();
     plugin.addonOptions = {
-      buttonCssClass: 'some-class'
+      buttonCssClass: 'some-class',
     };
 
     expect(plugin.addonOptions).toEqual({
@@ -209,8 +209,9 @@ describe('HeaderMenu Plugin', () => {
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"></div>`)
+      );
     });
 
     it('should populate a Header Menu button with extra tooltip title attribute when header menu option "tooltip" and cell is being rendered', () => {
@@ -221,8 +222,9 @@ describe('HeaderMenu Plugin', () => {
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-menu-button" aria-label="Header Menu" title="some tooltip text"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" title="some tooltip text"></div>`)
+      );
     });
 
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility callback returns undefined', () => {
@@ -234,8 +236,7 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
 
       gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       expect(headerDiv.innerHTML).toBe('');
@@ -250,8 +251,7 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
     });
 
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
@@ -270,12 +270,14 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
     });
 
     it('should populate a Header Menu and a 2nd button item usability callback returns false and expect button to be disabled', () => {
@@ -292,12 +294,14 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item.slick-menu-item-disabled') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
 
       commandElm.dispatchEvent(new Event('click'));
       expect(publishSpy).not.toHaveBeenCalledWith('onHeaderMenuCommand');
@@ -316,12 +320,14 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item.slick-menu-item-disabled') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
     });
 
     it('should populate a Header Menu and expect button to be disabled when command property is disabled', () => {
@@ -336,12 +342,14 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item.slick-menu-item-hidden') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
     });
 
     it('should populate a Header Menu and a 2nd button and property "tooltip" is filled and expect button to include a "title" attribute for the tooltip', () => {
@@ -356,12 +364,14 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
     });
 
     it('should populate a Header Menu and a 2nd button and expect the button click handler & action callback to be executed when defined', () => {
@@ -379,15 +389,24 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
 
-      gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-      expect(actionMock).toHaveBeenCalledWith(clickEvent, { command: 'show-negative-numbers', item: columnsMock[0].header!.menu!.commandItems![1], column: columnsMock[0], grid: gridStub });
+      gridContainerDiv
+        .querySelector('.slick-menu-item.mdi-lightbulb-on')!
+        .dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      expect(actionMock).toHaveBeenCalledWith(clickEvent, {
+        command: 'show-negative-numbers',
+        item: columnsMock[0].header!.menu!.commandItems![1],
+        column: columnsMock[0],
+        grid: gridStub,
+      });
       expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
 
@@ -405,20 +424,24 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
 
-      gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      gridContainerDiv
+        .querySelector('.slick-menu-item.mdi-lightbulb-on')!
+        .dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(onCommandMock).toHaveBeenCalled();
       expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" but still expect the button NOT to be disabled because the "itemUsabilityOverride" has priority over the "disabled" property', () => {
-      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true });
 
       plugin.dispose();
       plugin.init();
@@ -434,12 +457,14 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
     });
 
     it('should "autoAlign" and expect menu to aligned left with a calculate offset when showing menu', () => {
@@ -461,12 +486,14 @@ describe('HeaderMenu Plugin', () => {
       expect(menuElm).toBeTruthy();
       expect(menuElm.clientWidth).toBe(275);
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
     });
 
     it('should not populate a Header Menu when 2nd button item visibility callback returns false', () => {
@@ -485,7 +512,7 @@ describe('HeaderMenu Plugin', () => {
     });
 
     it('should not populate a Header Menu when "menuUsabilityOverride" is defined and returns False', () => {
-      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true });
 
       plugin.dispose();
       plugin.init({ menuUsabilityOverride: () => false });
@@ -503,7 +530,7 @@ describe('HeaderMenu Plugin', () => {
 
     it('should open the Header Menu and then expect it to hide when clicking anywhere in the DOM body', () => {
       const hideMenuSpy = vi.spyOn(plugin, 'hideMenu');
-      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true, });
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableSorting: true });
 
       plugin.dispose();
       plugin.init();
@@ -516,12 +543,14 @@ describe('HeaderMenu Plugin', () => {
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
+        removeExtraSpaces(
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
-      ));
+        )
+      );
 
       // click inside menu shouldn't close it
       plugin.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true, cancelable: false, composed: false }));
@@ -548,7 +577,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.slickGrid = gridStub;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true, }
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
         });
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -556,8 +585,8 @@ describe('HeaderMenu Plugin', () => {
         const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
         const visibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
         const updatedColumnsMock = [
-          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined, }, },
-          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined, }, width: 75, },
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined } },
+          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined }, width: 75 },
         ] as Column[];
 
         plugin.hideColumn(columnsMock[1]);
@@ -569,8 +598,9 @@ describe('HeaderMenu Plugin', () => {
 
       it('should call hideColumn and expect "setOptions" to be called with new "frozenColumn" index when the grid is detected to be a frozen grid', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, frozenColumn: 1,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          frozenColumn: 1,
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
         });
 
         sharedService.slickGrid = gridStub;
@@ -580,8 +610,8 @@ describe('HeaderMenu Plugin', () => {
         const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
         const visibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
         const updatedColumnsMock = [
-          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined, }, },
-          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined, }, width: 75, },
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined } },
+          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined }, width: 75 },
         ] as Column[];
 
         plugin.hideColumn(columnsMock[1]);
@@ -597,32 +627,41 @@ describe('HeaderMenu Plugin', () => {
 
       beforeEach(() => {
         columnsMock = [
-          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, },
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100 },
           {
-            id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing',
+            id: 'field3',
+            field: 'field3',
+            name: 'Field 3',
+            columnGroup: 'Billing',
             header: {
               menu: {
                 commandItems: [
                   { command: 'help', title: 'Help', textCssClass: 'red bold' },
                   {
-                    command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', commandItems: [
-                      { command: 'command3', title: 'Command 3', positionOrder: 70, },
-                      { command: 'command4', title: 'Command 4', positionOrder: 71, },
+                    command: 'sub-commands',
+                    title: 'Sub Commands',
+                    subMenuTitle: 'Sub Command Title',
+                    commandItems: [
+                      { command: 'command3', title: 'Command 3', positionOrder: 70 },
+                      { command: 'command4', title: 'Command 4', positionOrder: 71 },
                       {
-                        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
-                          { command: 'command5', title: 'Command 5', positionOrder: 72, },
-                        ]
-                      }
-                    ]
+                        command: 'more-sub-commands',
+                        title: 'More Sub Commands',
+                        subMenuTitle: 'Sub Command Title 2',
+                        subMenuTitleCssClass: 'text-color-warning',
+                        commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
+                      },
+                    ],
                   },
                   {
-                    command: 'sub-commands3', title: 'Sub Commands 3', commandItems: [
-                      { command: 'command33', title: 'Command 33', positionOrder: 70, },
-                    ]
-                  }
-                ]
-              }
-            }, width: 75,
+                    command: 'sub-commands3',
+                    title: 'Sub Commands 3',
+                    commandItems: [{ command: 'command33', title: 'Command 33', positionOrder: 70 }],
+                  },
+                ],
+              },
+            },
+            width: 75,
           },
         ] as Column[];
       });
@@ -684,7 +723,12 @@ describe('HeaderMenu Plugin', () => {
         const subCommands33Elm = subCommandList3.querySelector('[data-command="command33"]') as HTMLDivElement;
         const command33ClickEvent = new Event('click');
         subCommands33Elm!.dispatchEvent(command33ClickEvent);
-        expect(subCommand33ActionMock).toHaveBeenCalledWith(command33ClickEvent, { command: 'command33', item: (columnsMock[1].header!.menu!.commandItems![2] as MenuCommandItem).commandItems![0], column: columnsMock[1], grid: gridStub });
+        expect(subCommand33ActionMock).toHaveBeenCalledWith(command33ClickEvent, {
+          command: 'command33',
+          item: (columnsMock[1].header!.menu!.commandItems![2] as MenuCommandItem).commandItems![0],
+          column: columnsMock[1],
+          grid: gridStub,
+        });
         expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
 
         // calling another command on parent menu should dispose sub-menus
@@ -818,7 +862,7 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
@@ -859,7 +903,7 @@ describe('HeaderMenu Plugin', () => {
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -879,15 +923,20 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect menu to show and "onBeforeMenuShow" callback to run when defined', () => {
-        const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
+        const originalColumnDefinitions = [
+          { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
+          { id: 'field2', field: 'field2', width: 75 },
+        ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
         vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: {
-            hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true,
-          }
+            hideFreezeColumnsCommand: false,
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         plugin.init({ onBeforeMenuShow: () => false });
@@ -907,8 +956,9 @@ describe('HeaderMenu Plugin', () => {
       it('should expect menu to show and "onAfterMenuShow" callback to run when defined', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableFiltering: true,
-          headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          enableFiltering: true,
+          headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         plugin.init({ onAfterMenuShow: () => false });
@@ -920,7 +970,9 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = vi.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
-        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 }];
+        const headerMenuExpected = [
+          { iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 },
+        ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
@@ -936,14 +988,14 @@ describe('HeaderMenu Plugin', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuAfterMenuShow', {
           grid: gridStub,
           menu: { commandItems: headerMenuExpected },
-          column: columnsMock[1]
+          column: columnsMock[1],
         });
       });
 
       it('should have the commands "column-resize-by-content" and "hide-column" in the header menu list and also expect the command to execute necessary callback', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnResizeByContentCommand: false, }
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnResizeByContentCommand: false },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate any column menus
@@ -956,9 +1008,15 @@ describe('HeaderMenu Plugin', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         const headerMenuExpected = [
-          { iconCssClass: 'mdi mdi-arrow-expand-horizontal', title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', command: 'column-resize-by-content', positionOrder: 47 },
+          {
+            iconCssClass: 'mdi mdi-arrow-expand-horizontal',
+            title: 'Resize by Content',
+            titleKey: 'COLUMN_RESIZE_BY_CONTENT',
+            command: 'column-resize-by-content',
+            positionOrder: 47,
+          },
           { divider: true, command: '', positionOrder: 48 },
-          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 }
+          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="column-resize-by-content"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -975,9 +1033,9 @@ describe('HeaderMenu Plugin', () => {
       it('should populate Filter Shortcuts list with shortcuts as sub-menus when a shortcu list is provided and we should also expect the command to execute necessary callback', () => {
         columnsMock[0].filter = {
           filterShortcuts: [
-            { title: 'Blank Values', searchTerms: ['A'], operator: '<', iconCssClass: 'mdi mdi-filter-minus-outline', },
-            { title: 'Non-Blank Values', searchTerms: ['A'], operator: '>', iconCssClass: 'mdi mdi-filter-plus-outline', },
-          ]
+            { title: 'Blank Values', searchTerms: ['A'], operator: '<', iconCssClass: 'mdi mdi-filter-minus-outline' },
+            { title: 'Non-Blank Values', searchTerms: ['A'], operator: '>', iconCssClass: 'mdi mdi-filter-plus-outline' },
+          ],
         };
         vi.spyOn(sharedService.slickGrid, 'getColumns').mockReturnValueOnce(columnsMock);
         vi.spyOn(sharedService.slickGrid, 'getColumnIndex').mockReturnValue(0);
@@ -994,15 +1052,35 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const headerMenuExpected = [
-          { command: 'freeze-columns', iconCssClass: 'mdi mdi-pin-outline', positionOrder: 45, title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', },
-          { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.', },
-          { command: 'column-resize-by-content', iconCssClass: 'mdi mdi-arrow-expand-horizontal', positionOrder: 47, title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', },
-          { command: '', divider: true, positionOrder: 48, },
+          { command: 'freeze-columns', iconCssClass: 'mdi mdi-pin-outline', positionOrder: 45, title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS' },
+          { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.' },
+          {
+            command: 'column-resize-by-content',
+            iconCssClass: 'mdi mdi-arrow-expand-horizontal',
+            positionOrder: 47,
+            title: 'Resize by Content',
+            titleKey: 'COLUMN_RESIZE_BY_CONTENT',
+          },
+          { command: '', divider: true, positionOrder: 48 },
           {
             command: 'filter-shortcuts-root-menu',
             commandItems: [
-              { command: 'blank-values', action: expect.any(Function), iconCssClass: 'mdi mdi-filter-minus-outline', operator: '<', searchTerms: ['A'], title: 'Blank Values', },
-              { command: 'non-blank-values', action: expect.any(Function), iconCssClass: 'mdi mdi-filter-plus-outline', operator: '>', searchTerms: ['A'], title: 'Non-Blank Values', },
+              {
+                command: 'blank-values',
+                action: expect.any(Function),
+                iconCssClass: 'mdi mdi-filter-minus-outline',
+                operator: '<',
+                searchTerms: ['A'],
+                title: 'Blank Values',
+              },
+              {
+                command: 'non-blank-values',
+                action: expect.any(Function),
+                iconCssClass: 'mdi mdi-filter-plus-outline',
+                operator: '>',
+                searchTerms: ['A'],
+                title: 'Non-Blank Values',
+              },
             ],
             iconCssClass: 'mdi mdi-filter-outline',
             positionOrder: 55,
@@ -1010,7 +1088,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FILTER_SHORTCUTS',
           },
           { command: '', divider: true, positionOrder: 56 },
-          { command: 'hide-column', iconCssClass: 'mdi mdi-close', positionOrder: 59, title: 'Hide Column', titleKey: 'HIDE_COLUMN', },
+          { command: 'hide-column', iconCssClass: 'mdi mdi-close', positionOrder: 59, title: 'Hide Column', titleKey: 'HIDE_COLUMN' },
         ];
         const shortcutSubMenuElm = gridContainerDiv.querySelector('[data-command="filter-shortcuts-root-menu"]') as HTMLDivElement;
         shortcutSubMenuElm!.dispatchEvent(new Event('mouseover'));
@@ -1031,8 +1109,10 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(sharedService.slickGrid, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(sharedService.slickGrid, 'getColumns').mockReturnValue(columnsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableSorting: true, enableColumnResizeOnDoubleClick: false,
-          headerMenu: { hideColumnHideCommand: false, hideSortCommands: true, }
+          ...gridOptionsMock,
+          enableSorting: true,
+          enableColumnResizeOnDoubleClick: false,
+          headerMenu: { hideColumnHideCommand: false, hideSortCommands: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate hide column menu
@@ -1047,7 +1127,7 @@ describe('HeaderMenu Plugin', () => {
         const headerMenuExpected = [
           { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 45 },
           { divider: true, command: '', positionOrder: 48 },
-          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 }
+          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -1062,8 +1142,9 @@ describe('HeaderMenu Plugin', () => {
 
       it('should expect all menu related to Filtering when "enableFiltering" is set', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableFiltering: true,
-          headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          enableFiltering: true,
+          headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear filter menu
@@ -1074,7 +1155,9 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = vi.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
-        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 }];
+        const headerMenuExpected = [
+          { iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 57 },
+        ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
@@ -1089,8 +1172,9 @@ describe('HeaderMenu Plugin', () => {
 
       it('should expect all menu related to Sorting when "enableSorting" is set', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableSorting: true,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          enableSorting: true,
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
@@ -1117,7 +1201,13 @@ describe('HeaderMenu Plugin', () => {
         plugin.translateHeaderMenu();
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'mdi mdi-sort-ascending', title: 'Trier par ordre croissant', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'mdi mdi-sort-descending', title: 'Trier par ordre décroissant', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          {
+            iconCssClass: 'mdi mdi-sort-descending',
+            title: 'Trier par ordre décroissant',
+            titleKey: 'SORT_DESCENDING',
+            command: 'sort-desc',
+            positionOrder: 51,
+          },
           { divider: true, command: '', positionOrder: 52 },
           { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Supprimer le tri', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
         ]);
@@ -1128,7 +1218,10 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "setColumns" to be called with same as original even when the column definitions list did not change', () => {
-        const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
+        const originalColumnDefinitions = [
+          { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
+          { id: 'field2', field: 'field2', width: 75 },
+        ];
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
@@ -1136,7 +1229,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
@@ -1156,13 +1249,20 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should trigger the command "sort-asc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {
-        const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
-        const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
+        const mockSortedCols: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const mockSortedOuput: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } },
+        ];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = vi.spyOn(sortServiceStub, 'onBackendSortChanged');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableSorting: true,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          enableSorting: true,
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -1187,13 +1287,20 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should trigger the command "sort-desc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {
-        const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
-        const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
+        const mockSortedCols: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const mockSortedOuput: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } },
+        ];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = vi.spyOn(sortServiceStub, 'onBackendSortChanged');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableSorting: true,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          enableSorting: true,
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -1219,13 +1326,21 @@ describe('HeaderMenu Plugin', () => {
 
       it('should trigger the command "sort-desc" and expect Sort Service to call "onLocalSortChanged" being called without the sorted column', () => {
         sharedService.dataView = dataViewStub;
-        const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
-        const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
+        const mockSortedCols: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const mockSortedOuput: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } },
+        ];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const localSortSpy = vi.spyOn(sortServiceStub, 'onLocalSortChanged');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableSorting: true, backendServiceApi: undefined,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          enableSorting: true,
+          backendServiceApi: undefined,
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -1242,13 +1357,21 @@ describe('HeaderMenu Plugin', () => {
 
       it('should trigger the command "sort-desc" and expect "onSort" event triggered when no DataView is provided', () => {
         sharedService.dataView = undefined as any;
-        const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
-        const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
+        const mockSortedCols: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const mockSortedOuput: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } },
+        ];
         const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const gridSortSpy = vi.spyOn(gridStub.onSort, 'notify');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock, enableSorting: true, backendServiceApi: undefined,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
+          ...gridOptionsMock,
+          enableSorting: true,
+          backendServiceApi: undefined,
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);

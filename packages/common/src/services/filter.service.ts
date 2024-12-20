@@ -5,13 +5,7 @@ import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
 import { type FilterFactory } from './../filters/filterFactory.js';
-import {
-  EmitterType,
-  FieldType,
-  OperatorType,
-  type OperatorString,
-  type SearchTerm,
-} from '../enums/index.js';
+import { EmitterType, FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilters,
@@ -26,7 +20,7 @@ import type {
   SearchColumnFilter,
 } from './../interfaces/index.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
-import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType, } from './utilities.js';
+import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType } from './utilities.js';
 import type { SharedService } from './shared.service.js';
 import type { RxJsFacade, Subject } from './rxjsFacade.js';
 import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
@@ -57,7 +51,13 @@ export class FilterService {
   protected _tmpPreFilteredData?: Set<number | string>;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(protected filterFactory: FilterFactory, protected pubSubService: BasePubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService | undefined, protected rxjs?: RxJsFacade | undefined) {
+  constructor(
+    protected filterFactory: FilterFactory,
+    protected pubSubService: BasePubSubService,
+    protected sharedService: SharedService,
+    protected backendUtilities?: BackendUtilityService | undefined,
+    protected rxjs?: RxJsFacade | undefined
+  ) {
     this._onSearchChange = new SlickEvent<OnSearchChangeEventArgs>();
     this._eventHandler = new SlickEventHandler();
     if (this.rxjs) {
@@ -221,7 +221,10 @@ export class FilterService {
     this.subscribeToOnHeaderRowCellRendered(grid);
   }
 
-  async clearFilterByColumnId(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, columnId: number | string): Promise<boolean> {
+  async clearFilterByColumnId(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    columnId: number | string
+  ): Promise<boolean> {
     await this.pubSubService.publish('onBeforeFilterClear', { columnId }, 0);
 
     const isBackendApi = this._gridOptions.backendServiceApi ?? false;
@@ -231,7 +234,7 @@ export class FilterService {
     const currentFilterColumnIds = Object.keys(this._columnFilters);
     let currentColFilter: string | undefined;
     if (Array.isArray(currentFilterColumnIds)) {
-      currentColFilter = currentFilterColumnIds.find(name => name === `${columnId}`);
+      currentColFilter = currentFilterColumnIds.find((name) => name === `${columnId}`);
     }
 
     // find the filter object and call its clear method with true (the argument tells the method it was called by a clear filter)
@@ -242,7 +245,10 @@ export class FilterService {
 
     // when using a backend service, we need to manually trigger a filter change but only if the filter was previously filled
     if (isBackendApi && currentColFilter !== undefined) {
-      this.onBackendFilterChange(event, { grid: this._grid, columnFilters: this._columnFilters } as unknown as OnSearchChangeEventArgs);
+      this.onBackendFilterChange(event, {
+        grid: this._grid,
+        columnFilters: this._columnFilters,
+      } as unknown as OnSearchChangeEventArgs);
     }
 
     // emit an event when filter is cleared
@@ -286,14 +292,19 @@ export class FilterService {
     // when using backend service, we need to query only once so it's better to do it here
     const backendApi = this._gridOptions.backendServiceApi;
     if (backendApi && triggerChange) {
-      const callbackArgs = { clearFilterTriggered: true, shouldTriggerQuery: triggerChange, grid: this._grid, columnFilters: this._columnFilters };
+      const callbackArgs = {
+        clearFilterTriggered: true,
+        shouldTriggerQuery: triggerChange,
+        grid: this._grid,
+        columnFilters: this._columnFilters,
+      };
       const queryResponse = backendApi.service.processOnFilterChanged(undefined, callbackArgs as FilterChangedArgs);
       const query = queryResponse as string;
       const totalItems = this._gridOptions.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, {
         errorCallback: this.resetToPreviousSearchFilters.bind(this),
-        successCallback: (responseArgs) => this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters),
-        emitActionChangedCallback: this.emitFilterChanged.bind(this)
+        successCallback: (responseArgs) => (this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters)),
+        emitActionChangedCallback: this.emitFilterChanged.bind(this),
       });
     } else {
       // keep a copy of the filters in case we need to rollback
@@ -307,7 +318,7 @@ export class FilterService {
   }
 
   /** Local Grid Filter search */
-  customLocalFilter(item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGrid; }): boolean {
+  customLocalFilter(item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGrid }): boolean {
     const grid = args?.grid;
     const columnFilters = args?.columnFilters ?? {};
     const isGridWithTreeData = this._gridOptions.enableTreeData ?? false;
@@ -346,7 +357,11 @@ export class FilterService {
 
         // when user enables Tree Data auto-recalc, we need to keep ref (only in hierarchical tree) of which datacontext was filtered or not
         if (autoRecalcTotalsOnFilterChange) {
-          const treeItem = findItemInTreeStructure(this.sharedService.hierarchicalDataset!, x => x[primaryDataId] === item[primaryDataId], childrenPropName);
+          const treeItem = findItemInTreeStructure(
+            this.sharedService.hierarchicalDataset!,
+            (x) => x[primaryDataId] === item[primaryDataId],
+            childrenPropName
+          );
           if (treeItem) {
             treeItem.__filteredOut = !filtered;
           }
@@ -379,7 +394,10 @@ export class FilterService {
           // in the rare case of an empty search term (it can happen when creating an external grid global search)
           // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
           if (parsedSearchTerms === undefined) {
-            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, searchColFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
+            parsedSearchTerms = getParsedSearchTermsByFieldType(
+              searchColFilter.searchTerms,
+              searchColFilter.columnDef.type || FieldType.string
+            ); // parsed term could be a single value or an array of values
             if (parsedSearchTerms !== undefined) {
               searchColFilter.parsedSearchTerms = parsedSearchTerms;
             }
@@ -405,23 +423,28 @@ export class FilterService {
    * @param columnFilter - column filter object (the object properties represent each column id and the value is the filter metadata)
    * @returns FilterConditionOption
    */
-  parseFormInputFilterConditions(inputSearchTerms: SearchTerm[] | undefined, columnFilter: Omit<SearchColumnFilter, 'searchTerms'>): Omit<FilterConditionOption, 'cellValue'> {
+  parseFormInputFilterConditions(
+    inputSearchTerms: SearchTerm[] | undefined,
+    columnFilter: Omit<SearchColumnFilter, 'searchTerms'>
+  ): Omit<FilterConditionOption, 'cellValue'> {
     const searchValues: SearchTerm[] = extend(true, [], inputSearchTerms) || [];
-    let fieldSearchValue = (Array.isArray(searchValues) && searchValues.length === 1) ? searchValues[0] : '';
+    let fieldSearchValue = Array.isArray(searchValues) && searchValues.length === 1 ? searchValues[0] : '';
     const columnDef = columnFilter.columnDef;
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
 
     let matches = null;
     if (fieldType !== FieldType.object) {
-      fieldSearchValue = (fieldSearchValue === undefined || fieldSearchValue === null) ? '' : `${fieldSearchValue}`; // make sure it's a string
+      fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
 
       // run regex to find possible filter operators unless the user disabled the feature
-      const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+      const autoParseInputFilterOperator =
+        columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
 
       // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
-      matches = autoParseInputFilterOperator !== false
-        ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
-        : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
+      matches =
+        autoParseInputFilterOperator !== false
+          ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
+          : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
     }
 
     const comboStartsWith = matches?.[2] || '';
@@ -444,12 +467,10 @@ export class FilterService {
 
     // if search value has a regex match we will only keep the value without the operator
     // in this case we need to overwrite the returned search values to truncate operator from the string search
-    if (Array.isArray(matches) && matches.length >= 1 && (Array.isArray(searchValues) && searchValues.length === 1)) {
+    if (Array.isArray(matches) && matches.length >= 1 && Array.isArray(searchValues) && searchValues.length === 1) {
       // string starts with a whitespace we'll trim only the first whitespace char
       // e.g. " " becomes "" and " slick grid " becomes "slick grid " (notice last whitespace is kept)
-      searchValues[0] = (searchTerm.length > 0 && searchTerm.substring(0, 1) === ' ')
-        ? searchTerm.substring(1)
-        : searchTerm;
+      searchValues[0] = searchTerm.length > 0 && searchTerm.substring(0, 1) === ' ' ? searchTerm.substring(1) : searchTerm;
     }
 
     return {
@@ -472,7 +493,11 @@ export class FilterService {
    * @param grid - SlickGrid object
    * @returns FilterConditionOption or boolean
    */
-  preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGrid): FilterConditionOption | true {
+  preProcessFilterConditionOnDataContext(
+    item: any,
+    columnFilter: SearchColumnFilter,
+    grid: SlickGrid
+  ): FilterConditionOption | true {
     const columnDef = columnFilter.columnDef;
     const columnId = columnFilter.columnId;
     let columnIndex = grid.getColumnIndex(columnId) as number;
@@ -480,7 +505,7 @@ export class FilterService {
     // it might be a hidden column, if so it won't be part of the getColumns (because it could be hidden via setColumns())
     // when that happens we can try to get the column definition from all defined columns
     if (!columnDef && this.sharedService && Array.isArray(this.sharedService.allColumns)) {
-      columnIndex = this.sharedService.allColumns.findIndex(col => col.field === columnId);
+      columnIndex = this.sharedService.allColumns.findIndex((col) => col.field === columnId);
     }
 
     // if we still don't have a column definition then we should return then row anyway (true)
@@ -490,13 +515,14 @@ export class FilterService {
 
     // Row Detail View plugin, if the row is padding we just get the value we're filtering on from it's parent
     if (this._gridOptions.enableRowDetailView) {
-      const metadataPrefix = this._gridOptions.rowDetailView && this._gridOptions.rowDetailView.keyPrefix || '__';
+      const metadataPrefix = (this._gridOptions.rowDetailView && this._gridOptions.rowDetailView.keyPrefix) || '__';
       if (item[`${metadataPrefix}isPadding`] && item[`${metadataPrefix}parent`]) {
         item = item[`${metadataPrefix}parent`];
       }
     }
 
-    let queryFieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || '';
+    let queryFieldName =
+      columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || '';
     if (typeof columnDef.queryFieldNameGetterFn === 'function') {
       queryFieldName = columnDef.queryFieldNameGetterFn(item);
     }
@@ -512,7 +538,10 @@ export class FilterService {
     const searchValues = columnFilter.searchTerms || [];
 
     // no need to query if search value is empty or if the search value is in fact equal to the operator
-    if (!searchValues || (Array.isArray(searchValues) && (searchValues.length === 0 || searchValues.length === 1 && operator === searchValues[0]))) {
+    if (
+      !searchValues ||
+      (Array.isArray(searchValues) && (searchValues.length === 0 || (searchValues.length === 1 && operator === searchValues[0])))
+    ) {
       return true;
     }
 
@@ -521,14 +550,16 @@ export class FilterService {
     if (searchValues && Array.isArray(searchValues) && fieldType !== FieldType.object) {
       for (let k = 0, ln = searchValues.length; k < ln; k++) {
         // make sure all search terms are strings
-        searchValues[k] = ((searchValues[k] === undefined || searchValues[k] === null) ? '' : searchValues[k]) + '';
+        searchValues[k] = (searchValues[k] === undefined || searchValues[k] === null ? '' : searchValues[k]) + '';
       }
     }
 
     // when using localization (i18n), the user might want to use the formatted output to do its filtering
     if (columnDef?.params?.useFormatterOuputToFilter === true) {
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-      const rowIndex = (this._dataView && typeof this._dataView.getIdxById === 'function') ? this._dataView.getIdxById(item[idPropName]) : 0;
+      const rowIndex =
+        this._dataView && typeof this._dataView.getIdxById === 'function' ? this._dataView.getIdxById(item[idPropName]) : 0;
+      // prettier-ignore
       const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
       cellValue = stripTags(formattedCellValue as string);
     }
@@ -566,7 +597,8 @@ export class FilterService {
     const isInitiallyCollapsed = this._gridOptions.treeDataOptions?.initiallyCollapsed ?? false;
     const treeDataColumnId = this._gridOptions.treeDataOptions?.columnId;
     const excludeChildrenWhenFilteringTree = this._gridOptions.treeDataOptions?.excludeChildrenWhenFilteringTree;
-    const isNotExcludingChildAndValidateOnlyTreeColumn = !excludeChildrenWhenFilteringTree && this._gridOptions.treeDataOptions?.autoApproveParentItemWhenTreeColumnIsValid === true;
+    const isNotExcludingChildAndValidateOnlyTreeColumn =
+      !excludeChildrenWhenFilteringTree && this._gridOptions.treeDataOptions?.autoApproveParentItemWhenTreeColumnIsValid === true;
 
     const treeObj = {};
     const filteredChildrenAndParents = new Set<number | string>(); // use Set instead of simple array to avoid duplicates
@@ -576,7 +608,7 @@ export class FilterService {
     const filteredParents = new Map<number | string, boolean>();
 
     if (Array.isArray(inputItems)) {
-      inputItems.forEach(inputItem => {
+      inputItems.forEach((inputItem) => {
         (treeObj as any)[inputItem[primaryDataId]] = inputItem;
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
@@ -588,7 +620,7 @@ export class FilterService {
       // loop through all column filters once and get parsed filter search value then save a reference in the columnFilter itself
       // it is much more effective to do it outside and prior to Step 2 so that we don't re-parse search filter for no reason while checking every row
       if (typeof columnFilters === 'object') {
-        Object.keys(columnFilters).forEach(columnId => {
+        Object.keys(columnFilters).forEach((columnId) => {
           const columnFilter = columnFilters[columnId] as SearchColumnFilter;
           const searchValues: SearchTerm[] = columnFilter?.searchTerms ? extend(true, [], columnFilter.searchTerms) : [];
           const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
@@ -603,7 +635,7 @@ export class FilterService {
       }
 
       // Step 2. loop through every item data context to execute filter condition check
-      inputItems.forEach(item => {
+      inputItems.forEach((item) => {
         const hasChildren = item[hasChildrenPropName];
         let matchFilter = true; // valid until proven otherwise
 
@@ -614,18 +646,24 @@ export class FilterService {
 
           if (conditionOptionResult) {
             const parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
+            // prettier-ignore
             const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeFilterConditionTest(conditionOptionResult as FilterConditionOption, parsedSearchTerms);
 
             // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
             // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)
-            if (conditionResult && isNotExcludingChildAndValidateOnlyTreeColumn && hasChildren && columnFilter.columnId === treeDataColumnId) {
+            if (
+              conditionResult &&
+              isNotExcludingChildAndValidateOnlyTreeColumn &&
+              hasChildren &&
+              columnFilter.columnId === treeDataColumnId
+            ) {
               filteredParents.set(item[primaryDataId], true);
               break;
             }
 
             // if item is valid OR we aren't excluding children and its parent is valid then we'll consider this valid
             // however we don't return true, we need to continue and loop through next filter(s) since we still need to check other keys in columnFilters
-            if (conditionResult || (!excludeChildrenWhenFilteringTree && (filteredParents.get(item[parentPropName]) === true))) {
+            if (conditionResult || (!excludeChildrenWhenFilteringTree && filteredParents.get(item[parentPropName]) === true)) {
               if (hasChildren && columnFilter.columnId === treeDataColumnId) {
                 filteredParents.set(item[primaryDataId], true); // when it's a Parent item, we'll keep a Map ref as being a Parent with valid criteria
               }
@@ -636,7 +674,11 @@ export class FilterService {
             } else {
               // when it's a Parent item AND its Parent isn't valid AND we aren't on the Tree column
               // we'll keep reference of the parent via a Map key/value pair and make its value as False because this Parent item is considered invalid
-              if (hasChildren && filteredParents.get(item[parentPropName]) !== true && columnFilter.columnId !== treeDataColumnId) {
+              if (
+                hasChildren &&
+                filteredParents.get(item[parentPropName]) !== true &&
+                columnFilter.columnId !== treeDataColumnId
+              ) {
                 filteredParents.set(item[primaryDataId], false);
               }
             }
@@ -656,7 +698,13 @@ export class FilterService {
 
           // if there are any presets of collapsed parents, let's processed them
           const presetToggleShouldBeCollapsed = !isInitiallyCollapsed;
-          if (!this._isTreePresetExecuted && Array.isArray(treeDataToggledItems) && treeDataToggledItems.some(collapsedItem => collapsedItem.itemId === parent.id && collapsedItem.isCollapsed === presetToggleShouldBeCollapsed)) {
+          if (
+            !this._isTreePresetExecuted &&
+            Array.isArray(treeDataToggledItems) &&
+            treeDataToggledItems.some(
+              (collapsedItem) => collapsedItem.itemId === parent.id && collapsedItem.isCollapsed === presetToggleShouldBeCollapsed
+            )
+          ) {
             parent[collapsedPropName] = presetToggleShouldBeCollapsed;
           }
 
@@ -694,7 +742,7 @@ export class FilterService {
       for (const colId of Object.keys(this._columnFilters)) {
         const columnFilter = this._columnFilters[colId];
         const filter = { columnId: colId || '' } as CurrentFilter;
-        const columnDef = this.sharedService.allColumns.find(col => col.id === filter.columnId);
+        const columnDef = this.sharedService.allColumns.find((col) => col.id === filter.columnId);
         const emptySearchTermReturnAllValues = columnDef?.filter?.emptySearchTermReturnAllValues ?? true;
 
         if (columnFilter?.searchTerms) {
@@ -706,7 +754,11 @@ export class FilterService {
         if (columnFilter.targetSelector) {
           filter.targetSelector = columnFilter.targetSelector;
         }
-        if (Array.isArray(filter.searchTerms) && filter.searchTerms.length > 0 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')) {
+        if (
+          Array.isArray(filter.searchTerms) &&
+          filter.searchTerms.length > 0 &&
+          (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')
+        ) {
           currentFilters.push(filter);
         }
       }
@@ -734,7 +786,10 @@ export class FilterService {
     }
   }
 
-  async onBackendFilterChange(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnSearchChangeEventArgs): Promise<void> {
+  async onBackendFilterChange(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    args: OnSearchChangeEventArgs
+  ): Promise<void> {
     const isTriggeringQueryEvent = args?.shouldTriggerQuery;
 
     if (isTriggeringQueryEvent) {
@@ -742,7 +797,9 @@ export class FilterService {
     }
 
     if (!args || !args.grid) {
-      throw new Error('Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function, it seems that "args" is not populated correctly');
+      throw new Error(
+        'Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function, it seems that "args" is not populated correctly'
+      );
     }
 
     const backendApi = this._gridOptions.backendServiceApi;
@@ -765,9 +822,9 @@ export class FilterService {
       const totalItems = this._gridOptions.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, {
         errorCallback: this.resetToPreviousSearchFilters.bind(this),
-        successCallback: (responseArgs) => this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters),
+        successCallback: (responseArgs) => (this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters)),
         emitActionChangedCallback: this.emitFilterChanged.bind(this),
-        httpCancelRequestSubject: this.httpCancelRequests$
+        httpCancelRequestSubject: this.httpCancelRequests$,
       });
     }
   }
@@ -818,7 +875,11 @@ export class FilterService {
     if (this._dataView && this._gridOptions.enableTreeData && inputItems.length > 0) {
       this._tmpPreFilteredData = this.preFilterTreeData(inputItems, this._columnFilters);
       this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
-    } else if (inputItems.length === 0 && Array.isArray(this.sharedService.hierarchicalDataset) && this.sharedService.hierarchicalDataset.length > 0) {
+    } else if (
+      inputItems.length === 0 &&
+      Array.isArray(this.sharedService.hierarchicalDataset) &&
+      this.sharedService.hierarchicalDataset.length > 0
+    ) {
       // in some occasion, we might be dealing with a dataset that is hierarchical from the start (the source dataset is already a tree structure)
       // and we did not have time to convert it to a flat dataset yet (for SlickGrid to use),
       // we would end up calling the pre-filter too early because these pre-filter works only a flat dataset
@@ -888,7 +949,7 @@ export class FilterService {
    * you can change the sorting icons separately by passing an array of columnId/sortAsc and that will change ONLY the icons
    * @param sortColumns
    */
-  setSortColumnIcons(sortColumns: { columnId: string, sortAsc: boolean; }[]): void {
+  setSortColumnIcons(sortColumns: { columnId: string; sortAsc: boolean }[]): void {
     if (this._grid && Array.isArray(sortColumns)) {
       this._grid.setSortColumns(sortColumns);
     }
@@ -905,9 +966,21 @@ export class FilterService {
    * @param triggerBackendQuery defaults to True, which will query the backend.
    * @param triggerOnSearchChangeEvent defaults to False, can be useful with Tree Data structure where the onSearchEvent has to run to execute a prefiltering step
    */
-  async updateFilters(filters: CurrentFilter[], emitChangedEvent = true, triggerBackendQuery = true, triggerOnSearchChangeEvent = false): Promise<boolean> {
-    if (!this._filtersMetadata || this._filtersMetadata.length === 0 || !this._gridOptions || !this._gridOptions.enableFiltering) {
-      throw new Error('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid and "enableFiltering" set in your Grid Options');
+  async updateFilters(
+    filters: CurrentFilter[],
+    emitChangedEvent = true,
+    triggerBackendQuery = true,
+    triggerOnSearchChangeEvent = false
+  ): Promise<boolean> {
+    if (
+      !this._filtersMetadata ||
+      this._filtersMetadata.length === 0 ||
+      !this._gridOptions ||
+      !this._gridOptions.enableFiltering
+    ) {
+      throw new Error(
+        '[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid and "enableFiltering" set in your Grid Options'
+      );
     }
 
     if (Array.isArray(filters)) {
@@ -925,7 +998,13 @@ export class FilterService {
           uiFilter.setValues(newFilter.searchTerms || [], newOperator);
 
           if (triggerOnSearchChangeEvent || this._gridOptions.enableTreeData) {
-            this.callbackSearchEvent(undefined, { columnDef: uiFilter.columnDef, operator: newOperator, searchTerms: newFilter.searchTerms, shouldTriggerQuery: true, forceOnSearchChangeEvent: true });
+            this.callbackSearchEvent(undefined, {
+              columnDef: uiFilter.columnDef,
+              operator: newOperator,
+              searchTerms: newFilter.searchTerms,
+              shouldTriggerQuery: true,
+              forceOnSearchChangeEvent: true,
+            });
           }
         }
       });
@@ -971,12 +1050,16 @@ export class FilterService {
    * @param triggerBackendQuery defaults to True, which will query the backend.
    */
   async updateSingleFilter(filter: CurrentFilter, emitChangedEvent = true, triggerBackendQuery = true): Promise<boolean> {
-    const columnDef = this.sharedService.allColumns.find(col => col.id === filter.columnId);
+    const columnDef = this.sharedService.allColumns.find((col) => col.id === filter.columnId);
     if (columnDef && filter.columnId) {
       this._columnFilters = {};
       const emptySearchTermReturnAllValues = columnDef.filter?.emptySearchTermReturnAllValues ?? true;
 
-      if (Array.isArray(filter.searchTerms) && (filter.searchTerms.length > 1 || (filter.searchTerms.length === 1 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')))) {
+      if (
+        Array.isArray(filter.searchTerms) &&
+        (filter.searchTerms.length > 1 ||
+          (filter.searchTerms.length === 1 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')))
+      ) {
         // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
         this._columnFilters[filter.columnId] = {
           columnId: filter.columnId,
@@ -1006,7 +1089,7 @@ export class FilterService {
       } else {
         this._dataView.setFilterArgs({
           columnFilters: this._columnFilters,
-          grid: this._grid
+          grid: this._grid,
         });
 
         // when using Tree Data, we also need to refresh the filters because of the tree structure with recursion
@@ -1039,7 +1122,7 @@ export class FilterService {
     } else {
       filterContainerElm = filterContainer;
     }
-    const columnDef = typeof column === 'string' ? this.sharedService.allColumns.find(col => col.id === column) : column;
+    const columnDef = typeof column === 'string' ? this.sharedService.allColumns.find((col) => col.id === column) : column;
     const columnId = columnDef?.id ?? '';
 
     if (columnId !== 'selector' && columnDef?.filterable) {
@@ -1064,7 +1147,7 @@ export class FilterService {
         searchTerms,
         columnDef,
         filterContainerElm,
-        callback: this.callbackSearchEvent.bind(this)
+        callback: this.callbackSearchEvent.bind(this),
       };
 
       if (newFilter) {
@@ -1086,7 +1169,10 @@ export class FilterService {
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement; }, isFilterFirstRender = true): void {
+  protected addFilterTemplateToHeaderRow(
+    args: { column: Column; grid: SlickGrid; node: HTMLElement },
+    isFilterFirstRender = true
+  ): void {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
@@ -1112,7 +1198,7 @@ export class FilterService {
         searchTerms,
         columnDef,
         filterContainerElm: args.node,
-        callback: this.callbackSearchEvent.bind(this)
+        callback: this.callbackSearchEvent.bind(this),
       };
 
       if (newFilter && filterArguments.filterContainerElm) {
@@ -1141,8 +1227,9 @@ export class FilterService {
    */
   protected callbackSearchEvent(event: Event | undefined, args: FilterCallbackArg): void {
     if (args) {
-      const searchTerm = ((event?.target) ? (event.target as HTMLInputElement).value : undefined);
-      const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
+      const searchTerm = event?.target ? (event.target as HTMLInputElement).value : undefined;
+      const searchTerms =
+        args.searchTerms && Array.isArray(args.searchTerms) ? args.searchTerms : searchTerm ? [searchTerm] : undefined;
       const columnDef = args.columnDef || null;
       const columnId = columnDef?.id ?? '';
       const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
@@ -1154,7 +1241,11 @@ export class FilterService {
       let parsedSearchTerms: SearchTerm | SearchTerm[] | undefined;
 
       if (columnDef && columnId) {
-        if (!hasSearchTerms || termsCount === 0 || (termsCount === 1 && Array.isArray(searchTerms) && emptySearchTermReturnAllValues && searchTerms[0] === '')) {
+        if (
+          !hasSearchTerms ||
+          termsCount === 0 ||
+          (termsCount === 1 && Array.isArray(searchTerms) && emptySearchTermReturnAllValues && searchTerms[0] === '')
+        ) {
           // delete the property from the columnFilters when it becomes empty
           // without doing this, it would leave an incorrect state of the previous column filters when filtering on another column
           delete this._columnFilters[columnId];
@@ -1165,7 +1256,7 @@ export class FilterService {
             columnDef,
             parsedSearchTerms: [],
             type: fieldType,
-            targetSelector: this.getSelectorStringFromElement(event?.target as HTMLElement | undefined)
+            targetSelector: this.getSelectorStringFromElement(event?.target as HTMLElement | undefined),
           };
           const inputSearchConditions = this.parseFormInputFilterConditions(searchTerms, colFilter);
           colFilter.operator = operator || inputSearchConditions.operator || mapOperatorByFieldType(fieldType);
@@ -1184,11 +1275,15 @@ export class FilterService {
 
       // event might have been created as a CustomEvent (e.g. CompoundDateFilter), without being a valid SlickEventData,
       // if so we will create a new SlickEventData and merge it with that CustomEvent to avoid having SlickGrid errors
-      const eventData = ((event && typeof (event as any).isPropagationStopped !== 'function') ? extend({}, new SlickEventData(), event) : event);
+      const eventData =
+        event && typeof (event as any).isPropagationStopped !== 'function' ? extend({}, new SlickEventData(), event) : event;
 
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = (event as KeyboardEvent)?.key;
-      if (this._onSearchChange && (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))) {
+      if (
+        this._onSearchChange &&
+        (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))
+      ) {
         const eventArgs = {
           clearFilterTriggered: args.clearFilterTriggered,
           shouldTriggerQuery: args.shouldTriggerQuery,
@@ -1199,7 +1294,7 @@ export class FilterService {
           searchTerms,
           parsedSearchTerms,
           grid: this._grid,
-          target: event?.target
+          target: event?.target,
         } as OnSearchChangeEventArgs;
 
         const onBeforeDispatchResult = this.pubSubService.publish('onBeforeSearchChange', eventArgs);
@@ -1227,7 +1322,7 @@ export class FilterService {
     // loop through column definition to hide/show header menu commands
     columnDefinitions.forEach((col) => {
       if (col?.header?.menu) {
-        (col.header.menu.commandItems)?.forEach(menuItem => {
+        col.header.menu.commandItems?.forEach((menuItem) => {
           if (menuItem && typeof menuItem !== 'string') {
             const menuCommand = menuItem.command;
             if (menuCommand === 'clear-filter') {
@@ -1284,7 +1379,7 @@ export class FilterService {
    */
   protected removeAllColumnFiltersProperties(): void {
     if (typeof this._columnFilters === 'object') {
-      Object.keys(this._columnFilters).forEach(columnId => {
+      Object.keys(this._columnFilters).forEach((columnId) => {
         if (columnId && this._columnFilters[columnId]) {
           delete this._columnFilters[columnId];
         }
@@ -1298,12 +1393,18 @@ export class FilterService {
    */
   protected subscribeToOnHeaderRowCellRendered(grid: SlickGrid): void {
     this._eventHandler.subscribe(grid.onBeforeHeaderRowCellDestroy, (_e, args) => {
-      const colFilter: Filter | undefined = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === args.column.id);
+      const colFilter: Filter | undefined = this._filtersMetadata.find(
+        (filter: Filter) => filter.columnDef.id === args.column.id
+      );
       colFilter?.destroy?.();
     });
   }
 
-  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString): void {
+  protected updateColumnFilters(
+    searchTerms: SearchTerm[] | undefined,
+    columnDef: any,
+    operator?: OperatorType | OperatorString
+  ): void {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
     const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 

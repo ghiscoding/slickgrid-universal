@@ -16,7 +16,10 @@ import { isColumnDateType } from '../services/utilities.js';
 export type GeneralVariableDataType = 'boolean' | 'date' | 'number' | 'object' | 'string';
 
 /** Execute mapped condition (per field type) for each cell in the grid */
-export const executeFilterConditionTest: FilterCondition = ((options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
+export const executeFilterConditionTest: FilterCondition = ((
+  options: FilterConditionOption,
+  parsedSearchTerms: SearchTerm | SearchTerm[]
+) => {
   // when using a multi-select ('IN' operator) we will not use the field type but instead go directly with a collection search
   if (isCollectionOperator(options.operator)) {
     return executeCollectionSearchFilterCondition(options);
@@ -49,7 +52,10 @@ export const executeFilterConditionTest: FilterCondition = ((options: FilterCond
  * Then later when we execute the filtering checks, we won't need to re-parse all search value(s) again and again.
  * So this is called only once, for each search filter that is, prior to running the actual filter condition checks on each cell afterward.
  */
-export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm | SearchTerm[] | undefined {
+export function getParsedSearchTermsByFieldType(
+  inputSearchTerms: SearchTerm[] | undefined,
+  inputFilterSearchType: (typeof FieldType)[keyof typeof FieldType]
+): SearchTerm | SearchTerm[] | undefined {
   const generalizedType = getVarTypeOfByColumnFieldType(inputFilterSearchType);
   let parsedSearchValues: SearchTerm | SearchTerm[] | undefined;
 
@@ -75,13 +81,12 @@ export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] |
   return parsedSearchValues;
 }
 
-
 /**
  * From a more specific field type, let's return a simple and more general type (boolean, date, number, object, text)
  * @param fieldType - specific field type
  * @returns generalType - general field type
  */
-export function getVarTypeOfByColumnFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralVariableDataType {
+export function getVarTypeOfByColumnFieldType(fieldType: (typeof FieldType)[keyof typeof FieldType]): GeneralVariableDataType {
   if (isColumnDateType(fieldType)) {
     return 'date';
   }

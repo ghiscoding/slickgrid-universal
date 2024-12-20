@@ -20,16 +20,17 @@ export class BindingEventService {
   /** Bind an event listener to any element */
   bind(
     elementOrElements: Document | Element | NodeListOf<Element> | Array<Element> | Window,
-    eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject,
+    eventNameOrNames: string | string[],
+    listener: EventListenerOrEventListenerObject,
     listenerOptions?: boolean | AddEventListenerOptions,
     groupName = ''
   ): void {
     // convert to array for looping in next task
-    const eventNames = (Array.isArray(eventNameOrNames)) ? eventNameOrNames : [eventNameOrNames];
+    const eventNames = Array.isArray(eventNameOrNames) ? eventNameOrNames : [eventNameOrNames];
 
     if ((elementOrElements as NodeListOf<HTMLElement>)?.forEach) {
       // multiple elements to bind to
-      (elementOrElements as NodeListOf<HTMLElement>).forEach(element => {
+      (elementOrElements as NodeListOf<HTMLElement>).forEach((element) => {
         for (const eventName of eventNames) {
           element.addEventListener(eventName, listener, listenerOptions);
           this._boundedEvents.push({ element, eventName, listener, groupName });
@@ -39,15 +40,19 @@ export class BindingEventService {
       // single elements to bind to
       for (const eventName of eventNames) {
         (elementOrElements as Element).addEventListener(eventName, listener, listenerOptions);
-        this._boundedEvents.push({ element: (elementOrElements as Element), eventName, listener, groupName });
+        this._boundedEvents.push({ element: elementOrElements as Element, eventName, listener, groupName });
       }
     }
   }
 
   /** Unbind a specific listener that was bounded earlier */
-  unbind(elementOrElements: Element | NodeListOf<Element>, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject): void {
+  unbind(
+    elementOrElements: Element | NodeListOf<Element>,
+    eventNameOrNames: string | string[],
+    listener: EventListenerOrEventListenerObject
+  ): void {
     // convert to array for looping in next task
-    const elements = (Array.isArray(elementOrElements)) ? elementOrElements : [elementOrElements];
+    const elements = Array.isArray(elementOrElements) ? elementOrElements : [elementOrElements];
     const eventNames = Array.isArray(eventNameOrNames) ? eventNameOrNames : [eventNameOrNames];
 
     for (const eventName of eventNames) {
@@ -60,7 +65,7 @@ export class BindingEventService {
   }
 
   unbindByEventName(element: Element | Window, eventName: string): void {
-    const boundedEvent = this._boundedEvents.find(e => e.element === element && e.eventName === eventName);
+    const boundedEvent = this._boundedEvents.find((e) => e.element === element && e.eventName === eventName);
     if (boundedEvent) {
       this.unbind(boundedEvent.element, boundedEvent.eventName, boundedEvent.listener);
     }
@@ -77,7 +82,7 @@ export class BindingEventService {
       // Note: we need to loop in reverse order to avoid array reindexing (causing index offset) after a splice is called
       for (let i = this._boundedEvents.length - 1; i >= 0; --i) {
         const boundedEvent = this._boundedEvents[i];
-        if (groupNames.some(g => g === boundedEvent.groupName)) {
+        if (groupNames.some((g) => g === boundedEvent.groupName)) {
           const { element, eventName, listener } = boundedEvent;
           this.unbind(element, eventName, listener);
           this._boundedEvents.splice(i, 1);

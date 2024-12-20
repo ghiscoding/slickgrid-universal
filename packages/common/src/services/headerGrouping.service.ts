@@ -1,7 +1,7 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 
-import type { Column, GridOption, } from './../interfaces/index.js';
+import type { Column, GridOption } from './../interfaces/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
@@ -26,7 +26,7 @@ export class HeaderGroupingService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() ?? {} as GridOption;
+    return this._grid?.getOptions() ?? ({} as GridOption);
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
@@ -111,7 +111,7 @@ export class HeaderGroupingService {
     let lastColumnGroup = '';
     let widthTotal = 0;
     const frozenHeaderWidthCalcDifferential = this._gridOptions?.frozenHeaderWidthCalcDifferential ?? 0;
-    const isFrozenGrid = (this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0);
+    const isFrozenGrid = this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0;
 
     for (let i = start; i < end; i++) {
       colDef = this._columnDefinitions[i];
@@ -126,7 +126,7 @@ export class HeaderGroupingService {
           headerElm = createDomElement('div', {
             className: `slick-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`,
             dataset: { group: colDef.columnGroup },
-            style: { width: `${widthTotal - headerColumnWidthDiff}px` }
+            style: { width: `${widthTotal - headerColumnWidthDiff}px` },
           });
 
           createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' }, headerElm);

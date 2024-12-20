@@ -1,7 +1,7 @@
 import { titleCase, toKebabCase } from '@slickgrid-universal/utils';
 import { type BasePubSubService } from './types/basePubSubService.interface.js';
 import { EventNamingStyle } from './types/eventNamingStyle.enum.js';
-import { type EventSubscription, type Subscription, } from './types/eventSubscription.interface.js';
+import { type EventSubscription, type Subscription } from './types/eventSubscription.interface.js';
 
 export interface PubSubEvent<T = any> {
   name: string;
@@ -53,7 +53,13 @@ export class EventPubSubService implements BasePubSubService {
    * @param {Function} externalizeEventCallback - user can optionally retrieve the CustomEvent used in the PubSub for its own usage via a callback (called just before the event dispatch)
    * @returns {Boolean} returns true if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.
    */
-  dispatchCustomEvent<T = any>(eventName: string, data?: T, isBubbling = true, isCancelable = true, externalizeEventCallback?: (e: Event) => void): boolean {
+  dispatchCustomEvent<T = any>(
+    eventName: string,
+    data?: T,
+    isBubbling = true,
+    isCancelable = true,
+    externalizeEventCallback?: (e: Event) => void
+  ): boolean {
     const eventInit: CustomEventInit<T> = { bubbles: isBubbling, cancelable: isCancelable };
     if (data) {
       eventInit.detail = data;
@@ -82,10 +88,11 @@ export class EventPubSubService implements BasePubSubService {
 
     switch (this.eventNamingStyle) {
       case EventNamingStyle.camelCase:
-        outputEventName = (eventNamePrefix !== '') ? `${eventNamePrefix}${titleCase(inputEventName)}` : inputEventName;
+        outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(inputEventName)}` : inputEventName;
         break;
       case EventNamingStyle.kebabCase:
-        outputEventName = (eventNamePrefix !== '') ? `${eventNamePrefix}-${toKebabCase(inputEventName)}` : toKebabCase(inputEventName);
+        outputEventName =
+          eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(inputEventName)}` : toKebabCase(inputEventName);
         break;
       case EventNamingStyle.lowerCase:
         outputEventName = `${eventNamePrefix}${inputEventName}`.toLowerCase();
@@ -106,13 +113,21 @@ export class EventPubSubService implements BasePubSubService {
    * @param {Function} externalizeEventCallback - user can optionally retrieve the CustomEvent used in the PubSub for its own usage via a callback (called just before the event dispatch)
    * @returns {Boolean | Promise} - return type will be a Boolean unless a `delay` is provided then a `Promise<Boolean>` will be returned
    */
-  publish<T = any>(eventName: string, data?: T, delay?: number, externalizeEventCallback?: (e: Event) => void): boolean | Promise<boolean> {
+  publish<T = any>(
+    eventName: string,
+    data?: T,
+    delay?: number,
+    externalizeEventCallback?: (e: Event) => void
+  ): boolean | Promise<boolean> {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
     if (delay) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         window.clearTimeout(this._timer);
-        this._timer = window.setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true, externalizeEventCallback)), delay);
+        this._timer = window.setTimeout(
+          () => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true, externalizeEventCallback)),
+          delay
+        );
       });
     } else {
       return this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true, externalizeEventCallback);
@@ -129,19 +144,21 @@ export class EventPubSubService implements BasePubSubService {
     eventNames = Array.isArray(eventNames) ? eventNames : [eventNames];
     const subscriptions: Array<() => void> = [];
 
-    eventNames.forEach(eventName => {
+    eventNames.forEach((eventName) => {
       const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
       // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
       // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
-      this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail as T));
+      this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) =>
+        callback.call(null, event.detail as T)
+      );
       this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
       subscriptions.push(() => this.unsubscribe(eventNameByConvention, callback as never));
     });
 
     // return a subscription(s) that we can later unsubscribe
     return {
-      unsubscribe: () => subscriptions.forEach(unsub => unsub())
+      unsubscribe: () => subscriptions.forEach((unsub) => unsub()),
     };
   }
 
@@ -159,7 +176,7 @@ export class EventPubSubService implements BasePubSubService {
 
     // return a subscription that we can later unsubscribe
     return {
-      unsubscribe: () => this.unsubscribe(eventNameByConvention, listener as never)
+      unsubscribe: () => this.unsubscribe(eventNameByConvention, listener as never),
     };
   }
 
@@ -170,7 +187,11 @@ export class EventPubSubService implements BasePubSubService {
    * @param {Boolean} [shouldRemoveFromEventList] - should we also remove the event from the subscriptions array?
    * @return possibly a Subscription
    */
-  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList = true): void {
+  unsubscribe<T = any>(
+    eventName: string,
+    listener: (event: T | CustomEventInit<T>) => void,
+    shouldRemoveFromEventList = true
+  ): void {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.removeEventListener(eventNameByConvention, listener);
     if (shouldRemoveFromEventList) {
@@ -204,7 +225,7 @@ export class EventPubSubService implements BasePubSubService {
   // --------------------
 
   protected removeSubscribedEventWhenFound<T>(eventName: string, listener: (event: T | CustomEventInit<T>) => void): void {
-    const eventIdx = this._subscribedEvents.findIndex(evt => evt.name === eventName && evt.listener === listener);
+    const eventIdx = this._subscribedEvents.findIndex((evt) => evt.name === eventName && evt.listener === listener);
     if (eventIdx >= 0) {
       this._subscribedEvents.splice(eventIdx, 1);
     }

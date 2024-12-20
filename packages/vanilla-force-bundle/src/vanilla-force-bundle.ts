@@ -50,31 +50,34 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     dataset?: any[],
     hierarchicalDataset?: any[],
     services?: {
-      backendUtilityService?: BackendUtilityService,
-      collectionService?: CollectionService,
-      eventPubSubService?: EventPubSubService,
-      extensionService?: ExtensionService,
-      extensionUtility?: ExtensionUtility,
-      filterService?: FilterService,
-      gridEventService?: GridEventService,
-      gridService?: GridService,
-      gridStateService?: GridStateService,
-      headerGroupingService?: HeaderGroupingService,
-      paginationService?: PaginationService,
-      resizerService?: ResizerService,
-      rxjs?: RxJsFacade,
-      sharedService?: SharedService,
-      sortService?: SortService,
-      treeDataService?: TreeDataService,
-      translaterService?: TranslaterService,
-      universalContainerService?: UniversalContainerService,
+      backendUtilityService?: BackendUtilityService;
+      collectionService?: CollectionService;
+      eventPubSubService?: EventPubSubService;
+      extensionService?: ExtensionService;
+      extensionUtility?: ExtensionUtility;
+      filterService?: FilterService;
+      gridEventService?: GridEventService;
+      gridService?: GridService;
+      gridStateService?: GridStateService;
+      headerGroupingService?: HeaderGroupingService;
+      paginationService?: PaginationService;
+      resizerService?: ResizerService;
+      rxjs?: RxJsFacade;
+      sharedService?: SharedService;
+      sortService?: SortService;
+      treeDataService?: TreeDataService;
+      translaterService?: TranslaterService;
+      universalContainerService?: UniversalContainerService;
     }
   ) {
     super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset, services);
   }
 
   mergeGridOptions(gridOptions: GridOption): GridOption {
-    const extraOptions = (gridOptions.useSalesforceDefaultGridOptions || (this._gridOptions?.useSalesforceDefaultGridOptions)) ? SalesforceGlobalGridOptions : {};
+    const extraOptions =
+      gridOptions.useSalesforceDefaultGridOptions || this._gridOptions?.useSalesforceDefaultGridOptions
+        ? SalesforceGlobalGridOptions
+        : {};
     const options = extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering
@@ -85,7 +88,12 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     // using copy extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
     // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
     // On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
-    if (options?.pagination && (gridOptions.enablePagination || gridOptions.backendServiceApi) && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+    if (
+      options?.pagination &&
+      (gridOptions.enablePagination || gridOptions.backendServiceApi) &&
+      gridOptions.pagination &&
+      Array.isArray(gridOptions.pagination.pageSizes)
+    ) {
       options.pagination.pageSizes = gridOptions.pagination.pageSizes;
     }
 
@@ -126,7 +134,10 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     this._registeredResources.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
-    if ((this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) || (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)) {
+    if (
+      (this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) ||
+      (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)
+    ) {
       this._registeredResources.push(this.headerGroupingService);
     }
 
@@ -147,7 +158,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     // also initialize (render) the pagination component when using the salesforce default options
     // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
     if (this.gridOptions.enableCompositeEditor) {
-      if (!this._registeredResources.some((resource => resource instanceof SlickCompositeEditorComponent))) {
+      if (!this._registeredResources.some((resource) => resource instanceof SlickCompositeEditorComponent)) {
         this.slickCompositeEditor = new SlickCompositeEditorComponent();
         this._registeredResources.push(this.slickCompositeEditor);
       }

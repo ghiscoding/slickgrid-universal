@@ -53,8 +53,8 @@ export interface SlickResizer {
   // Events
 
   /** triggered before rows are being moved */
-  onGridAfterResize: SlickEvent<{ grid: SlickGrid; dimensions: GridSize; }>;
+  onGridAfterResize: SlickEvent<{ grid: SlickGrid; dimensions: GridSize }>;
 
   /** triggered when rows are being moved */
-  onGridBeforeResize: SlickEvent<{ grid: SlickGrid; }>;
+  onGridBeforeResize: SlickEvent<{ grid: SlickGrid }>;
 }

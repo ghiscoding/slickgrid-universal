@@ -52,5 +52,11 @@ export interface ExcelGroupValueParserArgs extends BaseExcelValueParserArgs {
   groupType: string;
 }
 
-export type GetDataValueCallback = (data: Date | string | number, args: ExcelCellValueParserArgs) => Date | string | number | ExcelColumnMetadata;
-export type GetGroupTotalValueCallback = (totals: SlickGroupTotals, args: ExcelGroupValueParserArgs) => Date | string | number | ExcelColumnMetadata;
+export type GetDataValueCallback = (
+  data: Date | string | number,
+  args: ExcelCellValueParserArgs
+) => Date | string | number | ExcelColumnMetadata;
+export type GetGroupTotalValueCallback = (
+  totals: SlickGroupTotals,
+  args: ExcelGroupValueParserArgs
+) => Date | string | number | ExcelColumnMetadata;

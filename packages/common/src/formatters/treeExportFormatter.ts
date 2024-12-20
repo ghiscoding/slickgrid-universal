@@ -2,7 +2,7 @@ import { addWhiteSpaces, stripTags } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
 import { type Formatter } from './../interfaces/index.js';
-import { getCellValueFromQueryFieldGetter, } from '../services/utilities.js';
+import { getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
 
 /** Formatter that must be use with a Tree Data column */
@@ -27,7 +27,9 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
   }
 
   if (!dataContext.hasOwnProperty(treeLevelPropName)) {
-    throw new Error('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
+    throw new Error(
+      '[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.'
+    );
   }
 
   const treeLevel = dataContext?.[treeLevelPropName] ?? 0;
@@ -36,9 +38,9 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
 
   if (dataContext[hasChildrenPropName]) {
     toggleSymbol = dataContext?.[collapsedPropName] ? groupCollapsedSymbol : groupExpandedSymbol; // parent with child will have a toggle icon
-    indentation = treeLevel === 0 ? 0 : (indentMarginLeft * treeLevel);
+    indentation = treeLevel === 0 ? 0 : indentMarginLeft * treeLevel;
   } else {
-    indentation = (indentMarginLeft * (treeLevel === 0 ? 0 : treeLevel + 1));
+    indentation = indentMarginLeft * (treeLevel === 0 ? 0 : treeLevel + 1);
   }
   const indentSpacer = addWhiteSpaces(indentation);
 
@@ -46,7 +48,12 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
     outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
   }
 
-  const leadingChar = (treeLevel === 0 && toggleSymbol) ? '' : (treeLevel === 0 ? `${exportIndentationLeadingChar}${addWhiteSpaces(exportIndentationLeadingSpaceCount)}` : exportIndentationLeadingChar);
+  const leadingChar =
+    treeLevel === 0 && toggleSymbol
+      ? ''
+      : treeLevel === 0
+        ? `${exportIndentationLeadingChar}${addWhiteSpaces(exportIndentationLeadingSpaceCount)}`
+        : exportIndentationLeadingChar;
   outputValue = `${leadingChar}${indentSpacer}${toggleSymbol} ${outputValue}`;
   const sanitizedOutputValue = stripTags(outputValue); // also remove any html tags that might exist
 

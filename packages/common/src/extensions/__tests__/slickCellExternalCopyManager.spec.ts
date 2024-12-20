@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { SelectionModel } from '../../enums/index.js';
-import type { Column, GridOption, OnEventArgs, } from '../../interfaces/index.js';
+import type { Column, GridOption, OnEventArgs } from '../../interfaces/index.js';
 import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager.js';
 import type { InputEditor } from '../../editors/inputEditor.js';
@@ -36,7 +36,7 @@ const gridStub = {
   getActiveCell: vi.fn(),
   getActiveCellNode: vi.fn(),
   getColumns: vi.fn().mockReturnValue([
-    { id: 'firstName', field: 'firstName', name: 'First Name', },
+    { id: 'firstName', field: 'firstName', name: 'First Name' },
     { id: 'lastName', field: 'lastName', name: 'Last Name' },
   ] as Column[]),
   getData: () => dataViewStub,
@@ -87,17 +87,17 @@ const mockTextEditor = {
 const mockTextEditorImplementation = vi.fn().mockImplementation(() => mockTextEditor);
 
 const Editors = {
-  text: mockTextEditorImplementation
+  text: mockTextEditorImplementation,
 };
 
 describe('CellExternalCopyManager', () => {
   const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
   const lastNameElm = document.createElement('div');
   lastNameElm.textContent = 'Last Name';
-  const mockEventCallback = () => { };
+  const mockEventCallback = () => {};
   const mockColumns = [
     { id: 'firstName', field: 'firstName', name: 'First Name', editor: { model: Editors.text }, editorClass: Editors.text },
-    { id: 'lastName', field: 'lastName', name: lastNameElm, },
+    { id: 'lastName', field: 'lastName', name: lastNameElm },
     { id: 'age', field: 'age', name: 'Age', editor: { model: Editors.text }, editorClass: Editors.text },
   ] as Column[];
   let plugin: SlickCellExternalCopyManager;
@@ -109,7 +109,7 @@ describe('CellExternalCopyManager', () => {
       onCopyCells: mockEventCallback,
       onCopyCancelled: mockEventCallback,
       onPasteCells: mockEventCallback,
-    }
+    },
   } as GridOption;
 
   beforeEach(() => {
@@ -135,15 +135,18 @@ describe('CellExternalCopyManager', () => {
       vi.clearAllMocks();
     });
 
-    it('should throw an error initializing the plugin without a selection model', () => new Promise((done: any) => {
-      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(null as any);
-      try {
-        plugin.init(gridStub);
-      } catch (error) {
-        expect(error.message).toBe('Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())');
-        done();
-      }
-    }));
+    it('should throw an error initializing the plugin without a selection model', () =>
+      new Promise((done: any) => {
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(null as any);
+        try {
+          plugin.init(gridStub);
+        } catch (error) {
+          expect(error.message).toBe(
+            'Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())'
+          );
+          done();
+        }
+      }));
 
     it('should focus on the grid after "onSelectedRangesChanged" is triggered', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockCellSelectionModel as any);
@@ -176,7 +179,7 @@ describe('CellExternalCopyManager', () => {
     });
 
     it('should call "getDataItemValueForColumn" and expect the ouput to be what "dataItemColumnValueExtractor" returns when it is provided', () => {
-      plugin.init(gridStub, { dataItemColumnValueExtractor: (item, col) => col.field === 'firstName' ? 'Full Name' : 'Last Name' });
+      plugin.init(gridStub, { dataItemColumnValueExtractor: (item, col) => (col.field === 'firstName' ? 'Full Name' : 'Last Name') });
       const output = plugin.getDataItemValueForColumn({ firstName: 'John', lastName: 'Doe' }, mockColumns[0], 0, 0, new SlickEventData());
       expect(output).toEqual('Full Name');
     });
@@ -252,9 +255,10 @@ describe('CellExternalCopyManager', () => {
         cell: 0,
         item: {
           firstName: 'John',
-          lastName: 'Doe'
+          lastName: 'Doe',
         },
-        value: 'Foobar', columnDef: {} as Column
+        value: 'Foobar',
+        columnDef: {} as Column,
       });
 
       expect(sutSpy).toHaveBeenCalled();
@@ -264,7 +268,10 @@ describe('CellExternalCopyManager', () => {
       beforeEach(() => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         vi.spyOn(gridStub, 'getDataLength').mockReturnValue(2);
-        vi.spyOn(gridStub, 'getData').mockReturnValue([{ firstName: 'John', lastName: 'Doe', age: 30 }, { firstName: 'Jane', lastName: 'Doe' }]);
+        vi.spyOn(gridStub, 'getData').mockReturnValue([
+          { firstName: 'John', lastName: 'Doe', age: 30 },
+          { firstName: 'Jane', lastName: 'Doe' },
+        ]);
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' }).mockReturnValueOnce({ firstName: 'Jane', lastName: 'Doe' });
         vi.spyOn(gridStub, 'hasDataView').mockReturnValue(false);
       });
@@ -282,7 +289,15 @@ describe('CellExternalCopyManager', () => {
         const clearSpy = vi.spyOn(plugin, 'clearCopySelection');
         vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 1, 2, 2)]);
 
-        plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 2, includeHeaderWhenCopying: true, onCopyCancelled: mockOnCopyCancelled, onCopyInit: mockOnCopyInit, onCopyCells: mockOnCopyCells, onCopySuccess: mockOnCopySuccess });
+        plugin.init(gridStub, {
+          clearCopySelectionDelay: 1,
+          clipboardPasteDelay: 2,
+          includeHeaderWhenCopying: true,
+          onCopyCancelled: mockOnCopyCancelled,
+          onCopyInit: mockOnCopyInit,
+          onCopyCells: mockOnCopyCells,
+          onCopySuccess: mockOnCopySuccess,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -325,7 +340,13 @@ describe('CellExternalCopyManager', () => {
         const clearSpy = vi.spyOn(plugin, 'clearCopySelection');
         vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 1, 1, 2)]);
 
-        plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, onCopyInit: mockOnCopyInit, onCopyCells: mockOnCopyCells });
+        plugin.init(gridStub, {
+          clipboardPasteDelay: 1,
+          clearCopySelectionDelay: 1,
+          includeHeaderWhenCopying: true,
+          onCopyInit: mockOnCopyInit,
+          onCopyCells: mockOnCopyCells,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -360,7 +381,9 @@ describe('CellExternalCopyManager', () => {
           clipCommand = cmd;
           cmd.execute();
         };
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce(null as any);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
+          .mockReturnValueOnce(null as any);
         plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
@@ -387,7 +410,13 @@ describe('CellExternalCopyManager', () => {
         expect(getActiveCellSpy).toHaveBeenCalled();
         expect(updateCellSpy).toHaveBeenCalledWith(1, 0);
         expect(updateCellSpy).toHaveBeenCalledWith(1, 1);
-        expect(onCellChangeSpy).toHaveBeenCalledWith({ row: 1, cell: 0, item: { firstName: 'John', lastName: 'serialized output' }, grid: gridStub, column: {} });
+        expect(onCellChangeSpy).toHaveBeenCalledWith({
+          row: 1,
+          cell: 0,
+          item: { firstName: 'John', lastName: 'serialized output' },
+          grid: gridStub,
+          column: {},
+        });
         const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
         clipCommand.undo();
         expect(getDataItemSpy).toHaveBeenCalled();
@@ -399,11 +428,19 @@ describe('CellExternalCopyManager', () => {
           clipCommand = cmd;
           cmd.execute();
         };
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce(null as any);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
+          .mockReturnValueOnce(null as any);
 
         // first one should be denied
         returnValueStub.mockReturnValueOnce(false);
-        plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, onBeforePasteCell: (e: SlickEventData, args: OnEventArgs) => args.cell > 0 });
+        plugin.init(gridStub, {
+          clipboardPasteDelay: 1,
+          clearCopySelectionDelay: 1,
+          includeHeaderWhenCopying: true,
+          clipboardCommandHandler,
+          onBeforePasteCell: (e: SlickEventData, args: OnEventArgs) => args.cell > 0,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -429,14 +466,22 @@ describe('CellExternalCopyManager', () => {
         expect(getActiveCellSpy).toHaveBeenCalled();
         expect(updateCellSpy).not.toHaveBeenCalledWith(1, 0);
         expect(updateCellSpy).toHaveBeenCalledWith(1, 1);
-        expect(onCellChangeSpy).toHaveBeenCalledWith({ row: 1, cell: 1, item: { firstName: 'John', lastName: 'serialized output' }, grid: gridStub, column: {} });
+        expect(onCellChangeSpy).toHaveBeenCalledWith({
+          row: 1,
+          cell: 1,
+          item: { firstName: 'John', lastName: 'serialized output' },
+          grid: gridStub,
+          column: {},
+        });
         const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
         clipCommand.undo();
         expect(getDataItemSpy).toHaveBeenCalled();
       });
 
       it('should Copy, Paste and run Execute clip command with only 1 cell to copy', () => {
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
         let clipCommand;
         const clipboardCommandHandler = (cmd) => {
           clipCommand = cmd;
@@ -483,14 +528,22 @@ describe('CellExternalCopyManager', () => {
       });
 
       it('should remove quotes on multiline content pastes', () => {
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
         let clipCommand;
         const clipboardCommandHandler = (cmd) => {
           clipCommand = cmd;
           cmd.execute();
         };
 
-        plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, removeDoubleQuotesOnPaste: true });
+        plugin.init(gridStub, {
+          clipboardPasteDelay: 1,
+          clearCopySelectionDelay: 1,
+          includeHeaderWhenCopying: true,
+          clipboardCommandHandler,
+          removeDoubleQuotesOnPaste: true,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -531,14 +584,22 @@ describe('CellExternalCopyManager', () => {
       });
 
       it('should replace newlines with configured characters for multiline content', () => {
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
         let clipCommand;
         const clipboardCommandHandler = (cmd) => {
           clipCommand = cmd;
           cmd.execute();
         };
 
-        plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, replaceNewlinesWith: '🥳' });
+        plugin.init(gridStub, {
+          clipboardPasteDelay: 1,
+          clearCopySelectionDelay: 1,
+          includeHeaderWhenCopying: true,
+          clipboardCommandHandler,
+          replaceNewlinesWith: '🥳',
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -580,9 +641,16 @@ describe('CellExternalCopyManager', () => {
 
       it('should Copy, Paste but not execute run clipCommandHandler when defined', () => {
         const mockClipboardCommandHandler = vi.fn();
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 2, 2)])
+          .mockReturnValueOnce(null as any);
 
-        plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler: mockClipboardCommandHandler });
+        plugin.init(gridStub, {
+          clearCopySelectionDelay: 1,
+          clipboardPasteDelay: 1,
+          includeHeaderWhenCopying: true,
+          clipboardCommandHandler: mockClipboardCommandHandler,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -609,9 +677,16 @@ describe('CellExternalCopyManager', () => {
 
       it('should Copy, Paste without completing it because it does not know where to paste it', () => {
         const mockClipboardCommandHandler = vi.fn();
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 2, 2)])
+          .mockReturnValueOnce(null as any);
 
-        plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler: mockClipboardCommandHandler });
+        plugin.init(gridStub, {
+          clearCopySelectionDelay: 1,
+          clipboardPasteDelay: 1,
+          includeHeaderWhenCopying: true,
+          clipboardCommandHandler: mockClipboardCommandHandler,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -641,7 +716,7 @@ describe('CellExternalCopyManager', () => {
         const mockNewRowCreator = vi.fn((count: number) => {
           for (let i = 0; i < count; i++) {
             gridStub.getData<any[]>().push({
-              id: nextAddNewRowId--
+              id: nextAddNewRowId--,
             });
           }
         });
@@ -656,7 +731,14 @@ describe('CellExternalCopyManager', () => {
           clipCommand = cmd;
           cmd.execute();
         };
-        plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, newRowCreator: mockNewRowCreator, onPasteCells: mockOnPasteCells });
+        plugin.init(gridStub, {
+          clearCopySelectionDelay: 1,
+          clipboardPasteDelay: 1,
+          includeHeaderWhenCopying: true,
+          clipboardCommandHandler,
+          newRowCreator: mockNewRowCreator,
+          onPasteCells: mockOnPasteCells,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -691,12 +773,21 @@ describe('CellExternalCopyManager', () => {
           // user forgot to add rows
         });
         const mockOnPasteCells = vi.fn();
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 2, 2)])
+          .mockReturnValueOnce(null as any);
         const clipboardCommandHandler = (cmd) => {
           cmd.execute();
         };
         const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
-        plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, newRowCreator: mockNewRowCreator, onPasteCells: mockOnPasteCells });
+        plugin.init(gridStub, {
+          clearCopySelectionDelay: 1,
+          clipboardPasteDelay: 1,
+          includeHeaderWhenCopying: true,
+          clipboardCommandHandler,
+          newRowCreator: mockNewRowCreator,
+          onPasteCells: mockOnPasteCells,
+        });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
         Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
@@ -731,12 +822,14 @@ describe('CellExternalCopyManager', () => {
         };
         const mockColumns = [
           { id: 'firstName', field: 'firstName', name: 'First Name', editor: { model: Editors.text }, editorClass: Editors.text },
-          { id: 'lastName', field: 'lastName', name: lastNameElm, hidden: true, },
+          { id: 'lastName', field: 'lastName', name: lastNameElm, hidden: true },
           { id: 'age', field: 'age', name: 'Age', editor: { model: Editors.text }, editorClass: Editors.text },
           { id: 'gender', field: 'gender', name: 'Gender' },
         ] as Column[];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce(null as any);
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
+          .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
+          .mockReturnValueOnce(null as any);
         plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler });
 
         const keyDownCtrlCopyEvent = new Event('keydown');

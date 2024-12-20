@@ -108,7 +108,7 @@ describe('CellRangeSelector Plugin', () => {
       accelerateInterval: 5,
       selectionCss: {
         border: '2px dashed blue',
-      }
+      },
     });
   });
 
@@ -139,7 +139,7 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
 
     plugin.init(gridStub);
@@ -156,10 +156,18 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     const dragEventEnd = addVanillaEventPropagation(new Event('dragEnd'));
-    gridStub.onDragEnd.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEventEnd, gridStub);
+    gridStub.onDragEnd.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEventEnd,
+      gridStub
+    );
 
     expect(focusSpy).not.toHaveBeenCalled();
     expect(decoratorHideSpy).toHaveBeenCalled();
@@ -184,7 +192,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const scrollSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
     vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const initEvent = new Event('dragInit');
     const popagationSpy = vi.spyOn(initEvent, 'stopImmediatePropagation');
@@ -204,7 +212,11 @@ describe('CellRangeSelector Plugin', () => {
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
     dragEvent.pageX = 0;
     dragEvent.pageY = 0;
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
@@ -229,7 +241,7 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const onBeforeCellSpy = vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
 
     plugin.init(gridStub);
@@ -247,12 +259,19 @@ describe('CellRangeSelector Plugin', () => {
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
     dragEvent.pageX = -2;
     dragEvent.pageY = -156;
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(onBeforeCellSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4, fromRow: 5, toCell: 4, toRow: 5,
+      fromCell: 4,
+      fromRow: 5,
+      toCell: 4,
+      toRow: 5,
     });
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
   });
@@ -273,10 +292,10 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const onCellRangeSpy = vi.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
 
     plugin.init(gridStub);
@@ -293,21 +312,35 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEventEnd = addVanillaEventPropagation(new Event('dragEnd'));
-    gridStub.onDragEnd.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEventEnd, gridStub);
+    gridStub.onDragEnd.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEventEnd,
+      gridStub
+    );
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(onBeforeCellRangeSpy).toHaveBeenCalled();
     expect(onCellRangeSpy).toHaveBeenCalledWith({
       range: {
-        fromCell: 2, fromRow: 3, toCell: 4, toRow: 5,
-      }
+        fromCell: 2,
+        fromRow: 3,
+        toCell: 4,
+        toRow: 5,
+      },
     });
     expect(decoratorHideSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4, fromRow: 5, toCell: 4, toRow: 5,
+      fromCell: 4,
+      fromRow: 5,
+      toCell: 4,
+      toRow: 5,
     });
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
   });
@@ -329,10 +362,10 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5 });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const onCellRangeSpy = vi.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const scrollSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
     const onCellRangeSelectingSpy = vi.spyOn(plugin.onCellRangeSelecting, 'notify');
@@ -351,14 +384,21 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(onBeforeCellRangeSpy).toHaveBeenCalled();
     expect(onCellRangeSpy).not.toHaveBeenCalled();
     expect(decoratorHideSpy).not.toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4, fromRow: 5, toCell: 4, toRow: 5,
+      fromCell: 4,
+      fromRow: 5,
+      toCell: 4,
+      toRow: 5,
     });
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(scrollSpy).toHaveBeenCalledWith(5, 4);
@@ -382,10 +422,10 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5 });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const onCellRangeSpy = vi.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const scrollSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
     const onCellRangeSelectingSpy = vi.spyOn(plugin.onCellRangeSelecting, 'notify');
@@ -404,20 +444,30 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(onBeforeCellRangeSpy).toHaveBeenCalled();
     expect(onCellRangeSpy).not.toHaveBeenCalled();
     expect(decoratorHideSpy).not.toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4, fromRow: 5, toCell: 4, toRow: 5,
+      fromCell: 4,
+      fromRow: 5,
+      toCell: 4,
+      toRow: 5,
     });
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(scrollSpy).toHaveBeenCalledWith(5, 4);
     expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
       range: {
-        fromCell: 2, fromRow: 3, toCell: 4, toRow: 5,
+        fromCell: 2,
+        fromRow: 3,
+        toCell: 4,
+        toRow: 5,
       },
     });
   });
@@ -438,7 +488,7 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     vi.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 0 });
     const onBeforeCellRangeSpy = vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
 
     plugin.init(gridStub);
@@ -454,12 +504,19 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     // expect(focusSpy).toHaveBeenCalled();
     expect(onBeforeCellRangeSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).not.toHaveBeenCalledWith({
-      fromCell: 4, fromRow: 5, toCell: 4, toRow: 5, // from handleDrag
+      fromCell: 4,
+      fromRow: 5,
+      toCell: 4,
+      toRow: 5, // from handleDrag
     });
     // expect(decoratorShowSpy).toHaveBeenCalledWith({
     //   fromCell: 4, fromRow: 0, toCell: 4, toRow: 0, // from handleDragStart
@@ -484,7 +541,7 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 0 });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
 
     plugin.init(gridStub);
@@ -500,15 +557,25 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(onBeforeCellRangeSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).not.toHaveBeenCalledWith({
-      fromCell: 4, fromRow: 5, toCell: 4, toRow: 5, // from handleDrag
+      fromCell: 4,
+      fromRow: 5,
+      toCell: 4,
+      toRow: 5, // from handleDrag
     });
     expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4, fromRow: 0, toCell: 4, toRow: 0, // from handleDragStart
+      fromCell: 4,
+      fromRow: 0,
+      toCell: 4,
+      toRow: 0, // from handleDragStart
     });
   });
 
@@ -530,11 +597,11 @@ describe('CellRangeSelector Plugin', () => {
       dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } } },
       viewport: { left: 23, top: 24, right: 25, bottom: 26, offset: { left: 27, top: 28, right: 29, bottom: 30 } },
       offset: { x: 0, y: 0 },
-      isOutsideViewport: true
+      isOutsideViewport: true,
     });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const getCellFromPointSpy = vi.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = vi.spyOn(plugin.onCellRangeSelecting, 'notify');
@@ -554,7 +621,11 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
@@ -584,11 +655,11 @@ describe('CellRangeSelector Plugin', () => {
       dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } } },
       viewport: { left: 23, top: 24, right: 25, bottom: 26, offset: { left: 27, top: 28, right: 29, bottom: 30 } },
       offset: { x: 1, y: 1 },
-      isOutsideViewport: true
+      isOutsideViewport: true,
     });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const getCellFromPointSpy = vi.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = vi.spyOn(plugin.onCellRangeSelecting, 'notify');
@@ -608,7 +679,11 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
@@ -619,7 +694,10 @@ describe('CellRangeSelector Plugin', () => {
 
     expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
       range: {
-        fromCell: 4, fromRow: 2, toCell: 22, toRow: 5,
+        fromCell: 4,
+        fromRow: 2,
+        toCell: 22,
+        toRow: 5,
       },
     });
   });
@@ -642,11 +720,11 @@ describe('CellRangeSelector Plugin', () => {
       dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } } },
       viewport: { left: 23, top: 24, right: 25, bottom: 26, offset: { left: 27, top: 28, right: 29, bottom: 30 } },
       offset: { x: -2, y: -4 },
-      isOutsideViewport: true
+      isOutsideViewport: true,
     });
     const focusSpy = vi.spyOn(gridStub, 'focus');
     vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
     const getCellFromPointSpy = vi.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = vi.spyOn(plugin.onCellRangeSelecting, 'notify');
@@ -666,7 +744,11 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
@@ -677,7 +759,10 @@ describe('CellRangeSelector Plugin', () => {
 
     expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
       range: {
-        fromCell: 4, fromRow: 2, toCell: 22, toRow: 5,
+        fromCell: 4,
+        fromRow: 2,
+        toCell: 22,
+        toRow: 5,
       },
     });
   });
@@ -700,7 +785,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const scrollSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
     vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
 
     vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 3, cell: 2 });
@@ -722,7 +807,11 @@ describe('CellRangeSelector Plugin', () => {
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
     dragEvent.pageX = 0;
     dragEvent.pageY = 0;
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
@@ -749,7 +838,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = vi.spyOn(gridStub, 'focus');
     const scrollSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
     vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
-      getReturnValue: () => true
+      getReturnValue: () => true,
     } as any);
 
     vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 3, cell: 2 });
@@ -771,7 +860,11 @@ describe('CellRangeSelector Plugin', () => {
     const dragEvent = addVanillaEventPropagation(new Event('drag'));
     dragEvent.pageX = 0;
     dragEvent.pageY = 0;
-    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+    gridStub.onDrag.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
+      dragEvent,
+      gridStub
+    );
 
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();

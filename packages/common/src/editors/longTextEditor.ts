@@ -15,7 +15,7 @@ import type {
   Locale,
   LongTextEditorOption,
 } from '../interfaces/index.js';
-import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities.js';
+import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
@@ -72,7 +72,7 @@ export class LongTextEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor ?? {} as ColumnEditor;
+    return this.columnDef?.editor ?? ({} as ColumnEditor);
   }
 
   /** Getter for the item data context object */
@@ -120,7 +120,7 @@ export class LongTextEditor implements Editor {
     const containerElm = compositeEditorOptions ? this.args.container : document.body;
     this._wrapperElm = createDomElement('div', {
       className: `slick-large-editor-text editor-${columnId}`,
-      style: { position: compositeEditorOptions ? 'relative' : 'absolute' }
+      style: { position: compositeEditorOptions ? 'relative' : 'absolute' },
     });
 
     // add dark mode CSS class when enabled
@@ -135,7 +135,7 @@ export class LongTextEditor implements Editor {
       {
         ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Text Editor`,
         cols: this.editorOptions?.cols ?? 40,
-        rows: (compositeEditorOptions && textAreaRows > 3) ? 3 : textAreaRows,
+        rows: compositeEditorOptions && textAreaRows > 3 ? 3 : textAreaRows,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
       },
@@ -148,18 +148,22 @@ export class LongTextEditor implements Editor {
     countContainerElm.appendChild(this._currentLengthElm);
 
     if (maxLength !== undefined) {
-      countContainerElm.appendChild(
-        createDomElement('span', { className: 'separator', textContent: '/' })
-      );
-      countContainerElm.appendChild(
-        createDomElement('span', { className: 'max-length', textContent: `${maxLength}` })
-      );
+      countContainerElm.appendChild(createDomElement('span', { className: 'separator', textContent: '/' }));
+      countContainerElm.appendChild(createDomElement('span', { className: 'max-length', textContent: `${maxLength}` }));
     }
     editorFooterElm.appendChild(countContainerElm);
 
     if (!compositeEditorOptions) {
-      const cancelBtnElm = createDomElement('button', { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText }, editorFooterElm);
-      const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText }, editorFooterElm);
+      const cancelBtnElm = createDomElement(
+        'button',
+        { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText },
+        editorFooterElm
+      );
+      const saveBtnElm = createDomElement(
+        'button',
+        { className: 'btn btn-save btn-primary btn-xs', textContent: saveText },
+        editorFooterElm
+      );
       this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);
       this._bindEventService.bind(saveBtnElm, 'click', this.save.bind(this) as EventListener);
       this.position(this.args?.position as ElementPosition);
@@ -274,7 +278,10 @@ export class LongTextEditor implements Editor {
 
   isValueChanged(): boolean {
     const elmValue = this._textareaElm.value;
-    return (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
+    return (
+      !(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined)) &&
+      elmValue !== this._defaultTextValue
+    );
   }
 
   isValueTouched(): boolean {
@@ -287,7 +294,7 @@ export class LongTextEditor implements Editor {
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
-      const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
+      const value = isComplexObject ? getDescendantProperty(item, fieldName) : item[fieldName];
 
       this._defaultTextValue = value || '';
       this._textareaElm.value = this._defaultTextValue;
@@ -309,26 +316,27 @@ export class LongTextEditor implements Editor {
     const containerOffset = getOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
-    const calculatedEditorHeight = this._wrapperElm.getBoundingClientRect().height || (this.args.position as ElementPosition).height;
+    const calculatedEditorHeight =
+      this._wrapperElm.getBoundingClientRect().height || (this.args.position as ElementPosition).height;
     const calculatedEditorWidth = this._wrapperElm.getBoundingClientRect().width || (this.args.position as ElementPosition).width;
     const calculatedBodyHeight = document.body.offsetHeight || window.innerHeight; // body height/width might be 0 if so use the window height/width
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
     // first defined position will be bottom/right (which will position the editor completely over the cell)
-    let newPositionTop = this.args.container ? containerOffset.top : parentPosition.top ?? 0;
-    let newPositionLeft = this.args.container ? containerOffset.left : parentPosition.left ?? 0;
+    let newPositionTop = this.args.container ? containerOffset.top : (parentPosition.top ?? 0);
+    let newPositionLeft = this.args.container ? containerOffset.left : (parentPosition.left ?? 0);
 
     // user could explicitely use a "left" position (when user knows his column is completely on the right)
     // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
     const position = this.editorOptions?.position ?? 'auto';
-    if (position === 'left' || (position === 'auto' && (newPositionLeft + calculatedEditorWidth) > calculatedBodyWidth)) {
+    if (position === 'left' || (position === 'auto' && newPositionLeft + calculatedEditorWidth > calculatedBodyWidth)) {
       const marginRightAdjustment = this.editorOptions?.marginRight ?? 0;
-      newPositionLeft -= (calculatedEditorWidth - containerWidth + marginRightAdjustment);
+      newPositionLeft -= calculatedEditorWidth - containerWidth + marginRightAdjustment;
     }
 
     // do the same calculation/reposition with top/bottom (default is bottom of the cell or in other word starting from the cell going down)
-    if (position === 'top' || (position === 'auto' && (newPositionTop + calculatedEditorHeight) > calculatedBodyHeight)) {
-      newPositionTop -= (calculatedEditorHeight - containerHeight);
+    if (position === 'top' || (position === 'auto' && newPositionTop + calculatedEditorHeight > calculatedBodyHeight)) {
+      newPositionTop -= calculatedEditorHeight - containerHeight;
     }
 
     // reposition the editor over the cell (90% of the time this will end up using a position on the "right" of the cell)
@@ -384,7 +392,7 @@ export class LongTextEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this._textareaElm?.value;
+    const elmValue = inputValue !== undefined ? inputValue : this._textareaElm?.value;
     return textValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
@@ -403,9 +411,16 @@ export class LongTextEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({
-      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    }).getReturnValue();
+    const isCellEditable = this.grid.onBeforeEditCell
+      .notify({
+        ...activeCell,
+        item: this.dataContext,
+        column: this.args.column,
+        grid: this.grid,
+        target: 'composite',
+        compositeEditorOptions: this.args.compositeEditorOptions,
+      })
+      .getReturnValue();
     this.disable(isCellEditable === false);
   }
 
@@ -435,7 +450,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer, target: HTMLTextAreaElement; }): void {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement }): void {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 
@@ -461,7 +476,12 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
+  protected handleChangeOnCompositeEditor(
+    event: Event | null,
+    compositeEditorOptions: CompositeEditorOption,
+    triggeredBy: 'user' | 'system' = 'user',
+    isCalledByClearValue = false
+  ): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -476,11 +496,22 @@ export class LongTextEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
+    if (
+      isCalledByClearValue ||
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+    ) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
-      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      {
+        ...activeCell,
+        item,
+        grid,
+        column,
+        formValues: compositeEditorOptions.formValues,
+        editors: compositeEditorOptions.editors,
+        triggeredBy,
+      },
       new SlickEventData(event)
     );
   }

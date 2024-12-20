@@ -13,10 +13,14 @@ export interface GraphqlServiceApi extends BackendServiceApi {
   service: GraphqlService;
 
   /** On init (or on page load), what action to perform? */
-  onInit?: (query: string) => Promise<GraphqlResult | GraphqlPaginatedResult> | Observable<GraphqlResult | GraphqlPaginatedResult>;
+  onInit?: (
+    query: string
+  ) => Promise<GraphqlResult | GraphqlPaginatedResult> | Observable<GraphqlResult | GraphqlPaginatedResult>;
 
   /** On Processing, we get the query back from the service, and we need to provide a Promise/Observable. For example: this.http.get(myGraphqlUrl) */
-  process: (query: string) => Promise<GraphqlResult | GraphqlPaginatedResult> | Observable<GraphqlResult | GraphqlPaginatedResult>;
+  process: (
+    query: string
+  ) => Promise<GraphqlResult | GraphqlPaginatedResult> | Observable<GraphqlResult | GraphqlPaginatedResult>;
 
   /** After executing the query, what action to perform? For example, stop the spinner */
   postProcess?: (response: GraphqlResult | GraphqlPaginatedResult) => void;

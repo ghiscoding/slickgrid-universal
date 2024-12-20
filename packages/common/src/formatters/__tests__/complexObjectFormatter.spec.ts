@@ -4,7 +4,10 @@ import type { Column } from '../../interfaces/index.js';
 import { complexObjectFormatter } from '../complexObjectFormatter.js';
 
 describe('the ComplexObject Formatter', () => {
-  const allRoles = [{ roleId: 0, name: 'Administrator' }, { roleId: 1, name: 'Regular User', empty: {}, nullable: null }];
+  const allRoles = [
+    { roleId: 0, name: 'Administrator' },
+    { roleId: 1, name: 'Regular User', empty: {}, nullable: null },
+  ];
 
   const dataset = [
     { id: 0, firstName: 'John', lastName: 'Smith', email: 'john.smith@movie.com', role: allRoles[0] },
@@ -13,8 +16,7 @@ describe('the ComplexObject Formatter', () => {
   ];
 
   it('should throw an error when omitting to pass "complexFieldLabel" to "params"', () => {
-    expect(() => complexObjectFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrow('For the Formatters.complexObject to work properly');
+    expect(() => complexObjectFormatter(0, 0, 'anything', {} as Column, {}, {} as any)).toThrow('For the Formatters.complexObject to work properly');
   });
 
   it('should return empty string when no column definition is provided', () => {

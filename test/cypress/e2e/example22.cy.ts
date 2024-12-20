@@ -106,8 +106,7 @@ describe('Example 22 - Row Based Editing', () => {
 
     cy.get('.action-btns--update').first().click();
 
-    cy.get('[data-test="fetch-result"]')
-      .should('contain', 'success');
+    cy.get('[data-test="fetch-result"]').should('contain', 'success');
 
     cy.get('.slick-cell.l1.r1').first().should('contain', '30');
     cy.get('.slick-cell.l2.r2').first().should('contain', '30');

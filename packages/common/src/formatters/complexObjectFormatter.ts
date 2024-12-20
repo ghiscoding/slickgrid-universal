@@ -32,7 +32,11 @@ export const complexObjectFormatter: Formatter = (_row, _cell, cellValue, column
   // however we also need to make sure that the complex objet exist, else we'll return the cell value (original value)
   if (typeof complexField === 'string' && complexField.indexOf('.') > 0) {
     let outputValue = complexField.split('.').reduce((obj, i) => (obj?.hasOwnProperty(i) ? obj[i] : ''), dataContext);
-    if (outputValue === undefined || outputValue === null || (typeof outputValue === 'object' && Object.entries(outputValue).length === 0 && !(outputValue instanceof Date))) {
+    if (
+      outputValue === undefined ||
+      outputValue === null ||
+      (typeof outputValue === 'object' && Object.entries(outputValue).length === 0 && !(outputValue instanceof Date))
+    ) {
       outputValue = ''; // return empty string when value ends up being an empty object
     }
     return outputValue;

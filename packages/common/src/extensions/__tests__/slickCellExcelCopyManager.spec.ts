@@ -58,10 +58,10 @@ vi.mock('../slickCellExternalCopyManager', () => ({
 
 describe('CellExcelCopyManager', () => {
   let queueCallback: EditCommand;
-  const mockEventCallback = () => { };
+  const mockEventCallback = () => {};
   const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as SlickRange[];
   const mockSelectRangeEvent = { ranges: mockSelectRange };
-  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : null as any;
+  const myBoldFormatter: Formatter = (_row, _cell, value) => (value ? `<b>${value}</b>` : (null as any));
 
   let plugin: SlickCellExcelCopyManager;
   const gridOptionsMock = {
@@ -72,7 +72,7 @@ describe('CellExcelCopyManager', () => {
       onCopyCells: mockEventCallback,
       onCopyCancelled: mockEventCallback,
       onPasteCells: mockEventCallback,
-    }
+    },
   } as GridOption;
 
   beforeEach(() => {
@@ -91,13 +91,13 @@ describe('CellExcelCopyManager', () => {
   describe('registered addon', () => {
     beforeEach(() => {
       queueCallback = {
-        execute: () => { },
-        undo: () => { },
+        execute: () => {},
+        undo: () => {},
         row: 0,
         cell: 0,
         editor: {},
         serializedValue: 'serialize',
-        prevSerializedValue: 'previous'
+        prevSerializedValue: 'previous',
       };
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
     });
@@ -115,7 +115,7 @@ describe('CellExcelCopyManager', () => {
         includeHeaderWhenCopying: false,
         readOnlyMode: false,
         removeDoubleQuotesOnPaste: false,
-        replaceNewlinesWith: false
+        replaceNewlinesWith: false,
       };
       expect(plugin.addonOptions).toEqual(expectedAddonOptions);
       expect(plugin.gridOptions).toEqual(gridOptionsMock);
@@ -133,10 +133,7 @@ describe('CellExcelCopyManager', () => {
       mockCellExternalCopyManager.onCopyCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
-      expect(handlerSpy).toHaveBeenCalledWith(
-        expect.any(SlickEvent),
-        expect.anything()
-      );
+      expect(handlerSpy).toHaveBeenCalledWith(expect.any(SlickEvent), expect.anything());
       expect(mockOnCopy).toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
       expect(mockOnCopyCancel).not.toHaveBeenCalled();
       expect(mockOnPasteCell).not.toHaveBeenCalled();
@@ -152,10 +149,7 @@ describe('CellExcelCopyManager', () => {
       mockCellExternalCopyManager.onCopyCancelled.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
-      expect(handlerSpy).toHaveBeenCalledWith(
-        expect.any(SlickEvent),
-        expect.anything()
-      );
+      expect(handlerSpy).toHaveBeenCalledWith(expect.any(SlickEvent), expect.anything());
       expect(mockOnCopy).not.toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
       expect(mockOnCopyCancel).toHaveBeenCalled();
       expect(mockOnPasteCell).not.toHaveBeenCalled();
@@ -171,10 +165,7 @@ describe('CellExcelCopyManager', () => {
       mockCellExternalCopyManager.onPasteCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
-      expect(handlerSpy).toHaveBeenCalledWith(
-        expect.any(SlickEvent),
-        expect.anything()
-      );
+      expect(handlerSpy).toHaveBeenCalledWith(expect.any(SlickEvent), expect.anything());
       expect(mockOnCopy).not.toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
       expect(mockOnCopyCancel).not.toHaveBeenCalled();
       expect(mockOnPasteCell).toHaveBeenCalled();
@@ -258,13 +249,15 @@ describe('CellExcelCopyManager', () => {
 
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
-      body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-        key: 'Z',
-        ctrlKey: true,
-        shiftKey: true,
-        bubbles: true,
-        cancelable: true
-      }));
+      body.dispatchEvent(
+        new (window.window as any).KeyboardEvent('keydown', {
+          key: 'Z',
+          ctrlKey: true,
+          shiftKey: true,
+          bubbles: true,
+          cancelable: true,
+        })
+      );
 
       expect(spy).toHaveBeenCalledTimes(2);
     });
@@ -275,12 +268,14 @@ describe('CellExcelCopyManager', () => {
 
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
-      body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-        key: 'Z',
-        ctrlKey: true,
-        shiftKey: false,
-        bubbles: true
-      }));
+      body.dispatchEvent(
+        new (window.window as any).KeyboardEvent('keydown', {
+          key: 'Z',
+          ctrlKey: true,
+          shiftKey: false,
+          bubbles: true,
+        })
+      );
 
       expect(spy).toHaveBeenCalled();
     });
@@ -326,7 +321,10 @@ describe('CellExcelCopyManager', () => {
 
     it('should expect a formatted output after calling "dataItemColumnValueExtractor" callback', () => {
       plugin.init(gridStub);
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!(
+        { firstName: 'John', lastName: 'Doe' },
+        { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter }
+      );
       expect(output).toBe('<b>John</b>');
     });
 
@@ -335,7 +333,10 @@ describe('CellExcelCopyManager', () => {
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: null }, { id: 'lastName', field: 'lastName', exportWithFormatter: true, formatter: myBoldFormatter });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!(
+        { firstName: '<b>John</b>', lastName: null },
+        { id: 'lastName', field: 'lastName', exportWithFormatter: true, formatter: myBoldFormatter }
+      );
 
       expect(output).toBe('');
     });
@@ -345,7 +346,10 @@ describe('CellExcelCopyManager', () => {
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!(
+        { firstName: '<b>John</b>', lastName: 'Doe' },
+        { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter }
+      );
 
       expect(output).toBe('John');
     });
@@ -355,7 +359,10 @@ describe('CellExcelCopyManager', () => {
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!(
+        { firstName: '<b>John</b>', lastName: 'Doe' },
+        { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter }
+      );
 
       expect(output).toBe('John');
     });
@@ -366,7 +373,12 @@ describe('CellExcelCopyManager', () => {
       (gridStub.getCellEditor as Mock).mockReturnValue({});
       (gridStub.getActiveCell as Mock).mockReturnValue({ row: 6, cell: 6 });
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, editor: { model: Editors.text }, formatter: myBoldFormatter }, 6, 6);
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!(
+        { firstName: '<b>John</b>', lastName: 'Doe' },
+        { id: 'firstName', field: 'firstName', exportWithFormatter: true, editor: { model: Editors.text }, formatter: myBoldFormatter },
+        6,
+        6
+      );
 
       expect(output).toBeNull();
     });
@@ -376,7 +388,12 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
 
       const rowCellFormatter: Formatter = (row, cell) => `${row}:${cell}`;
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: rowCellFormatter }, 6, 6);
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!(
+        { firstName: '<b>John</b>', lastName: 'Doe' },
+        { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: rowCellFormatter },
+        6,
+        6
+      );
 
       expect(output).toBe('6:6');
     });
@@ -387,7 +404,12 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
 
       const rowCellFormatter: Formatter = (row, cell) => `${row}:${cell}`;
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, editor: { model: Editors.text }, formatter: rowCellFormatter }, 6, 6);
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!(
+        { firstName: '<b>John</b>', lastName: 'Doe' },
+        { id: 'firstName', field: 'firstName', exportWithFormatter: true, editor: { model: Editors.text }, formatter: rowCellFormatter },
+        6,
+        6
+      );
 
       expect(output).toBe('6:6');
     });

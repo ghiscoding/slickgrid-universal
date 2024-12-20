@@ -19,7 +19,7 @@ const mockLocales = {
   TEXT_ITEMS_PER_PAGE: 'items per page',
   TEXT_ITEMS: 'items',
   TEXT_OF: 'of',
-  TEXT_PAGE: 'page'
+  TEXT_PAGE: 'page',
 } as Locale;
 
 const mockGridOptions = { enableTranslate: false } as GridOption;
@@ -78,19 +78,22 @@ describe('Slick-Pagination Component', () => {
       vi.clearAllMocks();
     });
 
-    it('should throw an error when "enableTranslate" is set and I18N Service is not provided', () => new Promise((done: any) => {
-      try {
-        translateService = undefined as any;
-        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, enableTranslate: true });
+    it('should throw an error when "enableTranslate" is set and I18N Service is not provided', () =>
+      new Promise((done: any) => {
+        try {
+          translateService = undefined as any;
+          vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, enableTranslate: true });
 
-        component = new SlickPaginationComponent();
-        component.init(gridStub, paginationServiceStub, eventPubSubService, translateService);
-        component.renderPagination(div);
-      } catch (e) {
-        expect(e.toString()).toContain('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
-        done();
-      }
-    }));
+          component = new SlickPaginationComponent();
+          component.init(gridStub, paginationServiceStub, eventPubSubService, translateService);
+          component.renderPagination(div);
+        } catch (e) {
+          expect(e.toString()).toContain(
+            '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+          );
+          done();
+        }
+      }));
 
     it('should have defined locale and expect new text in the UI', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, locales: mockLocales });
@@ -106,8 +109,12 @@ describe('Slick-Pagination Component', () => {
       expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
       expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
       expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
-      expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">of</span> ');
-      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">items</span> ');
+      expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(
+        '<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">of</span> '
+      );
+      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(
+        '<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">items</span> '
+      );
       component.dispose();
     });
   });

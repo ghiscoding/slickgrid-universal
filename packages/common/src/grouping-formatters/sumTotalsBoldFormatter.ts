@@ -11,16 +11,24 @@ export const sumTotalsBoldFormatter: GroupTotalsFormatter = (totals: any, column
   const params = columnDef?.params;
   const prefix = params?.groupFormatterPrefix || '';
   const suffix = params?.groupFormatterSuffix || '';
-  const {
-    minDecimal,
-    maxDecimal,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'regular', 'group');
+  const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
+    columnDef,
+    grid,
+    'regular',
+    'group'
+  );
 
   if (isNumber(val)) {
-    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '', '', decimalSeparator, thousandSeparator);
+    const formattedNumber = formatNumber(
+      val,
+      minDecimal,
+      maxDecimal,
+      wrapNegativeNumber,
+      '',
+      '',
+      decimalSeparator,
+      thousandSeparator
+    );
     return createDomElement('span', { style: { fontWeight: 'bold' }, textContent: `${prefix}${formattedNumber}${suffix}` });
   }
   return '';

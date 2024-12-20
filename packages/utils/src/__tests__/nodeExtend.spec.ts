@@ -11,7 +11,7 @@ describe('extend()', () => {
   const arr = [1, 'what', new Date(81, 8, 4)];
   const date = new Date(81, 4, 13);
 
-  const Foo = function () { };
+  const Foo = function () {};
 
   const obj = {
     str,
@@ -20,7 +20,7 @@ describe('extend()', () => {
     date,
     constructor: 'fake',
     isPrototypeOf: 'not a function',
-    foo: new Foo()
+    foo: new Foo(),
   };
 
   const deep = {
@@ -34,9 +34,9 @@ describe('extend()', () => {
         str: obj.str,
         integer,
         arr: obj.arr,
-        date: new Date(81, 7, 4)
-      }
-    }
+        date: new Date(81, 7, 4),
+      },
+    },
   };
 
   describe('missing arguments', () => {
@@ -59,7 +59,7 @@ describe('extend()', () => {
       5: 't',
       6: 'e',
       7: 's',
-      8: 't'
+      8: 't',
     };
 
     test('original string 1 is unchanged', () => expect(ori).toBe('what u gonna say'));
@@ -81,11 +81,12 @@ describe('extend()', () => {
 
     test('original string is unchanged', () => expect(ori).toBe('what u gonna say'));
     test('array is unchanged', () => expect(arr).toEqual([1, 'what', new Date(81, 8, 4)]));
-    test('string + array is array', () => expect(target).toEqual({
-      0: 1,
-      1: 'what',
-      2: new Date(81, 8, 4)
-    }));
+    test('string + array is array', () =>
+      expect(target).toEqual({
+        0: 1,
+        1: 'what',
+        2: new Date(81, 8, 4),
+      }));
   });
 
   describe('merge string with date', () => {
@@ -109,7 +110,7 @@ describe('extend()', () => {
       date: new Date(81, 4, 13),
       constructor: 'fake',
       isPrototypeOf: 'not a function',
-      foo: new Foo()
+      foo: new Foo(),
     };
 
     test('original string is unchanged', () => expect(ori).toBe('what u gonna say'));
@@ -123,17 +124,18 @@ describe('extend()', () => {
 
     test('number is unchanged', () => expect(ori).toBe(20));
     test('string is unchanged', () => expect(str).toBe('me a test'));
-    test('number + string is object form of string', () => expect(target).toEqual({
-      0: 'm',
-      1: 'e',
-      2: ' ',
-      3: 'a',
-      4: ' ',
-      5: 't',
-      6: 'e',
-      7: 's',
-      8: 't'
-    }));
+    test('number + string is object form of string', () =>
+      expect(target).toEqual({
+        0: 'm',
+        1: 'e',
+        2: ' ',
+        3: 'a',
+        4: ' ',
+        5: 't',
+        6: 'e',
+        7: 's',
+        8: 't',
+      }));
   });
 
   describe('merge number with number', () => {
@@ -144,11 +146,12 @@ describe('extend()', () => {
     const target = extend(20, arr);
 
     test('array is unchanged', () => expect(arr).toEqual([1, 'what', new Date(81, 8, 4)]));
-    test('number + arr is object with array contents', () => expect(target).toEqual({
-      0: 1,
-      1: 'what',
-      2: new Date(81, 8, 4)
-    }));
+    test('number + arr is object with array contents', () =>
+      expect(target).toEqual({
+        0: 1,
+        1: 'what',
+        2: new Date(81, 8, 4),
+      }));
   });
 
   describe('merge number with date', () => {
@@ -169,7 +172,7 @@ describe('extend()', () => {
       date: new Date(81, 4, 13),
       constructor: 'fake',
       isPrototypeOf: 'not a function',
-      foo: new Foo()
+      foo: new Foo(),
     };
 
     test('obj is unchanged', () => expect(obj).toEqual(testObj));
@@ -182,17 +185,18 @@ describe('extend()', () => {
 
     test('array is changed to be an array of string chars', () => expect(ori).toEqual(str.split('')));
     test('string is unchanged', () => expect(str).toBe('me a test'));
-    test('array + string is object form of string', () => expect(target).toMatchObject({
-      0: 'm',
-      1: 'e',
-      2: ' ',
-      3: 'a',
-      4: ' ',
-      5: 't',
-      6: 'e',
-      7: 's',
-      8: 't'
-    }));
+    test('array + string is object form of string', () =>
+      expect(target).toMatchObject({
+        0: 'm',
+        1: 'e',
+        2: ' ',
+        3: 'a',
+        4: ' ',
+        5: 't',
+        6: 'e',
+        7: 's',
+        8: 't',
+      }));
   });
 
   describe('merge array with number', () => {
@@ -235,7 +239,7 @@ describe('extend()', () => {
       date: new Date(81, 4, 13),
       constructor: 'fake',
       isPrototypeOf: 'not a function',
-      foo: new Foo()
+      foo: new Foo(),
     };
 
     test('obj is unchanged', () => expect(obj).toEqual(testObject));
@@ -264,7 +268,7 @@ describe('extend()', () => {
       5: 't',
       6: 'e',
       7: 's',
-      8: 't'
+      8: 't',
     };
 
     test('date is changed to object form of string', () => expect(ori).toMatchObject(testObject));
@@ -313,7 +317,7 @@ describe('extend()', () => {
       date: new Date(81, 4, 13),
       constructor: 'fake',
       isPrototypeOf: 'not a function',
-      foo: new Foo()
+      foo: new Foo(),
     };
 
     test('original object is unchanged', () => expect(obj).toMatchObject(testObject));
@@ -327,7 +331,7 @@ describe('extend()', () => {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: testDate
+      date: testDate,
     };
     const target = extend(ori, str);
     const testObj = {
@@ -343,7 +347,7 @@ describe('extend()', () => {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: testDate
+      date: testDate,
     };
 
     test('original object updated', () => expect(ori).toEqual(testObj));
@@ -356,13 +360,13 @@ describe('extend()', () => {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26)
+      date: new Date(81, 7, 26),
     };
     const testObject = {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26)
+      date: new Date(81, 7, 26),
     };
     const target = extend(ori, 10);
 
@@ -375,7 +379,7 @@ describe('extend()', () => {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26)
+      date: new Date(81, 7, 26),
     };
     const target = extend(ori, arr);
     const testObject = {
@@ -385,7 +389,7 @@ describe('extend()', () => {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26)
+      date: new Date(81, 7, 26),
     };
 
     test('original object is merged', () => expect(ori).toEqual(testObject));
@@ -398,14 +402,14 @@ describe('extend()', () => {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26)
+      date: new Date(81, 7, 26),
     };
     const target = extend(ori, date);
     const testObject = {
       str: 'no shit',
       integer: 76,
       arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26)
+      date: new Date(81, 7, 26),
     };
 
     test('original object is unchanged', () => expect(ori).toEqual(testObject));
@@ -419,7 +423,7 @@ describe('extend()', () => {
       integer: 76,
       arr: [1, 2, 3, 4],
       date: new Date(81, 7, 26),
-      foo: 'bar'
+      foo: 'bar',
     };
     const target = extend(ori, obj);
     const expectedObj = {
@@ -429,7 +433,7 @@ describe('extend()', () => {
       date: new Date(81, 4, 13),
       constructor: 'fake',
       isPrototypeOf: 'not a function',
-      foo: new Foo()
+      foo: new Foo(),
     };
     const expectedTarget = {
       str: 'me a test',
@@ -438,7 +442,7 @@ describe('extend()', () => {
       date: new Date(81, 4, 13),
       constructor: 'fake',
       isPrototypeOf: 'not a function',
-      foo: new Foo()
+      foo: new Foo(),
     };
 
     test('obj is unchanged', () => expect(obj).toEqual(expectedObj));
@@ -452,89 +456,92 @@ describe('extend()', () => {
       integer: 76,
       arr: [1, 2, 3, 4],
       date: new Date(81, 7, 26),
-      layer: { deep: { integer: 42 } }
+      layer: { deep: { integer: 42 } },
     };
     const target = extend(true, ori, deep);
 
-    test('original object is merged', () => expect(ori).toEqual({
-      str: 'no shit',
-      integer: 76,
-      arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26),
-      ori: {
-        str: 'me a test',
-        integer: 10,
-        arr: [1, 'what', new Date(81, 8, 4)],
-        date: new Date(81, 4, 13),
-        constructor: 'fake',
-        isPrototypeOf: 'not a function',
-        foo: new Foo()
-      },
-      layer: {
-        integer: 10,
-        str: 'str',
-        date: new Date(84, 5, 12),
-        arr: [101, 'dude', new Date(82, 10, 4)],
-        deep: {
+    test('original object is merged', () =>
+      expect(ori).toEqual({
+        str: 'no shit',
+        integer: 76,
+        arr: [1, 2, 3, 4],
+        date: new Date(81, 7, 26),
+        ori: {
           str: 'me a test',
           integer: 10,
           arr: [1, 'what', new Date(81, 8, 4)],
-          date: new Date(81, 7, 4)
-        }
-      }
-    }));
+          date: new Date(81, 4, 13),
+          constructor: 'fake',
+          isPrototypeOf: 'not a function',
+          foo: new Foo(),
+        },
+        layer: {
+          integer: 10,
+          str: 'str',
+          date: new Date(84, 5, 12),
+          arr: [101, 'dude', new Date(82, 10, 4)],
+          deep: {
+            str: 'me a test',
+            integer: 10,
+            arr: [1, 'what', new Date(81, 8, 4)],
+            date: new Date(81, 7, 4),
+          },
+        },
+      }));
 
-    test('deep is unchanged', () => expect(deep).toEqual({
-      ori: {
-        str: 'me a test',
-        integer: 10,
-        arr: [1, 'what', new Date(81, 8, 4)],
-        date: new Date(81, 4, 13),
-        constructor: 'fake',
-        isPrototypeOf: 'not a function',
-        foo: new Foo()
-      },
-      layer: {
-        integer: 10,
-        str: 'str',
-        date: new Date(84, 5, 12),
-        arr: [101, 'dude', new Date(82, 10, 4)],
-        deep: {
+    test('deep is unchanged', () =>
+      expect(deep).toEqual({
+        ori: {
           str: 'me a test',
           integer: 10,
           arr: [1, 'what', new Date(81, 8, 4)],
-          date: new Date(81, 7, 4)
-        }
-      }
-    }));
+          date: new Date(81, 4, 13),
+          constructor: 'fake',
+          isPrototypeOf: 'not a function',
+          foo: new Foo(),
+        },
+        layer: {
+          integer: 10,
+          str: 'str',
+          date: new Date(84, 5, 12),
+          arr: [101, 'dude', new Date(82, 10, 4)],
+          deep: {
+            str: 'me a test',
+            integer: 10,
+            arr: [1, 'what', new Date(81, 8, 4)],
+            date: new Date(81, 7, 4),
+          },
+        },
+      }));
 
-    test('deep + object + object is deeply merged object', () => expect(target).toEqual({
-      str: 'no shit',
-      integer: 76,
-      arr: [1, 2, 3, 4],
-      date: new Date(81, 7, 26),
-      ori: {
-        str: 'me a test',
-        integer: 10,
-        arr: [1, 'what', new Date(81, 8, 4)],
-        date: new Date(81, 4, 13),
-        constructor: 'fake',
-        isPrototypeOf: 'not a function',
-        foo: new Foo()
-      },
-      layer: {
-        integer: 10,
-        str: 'str',
-        date: new Date(84, 5, 12),
-        arr: [101, 'dude', new Date(82, 10, 4)],
-        deep: {
+    test('deep + object + object is deeply merged object', () =>
+      expect(target).toEqual({
+        str: 'no shit',
+        integer: 76,
+        arr: [1, 2, 3, 4],
+        date: new Date(81, 7, 26),
+        ori: {
           str: 'me a test',
           integer: 10,
           arr: [1, 'what', new Date(81, 8, 4)],
-          date: new Date(81, 7, 4)
-        }
-      }
-    }));
+          date: new Date(81, 4, 13),
+          constructor: 'fake',
+          isPrototypeOf: 'not a function',
+          foo: new Foo(),
+        },
+        layer: {
+          integer: 10,
+          str: 'str',
+          date: new Date(84, 5, 12),
+          arr: [101, 'dude', new Date(82, 10, 4)],
+          deep: {
+            str: 'me a test',
+            integer: 10,
+            arr: [1, 'what', new Date(81, 8, 4)],
+            date: new Date(81, 7, 4),
+          },
+        },
+      }));
 
     // ----- NEVER USE EXTEND WITH THE ABOVE SITUATION ------------------------------
   });
@@ -545,34 +552,35 @@ describe('extend()', () => {
       integer: 76,
       arr: [1, 2, 3, 4],
       date: new Date(81, 7, 26),
-      layer: { deep: { integer: 42 } }
+      layer: { deep: { integer: 42 } },
     };
     const target = extend(true, ori, deep);
     target.layer.deep = 339;
 
-    test('deep is unchanged after setting target property', () => expect(deep).toEqual({
-      ori: {
-        str: 'me a test',
-        integer: 10,
-        arr: [1, 'what', new Date(81, 8, 4)],
-        date: new Date(81, 4, 13),
-        constructor: 'fake',
-        isPrototypeOf: 'not a function',
-        foo: new Foo()
-      },
-      layer: {
-        integer: 10,
-        str: 'str',
-        date: new Date(84, 5, 12),
-        arr: [101, 'dude', new Date(82, 10, 4)],
-        deep: {
+    test('deep is unchanged after setting target property', () =>
+      expect(deep).toEqual({
+        ori: {
           str: 'me a test',
           integer: 10,
           arr: [1, 'what', new Date(81, 8, 4)],
-          date: new Date(81, 7, 4)
-        }
-      }
-    }));
+          date: new Date(81, 4, 13),
+          constructor: 'fake',
+          isPrototypeOf: 'not a function',
+          foo: new Foo(),
+        },
+        layer: {
+          integer: 10,
+          str: 'str',
+          date: new Date(84, 5, 12),
+          arr: [101, 'dude', new Date(82, 10, 4)],
+          deep: {
+            str: 'me a test',
+            integer: 10,
+            arr: [1, 'what', new Date(81, 8, 4)],
+            date: new Date(81, 7, 4),
+          },
+        },
+      }));
     // ----- NEVER USE EXTEND WITH THE ABOVE SITUATION ------------------------------
   });
 
@@ -605,10 +613,7 @@ describe('extend()', () => {
     const target = [];
     const source = [1, [2], { 3: true }];
 
-    test('It works without Array.isArray', () => expect(
-      extend(true, target, source)).toEqual(
-        [1, [2], { 3: true }]
-      ));
+    test('It works without Array.isArray', () => expect(extend(true, target, source)).toEqual([1, [2], { 3: true }]));
     Array.isArray = savedIsArray;
   });
 
@@ -699,17 +704,17 @@ describe('extend() - extra tests', () => {
   });
 
   it('should expect Symbol to be converted to Object', () => {
-    const sym1 = Symbol("foo");
-    const sym2 = Symbol("bar");
+    const sym1 = Symbol('foo');
+    const sym2 = Symbol('bar');
 
     expect(extend(sym1, sym2, { hello: 'world' })).toEqual({ hello: 'world' });
   });
 
   it('should be able to make a copy of an object with prototype', () => {
     const l = console.log;
-    const method = () => l("method in obj");
+    const method = () => l('method in obj');
     const obj = {
-      method
+      method,
     };
     const obj2: any = { hello: 'world' };
     obj2.__proto__ = obj;

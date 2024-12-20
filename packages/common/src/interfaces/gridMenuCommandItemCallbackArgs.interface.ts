@@ -5,7 +5,7 @@ export interface GridMenuCallbackArgs {
   grid: SlickGrid;
   menu: any;
   columns: Column[];
-  visibleColumns: Column[]
+  visibleColumns: Column[];
 }
 
 export interface GridMenuCommandItemCallbackArgs {
@@ -19,8 +19,8 @@ export interface GridMenuCommandItemCallbackArgs {
   grid: SlickGrid;
 
   /** all columns (including hidden ones) */
-  allColumns: Column[],
+  allColumns: Column[];
 
   /** only visible columns (excluding hidden columns) */
-  visibleColumns: Column[],
+  visibleColumns: Column[];
 }

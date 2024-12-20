@@ -9,7 +9,9 @@ export const maskFormatter: Formatter = (_row, _cell, value, columnDef, data, gr
   const mask = params.mask;
 
   if (!mask) {
-    throw new Error(`You must provide a "mask" via the generic "params" options (e.g.: { formatter: Formatters.mask, params: { mask: '000-000' }}`);
+    throw new Error(
+      `You must provide a "mask" via the generic "params" options (e.g.: { formatter: Formatters.mask, params: { mask: '000-000' }}`
+    );
   }
 
   if (value) {

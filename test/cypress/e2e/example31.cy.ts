@@ -8,8 +8,7 @@ describe('Example 31 - Dynamically Create Grid from CSV / Excel import', () => {
   });
 
   it('should load default CSV file and expect default column titles', () => {
-    cy.get('[data-test="static-data-btn"]')
-      .click();
+    cy.get('[data-test="static-data-btn"]').click();
 
     cy.get('.grid31')
       .find('.slick-header-columns')
@@ -35,8 +34,7 @@ describe('Example 31 - Dynamically Create Grid from CSV / Excel import', () => {
   });
 
   it('should sort by "Age" and expect it to be sorted in ascending order', () => {
-    cy.get('.slick-header-columns .slick-header-column:nth(2)')
-      .click();
+    cy.get('.slick-header-columns .slick-header-column:nth(2)').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'John');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Doe');
@@ -55,8 +53,7 @@ describe('Example 31 - Dynamically Create Grid from CSV / Excel import', () => {
   });
 
   it('should click again the "Age" column and expect it to be sorted in descending order', () => {
-    cy.get('.slick-header-columns .slick-header-column:nth(2)')
-      .click();
+    cy.get('.slick-header-columns .slick-header-column:nth(2)').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Bob');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Smith');
@@ -75,11 +72,9 @@ describe('Example 31 - Dynamically Create Grid from CSV / Excel import', () => {
   });
 
   it('should filter Smith as "Last Name" and expect only 1 row in the grid', () => {
-    cy.get('.slick-headerrow .slick-headerrow-column:nth(1) input')
-      .type('Smith');
+    cy.get('.slick-headerrow .slick-headerrow-column:nth(1) input').type('Smith');
 
-    cy.get('.slick-row')
-      .should('have.length', 1);
+    cy.get('.slick-row').should('have.length', 1);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Bob');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Smith');

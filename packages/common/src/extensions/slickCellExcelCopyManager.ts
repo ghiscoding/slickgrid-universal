@@ -130,7 +130,7 @@ export class SlickCellExcelCopyManager {
         if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
           command.execute();
         }
-      }
+      },
     };
   }
 
@@ -150,12 +150,14 @@ export class SlickCellExcelCopyManager {
         const copyActiveEditorCell = this.addonOptions?.copyActiveEditorCell || false;
 
         if (!this.gridOptions.editable || !columnDef.editor || !isActiveEditorCurrentCell || copyActiveEditorCell) {
+          // prettier-ignore
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.gridOptions.textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
             const formattedOutput = columnDef.formatter(row, cell, item[columnDef.field], columnDef, item, this._grid);
+            // prettier-ignore
             const cellResult = isPrimitiveOrHTML(formattedOutput) ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text;
-            if (columnDef.sanitizeDataExport || (this.gridOptions.textExportOptions?.sanitizeDataExport)) {
-              const outputString = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
+            if (columnDef.sanitizeDataExport || this.gridOptions.textExportOptions?.sanitizeDataExport) {
+              const outputString = cellResult instanceof HTMLElement ? cellResult.innerHTML : (cellResult as string);
               return stripTags(outputString ?? '');
             }
             return formattedOutput;
@@ -170,11 +172,13 @@ export class SlickCellExcelCopyManager {
       includeHeaderWhenCopying: false,
       newRowCreator: (count: number) => {
         for (let i = 0; i < count; i++) {
-          this._grid.getData<SlickDataView>().addItem({ [this.gridOptions.datasetIdPropertyName || 'id']: `newRow_${newRowIds++}` });
+          this._grid
+            .getData<SlickDataView>()
+            .addItem({ [this.gridOptions.datasetIdPropertyName || 'id']: `newRow_${newRowIds++}` });
         }
       },
       replaceNewlinesWith: false,
-      removeDoubleQuotesOnPaste: false
+      removeDoubleQuotesOnPaste: false,
     };
   }
 

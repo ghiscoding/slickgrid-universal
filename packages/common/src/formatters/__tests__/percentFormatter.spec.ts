@@ -6,7 +6,7 @@ import type { SlickGrid } from '../../core/index.js';
 
 describe('the Percent Symbol Formatter', () => {
   const gridStub = {
-    getOptions: vi.fn()
+    getOptions: vi.fn(),
   } as unknown as SlickGrid;
 
   it('should display an empty string when no value is provided', () => {
@@ -26,7 +26,7 @@ describe('the Percent Symbol Formatter', () => {
   });
 
   it('should display -15% when the negative number -.15 is provided', () => {
-    const input = -.15;
+    const input = -0.15;
     const output = percentFormatter(1, 1, input, {} as Column, {}, {} as any);
     expect(output).toBe('-15%');
   });
@@ -62,14 +62,15 @@ describe('the Percent Symbol Formatter', () => {
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2 } } as GridOption);
+    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2 } }) as GridOption;
     const input = -0.024;
     const output = percentFormatter(1, 1, input, {} as Column, {}, gridStub);
     expect(output).toBe(`(2.40%)`);
   });
 
   it('should display a negative average with thousand separator and parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' } } as GridOption);
+    gridStub.getOptions = () =>
+      ({ formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' } }) as GridOption;
     const input = -345678.024;
     const output = percentFormatter(1, 1, input, {} as Column, {}, gridStub);
     expect(output).toBe(`(34_567_802,40%)`);

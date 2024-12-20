@@ -19,9 +19,9 @@ export const executeNumberFilterCondition: FilterCondition = ((options: FilterCo
       operator = options.defaultFilterRangeOperator;
     }
     const isInclusive = operator === OperatorType.rangeInclusive;
-    const resultCondition1 = testFilterCondition((isInclusive ? '>=' : '>'), cellValue, +searchValue1);
-    const resultCondition2 = testFilterCondition((isInclusive ? '<=' : '<'), cellValue, +searchValue2);
-    return (resultCondition1 && resultCondition2);
+    const resultCondition1 = testFilterCondition(isInclusive ? '>=' : '>', cellValue, +searchValue1);
+    const resultCondition2 = testFilterCondition(isInclusive ? '<=' : '<', cellValue, +searchValue2);
+    return resultCondition1 && resultCondition2;
   }
   return testFilterCondition(options.operator || '==', cellValue, +searchValue1);
 }) as FilterCondition;
@@ -32,14 +32,14 @@ export const executeNumberFilterCondition: FilterCondition = ((options: FilterCo
  */
 export function getFilterParsedNumbers(inputSearchTerms: SearchTerm[] | undefined): number[] {
   const defaultSearchTerm = 0; // when nothing is provided, we'll default to 0
-  const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [defaultSearchTerm];
+  const searchTerms = (Array.isArray(inputSearchTerms) && inputSearchTerms) || [defaultSearchTerm];
   const parsedSearchValues: number[] = [];
   let searchValue1;
   let searchValue2;
   if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
-    const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
-    searchValue1 = parseFloat(Array.isArray(searchValues) ? searchValues[0] as string : '');
-    searchValue2 = parseFloat(Array.isArray(searchValues) ? searchValues[1] as string : '');
+    const searchValues = searchTerms.length === 2 ? searchTerms : (searchTerms[0] as string).split('..');
+    searchValue1 = parseFloat(Array.isArray(searchValues) ? (searchValues[0] as string) : '');
+    searchValue2 = parseFloat(Array.isArray(searchValues) ? (searchValues[1] as string) : '');
   } else {
     searchValue1 = parseFloat(searchTerms[0] as string);
   }

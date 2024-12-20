@@ -1,11 +1,13 @@
 import type { IRange, ISelected, ISelection, ISettings, IVisibility } from 'vanilla-calendar-pro/types';
 
-export type IPartialSettings = Partial<Pick<ISettings, 'iso8601' | 'lang'> & {
-  range: Partial<IRange>;
-  selection: Partial<ISelection>;
-  selected: Partial<ISelected>;
-  visibility: Partial<IVisibility>;
-}>;
+export type IPartialSettings = Partial<
+  Pick<ISettings, 'iso8601' | 'lang'> & {
+    range: Partial<IRange>;
+    selection: Partial<ISelection>;
+    selected: Partial<ISelected>;
+    visibility: Partial<IVisibility>;
+  }
+>;
 
 export interface VanillaCalendarOption extends IPartialSettings {
   //-- extra options used by SlickGrid

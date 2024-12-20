@@ -12,13 +12,12 @@ export class IntegerEditor extends InputEditor {
     const fieldName = this.columnDef?.field;
 
     if (fieldName !== undefined) {
-
       if (item && fieldName !== undefined && this._input) {
         // is the field a complex object, "address.streetNumber"
         const isComplexObject = fieldName?.indexOf('.') > 0;
 
-        const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
-        this._originalValue = (isNaN(value) || value === null || value === undefined) ? value : `${value}`;
+        const value = isComplexObject ? getDescendantProperty(item, fieldName) : item[fieldName];
+        this._originalValue = isNaN(value) || value === null || value === undefined ? value : `${value}`;
         this._input.value = `${this._originalValue}`;
         this._input.select();
       }
@@ -45,7 +44,7 @@ export class IntegerEditor extends InputEditor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this.getValue();
+    const elmValue = inputValue !== undefined ? inputValue : this.getValue();
     return integerValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,

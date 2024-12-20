@@ -17,10 +17,10 @@ export interface FilterConditionOption {
   searchInputLastChar?: string;
 
   /** column field type */
-  fieldType: typeof FieldType[keyof typeof FieldType];
+  fieldType: (typeof FieldType)[keyof typeof FieldType];
 
   /** filter search field type */
-  filterSearchType?: typeof FieldType[keyof typeof FieldType];
+  filterSearchType?: (typeof FieldType)[keyof typeof FieldType];
 
   /** should we ignore any accent while filtering text? */
   ignoreAccentOnStringFilterAndSort?: any;

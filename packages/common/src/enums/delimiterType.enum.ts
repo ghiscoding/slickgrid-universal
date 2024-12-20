@@ -11,4 +11,3 @@ export enum DelimiterType {
   doublePipe = '||',
   doubleSemicolon = ';;',
 }
-

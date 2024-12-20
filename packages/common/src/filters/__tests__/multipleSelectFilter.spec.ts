@@ -43,18 +43,23 @@ describe('SelectFilter', () => {
     spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
-      id: 'gender', field: 'gender', filterable: true,
+      id: 'gender',
+      field: 'gender',
+      filterable: true,
       filter: {
         model: Filters.multipleSelect,
-        collection: [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
-      }
+        collection: [
+          { value: 'male', label: 'male' },
+          { value: 'female', label: 'female' },
+        ],
+      },
     };
 
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new MultipleSelectFilter(translateService, collectionService);
@@ -65,7 +70,10 @@ describe('SelectFilter', () => {
   });
 
   it('should be a multiple-select filter', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     filter = new MultipleSelectFilter(translateService, collectionService);
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('select.ms-filter.search-filter.filter-gender').length;

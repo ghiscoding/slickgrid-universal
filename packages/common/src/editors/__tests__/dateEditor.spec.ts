@@ -41,8 +41,7 @@ const gridStub = {
 
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
-const template =
-  `<div class="slickgrid-container">
+const template = `<div class="slickgrid-container">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%">
         <div class="slick-headerrow ">
@@ -98,14 +97,15 @@ describe('DateEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () => new Promise((done: any) => {
-      try {
-        editor = new DateEditor(null as any);
-      } catch (e) {
-        expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-        done();
-      }
-    }));
+    it('should throw an error when trying to call init without any arguments', () =>
+      new Promise((done: any) => {
+        try {
+          editor = new DateEditor(null as any);
+        } catch (e) {
+          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
+          done();
+        }
+      }));
   });
 
   describe('with valid Editor instance', () => {
@@ -158,9 +158,9 @@ describe('DateEditor', () => {
           ...editorArguments.column,
           editor: {
             ...editorArguments.column.editor,
-            editorOptions: { ...editorArguments.column?.editor?.editorOptions, allowInput: true }
-          }
-        }
+            editorOptions: { ...editorArguments.column?.editor?.editorOptions, allowInput: true },
+          },
+        },
       });
 
       let event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
@@ -303,8 +303,19 @@ describe('DateEditor', () => {
         editor.focus();
         const editorInputElm = editor.editorDomElement;
         editorInputElm.value = '2024-04-02T16:02:02.239Z';
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2 } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2, hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [dateMock],
+          selectedHours: 11,
+          selectedMinutes: 2,
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [dateMock],
+          selectedHours: 11,
+          selectedMinutes: 2,
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
 
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
@@ -316,11 +327,13 @@ describe('DateEditor', () => {
         editor = new DateEditor({
           ...editorArguments,
           column: {
-            ...mockColumn, editor: {
-              ...editorArguments.column.editor, alwaysSaveOnEnterKey: true,
-              editorOptions: { ...editorArguments.column.editor?.editorOptions, allowInput: true }
-            }
-          }
+            ...mockColumn,
+            editor: {
+              ...editorArguments.column.editor,
+              alwaysSaveOnEnterKey: true,
+              editorOptions: { ...editorArguments.column.editor?.editorOptions, allowInput: true },
+            },
+          },
         });
         const event = new KeyboardEvent('keydown', { key: 'Enter' });
         vi.runAllTimers();
@@ -328,7 +341,6 @@ describe('DateEditor', () => {
         editor.editorDomElement.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(true);
-
       });
 
       it('should return True when date is reset by the clear date button', () => {
@@ -342,8 +354,15 @@ describe('DateEditor', () => {
         const clearBtnElm = divContainer.querySelector('.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         clearBtnElm.click();
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
 
         expect(editor.calendarInstance?.settings.selected.dates).toEqual([]);
         expect(editorInputElm.value).toBe('');
@@ -387,8 +406,15 @@ describe('DateEditor', () => {
         editor.focus();
         const clearBtnElm = divContainer.querySelector('.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
         clearBtnElm.click();
 
         expect(editorInputElm.value).toBe('');
@@ -408,8 +434,15 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         editorInputElm.value = dateMock;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [dateMock],
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [dateMock],
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
         editor.reset();
 
         expect(editorInputElm.value).toBe(dateMock);
@@ -429,8 +462,15 @@ describe('DateEditor', () => {
 
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         editorInputElm.value = '2001-01-02';
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: ['2001-01-02'] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: ['2001-01-02'], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: ['2001-01-02'],
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: ['2001-01-02'],
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
 
         expect(editor.isValueChanged()).toBe(false);
         expect(editor.isValueTouched()).toBe(true);
@@ -447,8 +487,15 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         editorInputElm.value = dateMock;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [dateMock],
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [dateMock],
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
 
         expect(editor.isValueChanged()).toBe(false);
         expect(editor.isValueTouched()).toBe(true);
@@ -626,8 +673,15 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         editor.calendarInstance?.show();
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
 
         expect(editor.pickerOptions).toBeTruthy();
         expect(editorInputElm.value).toBe('');
@@ -637,7 +691,7 @@ describe('DateEditor', () => {
       it('should not throw any error when date is invalid when lower than required "minDate" defined in the global default editorOptions and "autoCommitEdit" is enabled', () => {
         // change to allow input value only for testing purposes & use the regular date picker input to test that one too
         gridOptionMock.defaultEditorOptions = {
-          date: { range: { min: 'today' } }
+          date: { range: { min: 'today' } },
         };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
@@ -649,8 +703,15 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         editor.calendarInstance?.show();
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [] } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [], hide: vi.fn() } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+          HTMLInputElement: editorInputElm,
+          selectedDates: [],
+          hide: vi.fn(),
+        } as unknown as VanillaCalendar);
 
         expect(editor.pickerOptions).toBeTruthy();
         expect(editorInputElm.value).toBe('');
@@ -713,7 +774,7 @@ describe('DateEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       mockColumn.type = FieldType.dateIso;
       editor = new DateEditor(editorArguments);
@@ -721,17 +782,25 @@ describe('DateEditor', () => {
       editor.setValue('2001-01-02', true);
 
       expect(editor.getValue()).toContain('2001-01-02');
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { startDate: '2001-01-02' }, editors: {}, triggeredBy: 'system',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { startDate: '2001-01-02' },
+          editors: {},
+          triggeredBy: 'system',
+        },
+        expect.anything()
+      );
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
 
       editor = new DateEditor(editorArguments);
@@ -740,7 +809,14 @@ describe('DateEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -748,10 +824,10 @@ describe('DateEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
 
       editor = new DateEditor(editorArguments);
@@ -761,11 +837,26 @@ describe('DateEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { startDate: '' }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { startDate: '' },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.calendarInstance?.HTMLInputElement?.disabled).toEqual(true);
       expect(editor.calendarInstance?.HTMLInputElement?.value).toEqual('');
@@ -775,13 +866,13 @@ describe('DateEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new DateEditor(editorArguments);
@@ -791,7 +882,14 @@ describe('DateEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
       expect(onCompositeEditorSpy).not.toHaveBeenCalled();
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.calendarInstance?.HTMLInputElement?.disabled).toEqual(true);
@@ -802,10 +900,10 @@ describe('DateEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
+        excludeDisabledFieldFormValues: true,
       };
 
       editor = new DateEditor(editorArguments);
@@ -815,10 +913,18 @@ describe('DateEditor', () => {
       editor.disable();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: {},
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
       expect(editor.calendarInstance?.HTMLInputElement?.disabled).toEqual(true);
       expect(editor.calendarInstance?.HTMLInputElement?.value).toEqual('');
     });
@@ -829,10 +935,10 @@ describe('DateEditor', () => {
       mockColumn.type = FieldType.dateIso;
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
-        getReturnValue: () => undefined
+        getReturnValue: () => undefined,
       } as any);
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
-        getReturnValue: () => false
+        getReturnValue: () => false,
       } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, startDate: dateMock, isActive: true };
@@ -843,15 +949,37 @@ describe('DateEditor', () => {
       editor.focus();
       const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
       editorInputElm.value = dateMock;
-      editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock] } as unknown as VanillaCalendar);
-      editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [dateMock], hide: vi.fn() } as unknown as VanillaCalendar);
+      editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+        HTMLInputElement: editorInputElm,
+        selectedDates: [dateMock],
+      } as unknown as VanillaCalendar);
+      editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+        HTMLInputElement: editorInputElm,
+        selectedDates: [dateMock],
+        hide: vi.fn(),
+      } as unknown as VanillaCalendar);
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { startDate: dateMock }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({
+        ...activeCellMock,
+        column: mockColumn,
+        item: mockItemData,
+        grid: gridStub,
+        target: 'composite',
+        compositeEditorOptions: editorArguments.compositeEditorOptions,
+      });
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith(
+        {
+          ...activeCellMock,
+          column: mockColumn,
+          item: mockItemData,
+          grid: gridStub,
+          formValues: { startDate: dateMock },
+          editors: {},
+          triggeredBy: 'user',
+        },
+        expect.anything()
+      );
     });
   });
 });

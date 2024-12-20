@@ -8,5 +8,5 @@ export interface CollectionSortBy {
   sortDesc?: boolean;
 
   /** Field type of the value or object value content */
-  fieldType?: typeof FieldType[keyof typeof FieldType];
+  fieldType?: (typeof FieldType)[keyof typeof FieldType];
 }

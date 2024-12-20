@@ -74,10 +74,10 @@ export function deepMerge(target: any, ...sources: any[]): any {
   const source = sources.shift();
 
   // when target is not an object but source is an object, then we'll assign as object
-  target = (!isObject(target) && isObject(source)) ? {} : target;
+  target = !isObject(target) && isObject(source) ? {} : target;
 
   if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(prop => {
+    Object.keys(source).forEach((prop) => {
       if (source.hasOwnProperty(prop)) {
         if (prop in target) {
           // handling merging of two properties with equal names
@@ -112,7 +112,7 @@ export function deepMerge(target: any, ...sources: any[]): any {
  */
 export function emptyObject(obj: any): any {
   if (isObject(obj)) {
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       if (obj.hasOwnProperty(key)) {
         delete obj[key];
       }
@@ -131,7 +131,10 @@ export function emptyObject(obj: any): any {
  * @param {Boolean} [addReturn] - when using ES6 function as single liner, we could add the missing `return ...`
  * @returns
  */
-export function getFunctionDetails(fn: AnyFunction, addReturn = true): {
+export function getFunctionDetails(
+  fn: AnyFunction,
+  addReturn = true
+): {
   params: string[];
   body: string;
   isAsync: boolean;
@@ -143,13 +146,13 @@ export function getFunctionDetails(fn: AnyFunction, addReturn = true): {
     isAsyncFn = fnStr.includes('async ');
 
     // when fn is one liner arrow fn returning an object in brackets e.g. `() => ({ hello: 'world' })`
-    if ((fnStr.replaceAll(' ', '').includes('=>({'))) {
+    if (fnStr.replaceAll(' ', '').includes('=>({')) {
       const matches = fnStr.match(/(({.*}))/g) || [];
       return matches.length >= 1 ? `return ${matches[0]!.trimStart()}` : fnStr;
     }
-    const isOneLinerArrowFn = (!fnStr.includes('{') && fnStr.includes('=>'));
+    const isOneLinerArrowFn = !fnStr.includes('{') && fnStr.includes('=>');
     const body = fnStr.substring(
-      (fnStr.indexOf('{') + 1) || (fnStr.indexOf('=>') + 2),
+      fnStr.indexOf('{') + 1 || fnStr.indexOf('=>') + 2,
       fnStr.includes('}') ? fnStr.lastIndexOf('}') : fnStr.length
     );
     if (addReturn && isOneLinerArrowFn && !body.startsWith('return')) {
@@ -159,7 +162,8 @@ export function getFunctionDetails(fn: AnyFunction, addReturn = true): {
   };
 
   const getFunctionParams = (func: AnyFunction): string[] => {
-    const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,)]*))/mg;
+    const STRIP_COMMENTS =
+      /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,)]*))/gm;
     const ARG_NAMES = /([^\s,]+)/g;
     const fnStr = func.toString().replace(STRIP_COMMENTS, '');
     return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARG_NAMES) ?? [];
@@ -222,9 +226,9 @@ export function isPrimitiveOrHTML(val: any): boolean {
  */
 export function isNumber(value: any, strict = false): value is number {
   if (strict) {
-    return (value === null || value === undefined || typeof value === 'string') ? false : !isNaN(value);
+    return value === null || value === undefined || typeof value === 'string' ? false : !isNaN(value);
   }
-  return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
+  return value === null || value === undefined || value === '' ? false : !isNaN(+value);
 }
 
 /** Check if an object is empty, it will also be considered empty when the input is null, undefined or isn't an object */
@@ -244,7 +248,7 @@ export function parseBoolean(input: any): boolean {
  * @returns
  */
 export function removeAccentFromText(text: string, shouldLowerCase = false): string {
-  const normalizedText = (typeof text.normalize === 'function') ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : text;
+  const normalizedText = typeof text.normalize === 'function' ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : text;
   return shouldLowerCase ? normalizedText.toLowerCase() : normalizedText;
 }
 
@@ -258,15 +262,16 @@ export function setDeepValue<T = unknown>(obj: T, path: string | string[], value
     const e = path.shift() as keyof T;
     if (obj && e !== undefined) {
       setDeepValue(
-        (obj)[e] = (isDefined(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call((obj)[e]) === '[object Object]'))
-          ? (obj)[e]
-          : {} as any,
+        (obj[e] =
+          isDefined(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call(obj[e]) === '[object Object]')
+            ? obj[e]
+            : ({} as any)),
         path,
         value
       );
     }
   } else if (obj && path[0]) {
-    (obj)[path[0] as keyof T] = value;
+    obj[path[0] as keyof T] = value;
   }
 }
 
@@ -314,7 +319,9 @@ export function toCamelCase(inputStr: string): string {
  */
 export function toKebabCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    return toCamelCase(inputStr).replace(/([A-Z])|([-_])/g, '-$1').toLowerCase();
+    return toCamelCase(inputStr)
+      .replace(/([A-Z])|([-_])/g, '-$1')
+      .toLowerCase();
   }
   return inputStr;
 }
@@ -326,7 +333,10 @@ export function toKebabCase(inputStr: string): string {
  */
 export function toSentenceCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    const result = inputStr.replace(/([A-Z])|([-_])/g, ' $1').replace(/\s+/g, ' ').trim();
+    const result = inputStr
+      .replace(/([A-Z])|([-_])/g, ' $1')
+      .replace(/\s+/g, ' ')
+      .trim();
     return result.charAt(0).toUpperCase() + result.slice(1);
   }
   return inputStr;
@@ -339,7 +349,9 @@ export function toSentenceCase(inputStr: string): string {
  */
 export function toSnakeCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    return toCamelCase(inputStr).replace(/([A-Z])/g, '_$1').toLowerCase();
+    return toCamelCase(inputStr)
+      .replace(/([A-Z])/g, '_$1')
+      .toLowerCase();
   }
   return inputStr;
 }
@@ -372,10 +384,10 @@ export function uniqueObjectArray(arr: any[], propertyName = 'id'): any[] {
 
     for (const item of arr) {
       if (item && !map.has(item[propertyName])) {
-        map.set(item[propertyName], true);    // set any value to Map
+        map.set(item[propertyName], true); // set any value to Map
         result.push({
           id: item[propertyName],
-          name: item.name
+          name: item.name,
         });
       }
     }

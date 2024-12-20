@@ -25,7 +25,7 @@ export const SalesforceGlobalGridOptions = {
   },
   datasetIdPropertyName: 'Id',
   emptyDataWarning: {
-    message: emptyWarningElm
+    message: emptyWarningElm,
   },
   enableDeepCopyDatasetOnPageLoad: true,
   enableTextExport: true,
@@ -41,11 +41,11 @@ export const SalesforceGlobalGridOptions = {
   excelExportOptions: {
     exportWithFormatter: true,
     mimeType: '', // Salesforce doesn't like Excel MIME type (not allowed), but we can bypass the problem by using no type at all
-    sanitizeDataExport: true
+    sanitizeDataExport: true,
   },
   filterTypingDebounce: 250,
   formatterOptions: {
-    thousandSeparator: ','
+    thousandSeparator: ',',
   },
   frozenHeaderWidthCalcDifferential: 2,
   columnPicker: {
@@ -55,7 +55,7 @@ export const SalesforceGlobalGridOptions = {
     commandLabels: {
       clearFrozenColumnsCommandKey: 'UNFREEZE_COLUMNS',
     },
-    hideToggleDarkModeCommand: false,
+    hideToggleDarkModeCommand: true,
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
     hideClearFrozenColumnsCommand: false,
@@ -67,7 +67,13 @@ export const SalesforceGlobalGridOptions = {
     iconSortDescCommand: 'mdi mdi-arrow-down',
   },
   preventDocumentFragmentUsage: true,
-  sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,
+  sanitizer: (dirtyHtml: string) =>
+    typeof dirtyHtml === 'string'
+      ? dirtyHtml.replace(
+          /(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi,
+          ''
+        )
+      : dirtyHtml,
   showCustomFooter: true,
   customFooterOptions: {
     hideMetrics: false,
@@ -75,7 +81,7 @@ export const SalesforceGlobalGridOptions = {
     hideLastUpdateTimestamp: true,
     metricTexts: {
       itemsSelectedKey: 'RECORDS_SELECTED',
-    }
+    },
   },
   headerRowHeight: 35,
   rowHeight: 33,

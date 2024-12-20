@@ -4,25 +4,29 @@
  * @param {any[]} arr - array you want to listen to
  * @param {Function} callback function that will be called on any change inside array
  */
-export function collectionObserver(arr: any[], callback: (outputArray: any[], newValues: any[]) => void): null | ({ disconnect: () => void; }) {
+export function collectionObserver(
+  arr: any[],
+  callback: (outputArray: any[], newValues: any[]) => void
+): null | { disconnect: () => void } {
   if (Array.isArray(arr)) {
     // Add more methods here if you want to listen to them
     const mutationMethods = ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'];
-    const originalActions: Array<{ method: string; action: () => void; }> = [];
+    const originalActions: Array<{ method: string; action: () => void }> = [];
 
     mutationMethods.forEach((changeMethod: any) => {
       arr[changeMethod] = (...args: any[]) => {
-        const res = Array.prototype[changeMethod].apply(arr, args);  // call normal behaviour
+        const res = Array.prototype[changeMethod].apply(arr, args); // call normal behaviour
         originalActions.push({ method: changeMethod, action: res });
-        callback.apply(arr, [arr, args]);  // finally call the callback supplied
+        callback.apply(arr, [arr, args]); // finally call the callback supplied
         return res;
       };
     });
 
     // reapply original behaviors when disconnecting
-    const disconnect = () => mutationMethods.forEach((changeMethod: any) => {
-      arr[changeMethod] = () => originalActions[changeMethod].action;
-    });
+    const disconnect = () =>
+      mutationMethods.forEach((changeMethod: any) => {
+        arr[changeMethod] = () => originalActions[changeMethod].action;
+      });
 
     return { disconnect };
   }
@@ -47,6 +51,6 @@ export function propertyObserver(obj: any, prop: string, callback: (newValue: an
     set(newValue: any) {
       innerValue = newValue;
       callback.apply(obj, [newValue, obj[prop]]);
-    }
+    },
   });
 }

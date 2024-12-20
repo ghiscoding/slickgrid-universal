@@ -17,17 +17,25 @@ import type {
   SortComparer,
 } from './index.js';
 
-export type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
-  [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
-}[Extract<keyof T, string>];
+export type PathsToStringProps<T> = T extends string | number | boolean | Date
+  ? []
+  : {
+      [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
+    }[Extract<keyof T, string>];
 
 type AllowedJoinTypes = string | number | boolean;
 
-export type Join<T extends (AllowedJoinTypes | unknown)[], D extends string> =
-  T extends [] ? never :
-  T extends [infer F] ? F :
-  T extends [infer F, ...infer R] ?
-  F extends AllowedJoinTypes ? string extends F ? string : `${F}${D}${Join<Extract<R, AllowedJoinTypes[]>, D>}` : never : string;
+export type Join<T extends (AllowedJoinTypes | unknown)[], D extends string> = T extends []
+  ? never
+  : T extends [infer F]
+    ? F
+    : T extends [infer F, ...infer R]
+      ? F extends AllowedJoinTypes
+        ? string extends F
+          ? string
+          : `${F}${D}${Join<Extract<R, AllowedJoinTypes[]>, D>}`
+        : never
+      : string;
 
 export interface Column<T = any> {
   /** Defaults to false, should we always render the column? */
@@ -179,7 +187,7 @@ export interface Column<T = any> {
   filterable?: boolean;
 
   /** Extra option to filter more easily. For example, a "UTC Date" field can use a search format of US Format like ">02/28/2017" */
-  filterSearchType?: typeof FieldType[keyof typeof FieldType];
+  filterSearchType?: (typeof FieldType)[keyof typeof FieldType];
 
   /** are we allowed to focus on the column? */
   focusable?: boolean;
@@ -256,13 +264,13 @@ export interface Column<T = any> {
    * Column output type (e.g. Date Picker, the output format that we will see in the picker)
    * NOTE: this is currently only used by the Editors/Filters with a Date Picker
    */
-  outputType?: typeof FieldType[keyof typeof FieldType];
+  outputType?: (typeof FieldType)[keyof typeof FieldType];
 
   /**
    * Column Editor save format type (e.g. which date format to use when saving after choosing a date from the Date Editor picker)
    * NOTE: this is currently only used by the Date Editor (date picker)
    */
-  saveOutputType?: typeof FieldType[keyof typeof FieldType];
+  saveOutputType?: (typeof FieldType)[keyof typeof FieldType];
 
   /** extra custom generic parameters that could be used by your Formatter/Editor or anything else */
   params?: any | any[];
@@ -355,7 +363,7 @@ export interface Column<T = any> {
   treeTotalsFormatter?: GroupTotalsFormatter;
 
   /** What is the Field Type, this could be used by Formatters/Editors/Filters/... */
-  type?: typeof FieldType[keyof typeof FieldType];
+  type?: (typeof FieldType)[keyof typeof FieldType];
 
   /** Defaults to false, when enabled it will lead to the column being unselected in the UI */
   unselectable?: boolean;

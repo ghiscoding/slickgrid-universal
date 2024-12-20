@@ -42,14 +42,18 @@ export class InputMaskFilter extends InputFilter {
     }
 
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
-    const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
+    const searchTerm = Array.isArray(this.searchTerms) && this.searchTerms.length >= 0 ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
     this.createDomFilterElement(searchTerm);
 
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change'], this.onTriggerEvent.bind(this) as EventListener);
+    this._bindEventService.bind(
+      this._filterInputElm,
+      ['keyup', 'blur', 'change'],
+      this.onTriggerEvent.bind(this) as EventListener
+    );
   }
 
   /**
@@ -78,11 +82,20 @@ export class InputMaskFilter extends InputFilter {
     }
 
     if (isClearFilterEvent) {
-      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(event, {
+        columnDef: this.columnDef,
+        clearFilterTriggered: isClearFilterEvent,
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      });
       this._filterInputElm.classList.remove('filled');
     } else {
       this._filterInputElm.classList.add('filled');
-      this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(event, {
+        columnDef: this.columnDef,
+        operator: this.operator,
+        searchTerms: [value],
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      });
     }
     // reset both flags for next use
     this._shouldTriggerQuery = true;
@@ -97,8 +110,8 @@ export class InputMaskFilter extends InputFilter {
       maskedValue = this._inputMask.replace(/[09A]/gi, (match) => {
         // only replace the char when the mask is a 0 or 9 for a digit OR the mask is "A" and the char is a non-digit meaning a string char
         if (
-          ((match === '0' || match === '9') && /\d+/g.test(inputValue[i]))    // mask is 0 or 9 and value is a digit
-          || (match.toUpperCase() === 'A' && /[^\d]+/gi.test(inputValue[i]))  // OR mask is an "A" and value is non-digit
+          ((match === '0' || match === '9') && /\d+/g.test(inputValue[i])) || // mask is 0 or 9 and value is a digit
+          (match.toUpperCase() === 'A' && /[^\d]+/gi.test(inputValue[i])) // OR mask is an "A" and value is non-digit
         ) {
           return inputValue[i++] || '';
         }
@@ -122,8 +135,8 @@ export class InputMaskFilter extends InputFilter {
     for (let i = 0; i < maskWithoutSymbols.length; i++) {
       if (valueWithoutSymbols[i]) {
         if (
-          ((maskWithoutSymbols[i] === '0' || maskWithoutSymbols[i] === '9') && /\d+/g.test(valueWithoutSymbols[i]))    // mask is 0 or 9 and value is a digit
-          || (maskWithoutSymbols[i].toUpperCase() === 'A' && /[^\d]+/gi.test(valueWithoutSymbols[i]))  // OR mask is an "A" and value is non-digit
+          ((maskWithoutSymbols[i] === '0' || maskWithoutSymbols[i] === '9') && /\d+/g.test(valueWithoutSymbols[i])) || // mask is 0 or 9 and value is a digit
+          (maskWithoutSymbols[i].toUpperCase() === 'A' && /[^\d]+/gi.test(valueWithoutSymbols[i])) // OR mask is an "A" and value is non-digit
         ) {
           output += valueWithoutSymbols[i]; // valid and matches the Mask, so we can add it up to the string output
         }

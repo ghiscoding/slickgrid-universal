@@ -32,7 +32,7 @@ export class DistinctAggregator implements Aggregator {
   }
 
   accumulate(item: any): void {
-    const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : undefined;
+    const val = item && item.hasOwnProperty(this._field) ? item[this._field] : undefined;
     if (this._distinctValues.indexOf(val) === -1 && val !== undefined) {
       this._distinctValues.push(val);
     }

@@ -7,8 +7,10 @@ export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
   const columnParams = columnDef?.params ?? {};
   const cssClasses = columnParams.iconCssClass || columnParams.icon || columnParams.formatterIcon;
   if (!cssClasses) {
-    throw new Error('[Slickgrid-Universal] When using `Formatters.icon`, you must provide the "iconCssClass" via the generic "params". (e.g.: `{ formatter: Formatters.icon, params: { iconCssClass: "mdi mdi-magnify" }}`');
+    throw new Error(
+      '[Slickgrid-Universal] When using `Formatters.icon`, you must provide the "iconCssClass" via the generic "params". (e.g.: `{ formatter: Formatters.icon, params: { iconCssClass: "mdi mdi-magnify" }}`'
+    );
   }
-  const title = columnParams.title || null
-  return createDomElement('i', { className: cssClasses, ariaHidden: 'true', title});
+  const title = columnParams.title || null;
+  return createDomElement('i', { className: cssClasses, ariaHidden: 'true', title });
 };

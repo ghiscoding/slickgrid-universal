@@ -25,8 +25,9 @@ describe('the Object w/String SortComparer', () => {
     const direction = SortDirectionNumber.asc;
     const columnDef = { id: 'users', field: 'users' };
 
-    expect(() => collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef)))
-      .toThrow('Sorting a "FieldType.object" requires you to provide the "dataKey"');
+    expect(() => collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef))).toThrow(
+      'Sorting a "FieldType.object" requires you to provide the "dataKey"'
+    );
   });
 
   it('should return original unsorted array when direction is undefined', () => {

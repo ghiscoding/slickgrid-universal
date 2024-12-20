@@ -5,7 +5,7 @@ import type { Column } from '../../interfaces/index.js';
 import { maskFormatter } from '../maskFormatter.js';
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   focus: vi.fn(),
   getActiveCell: vi.fn(),
   getOptions: vi.fn(),
@@ -14,14 +14,14 @@ const gridStub = {
 
 describe('the ArrayObjectToCsv Formatter', () => {
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
-    expect(() => maskFormatter(0, 0, 'anything', {} as Column, {}, {} as any))
-      .toThrow('You must provide a "mask" via the generic "params" options');
+    expect(() => maskFormatter(0, 0, 'anything', {} as Column, {}, {} as any)).toThrow('You must provide a "mask" via the generic "params" options');
   });
 
   it('should throw an error when omitting to pass "propertyNames" to "params"', () => {
     const params = { mask: '' };
-    expect(() => maskFormatter(0, 0, 'anything', { field: 'user', params } as Column, {}, gridStub))
-      .toThrow('You must provide a "mask" via the generic "params" options');
+    expect(() => maskFormatter(0, 0, 'anything', { field: 'user', params } as Column, {}, gridStub)).toThrow(
+      'You must provide a "mask" via the generic "params" options'
+    );
   });
 
   it('should return null when no value is provided', () => {

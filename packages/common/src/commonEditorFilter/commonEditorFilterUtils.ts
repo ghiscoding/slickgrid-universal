@@ -15,7 +15,10 @@ import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } 
  * @param inputElm - autocomplete input element
  * @param autocompleterOptions - autocomplete settings
  */
-export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteItem>(inputElm: HTMLInputElement, autocompleterOptions: Partial<AutocompleterOption<T>>): void {
+export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteItem>(
+  inputElm: HTMLInputElement,
+  autocompleterOptions: Partial<AutocompleterOption<T>>
+): void {
   const previousFetch = autocompleterOptions.fetch;
 
   if (previousFetch) {
@@ -40,7 +43,7 @@ export function resetDatePicker(pickerInstance: VanillaCalendar): void {
   pickerInstance.settings.selected = {
     dates: [],
     month: today.getMonth(),
-    year: today.getFullYear()
+    year: today.getFullYear(),
   };
   const dateInputElm = pickerInstance.HTMLInputElement;
   if (dateInputElm) {
@@ -59,9 +62,9 @@ export function setPickerDates(
   dateInputElm: HTMLInputElement,
   pickerInstance: IOptions | VanillaCalendar,
   options: {
-    oldVal?: Date | string | Array<Date | string> | undefined,
-    newVal: Date | string | Array<Date | string> | undefined,
-    columnDef: Column,
+    oldVal?: Date | string | Array<Date | string> | undefined;
+    newVal: Date | string | Array<Date | string> | undefined;
+    columnDef: Column;
     updatePickerUI?: boolean;
     selectedSettings?: ISelected;
   }
@@ -84,10 +87,13 @@ export function setPickerDates(
     }
 
     const newSettingSelected: ISelected = selectedSettings ?? {
-      dates: [pickerDates.map(p => format(p, isoFormat)).join(':') as FormatDateString],
+      dates: [pickerDates.map((p) => format(p, isoFormat)).join(':') as FormatDateString],
       month: pickerDates[0]?.getMonth(),
       year: pickerDates[0]?.getFullYear(),
-      time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
+      time:
+        inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h')
+          ? format(pickerDates[0], 'HH:mm')
+          : undefined,
     };
 
     if (!dequal(pickerInstance.settings!.selected, newSettingSelected)) {
@@ -103,6 +109,8 @@ export function setPickerDates(
       }
     }
 
-    dateInputElm.value = newDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
+    dateInputElm.value = newDates.length
+      ? pickerDates.map((p) => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ')
+      : '';
   }
 }

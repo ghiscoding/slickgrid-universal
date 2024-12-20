@@ -12,10 +12,11 @@ const PICKER_UNCHECK_ICON = 'mdi-icon-picker-uncheck';
 export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement): void {
   const context: any = this;
   const closePickerButtonElm = createDomElement('button', {
-    type: 'button', className: 'close',
+    type: 'button',
+    className: 'close',
     ariaLabel: 'Close',
     textContent: '×',
-    dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-column-picker' : 'slick-grid-menu' }
+    dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-column-picker' : 'slick-grid-menu' },
   });
   menuElm.appendChild(closePickerButtonElm);
 }
@@ -42,7 +43,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
   const controlType = context instanceof SlickColumnPicker ? 'columnPicker' : 'gridMenu';
   const iconContainerElm = event.target?.closest('.icon-checkbox-container') as HTMLDivElement;
   const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.mdi');
-  const isChecked = !!(event.target.checked);
+  const isChecked = !!event.target.checked;
   event.target.ariaChecked = String(isChecked);
   togglePickerCheckbox(iconElm, isChecked);
 
@@ -79,7 +80,10 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     context.grid.setColumns(visibleColumns);
 
     // keep reference to the updated visible columns list
-    if (!context.sharedService.visibleColumns || (Array.isArray(visibleColumns) && visibleColumns.length !== context.sharedService.visibleColumns.length)) {
+    if (
+      !context.sharedService.visibleColumns ||
+      (Array.isArray(visibleColumns) && visibleColumns.length !== context.sharedService.visibleColumns.length)
+    ) {
       context.sharedService.visibleColumns = visibleColumns;
     }
 
@@ -106,7 +110,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
       allColumns: context.columns,
       visibleColumns,
       columns: visibleColumns,
-      grid: context.grid
+      grid: context.grid,
     };
 
     // execute user callback when defined
@@ -124,7 +128,12 @@ function togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false): 
   }
 }
 
-function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inputData: any, checked = false): {
+function generatePickerCheckbox(
+  columnLiElm: HTMLLIElement,
+  inputId: string,
+  inputData: any,
+  checked = false
+): {
   inputElm: HTMLInputElement;
   labelElm: HTMLLabelElement;
   labelSpanElm: HTMLSpanElement;
@@ -148,7 +157,10 @@ function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inp
   return { inputElm, labelElm, labelSpanElm };
 }
 
-export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption): void {
+export function populateColumnPicker(
+  this: SlickColumnPicker | SlickGridMenu,
+  addonOptions: ColumnPickerOption | GridMenuOption
+): void {
   const context: any = this;
   const isGridMenu = context instanceof SlickGridMenu;
   const menuPrefix = isGridMenu ? 'gridmenu-' : '';
@@ -162,10 +174,18 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
 
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
     const isChecked = context.grid.getColumnIndex(columnId) >= 0;
-    const { inputElm, labelElm, labelSpanElm } = generatePickerCheckbox(columnLiElm, inputId, { columnid: `${columnId}` }, isChecked);
+    const { inputElm, labelElm, labelSpanElm } = generatePickerCheckbox(
+      columnLiElm,
+      inputId,
+      { columnid: `${columnId}` },
+      isChecked
+    );
     context._columnCheckboxes.push(inputElm);
 
-    const headerColumnValueExtractorFn = typeof addonOptions?.headerColumnValueExtractor === 'function' ? addonOptions.headerColumnValueExtractor : context._defaults.headerColumnValueExtractor;
+    const headerColumnValueExtractorFn =
+      typeof addonOptions?.headerColumnValueExtractor === 'function'
+        ? addonOptions.headerColumnValueExtractor
+        : context._defaults.headerColumnValueExtractor;
     const columnLabel = headerColumnValueExtractorFn!(column, context.gridOptions);
 
     this.grid.applyHtmlCode(labelSpanElm, columnLabel);
@@ -177,18 +197,28 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     context._listElm.appendChild(document.createElement('hr'));
   }
 
-  if (!(addonOptions?.hideForceFitButton)) {
+  if (!addonOptions?.hideForceFitButton) {
     const fitLiElm = document.createElement('li');
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-forcefit`;
-    const { labelSpanElm } = generatePickerCheckbox(fitLiElm, inputId, { option: 'autoresize' }, context.gridOptions.forceFitColumns);
+    const { labelSpanElm } = generatePickerCheckbox(
+      fitLiElm,
+      inputId,
+      { option: 'autoresize' },
+      context.gridOptions.forceFitColumns
+    );
     labelSpanElm.textContent = addonOptions?.forceFitTitle ?? '';
     context._listElm.appendChild(fitLiElm);
   }
 
-  if (!(addonOptions?.hideSyncResizeButton)) {
+  if (!addonOptions?.hideSyncResizeButton) {
     const syncLiElm = document.createElement('li');
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-syncresize`;
-    const { labelSpanElm } = generatePickerCheckbox(syncLiElm, inputId, { option: 'syncresize' }, context.gridOptions.forceFitColumns);
+    const { labelSpanElm } = generatePickerCheckbox(
+      syncLiElm,
+      inputId,
+      { option: 'syncresize' },
+      context.gridOptions.forceFitColumns
+    );
     labelSpanElm.textContent = addonOptions?.syncResizeTitle ?? '';
     context._listElm.appendChild(syncLiElm);
   }

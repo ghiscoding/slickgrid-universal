@@ -1,4 +1,13 @@
-import { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  Editors,
+  Enums,
+  Filters,
+  Formatters,
+  GroupTotalFormatters,
+  SortComparers,
+  Utilities,
+} from '@slickgrid-universal/common';
 import { BindingService } from '@slickgrid-universal/binding';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';

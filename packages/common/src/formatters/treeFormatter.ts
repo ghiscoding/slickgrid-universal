@@ -3,7 +3,7 @@ import { createDomElement } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
 import { type Formatter } from './../interfaces/index.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
-import { getCellValueFromQueryFieldGetter, } from '../services/utilities.js';
+import { getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
@@ -23,7 +23,9 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
 
   if (!dataContext.hasOwnProperty(treeLevelPropName)) {
-    throw new Error('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
+    throw new Error(
+      '[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.'
+    );
   }
 
   const treeLevel = dataContext?.[treeLevelPropName] ?? 0;

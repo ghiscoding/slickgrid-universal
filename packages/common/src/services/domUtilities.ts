@@ -17,7 +17,15 @@ import type { TranslaterService } from './translater.service.js';
  * @param {Array<*>} searchTerms - optional array of search term (used by the "filter" type only)
  * @returns object with 2 properties for the select element & a boolean value telling us if any of the search terms were found and selected in the dropdown
  */
-export function buildMsSelectCollectionList(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
+export function buildMsSelectCollectionList(
+  type: 'editor' | 'filter',
+  collection: any[],
+  columnDef: Column,
+  grid: SlickGrid,
+  isMultiSelect = false,
+  translaterService?: TranslaterService,
+  searchTerms?: SearchTerm[]
+): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean } {
   const columnId = columnDef?.id ?? '';
   const gridOptions = grid.getOptions();
   const columnFilterOrEditor = (type === 'editor' ? columnDef?.editor : columnDef?.filter) ?? {};
@@ -43,10 +51,10 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
   // collection could be an Array of Strings OR Objects
   if (Array.isArray(collection)) {
     if (collection.every((x: any) => typeof x === 'number' || typeof x === 'string')) {
-      collection.forEach(option => {
+      collection.forEach((option) => {
         const selectOption: OptionRowData = { text: String(option), value: option };
         if (type === 'filter' && Array.isArray(searchTerms)) {
-          selectOption.selected = (searchTerms.findIndex(term => term === option) >= 0); // when filter search term is found then select it in dropdown
+          selectOption.selected = searchTerms.findIndex((term) => term === option) >= 0; // when filter search term is found then select it in dropdown
         }
         dataCollection.push(selectOption);
 
@@ -59,26 +67,43 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
     } else {
       // array of objects will require a label/value pair unless a customStructure is passed
       collection.forEach((option: SelectOption) => {
-        if (option === undefined || (typeof option === 'object' && option[labelName] === undefined && option.labelKey === undefined)) {
-          throw new Error(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list, for example:: { filter: model: Filters.multipleSelect, collection: [ { value: '1', label: 'One' } ]')`);
+        if (
+          option === undefined ||
+          (typeof option === 'object' && option[labelName] === undefined && option.labelKey === undefined)
+        ) {
+          throw new Error(
+            `[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list, for example:: { filter: model: Filters.multipleSelect, collection: [ { value: '1', label: 'One' } ]')`
+          );
         }
 
         const labelKey = (option.labelKey || option[labelName]) as string;
-        const labelText = ((option.labelKey || (enableTranslateLabel && translaterService)) && labelKey && isTranslateEnabled) ? translaterService?.translate(labelKey || ' ') : labelKey;
+        const labelText =
+          (option.labelKey || (enableTranslateLabel && translaterService)) && labelKey && isTranslateEnabled
+            ? translaterService?.translate(labelKey || ' ')
+            : labelKey;
         let prefixText = option[labelPrefixName] || '';
         let suffixText = option[labelSuffixName] || '';
         let selectOptionLabel = option.hasOwnProperty(optionLabel) ? option[optionLabel] : '';
         if (selectOptionLabel?.toString) {
-          selectOptionLabel = selectOptionLabel.toString().replace(/"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
+          selectOptionLabel = selectOptionLabel.toString().replace(/"/g, "'"); // replace double quotes by single quotes to avoid interfering with regular html
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
+        // prettier-ignore
         prefixText = (enableTranslateLabel && translaterService && prefixText && typeof prefixText === 'string') ? translaterService.translate(prefixText || ' ') : prefixText;
+        // prettier-ignore
         suffixText = (enableTranslateLabel && translaterService && suffixText && typeof suffixText === 'string') ? translaterService.translate(suffixText || ' ') : suffixText;
-        selectOptionLabel = (enableTranslateLabel && translaterService && selectOptionLabel && typeof selectOptionLabel === 'string') ? translaterService.translate(selectOptionLabel || ' ') : selectOptionLabel;
+        selectOptionLabel =
+          enableTranslateLabel && translaterService && selectOptionLabel && typeof selectOptionLabel === 'string'
+            ? translaterService.translate(selectOptionLabel || ' ')
+            : selectOptionLabel;
 
         // add to a temp array for joining purpose and filter out empty text
-        const tmpOptionArray = [prefixText, (typeof labelText === 'string' || typeof labelText === 'number') ? labelText.toString() : labelText, suffixText].filter((text) => text);
+        const tmpOptionArray = [
+          prefixText,
+          typeof labelText === 'string' || typeof labelText === 'number' ? labelText.toString() : labelText,
+          suffixText,
+        ].filter((text) => text);
         let optionText = tmpOptionArray.join(separatorBetweenLabels);
         const selectOption: OptionRowData = { text: '', value: '' };
 
@@ -98,7 +123,7 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
         }
 
         if (type === 'filter' && Array.isArray(searchTerms)) {
-          selectOption.selected = (searchTerms.findIndex(term => `${term}` === `${option[valueName]}`) >= 0); // when filter search term is found then select it in dropdown
+          selectOption.selected = searchTerms.findIndex((term) => `${term}` === `${option[valueName]}`) >= 0; // when filter search term is found then select it in dropdown
         }
         selectOption.value = `${selectOptionValue ?? ''}`; // we'll convert every value to string for better equality checks
         dataCollection.push(selectOption);

@@ -1,15 +1,10 @@
 import { format, parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, extend, isDefined, } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-universal/utils';
 import VanillaCalendar from 'vanilla-calendar-pro';
 import type { IOptions } from 'vanilla-calendar-pro/types';
 
-import {
-  FieldType,
-  OperatorType,
-  type OperatorString,
-  type SearchTerm,
-} from '../enums/index.js';
+import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilter,
@@ -60,7 +55,7 @@ export class DateFilter implements Filter {
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
-    return this.columnDef?.filter || {} as ColumnFilter;
+    return this.columnDef?.filter || ({} as ColumnFilter);
   }
 
   /** Getter for the Current Date(s) selected */
@@ -72,7 +67,7 @@ export class DateFilter implements Filter {
   get defaultOperator(): OperatorType | OperatorString {
     return this.inputFilterType === 'compound'
       ? OperatorType.empty
-      : (this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive);
+      : this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
   }
 
   /** Getter for the date picker options */
@@ -117,6 +112,7 @@ export class DateFilter implements Filter {
     this.filterContainerElm = args.filterContainerElm;
 
     // date input can only have 1 search term, so we will use the 1st array index if it exist
+    // prettier-ignore
     const searchValues = this.inputFilterType === 'compound'
       ? (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : ''
       : this.searchTerms;
@@ -207,8 +203,11 @@ export class DateFilter implements Filter {
       pickerValues = Array.isArray(values) ? values[0] : values;
     } else {
       // get the picker values, if it's a string with the "..", we'll do the split else we'll use the array of search terms
-      if (typeof values === 'string' || (Array.isArray(values) && typeof values[0] === 'string') && (values[0] as string).indexOf('..') > 0) {
-        pickerValues = (typeof values === 'string') ? [(values as string)] : (values[0] as string).split('..');
+      if (
+        typeof values === 'string' ||
+        (Array.isArray(values) && typeof values[0] === 'string' && (values[0] as string).indexOf('..') > 0)
+      ) {
+        pickerValues = typeof values === 'string' ? [values as string] : (values[0] as string).split('..');
       } else if (Array.isArray(values)) {
         pickerValues = values;
       }
@@ -218,9 +217,9 @@ export class DateFilter implements Filter {
       setPickerDates(this.columnFilter, this._dateInputElm, this.calendarInstance, {
         columnDef: this.columnDef,
         newVal: pickerValues,
-        updatePickerUI: true
+        updatePickerUI: true,
       });
-      this._currentDateOrDates = (values && pickerValues) ? pickerValues : undefined;
+      this._currentDateOrDates = values && pickerValues ? pickerValues : undefined;
     }
 
     const currentValueOrValues = this.getValues() || [];
@@ -252,12 +251,17 @@ export class DateFilter implements Filter {
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
     // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
-    if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
+    if (
+      outputFormat &&
+      this.inputFilterType !== 'range' &&
+      (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))
+    ) {
       this.hasTimePicker = true;
     }
     const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
+    // prettier-ignore
     const currentLocale = ((this.filterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en') as string;
 
     let pickerValues: any | any[];
@@ -269,8 +273,11 @@ export class DateFilter implements Filter {
       }
     } else {
       // get the picker values, if it's a string with the "..", we'll do the split else we'll use the array of search terms
-      if (typeof searchTerms === 'string' || (Array.isArray(searchTerms) && typeof searchTerms[0] === 'string') && (searchTerms[0] as string).indexOf('..') > 0) {
-        pickerValues = (typeof searchTerms === 'string') ? [(searchTerms as string)] : (searchTerms[0] as string).split('..');
+      if (
+        typeof searchTerms === 'string' ||
+        (Array.isArray(searchTerms) && typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)
+      ) {
+        pickerValues = typeof searchTerms === 'string' ? [searchTerms as string] : (searchTerms[0] as string).split('..');
       } else if (Array.isArray(searchTerms)) {
         pickerValues = searchTerms;
       }
@@ -278,7 +285,7 @@ export class DateFilter implements Filter {
       // if we are preloading searchTerms, we'll keep them for reference
       if (Array.isArray(pickerValues)) {
         this._currentDateOrDates = pickerValues as Date[];
-        this._currentDateStrings = pickerValues.map(date => formatDateByFieldType(date, undefined, inputFieldType));
+        this._currentDateStrings = pickerValues.map((date) => formatDateByFieldType(date, undefined, inputFieldType));
       }
     }
 
@@ -326,12 +333,12 @@ export class DateFilter implements Filter {
               this._currentValue = formatDateByFieldType(outDates[0], undefined, columnFieldType);
             } else {
               if (Array.isArray(outDates)) {
-                this._currentDateStrings = outDates.map(date => formatDateByFieldType(date, undefined, columnFieldType));
+                this._currentDateStrings = outDates.map((date) => formatDateByFieldType(date, undefined, columnFieldType));
                 this._currentValue = this._currentDateStrings.join('..');
               }
             }
 
-            this._currentDateOrDates = outDates.map(d => d instanceof Date ? d : parse(d, pickerFormat));
+            this._currentDateOrDates = outDates.map((d) => (d instanceof Date ? d : parse(d, pickerFormat)));
 
             // when using the time picker, we can simulate a keyup event to avoid multiple backend request
             // since backend request are only executed after user start typing, changing the time should be treated the same way
@@ -350,7 +357,7 @@ export class DateFilter implements Filter {
               this._lastClickIsDate = false;
             }
           }
-        }
+        },
       },
       settings: {
         lang: currentLocale,
@@ -397,10 +404,11 @@ export class DateFilter implements Filter {
     }
 
     this._dateInputElm = createDomElement('input', {
-      type: 'text', className: 'form-control date-picker',
+      type: 'text',
+      className: 'form-control date-picker',
       placeholder,
       readOnly: true,
-      dataset: { input: '', columnid: `${columnId}` }
+      dataset: { input: '', columnid: `${columnId}` },
     });
 
     this.calendarInstance = new VanillaCalendar(this._dateInputElm, this._pickerOptions);
@@ -415,7 +423,7 @@ export class DateFilter implements Filter {
         columnDef: this.columnDef,
         oldVal: undefined,
         newVal: pickerValues,
-        updatePickerUI: false
+        updatePickerUI: false,
       });
     }
   }
@@ -448,7 +456,9 @@ export class DateFilter implements Filter {
 
     if (this.inputFilterType === 'range') {
       // if there's a search term, we will add the "filled" class for styling purposes
-      const inputContainerElm = createDomElement('div', { className: `date-picker form-group search-filter slick-filter filter-${columnId}` });
+      const inputContainerElm = createDomElement('div', {
+        className: `date-picker form-group search-filter slick-filter filter-${columnId}`,
+      });
 
       if (Array.isArray(searchTerms) && searchTerms.length > 0 && searchTerms[0] !== '') {
         this._currentDateOrDates = searchTerms as Date[];
@@ -464,9 +474,15 @@ export class DateFilter implements Filter {
       return inputContainerElm;
     } else {
       this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.grid);
-      const filterContainerElm = createDomElement('div', { className: `date-picker form-group search-filter filter-${columnId}` });
+      const filterContainerElm = createDomElement('div', {
+        className: `date-picker form-group search-filter filter-${columnId}`,
+      });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group date-picker' }, filterContainerElm);
-      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
+      const operatorInputGroupAddonElm = createDomElement(
+        'div',
+        { className: 'input-group-addon input-group-prepend operator' },
+        containerInputGroupElm
+      );
 
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
       containerInputGroupElm.appendChild(this._dateInputElm);
@@ -490,23 +506,42 @@ export class DateFilter implements Filter {
 
   protected onTriggerEvent(e: Event | undefined): void {
     if (this._clearFilterTriggered) {
-      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(e, {
+        columnDef: this.columnDef,
+        clearFilterTriggered: this._clearFilterTriggered,
+        shouldTriggerQuery: this._shouldTriggerQuery,
+      });
       this.updateFilterStyle(false);
     } else {
       if (this.inputFilterType === 'range') {
-        const searchTerms = (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]);
+        const searchTerms = this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string];
         this.updateFilterStyle(searchTerms.length > 0);
-        this.callback(e, { columnDef: this.columnDef, searchTerms, operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+        this.callback(e, {
+          columnDef: this.columnDef,
+          searchTerms,
+          operator: this.operator || '',
+          shouldTriggerQuery: this._shouldTriggerQuery,
+        });
       } else if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
         const selectedOperator = this._selectOperatorElm.value as OperatorString;
         this.updateFilterStyle(!!this._currentValue);
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
-        const skipNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
-        const hasSkipNullValChanged = (skipNullInput && isDefined(this._currentDateOrDates)) || (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
+        const skipNullInput =
+          this.columnFilter.skipCompoundOperatorFilterWithNullInput ??
+          this.gridOptions.skipCompoundOperatorFilterWithNullInput ??
+          this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
+        const hasSkipNullValChanged =
+          (skipNullInput && isDefined(this._currentDateOrDates)) ||
+          (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
 
         if (!skipNullInput || !skipNullInput || hasSkipNullValChanged) {
-          this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+          this.callback(e, {
+            columnDef: this.columnDef,
+            searchTerms: this._currentValue ? [this._currentValue] : null,
+            operator: selectedOperator || '',
+            shouldTriggerQuery: this._shouldTriggerQuery,
+          });
         }
       }
     }

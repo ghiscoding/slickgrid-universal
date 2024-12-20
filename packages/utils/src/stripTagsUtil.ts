@@ -28,8 +28,11 @@ interface Context {
   in_quote_char: string;
 }
 
-export function stripTags(htmlText: string | number | boolean | HTMLElement, allowableTags?: string | string[], tagReplacement?: string): string {
-
+export function stripTags(
+  htmlText: string | number | boolean | HTMLElement,
+  allowableTags?: string | string[],
+  tagReplacement?: string
+): string {
   /** main init function that will be executed when calling the global function */
   function init(html: string | number | boolean | HTMLElement, allowable_tags?: string | string[], tag_replacement?: string) {
     // number/boolean should be accepted but converted to string and returned on the spot
@@ -44,10 +47,7 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
       throw new TypeError(`'html' parameter must be a string`);
     }
 
-    return striptags_internal(
-      html || '',
-      init_context(allowable_tags || '', tag_replacement || '')
-    );
+    return striptags_internal(html || '', init_context(allowable_tags || '', tag_replacement || ''));
   }
 
   function init_context(allowable_tags: string | string[], tag_replacement: string): Context {
@@ -57,7 +57,7 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
       state: STATE_PLAINTEXT,
       tag_buffer: '',
       depth: 0,
-      in_quote_char: ''
+      in_quote_char: '',
     };
   }
 
@@ -117,7 +117,7 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
             tag_buffer = '';
             break;
           case '"':
-          case '\'':
+          case "'":
             // catch both single and double quotes
             if (char === in_quote_char) {
               in_quote_char = '';

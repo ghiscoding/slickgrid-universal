@@ -51,17 +51,20 @@ describe('GraphqlService', () => {
   let sharedService: SharedService;
 
   beforeEach(() => {
-    mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+    mockColumns = [
+      { id: 'field1', field: 'field1', width: 100 },
+      { id: 'field2', field: 'field2', width: 100 },
+    ];
     sharedService = new SharedService();
     service = new GraphqlService();
     serviceOptions = {
-      datasetName: 'users'
+      datasetName: 'users',
     };
     paginationOptions = {
       pageNumber: 1,
       pageSizes: [5, 10, 25, 50, 100],
       pageSize: 10,
-      totalItems: 100
+      totalItems: 100,
     };
     gridOptionMock = {
       enablePagination: true,
@@ -72,7 +75,7 @@ describe('GraphqlService', () => {
         preProcess: vi.fn(),
         process: vi.fn(),
         postProcess: vi.fn(),
-      } as unknown as GraphqlServiceApi
+      } as unknown as GraphqlServiceApi,
     } as unknown as GridOption;
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
   });
@@ -93,7 +96,10 @@ describe('GraphqlService', () => {
     });
 
     it('should get the column definitions from "getColumns"', () => {
-      const columns = [{ id: 'field4', field: 'field4', width: 50 }, { id: 'field2', field: 'field2', width: 50 }];
+      const columns = [
+        { id: 'field4', field: 'field4', width: 50 },
+        { id: 'field2', field: 'field2', width: 50 },
+      ];
       const spy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
@@ -168,7 +174,10 @@ describe('GraphqlService', () => {
 
     it('should add extra column extra "fields" and expect them to be part of the query string', () => {
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id, field1, field2, field3, field4 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, fields: ['field3', 'field4'] }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100, fields: ['field3', 'field4'] },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
@@ -179,7 +188,10 @@ describe('GraphqlService', () => {
 
     it('should exclude a column and expect a query string without it', () => {
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id, field1 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
@@ -192,7 +204,7 @@ describe('GraphqlService', () => {
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id, field1, field3, field4, field5 }}}`;
       const columns = [
         { id: 'field1', field: 'field1', width: 100 },
-        { id: 'field2', field: 'field2', fields: ['field3', 'field4', 'field5'], width: 100, excludeFieldFromQuery: true }
+        { id: 'field2', field: 'field2', fields: ['field3', 'field4', 'field5'], width: 100, excludeFieldFromQuery: true },
       ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
@@ -204,7 +216,10 @@ describe('GraphqlService', () => {
 
     it('should use default pagination "first" option when "paginationOptions" is not provided', () => {
       const expectation = `query{ users(first:${DEFAULT_ITEMS_PER_PAGE}, offset:0){ totalCount, nodes{ id, field1 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, undefined, gridStub);
@@ -242,7 +257,7 @@ describe('GraphqlService', () => {
       const columns = [
         { id: 'field1', field: 'field1' },
         { id: 'billing.address.street', field: 'billing.address.street' },
-        { id: 'billing.address.zip', field: 'billing.address.zip' }
+        { id: 'billing.address.zip', field: 'billing.address.zip' },
       ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
@@ -254,7 +269,10 @@ describe('GraphqlService', () => {
 
     it('should exclude pagination from the query string when the option is disabled', () => {
       const expectation = `query{ users{ id, field1, field2 }}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       gridOptionMock.enablePagination = false;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
@@ -268,7 +286,10 @@ describe('GraphqlService', () => {
 
     it('should have a different pagination offset when it is updated before calling the buildQuery query (presets does that)', () => {
       const expectation = `query{ users(first:20, offset:40){ totalCount, nodes{ id, field1, field2 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
@@ -280,7 +301,10 @@ describe('GraphqlService', () => {
 
     it('should make sure the offset pagination is never below zero, even when new page is 0', () => {
       const expectation = `query{ users(first:20, offset:0){ totalCount, nodes{ id, field1, field2 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
@@ -292,7 +316,10 @@ describe('GraphqlService', () => {
 
     it('should make sure the offset pagination is never below zero, even when new is 1 the offset should remain 0', () => {
       const expectation = `query{ users(first:20, offset:0){ totalCount, nodes{ id, field1, field2 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
@@ -304,7 +331,10 @@ describe('GraphqlService', () => {
 
     it('should be able to provide "sortingOptions" and see the query string include the sorting', () => {
       const expectation = `query{ users(first:20, offset:40,orderBy:[{field:field1, direction:DESC}]){ totalCount, nodes{ id, field1, field2 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', sortingOptions: [{ field: 'field1', direction: 'DESC' }] }, paginationOptions, gridStub);
@@ -316,7 +346,10 @@ describe('GraphqlService', () => {
 
     it('should be able to provide "filteringOptions" and see the query string include the filters', () => {
       const expectation = `query{ users(first:20, offset:40,filterBy:[{field:field1, operator: >, value:"2000-10-10"}]){ totalCount, nodes{ id, field1, field2 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', filteringOptions: [{ field: 'field1', operator: '>', value: '2000-10-10' }] }, paginationOptions, gridStub);
@@ -328,7 +361,10 @@ describe('GraphqlService', () => {
 
     it('should be able to provide "sortingOptions" and see the query string include the sorting but without pagination when that is excluded', () => {
       const expectation = `query{ users(orderBy:[{field:field1, direction:DESC}]){ id, field1, field2 }}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       gridOptionMock.enablePagination = false;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
@@ -342,7 +378,10 @@ describe('GraphqlService', () => {
 
     it('should be able to provide "filteringOptions" and see the query string include the filters but without pagination when that is excluded', () => {
       const expectation = `query{ users(filterBy:[{field:field1, operator: >, value:"2000-10-10"}]){ id, field1, field2 }}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       gridOptionMock.enablePagination = false;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
@@ -356,7 +395,10 @@ describe('GraphqlService', () => {
 
     it('should include default locale "en" in the query string when option "addLocaleIntoQuery" is enabled and translater is not defined', () => {
       const expectation = `query{ users(first:10, offset:0, locale: "en"){ totalCount, nodes{ id, field1, field2 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', addLocaleIntoQuery: true }, paginationOptions, gridStub);
@@ -367,7 +409,10 @@ describe('GraphqlService', () => {
 
     it('should include the locale in the query string when option "addLocaleIntoQuery" is enabled', () => {
       const expectation = `query{ users(first:10, offset:0, locale: "fr-CA"){ totalCount, nodes{ id, field1, field2 }}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       gridOptionMock.translater = { getCurrentLanguage: () => 'fr-CA' } as TranslaterService;
@@ -379,13 +424,23 @@ describe('GraphqlService', () => {
 
     it('should include extra query arguments in the query string when option "extraQueryArguments" is used', () => {
       const expectation = `query{users(first:10, offset:0, userId:123, firstName:"John"){ totalCount, nodes{id,field1,field2}}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
-      service.init({
-        datasetName: 'users',
-        extraQueryArguments: [{ field: 'userId', value: 123 }, { field: 'firstName', value: 'John' }],
-      }, paginationOptions, gridStub);
+      service.init(
+        {
+          datasetName: 'users',
+          extraQueryArguments: [
+            { field: 'userId', value: 123 },
+            { field: 'firstName', value: 'John' },
+          ],
+        },
+        paginationOptions,
+        gridStub
+      );
       const query = service.buildQuery();
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
@@ -399,15 +454,28 @@ describe('GraphqlService', () => {
                           ) {
                             totalCount, nodes { id,field1,field2 }}
                           }`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
-      service.init({
-        datasetName: 'users',
-        filteringOptions: [{ field: 'field1', operator: '>', value: '2000-10-10' }, { field: 'field2', operator: 'EQ', value: 'John' }],
-        sortingOptions: [{ field: 'field1', direction: 'DESC' }, { field: 'field2', direction: 'ASC' }],
-        keepArgumentFieldDoubleQuotes: true
-      }, paginationOptions, gridStub);
+      service.init(
+        {
+          datasetName: 'users',
+          filteringOptions: [
+            { field: 'field1', operator: '>', value: '2000-10-10' },
+            { field: 'field2', operator: 'EQ', value: 'John' },
+          ],
+          sortingOptions: [
+            { field: 'field1', direction: 'DESC' },
+            { field: 'field2', direction: 'ASC' },
+          ],
+          keepArgumentFieldDoubleQuotes: true,
+        },
+        paginationOptions,
+        gridStub
+      );
       const query = service.buildQuery();
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
@@ -415,14 +483,24 @@ describe('GraphqlService', () => {
 
     it('should include the operationName if provided', () => {
       const expectation = `query foo {users(first:10, offset:0, userId:123, firstName:"John"){ totalCount, nodes{id,field1,field2}}}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100 },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
-      service.init({
-        datasetName: 'users',
-        operationName: 'foo',
-        extraQueryArguments: [{ field: 'userId', value: 123 }, { field: 'firstName', value: 'John' }],
-      }, paginationOptions, gridStub);
+      service.init(
+        {
+          datasetName: 'users',
+          operationName: 'foo',
+          extraQueryArguments: [
+            { field: 'userId', value: 123 },
+            { field: 'firstName', value: 'John' },
+          ],
+        },
+        paginationOptions,
+        gridStub
+      );
       const query = service.buildQuery();
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
@@ -552,8 +630,9 @@ describe('GraphqlService', () => {
     it('should throw an error when grid is undefined', () => {
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      expect(() => service.processOnFilterChanged(null as any, { grid: undefined } as any))
-        .toThrow('Something went wrong when trying create the GraphQL Backend Service');
+      expect(() => service.processOnFilterChanged(null as any, { grid: undefined } as any)).toThrow(
+        'Something went wrong when trying create the GraphQL Backend Service'
+      );
     });
 
     it('should return a query with the new filter', () => {
@@ -561,7 +640,13 @@ describe('GraphqlService', () => {
       const querySpy = vi.spyOn(service, 'buildQuery');
       const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
-      const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
+      const mockColumnFilter = {
+        columnDef: mockColumn,
+        columnId: 'gender',
+        operator: 'EQ',
+        searchTerms: ['female'],
+        targetSelector: 'div.some-classes',
+      } as ColumnFilter;
       const mockFilterChangedArgs = {
         columnDef: mockColumn,
         columnId: 'gender',
@@ -570,7 +655,7 @@ describe('GraphqlService', () => {
         operator: 'EQ',
         searchTerms: ['female'],
         shouldTriggerQuery: true,
-        targetSelector: 'div.some-classes'
+        targetSelector: 'div.some-classes',
       } as FilterChangedArgs;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -591,7 +676,13 @@ describe('GraphqlService', () => {
       const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
-      const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
+      const mockColumnFilter = {
+        columnDef: mockColumn,
+        columnId: 'gender',
+        operator: 'EQ',
+        searchTerms: ['female'],
+        targetSelector: 'div.some-classes',
+      } as ColumnFilter;
       const mockColumnFilterName = { columnDef: mockColumnName, columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] } as ColumnFilter;
       const mockFilterChangedArgs = {
         columnDef: mockColumn,
@@ -600,7 +691,7 @@ describe('GraphqlService', () => {
         grid: gridStub,
         operator: 'EQ',
         searchTerms: ['female'],
-        shouldTriggerQuery: true
+        shouldTriggerQuery: true,
       } as FilterChangedArgs;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -612,7 +703,7 @@ describe('GraphqlService', () => {
       expect(resetSpy).toHaveBeenCalled();
       expect(currentFilters).toEqual([
         { columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' },
-        { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] }
+        { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] },
       ]);
     });
   });
@@ -657,13 +748,13 @@ describe('GraphqlService', () => {
       expect(currentPagination).toEqual({ pageNumber: 3, pageSize: 20 });
     });
 
-    describe("CursorBased related scenarios", () => {
+    describe('CursorBased related scenarios', () => {
       describe.each`
-        description           | cursorArgs                    | expectation
-        ${"First page"}       | ${{ first: 20 }}              | ${'query{users(first:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
-        ${"Next Page"}        | ${{ first: 20, after: 'a' }}  | ${'query{users(first:20, after:"a") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
-        ${"Previous Page"}  | ${{ last: 20, before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
-        ${"Last Page"}        | ${{ last: 20 }}               | ${'query{users(last:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        description        | cursorArgs                   | expectation
+        ${'First page'}    | ${{ first: 20 }}             | ${'query{users(first:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${'Next Page'}     | ${{ first: 20, after: 'a' }} | ${'query{users(first:20, after:"a") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${'Previous Page'} | ${{ last: 20, before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${'Last Page'}     | ${{ last: 20 }}              | ${'query{users(last:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
       `(`$description`, ({ cursorArgs, expectation }) => {
         it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
           const querySpy = vi.spyOn(service, 'buildQuery');
@@ -715,7 +806,11 @@ describe('GraphqlService', () => {
 
   describe('updateFilters method', () => {
     beforeEach(() => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'name', field: 'name' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
@@ -726,7 +821,9 @@ describe('GraphqlService', () => {
     });
 
     it('should throw an error when neither "field" nor "name" are being part of the column definition', () => {
-      const mockColumnFilters = { gender: { columnId: 'gender', columnDef: { id: 'gender' }, searchTerms: ['female'], operator: 'EQ' }, } as unknown as ColumnFilters;
+      const mockColumnFilters = {
+        gender: { columnId: 'gender', columnDef: { id: 'gender' }, searchTerms: ['female'], operator: 'EQ' },
+      } as unknown as ColumnFilters;
       service.init(serviceOptions, paginationOptions, gridStub);
       expect(() => service.updateFilters(mockColumnFilters, false)).toThrow('GraphQL filter could not find the field name to query the search');
     });
@@ -736,7 +833,7 @@ describe('GraphqlService', () => {
         totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string, }
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -750,7 +847,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, operator: 'EQ', type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, operator: 'EQ', type: FieldType.string },
       } as unknown as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -765,8 +862,8 @@ describe('GraphqlService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string, },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: '<>', type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: '<>', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -781,8 +878,8 @@ describe('GraphqlService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string, },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: OperatorType.notContains, type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: OperatorType.notContains, type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -797,8 +894,8 @@ describe('GraphqlService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string, },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -826,7 +923,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:StartsWith, value:"fem"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['fem*'], type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['fem*'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -840,7 +937,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['*le'], type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['*le'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -854,7 +951,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: '*z', type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: '*z', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -868,7 +965,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:StartsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: 'a*', type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: 'a*', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -882,7 +979,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: '*z' } } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -896,7 +993,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: 'EndsWith' } } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -910,7 +1007,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:StartsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'a*', type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'a*', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -924,7 +1021,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:StartsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'StartsWith', type: FieldType.string, },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'StartsWith', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1038,7 +1135,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GE, value:"2"}, {field:duration, operator:LE, value:"33"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'duration', field: 'duration' } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumn, searchTerms: ['2..33'], type: FieldType.number, },
+        duration: { columnId: 'duration', columnDef: mockColumn, searchTerms: ['2..33'], type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1052,7 +1149,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GE, value:"5"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeInclusive', type: FieldType.number, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeInclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1066,7 +1163,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:LE, value:"5"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeInclusive', type: FieldType.number, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeInclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1080,7 +1177,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GT, value:"5"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeExclusive', type: FieldType.number, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeExclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1094,7 +1191,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:LT, value:"5"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeExclusive', type: FieldType.number, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeExclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1108,7 +1205,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GE, value:2}, {field:duration, operator:LE, value:33}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'duration', field: 'duration' } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumn, searchTerms: [2, 33], operator: 'RangeInclusive', type: FieldType.number, },
+        duration: { columnId: 'duration', columnDef: mockColumn, searchTerms: [2, 33], operator: 'RangeInclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1152,7 +1249,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:startDate, operator:GE, value:"2001-01-01"}, {field:startDate, operator:LE, value:"2001-01-31"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'startDate', field: 'startDate' } as Column;
       const mockColumnFilters = {
-        startDate: { columnId: 'startDate', columnDef: mockColumn, searchTerms: ['2001-01-01..2001-01-31'], type: FieldType.dateIso, },
+        startDate: { columnId: 'startDate', columnDef: mockColumn, searchTerms: ['2001-01-01..2001-01-31'], type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1166,7 +1263,13 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:startDate, operator:GE, value:"2001-01-01"}, {field:startDate, operator:LE, value:"2001-01-31"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'startDate', field: 'startDate' } as Column;
       const mockColumnFilters = {
-        startDate: { columnId: 'startDate', columnDef: mockColumn, searchTerms: ['2001-01-01', '2001-01-31'], operator: 'RangeInclusive', type: FieldType.dateIso },
+        startDate: {
+          columnId: 'startDate',
+          columnDef: mockColumn,
+          searchTerms: ['2001-01-01', '2001-01-31'],
+          operator: 'RangeInclusive',
+          type: FieldType.dateIso,
+        },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1182,7 +1285,13 @@ describe('GraphqlService', () => {
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
         company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20'], operator: 'RangeExclusive', type: FieldType.dateIso },
+        updatedDate: {
+          columnId: 'updatedDate',
+          columnDef: mockColumnUpdated,
+          searchTerms: ['2001-01-20'],
+          operator: 'RangeExclusive',
+          type: FieldType.dateIso,
+        },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1387,25 +1496,24 @@ describe('GraphqlService', () => {
       expect(currentFilters).toEqual([]);
     });
 
-    describe("Verbatim ColumnFilters", () => {
+    describe('Verbatim ColumnFilters', () => {
       describe.each`
-        description                                             | verbatim | operator  | searchTerms            | expectation
-        ${"Verbatim false, Filter for null"}                    | ${false} | ${'EQ'}   | ${null}                | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for null"}                    | ${true}  | ${'EQ'}   | ${null}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"null"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Empty string"}                       | ${false} | ${'EQ'}   | ${''}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Empty string"}                       | ${true}  | ${'EQ'}   | ${''}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"\\"\\""}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Empty list"}                         | ${false} | ${'IN'}   | ${[]}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Empty list"}                         | ${true}  | ${'IN'}   | ${[]}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Filter for null (in list)"}          | ${false} | ${'IN'}   | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for null (in list)"}          | ${true}  | ${'IN'}   | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[null]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Filter for empty string (in list)"}  | ${false} | ${'IN'}   | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for empty string (in list)"}  | ${true}  | ${'IN'}   | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Filter for female"}                  | ${false} | ${'IN'}   | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female, male"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\", \\"male\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        description                                            | verbatim | operator | searchTerms           | expectation
+        ${'Verbatim false, Filter for null'}                   | ${false} | ${'EQ'}  | ${null}               | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim true,  Filter for null'}                   | ${true}  | ${'EQ'}  | ${null}               | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"null"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim false, Empty string'}                      | ${false} | ${'EQ'}  | ${''}                 | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim true,  Empty string'}                      | ${true}  | ${'EQ'}  | ${''}                 | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"\\"\\""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim false, Empty list'}                        | ${false} | ${'IN'}  | ${[]}                 | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim true,  Empty list'}                        | ${true}  | ${'IN'}  | ${[]}                 | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim false, Filter for null (in list)'}         | ${false} | ${'IN'}  | ${[null]}             | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim true,  Filter for null (in list)'}         | ${true}  | ${'IN'}  | ${[null]}             | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[null]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim false, Filter for empty string (in list)'} | ${false} | ${'IN'}  | ${['']}               | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim true,  Filter for empty string (in list)'} | ${true}  | ${'IN'}  | ${['']}               | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim false, Filter for female'}                 | ${false} | ${'IN'}  | ${['female']}         | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim true,  Filter for female'}                 | ${true}  | ${'IN'}  | ${['female']}         | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim false, Filter for female/male'}            | ${false} | ${'IN'}  | ${['female', 'male']} | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female, male"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${'Verbatim true,  Filter for female/male'}            | ${true}  | ${'IN'}  | ${['female', 'male']} | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\", \\"male\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
       `(`$description`, ({ verbatim, operator, searchTerms, expectation }) => {
-
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         let mockColumnFilters: ColumnFilters;
 
@@ -1429,7 +1537,12 @@ describe('GraphqlService', () => {
   describe('presets', () => {
     let mockColumns: Column[] = [];
     beforeEach(() => {
-      mockColumns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }, { id: 'startDate', field: 'startDate' }];
+      mockColumns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'duration', field: 'duration', type: FieldType.number },
+        { id: 'startDate', field: 'startDate' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
 
@@ -1475,9 +1588,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with a filter with range of numbers with decimals when the preset is a filter range with 2 dots (..) separator and range ends with a fraction', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GE, value:"0.5"}, {field:duration, operator:LE, value:"0.88"}]) { totalCount,nodes{ id,company,gender,duration,startDate } }}`;
-      const presetFilters = [
-        { columnId: 'duration', searchTerms: ['0.5...88'] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'duration', searchTerms: ['0.5...88'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1490,9 +1601,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with search having a range of inclusive numbers when 2 searchTerms numbers are provided and the operator is "RangeInclusive"', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GE, value:2}, {field:duration, operator:LE, value:33}]) { totalCount,nodes{ id,company,gender,duration,startDate } }}`;
-      const presetFilters = [
-        { columnId: 'duration', searchTerms: [2, 33], operator: 'RangeInclusive' },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'duration', searchTerms: [2, 33], operator: 'RangeInclusive' }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1505,9 +1614,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with search having a range of exclusive numbers when 2 searchTerms numbers are provided without any operator', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GE, value:2}, {field:duration, operator:LE, value:33}]) { totalCount,nodes{ id,company,gender,duration,startDate } }}`;
-      const presetFilters = [
-        { columnId: 'duration', searchTerms: [2, 33] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'duration', searchTerms: [2, 33] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1520,9 +1627,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with search having a range of exclusive dates when the search value contains 2 dots (..) to represent a range of dates', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:startDate, operator:GE, value:"2001-01-01"}, {field:startDate, operator:LE, value:"2001-01-31"}]) { totalCount,nodes{ id,company,gender,duration,startDate } }}`;
-      const presetFilters = [
-        { columnId: 'startDate', searchTerms: ['2001-01-01..2001-01-31'] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'startDate', searchTerms: ['2001-01-01..2001-01-31'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1535,9 +1640,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with search having a range of inclusive dates when 2 searchTerms dates are provided and the operator is "RangeInclusive"', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:startDate, operator:GE, value:"2001-01-01"}, {field:startDate, operator:LE, value:"2001-01-31"}]) { totalCount,nodes{ id,company,gender,duration,startDate } }}`;
-      const presetFilters = [
-        { columnId: 'startDate', searchTerms: ['2001-01-01', '2001-01-31'], operator: 'RangeInclusive' },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'startDate', searchTerms: ['2001-01-01', '2001-01-31'], operator: 'RangeInclusive' }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1550,9 +1653,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with search having a range of exclusive dates when 2 searchTerms dates are provided without any operator', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:startDate, operator:GE, value:"2001-01-01"}, {field:startDate, operator:LE, value:"2001-01-31"}]) { totalCount,nodes{ id,company,gender,duration,startDate } }}`;
-      const presetFilters = [
-        { columnId: 'startDate', searchTerms: ['2001-01-01', '2001-01-31'] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'startDate', searchTerms: ['2001-01-01', '2001-01-31'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
@@ -1567,7 +1668,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10,offset:0,filterBy:[{field:duration,operator:EQ,value:"0.22"}]){totalCount,nodes{id,company,gender,duration,startDate}}}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['.22'], type: FieldType.string, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['.22'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1581,7 +1682,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10,offset:0,filterBy:[{field:duration,operator:EQ,value:"-22"}]){totalCount,nodes{id,company,gender,duration,startDate}}}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.float } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-2a2'], type: FieldType.string, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-2a2'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1595,7 +1696,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10,offset:0,filterBy:[{field:duration,operator:EQ,value:"22"}]){totalCount,nodes{id,company,gender,duration,startDate}}}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.integer } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['22;'], type: FieldType.string, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['22;'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1609,7 +1710,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10,offset:0,filterBy:[{field:duration,operator:EQ,value:"0"}]){totalCount,nodes{id,company,gender,duration,startDate}}}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-'], type: FieldType.string, },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1622,7 +1723,11 @@ describe('GraphqlService', () => {
 
   describe('updateSorters method', () => {
     beforeEach(() => {
-      const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'name', field: 'name' }];
+      const columns = [
+        { id: 'company', field: 'company' },
+        { id: 'gender', field: 'gender' },
+        { id: 'name', field: 'name' },
+      ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
     });
 
@@ -1632,7 +1737,7 @@ describe('GraphqlService', () => {
                             totalCount,nodes{ id, company, gender, name } }}`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true }
+        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1641,7 +1746,10 @@ describe('GraphqlService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'DESC' }, { columnId: 'firstName', direction: 'ASC' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'DESC' },
+        { columnId: 'firstName', direction: 'ASC' },
+      ]);
     });
 
     it('should return a query when using presets array', () => {
@@ -1668,7 +1776,7 @@ describe('GraphqlService', () => {
                             totalCount,nodes{ id, company, gender, name } }}`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'firstName' }, sortAsc: true }
+        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1677,7 +1785,10 @@ describe('GraphqlService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'DESC' }, { columnId: 'name', direction: 'ASC' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'DESC' },
+        { columnId: 'name', direction: 'ASC' },
+      ]);
     });
 
     it('should return a query string using a different field to query when the column has a "queryFieldSorter" defined in its definition', () => {
@@ -1686,7 +1797,7 @@ describe('GraphqlService', () => {
                             totalCount,nodes{ id, company, gender, name } }}`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'isAfter', queryFieldSorter: 'lastName' }, sortAsc: true }
+        { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'isAfter', queryFieldSorter: 'lastName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1695,7 +1806,10 @@ describe('GraphqlService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'DESC' }, { columnId: 'name', direction: 'ASC' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'DESC' },
+        { columnId: 'name', direction: 'ASC' },
+      ]);
     });
 
     it('should return a query without the field sorter when its field property is missing', () => {
@@ -1703,7 +1817,7 @@ describe('GraphqlService', () => {
                           totalCount, nodes { id,company,gender,name }}}`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'firstName', sortCol: { id: 'firstName' }, sortAsc: true }
+        { columnId: 'firstName', sortCol: { id: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1712,7 +1826,10 @@ describe('GraphqlService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'DESC' }, { columnId: 'firstName', direction: 'ASC' }]);
+      expect(currentSorters).toEqual([
+        { columnId: 'gender', direction: 'DESC' },
+        { columnId: 'firstName', direction: 'ASC' },
+      ]);
     });
 
     it('should return a query without any sorting after clearSorters was called', () => {
@@ -1720,7 +1837,7 @@ describe('GraphqlService', () => {
         totalCount, nodes { id,company,gender,name }}}`;
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
-        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true }
+        { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true },
       ] as ColumnSort[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1737,7 +1854,7 @@ describe('GraphqlService', () => {
   describe('postProcess method', () => {
     it('should set pagination totalCount from data result from dataset group name result', () => {
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
-      service.postProcess({ data: { 'users': { nodes: [], totalCount: 20 } } });
+      service.postProcess({ data: { users: { nodes: [], totalCount: 20 } } });
 
       expect(paginationOptions.totalItems).toBe(20);
     });

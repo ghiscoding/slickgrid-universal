@@ -27,12 +27,12 @@ export interface CompositeEditorOption {
    * Object containing all Editor instance references used by the Composite Editor modal window
    * The object is formed by the column id being the object key which contain each Editor instance
    */
-  editors: { [columnId: string]: Editor | EditorConstructor; };
+  editors: { [columnId: string]: Editor | EditorConstructor };
 
   /**
    * Object containing all the modal form values that got changed.
    * The object is formed by the column id being the object key,
    * for example if user changed Title and Completed fields then the object will be:: { title: "Task 123", completed: true }
    */
-  formValues: { [columnId: string]: any; };
+  formValues: { [columnId: string]: any };
 }

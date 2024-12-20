@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { type GridOption, type PaginationService, type SlickGrid, } from '@slickgrid-universal/common';
+import { type GridOption, type PaginationService, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
@@ -56,8 +56,7 @@ const paginationServiceStubWithCursor = {
   isCursorBased: true,
 } as unknown as PaginationService;
 
-[basicPaginationServiceStub, paginationServiceStubWithCursor].forEach(stub => {
-
+[basicPaginationServiceStub, paginationServiceStubWithCursor].forEach((stub) => {
   Object.defineProperty(stub, 'dataFrom', { get: vi.fn(() => mockFullPagination.dataFrom), set: vi.fn() });
   Object.defineProperty(stub, 'dataTo', { get: vi.fn(() => mockFullPagination.dataTo), set: vi.fn() });
   Object.defineProperty(stub, 'pageCount', { get: vi.fn(() => mockFullPagination.pageCount), set: vi.fn() });
@@ -72,11 +71,11 @@ describe('Slick-Pagination Component', () => {
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
 
-  describe("Integration Tests", () => {
+  describe('Integration Tests', () => {
     describe.each`
       description                   | paginationServiceStub
-      ${"Without CursorPagination"} | ${basicPaginationServiceStub}
-      ${"With CursorPagination"}    | ${paginationServiceStubWithCursor}
+      ${'Without CursorPagination'} | ${basicPaginationServiceStub}
+      ${'With CursorPagination'}    | ${paginationServiceStubWithCursor}
     `(`$description`, ({ paginationServiceStub }) => {
       // Reset mockFullPagination before each entry in the test table
       beforeAll(() => {
@@ -127,8 +126,12 @@ describe('Slick-Pagination Component', () => {
         expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDom doesn't support ariaLabel, but we can test attribute this way
         expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
         expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
-        expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">of</span> ');
-        expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">items</span> ');
+        expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(
+          '<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">of</span> '
+        );
+        expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(
+          '<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">items</span> '
+        );
         expect(itemsPerPage.selectedOptions[0].value).toBe('5');
       });
 
@@ -142,7 +145,6 @@ describe('Slick-Pagination Component', () => {
         mockFullPagination.dataTo = 10;
         vi.spyOn(paginationServiceStub as PaginationService, 'dataFrom', 'get').mockReturnValue(mockFullPagination.dataFrom);
         vi.spyOn(paginationServiceStub as PaginationService, 'dataTo', 'get').mockReturnValue(mockFullPagination.dataTo);
-
 
         const itemFrom = document.querySelector('.item-from') as HTMLInputElement;
         const itemTo = document.querySelector('.item-to') as HTMLInputElement;
@@ -309,7 +311,7 @@ describe('with different i18n locale', () => {
   };
 
   const paginationServiceStub = {
-    ...basicPaginationServiceStub
+    ...basicPaginationServiceStub,
   } as unknown as PaginationService;
 
   beforeEach(() => {
@@ -330,8 +332,9 @@ describe('with different i18n locale', () => {
     vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, enableTranslate: true });
     component = new SlickPaginationComponent();
 
-    expect(() => component.init(gridStub, paginationServiceStub, eventPubSubService, null as any))
-      .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    expect(() => component.init(gridStub, paginationServiceStub, eventPubSubService, null as any)).toThrow(
+      '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+    );
   });
 
   it('should create a the Slick-Pagination component in the DOM and expect different locale when changed', () => {
@@ -346,7 +349,11 @@ describe('with different i18n locale', () => {
     expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
     expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
     expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
-    expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">de</span> `);
-    expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">éléments</span> `);
+    expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(
+      `<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">de</span> `
+    );
+    expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(
+      `<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">éléments</span> `
+    );
   });
 });

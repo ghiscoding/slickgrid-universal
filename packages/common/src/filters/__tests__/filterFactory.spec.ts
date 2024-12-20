@@ -20,14 +20,13 @@ vi.mock('../autocompleterFilter');
 describe('Filter Factory', () => {
   const Filters = {
     input: InputFilter,
-    autocompleter: AutocompleterFilter
+    autocompleter: AutocompleterFilter,
   };
   let factory: FilterFactory;
   let collectionService: CollectionService;
   let slickgridConfig: SlickgridConfig;
   let rxjsResourceStub: RxJsResourceStub;
   let translateService: TranslateServiceStub;
-
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();

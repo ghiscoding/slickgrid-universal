@@ -17,7 +17,7 @@ import type {
   GridOption,
   VanillaCalendarOption,
 } from './../interfaces/index.js';
-import { getDescendantProperty, } from './../services/utilities.js';
+import { getDescendantProperty } from './../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
@@ -73,7 +73,7 @@ export class DateEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor || {} as ColumnEditor;
+    return this.columnDef?.editor || ({} as ColumnEditor);
   }
 
   /** Getter for the item data context object */
@@ -151,7 +151,7 @@ export class DateEditor implements Editor {
                 self.hide();
               }
             }
-          }
+          },
         },
         settings: {
           lang: currentLocale,
@@ -167,7 +167,7 @@ export class DateEditor implements Editor {
       // add the time picker when format includes time (hours/minutes)
       if (this.hasTimePicker) {
         pickerOptions.settings!.selection = {
-          time: 24
+          time: 24,
         };
       }
 
@@ -176,14 +176,17 @@ export class DateEditor implements Editor {
 
       const inputCssClasses = `.editor-text.date-picker.editor-${columnId}.form-control.input-group-editor`;
       this._editorInputGroupElm = createDomElement('div', { className: 'vanilla-picker input-group' });
-      const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
+      const closeButtonGroupElm = createDomElement('span', {
+        className: 'input-group-btn input-group-append',
+        dataset: { clear: '' },
+      });
       this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default btn-clear' });
       this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
       this._inputElm = createDomElement(
         'input',
         {
           placeholder: this.columnEditor?.placeholder ?? '',
-          title: this.columnEditor && this.columnEditor.title || '',
+          title: (this.columnEditor && this.columnEditor.title) || '',
           className: inputCssClasses.replace(/\./g, ' '),
           dataset: { input: '', defaultdate: this.defaultDate },
           readOnly: this.columnEditor.editorOptions?.allowInput === true ? false : true,
@@ -210,7 +213,7 @@ export class DateEditor implements Editor {
 
         this._isValueTouched = true;
         this._lastInputKeyEvent = event;
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === "Home" || event.key === "End") {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End') {
           event.stopImmediatePropagation();
         }
       }) as EventListener);
@@ -226,7 +229,7 @@ export class DateEditor implements Editor {
           setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
             columnDef: this.columnDef,
             newVal: this.defaultDate,
-            updatePickerUI: true
+            updatePickerUI: true,
           });
         }
       });
@@ -280,7 +283,10 @@ export class DateEditor implements Editor {
    * @param {string} optionName
    * @param {newValue} newValue
    */
-  changeEditorOption<T extends keyof Required<VanillaCalendarOption>, K extends Required<VanillaCalendarOption>[T]>(optionName: T, newValue: K): void {
+  changeEditorOption<T extends keyof Required<VanillaCalendarOption>, K extends Required<VanillaCalendarOption>[T]>(
+    optionName: T,
+    newValue: K
+  ): void {
     if (!this.columnEditor.editorOptions) {
       this.columnEditor.editorOptions = {};
     }
@@ -319,7 +325,7 @@ export class DateEditor implements Editor {
       setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
         columnDef: this.columnDef,
         newVal: val,
-        updatePickerUI: true
+        updatePickerUI: true,
       });
     }
 
@@ -337,13 +343,18 @@ export class DateEditor implements Editor {
   applyValue(item: any, state: any): void {
     const fieldName = this.columnDef?.field;
     if (this.columnDef && fieldName !== undefined) {
-      const saveFieldType = this.columnDef.saveOutputType || this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
+      const saveFieldType =
+        this.columnDef.saveOutputType ||
+        this.columnDef.outputType ||
+        this.columnEditor.type ||
+        this.columnDef.type ||
+        FieldType.dateUtc;
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
       const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(null, state);
-      const newValue = (state && validation?.valid) ? formatDateByFieldType(state, outputFieldType, saveFieldType) : '';
+      const newValue = state && validation?.valid ? formatDateByFieldType(state, outputFieldType, saveFieldType) : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -362,13 +373,18 @@ export class DateEditor implements Editor {
     const elmDateStr = this.getValue();
 
     const lastEventKey = this._lastInputKeyEvent?.key;
-    if (this.columnEditor.editorOptions?.allowInput === true &&
-      this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
+    if (
+      this.columnEditor.editorOptions?.allowInput === true &&
+      this.columnEditor?.alwaysSaveOnEnterKey &&
+      lastEventKey === 'Enter'
+    ) {
       return true;
     }
 
     if (this.columnDef) {
-      isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && this._originalDate === '')) && (elmDateStr !== this._originalDate);
+      isChanged =
+        this._lastTriggeredByClearDate ||
+        (!(elmDateStr === '' && this._originalDate === '') && elmDateStr !== this._originalDate);
     }
 
     return isChanged;
@@ -477,9 +493,16 @@ export class DateEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({
-      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    }).getReturnValue();
+    const isCellEditable = this.grid.onBeforeEditCell
+      .notify({
+        ...activeCell,
+        item: this.dataContext,
+        column: this.args.column,
+        grid: this.grid,
+        target: 'composite',
+        compositeEditorOptions: this.args.compositeEditorOptions,
+      })
+      .getReturnValue();
     this.disable(isCellEditable === false);
   }
 
@@ -494,10 +517,14 @@ export class DateEditor implements Editor {
         this.save();
       }
     }
-    window.setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
+    window.setTimeout(() => (this._lastTriggeredByClearDate = false)); // reset flag after a cycle
   }
 
-  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
+  protected handleChangeOnCompositeEditor(
+    compositeEditorOptions: CompositeEditorOption,
+    triggeredBy: 'user' | 'system' = 'user',
+    isCalledByClearValue = false
+  ): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -512,11 +539,22 @@ export class DateEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
+    if (
+      isCalledByClearValue ||
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+    ) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
-      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      {
+        ...activeCell,
+        item,
+        grid,
+        column,
+        formValues: compositeEditorOptions.formValues,
+        editors: compositeEditorOptions.editors,
+        triggeredBy,
+      },
       new SlickEventData()
     );
   }

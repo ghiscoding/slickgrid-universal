@@ -25,7 +25,16 @@ export const currencyFormatter: Formatter = (_row, _cell, value, columnDef, _dat
   } = retrieveFormatterOptions(columnDef, grid, 'decimal', 'cell');
 
   if (isNumber(value)) {
-    const formattedNumber = formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, currencyPrefix, currencySuffix, decimalSeparator, thousandSeparator);
+    const formattedNumber = formatNumber(
+      value,
+      minDecimal,
+      maxDecimal,
+      wrapNegativeNumber,
+      currencyPrefix,
+      currencySuffix,
+      decimalSeparator,
+      thousandSeparator
+    );
     return `${numberPrefix}${formattedNumber}${numberSuffix}`;
   }
   return value;

@@ -5,7 +5,9 @@ import { TranslaterService } from '../translater.service.js';
 
 describe('Translater Service', () => {
   it('should display a not implemented when calling "addPubSubMessaging" method', () => {
-    expect(() => TranslaterService.prototype.addPubSubMessaging!({} as unknown as BasePubSubService)).toThrow('TranslaterService "addPubSubMessaging" method must be implemented');
+    expect(() => TranslaterService.prototype.addPubSubMessaging!({} as unknown as BasePubSubService)).toThrow(
+      'TranslaterService "addPubSubMessaging" method must be implemented'
+    );
   });
 
   it('should display a not implemented when calling "getCurrentLanguage" method', () => {

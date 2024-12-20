@@ -2,7 +2,7 @@ import type { HtmlElementPosition } from './models/interfaces.js';
 import type { InferDOMType } from './models/types.js';
 
 /** calculate available space for each side of the DOM element */
-export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } {
+export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number } {
   let bottom = 0;
   let top = 0;
   let left = 0;
@@ -47,8 +47,10 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
   if (elementOptions) {
     Object.keys(elementOptions).forEach((elmOptionKey) => {
       if (elmOptionKey === 'innerHTML') {
-        console.warn(`[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('${tagName}', { innerHTML: 'some html'})", ` +
-          `it is better as separate assignment: "const elm = createDomElement('span'); elm.innerHTML = 'some html';"`);
+        console.warn(
+          `[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('${tagName}', { innerHTML: 'some html'})", ` +
+            `it is better as separate assignment: "const elm = createDomElement('span'); elm.innerHTML = 'some html';"`
+        );
       }
       const elmValue = elementOptions[elmOptionKey as keyof typeof elementOptions];
       if (typeof elmValue === 'object') {
@@ -72,7 +74,7 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
  * @param {String} className - space separated list of class names
  */
 export function classNameToList(className = ''): string[] {
-  return className.split(' ').filter(cls => cls); // filter will remove whitespace entries
+  return className.split(' ').filter((cls) => cls); // filter will remove whitespace entries
 }
 
 /**
@@ -82,7 +84,7 @@ export function classNameToList(className = ''): string[] {
  */
 export function destroyAllElementProps(obj: any): void {
   if (typeof obj === 'object') {
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       if (Array.isArray(obj[key])) {
         destroyAllElementProps(obj[key]);
       }
@@ -112,7 +114,10 @@ export function emptyElement<T extends Element = Element>(element?: T | null): T
  * @param {'innerHTML' | 'outerHTML'} [type] - when the input is a DocumentFragment or HTMLElement, which type of HTML do you want to return? 'innerHTML' or 'outerHTML'
  * @returns {String}
  */
-export function getHtmlStringOutput(input: DocumentFragment | HTMLElement | string | number, type: 'innerHTML' | 'outerHTML' = 'innerHTML'): string {
+export function getHtmlStringOutput(
+  input: DocumentFragment | HTMLElement | string | number,
+  type: 'innerHTML' | 'outerHTML' = 'innerHTML'
+): string {
   if (input instanceof DocumentFragment) {
     // a DocumentFragment doesn't have innerHTML/outerHTML, but we can loop through all children and concatenate them all to an HTML string
     return [].map.call(input.childNodes, (x: HTMLElement) => x[type]).join('') || input.textContent || '';
@@ -123,12 +128,17 @@ export function getHtmlStringOutput(input: DocumentFragment | HTMLElement | stri
 }
 
 /** Get offset of HTML element relative to a parent element */
-export function getOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null): {
-  top: number;
-  right: number;
-  bottom: number;
-  left: number;
-} | undefined {
+export function getOffsetRelativeToParent(
+  parentElm: HTMLElement | null,
+  childElm: HTMLElement | null
+):
+  | {
+      top: number;
+      right: number;
+      bottom: number;
+      left: number;
+    }
+  | undefined {
   if (!parentElm || !childElm) {
     return undefined;
   }
@@ -172,7 +182,7 @@ export function getInnerSize(elm: HTMLElement, type: 'height' | 'width'): number
     const sides = type === 'height' ? ['top', 'bottom'] : ['left', 'right'];
     size = elm[clientSize];
     for (const side of sides) {
-      const sideSize = (parseFloat(getStyleProp(elm, `padding-${side}`) || '') || 0);
+      const sideSize = parseFloat(getStyleProp(elm, `padding-${side}`) || '') || 0;
       size -= sideSize;
     }
   }
@@ -206,7 +216,7 @@ export function findFirstAttribute(inputElm: Element | null | undefined, attribu
  * @returns {String} string output
  */
 export function findWidthOrDefault(inputWidth?: number | string | null, defaultValue = 'auto'): string {
-  return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : inputWidth as string) || defaultValue;
+  return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : (inputWidth as string)) || defaultValue;
 }
 
 /**
@@ -218,14 +228,14 @@ export function findWidthOrDefault(inputWidth?: number | string | null, defaultV
  */
 export function htmlEncode(inputValue: string): string {
   const val = typeof inputValue === 'string' ? inputValue : String(inputValue);
-  const entityMap: { [char: string]: string; } = {
+  const entityMap: { [char: string]: string } = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    '\'': '&#39;',
+    "'": '&#39;',
   };
-  return (val || '').toString().replace(/[&<>"']/g, (s) => entityMap[s as keyof { [char: string]: string; }]);
+  return (val || '').toString().replace(/[&<>"']/g, (s) => entityMap[s as keyof { [char: string]: string }]);
 }
 
 /**
@@ -265,7 +275,7 @@ export function insertAfterElement(referenceNode: HTMLElement, newNode: HTMLElem
  * Get the Window Scroll top/left Position
  * @returns
  */
-export function windowScrollPosition(): { left: number; top: number; } {
+export function windowScrollPosition(): { left: number; top: number } {
   return {
     left: window.pageXOffset || document.documentElement.scrollLeft || 0,
     top: window.pageYOffset || document.documentElement.scrollTop || 0,

@@ -74,7 +74,11 @@ describe('SingleSelectEditor', () => {
     beforeEach(() => {
       mockItemData = { id: 1, gender: 'male', isActive: true };
       mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
-      mockColumn.editor!.collection = [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: '', label: '' },
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -85,7 +89,10 @@ describe('SingleSelectEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
       gridOptionMock.translater = translateService;
       editor = new SingleSelectEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
@@ -237,7 +244,10 @@ describe('SingleSelectEditor', () => {
       it('should create the multi-select editor with a default value and have the HTML rendered when "enableRenderHtml" is set', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
+          collection: [
+            { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` },
+            { value: false, label: 'False' },
+          ],
           customStructure: {
             value: 'isEffort',
             label: 'label',
@@ -262,7 +272,10 @@ describe('SingleSelectEditor', () => {
         mockColumn.field = 'isEffort';
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
+          collection: [
+            { isEffort: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` },
+            { isEffort: false, label: 'False' },
+          ],
           collectionOptions: {
             separatorBetweenTextLabels: ': ',
             includePrefixSuffixToSelectedValues: true,

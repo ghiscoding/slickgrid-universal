@@ -68,7 +68,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _currentDatasetLength = 0;
   protected _eventPubSubService!: EventPubSubService;
   protected _darkMode = false;
-  protected _collectionObservers: Array<null | ({ disconnect: () => void; })> = [];
+  protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
   protected _columnDefinitions?: Column<TData>[];
   protected _gridOptions: GridOption = {};
   protected _gridContainerElm!: HTMLElement;
@@ -151,11 +151,16 @@ export class SlickVanillaGridBundle<TData = any> {
   set dataset(newDataset: TData[]) {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
-    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
+    const isDeepCopyDataOnPageLoadEnabled = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad;
     let data = isDeepCopyDataOnPageLoadEnabled ? extend(true, [], newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (this.slickGrid && this.gridOptions?.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)) {
+    if (
+      this.slickGrid &&
+      this.gridOptions?.enableTreeData &&
+      Array.isArray(newDataset) &&
+      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
+    ) {
       this._isDatasetHierarchicalInitialized = false;
       data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
     }
@@ -212,7 +217,7 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   get gridOptions(): GridOption {
-    return this._gridOptions || {} as GridOption;
+    return this._gridOptions || ({} as GridOption);
   }
 
   set gridOptions(options: GridOption) {
@@ -222,7 +227,12 @@ export class SlickVanillaGridBundle<TData = any> {
     // if we already have grid options, when grid was already initialized, we'll merge with those options
     // else we'll merge with global grid options
     if (this.slickGrid?.getOptions) {
-      mergedOptions = (extend<GridOption>(true, {} as GridOption, this.slickGrid.getOptions() as GridOption, options)) as GridOption;
+      mergedOptions = extend<GridOption>(
+        true,
+        {} as GridOption,
+        this.slickGrid.getOptions() as GridOption,
+        options
+      ) as GridOption;
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
@@ -289,26 +299,28 @@ export class SlickVanillaGridBundle<TData = any> {
     options?: Partial<GridOption> | undefined,
     dataset?: TData[] | undefined,
     hierarchicalDataset?: any[] | undefined,
-    services?: {
-      backendUtilityService?: BackendUtilityService,
-      collectionService?: CollectionService,
-      eventPubSubService?: EventPubSubService,
-      extensionService?: ExtensionService,
-      extensionUtility?: ExtensionUtility,
-      filterService?: FilterService,
-      gridEventService?: GridEventService,
-      gridService?: GridService,
-      gridStateService?: GridStateService,
-      headerGroupingService?: HeaderGroupingService,
-      paginationService?: PaginationService,
-      resizerService?: ResizerService,
-      rxjs?: RxJsFacade,
-      sharedService?: SharedService,
-      sortService?: SortService,
-      treeDataService?: TreeDataService,
-      translaterService?: TranslaterService,
-      universalContainerService?: UniversalContainerService,
-    } | undefined
+    services?:
+      | {
+          backendUtilityService?: BackendUtilityService;
+          collectionService?: CollectionService;
+          eventPubSubService?: EventPubSubService;
+          extensionService?: ExtensionService;
+          extensionUtility?: ExtensionUtility;
+          filterService?: FilterService;
+          gridEventService?: GridEventService;
+          gridService?: GridService;
+          gridStateService?: GridStateService;
+          headerGroupingService?: HeaderGroupingService;
+          paginationService?: PaginationService;
+          resizerService?: ResizerService;
+          rxjs?: RxJsFacade;
+          sharedService?: SharedService;
+          sortService?: SortService;
+          treeDataService?: TreeDataService;
+          translaterService?: TranslaterService;
+          universalContainerService?: UniversalContainerService;
+        }
+      | undefined
   ) {
     // make sure that the grid container doesn't already have the "slickgrid-container" css class
     // if it does then we won't create yet another grid, just stop there
@@ -324,7 +336,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // check if the user wants to hide the header row from the start
     // we only want to do this check once in the constructor
-    this._hideHeaderRowAfterPageLoad = (options?.showHeaderRow === false);
+    this._hideHeaderRowAfterPageLoad = options?.showHeaderRow === false;
 
     this._columnDefinitions = columnDefs || [];
     if (this._columnDefinitions.length > 0) {
@@ -336,7 +348,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._registeredResources = options?.externalResources || [];
 
     this._gridOptions = this.mergeGridOptions(options || {});
-    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
+    const isDeepCopyDataOnPageLoadEnabled = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad;
 
     // add dark mode CSS class when enabled
     if (this._gridOptions.darkMode) {
@@ -357,31 +369,42 @@ export class SlickVanillaGridBundle<TData = any> {
     this.gridEventService = services?.gridEventService ?? new GridEventService();
     this.sharedService = services?.sharedService ?? new SharedService();
     this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
-    this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.backendUtilityService, this.translaterService);
+    this.extensionUtility =
+      services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.backendUtilityService, this.translaterService);
     this.filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
+    // prettier-ignore
     this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
+    // prettier-ignore
     this.sortService = services?.sortService ?? new SortService(this.collectionService, this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
+    this.treeDataService =
+      services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
+
+    // prettier-ignore
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
-    this.extensionService = services?.extensionService ?? new ExtensionService(
-      this.extensionUtility,
-      this.filterService,
-      this._eventPubSubService,
-      this.sharedService,
-      this.sortService,
-      this.treeDataService,
-      this.translaterService,
-      () => this.gridService
-    );
+    this.extensionService =
+      services?.extensionService ??
+      new ExtensionService(
+        this.extensionUtility,
+        this.filterService,
+        this._eventPubSubService,
+        this.sharedService,
+        this.sortService,
+        this.treeDataService,
+        this.translaterService,
+        () => this.gridService
+      );
 
+    // prettier-ignore
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.treeDataService);
+    // prettier-ignore
     this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService, this.treeDataService);
     this.headerGroupingService = services?.headerGroupingService ?? new HeaderGroupingService(this.extensionUtility);
 
     if (hierarchicalDataset) {
-      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
+      this.sharedService.hierarchicalDataset =
+        (isDeepCopyDataOnPageLoadEnabled ? extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
     const eventHandler = new SlickEventHandler();
 
@@ -475,7 +498,7 @@ export class SlickVanillaGridBundle<TData = any> {
     if (shouldEmptyDomElementContainer) {
       this.emptyGridContainerElm();
     }
-    this._collectionObservers.forEach(obs => obs?.disconnect());
+    this._collectionObservers.forEach((obs) => obs?.disconnect());
     this._eventPubSubService?.dispose();
     this._slickerGridInstances = null as any;
   }
@@ -494,7 +517,12 @@ export class SlickVanillaGridBundle<TData = any> {
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler, inputDataset?: TData[]): void {
     // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-    if (this.gridOptions && ((this.gridOptions.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) || this.gridOptions.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0) && this.gridOptions.enableMouseWheelScrollHandler === undefined) {
+    if (
+      this.gridOptions &&
+      ((this.gridOptions.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) ||
+        (this.gridOptions.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0)) &&
+      this.gridOptions.enableMouseWheelScrollHandler === undefined
+    ) {
       this.gridOptions.enableMouseWheelScrollHandler = true;
     }
 
@@ -504,7 +532,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     this._isAutosizeColsCalled = false;
     this._eventHandler = eventHandler;
-    this._gridOptions = this.mergeGridOptions(this._gridOptions || {} as GridOption);
+    this._gridOptions = this.mergeGridOptions(this._gridOptions || ({} as GridOption));
     this.backendServiceApi = this._gridOptions?.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
@@ -562,7 +590,13 @@ export class SlickVanillaGridBundle<TData = any> {
       this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
     }
 
-    this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(gridContainerElm, this.dataView as SlickDataView<TData>, this._columnDefinitions, this._gridOptions, this._eventPubSubService);
+    this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(
+      gridContainerElm,
+      this.dataView as SlickDataView<TData>,
+      this._columnDefinitions,
+      this._gridOptions,
+      this._eventPubSubService
+    );
     this.sharedService.dataView = this.dataView as SlickDataView;
     this.sharedService.slickGrid = this.slickGrid as SlickGrid;
     this.sharedService.gridContainerElement = this._gridContainerElm;
@@ -592,7 +626,12 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
     if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
-      this.slickFooter = new SlickFooterComponent(this.slickGrid, this.gridOptions.customFooterOptions, this._eventPubSubService, this.translaterService);
+      this.slickFooter = new SlickFooterComponent(
+        this.slickGrid,
+        this.gridOptions.customFooterOptions,
+        this._eventPubSubService,
+        this.translaterService
+      );
       this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
@@ -613,7 +652,10 @@ export class SlickVanillaGridBundle<TData = any> {
       // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
       // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
       let preservedRowSelectionWithBackend = false;
-      if (this._gridOptions.backendServiceApi && this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')) {
+      if (
+        this._gridOptions.backendServiceApi &&
+        this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')
+      ) {
         preservedRowSelectionWithBackend = this._gridOptions.dataView.syncGridSelectionWithBackendService as boolean;
       }
 
@@ -626,7 +668,11 @@ export class SlickVanillaGridBundle<TData = any> {
         }
         this.dataView?.syncGridSelection(this.slickGrid, preservedRowSelection);
       } else if (typeof syncGridSelection === 'object') {
-        this.dataView?.syncGridSelection(this.slickGrid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
+        this.dataView?.syncGridSelection(
+          this.slickGrid,
+          syncGridSelection.preserveHidden,
+          syncGridSelection.preserveHiddenOnSelectionChange
+        );
       }
     }
 
@@ -730,7 +776,12 @@ export class SlickVanillaGridBundle<TData = any> {
     // using copy extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
     // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
     // On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
-    if (options?.pagination && (gridOptions.enablePagination || gridOptions.backendServiceApi) && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+    if (
+      options?.pagination &&
+      (gridOptions.enablePagination || gridOptions.backendServiceApi) &&
+      gridOptions.pagination &&
+      Array.isArray(gridOptions.pagination.pageSizes)
+    ) {
       options.pagination.pageSizes = gridOptions.pagination.pageSizes;
     }
 
@@ -759,10 +810,15 @@ export class SlickVanillaGridBundle<TData = any> {
       // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
       if (/* backendApiService instanceof GraphqlService || */ typeof backendApiService.getDatasetName === 'function') {
         backendApi.internalPostProcess = (processResult: any) => {
+          // prettier-ignore
           const datasetName = (backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function') ? backendApiService.getDatasetName() : '';
           if (processResult && processResult.data && processResult.data[datasetName]) {
-            const data = processResult.data[datasetName].hasOwnProperty('nodes') ? (processResult as any).data[datasetName].nodes : (processResult as any).data[datasetName];
-            const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount') ? (processResult as any).data[datasetName].totalCount : (processResult as any).data[datasetName].length;
+            const data = processResult.data[datasetName].hasOwnProperty('nodes')
+              ? (processResult as any).data[datasetName].nodes
+              : (processResult as any).data[datasetName];
+            const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount')
+              ? (processResult as any).data[datasetName].totalCount
+              : (processResult as any).data[datasetName].length;
             this.refreshGridData(data, totalCount || 0);
           }
         };
@@ -784,10 +840,13 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // on locale change, we have to manually translate the Headers, GridMenu
     this.subscriptions.push(
-      this._eventPubSubService.subscribe('onLanguageChange', (args: { language: string; }) => {
+      this._eventPubSubService.subscribe('onLanguageChange', (args: { language: string }) => {
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions(args.language);
-          if ((gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) || (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)) {
+          if (
+            (gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) ||
+            (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)
+          ) {
             this.headerGroupingService.translateHeaderGrouping();
           }
         }
@@ -837,7 +896,10 @@ export class SlickVanillaGridBundle<TData = any> {
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, args.itemCount);
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
-        if (args.itemCount > 0 && (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)) {
+        if (
+          args.itemCount > 0 &&
+          (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)
+        ) {
           this.resizerService.resizeColumnsByCellContent(!this.gridOptions?.resizeByContentOnlyOnFirstLoad);
         }
       });
@@ -849,9 +911,7 @@ export class SlickVanillaGridBundle<TData = any> {
           // see commit: https://github.com/ghiscoding/aurelia-slickgrid/commit/8c503a4d45fba11cbd8d8cc467fae8d177cc4f60
           if (!calledOnRowCountChanged && Array.isArray(rows)) {
             const ranges = grid.getRenderedRange();
-            rows
-              .filter(row => row >= ranges.top && row <= ranges.bottom)
-              .forEach((row: number) => grid.updateRow(row));
+            rows.filter((row) => row >= ranges.top && row <= ranges.bottom).forEach((row: number) => grid.updateRow(row));
             grid.render();
           }
         });
@@ -891,6 +951,7 @@ export class SlickVanillaGridBundle<TData = any> {
     const backendApi = gridOptions.backendServiceApi;
     const backendApiService = backendApi?.service;
     const serviceOptions: BackendServiceOption = backendApiService?.options ?? {};
+    // prettier-ignore
     const isExecuteCommandOnInit = (!serviceOptions) ? false : ((serviceOptions?.hasOwnProperty('executeProcessCommandOnInit')) ? serviceOptions['executeProcessCommandOnInit'] : true);
 
     if (backendApiService) {
@@ -898,13 +959,23 @@ export class SlickVanillaGridBundle<TData = any> {
       // if user entered some any "presets", we need to reflect them all in the grid
       if (gridOptions?.presets) {
         // Filters "presets"
-        if (backendApiService.updateFilters && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
+        if (
+          backendApiService.updateFilters &&
+          Array.isArray(gridOptions.presets.filters) &&
+          gridOptions.presets.filters.length > 0
+        ) {
           backendApiService.updateFilters(gridOptions.presets.filters, true);
         }
         // Sorters "presets"
-        if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
+        if (
+          backendApiService.updateSorters &&
+          Array.isArray(gridOptions.presets.sorters) &&
+          gridOptions.presets.sorters.length > 0
+        ) {
           // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-          const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+          const sortColumns = this._gridOptions?.multiColumnSort
+            ? gridOptions.presets.sorters
+            : gridOptions.presets.sorters.slice(0, 1);
           backendApiService.updateSorters(undefined, sortColumns);
         }
         // Pagination "presets"
@@ -921,7 +992,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // execute onInit command when necessary
       if (backendApi && backendApiService && (backendApi.onInit || isExecuteCommandOnInit)) {
-        const query = (typeof backendApiService.buildQuery === 'function') ? backendApiService.buildQuery() : '';
+        const query = typeof backendApiService.buildQuery === 'function' ? backendApiService.buildQuery() : '';
         const process = isExecuteCommandOnInit ? (backendApi.process?.(query) ?? null) : (backendApi.onInit?.(query) ?? null);
 
         // wrap this inside a microtask to be executed at the end of the task and avoid timing issue since the gridOptions needs to be ready before running this onInit
@@ -939,12 +1010,15 @@ export class SlickVanillaGridBundle<TData = any> {
           const totalItems = this.gridOptions?.pagination?.totalItems ?? 0;
           if (process instanceof Promise) {
             process
-              .then((processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
+              .then((processResult: any) =>
+                backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems)
+              )
               .catch((error) => backendUtilityService.onBackendError(error, backendApi));
           } else if (process && this.rxjs?.isObservable(process)) {
             this.subscriptions.push(
               (process as Observable<any>).subscribe(
-                (processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
+                (processResult: any) =>
+                  backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
                 (error: any) => backendUtilityService.onBackendError(error, backendApi)
               )
             );
@@ -960,14 +1034,19 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   protected addBackendInfiniteScrollCallback(): void {
-    if (this.slickGrid && this.gridOptions.backendServiceApi && this.hasBackendInfiniteScroll() && !this.gridOptions.backendServiceApi?.onScrollEnd) {
+    if (
+      this.slickGrid &&
+      this.gridOptions.backendServiceApi &&
+      this.hasBackendInfiniteScroll() &&
+      !this.gridOptions.backendServiceApi?.onScrollEnd
+    ) {
       const onScrollEnd = () => {
         this.backendUtilityService.setInfiniteScrollBottomHit(true);
 
         // even if we're not showing pagination, we still use pagination service behind the scene
         // to keep track of the scroll position and fetch next set of data (aka next page)
         // we also need a flag to know if we reached the of the dataset or not (no more pages)
-        this.paginationService.goToNextPage().then(hasNext => {
+        this.paginationService.goToNextPage().then((hasNext) => {
           if (!hasNext) {
             this.backendUtilityService.setInfiniteScrollBottomHit(false);
           }
@@ -980,10 +1059,10 @@ export class SlickVanillaGridBundle<TData = any> {
       this._eventHandler.subscribe(this.slickGrid.onScroll, (_e, args) => {
         const viewportElm = args.grid.getViewportNode()!;
         if (
-          ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
-          && this.paginationService?.totalItems
-          && args.scrollTop > 0
-          && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
+          ['mousewheel', 'scroll'].includes(args.triggeredBy || '') &&
+          this.paginationService?.totalItems &&
+          args.scrollTop > 0 &&
+          Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
         ) {
           if (!this._scrollEndCalled) {
             onScrollEnd();
@@ -1005,8 +1084,13 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   bindResizeHook(grid: SlickGrid, options: GridOption): void {
-    if ((options.autoFitColumnsOnFirstLoad && options.autosizeColumnsByCellContentOnFirstLoad) || (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)) {
-      throw new Error(`[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`);
+    if (
+      (options.autoFitColumnsOnFirstLoad && options.autosizeColumnsByCellContentOnFirstLoad) ||
+      (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)
+    ) {
+      throw new Error(
+        `[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`
+      );
     }
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
@@ -1017,7 +1101,13 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     // expand/autofit columns on first page load
-    if (grid && options?.enableAutoResize && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && !this._isAutosizeColsCalled) {
+    if (
+      grid &&
+      options?.enableAutoResize &&
+      options.autoFitColumnsOnFirstLoad &&
+      options.enableAutoSizeColumns &&
+      !this._isAutosizeColsCalled
+    ) {
       grid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
@@ -1028,7 +1118,9 @@ export class SlickVanillaGridBundle<TData = any> {
     if (gridOptions.enableSorting) {
       if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
         // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-        const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+        const sortColumns = this._gridOptions?.multiColumnSort
+          ? gridOptions.presets.sorters
+          : gridOptions.presets.sorters.slice(0, 1);
         this.sortService.loadGridSorters(sortColumns);
       }
     }
@@ -1040,7 +1132,12 @@ export class SlickVanillaGridBundle<TData = any> {
    */
   paginationChanged(pagination: PaginationMetadata): void {
     const isSyncGridSelectionEnabled = this.gridStateService?.needToPreserveRowSelection() ?? false;
-    if (this.slickGrid && !isSyncGridSelectionEnabled && this._gridOptions?.backendServiceApi && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
+    if (
+      this.slickGrid &&
+      !isSyncGridSelectionEnabled &&
+      this._gridOptions?.backendServiceApi &&
+      (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)
+    ) {
       this.slickGrid.setSelectedRows([]);
     }
     const { pageNumber, pageSize } = pagination;
@@ -1049,7 +1146,7 @@ export class SlickVanillaGridBundle<TData = any> {
     }
     this._eventPubSubService.publish('onGridStateChanged', {
       change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
-      gridState: this.gridStateService.getCurrentGridState()
+      gridState: this.gridStateService.getCurrentGridState(),
     });
   }
 
@@ -1089,14 +1186,18 @@ export class SlickVanillaGridBundle<TData = any> {
         }
 
         // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
-        this.showPagination = !!(this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined)));
+        this.showPagination = !!(
+          this._gridOptions &&
+          (this._gridOptions.enablePagination ||
+            (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))
+        );
 
         if (this._paginationOptions && this._gridOptions?.pagination && this._gridOptions?.backendServiceApi) {
           const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
 
           // when we have a totalCount use it, else we'll take it from the pagination object
           // only update the total items if it's different to avoid refreshing the UI
-          const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions?.pagination?.totalItems);
+          const totalRecords = totalCount !== undefined ? totalCount : this._gridOptions?.pagination?.totalItems;
           if (totalRecords !== undefined && totalRecords !== this.totalItems) {
             this.totalItems = +totalRecords;
           }
@@ -1174,7 +1275,9 @@ export class SlickVanillaGridBundle<TData = any> {
   protected setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
     if (gridOptions.presets?.pagination && paginationOptions && !this._isPaginationInitialized) {
       if (this.hasBackendInfiniteScroll()) {
-        console.warn('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');
+        console.warn(
+          '[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.'
+        );
       } else {
         paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;
         paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
@@ -1200,7 +1303,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
    */
   protected copyColumnWidthsReference(columnDefinitions: Column<TData>[]): void {
-    columnDefinitions.forEach(col => col.originalWidth = col.width);
+    columnDefinitions.forEach((col) => (col.originalWidth = col.width));
   }
 
   protected displayEmptyDataWarning(showWarning = true): void {
@@ -1216,7 +1319,7 @@ export class SlickVanillaGridBundle<TData = any> {
       startTime: new Date(),
       endTime: new Date(),
       itemCount: currentPageRowItemCount,
-      totalItemCount
+      totalItemCount,
     };
     // if custom footer is enabled, then we'll update its metrics
     if (this.slickFooter) {
@@ -1239,8 +1342,10 @@ export class SlickVanillaGridBundle<TData = any> {
       this.paginationService.totalItems = this.totalItems;
       this.paginationService.init(this.slickGrid, paginationOptions, this.backendServiceApi);
       this.subscriptions.push(
-        this._eventPubSubService.subscribe<PaginationMetadata>('onPaginationChanged', paginationChanges => this.paginationChanged(paginationChanges)),
-        this._eventPubSubService.subscribe<{ visible: boolean; }>('onPaginationVisibilityChanged', visibility => {
+        this._eventPubSubService.subscribe<PaginationMetadata>('onPaginationChanged', (paginationChanges) =>
+          this.paginationChanged(paginationChanges)
+        ),
+        this._eventPubSubService.subscribe<{ visible: boolean }>('onPaginationVisibilityChanged', (visibility) => {
           this.showPagination = visibility?.visible ?? false;
           if (this.gridOptions?.backendServiceApi) {
             this.backendUtilityService?.refreshBackendDataset(this.gridOptions);
@@ -1273,9 +1378,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * we can use our internal array observer for any changes done via (push, pop, shift, ...)
    */
   protected observeColumnDefinitions(): void {
-    this._collectionObservers.push(
-      collectionObserver(this.columnDefinitions, this.columnDefinitionsChanged.bind(this))
-    );
+    this._collectionObservers.push(collectionObserver(this.columnDefinitions, this.columnDefinitionsChanged.bind(this)));
   }
 
   /**
@@ -1286,7 +1389,8 @@ export class SlickVanillaGridBundle<TData = any> {
    */
   protected renderPagination(showPagination = true): void {
     if (this.slickGrid && this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
-      const PaginationClass = (this.gridOptions.customPaginationComponent ?? SlickPaginationComponent) as typeof BasePaginationComponent;
+      const PaginationClass = (this.gridOptions.customPaginationComponent ??
+        SlickPaginationComponent) as typeof BasePaginationComponent;
       this.paginationComponent = new PaginationClass();
       this.paginationComponent.init(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
       this.paginationComponent.renderPagination(this._gridParentContainerElm);
@@ -1311,11 +1415,13 @@ export class SlickVanillaGridBundle<TData = any> {
             this.updateEditorCollection(column, response); // from Promise
           } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
             if (response.bodyUsed) {
-              console.warn(`[SlickGrid-Universal] The response body passed to collectionAsync was already read.`
-                + `Either pass the dataset from the Response or clone the response first using response.clone()`);
+              console.warn(
+                `[SlickGrid-Universal] The response body passed to collectionAsync was already read.` +
+                  `Either pass the dataset from the Response or clone the response first using response.clone()`
+              );
             } else {
               // from Fetch
-              (response as Response).json().then(data => this.updateEditorCollection(column, data));
+              (response as Response).json().then((data) => this.updateEditorCollection(column, data));
             }
           } else if (response?.content) {
             this.updateEditorCollection(column, response['content']); // from http-client
@@ -1325,7 +1431,9 @@ export class SlickVanillaGridBundle<TData = any> {
         // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
         queueMicrotask(() => {
           this.subscriptions.push(
-            (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
+            (collectionAsync as Observable<any>).subscribe((resolvedCollection) =>
+              this.updateEditorCollection(column, resolvedCollection)
+            )
           );
         });
       }
@@ -1334,13 +1442,11 @@ export class SlickVanillaGridBundle<TData = any> {
 
   protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<TData>[]): void {
     if (this._columnDefinitions) {
-      const columnPosition = this._columnDefinitions.findIndex(c => c.id === columnId);
+      const columnPosition = this._columnDefinitions.findIndex((c) => c.id === columnId);
       if (columnPosition >= 0) {
         const dynColumn = this._columnDefinitions[columnPosition];
-        if (dynColumn?.id === columnId && !gridPresetColumns.some(c => c.id === columnId)) {
-          columnPosition > 0
-            ? gridPresetColumns.splice(columnPosition, 0, dynColumn)
-            : gridPresetColumns.unshift(dynColumn);
+        if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
+          columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
         }
       }
     }
@@ -1349,9 +1455,22 @@ export class SlickVanillaGridBundle<TData = any> {
   /** Load any possible Columns Grid Presets */
   protected loadColumnPresetsWhenDatasetInitialized(): void {
     // if user entered some Columns "presets", we need to reflect them all in the grid
-    if (this.slickGrid && this.gridOptions.presets && Array.isArray(this.gridOptions.presets.columns) && this.gridOptions.presets.columns.length > 0) {
-      const gridPresetColumns: Column<TData>[] = this.gridStateService.getAssociatedGridColumns(this.slickGrid, this.gridOptions.presets.columns);
-      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columnDefinitions)) {
+    if (
+      this.slickGrid &&
+      this.gridOptions.presets &&
+      Array.isArray(this.gridOptions.presets.columns) &&
+      this.gridOptions.presets.columns.length > 0
+    ) {
+      const gridPresetColumns: Column<TData>[] = this.gridStateService.getAssociatedGridColumns(
+        this.slickGrid,
+        this.gridOptions.presets.columns
+      );
+      if (
+        gridPresetColumns &&
+        Array.isArray(gridPresetColumns) &&
+        gridPresetColumns.length > 0 &&
+        Array.isArray(this._columnDefinitions)
+      ) {
         // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
         if (this.gridOptions.enableRowMoveManager) {
           const rmmColId = this.gridOptions?.rowMoveManager?.columnId ?? '_move';
@@ -1368,7 +1487,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
         // keep copy the original optional `width` properties optionally provided by the user.
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        gridPresetColumns.forEach(col => col.originalWidth = col.width);
+        gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
 
         // finally set the new presets columns (including checkbox selector if need be)
         this.slickGrid.setColumns(gridPresetColumns);
@@ -1383,7 +1502,10 @@ export class SlickVanillaGridBundle<TData = any> {
       // if user entered some Filter "presets", we need to reflect them all in the DOM
       // also note that a presets of Tree Data Toggling will also call this method because Tree Data toggling does work with data filtering
       // (collapsing a parent will basically use Filter for hidding (aka collapsing) away the child underneat it)
-      if (this.gridOptions.presets && (Array.isArray(this.gridOptions.presets.filters) || Array.isArray(this.gridOptions.presets?.treeData?.toggledItems))) {
+      if (
+        this.gridOptions.presets &&
+        (Array.isArray(this.gridOptions.presets.filters) || Array.isArray(this.gridOptions.presets?.treeData?.toggledItems))
+      ) {
         this.filterService.populateColumnFilterSearchTermPresets(this.gridOptions.presets?.filters || []);
       }
     }
@@ -1414,8 +1536,16 @@ export class SlickVanillaGridBundle<TData = any> {
     // if user entered some Row Selections "presets"
     const presets = this.gridOptions?.presets;
     const selectionModel = this.slickGrid?.getSelectionModel();
-    const enableRowSelection = this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
-    if (this.slickGrid && this.dataView && enableRowSelection && selectionModel && presets?.rowSelection && (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))) {
+    const enableRowSelection =
+      this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
+    if (
+      this.slickGrid &&
+      this.dataView &&
+      enableRowSelection &&
+      selectionModel &&
+      presets?.rowSelection &&
+      (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))
+    ) {
       let dataContextIds = presets.rowSelection.dataContextIds;
       let gridRowIndexes = presets.rowSelection.gridRowIndexes;
 
@@ -1432,7 +1562,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.dataView!.setSelectedIds(dataContextIds || [], {
           isRowBeingAdded: true,
           shouldTriggerEvent: false, // do not trigger when presetting the grid
-          applyRowSelectionToGrid: true
+          applyRowSelectionToGrid: true,
         });
       }
     }
@@ -1443,7 +1573,7 @@ export class SlickVanillaGridBundle<TData = any> {
     if (disposePreviousResources) {
       this.disposeExternalResources();
     }
-    resources.forEach(res => this._registeredResources.push(res));
+    resources.forEach((res) => this._registeredResources.push(res));
     this.initializeExternalResources(resources);
   }
 
@@ -1484,7 +1614,10 @@ export class SlickVanillaGridBundle<TData = any> {
     this._registeredResources.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
-    if ((this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) || (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)) {
+    if (
+      (this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) ||
+      (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)
+    ) {
       this._registeredResources.push(this.headerGroupingService);
     }
 
@@ -1535,7 +1668,11 @@ export class SlickVanillaGridBundle<TData = any> {
     } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
       // we need to first convert the flat dataset to a hierarchical dataset and then sort it
       // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columnDefinitions || [], this.gridOptions);
+      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
+        flatDatasetInput,
+        this._columnDefinitions || [],
+        this.gridOptions
+      );
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       flatDatasetOutput = sortedDatasetResult.flat;
     }
@@ -1552,8 +1689,10 @@ export class SlickVanillaGridBundle<TData = any> {
   protected loadSlickGridEditors(columnDefinitions: Column<TData>[]): Column<TData>[] {
     const columns = Array.isArray(columnDefinitions) ? columnDefinitions : [];
 
-    if (columns.some(col => `${col.id}`.includes('.'))) {
-      console.error('[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".');
+    if (columns.some((col) => `${col.id}`.includes('.'))) {
+      console.error(
+        '[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
+      );
     }
 
     return columns.map((column) => {
@@ -1566,10 +1705,16 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   protected suggestDateParsingWhenHelpful(): void {
-    if (!this.gridOptions.silenceWarnings && this.dataView && this.dataView.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE && !this.gridOptions.preParseDateColumns && this.slickGrid?.getColumns().some(c => isColumnDateType(c.type))) {
+    if (
+      !this.gridOptions.silenceWarnings &&
+      this.dataView &&
+      this.dataView.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
+      !this.gridOptions.preParseDateColumns &&
+      this.slickGrid?.getColumns().some((c) => isColumnDateType(c.type))
+    ) {
       console.warn(
         '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
-        'for more info visit => https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
+          'for more info visit => https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
       );
     }
   }

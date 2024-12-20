@@ -7,7 +7,7 @@ import { treeFormatter } from '../treeFormatter.js';
 import type { SlickGrid } from '../../core/index.js';
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getData: vi.fn(),
   getOptions: vi.fn(),
 } as unknown as SlickGrid;
@@ -18,23 +18,98 @@ describe('Tree Formatter', () => {
 
   beforeEach(() => {
     dataset = [
-      { id: 0, firstName: 'John', lastName: 'Smith', fullName: 'John Smith', email: 'john.smith@movie.com', address: { zip: 123456 }, parentId: null, indent: 0, __collapsed: false, __hasChildren: true },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', fullName: 'Jane Doe', email: 'jane.doe@movie.com', address: { zip: 222222 }, parentId: 0, indent: 1, __collapsed: false, __hasChildren: true },
-      { id: 2, firstName: 'Bob', lastName: 'Cane', fullName: 'Bob Cane', email: 'bob.cane@movie.com', address: { zip: 333333 }, parentId: 1, indent: 2, __collapsed: true, __hasChildren: true },
-      { id: 3, firstName: 'Barbara', lastName: 'Cane', fullName: 'Barbara Cane', email: 'barbara.cane@movie.com', address: { zip: 444444 }, parentId: null, indent: 0, __hasChildren: false },
-      { id: 4, firstName: 'Anonymous', lastName: 'Doe', fullName: 'Anonymous < Doe', email: 'anonymous.doe@anom.com', address: { zip: 556666 }, parentId: null, indent: 0, __collapsed: true, __hasChildren: true },
-      { id: 5, firstName: 'Sponge', lastName: 'Bob', fullName: 'Sponge Bob', email: 'sponge.bob@cartoon.com', address: { zip: 888888 }, parentId: 2, indent: 3, __hasChildren: false },
-      { id: 6, firstName: 'Bobby', lastName: 'Blown', fullName: 'Bobby Blown', email: 'bobby.blown@dynamite.com', address: { zip: 998877 }, parentId: 4, indent: 1, __hasChildren: false },
+      {
+        id: 0,
+        firstName: 'John',
+        lastName: 'Smith',
+        fullName: 'John Smith',
+        email: 'john.smith@movie.com',
+        address: { zip: 123456 },
+        parentId: null,
+        indent: 0,
+        __collapsed: false,
+        __hasChildren: true,
+      },
+      {
+        id: 1,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        fullName: 'Jane Doe',
+        email: 'jane.doe@movie.com',
+        address: { zip: 222222 },
+        parentId: 0,
+        indent: 1,
+        __collapsed: false,
+        __hasChildren: true,
+      },
+      {
+        id: 2,
+        firstName: 'Bob',
+        lastName: 'Cane',
+        fullName: 'Bob Cane',
+        email: 'bob.cane@movie.com',
+        address: { zip: 333333 },
+        parentId: 1,
+        indent: 2,
+        __collapsed: true,
+        __hasChildren: true,
+      },
+      {
+        id: 3,
+        firstName: 'Barbara',
+        lastName: 'Cane',
+        fullName: 'Barbara Cane',
+        email: 'barbara.cane@movie.com',
+        address: { zip: 444444 },
+        parentId: null,
+        indent: 0,
+        __hasChildren: false,
+      },
+      {
+        id: 4,
+        firstName: 'Anonymous',
+        lastName: 'Doe',
+        fullName: 'Anonymous < Doe',
+        email: 'anonymous.doe@anom.com',
+        address: { zip: 556666 },
+        parentId: null,
+        indent: 0,
+        __collapsed: true,
+        __hasChildren: true,
+      },
+      {
+        id: 5,
+        firstName: 'Sponge',
+        lastName: 'Bob',
+        fullName: 'Sponge Bob',
+        email: 'sponge.bob@cartoon.com',
+        address: { zip: 888888 },
+        parentId: 2,
+        indent: 3,
+        __hasChildren: false,
+      },
+      {
+        id: 6,
+        firstName: 'Bobby',
+        lastName: 'Blown',
+        fullName: 'Bobby Blown',
+        email: 'bobby.blown@dynamite.com',
+        address: { zip: 998877 },
+        parentId: 4,
+        indent: 1,
+        __hasChildren: false,
+      },
     ];
     mockGridOptions = {
-      treeDataOptions: { levelPropName: 'indent' }
+      treeDataOptions: { levelPropName: 'indent' },
     } as GridOption;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
 
   it('should throw an error when oarams are mmissing', () => {
-    expect(() => treeFormatter(1, 1, 'blah', {} as Column, {}, gridStub))
-      .toThrow('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
+    expect(() => treeFormatter(1, 1, 'blah', {} as Column, {}, gridStub)).toThrow(
+      '[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.'
+    );
   });
 
   it('should return empty string when value is null', () => {
@@ -56,8 +131,9 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`
+    );
   });
 
   it('should return the Tree content wrapped inside a span HTML element when "allowDocumentFragmentUsage" grid option is disabled', () => {
@@ -65,40 +141,45 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect((output.html as HTMLElement).outerHTML)
-      .toEqual(`<span><span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span></span>`);
+    expect((output.html as HTMLElement).outerHTML).toEqual(
+      `<span><span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span></span>`
+    );
   });
 
   it('should return a span without any toggle icon and have a 15px indentation with tree level 3', () => {
     const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="1">Bobby</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="1">Bobby</span>`
+    );
   });
 
   it('should return a span without any toggle icon and have a 45px indentation of a tree level 3', () => {
     const output = treeFormatter(1, 1, dataset[5]['firstName'], {} as Column, dataset[5], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-3');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 45px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="3">Sponge</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 45px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="3">Sponge</span>`
+    );
   });
 
   it('should return a span with expanded icon and 15px indentation when item is a parent and is not collapsed', () => {
     const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`
+    );
   });
 
   it('should return a span with collapsed icon and 0px indentation of a tree level 0 when item is a parent and is collapsed', () => {
     const output = treeFormatter(1, 1, dataset[4]['firstName'], {} as Column, dataset[4], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous</span>`
+    );
   });
 
   it('should return a span with expanded icon and 15px indentation of a tree level 1 with a value prefix when provided', () => {
@@ -110,11 +191,19 @@ describe('Tree Formatter', () => {
       return value || '';
     };
 
-    const output = treeFormatter(1, 1, { ...dataset[1]['firstName'], indent: 1 }, { field: 'firstName' } as Column, dataset[1], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(
+      1,
+      1,
+      { ...dataset[1]['firstName'], indent: 1 },
+      { field: 'firstName' } as Column,
+      dataset[1],
+      gridStub
+    ) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`
+    );
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name to use when it is defined', () => {
@@ -122,8 +211,9 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`
+    );
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name and also apply html encoding when output value includes a character that should be encoded', () => {
@@ -131,8 +221,9 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`
+    );
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name, which has (.) dot notation reprensenting complex object', () => {
@@ -140,7 +231,8 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">444444</span>`);
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">444444</span>`
+    );
   });
 });

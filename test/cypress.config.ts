@@ -29,5 +29,5 @@ export default defineConfig({
     supportFile: 'test/cypress/support/index.ts',
     specPattern: 'test/cypress/e2e/**/*.cy.{js,ts}',
     testIsolation: false,
-  }
+  },
 });

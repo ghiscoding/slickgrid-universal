@@ -16,7 +16,11 @@ export const checkmarkMaterialFormatter: Formatter = (_row, _cell, value) => {
     value = +value; // convert to number before doing next condition
   }
 
-  if (value === true || (isValidNumber && +value > 0) || (typeof value === 'string' && value.length > 0 && value.toLowerCase() !== 'false' && value !== '0')) {
+  if (
+    value === true ||
+    (isValidNumber && +value > 0) ||
+    (typeof value === 'string' && value.length > 0 && value.toLowerCase() !== 'false' && value !== '0')
+  ) {
     isChecked = true;
   }
 

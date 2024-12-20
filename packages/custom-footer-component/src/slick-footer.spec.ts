@@ -15,7 +15,7 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => mockGridOptions,
   getUID: () => 'slickgrid_123456',
   onSelectedRowsChanged: new SlickEvent(),
@@ -42,8 +42,8 @@ describe('Slick-Footer Component', () => {
       metricTexts: {
         items: 'some items',
         lastUpdate: 'some last update',
-        of: 'some of'
-      }
+        of: 'some of',
+      },
     };
   });
 
@@ -111,12 +111,15 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"><span><span class="text-last-update">some last update</span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"><span><span class="text-last-update">some last update</span>
         <span class="last-update-timestamp">2019-05-03, 12:00:01am</span>
           <span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
-          <span class="text-items">some items</span>`));
+          <span class="text-items">some items</span>`
+        )
+      );
     });
 
     it('should create a the Slick-Footer component in the DOM with metrics but without timestamp when hidding it', () => {
@@ -135,10 +138,13 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"></span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
-          <span class="text-items">some items</span>`));
+          <span class="text-items">some items</span>`
+        )
+      );
     });
 
     it('should create a the Slick-Footer component in the DOM with metrics but without timestamp neither totalCount when hidding it', () => {
@@ -158,10 +164,13 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"></span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"></span>
           <span class="item-count">7</span>
-          <span class="text-items">some items</span>`));
+          <span class="text-items">some items</span>`
+        )
+      );
     });
 
     it('should create a the Slick-Footer component in the DOM and expect to use default English locale when none of the metricsText are defined', () => {
@@ -179,18 +188,22 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"><span><span class="text-last-update">Last Update</span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"><span><span class="text-last-update">Last Update</span>
         <span class="last-update-timestamp">2019-05-03, 12:00:01am</span>
           <span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">of</span><span class="total-count">99</span>
-          <span class="text-items">items</span>`));
+          <span class="text-items">items</span>`
+        )
+      );
     });
 
     it('should throw an error when enabling translate without a Translate Service', () => {
       mockGridOptions.enableTranslate = true;
-      expect(() => new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, null as any))
-        .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+      expect(() => new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, null as any)).toThrow(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     });
 
     it('should create a the Slick-Footer component in the DOM and use different locale when enableTranslate is enabled', () => {
@@ -213,11 +226,14 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"><span><span class="text-last-update">Dernière mise à jour</span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"><span><span class="text-last-update">Dernière mise à jour</span>
           <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">de</span><span class="total-count">99</span>
-          <span class="text-items">éléments</span>`));
+          <span class="text-items">éléments</span>`
+        )
+      );
     });
 
     it('should read initial custom left text from grid options and display it on the left side footer section when calling the leftFooterText SETTER', () => {
@@ -253,10 +269,13 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('custom left footer text');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"><span><span class="text-last-update">some last update</span><span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"><span><span class="text-last-update">some last update</span><span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
-          <span class="text-items">some items</span>`));
+          <span class="text-items">some items</span>`
+        )
+      );
     });
 
     it('should display 1 items selected on the left side footer section after triggering "onSelectedRowsChanged" event', () => {
@@ -275,11 +294,14 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('1 items selected');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"><span><span class="text-last-update">some last update</span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"><span><span class="text-last-update">some last update</span>
           <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
-          <span class="text-items">some items</span>`));
+          <span class="text-items">some items</span>`
+        )
+      );
 
       gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], grid: gridStub, previousSelectedRows: [] } as any);
       expect(leftFooterElm.innerHTML).toBe('5 items selected');
@@ -302,38 +324,46 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
-        `<span class="timestamp"><span><span class="text-last-update">some last update</span>
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(
+        removeExtraSpaces(
+          `<span class="timestamp"><span><span class="text-last-update">some last update</span>
           <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
-          <span class="text-items">some items</span>`));
+          <span class="text-items">some items</span>`
+        )
+      );
     });
 
     it('should display row selection count on the left side footer section after triggering "onSelectedRowsChanged" event', () => {
       mockGridOptions.enableCheckboxSelector = true;
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, } as any);
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub } as any);
 
       expect(component).toBeTruthy();
       expect(component.leftFooterText).toEqual('1 items selected');
 
-      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, } as any);
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub } as any);
       expect(component.leftFooterText).toEqual('5 items selected');
     });
 
     it('should display row selection count in French on the left side footer section after triggering "onSelectedRowsChanged" event when using "fr" as locale', () => {
       translateService.use('fr');
-      (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { itemsKey: 'ITEMS', itemsSelectedKey: 'ITEMS_SELECTED', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
+      (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = {
+        itemsKey: 'ITEMS',
+        itemsSelectedKey: 'ITEMS_SELECTED',
+        lastUpdateKey: 'LAST_UPDATE',
+        ofKey: 'OF',
+      };
       mockGridOptions.enableTranslate = true;
       mockGridOptions.enableCheckboxSelector = true;
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
 
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, } as any);
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub } as any);
       expect(component.leftFooterText).toEqual('1 éléments sélectionnés');
 
-      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, } as any);
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub } as any);
       expect(component.leftFooterText).toEqual('5 éléments sélectionnés');
     });
 
@@ -341,7 +371,7 @@ describe('Slick-Footer Component', () => {
       mockGridOptions.enableCheckboxSelector = true;
       mockGridOptions.customFooterOptions!.hideRowSelectionCount = true;
       component.renderFooter(div);
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, } as any);
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub } as any);
       expect(component.leftFooterText).toBe('0 items selected');
     });
 

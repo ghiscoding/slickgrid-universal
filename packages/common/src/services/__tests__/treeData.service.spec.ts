@@ -11,7 +11,7 @@ import { unflattenParentChildArrayToTree } from '../utilities.js';
 
 // mocked modules
 vi.mock('../utilities', async (importOriginal) => ({
-  ...await importOriginal() as any,
+  ...((await importOriginal()) as any),
   unflattenParentChildArrayToTree: vi.fn(),
 }));
 
@@ -25,8 +25,8 @@ const gridOptionsMock: GridOption = {
   enableTreeData: true,
   treeDataOptions: {
     columnId: 'file',
-    childrenPropName: 'files'
-  }
+    childrenPropName: 'files',
+  },
 };
 
 const backendServiceStub = {
@@ -70,12 +70,12 @@ const gridStub = {
 const fnCallbacks = {};
 const mockPubSub = {
   publish: vi.fn(),
-  subscribe: (eventName, fn) => fnCallbacks[eventName as string] = fn,
+  subscribe: (eventName, fn) => (fnCallbacks[eventName as string] = fn),
   unsubscribe: vi.fn(),
   unsubscribeAll: vi.fn(),
 } as BasePubSubService;
 vi.mock('@slickgrid-universal/event-pub-sub', () => ({
-  PubSubService: () => mockPubSub
+  PubSubService: () => mockPubSub,
 }));
 
 const sortServiceStub = {
@@ -95,7 +95,7 @@ describe('TreeData Service', () => {
     gridOptionsMock.enablePagination = false;
     gridOptionsMock.multiColumnSort = false;
     gridOptionsMock.treeDataOptions = {
-      columnId: 'file'
+      columnId: 'file',
     };
     service = new TreeDataService(mockPubSub, sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
@@ -112,59 +112,70 @@ describe('TreeData Service', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should throw an error when used with multi-column sorting', () => new Promise((done: any) => {
-    try {
-      gridOptionsMock.multiColumnSort = true;
-      service.init(gridStub);
-    } catch (e) {
-      expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting');
-      done();
-    }
-  }));
+  it('should throw an error when used with multi-column sorting', () =>
+    new Promise((done: any) => {
+      try {
+        gridOptionsMock.multiColumnSort = true;
+        service.init(gridStub);
+      } catch (e) {
+        expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting');
+        done();
+      }
+    }));
 
-  it('should throw an error when used without filter grid option', () => new Promise((done: any) => {
-    try {
-      gridOptionsMock.enableFiltering = false;
-      service.init(gridStub);
-    } catch (e) {
-      expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option');
-      done();
-    }
-  }));
+  it('should throw an error when used without filter grid option', () =>
+    new Promise((done: any) => {
+      try {
+        gridOptionsMock.enableFiltering = false;
+        service.init(gridStub);
+      } catch (e) {
+        expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option');
+        done();
+      }
+    }));
 
-  it('should throw an error when enableTreeData is enabled with Pagination since that is not supported', () => new Promise((done: any) => {
-    try {
-      gridOptionsMock.enablePagination = true;
-      service.init(gridStub);
-    } catch (e) {
-      expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination and/or a Backend Service (OData, GraphQL) but unfortunately that is simply not supported because of its complexity.');
-      done();
-    }
-  }));
+  it('should throw an error when enableTreeData is enabled with Pagination since that is not supported', () =>
+    new Promise((done: any) => {
+      try {
+        gridOptionsMock.enablePagination = true;
+        service.init(gridStub);
+      } catch (e) {
+        expect(e.toString()).toContain(
+          '[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination and/or a Backend Service (OData, GraphQL) but unfortunately that is simply not supported because of its complexity.'
+        );
+        done();
+      }
+    }));
 
-  it('should throw an error when used with a backend service (OData, GraphQL)', () => new Promise((done: any) => {
-    try {
-      gridOptionsMock.backendServiceApi = {
-        filterTypingDebounce: 0,
-        service: backendServiceStub,
-        process: () => new Promise((resolve) => resolve(vi.fn())),
-      };
-      service.init(gridStub);
-    } catch (e) {
-      expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination and/or a Backend Service (OData, GraphQL) but unfortunately that is simply not supported because of its complexity.');
-      done();
-    }
-  }));
+  it('should throw an error when used with a backend service (OData, GraphQL)', () =>
+    new Promise((done: any) => {
+      try {
+        gridOptionsMock.backendServiceApi = {
+          filterTypingDebounce: 0,
+          service: backendServiceStub,
+          process: () => new Promise((resolve) => resolve(vi.fn())),
+        };
+        service.init(gridStub);
+      } catch (e) {
+        expect(e.toString()).toContain(
+          '[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination and/or a Backend Service (OData, GraphQL) but unfortunately that is simply not supported because of its complexity.'
+        );
+        done();
+      }
+    }));
 
-  it('should throw an error when enableTreeData is enabled without passing a "columnId"', () => new Promise((done: any) => {
-    try {
-      gridOptionsMock.treeDataOptions = {} as any;
-      service.init(gridStub);
-    } catch (e) {
-      expect(e.toString()).toContain('[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName"');
-      done();
-    }
-  }));
+  it('should throw an error when enableTreeData is enabled without passing a "columnId"', () =>
+    new Promise((done: any) => {
+      try {
+        gridOptionsMock.treeDataOptions = {} as any;
+        service.init(gridStub);
+      } catch (e) {
+        expect(e.toString()).toContain(
+          '[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName"'
+        );
+        done();
+      }
+    }));
 
   it('should dispose of the event handler', () => {
     const spy = vi.spyOn(slickgridEventHandler, 'unsubscribeAll');
@@ -199,7 +210,7 @@ describe('TreeData Service', () => {
       div.innerHTML = `<div class="slick-cell">Text</div>`;
       document.body.appendChild(div);
       mockColumn = { id: 'file', field: 'file', onCellClick: vi.fn() } as Column;
-      mockRowData = { id: 123, file: 'myFile.txt', size: 0.5, };
+      mockRowData = { id: 123, file: 'myFile.txt', size: 0.5 };
     });
 
     afterEach(() => {
@@ -261,7 +272,11 @@ describe('TreeData Service', () => {
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
       expect(service.getToggledItems().length).toBe(1);
-      expect(service.getCurrentToggleState()).toEqual({ type: 'toggle-expand', previousFullToggleType: 'full-expand', toggledItems: [{ isCollapsed: false, itemId: 123 }] });
+      expect(service.getCurrentToggleState()).toEqual({
+        type: 'toggle-expand',
+        previousFullToggleType: 'full-expand',
+        toggledItems: [{ isCollapsed: false, itemId: 123 }],
+      });
       expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false });
     });
 
@@ -287,7 +302,11 @@ describe('TreeData Service', () => {
       expect(service.getToggledItems().length).toBe(1);
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
-      expect(service.getCurrentToggleState()).toEqual({ type: 'toggle-expand', previousFullToggleType: 'full-expand', toggledItems: [{ isCollapsed: false, itemId: 123 }] });
+      expect(service.getCurrentToggleState()).toEqual({
+        type: 'toggle-expand',
+        previousFullToggleType: 'full-expand',
+        toggledItems: [{ isCollapsed: false, itemId: 123 }],
+      });
       expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false });
       expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
       expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
@@ -310,7 +329,11 @@ describe('TreeData Service', () => {
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
       expect(service.getToggledItems().length).toBe(1);
-      expect(service.getCurrentToggleState()).toEqual({ type: 'toggle-expand', previousFullToggleType: 'full-expand', toggledItems: [{ isCollapsed: false, itemId: 123 }] });
+      expect(service.getCurrentToggleState()).toEqual({
+        type: 'toggle-expand',
+        previousFullToggleType: 'full-expand',
+        toggledItems: [{ isCollapsed: false, itemId: 123 }],
+      });
       expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, customCollapsed: false });
     });
   });
@@ -326,11 +349,18 @@ describe('TreeData Service', () => {
         { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1, __parentId: 0 },
         { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1, __parentId: 0 },
         { id: 4, file: 'MP3', size: 3.4, __hasChildren: true, __treeLevel: 0 },
-        { id: 5, file: 'relaxation.mp3', size: 3.4, __treeLevel: 1, __parentId: 4 }
+        { id: 5, file: 'relaxation.mp3', size: 3.4, __treeLevel: 1, __parentId: 4 },
       ];
       mockHierarchical = [
-        { id: 0, file: 'TXT', files: [{ id: 1, file: 'myFile.txt', size: 0.5, }, { id: 2, file: 'myMusic.txt', size: 5.3, }] },
-        { id: 4, file: 'MP3', files: [{ id: 5, file: 'relaxation.mp3', size: 3.4, }] }
+        {
+          id: 0,
+          file: 'TXT',
+          files: [
+            { id: 1, file: 'myFile.txt', size: 0.5 },
+            { id: 2, file: 'myMusic.txt', size: 5.3 },
+          ],
+        },
+        { id: 4, file: 'MP3', files: [{ id: 5, file: 'relaxation.mp3', size: 3.4 }] },
       ];
       gridOptionsMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
       (unflattenParentChildArrayToTree as Mock).mockImplementationOnce(unflattenActual);
@@ -348,32 +378,52 @@ describe('TreeData Service', () => {
       await service.toggleTreeDataCollapse(true);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleStart`, { collapsing: true });
-      expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-collapse', previousFullToggleType: 'full-collapse', toggledItems: null, });
+      expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-collapse', previousFullToggleType: 'full-collapse', toggledItems: null });
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
       expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, {
-        id: 0, file: 'TXT', size: 5.8, __collapsed: true, __hasChildren: true, __treeLevel: 0,
+        id: 0,
+        file: 'TXT',
+        size: 5.8,
+        __collapsed: true,
+        __hasChildren: true,
+        __treeLevel: 0,
         files: [
-          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1, },
-          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1, },
+          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1 },
+          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1 },
         ],
       });
       expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, {
-        id: 4, file: 'MP3', size: 3.4, __collapsed: true, __hasChildren: true, __treeLevel: 0,
-        files: [{ id: 5, file: 'relaxation.mp3', size: 3.4, __parentId: 4, __treeLevel: 1, },],
+        id: 4,
+        file: 'MP3',
+        size: 3.4,
+        __collapsed: true,
+        __hasChildren: true,
+        __treeLevel: 0,
+        files: [{ id: 5, file: 'relaxation.mp3', size: 3.4, __parentId: 4, __treeLevel: 1 }],
       });
       expect(sharedService.hierarchicalDataset).toEqual([
         {
-          id: 0, file: 'TXT', size: 5.8, __collapsed: true, __hasChildren: true, __treeLevel: 0,
+          id: 0,
+          file: 'TXT',
+          size: 5.8,
+          __collapsed: true,
+          __hasChildren: true,
+          __treeLevel: 0,
           files: [
-            { id: 1, file: 'myFile.txt', size: 0.5, __parentId: 0, __treeLevel: 1, },
-            { id: 2, file: 'myMusic.txt', size: 5.3, __parentId: 0, __treeLevel: 1, }
+            { id: 1, file: 'myFile.txt', size: 0.5, __parentId: 0, __treeLevel: 1 },
+            { id: 2, file: 'myMusic.txt', size: 5.3, __parentId: 0, __treeLevel: 1 },
           ],
         },
         {
-          id: 4, file: 'MP3', size: 3.4, __collapsed: true, __hasChildren: true, __treeLevel: 0,
+          id: 4,
+          file: 'MP3',
+          size: 3.4,
+          __collapsed: true,
+          __hasChildren: true,
+          __treeLevel: 0,
           files: [{ id: 5, file: 'relaxation.mp3', size: 3.4, __parentId: 4, __treeLevel: 1 }],
-        }
+        },
       ]);
       expect(service.getItemCount(0)).toBe(2); // get count by tree level 0
       expect(service.getItemCount(1)).toBe(3);
@@ -393,20 +443,30 @@ describe('TreeData Service', () => {
       await service.toggleTreeDataCollapse(true);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleStart`, { collapsing: true });
-      expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-collapse', previousFullToggleType: 'full-collapse', toggledItems: null, });
+      expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-collapse', previousFullToggleType: 'full-collapse', toggledItems: null });
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
       expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, {
-        customCollapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0,
+        customCollapsed: true,
+        __hasChildren: true,
+        id: 0,
+        file: 'TXT',
+        size: 5.8,
+        __treeLevel: 0,
         files: [
-          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1, },
-          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1, },
+          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1 },
+          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1 },
         ],
       });
       expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, {
-        customCollapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0,
-        files: [{ file: 'relaxation.mp3', id: 5, size: 3.4, __parentId: 4, __treeLevel: 1, },],
+        customCollapsed: true,
+        __hasChildren: true,
+        id: 4,
+        file: 'MP3',
+        size: 3.4,
+        __treeLevel: 0,
+        files: [{ file: 'relaxation.mp3', id: 5, size: 3.4, __parentId: 4, __treeLevel: 1 }],
       });
       expect(endUpdateSpy).toHaveBeenCalled();
     });
@@ -422,19 +482,29 @@ describe('TreeData Service', () => {
       await service.toggleTreeDataCollapse(false);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleStart`, { collapsing: false });
-      expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null, });
+      expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null });
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
       expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, {
-        __collapsed: false, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0,
+        __collapsed: false,
+        __hasChildren: true,
+        id: 0,
+        file: 'TXT',
+        size: 5.8,
+        __treeLevel: 0,
         files: [
-          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1, },
-          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1, },
+          { file: 'myFile.txt', id: 1, size: 0.5, __parentId: 0, __treeLevel: 1 },
+          { file: 'myMusic.txt', id: 2, size: 5.3, __parentId: 0, __treeLevel: 1 },
         ],
       });
       expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, {
-        __collapsed: false, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0,
-        files: [{ file: 'relaxation.mp3', id: 5, size: 3.4, __parentId: 4, __treeLevel: 1, },],
+        __collapsed: false,
+        __hasChildren: true,
+        id: 4,
+        file: 'MP3',
+        size: 3.4,
+        __treeLevel: 0,
+        files: [{ file: 'relaxation.mp3', id: 5, size: 3.4, __parentId: 4, __treeLevel: 1 }],
       });
       expect(endUpdateSpy).toHaveBeenCalled();
     });
@@ -474,7 +544,12 @@ describe('TreeData Service', () => {
         expect(dataGetItemsSpy).not.toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
         expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, {
+          fromItemId: 4,
+          previousFullToggleType: 'full-collapse',
+          toggledItems: [{ itemId: 4, isCollapsed: true }],
+          type: 'toggle-collapse',
+        });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
 
@@ -494,7 +569,12 @@ describe('TreeData Service', () => {
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
         expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, {
+          fromItemId: 4,
+          previousFullToggleType: 'full-collapse',
+          toggledItems: [{ itemId: 4, isCollapsed: true }],
+          type: 'toggle-collapse',
+        });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
     });
@@ -514,7 +594,12 @@ describe('TreeData Service', () => {
 
         expect(beginUpdateSpy).toHaveBeenCalled();
         expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-expand', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, {
+          fromItemId: 4,
+          previousFullToggleType: 'full-expand',
+          toggledItems: [{ itemId: 4, isCollapsed: true }],
+          type: 'toggle-collapse',
+        });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
     });
@@ -589,18 +674,30 @@ describe('TreeData Service', () => {
     let mockFlatDataset;
 
     beforeEach(() => {
-      mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
-      mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', size: 1.2, parentId: 0, __collapsed: false }, { id: 2, file: 'todo.txt', size: 2.3, parentId: 0, __collapsed: false }];
+      mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
+      mockFlatDataset = [
+        { id: 0, file: 'documents' },
+        { id: 1, file: 'vacation.txt', size: 1.2, parentId: 0, __collapsed: false },
+        { id: 2, file: 'todo.txt', size: 2.3, parentId: 0, __collapsed: false },
+      ];
       gridOptionsMock.treeDataOptions = { columnId: 'file', parentPropName: 'parentId', initiallyCollapsed: false };
       vi.clearAllMocks();
     });
 
     it('should sort by the Tree column when there is no initial sort provided', async () => {
-      const mockHierarchical = [{
-        id: 0,
-        file: 'documents',
-        files: [{ id: 2, file: 'todo.txt', size: 2.3, }, { id: 1, file: 'vacation.txt', size: 1.2, }]
-      }];
+      const mockHierarchical = [
+        {
+          id: 0,
+          file: 'documents',
+          files: [
+            { id: 2, file: 'todo.txt', size: 2.3 },
+            { id: 1, file: 'vacation.txt', size: 1.2 },
+          ],
+        },
+      ];
       const setSortSpy = vi.spyOn(gridStub, 'setSortColumns');
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
       vi.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
@@ -608,11 +705,13 @@ describe('TreeData Service', () => {
       service.init(gridStub);
       const result = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
 
-      expect(setSortSpy).toHaveBeenCalledWith([{
-        columnId: 'file',
-        sortAsc: true,
-        sortCol: mockColumns[0]
-      }]);
+      expect(setSortSpy).toHaveBeenCalledWith([
+        {
+          columnId: 'file',
+          sortAsc: true,
+          sortCol: mockColumns[0],
+        },
+      ]);
       expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
       expect(unflattenParentChildArrayToTree).toHaveBeenNthCalledWith(1, mockFlatDataset, {
         columnId: 'file',
@@ -625,7 +724,8 @@ describe('TreeData Service', () => {
       await service.toggleTreeDataCollapse(true);
       const result2 = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
       expect(result2).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      expect(unflattenParentChildArrayToTree).toHaveBeenNthCalledWith(3, mockFlatDataset, { // 3rd call because toggleTreeDataCollapse() made the 2nd call
+      expect(unflattenParentChildArrayToTree).toHaveBeenNthCalledWith(3, mockFlatDataset, {
+        // 3rd call because toggleTreeDataCollapse() made the 2nd call
         columnId: 'file',
         identifierPropName: 'id',
         initiallyCollapsed: true, // changed to True
@@ -636,13 +736,18 @@ describe('TreeData Service', () => {
     it('should sort by the Tree column by the "initialSort" provided', () => {
       gridOptionsMock.treeDataOptions!.initialSort = {
         columnId: 'size',
-        direction: 'desc'
+        direction: 'desc',
       };
-      const mockHierarchical = [{
-        id: 0,
-        file: 'documents',
-        files: [{ id: 1, file: 'vacation.txt', size: 1.2, }, { id: 2, file: 'todo.txt', size: 2.3, }]
-      }];
+      const mockHierarchical = [
+        {
+          id: 0,
+          file: 'documents',
+          files: [
+            { id: 1, file: 'vacation.txt', size: 1.2 },
+            { id: 2, file: 'todo.txt', size: 2.3 },
+          ],
+        },
+      ];
       const setSortSpy = vi.spyOn(gridStub, 'setSortColumns');
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
       vi.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
@@ -650,24 +755,31 @@ describe('TreeData Service', () => {
       service.init(gridStub);
       const result = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
 
-      expect(setSortSpy).toHaveBeenCalledWith([{
-        columnId: 'size',
-        sortAsc: false,
-        sortCol: mockColumns[1]
-      }]);
+      expect(setSortSpy).toHaveBeenCalledWith([
+        {
+          columnId: 'size',
+          sortAsc: false,
+          sortCol: mockColumns[1],
+        },
+      ]);
       expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
     });
 
     it('should sort Tree by provided Sort Column when provided', () => {
       gridOptionsMock.treeDataOptions!.initialSort = {
         columnId: 'size',
-        direction: 'desc'
+        direction: 'desc',
       };
-      const mockHierarchical = [{
-        id: 0,
-        file: 'documents',
-        files: [{ id: 1, file: 'vacation.txt', size: 1.2, }, { id: 2, file: 'todo.txt', size: 2.3, }]
-      }];
+      const mockHierarchical = [
+        {
+          id: 0,
+          file: 'documents',
+          files: [
+            { id: 1, file: 'vacation.txt', size: 1.2 },
+            { id: 2, file: 'todo.txt', size: 2.3 },
+          ],
+        },
+      ];
       const setSortSpy = vi.spyOn(gridStub, 'setSortColumns');
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
       vi.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
@@ -676,24 +788,34 @@ describe('TreeData Service', () => {
       const sortCols = [{ columnId: mockColumns[0].id, sortCol: mockColumns[0], sortAsc: false }];
       const result = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock, sortCols);
 
-      expect(setSortSpy).toHaveBeenCalledWith([{
-        columnId: mockColumns[0].id,
-        sortAsc: false,
-        sortCol: mockColumns[0]
-      }]);
+      expect(setSortSpy).toHaveBeenCalledWith([
+        {
+          columnId: mockColumns[0].id,
+          sortAsc: false,
+          sortCol: mockColumns[0],
+        },
+      ]);
       expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
     });
   });
 
   describe('sortHierarchicalDataset method', () => {
     it('should call sortHierarchicalDataset from the sort service', () => {
-      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
-      const mockHierarchical = [{
-        id: 0,
-        file: 'documents',
-        files: [{ id: 2, file: 'todo.txt', size: 2.3, }, { id: 1, file: 'vacation.txt', size: 1.2, }]
-      }];
-      const mockColumnSort = { columnId: 'size', sortAsc: true, sortCol: mockColumns[1], };
+      const mockColumns = [
+        { id: 'file', field: 'file' },
+        { id: 'size', field: 'size' },
+      ] as Column[];
+      const mockHierarchical = [
+        {
+          id: 0,
+          file: 'documents',
+          files: [
+            { id: 2, file: 'todo.txt', size: 2.3 },
+            { id: 1, file: 'vacation.txt', size: 1.2 },
+          ],
+        },
+      ];
+      const mockColumnSort = { columnId: 'size', sortAsc: true, sortCol: mockColumns[1] };
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const getInitialSpy = vi.spyOn(service, 'getInitialSort').mockReturnValue(mockColumnSort);
       const sortHierarchySpy = vi.spyOn(sortServiceStub, 'sortHierarchicalDataset');

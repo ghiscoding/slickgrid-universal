@@ -34,8 +34,8 @@ export interface SlickRemoteModel {
   // Events
 
   /** triggered when the data is currently loading */
-  onDataLoading: SlickEvent<{ from: number; to: number; }>;
+  onDataLoading: SlickEvent<{ from: number; to: number }>;
 
   /** triggered when the data is loaded */
-  onDataLoaded: SlickEvent<{ from: number; to: number; }>;
+  onDataLoaded: SlickEvent<{ from: number; to: number }>;
 }

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { type Column, getOffset, type GridOption, type SlickGrid, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
+import { type Column, getOffset, type GridOption, type SlickGrid, type SlickDataView, SlickEvent, SlickEventData } from '@slickgrid-universal/common';
 import { delay, of, throwError } from 'rxjs';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip.js';
@@ -8,7 +8,7 @@ import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 
 // mocked modules
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
-  ...await importOriginal() as any,
+  ...((await importOriginal()) as any),
   getOffset: vi.fn(),
 }));
 
@@ -27,7 +27,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
+  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getCellFromEvent: vi.fn(),
   getCellNode: vi.fn(),
   getColumns: vi.fn(),
@@ -146,7 +146,7 @@ describe('SlickCustomTooltip plugin', () => {
   it('should return without creating a tooltip when "usabilityOverride" returns False', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
@@ -162,7 +162,7 @@ describe('SlickCustomTooltip plugin', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', '');
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -182,7 +182,7 @@ describe('SlickCustomTooltip plugin', () => {
     cellNode.className = 'slick-cell l2 r2';
     editInput.setAttribute('title', 'editing input tooltip text');
     cellNode.appendChild(editInput);
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -206,7 +206,7 @@ describe('SlickCustomTooltip plugin', () => {
     cellNode.className = 'slick-cell l2 r2';
     editInput.setAttribute('title', 'editing input tooltip text 20');
     cellNode.appendChild(editInput);
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -227,7 +227,7 @@ describe('SlickCustomTooltip plugin', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -248,7 +248,7 @@ describe('SlickCustomTooltip plugin', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -271,7 +271,7 @@ describe('SlickCustomTooltip plugin', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -294,7 +294,7 @@ describe('SlickCustomTooltip plugin', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'some very extra long tooltip text sentence');
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -566,7 +566,7 @@ describe('SlickCustomTooltip plugin', () => {
     const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -578,17 +578,19 @@ describe('SlickCustomTooltip plugin', () => {
       position: 'bottom',
       asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       formatter: () => 'loading...',
-      asyncPostFormatter: undefined
+      asyncPostFormatter: undefined,
     });
     gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
-    expect(consoleSpy).toHaveBeenCalledWith(`[Slickgrid-Universal] when using "asyncProcess" with Custom Tooltip, you must also provide an "asyncPostFormatter" formatter.`);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      `[Slickgrid-Universal] when using "asyncProcess" with Custom Tooltip, you must also provide an "asyncPostFormatter" formatter.`
+    );
   });
 
   it('should create an Observable async tooltip', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -617,7 +619,7 @@ describe('SlickCustomTooltip plugin', () => {
   it('should create an Observable async tooltip and throw an error when the Observable is throwing', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -645,7 +647,7 @@ describe('SlickCustomTooltip plugin', () => {
   it('should create a Promise async tooltip with position (up & right align) when space is not available on the right of the tooltip', async () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -683,7 +685,7 @@ describe('SlickCustomTooltip plugin', () => {
   it('should create a Promise async tooltip even on regular tooltip with "asyncProcess" and "useRegularTooltip" flags', async () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -695,7 +697,8 @@ describe('SlickCustomTooltip plugin', () => {
       useRegularTooltipFromFormatterOnly: true,
       formatter: () => 'loading...',
       asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
-      asyncPostFormatter: (row, cell, val, column, dataContext) => `<span title="tooltip title text with ratio: ${dataContext.__params.ratio || ''}">cell value</span>`,
+      asyncPostFormatter: (row, cell, val, column, dataContext) =>
+        `<span title="tooltip title text with ratio: ${dataContext.__params.ratio || ''}">cell value</span>`,
     });
     gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
@@ -711,34 +714,35 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
   });
 
-  it('should create a Promise async tooltip and throw an error when the Promise is not completing (rejected)', () => new Promise((done: any) => {
-    const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell l2 r2';
-    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
-    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
-    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
-    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+  it('should create a Promise async tooltip and throw an error when the Promise is not completing (rejected)', () =>
+    new Promise((done: any) => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub, container);
-    plugin.setOptions({
-      asyncProcess: () => Promise.reject('promise error'),
-      formatter: () => 'loading...',
-      asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
-    });
-    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
-    const cancellablePromise = plugin.cancellablePromise;
-    let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
-    expect(tooltipElm).toBeTruthy();
-    expect(tooltipElm.textContent).toBe('loading...');
-
-    cancellablePromise!.promise.catch(e => {
-      tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      plugin.init(gridStub, container);
+      plugin.setOptions({
+        asyncProcess: () => Promise.reject('promise error'),
+        formatter: () => 'loading...',
+        asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
+      });
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+      const cancellablePromise = plugin.cancellablePromise;
+      let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
       expect(tooltipElm.textContent).toBe('loading...');
-      expect(e.toString()).toBe('promise error');
-      done();
-    });
-  }));
+
+      cancellablePromise!.promise.catch((e) => {
+        tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+        expect(tooltipElm.textContent).toBe('loading...');
+        expect(e.toString()).toBe('promise error');
+        done();
+      });
+    }));
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderMouseOver" is triggered', () => {
     const cellNode = document.createElement('div');

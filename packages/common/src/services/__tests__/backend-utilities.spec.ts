@@ -32,8 +32,8 @@ describe('Backend Utility Service', () => {
         pageSize: 10,
         pageSizes: [10, 25, 50],
         pageNumber: 1,
-        totalItems: 0
-      }
+        totalItems: 0,
+      },
     } as GridOption;
     rxjsResourceStub = new RxJsResourceStub();
     service = new BackendUtilityService(rxjsResourceStub);
@@ -53,13 +53,13 @@ describe('Backend Utility Service', () => {
       const now = new Date();
       const mockResult = { data: { users: [{ firstName: 'John', lastName: 'Doe' }] } };
       const expectaction = {
-        data: { users: [{ firstName: 'John', lastName: 'Doe' }], },
+        data: { users: [{ firstName: 'John', lastName: 'Doe' }] },
         metrics: {
           startTime: now,
           endTime: expect.any(Date),
           executionTime: expect.any(Number),
           itemCount: 1,
-          totalItemCount: 1
+          totalItemCount: 1,
         },
       };
       gridOptionMock.backendServiceApi!.postProcess = vi.fn();
@@ -93,7 +93,7 @@ describe('Backend Utility Service', () => {
       const now = new Date();
       gridOptionMock.backendServiceApi!.service.postProcess = vi.fn();
       gridOptionMock.backendServiceApi!.service.options = {
-        infiniteScroll: true
+        infiniteScroll: true,
       };
       const spy = vi.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'postProcess');
       service.executeBackendProcessesCallback(now, { data: {} }, gridOptionMock.backendServiceApi as BackendServiceApi, 0);
@@ -127,7 +127,13 @@ describe('Backend Utility Service', () => {
       service.refreshBackendDataset(gridOptionMock);
 
       expect(querySpy).toHaveBeenCalled();
-      expect(executeSpy).toHaveBeenCalledWith(gridOptionMock.backendServiceApi as BackendServiceApi, query, null, expect.any(Date), gridOptionMock.pagination!.totalItems);
+      expect(executeSpy).toHaveBeenCalledWith(
+        gridOptionMock.backendServiceApi as BackendServiceApi,
+        query,
+        null,
+        expect.any(Date),
+        gridOptionMock.pagination!.totalItems
+      );
     });
 
     it('should call "executeBackendCallback" after calling the "refreshBackendDataset" method without Pagination (when disabled)', () => {
@@ -139,19 +145,26 @@ describe('Backend Utility Service', () => {
       service.refreshBackendDataset(gridOptionMock);
 
       expect(querySpy).toHaveBeenCalled();
-      expect(executeSpy).toHaveBeenCalledWith(gridOptionMock.backendServiceApi as BackendServiceApi, query, null, expect.any(Date), gridOptionMock.pagination!.totalItems);
+      expect(executeSpy).toHaveBeenCalledWith(
+        gridOptionMock.backendServiceApi as BackendServiceApi,
+        query,
+        null,
+        expect.any(Date),
+        gridOptionMock.pagination!.totalItems
+      );
     });
 
-    it('should throw an error when backendServiceApi is undefined', () => new Promise((done: any) => {
-      gridOptionMock.enablePagination = true;
-      try {
-        gridOptionMock.backendServiceApi = undefined;
-        service.refreshBackendDataset(undefined as any);
-      } catch (e) {
-        expect(e.toString()).toContain('BackendServiceApi requires at least a "process" function and a "service" defined');
-        done();
-      }
-    }));
+    it('should throw an error when backendServiceApi is undefined', () =>
+      new Promise((done: any) => {
+        gridOptionMock.enablePagination = true;
+        try {
+          gridOptionMock.backendServiceApi = undefined;
+          service.refreshBackendDataset(undefined as any);
+        } catch (e) {
+          expect(e.toString()).toContain('BackendServiceApi requires at least a "process" function and a "service" defined');
+          done();
+        }
+      }));
   });
 
   describe('executeBackendCallback method', () => {
@@ -162,7 +175,7 @@ describe('Backend Utility Service', () => {
       const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
       const processResult = {
         data: { users: { nodes: [] }, pageInfo: { hasNextPage: true }, totalCount: 0 },
-        metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
+        metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 },
       };
 
       const nextSpy = vi.spyOn(subject, 'next');

@@ -66,7 +66,7 @@ describe('GraphqlQueryBuilder', () => {
     profilePicture.find('uri', 'width', 'height');
 
     const user = new GraphqlQueryBuilder('user', { id: 12345 });
-    user.find(['id', { 'nickname': 'name' }, 'isViewerFriend', { 'image': profilePicture }]);
+    user.find(['id', { nickname: 'name' }, 'isViewerFriend', { image: profilePicture }]);
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
@@ -75,7 +75,7 @@ describe('GraphqlQueryBuilder', () => {
     const expectation = `user { profilePicture { uri, width, height } }`;
 
     const user = new GraphqlQueryBuilder('user');
-    user.find({ 'profilePicture': ['uri', 'width', 'height'] });
+    user.find({ profilePicture: ['uri', 'width', 'height'] });
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
@@ -129,9 +129,12 @@ describe('GraphqlQueryBuilder', () => {
       message: 'yoyo',
       user: {
         name: 'bob',
-        screen: { height: 1080, width: 1920 }
+        screen: { height: 1080, width: 1920 },
       },
-      friends: [{ id: 1, name: 'ann' }, { id: 2, name: 'tom' }]
+      friends: [
+        { id: 1, name: 'ann' },
+        { id: 2, name: 'tom' },
+      ],
     };
 
     const messageQuery = new GraphqlQueryBuilder('Message', 'myPost');
@@ -143,7 +146,7 @@ describe('GraphqlQueryBuilder', () => {
 
   it('should work with objects that have help functions(will skip function name)', () => {
     const expectation = 'inventory(toy:"jack in the box") { id }';
-    const childsToy = { toy: 'jack in the box', getState: () => { } };
+    const childsToy = { toy: 'jack in the box', getState: () => {} };
 
     childsToy.getState(); // for v8 coverage to get all fn be called
     const itemQuery = new GraphqlQueryBuilder('inventory', childsToy);
@@ -154,7 +157,7 @@ describe('GraphqlQueryBuilder', () => {
 
   it('should work with nasted objects that have help functions(will skip function name)', () => {
     const expectation = 'inventory(toy:"jack in the box") { id }';
-    const childsToy = { toy: 'jack in the box', utils: { getState: () => { } } };
+    const childsToy = { toy: 'jack in the box', utils: { getState: () => {} } };
 
     childsToy.utils.getState(); // for v8 coverage to get all fn be called
     const itemQuery = new GraphqlQueryBuilder('inventory', childsToy);

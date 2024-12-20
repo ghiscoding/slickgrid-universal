@@ -38,7 +38,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     enableExpandCollapse: true,
     groupFormatter: this.defaultGroupCellFormatter.bind(this),
     totalsFormatter: this.defaultTotalsCellFormatter.bind(this),
-    includeHeaderTotals: false
+    includeHeaderTotals: false,
   };
 
   constructor(inputOptions?: GroupItemMetadataProviderOption) {
@@ -95,19 +95,25 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
         0: {
           colspan: this._options.includeHeaderTotals ? '1' : '*',
           formatter: this._options.groupFormatter,
-          editorClass: null
-        }
-      }
+          editorClass: null,
+        },
+      },
     };
   }
 
-  getTotalsRowMetadata(item: { group: GroupingFormatterItem; }): { selectable: boolean; focusable: boolean | undefined; cssClasses: string; formatter: Formatter | undefined; editorClass: null; } {
+  getTotalsRowMetadata(item: { group: GroupingFormatterItem }): {
+    selectable: boolean;
+    focusable: boolean | undefined;
+    cssClasses: string;
+    formatter: Formatter | undefined;
+    editorClass: null;
+  } {
     return {
       selectable: false,
       focusable: this._options.totalsFocusable,
       cssClasses: `${this._options.totalsCssClass} slick-group-level-${item?.group?.level || 0}`,
       formatter: this._options.totalsFormatter,
-      editorClass: null
+      editorClass: null,
     };
   }
 
@@ -129,16 +135,18 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     const containerElm = this.gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
 
     // 1. group toggle span
-    containerElm.appendChild(createDomElement('span', {
-      className: `${this._options.toggleCssClass} ${toggleClass}`,
-      ariaExpanded: String(!item.collapsed),
-      style: { marginLeft }
-    }));
+    containerElm.appendChild(
+      createDomElement('span', {
+        className: `${this._options.toggleCssClass} ${toggleClass}`,
+        ariaExpanded: String(!item.collapsed),
+        style: { marginLeft },
+      })
+    );
 
     // 2. group title span
     const groupTitleElm = createDomElement('span', { className: this._options.groupTitleCssClass || '' });
     groupTitleElm.setAttribute('level', groupLevel);
-    (item.title instanceof HTMLElement || item.title instanceof DocumentFragment)
+    item.title instanceof HTMLElement || item.title instanceof DocumentFragment
       ? groupTitleElm.appendChild(item.title)
       : this._grid.applyHtmlCode(groupTitleElm, item.title ?? '');
     containerElm.appendChild(groupTitleElm);
@@ -146,7 +154,14 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     return containerElm;
   }
 
-  protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGrid): string | HTMLElement {
+  protected defaultTotalsCellFormatter(
+    _row: number,
+    _cell: number,
+    _value: any,
+    columnDef: Column,
+    item: any,
+    grid: SlickGrid
+  ): string | HTMLElement {
     return columnDef?.groupTotalsFormatter?.(item, columnDef, grid) ?? '';
   }
 
@@ -166,7 +181,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
    * TODO:  add -/+ handling
    */
   protected handleGridKeyDown(e: SlickEventData): void {
-    if (this._options.enableExpandCollapse && (e.key === ' ')) {
+    if (this._options.enableExpandCollapse && e.key === ' ') {
       const activeCell = this._grid?.getActiveCell();
       if (activeCell) {
         const item = this._grid.getDataItem(activeCell.row);
@@ -183,7 +198,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     const range = this._grid?.getRenderedRange();
     this.dataView.setRefreshHints({
       ignoreDiffsBefore: range.top,
-      ignoreDiffsAfter: range.bottom + 1
+      ignoreDiffsAfter: range.bottom + 1,
     });
 
     if (item.collapsed) {

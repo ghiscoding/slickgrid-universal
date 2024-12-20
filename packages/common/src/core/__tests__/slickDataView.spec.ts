@@ -10,8 +10,8 @@ import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.
 import { SlickEventData } from '../slickCore.js';
 
 class FakeAggregator {
-  init() { }
-  storeResult() { }
+  init() {}
+  storeResult() {}
 }
 
 describe('SlickDatView core file', () => {
@@ -55,7 +55,10 @@ describe('SlickDatView core file', () => {
     });
 
     test('retrieve an item from the DataView at specific index by calling getItem()', () => {
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv.setItems(items);
 
       expect(dv.getItemCount()).toBe(2);
@@ -65,14 +68,20 @@ describe('SlickDatView core file', () => {
 
     describe('getRowByItem()', () => {
       test('get row number in the grid by its item object by calling getRowByItem()', () => {
-        const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 4, name: 'John', age: 20 },
+          { id: 3, name: 'Jane', age: 24 },
+        ];
         dv.setItems(items);
 
         expect(dv.getRowByItem(items[1])).toBe(1);
       });
 
       it('should return undefined when calling getRowByItem() with an invalid item', () => {
-        const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 4, name: 'John', age: 20 },
+          { id: 3, name: 'Jane', age: 24 },
+        ];
         const newItem = { id: 2, name: 'Bob', age: 30 };
         dv.setItems(items);
 
@@ -81,39 +90,57 @@ describe('SlickDatView core file', () => {
     });
 
     test('get row number in the grid by its Id by calling getRowById()', () => {
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv.setItems(items);
 
       expect(dv.getRowById(3)).toBe(1);
     });
 
     test('get an item in the DataView by its Id by calling getItemById()', () => {
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv.setItems(items);
 
       expect(dv.getItemById(3)).toEqual({ id: 3, name: 'Jane', age: 24 });
     });
 
     test('retrieve an item from the DataView at specific index by calling getItem()', () => {
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv.setItems(items);
       expect(dv.getItem(1)).toEqual({ id: 3, name: 'Jane', age: 24 });
     });
 
     it('should return mapping of items with their row indexes', () => {
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv.setItems(items);
       expect(dv.mapItemsToRows(items)).toEqual([0, 1]);
     });
 
     it('should return mapping of item Ids with their row indexes and exclude any Ids not found', () => {
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv.setItems(items);
       expect(dv.mapIdsToRows([3, 4, 999])).toEqual([1, 0]);
     });
 
     it('should return mapping of row indexes with their item Ids and exclude any indexes not found', () => {
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv.setItems(items);
       expect(dv.mapRowsToIds([0, 1, 999])).toEqual([4, 3]);
     });
@@ -126,7 +153,10 @@ describe('SlickDatView core file', () => {
 
     describe('addItem()', () => {
       it('should call the method and expect item to be added', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const newItem = { id: 2, name: 'Bob', age: 30 };
 
         dv.setItems(items);
@@ -136,7 +166,7 @@ describe('SlickDatView core file', () => {
         expect(dv.getItems()).toEqual([
           { id: 0, name: 'John', age: 20 },
           { id: 1, name: 'Jane', age: 24 },
-          { id: 2, name: 'Bob', age: 30 }
+          { id: 2, name: 'Bob', age: 30 },
         ]);
       });
     });
@@ -147,14 +177,20 @@ describe('SlickDatView core file', () => {
       });
 
       it('should throw when item Id is not found in the items array', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         dv.setItems(items);
         expect(() => dv.deleteItem(99)).toThrow('[SlickGrid DataView] Invalid id');
       });
 
       test('delete an item from the items array', () => {
         const refreshSpy = vi.spyOn(dv, 'refresh');
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
 
         dv.setItems(items);
         dv.deleteItem(1);
@@ -170,14 +206,20 @@ describe('SlickDatView core file', () => {
       });
 
       it('should throw when item Id is not found in the items array', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         dv.setItems(items);
         expect(() => dv.deleteItems([99])).toThrow('[SlickGrid DataView] Invalid id');
       });
 
       test('delete an item from the items array', () => {
         const refreshSpy = vi.spyOn(dv, 'refresh');
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
 
         dv.setItems(items);
         dv.deleteItems([1]);
@@ -189,12 +231,18 @@ describe('SlickDatView core file', () => {
 
     describe('updateItem()', () => {
       it('should throw when calling the method with input Ids array does not match items array', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         expect(() => dv.updateItems([0, 1, 99], items)).toThrow('[SlickGrid DataView] Mismatch on the length of ids and items provided to update');
       });
 
       it('should update item when calling the method', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const updatedItem = { id: 1, name: 'Bob', age: 30 };
 
         dv.setItems(items);
@@ -203,7 +251,7 @@ describe('SlickDatView core file', () => {
         expect(dv.getItems().length).toBe(2);
         expect(dv.getItems()).toEqual([
           { id: 0, name: 'John', age: 20 },
-          { id: 1, name: 'Bob', age: 30 }
+          { id: 1, name: 'Bob', age: 30 },
         ]);
       });
     });
@@ -219,20 +267,26 @@ describe('SlickDatView core file', () => {
       });
 
       it('should call the method and expect item to be updated', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         dv.setItems(items);
         dv.updateSingleItem(1, { id: 1, name: 'Bob', age: 30 });
 
         expect(dv.getItems().length).toBe(2);
         expect(dv.getItems()).toEqual([
           { id: 0, name: 'John', age: 20 },
-          { id: 1, name: 'Bob', age: 30 }
+          { id: 1, name: 'Bob', age: 30 },
         ]);
         expect(dv.getItemByIdx(1)).toEqual({ id: 1, name: 'Bob', age: 30 });
       });
 
       it('should call the method and expect item to be updated when passing different Id', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
 
         dv.setItems(items);
         dv.updateSingleItem(1, { id: 2, name: 'Bob', age: 30 });
@@ -242,13 +296,16 @@ describe('SlickDatView core file', () => {
         expect(dv.getItems().length).toBe(2);
         expect(dv.getItems()).toEqual([
           { id: 0, name: 'John', age: 20 },
-          { id: 1, name: 'Bob', age: 30 }
+          { id: 1, name: 'Bob', age: 30 },
         ]);
         expect(dv.getIdxById(1)).toBe(1);
       });
 
       test('cannot update item to associate with a non-unique id', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const updatedItem = { id: 1, name: 'Bob', age: 30 };
 
         dv.setItems(items);
@@ -256,7 +313,10 @@ describe('SlickDatView core file', () => {
       });
 
       test('cannot update item to associate with a null id', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const updatedItem = { name: 'Bob', age: 30 };
 
         dv.setItems(items);
@@ -273,7 +333,10 @@ describe('SlickDatView core file', () => {
 
     describe('deleteItems()', () => {
       it('should throw when calling the method with an index not found in the items array', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
 
         dv.setItems(items);
         dv.beginUpdate(true);
@@ -282,7 +345,10 @@ describe('SlickDatView core file', () => {
 
       test('delete an item from the items array in bulk', () => {
         const refreshSpy = vi.spyOn(dv, 'refresh');
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
 
         dv.setItems(items);
         dv.beginUpdate(true);
@@ -295,7 +361,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should batch items with addItems and begin/end batch update', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
 
       dv.beginUpdate(true);
       dv.addItems(items);
@@ -306,8 +375,14 @@ describe('SlickDatView core file', () => {
     });
 
     it('should batch more items with addItems with begin/end batch update and expect them to be inserted at the end of the dataset', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
-      const newItems = [{ id: 3, name: 'Smith', age: 30 }, { id: 4, name: 'Ronald', age: 34 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
+      const newItems = [
+        { id: 3, name: 'Smith', age: 30 },
+        { id: 4, name: 'Ronald', age: 34 },
+      ];
 
       dv.setItems(items); // original items list
 
@@ -316,14 +391,22 @@ describe('SlickDatView core file', () => {
       dv.endUpdate();
 
       expect(dv.getItems()).toEqual([
-        { id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 },
-        { id: 3, name: 'Smith', age: 30 }, { id: 4, name: 'Ronald', age: 34 },
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+        { id: 3, name: 'Smith', age: 30 },
+        { id: 4, name: 'Ronald', age: 34 },
       ]);
     });
 
     it('should batch more items with insertItems with begin/end batch update and expect them to be inserted at the beginning of the dataset', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
-      const newItems = [{ id: 3, name: 'Smith', age: 30 }, { id: 4, name: 'Ronald', age: 34 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
+      const newItems = [
+        { id: 3, name: 'Smith', age: 30 },
+        { id: 4, name: 'Ronald', age: 34 },
+      ];
 
       dv.setItems(items); // original items list
 
@@ -332,20 +415,26 @@ describe('SlickDatView core file', () => {
       dv.endUpdate();
 
       expect(dv.getItems()).toEqual([
-        { id: 3, name: 'Smith', age: 30 }, { id: 4, name: 'Ronald', age: 34 },
-        { id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }
+        { id: 3, name: 'Smith', age: 30 },
+        { id: 4, name: 'Ronald', age: 34 },
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
       ]);
 
       dv.deleteItem(3);
 
       expect(dv.getItems()).toEqual([
         { id: 4, name: 'Ronald', age: 34 },
-        { id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
       ]);
     });
 
     it('should be able to use different "id" when using setItems()', () => {
-      const items = [{ keyId: 0, name: 'John', age: 20 }, { keyId: 1, name: 'Jane', age: 24 }];
+      const items = [
+        { keyId: 0, name: 'John', age: 20 },
+        { keyId: 1, name: 'Jane', age: 24 },
+      ];
 
       dv.beginUpdate(true);
       dv.setItems(items, 'keyId');
@@ -356,8 +445,14 @@ describe('SlickDatView core file', () => {
     });
 
     it('should batch more items with insertItems with begin/end batch update and expect them to be inserted at a certain index dataset', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
-      const newItems = [{ id: 3, name: 'Smith', age: 30 }, { id: 4, name: 'Ronald', age: 34 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
+      const newItems = [
+        { id: 3, name: 'Smith', age: 30 },
+        { id: 4, name: 'Ronald', age: 34 },
+      ];
 
       dv.setItems(items); // original items list
 
@@ -367,8 +462,9 @@ describe('SlickDatView core file', () => {
 
       expect(dv.getItems()).toEqual([
         { id: 0, name: 'John', age: 20 },
-        { id: 3, name: 'Smith', age: 30 }, { id: 4, name: 'Ronald', age: 34 },
-        { id: 1, name: 'Jane', age: 24 }
+        { id: 3, name: 'Smith', age: 30 },
+        { id: 4, name: 'Ronald', age: 34 },
+        { id: 1, name: 'Jane', age: 24 },
       ]);
 
       dv.deleteItems([3, 1]);
@@ -380,7 +476,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should throw when trying to delete items with have invalid Ids', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
 
       dv.setItems(items); // original items list
 
@@ -388,7 +487,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should throw when trying to delete items with a batch that have invalid Ids', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
 
       dv.setItems(items); // original items list
 
@@ -397,75 +499,105 @@ describe('SlickDatView core file', () => {
     });
 
     it('should call updateItems, without batch, and expect a refresh to be called', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
-      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
+      const updatedItems = [
+        { id: 0, name: 'Smith', age: 30 },
+        { id: 1, name: 'Ronald', age: 34 },
+      ];
       const refreshSpy = vi.spyOn(dv, 'refresh');
 
       dv.setItems(items); // original items list
 
-      dv.updateItems(updatedItems.map(item => item.id), updatedItems);
+      dv.updateItems(
+        updatedItems.map((item) => item.id),
+        updatedItems
+      );
 
       expect(refreshSpy).toHaveBeenCalled();
       expect(dv.getItems()).toEqual([
-        { id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 },
+        { id: 0, name: 'Smith', age: 30 },
+        { id: 1, name: 'Ronald', age: 34 },
       ]);
 
       dv.deleteItem(1);
 
-      expect(dv.getItems()).toEqual([
-        { id: 0, name: 'Smith', age: 30 }
-      ]);
+      expect(dv.getItems()).toEqual([{ id: 0, name: 'Smith', age: 30 }]);
     });
 
     it('should batch updateItems and expect a refresh to be called', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
-      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
+      const updatedItems = [
+        { id: 0, name: 'Smith', age: 30 },
+        { id: 1, name: 'Ronald', age: 34 },
+      ];
       const refreshSpy = vi.spyOn(dv, 'refresh');
 
       dv.setItems(items); // original items list
 
       dv.beginUpdate(true);
-      dv.updateItems(updatedItems.map(item => item.id), updatedItems);
+      dv.updateItems(
+        updatedItems.map((item) => item.id),
+        updatedItems
+      );
 
       expect(refreshSpy).toHaveBeenCalled();
       expect(dv.getItems()).toEqual([
-        { id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 },
+        { id: 0, name: 'Smith', age: 30 },
+        { id: 1, name: 'Ronald', age: 34 },
       ]);
 
       dv.deleteItem(1);
       dv.endUpdate();
 
-      expect(dv.getItems()).toEqual([
-        { id: 0, name: 'Smith', age: 30 }
-      ]);
+      expect(dv.getItems()).toEqual([{ id: 0, name: 'Smith', age: 30 }]);
     });
 
     it('should batch updateItems and expect a refresh to be called', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
-      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
+      const updatedItems = [
+        { id: 0, name: 'Smith', age: 30 },
+        { id: 1, name: 'Ronald', age: 34 },
+      ];
       const refreshSpy = vi.spyOn(dv, 'refresh');
 
       dv.setItems(items); // original items list
 
       dv.beginUpdate(true);
-      dv.updateItems(updatedItems.map(item => item.id), updatedItems);
+      dv.updateItems(
+        updatedItems.map((item) => item.id),
+        updatedItems
+      );
 
       expect(refreshSpy).toHaveBeenCalled();
       expect(dv.getItems()).toEqual([
-        { id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 },
+        { id: 0, name: 'Smith', age: 30 },
+        { id: 1, name: 'Ronald', age: 34 },
       ]);
 
       dv.deleteItem(1);
       dv.endUpdate();
 
-      expect(dv.getItems()).toEqual([
-        { id: 0, name: 'Smith', age: 30 }
-      ]);
+      expect(dv.getItems()).toEqual([{ id: 0, name: 'Smith', age: 30 }]);
     });
 
     it('should throw when batching updateItems with some invalid Ids', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
-      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
+      const updatedItems = [
+        { id: 0, name: 'Smith', age: 30 },
+        { id: 1, name: 'Ronald', age: 34 },
+      ];
 
       dv.setItems(items); // original items list
       dv.beginUpdate(true);
@@ -474,13 +606,19 @@ describe('SlickDatView core file', () => {
     });
 
     it('should throw when trying to call setItems() with duplicate Ids', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 0, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 0, name: 'Jane', age: 24 },
+      ];
 
       expect(() => dv.setItems(items)).toThrow(`[SlickGrid DataView] Each data element must implement a unique 'id' property`);
     });
 
     it('should call insertItem() at a defined index location', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
       const newItem = { id: 2, name: 'Smith', age: 30 };
       const refreshSpy = vi.spyOn(dv, 'refresh');
 
@@ -491,12 +629,15 @@ describe('SlickDatView core file', () => {
       expect(dv.getItems()).toEqual([
         { id: 0, name: 'John', age: 20 },
         { id: 2, name: 'Smith', age: 30 },
-        { id: 1, name: 'Jane', age: 24 }
+        { id: 1, name: 'Jane', age: 24 },
       ]);
     });
 
     it('should throw when trying to call insertItem() with undefined Id', () => {
-      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+      ];
       const newItem = { id: undefined, name: 'Smith', age: 30 };
 
       dv.setItems(items);
@@ -507,7 +648,8 @@ describe('SlickDatView core file', () => {
       const items = [
         { id: 0, name: 'John', age: 20 },
         { id: 1, name: 'Jane', age: 24 },
-        { id: undefined, name: 'Smith', age: 30 }];
+        { id: undefined, name: 'Smith', age: 30 },
+      ];
 
       dv.beginUpdate(true);
       dv.setItems(items);
@@ -547,7 +689,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: null,
-        value: 'Doe'
+        value: 'Doe',
       });
       expect(dv.getItem(1)).toEqual(mockData[0]);
       expect(dv.getItem(2)).toEqual(mockData[1]);
@@ -593,7 +735,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: expect.anything(),
-        value: 'Doe'
+        value: 'Doe',
       });
       expect(dv.getItem(1)).toEqual(mockData[0]);
       expect(dv.getItem(2)).toEqual(mockData[1]);
@@ -602,7 +744,7 @@ describe('SlickDatView core file', () => {
         __nonDataRow: true,
         group: expect.anything(),
         initialized: true,
-        count: { lastName: 2 }
+        count: { lastName: 2 },
       });
     });
 
@@ -637,7 +779,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: null,
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({ id: 3, firstName: 'Bob', lastName: 'Smith' });
       expect(dv.getItem(2)).toEqual({
@@ -648,11 +790,14 @@ describe('SlickDatView core file', () => {
         groupingKey: 'Doe',
         groups: null,
         level: 0,
-        rows: [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Doe' }],
+        rows: [
+          { id: 1, firstName: 'John', lastName: 'Doe' },
+          { id: 2, firstName: 'Jane', lastName: 'Doe' },
+        ],
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: null,
-        value: 'Doe'
+        value: 'Doe',
       });
       expect(dv.getItem(3)).toEqual({ id: 1, firstName: 'John', lastName: 'Doe' });
       expect(dv.getItem(4)).toEqual({ id: 2, firstName: 'Jane', lastName: 'Doe' });
@@ -672,7 +817,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: null,
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({
         __group: true,
@@ -682,11 +827,14 @@ describe('SlickDatView core file', () => {
         groupingKey: 'Doe',
         groups: null,
         level: 0,
-        rows: [{ id: 1, firstName: 'John', lastName: 'Doe' }, { id: 2, firstName: 'Jane', lastName: 'Doe' }],
+        rows: [
+          { id: 1, firstName: 'John', lastName: 'Doe' },
+          { id: 2, firstName: 'Jane', lastName: 'Doe' },
+        ],
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: null,
-        value: 'Doe'
+        value: 'Doe',
       });
 
       dv.expandAllGroups();
@@ -703,7 +851,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: null,
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({ id: 3, firstName: 'Bob', lastName: 'Smith' });
     });
@@ -743,12 +891,12 @@ describe('SlickDatView core file', () => {
         level: 0,
         rows: [
           { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }
+          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         ],
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: expect.anything(),
-        value: 'Doe'
+        value: 'Doe',
       });
 
       expect(dv.getItem(1)).toEqual({ id: 1, firstName: 'John', lastName: 'Doe', age: 30 });
@@ -782,12 +930,12 @@ describe('SlickDatView core file', () => {
         level: 0,
         rows: [
           { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }
+          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         ],
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: expect.anything(),
-        value: 'Doe'
+        value: 'Doe',
       });
       expect(dv.getItem(1)).not.toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
     });
@@ -809,7 +957,7 @@ describe('SlickDatView core file', () => {
         formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
         comparer: (a, b) => SortComparers.string(a.value, b.value, SortDirectionNumber.desc),
         aggregators: [agg1, agg2],
-        predefinedValues: ['Smith']
+        predefinedValues: ['Smith'],
       } as Grouping);
 
       dv.expandGroup('Smith:|:26');
@@ -828,11 +976,16 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
       expect(dv.getItem(2)).toEqual({
-        __groupTotals: true, __nonDataRow: true, group: expect.anything(), initialized: true, count: { lastName: 1 }, sum: { age: 26 }
+        __groupTotals: true,
+        __nonDataRow: true,
+        group: expect.anything(),
+        initialized: true,
+        count: { lastName: 1 },
+        sum: { age: 26 },
       });
       expect(dv.getItem(3)).toEqual({
         __group: true,
@@ -844,12 +997,12 @@ describe('SlickDatView core file', () => {
         level: 0,
         rows: [
           { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }
+          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         ],
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: expect.anything(),
-        value: 'Doe'
+        value: 'Doe',
       });
 
       dv.collapseGroup('Smith:|:26');
@@ -868,7 +1021,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
     });
@@ -905,7 +1058,7 @@ describe('SlickDatView core file', () => {
           aggregateEmpty: true,
           displayTotalsRow: true,
           aggregateCollapsed: false,
-        }
+        },
       ]);
 
       expect(dv.getItemMetadata(99)).toBeNull();
@@ -940,7 +1093,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({
         __group: true,
@@ -954,7 +1107,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Age: 26 <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 26
+        value: 26,
       });
       expect(dv.getItem(2)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
       expect(dv.getItem(3)).toEqual({
@@ -963,7 +1116,7 @@ describe('SlickDatView core file', () => {
         count: { lastName: 1 },
         group: expect.anything(),
         initialized: true,
-        sum: { age: 26 }
+        sum: { age: 26 },
       });
       expect(dv.getItemMetadata(3)).toEqual({
         cssClasses: 'slick-group-totals slick-group-level-1',
@@ -997,7 +1150,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({
         __group: true,
@@ -1007,7 +1160,10 @@ describe('SlickDatView core file', () => {
         groupingKey: 'Doe',
         groups: [expect.anything(), expect.anything()],
         level: 0,
-        rows: [{ id: 1, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }],
+        rows: [
+          { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ],
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: expect.anything(),
@@ -1048,7 +1204,7 @@ describe('SlickDatView core file', () => {
           displayTotalsRow: true,
           aggregateChildGroups: true,
           aggregateCollapsed: true,
-        }
+        },
       ]);
 
       expect(dv.getItemMetadata(99)).toBeNull();
@@ -1078,7 +1234,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({
         __group: true,
@@ -1092,7 +1248,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Age: 26 <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 26
+        value: 26,
       });
       expect(dv.getItem(2)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
       expect(dv.getItem(3)).toEqual({
@@ -1101,7 +1257,7 @@ describe('SlickDatView core file', () => {
         count: { lastName: 1 },
         group: expect.anything(),
         initialized: true,
-        sum: { age: 0 }
+        sum: { age: 0 },
       });
 
       dv.expandAllGroups(0);
@@ -1120,7 +1276,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
     });
 
@@ -1145,7 +1301,7 @@ describe('SlickDatView core file', () => {
           lazyTotalsCalculation: false,
           aggregateChildGroups: true,
           displayTotalsRow: true,
-          aggregateEmpty: true
+          aggregateEmpty: true,
         },
         {
           getter: 'age',
@@ -1154,7 +1310,7 @@ describe('SlickDatView core file', () => {
           aggregators: [agg1, agg2],
           lazyTotalsCalculation: false,
           displayTotalsRow: true,
-        }
+        },
       ]);
 
       expect(dv.getItem(1)).toEqual({
@@ -1169,7 +1325,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Age: 26 <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 26
+        value: 26,
       });
 
       dv.expandAllGroups();
@@ -1188,7 +1344,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({
         __group: true,
@@ -1202,7 +1358,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Age: 26 <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 26
+        value: 26,
       });
       expect(dv.getItem(2)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
       expect(dv.getItem(3)).toEqual({
@@ -1211,7 +1367,7 @@ describe('SlickDatView core file', () => {
         count: { lastName: 1 },
         group: expect.anything(),
         initialized: true,
-        sum: { age: 26 }
+        sum: { age: 26 },
       });
 
       dv.collapseAllGroups();
@@ -1230,7 +1386,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Smith',
       });
       expect(dv.getItem(1)).toEqual({
         __group: true,
@@ -1240,7 +1396,10 @@ describe('SlickDatView core file', () => {
         groupingKey: 'Doe',
         groups: [expect.anything(), expect.anything()],
         level: 0,
-        rows: [{ id: 1, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }],
+        rows: [
+          { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ],
         selectChecked: false,
         title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: expect.anything(),
@@ -1258,7 +1417,10 @@ describe('SlickDatView core file', () => {
 
     describe('sortedAddItem()', () => {
       it('should throw when calling the method without a sort comparer', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const newItem = { id: 2, name: 'Bob', age: 30 };
 
         dv.setItems(items);
@@ -1267,10 +1429,13 @@ describe('SlickDatView core file', () => {
 
       it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
         const refreshSpy = vi.spyOn(dv, 'refresh');
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const newItem = { id: 2, name: 'Bob', age: 30 };
         // const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
-        const comparer = (a, b) => a.id === b.id ? 0 : (a.id > b.id ? 1 : -1);
+        const comparer = (a, b) => (a.id === b.id ? 0 : a.id > b.id ? 1 : -1);
         const sortSpy = vi.spyOn(dv, 'sort');
 
         dv.setItems(items);
@@ -1298,7 +1463,10 @@ describe('SlickDatView core file', () => {
       });
 
       it('should call the method and expect item to be added when called with a descending sort comparer', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const newItem = { id: 2, name: 'Bob', age: 30 };
         const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
 
@@ -1330,7 +1498,10 @@ describe('SlickDatView core file', () => {
       });
 
       it('should throw when calling the method with input Ids array does not match items array', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
         dv.setItems(items);
         dv.sort(comparer);
@@ -1339,7 +1510,10 @@ describe('SlickDatView core file', () => {
       });
 
       it('should throw when calling the method with an input Id that does not match the updated item Id', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
         dv.setItems(items);
         dv.sort(comparer);
@@ -1348,7 +1522,10 @@ describe('SlickDatView core file', () => {
       });
 
       it('should throw when calling the method without a sort comparer', () => {
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
 
         dv.setItems(items);
         expect(() => dv.sortedUpdateItem(0, items[0])).toThrow('[SlickGrid DataView] sortedUpdateItem() requires a sort comparer, use sort()');
@@ -1356,7 +1533,10 @@ describe('SlickDatView core file', () => {
 
       it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
         const refreshSpy = vi.spyOn(dv, 'refresh');
-        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const items = [
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+        ];
         const updatedItem = { id: 1, name: 'Bob', age: 30 };
         const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
         const sortSpy = vi.spyOn(dv, 'sort');
@@ -1384,7 +1564,11 @@ describe('SlickDatView core file', () => {
       });
 
       it('should call the method and expect item to be added when called with a descending sort comparer', () => {
-        const items = [{ id: 2, name: 'John', age: 20 }, { id: 0, name: 'Jane', age: 24 }, { id: 1, name: 'Bob', age: 22 }];
+        const items = [
+          { id: 2, name: 'John', age: 20 },
+          { id: 0, name: 'Jane', age: 24 },
+          { id: 1, name: 'Bob', age: 22 },
+        ];
         const updatedItem = { id: 2, name: 'Bobby', age: 30 };
         const comparer = () => 1; // just return some static value
 
@@ -1412,7 +1596,11 @@ describe('SlickDatView core file', () => {
     it('should be able to set a filter and expect items to be filtered', () => {
       const refreshSpy = vi.spyOn(dv, 'refresh');
 
-      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       const filter = (item) => item.id >= 2;
       dv.setItems(items);
       dv.setFilter(filter);
@@ -1420,14 +1608,21 @@ describe('SlickDatView core file', () => {
       expect(dv.getItemCount()).toBe(3);
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ]);
       expect(refreshSpy).toHaveBeenCalled();
     });
 
     it('should be able to set a filter with Pagination and expect items to be filtered on first page', () => {
       const refreshSpy = vi.spyOn(dv, 'refresh');
 
-      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       const filter = (item) => item.id >= 2;
       dv.setItems(items);
       dv.setFilter(filter);
@@ -1435,12 +1630,19 @@ describe('SlickDatView core file', () => {
       expect(dv.getItemCount()).toBe(3);
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ]);
       expect(refreshSpy).toHaveBeenCalled();
     });
 
     it('should be able to set a filter with CSP Safe approach and expect items to be filtered', () => {
-      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       const filter = (item) => item.id >= 2;
 
       dv = new SlickDataView({ useCSPSafeFilter: true });
@@ -1450,7 +1652,10 @@ describe('SlickDatView core file', () => {
       expect(dv.getItemCount()).toBe(3);
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ]);
     });
 
     it('should be able to set a filter and extra filter arguments and expect items to be filtered', () => {
@@ -1458,7 +1663,12 @@ describe('SlickDatView core file', () => {
       function myFilter(item, args) {
         return item.name.toLowerCase().includes(args.searchString?.toLowerCase());
       }
-      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 0, name: 'Hobby', age: 44 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: false });
       dv.setItems(items);
@@ -1469,13 +1679,21 @@ describe('SlickDatView core file', () => {
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilterArgs()).toEqual({ searchString });
       expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 0, name: 'Hobby', age: 44 },
+      ]);
     });
 
     it('should be able to set a filter as CSP Safe and extra filter arguments and expect items to be filtered', () => {
       const searchString = 'Ob'; // we'll provide "searchString" as filter args
       const myFilter = (item, args) => item.name.toLowerCase().includes(args.searchString?.toLowerCase());
-      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 0, name: 'Hobby', age: 44 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
       dv.setItems(items);
@@ -1486,7 +1704,10 @@ describe('SlickDatView core file', () => {
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilterArgs()).toEqual({ searchString });
       expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 0, name: 'Hobby', age: 44 },
+      ]);
     });
   });
 
@@ -1497,7 +1718,11 @@ describe('SlickDatView core file', () => {
     });
 
     it('should be able to set a filter with Pagination and expect items to be filtered on 2nd page', () => {
-      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       const filter = (item) => item.id >= 2;
 
       dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
@@ -1512,11 +1737,18 @@ describe('SlickDatView core file', () => {
       expect(dv.getItemCount()).toBe(3);
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ]);
     });
 
     it('should be able to set an inline filter with Pagination and expect items to be filtered on 2nd page', () => {
-      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       const filter = (item) => item.id >= 2;
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
@@ -1531,16 +1763,23 @@ describe('SlickDatView core file', () => {
       expect(dv.getItemCount()).toBe(3);
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ]);
     });
 
     it('should be able to set a filter with Pagination and expect items to be filtered on 1st page', () => {
       const items = [
         { id: 1, name: 'Bob', age: 33 },
-        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
-        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 },
+        { id: 6, name: 'Omega', age: 24 },
       ];
-      function myFilter(item) { return item.id >= 2; }
+      function myFilter(item) {
+        return item.id >= 2;
+      }
 
       dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
       const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
@@ -1557,8 +1796,10 @@ describe('SlickDatView core file', () => {
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilteredItemCount()).toBe(4);
       expect(dv.getFilteredItems()).toEqual([
-        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
-        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 }
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 },
+        { id: 6, name: 'Omega', age: 24 },
       ]);
 
       dv.setRefreshHints({ isFilterExpanding: true });
@@ -1578,7 +1819,9 @@ describe('SlickDatView core file', () => {
       // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
       dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
       items[0].id = 8;
-      dv.setFilter(function (item) { return item.id >= 0; });
+      dv.setFilter(function (item) {
+        return item.id >= 0;
+      });
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
@@ -1587,10 +1830,14 @@ describe('SlickDatView core file', () => {
     it('should be able to set a inline filter with Pagination and expect items to be filtered on 1st page', () => {
       const items = [
         { id: 1, name: 'Bob', age: 33 },
-        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
-        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 },
+        { id: 6, name: 'Omega', age: 24 },
       ];
-      function myFilter(item) { return item.id >= 2; }
+      function myFilter(item) {
+        return item.id >= 2;
+      }
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
       const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
@@ -1607,8 +1854,10 @@ describe('SlickDatView core file', () => {
       expect(dv.getFilter()).toBeTruthy();
       expect(dv.getFilteredItemCount()).toBe(4);
       expect(dv.getFilteredItems()).toEqual([
-        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
-        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 }
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 },
+        { id: 6, name: 'Omega', age: 24 },
       ]);
 
       dv.setRefreshHints({ isFilterExpanding: true });
@@ -1616,7 +1865,9 @@ describe('SlickDatView core file', () => {
       dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
 
       // change filter without changing pagination & expect pageNum to be recalculated
-      dv.setFilter(function (item) { return item.id >= 10; });
+      dv.setFilter(function (item) {
+        return item.id >= 10;
+      });
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
@@ -1655,9 +1906,15 @@ describe('SlickDatView core file', () => {
     });
 
     it('should throw when calling syncGridSelection() and selection model is undefined', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
-      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
       dv.setItems(items);
@@ -1665,7 +1922,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should enable "preserveHidden" but keep "preserveHiddenOnSelectionChange" disabled and expect to only return current page selection when calling getAll methods', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
@@ -1695,7 +1955,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should disable "preserveHidden" and enable "preserveHiddenOnSelectionChange" and expect to return previous page + current page selections when calling getAll methods', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
@@ -1727,7 +1990,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should use setSelectedIds() to add/remove row selection with "preserveHiddenOnSelectionChange" enabled and "preserveHidden" disabled', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
@@ -1752,9 +2018,19 @@ describe('SlickDatView core file', () => {
       // remove selection
       dv.setSelectedIds([3], { isRowBeingAdded: false, applyRowSelectionToGrid: false });
 
-      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith({
-        added: false, dataView: dv, filteredIds: [4, 8], grid, ids: [3], rows: [1], selectedRowIds: [4, 8]
-      }, new SlickEventData(), dv);
+      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith(
+        {
+          added: false,
+          dataView: dv,
+          filteredIds: [4, 8],
+          grid,
+          ids: [3],
+          rows: [1],
+          selectedRowIds: [4, 8],
+        },
+        new SlickEventData(),
+        dv
+      );
       expect(dv.getAllSelectedIds()).toEqual([4, 8]);
       expect(dv.getAllSelectedItems()).toEqual([
         { id: 4, name: 'John', age: 20 },
@@ -1763,7 +2039,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should not expect row selections to be preserved when using "multiSelect:false" and setSelectedIds() even when either preseve is enabled ("preserveHidden" or "preserveHiddenOnSelectionChange")', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
@@ -1787,10 +2066,20 @@ describe('SlickDatView core file', () => {
       // remove selection
       dv.setSelectedIds([3], { isRowBeingAdded: false, applyRowSelectionToGrid: false });
 
-      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith({
-        // filteredIds & selectedRowIds becomes empty because of disabled multiSelect not preserving row selections
-        added: false, dataView: dv, filteredIds: [], grid, ids: [3], rows: [1], selectedRowIds: []
-      }, new SlickEventData(), dv);
+      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith(
+        {
+          // filteredIds & selectedRowIds becomes empty because of disabled multiSelect not preserving row selections
+          added: false,
+          dataView: dv,
+          filteredIds: [],
+          grid,
+          ids: [3],
+          rows: [1],
+          selectedRowIds: [],
+        },
+        new SlickEventData(),
+        dv
+      );
       expect(dv.getAllSelectedIds()).toEqual([]);
       expect(dv.getAllSelectedItems()).toEqual([]);
     });
@@ -1828,7 +2117,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onRowsOrCountChanged event is triggered', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
@@ -1837,13 +2129,24 @@ describe('SlickDatView core file', () => {
       dv.setItems(items);
       grid.setCellCssStyles('age_greater30_highlight', hash);
       dv.syncGridCellCssStyles(grid, 'age_greater30_highlight');
-      dv.onRowsOrCountChanged.notify({ currentRowCount: 11, dataView: dv, itemCount: 11, previousRowCount: 11, rowCountChanged: true, rowsChanged: true, rowsDiff: [0] });
+      dv.onRowsOrCountChanged.notify({
+        currentRowCount: 11,
+        dataView: dv,
+        itemCount: 11,
+        previousRowCount: 11,
+        rowCountChanged: true,
+        rowsChanged: true,
+        rowsDiff: [0],
+      });
 
       expect(setCssStyleSpy).toHaveBeenCalledWith('age_greater30_highlight', hash);
     });
 
     it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onCellCssStylesChanged event is triggered', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
@@ -1858,7 +2161,10 @@ describe('SlickDatView core file', () => {
     });
 
     it('should unsubscribe onCellCssStylesChanged & onRowsOrCountChanged when onCellCssStylesChanged event is triggered without a hash', () => {
-      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
       const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);

@@ -12,7 +12,7 @@ export interface BackendCallbacks {
 export class BackendUtilityService {
   protected _infiniteScrollBottomHit = false;
 
-  constructor(protected rxjs?: RxJsFacade | undefined) { }
+  constructor(protected rxjs?: RxJsFacade | undefined) {}
 
   addRxJsResource(rxjs: RxJsFacade): void {
     this.rxjs = rxjs;
@@ -67,7 +67,14 @@ export class BackendUtilityService {
    * Execute the backend callback, which are mainly the "process" & "postProcess" methods.
    * Also note that "preProcess" was executed prior to this callback
    */
-  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, extraCallbacks?: BackendCallbacks): void {
+  executeBackendCallback(
+    backendServiceApi: BackendServiceApi,
+    query: string,
+    args: any,
+    startTime: Date,
+    totalItems: number,
+    extraCallbacks?: BackendCallbacks
+  ): void {
     if (backendServiceApi) {
       // emit an onFilterChanged event when it's not called by a clear filter
       if (args && !args.clearFilterTriggered && !args.clearSortTriggered && extraCallbacks?.emitActionChangedCallback) {
@@ -97,7 +104,15 @@ export class BackendUtilityService {
         (process as unknown as Observable<any>)
           // the following takeUntil, will potentially be used later to cancel any pending http request (takeUntil another rx, that would be httpCancelRequests$, completes)
           // but make sure the observable is actually defined with the iif condition check before piping it to the takeUntil
-          .pipe(rxjs.takeUntil(rxjs.iif(() => rxjs.isObservable(extraCallbacks?.httpCancelRequestSubject), extraCallbacks?.httpCancelRequestSubject, rxjs.EMPTY)))
+          .pipe(
+            rxjs.takeUntil(
+              rxjs.iif(
+                () => rxjs.isObservable(extraCallbacks?.httpCancelRequestSubject),
+                extraCallbacks?.httpCancelRequestSubject,
+                rxjs.EMPTY
+              )
+            )
+          )
           .subscribe(
             (processResult: any) => {
               this.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems);

@@ -39,7 +39,7 @@ describe('InputMaskFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new InputMaskFilter({} as any);
@@ -111,7 +111,12 @@ describe('InputMaskFilter', () => {
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(filterElm.value).toBe('(123) 456-7890');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['1234567890'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      operator: 'EQ',
+      searchTerms: ['1234567890'],
+      shouldTriggerQuery: true,
+    });
   });
 
   it('should call "setValues" with 10 digits and other extra characters but still expect the value to be formatted as a phone as the mask format specifies', () => {

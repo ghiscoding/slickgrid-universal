@@ -1,5 +1,13 @@
-import { emptyElement, getOffset, } from '@slickgrid-universal/common';
-import type { Column, CompositeEditorOption, Editor, EditorArguments, EditorConstructor, EditorValidationResult, ElementPosition, } from '@slickgrid-universal/common';
+import { emptyElement, getOffset } from '@slickgrid-universal/common';
+import type {
+  Column,
+  CompositeEditorOption,
+  Editor,
+  EditorArguments,
+  EditorConstructor,
+  EditorValidationResult,
+  ElementPosition,
+} from '@slickgrid-universal/common';
 import type { HtmlElementPosition } from '@slickgrid-universal/utils';
 
 export interface CompositeEditorArguments extends EditorArguments {
@@ -32,7 +40,12 @@ export interface CompositeEditorArguments extends EditorArguments {
  *  position                -   A function to be called when the grid asks the editor to reposition itself.
  *  destroy                 -   A function to be called when the editor is destroyed.
  */
-export function SlickCompositeEditor(this: any, columns: Column[], containers: Array<HTMLDivElement>, options: CompositeEditorOption): {
+export function SlickCompositeEditor(
+  this: any,
+  columns: Column[],
+  containers: Array<HTMLDivElement>,
+  options: CompositeEditorOption
+): {
   (this: any, args: EditorArguments): void;
   prototype: any;
 } {
@@ -46,12 +59,12 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
     position: null,
     destroy: null,
     formValues: {},
-    editors: {}
+    editors: {},
   } as unknown as CompositeEditorOption;
   options = { ...defaultOptions, ...options };
 
   /* no operation (empty) function */
-  const noop = () => { };
+  const noop = () => {};
 
   const getContainerBox = (i: number): ElementPosition => {
     const container = containers[i];
@@ -66,7 +79,7 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
       right: offset.left + width,
       width,
       height,
-      visible: true
+      visible: true,
     };
   };
 
@@ -74,7 +87,7 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
   function editor(this: any, args: EditorArguments) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context: any = this;
-    let editors: Array<Editor & { args: EditorArguments; }> = [];
+    let editors: Array<Editor & { args: EditorArguments }> = [];
 
     function init() {
       let newArgs = {} as CompositeEditorArguments;
@@ -93,7 +106,7 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
 
           const currentEditor = new (column.editorClass as EditorConstructor)(newArgs);
           options.editors[column.id] = currentEditor; // add every Editor instance refs
-          editors.push(currentEditor as Editor & { args: EditorArguments; });
+          editors.push(currentEditor as Editor & { args: EditorArguments });
         }
         idx++;
       }
@@ -196,7 +209,7 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
                 index: idx,
                 editor: editors[idx],
                 container: containers[idx],
-                msg: validationResults.msg
+                msg: validationResults.msg,
               });
 
               if (validationElm) {
@@ -222,12 +235,12 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
         return {
           valid: false,
           msg: options.validationFailedMsg,
-          errors
+          errors,
         };
       }
       return {
         valid: true,
-        msg: ''
+        msg: '',
       };
     };
 

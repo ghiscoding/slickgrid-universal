@@ -10,9 +10,9 @@ export const executeCollectionSearchFilterCondition: FilterCondition = (options:
   const filterOperator = options.operator;
   let cellValue: string | string[];
   if (Array.isArray(options.cellValue) && (filterOperator === 'IN_COLLECTION' || filterOperator === 'NOT_IN_COLLECTION')) {
-    cellValue = (!!options.cellValue.length ? options.cellValue.map(value => `${value}`) : []);
+    cellValue = !!options.cellValue.length ? options.cellValue.map((value) => `${value}`) : [];
   } else {
-    cellValue = (options.cellValue === undefined || options.cellValue === null) ? '' : `${options.cellValue}`;
+    cellValue = options.cellValue === undefined || options.cellValue === null ? '' : `${options.cellValue}`;
   }
 
   return testFilterCondition(filterOperator || 'IN', cellValue, options.searchTerms || []);

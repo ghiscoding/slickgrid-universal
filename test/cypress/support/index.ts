@@ -29,8 +29,8 @@ Cypress.on('window:before:load', function (window) {
   };
 
   Object.defineProperty(window, 'onbeforeunload', {
-    get: () => { },
-    set: () => { }
+    get: () => {},
+    set: () => {},
   });
 });
 

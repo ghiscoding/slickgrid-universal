@@ -16,7 +16,7 @@ vi.mock('sortablejs', () => ({
     utils: {
       clone: (el) => el.cloneNode(true),
     },
-  }
+  },
 }));
 
 import { type SortableOptions } from 'sortablejs';
@@ -27,7 +27,7 @@ import { Aggregators } from '../../aggregators/aggregators.index.js';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index.js';
-import { BackendUtilityService, } from '../../services/backendUtility.service.js';
+import { BackendUtilityService } from '../../services/backendUtility.service.js';
 import { SharedService } from '../../services/shared.service.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SortDirectionNumber } from '../../enums/index.js';
@@ -51,7 +51,7 @@ const gridOptionsMock = {
   },
   showHeaderRow: false,
   showTopPanel: false,
-  showPreHeaderPanel: false
+  showPreHeaderPanel: false,
 } as unknown as GridOption;
 
 const dataViewStub = {
@@ -89,19 +89,29 @@ const mockColumns = [
   { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
   { id: 'lastName', name: 'Last Name', field: 'lastName', width: 100 },
   {
-    id: 'age', name: 'Age', field: 'age', width: 50, sortable: true,
+    id: 'age',
+    name: 'Age',
+    field: 'age',
+    width: 50,
+    sortable: true,
     grouping: {
-      getter: 'age', aggregators: [new Aggregators.Avg('age')],
+      getter: 'age',
+      aggregators: [new Aggregators.Avg('age')],
       formatter: (g) => `Age: ${g.value} <span class="text-green">(${g.count} items)</span>`,
-      collapsed: true
-    }
+      collapsed: true,
+    },
   },
   {
-    id: 'medals', name: 'Medals', field: 'medals', width: 50, sortable: true,
+    id: 'medals',
+    name: 'Medals',
+    field: 'medals',
+    width: 50,
+    sortable: true,
     grouping: {
-      getter: 'medals', aggregators: [new Aggregators.Sum('medals')],
+      getter: 'medals',
+      aggregators: [new Aggregators.Sum('medals')],
       formatter: (g) => `Medals: ${g.value} <span class="text-green">(${g.count} items)</span>`,
-    }
+    },
   },
   { name: 'Gender', field: 'gender', width: 75 },
 ] as Column[];
@@ -272,7 +282,17 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should execute the "onStart" and "onAdd" callbacks of Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
-      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      const fn = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        mockColumns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
       vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
@@ -302,7 +322,17 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should execute the "onEnd" callback of Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
-      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      const fn = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        mockColumns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
       vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue([]);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
@@ -318,7 +348,17 @@ describe('Draggable Grouping Plugin', () => {
     it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
-      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      const fn = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        mockColumns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -335,7 +375,17 @@ describe('Draggable Grouping Plugin', () => {
     it('should clear grouping and expect placeholder to be displayed when calling "onEnd" callback', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
-      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      const fn = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        mockColumns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -352,7 +402,17 @@ describe('Draggable Grouping Plugin', () => {
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
       vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
       getColumnIndexSpy.mockReturnValue(2);
-      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      const fn = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        mockColumns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
       vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
@@ -371,7 +431,17 @@ describe('Draggable Grouping Plugin', () => {
     it('should drag over dropzone and expect hover css class be added and removed when dragging outside of dropzone', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
-      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      const fn = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        mockColumns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -420,7 +490,17 @@ describe('Draggable Grouping Plugin', () => {
           plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
 
           vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
-          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          const fn = plugin.setupColumnReorder(
+            gridStub,
+            mockHeaderLeftDiv1,
+            {},
+            setColumnsSpy,
+            setColumnResizeSpy,
+            mockColumns,
+            getColumnIndexSpy,
+            GRID_UID,
+            triggerSpy
+          );
           vi.spyOn(plugin.droppableInstance!, 'toArray').mockReturnValue(['age', 'medals']);
           fn.sortableLeftInstance!.options.onStart!({} as any);
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
@@ -437,13 +517,15 @@ describe('Draggable Grouping Plugin', () => {
           expect(plugin.columnsGroupBy.length).toBeGreaterThan(0);
           const onGroupChangedArgs = {
             caller: 'sort-group',
-            groupColumns: [{
-              aggregators: expect.any(Array),
-              formatter: mockColumns[2].grouping!.formatter,
-              getter: 'age',
-              collapsed: false,
-              sortAsc: true,
-            }],
+            groupColumns: [
+              {
+                aggregators: expect.any(Array),
+                formatter: mockColumns[2].grouping!.formatter,
+                getter: 'age',
+                collapsed: false,
+                sortAsc: true,
+              },
+            ],
           };
           expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), onGroupChangedArgs);
           expect(groupChangedSpy).toHaveBeenCalledWith(onGroupChangedArgs);
@@ -459,8 +541,8 @@ describe('Draggable Grouping Plugin', () => {
           plugin.clearDroppedGroups();
           dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
           expect(dropboxPlaceholderElm.style.display).toBe('inline-block');
-          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'clear-all', groupColumns: [], });
-          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'clear-all', groupColumns: [], });
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'clear-all', groupColumns: [] });
+          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'clear-all', groupColumns: [] });
         });
 
         it('should use the Toggle All and expect classes to be toggled and DataView to call necessary method', () => {
@@ -544,13 +626,21 @@ describe('Draggable Grouping Plugin', () => {
           vi.clearAllMocks();
         });
 
-        it('should ', () => {
-
-        });
+        it('should ', () => {});
 
         it('should not expect any sort icons displayed when "hideGroupSortIcons" is set to True', () => {
           plugin.init(gridStub, { ...addonOptions, hideGroupSortIcons: true });
-          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          const fn = plugin.setupColumnReorder(
+            gridStub,
+            mockHeaderLeftDiv1,
+            {},
+            setColumnsSpy,
+            setColumnResizeSpy,
+            mockColumns,
+            getColumnIndexSpy,
+            GRID_UID,
+            triggerSpy
+          );
           vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
           fn.sortableLeftInstance!.options.onStart!({} as any);
@@ -572,7 +662,17 @@ describe('Draggable Grouping Plugin', () => {
           mockColumnsCopy[2].sortable = false; // change age column to not sortable
           vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumnsCopy);
           plugin.init(gridStub, { ...addonOptions });
-          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumnsCopy, getColumnIndexSpy, GRID_UID, triggerSpy);
+          const fn = plugin.setupColumnReorder(
+            gridStub,
+            mockHeaderLeftDiv1,
+            {},
+            setColumnsSpy,
+            setColumnResizeSpy,
+            mockColumnsCopy,
+            getColumnIndexSpy,
+            GRID_UID,
+            triggerSpy
+          );
           vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age']);
 
           fn.sortableLeftInstance!.options.onStart!({} as any);
@@ -590,7 +690,17 @@ describe('Draggable Grouping Plugin', () => {
         it('should toggle ascending/descending order when original sort is ascending then user clicked the sorting icon twice', () => {
           const onGroupChangedCallbackSpy = vi.fn();
           plugin.init(gridStub, { ...addonOptions, onGroupChanged: onGroupChangedCallbackSpy });
-          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          const fn = plugin.setupColumnReorder(
+            gridStub,
+            mockHeaderLeftDiv1,
+            {},
+            setColumnsSpy,
+            setColumnResizeSpy,
+            mockColumns,
+            getColumnIndexSpy,
+            GRID_UID,
+            triggerSpy
+          );
           vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
           const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
 
@@ -626,14 +736,29 @@ describe('Draggable Grouping Plugin', () => {
           expect(groupBySortAscIconElm).toBeTruthy();
           expect(groupBySortDescIconElm).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
-          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array), });
-          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array), });
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array) });
+          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array) });
         });
 
         it('should toggle ascending/descending order with different icons when original sort is ascending then user clicked the sorting icon twice', () => {
           const onGroupChangedCallbackSpy = vi.fn();
-          plugin.init(gridStub, { ...addonOptions, sortAscIconCssClass: 'mdi mdi-arrow-up', sortDescIconCssClass: 'mdi mdi-arrow-down', onGroupChanged: onGroupChangedCallbackSpy });
-          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          plugin.init(gridStub, {
+            ...addonOptions,
+            sortAscIconCssClass: 'mdi mdi-arrow-up',
+            sortDescIconCssClass: 'mdi mdi-arrow-down',
+            onGroupChanged: onGroupChangedCallbackSpy,
+          });
+          const fn = plugin.setupColumnReorder(
+            gridStub,
+            mockHeaderLeftDiv1,
+            {},
+            setColumnsSpy,
+            setColumnResizeSpy,
+            mockColumns,
+            getColumnIndexSpy,
+            GRID_UID,
+            triggerSpy
+          );
           vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
           const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
 
@@ -665,8 +790,8 @@ describe('Draggable Grouping Plugin', () => {
           expect(groupBySortAscIconElm).toBeTruthy();
           expect(groupBySortDescIconElm).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
-          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array), });
-          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array), });
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array) });
+          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array) });
 
           const sortResult1 = mockColumns[2].grouping!.comparer!({ value: 'John', count: 0 }, { value: 'Jane', count: 1 });
           expect(sortResult1).toBe(SortDirectionNumber.asc);
@@ -682,18 +807,23 @@ describe('Draggable Grouping Plugin', () => {
         gridOptionsMock.frozenColumn = 2;
         setColumnsSpy.mockClear();
         vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
-        getColumnIndexSpy
-          .mockReturnValueOnce(0)
-          .mockReturnValueOnce(1)
-          .mockReturnValueOnce(2)
-          .mockReturnValueOnce(3)
-          .mockReturnValueOnce(4);
+        getColumnIndexSpy.mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(2).mockReturnValueOnce(3).mockReturnValueOnce(4);
       });
 
       it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
         plugin.init(gridStub, { ...addonOptions });
         plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
-        const fn = plugin.setupColumnReorder(gridStub, [mockHeaderLeftDiv1, mockHeaderLeftDiv2], {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+        const fn = plugin.setupColumnReorder(
+          gridStub,
+          [mockHeaderLeftDiv1, mockHeaderLeftDiv2],
+          {},
+          setColumnsSpy,
+          setColumnResizeSpy,
+          mockColumns,
+          getColumnIndexSpy,
+          GRID_UID,
+          triggerSpy
+        );
         vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['firstName', 'lastName', 'age']);
         vi.spyOn(fn.sortableRightInstance, 'toArray').mockReturnValue(['gender']);
 

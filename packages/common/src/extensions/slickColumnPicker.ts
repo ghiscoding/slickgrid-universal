@@ -10,7 +10,7 @@ import {
   addCloseButtomElement,
   handleColumnPickerItemClick,
   populateColumnPicker,
-  updateColumnPickerOrder
+  updateColumnPickerOrder,
 } from '../extensions/extensionCommonUtils.js';
 import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
@@ -48,11 +48,15 @@ export class SlickColumnPicker {
     syncResizeTitle: 'Synchronous resize',
     headerColumnValueExtractor: (columnDef: Column) => {
       return getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML');
-    }
+    },
   } as ColumnPickerOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService) {
+  constructor(
+    protected readonly extensionUtility: ExtensionUtility,
+    protected readonly pubSubService: BasePubSubService,
+    protected readonly sharedService: SharedService
+  ) {
     this._bindEventService = new BindingEventService();
     this.onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
     this._eventHandler = new SlickEventHandler();
@@ -103,7 +107,7 @@ export class SlickColumnPicker {
     this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
 
     this._eventHandler.subscribe(this.grid.onPreHeaderContextMenu, (e) => {
-      if (['slick-column-name', 'slick-header-column'].some(className => e.target?.classList.contains(className))) {
+      if (['slick-column-name', 'slick-header-column'].some((className) => e.target?.classList.contains(className))) {
         this.handleHeaderContextMenu(e); // open picker only when preheader has column groups
       }
     });
@@ -112,7 +116,13 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onClick, this.disposeMenu.bind(this));
 
     // Hide the menu on outside click.
-    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, undefined, 'body');
+    this._bindEventService.bind(
+      document.body,
+      'mousedown',
+      this.handleBodyMouseDown.bind(this) as EventListener,
+      undefined,
+      'body'
+    );
 
     // destroy the picker if user leaves the page
     this._bindEventService.bind(document.body, 'beforeunload', this.dispose.bind(this) as EventListener, undefined, 'body');
@@ -145,7 +155,13 @@ export class SlickColumnPicker {
     addCloseButtomElement.call(this, menuElm);
 
     this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
-    this._bindEventService.bind(menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
+    this._bindEventService.bind(
+      menuElm,
+      'click',
+      handleColumnPickerItemClick.bind(this) as EventListener,
+      undefined,
+      'parent-menu'
+    );
 
     document.body.appendChild(menuElm);
 
@@ -193,6 +209,7 @@ export class SlickColumnPicker {
 
   /** Mouse down handler when clicking anywhere in the DOM body */
   protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>): void {
+    // prettier-ignore
     if ((this._menuElm !== e.target && !this._menuElm?.contains(e.target)) || (e.target.className === 'close' && e.target.closest('.slick-column-picker'))) {
       this.disposeMenu();
     }
@@ -225,14 +242,17 @@ export class SlickColumnPicker {
       const gridPos = this.grid.getGridPosition();
       const menuWidth = this._menuElm.clientWidth || 0;
       let menuOffsetLeft = targetEvent.pageX || 0;
-      if (gridPos?.width && (menuOffsetLeft + menuWidth >= gridPos.width)) {
+      if (gridPos?.width && menuOffsetLeft + menuWidth >= gridPos.width) {
         menuOffsetLeft = menuOffsetLeft - menuWidth;
       }
 
       this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
       this._menuElm.style.left = `${menuOffsetLeft}px`;
       this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
-      this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
+      this._menuElm.style.maxHeight = findWidthOrDefault(
+        this.addonOptions.maxHeight,
+        `${window.innerHeight - targetEvent.clientY}px`
+      );
       this._menuElm.style.display = 'block';
       this._menuElm.ariaExpanded = 'true';
       this._menuElm.appendChild(this._listElm);

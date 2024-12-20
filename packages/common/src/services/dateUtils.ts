@@ -11,8 +11,8 @@ import { FieldType } from '../enums/index.js';
  *   - withDefaultIso8601: should we use ISO8601 for `FieldType.date` or `FieldType.dateIso`
  */
 export function mapTempoDateFormatWithFieldType(
-  fieldType: typeof FieldType[keyof typeof FieldType],
-  options?: { withZeroPadding?: boolean; withDefaultIso8601?: boolean; }
+  fieldType: (typeof FieldType)[keyof typeof FieldType],
+  options?: { withZeroPadding?: boolean; withDefaultIso8601?: boolean }
 ): string {
   let map: string;
   const withZeroPadding = options?.withZeroPadding ?? false;
@@ -36,17 +36,13 @@ export function mapTempoDateFormatWithFieldType(
       map = 'DD/MM/YYYY';
       break;
     case FieldType.dateEuroShort:
-      map = withZeroPadding
-        ? 'DD/MM/YY'
-        : 'D/M/YY';
+      map = withZeroPadding ? 'DD/MM/YY' : 'D/M/YY';
       break;
     case FieldType.dateTimeEuro:
       map = 'DD/MM/YYYY HH:mm:ss';
       break;
     case FieldType.dateTimeShortEuro:
-      map = withZeroPadding
-        ? 'DD/MM/YYYY HH:mm'
-        : 'D/M/YYYY H:m';
+      map = withZeroPadding ? 'DD/MM/YYYY HH:mm' : 'D/M/YYYY H:m';
       break;
     case FieldType.dateTimeEuroAmPm:
       map = 'DD/MM/YYYY hh:mm:ss a';
@@ -55,28 +51,20 @@ export function mapTempoDateFormatWithFieldType(
       map = 'DD/MM/YYYY hh:mm:ss A';
       break;
     case FieldType.dateTimeEuroShort:
-      map = withZeroPadding
-        ? 'DD/MM/YY HH:mm:ss'
-        : 'D/M/YY H:m:s';
+      map = withZeroPadding ? 'DD/MM/YY HH:mm:ss' : 'D/M/YY H:m:s';
       break;
     case FieldType.dateTimeEuroShortAmPm:
-      map = withZeroPadding
-        ? 'DD/MM/YY hh:mm:ss a'
-        : 'D/M/YY h:m:s a';
+      map = withZeroPadding ? 'DD/MM/YY hh:mm:ss a' : 'D/M/YY h:m:s a';
       break;
     case FieldType.dateTimeEuroShortAM_PM:
-      map = withZeroPadding
-        ? 'DD/MM/YY hh:mm:ss A'
-        : 'D/M/YY h:m:s A';
+      map = withZeroPadding ? 'DD/MM/YY hh:mm:ss A' : 'D/M/YY h:m:s A';
       break;
     // all US Formats (month/date/year)
     case FieldType.dateUs:
       map = 'MM/DD/YYYY';
       break;
     case FieldType.dateUsShort:
-      map = withZeroPadding
-        ? 'MM/DD/YY'
-        : 'M/D/YY';
+      map = withZeroPadding ? 'MM/DD/YY' : 'M/D/YY';
       break;
     case FieldType.dateTimeUs:
       map = 'MM/DD/YYYY HH:mm:ss';
@@ -88,24 +76,16 @@ export function mapTempoDateFormatWithFieldType(
       map = 'MM/DD/YYYY hh:mm:ss A';
       break;
     case FieldType.dateTimeUsShort:
-      map = withZeroPadding
-        ? 'MM/DD/YY HH:mm:ss'
-        : 'M/D/YY H:m:s';
+      map = withZeroPadding ? 'MM/DD/YY HH:mm:ss' : 'M/D/YY H:m:s';
       break;
     case FieldType.dateTimeUsShortAmPm:
-      map = withZeroPadding
-        ? 'MM/DD/YY hh:mm:ss a'
-        : 'M/D/YY h:m:s a';
+      map = withZeroPadding ? 'MM/DD/YY hh:mm:ss a' : 'M/D/YY h:m:s a';
       break;
     case FieldType.dateTimeUsShortAM_PM:
-      map = withZeroPadding
-        ? 'MM/DD/YY hh:mm:ss A'
-        : 'M/D/YY h:m:s A';
+      map = withZeroPadding ? 'MM/DD/YY hh:mm:ss A' : 'M/D/YY h:m:s A';
       break;
     case FieldType.dateTimeShortUs:
-      map = withZeroPadding
-        ? 'MM/DD/YYYY HH:mm'
-        : 'M/D/YYYY H:m';
+      map = withZeroPadding ? 'MM/DD/YYYY HH:mm' : 'M/D/YYYY H:m';
       break;
     case FieldType.dateUtc:
       map = 'ISO8601';
@@ -113,9 +93,7 @@ export function mapTempoDateFormatWithFieldType(
     case FieldType.date:
     case FieldType.dateIso:
     default:
-      map = options?.withDefaultIso8601
-        ? 'ISO8601'
-        : 'YYYY-MM-DD';
+      map = options?.withDefaultIso8601 ? 'ISO8601' : 'YYYY-MM-DD';
       break;
   }
   return map;
@@ -128,7 +106,11 @@ export function mapTempoDateFormatWithFieldType(
  * @param {FieldType} outputFieldType
  * @returns
  */
-export function formatDateByFieldType(inputDate: Date | string, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
+export function formatDateByFieldType(
+  inputDate: Date | string,
+  inputFieldType: (typeof FieldType)[keyof typeof FieldType] | undefined,
+  outputFieldType: (typeof FieldType)[keyof typeof FieldType]
+): string {
   const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
   const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
   const date = inputDate instanceof Date ? inputDate : tryParseDate(inputDate, inputFormat as string);
@@ -146,7 +128,7 @@ export function formatDateByFieldType(inputDate: Date | string, inputFieldType: 
  * Try to parse date with Tempo or return `false` (instead of throwing) if Date is invalid.
  * When using strict mode, it will detect if the date is invalid when outside of the calendar (e.g. "2011-11-31").
  * However in non-strict mode, it will roll the date backward if out of calendar (e.g. "2011-11-31" would return "2011-11-30").
-   * @param {string|Date} [inputDate] - input date (or null)
+ * @param {string|Date} [inputDate] - input date (or null)
  * @param {string} [inputFormat] - optional input format to use when parsing
  * @param {Boolean} [strict] - are we using strict mode?
  * @returns
@@ -156,12 +138,14 @@ export function tryParseDate(inputDate?: string | Date, inputFormat?: string, st
     if (!inputDate) {
       return false;
     }
-    return inputDate instanceof Date ? inputDate : parse({
-      date: inputDate,
-      format: inputFormat as string,
-      dateOverflow: strict ? 'throw' : 'backward',
-      locale: 'en-US'
-    });
+    return inputDate instanceof Date
+      ? inputDate
+      : parse({
+          date: inputDate,
+          format: inputFormat as string,
+          dateOverflow: strict ? 'throw' : 'backward',
+          locale: 'en-US',
+        });
   } catch (_e) {
     return false;
   }

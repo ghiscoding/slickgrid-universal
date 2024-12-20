@@ -63,9 +63,9 @@ describe('CellRangeDecorator Plugin', () => {
     plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
     plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange);
 
-    expect(plugin.addonElement!.style.top).toEqual('45px');    // 25 + 20px
-    expect(plugin.addonElement!.style.left).toEqual('31px');   // 26 + 5px
+    expect(plugin.addonElement!.style.top).toEqual('45px'); // 25 + 20px
+    expect(plugin.addonElement!.style.left).toEqual('31px'); // 26 + 5px
     expect(plugin.addonElement!.style.height).toEqual('20px'); // 12 - 25 + 33px
-    expect(plugin.addonElement!.style.width).toEqual('13px');  // 27 - 26 + 12px
+    expect(plugin.addonElement!.style.width).toEqual('13px'); // 27 - 26 + 12px
   });
 });

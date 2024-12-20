@@ -2,7 +2,15 @@ import { format } from '@formkit/tempo';
 import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 
 import { FieldType } from '../enums/fieldType.enum.js';
-import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index.js';
+import type {
+  Column,
+  ExcelExportOption,
+  Formatter,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
+  GridOption,
+  TextExportOption,
+} from '../interfaces/index.js';
 import { multipleFormatter } from './multipleFormatter.js';
 import { Constants } from '../constants.js';
 import { type SlickGrid } from '../core/index.js';
@@ -38,7 +46,12 @@ export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Col
   }
 }
 
-export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, numberType: NumberType, formatterType: FormatterType): {
+export function retrieveFormatterOptions(
+  columnDef: Column,
+  grid: SlickGrid,
+  numberType: NumberType,
+  formatterType: FormatterType
+): {
   minDecimal: number;
   maxDecimal: number;
   decimalSeparator: ',' | '.';
@@ -70,12 +83,27 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
     default:
       break;
   }
-  const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
+  const gridOptions = (grid && typeof grid.getOptions === 'function' ? grid.getOptions() : {}) as GridOption;
   const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, gridOptions, defaultMinDecimal);
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, gridOptions, defaultMaxDecimal);
-  const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, gridOptions, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
-  const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, gridOptions, Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR);
-  const wrapNegativeNumber = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, gridOptions, Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET);
+  const decimalSeparator = getValueFromParamsOrFormatterOptions(
+    'decimalSeparator',
+    columnDef,
+    gridOptions,
+    Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR
+  );
+  const thousandSeparator = getValueFromParamsOrFormatterOptions(
+    'thousandSeparator',
+    columnDef,
+    gridOptions,
+    Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR
+  );
+  const wrapNegativeNumber = getValueFromParamsOrFormatterOptions(
+    'displayNegativeNumberWithParentheses',
+    columnDef,
+    gridOptions,
+    Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET
+  );
   const currencyPrefix = getValueFromParamsOrFormatterOptions('currencyPrefix', columnDef, gridOptions, '');
   const currencySuffix = getValueFromParamsOrFormatterOptions('currencySuffix', columnDef, gridOptions, '');
 
@@ -84,7 +112,17 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
     numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, gridOptions, '');
   }
 
-  return { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber, currencyPrefix, currencySuffix, numberPrefix, numberSuffix };
+  return {
+    minDecimal,
+    maxDecimal,
+    decimalSeparator,
+    thousandSeparator,
+    wrapNegativeNumber,
+    currencyPrefix,
+    currencySuffix,
+    numberPrefix,
+    numberSuffix,
+  };
 }
 
 /**
@@ -93,7 +131,12 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
  * 2- Grid Options "formatterOptions"
  * 3- nothing found, return default value provided
  */
-export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, gridOptions: GridOption, defaultValue?: any): any {
+export function getValueFromParamsOrFormatterOptions(
+  optionName: string,
+  columnDef: Column,
+  gridOptions: GridOption,
+  defaultValue?: any
+): any {
   const params = columnDef && columnDef.params;
 
   if (params && params.hasOwnProperty(optionName)) {
@@ -105,11 +148,14 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 }
 
 /** From a FieldType, return the associated date Formatter */
-export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
+export function getAssociatedDateFormatter(
+  fieldType: (typeof FieldType)[keyof typeof FieldType],
+  defaultSeparator: string
+): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
-    const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
+    const gridOptions = (grid && typeof grid.getOptions === 'function' ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? FieldType.date;
     const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
@@ -136,7 +182,6 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
   };
 }
 
-
 /**
  * Goes through every possible ways to find and apply a Formatter when found,
  * it will first check if a `exportCustomFormatter` is defined else it will check if there's a regular `formatter` and `exportWithFormatter` is enabled.
@@ -149,7 +194,14 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
  * @param {Object} exportOptions - Excel or Text Export Options
  * @returns formatted string output or empty string
  */
-export function exportWithFormatterWhenDefined<T = any>(row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption): string {
+export function exportWithFormatterWhenDefined<T = any>(
+  row: number,
+  col: number,
+  columnDef: Column<T>,
+  dataContext: T,
+  grid: SlickGrid,
+  exportOptions?: TextExportOption | ExcelExportOption
+): string {
   let isEvaluatingFormatter = false;
 
   // check if "exportWithFormatter" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions
@@ -170,7 +222,7 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
-  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? stripTags(output) : output;
+  return exportOptions?.sanitizeDataExport && typeof output === 'string' ? stripTags(output) : output;
 }
 
 /**
@@ -183,7 +235,14 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
  * @param {Object} grid - Slick Grid object
  * @returns formatted string output or empty string
  */
-export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undefined, row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid): string {
+export function parseFormatterWhenExist<T = any>(
+  formatter: Formatter<T> | undefined,
+  row: number,
+  col: number,
+  columnDef: Column<T>,
+  dataContext: T,
+  grid: SlickGrid
+): string {
   let output = '';
 
   // does the field have the dot (.) notation and is a complex object? if so pull the first property name
@@ -191,17 +250,19 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
   let fieldProperty = fieldId;
   if (typeof columnDef.field === 'string' && columnDef.field.indexOf('.') > 0) {
     const props = columnDef.field.split('.');
-    fieldProperty = (props.length > 0) ? props[0] : columnDef.field;
+    fieldProperty = props.length > 0 ? props[0] : columnDef.field;
   }
 
   const cellValue = dataContext?.hasOwnProperty(fieldProperty as keyof T) ? dataContext[fieldProperty as keyof T] : null;
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
-    const cellResult = isPrimitiveOrHTML(formattedData) ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
+    const cellResult = isPrimitiveOrHTML(formattedData)
+      ? formattedData
+      : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
     output = getHtmlStringOutput(cellResult as string | HTMLElement | DocumentFragment);
   } else {
-    output = ((!dataContext?.hasOwnProperty(fieldProperty as keyof T)) ? '' : cellValue) as string;
+    output = (!dataContext?.hasOwnProperty(fieldProperty as keyof T) ? '' : cellValue) as string;
   }
 
   if (output === null || output === undefined) {

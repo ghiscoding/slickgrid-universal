@@ -126,7 +126,7 @@ export interface CompositeEditorOpenDetailOption {
      * OR a preview of the updated dataset when modal type is (mass-update or mass-selection).
      * NOTE: the later requires `shouldPreviewMassChangeDataset` to be enabled since it could be resource heavy with large dataset.
      */
-    dataContextOrUpdatedDatasetPreview?: any | any[],
+    dataContextOrUpdatedDatasetPreview?: any | any[]
   ) => Promise<boolean> | boolean;
 
   /**

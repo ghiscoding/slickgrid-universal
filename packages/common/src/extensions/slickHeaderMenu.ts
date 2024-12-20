@@ -1,5 +1,13 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, classNameToList, toKebabCase } from '@slickgrid-universal/utils';
+import {
+  arrayRemoveItemByIndex,
+  calculateAvailableSpace,
+  createDomElement,
+  getOffsetRelativeToParent,
+  getOffset,
+  classNameToList,
+  toKebabCase,
+} from '@slickgrid-universal/utils';
 
 import { EmitterType } from '../enums/index.js';
 import type {
@@ -58,7 +66,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     protected readonly filterService: FilterService,
     protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
-    protected readonly sortService: SortService,
+    protected readonly sortService: SortService
   ) {
     super(extensionUtility, pubSubService, sharedService);
     this._menuCssPrefix = 'slick-menu';
@@ -125,7 +133,12 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this._menuElm = undefined;
   }
 
-  repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, item: MenuCommandItem, level: number, columnDef: Column): void {
+  repositionSubMenu(
+    e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData,
+    item: MenuCommandItem,
+    level: number,
+    columnDef: Column
+  ): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const subMenuElm = this.createCommandMenu(item.commandItems || [], columnDef, level + 1, item);
     document.body.appendChild(subMenuElm);
@@ -136,14 +149,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const buttonElm = e.target as HTMLDivElement; // get header button createElement
     const isSubMenu = menuElm.classList.contains('slick-submenu');
     const parentElm = isSubMenu
-      ? (e.target as HTMLElement).closest('.slick-menu-item') as HTMLDivElement
-      : buttonElm as HTMLElement;
+      ? ((e.target as HTMLElement).closest('.slick-menu-item') as HTMLDivElement)
+      : (buttonElm as HTMLElement);
 
     const relativePos = getOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
     const gridPos = this.grid.getGridPosition();
     const menuWidth = menuElm.offsetWidth;
     const parentOffset = getOffset(parentElm);
-    let menuOffsetLeft = isSubMenu ? parentOffset.left : relativePos?.left ?? 0;
+    let menuOffsetLeft = isSubMenu ? parentOffset.left : (relativePos?.left ?? 0);
     let menuOffsetTop = isSubMenu
       ? parentOffset.top
       : (relativePos?.top ?? 0) + (this.addonOptions?.menuOffsetTop ?? 0) + buttonElm.clientHeight;
@@ -154,11 +167,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
       const menuHeight = menuElm?.clientHeight || 0;
       const { bottom: availableSpaceBottom, top: availableSpaceTop } = calculateAvailableSpace(parentElm);
-      const dropPosition = ((availableSpaceBottom < menuHeight) && (availableSpaceTop > availableSpaceBottom)) ? 'top' : 'bottom';
+      const dropPosition = availableSpaceBottom < menuHeight && availableSpaceTop > availableSpaceBottom ? 'top' : 'bottom';
       if (dropPosition === 'top') {
         menuElm.classList.remove('dropdown');
         menuElm.classList.add('dropup');
-        menuOffsetTop -= (menuHeight - parentElm.clientHeight);
+        menuOffsetTop -= menuHeight - parentElm.clientHeight;
       } else {
         menuElm.classList.remove('dropup');
         menuElm.classList.add('dropdown');
@@ -172,7 +185,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       // sub-menu
       const subMenuPosCalc = menuOffsetLeft + Number(menuWidth) + parentElm.clientWidth; // calculate coordinate at caller element far right
       const browserWidth = document.documentElement.clientWidth;
-      const dropSide = (subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth) ? 'left' : 'right';
+      const dropSide = subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth ? 'left' : 'right';
       if (dropSide === 'left') {
         menuElm.classList.remove('dropright');
         menuElm.classList.add('dropleft');
@@ -185,7 +198,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     } else {
       // parent menu
       menuOffsetLeft = relativePos?.left ?? 0;
-      if (this.addonOptions.autoAlign && (gridPos?.width && (menuOffsetLeft + (menuElm.clientWidth ?? 0)) >= gridPos.width)) {
+      if (this.addonOptions.autoAlign && gridPos?.width && menuOffsetLeft + (menuElm.clientWidth ?? 0) >= gridPos.width) {
         menuOffsetLeft = menuOffsetLeft + buttonElm.clientWidth - menuElm.clientWidth + (this.addonOptions?.autoAlignOffset || 0);
       }
     }
@@ -221,7 +234,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' }, args.node);
+      const headerButtonDivElm = createDomElement(
+        'div',
+        { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' },
+        args.node
+      );
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...classNameToList(this.addonOptions.buttonCssClass));
@@ -244,14 +261,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
    * @param {Object} event - The event
    * @param {Object} args.column - The column definition
    */
-  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement; }): void {
+  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement }): void {
     const column = args.column;
 
     if (column.header?.menu) {
       // Removing buttons will also clean up any event handlers and data.
       // NOTE: If you attach event handlers directly or using a different framework,
       //       you must also clean them up here to avoid events leaking.
-      args.node.querySelectorAll('.slick-header-menu-button').forEach(elm => elm.remove());
+      args.node.querySelectorAll('.slick-header-menu-button').forEach((elm) => elm.remove());
     }
   }
 
@@ -266,13 +283,22 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         isMenuClicked = true;
       }
 
-      if (this._menuElm !== e.target && !isMenuClicked && !e.defaultPrevented || (e.target.className === 'close' && parentMenuElm)) {
+      if (
+        (this._menuElm !== e.target && !isMenuClicked && !e.defaultPrevented) ||
+        (e.target.className === 'close' && parentMenuElm)
+      ) {
         this.hideMenu();
       }
     }
   }
 
-  protected handleMenuItemCommandClick(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column): boolean | void {
+  protected handleMenuItemCommandClick(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    _type: MenuType,
+    item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+    level = 0,
+    columnDef?: Column
+  ): boolean | void {
     if (item !== 'divider' && !item.disabled && !(item as MenuCommandItem).divider) {
       const command = (item as MenuCommandItem).command || '';
 
@@ -311,7 +337,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column): void {
+  protected handleMenuItemMouseOver(
+    e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData,
+    _type: MenuType,
+    item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+    level = 0,
+    columnDef?: Column
+  ): void {
     if (item !== 'divider' && !item.disabled && !(item as MenuCommandItem).divider) {
       if ((item as MenuCommandItem).commandItems) {
         this.repositionSubMenu(e, item as MenuCommandItem, level, columnDef as Column);
@@ -342,8 +374,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (!columnDef.header) {
             columnDef.header = {
               menu: {
-                commandItems: []
-              }
+                commandItems: [],
+              },
             };
           } else if (!columnDef.header.menu) {
             // we might have header buttons without header menu,
@@ -356,72 +388,85 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           let hasFrozenOrResizeCommand = false;
           if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
             hasFrozenOrResizeCommand = true;
-            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'freeze-columns')) {
+            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'freeze-columns')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
                 titleKey: `${translationPrefix}FREEZE_COLUMNS`,
                 command: 'freeze-columns',
-                positionOrder: 45
+                positionOrder: 45,
               });
             }
           }
 
           // Column Resize by Content (column autofit)
-          if (headerMenuOptions && !headerMenuOptions.hideColumnResizeByContentCommand && this.sharedService.gridOptions.enableColumnResizeOnDoubleClick) {
+          if (
+            headerMenuOptions &&
+            !headerMenuOptions.hideColumnResizeByContentCommand &&
+            this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
+          ) {
             hasFrozenOrResizeCommand = true;
-            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'column-resize-by-content')) {
+            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'column-resize-by-content')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
                 titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
                 command: 'column-resize-by-content',
-                positionOrder: 47
+                positionOrder: 47,
               });
             }
           }
 
           // add a divider (separator) between the top freeze columns commands and the rest of the commands
-          if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 48)) {
+          if (
+            hasFrozenOrResizeCommand &&
+            !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)
+          ) {
             columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 48 });
           }
 
           // Sorting Commands
           if (gridOptions.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
-            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-asc')) {
+            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'sort-asc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-sort-ascending',
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
                 command: 'sort-asc',
-                positionOrder: 50
+                positionOrder: 50,
               });
             }
-            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-desc')) {
+            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'sort-desc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-sort-descending',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: 'sort-desc',
-                positionOrder: 51
+                positionOrder: 51,
               });
             }
 
             // add a divider (separator) between the top sort commands and the other clear commands
-            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 52)) {
+            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 52)) {
               columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 52 });
             }
 
-            if (!headerMenuOptions.hideClearSortCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-sort')) {
+            if (
+              !headerMenuOptions.hideClearSortCommand &&
+              !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'clear-sort')
+            ) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
                 titleKey: `${translationPrefix}REMOVE_SORT`,
                 command: 'clear-sort',
-                positionOrder: 58
+                positionOrder: 58,
               });
             }
           }
 
           // Filter Shortcuts via sub-menus
-          if (columnDef.filter?.filterShortcuts && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'filter-shortcuts-root-menu')) {
+          if (
+            columnDef.filter?.filterShortcuts &&
+            !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'filter-shortcuts-root-menu')
+          ) {
             const shortcutSubItems: MenuCommandItem[] = [];
-            columnDef.filter.filterShortcuts.forEach(fs => {
+            columnDef.filter.filterShortcuts.forEach((fs) => {
               // use the Title name as the command key in kebab cas
               const command = fs.title ? toKebabCase(fs.title) : (fs.titleKey || '').toLowerCase().replaceAll('_', '-');
 
@@ -430,9 +475,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 command,
                 action: (_e, args) => {
                   // get associated Column Filter instance and use its `setValues()` method to update the filter with provided `searchTerms`
-                  const filterRef = this.filterService.getFiltersMetadata().find(f => f.columnDef.id === args.column.id);
+                  const filterRef = this.filterService.getFiltersMetadata().find((f) => f.columnDef.id === args.column.id);
                   filterRef?.setValues(fs.searchTerms, fs.operator, true);
-                }
+                },
               });
             });
 
@@ -442,34 +487,44 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               titleKey: `${translationPrefix}FILTER_SHORTCUTS`,
               command: 'filter-shortcuts-root-menu',
               positionOrder: filterShortcutsPositionOrder,
-              commandItems: shortcutSubItems
+              commandItems: shortcutSubItems,
             });
 
             // add a divider (separator) between the top freeze columns commands and the rest of the commands
-            if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === filterShortcutsPositionOrder + 1)) {
+            if (
+              hasFrozenOrResizeCommand &&
+              !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === filterShortcutsPositionOrder + 1)
+            ) {
               columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: filterShortcutsPositionOrder + 1 });
             }
           }
 
           // Filtering Commands
           if (gridOptions.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
-            if (!headerMenuOptions.hideClearFilterCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-filter')) {
+            if (
+              !headerMenuOptions.hideClearFilterCommand &&
+              !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'clear-filter')
+            ) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
                 titleKey: `${translationPrefix}REMOVE_FILTER`,
                 command: 'clear-filter',
-                positionOrder: 57
+                positionOrder: 57,
               });
             }
           }
 
           // Hide Column Command
-          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'hide-column')) {
+          if (
+            headerMenuOptions &&
+            !headerMenuOptions.hideColumnHideCommand &&
+            !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'hide-column')
+          ) {
             columnHeaderMenuItems.push({
               iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
               titleKey: `${translationPrefix}HIDE_COLUMN`,
               command: 'hide-column',
-              positionOrder: 59
+              positionOrder: 59,
             });
           }
 
@@ -483,21 +538,30 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Clear the Filter on the current column (if it's actually filtered) */
-  protected clearColumnFilter(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs): void {
+  protected clearColumnFilter(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    args: MenuCommandItemCallbackArgs
+  ): void {
     if (args?.column) {
       this.filterService.clearFilterByColumnId(event, args.column.id);
     }
   }
 
   /** Clear the Sort on the current column (if it's actually sorted) */
-  protected clearColumnSort(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs): void {
+  protected clearColumnSort(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    args: MenuCommandItemCallbackArgs
+  ): void {
     if (args?.column && this.sharedService) {
       this.sortService.clearSortByColumnId(event, args.column.id);
     }
   }
 
   /** Execute the Header Menu Commands that was triggered by the onCommand subscribe */
-  protected executeHeaderMenuInternalCommands(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs): void {
+  protected executeHeaderMenuInternalCommands(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    args: MenuCommandItemCallbackArgs
+  ): void {
     if (args?.command) {
       switch (args.command) {
         case 'hide-column':
@@ -517,7 +581,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           break;
         case 'freeze-columns':
           const visibleColumns = [...this.sharedService.visibleColumns];
-          const columnPosition = visibleColumns.findIndex(col => col.id === args.column.id);
+          const columnPosition = visibleColumns.findIndex((col) => col.id === args.column.id);
           const newGridOptions = { frozenColumn: columnPosition, enableMouseWheelScrollHandler: true };
 
           // to circumvent a bug in SlickGrid core lib, let's keep the columns positions ref and re-apply them after calling setOptions
@@ -531,6 +595,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
           // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
           // to make sure that we only use the visible columns, not doing this will have the undesired effect of showing back some of the hidden columns
+          // prettier-ignore
           if (this.sharedService.hasColumnsReordered || (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length)) {
             this.sharedService.slickGrid.setColumns(visibleColumns);
           } else {
@@ -546,7 +611,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           break;
         case 'sort-asc':
         case 'sort-desc':
-          const isSortingAsc = (args.command === 'sort-asc');
+          const isSortingAsc = args.command === 'sort-asc';
           this.sortColumn(event, args, isSortingAsc);
           break;
         default:
@@ -561,25 +626,31 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const callbackArgs = {
       grid: this.grid,
       column: columnDef,
-      menu
+      menu,
     } as HeaderMenuCommandItemCallbackArgs;
 
     // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
     if (typeof e.stopPropagation === 'function') {
       this.pubSubService.publish('onHeaderMenuBeforeMenuShow', callbackArgs);
-      if (typeof this.addonOptions?.onBeforeMenuShow === 'function' && this.addonOptions?.onBeforeMenuShow(e, callbackArgs) === false) {
+      if (
+        typeof this.addonOptions?.onBeforeMenuShow === 'function' &&
+        this.addonOptions?.onBeforeMenuShow(e, callbackArgs) === false
+      ) {
         return;
       }
     }
 
     // create 1st parent menu container & reposition it
-    this._menuElm = this.createCommandMenu((menu.commandItems) as Array<MenuCommandItem | 'divider'>, columnDef);
+    this._menuElm = this.createCommandMenu(menu.commandItems as Array<MenuCommandItem | 'divider'>, columnDef);
     this.grid.getContainerNode()?.appendChild(this._menuElm);
     this.repositionMenu(e, this._menuElm);
 
     // execute optional callback method defined by the user
     this.pubSubService.publish('onHeaderMenuAfterMenuShow', callbackArgs);
-    if (typeof this.addonOptions?.onAfterMenuShow === 'function' && this.addonOptions?.onAfterMenuShow(e, callbackArgs) === false) {
+    if (
+      typeof this.addonOptions?.onAfterMenuShow === 'function' &&
+      this.addonOptions?.onAfterMenuShow(e, callbackArgs) === false
+    ) {
       return;
     }
 
@@ -589,12 +660,17 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
-  protected createCommandMenu(commandItems: Array<MenuCommandItem | 'divider'>, columnDef: Column, level = 0, item?: MenuCommandItem | 'divider'): HTMLDivElement {
+  protected createCommandMenu(
+    commandItems: Array<MenuCommandItem | 'divider'>,
+    columnDef: Column,
+    level = 0,
+    item?: MenuCommandItem | 'divider'
+  ): HTMLDivElement {
     // to avoid having multiple sub-menu trees opened
     // we need to somehow keep trace of which parent menu the tree belongs to
     // and we should keep ref of only the first sub-menu parent, we can use the command name (remove any whitespaces though)
     const subMenuCommand = (item as MenuCommandItem)?.command;
-    let subMenuId = (level === 1 && subMenuCommand) ? subMenuCommand.replace(/\s/g, '') : '';
+    let subMenuId = level === 1 && subMenuCommand ? subMenuCommand.replace(/\s/g, '') : '';
     if (subMenuId) {
       this._subMenuParentId = subMenuId;
     }
@@ -603,7 +679,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`);
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
+      `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
+    );
 
     // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
     if (bodyMenuElm) {
@@ -638,7 +716,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       grid: this.grid,
       column: columnDef,
       level,
-      menu: { commandItems }
+      menu: { commandItems },
     } as unknown as HeaderMenuCommandItemCallbackArgs;
 
     // when creating sub-menu also add its sub-menu title when exists
@@ -676,12 +754,17 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Sort the current column */
-  protected sortColumn(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs, isSortingAsc = true): void {
+  protected sortColumn(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    args: MenuCommandItemCallbackArgs,
+    isSortingAsc = true
+  ): void {
     if (args?.column) {
       // get previously sorted columns
       const columnDef = args.column;
 
       // 1- get the sort columns without the current column, in the case of a single sort that would equal to an empty array
+      // prettier-ignore
       const tmpSortedColumns = !this.sharedService.gridOptions.multiColumnSort ? [] : this.sortService.getCurrentColumnSorts(columnDef.id + '');
 
       let emitterType = EmitterType.local;
@@ -690,7 +773,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       tmpSortedColumns.push({ columnId: columnDef.id, sortCol: columnDef, sortAsc: isSortingAsc });
 
       if (this.sharedService.gridOptions.backendServiceApi) {
-        this.sortService.onBackendSortChanged(event, { multiColumnSort: true, sortCols: tmpSortedColumns, grid: this.sharedService.slickGrid });
+        this.sortService.onBackendSortChanged(event, {
+          multiColumnSort: true,
+          sortCols: tmpSortedColumns,
+          grid: this.sharedService.slickGrid,
+        });
         emitterType = EmitterType.remote;
       } else if (this.sharedService.dataView) {
         this.sortService.onLocalSortChanged(this.sharedService.slickGrid, tmpSortedColumns);
@@ -701,7 +788,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       }
 
       // update the sharedService.slickGrid sortColumns array which will at the same add the visual sort icon(s) on the UI
-      const newSortColumns = tmpSortedColumns.map(col => {
+      const newSortColumns = tmpSortedColumns.map((col) => {
         return {
           columnId: col?.sortCol?.id ?? '',
           sortAsc: col?.sortAsc ?? true,
@@ -719,7 +806,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         newSortColumns.forEach((sortCol) => {
           currentLocalSorters.push({
             columnId: `${sortCol.columnId}`,
-            direction: sortCol.sortAsc ? 'ASC' : 'DESC'
+            direction: sortCol.sortAsc ? 'ASC' : 'DESC',
           });
         });
         this.sortService.emitSortChanged(emitterType, currentLocalSorters);

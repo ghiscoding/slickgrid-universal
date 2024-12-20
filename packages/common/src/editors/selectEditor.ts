@@ -1,6 +1,11 @@
 import { emptyElement, setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
+import {
+  multipleSelect,
+  type MultipleSelectInstance,
+  type MultipleSelectOption,
+  type OptionRowData,
+} from 'multiple-select-vanilla';
 
 import { Constants } from '../constants.js';
 import { FieldType } from './../enums/index.js';
@@ -20,7 +25,7 @@ import type {
   SelectOption,
 } from './../interfaces/index.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
-import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities.js';
+import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 /**
@@ -89,7 +94,11 @@ export class SelectEditor implements Editor {
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
 
-  constructor(protected readonly args: EditorArguments, protected readonly isMultipleSelect: boolean, public delayOpening = -1) {
+  constructor(
+    protected readonly args: EditorArguments,
+    protected readonly isMultipleSelect: boolean,
+    public delayOpening = -1
+  ) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -121,9 +130,9 @@ export class SelectEditor implements Editor {
       singleRadio: true,
       renderOptionLabelAsHtml: this.columnEditor?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
-      onClick: () => this._isValueTouched = true,
-      onCheckAll: () => this._isValueTouched = true,
-      onUncheckAll: () => this._isValueTouched = true,
+      onClick: () => (this._isValueTouched = true),
+      onCheckAll: () => (this._isValueTouched = true),
+      onUncheckAll: () => (this._isValueTouched = true),
       onClose: (reason) => {
         if (reason === 'key.escape' || reason === 'body.click' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
           if (reason === 'key.escape') {
@@ -185,7 +194,7 @@ export class SelectEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef?.editor ?? {} as ColumnEditor;
+    return this.columnDef?.editor ?? ({} as ColumnEditor);
   }
 
   /** Getter for item data context object */
@@ -198,7 +207,7 @@ export class SelectEditor implements Editor {
   }
 
   get isCompositeEditor(): boolean {
-    return !!(this.args?.compositeEditorOptions);
+    return !!this.args?.compositeEditorOptions;
   }
 
   /** Getter for the Custom Structure if exist */
@@ -223,11 +232,10 @@ export class SelectEditor implements Editor {
    */
   get currentValues(): any[] | null {
     const selectedValuesSet = new Set();
-    (this._msInstance?.getSelects('value') ?? [])
-      .forEach(x => selectedValuesSet.add(x.toString()));
+    (this._msInstance?.getSelects('value') ?? []).forEach((x) => selectedValuesSet.add(x.toString()));
 
     // collection of strings, just return the filtered string that are equals
-    if (this.collection.every(x => typeof x === 'number' || typeof x === 'string')) {
+    if (this.collection.every((x) => typeof x === 'number' || typeof x === 'string')) {
       return this.collection.filter((c: SelectOption) => selectedValuesSet.has(c?.toString()));
     }
 
@@ -236,8 +244,8 @@ export class SelectEditor implements Editor {
     const isIncludingPrefixSuffix = this.collectionOptions?.includePrefixSuffixToSelectedValues ?? false;
 
     return this.collection
-      .filter(c => selectedValuesSet.has(c?.[this.valueName]?.toString()))
-      .map(c => {
+      .filter((c) => selectedValuesSet.has(c?.[this.valueName]?.toString()))
+      .map((c) => {
         const labelText = c[this.valueName];
         let prefixText = c[this.labelPrefixName] || '';
         let suffixText = c[this.labelSuffixName] || '';
@@ -254,7 +262,9 @@ export class SelectEditor implements Editor {
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
+        // prettier-ignore
         prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
+        // prettier-ignore
         suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
 
         if (isIncludingPrefixSuffix) {
@@ -275,14 +285,17 @@ export class SelectEditor implements Editor {
 
     if (fieldName !== undefined) {
       // collection of strings, just return the filtered string that are equals
-      if (this.collection.every(x => typeof x === 'number' || typeof x === 'string')) {
+      if (this.collection.every((x) => typeof x === 'number' || typeof x === 'string')) {
         return findOrDefault(this.collection, (c: any) => c?.toString?.() === `${selectedValue}`);
       }
 
       // collection of label/value pair
       const separatorBetweenLabels = this.collectionOptions?.separatorBetweenTextLabels ?? '';
       const isIncludingPrefixSuffix = this.collectionOptions?.includePrefixSuffixToSelectedValues ?? false;
-      const itemFound = findOrDefault(this.collection, (c: any) => c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString() === `${selectedValue}`);
+      const itemFound = findOrDefault(
+        this.collection,
+        (c: any) => c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString() === `${selectedValue}`
+      );
 
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
@@ -298,7 +311,9 @@ export class SelectEditor implements Editor {
           let suffixText = itemFound[this.labelSuffixName] || '';
 
           // also translate prefix/suffix if enableTranslateLabel is true and text is a string
+          // prettier-ignore
           prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
+          // prettier-ignore
           suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
 
           // add to a temp array for joining purpose and filter out empty text
@@ -317,7 +332,11 @@ export class SelectEditor implements Editor {
   }
 
   init(): void {
-    if (!this.columnDef || !this.columnDef.editor || (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)) {
+    if (
+      !this.columnDef ||
+      !this.columnDef.editor ||
+      (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)
+    ) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.
       Also each option should include a value/label pair (or value/labelKey when using Locale).
       For example: { editor: { collection: [{ value: true, label: 'True' },{ value: false, label: 'False'}] } }`);
@@ -332,7 +351,9 @@ export class SelectEditor implements Editor {
     this.valueName = this.customStructure?.value ?? 'value';
 
     if (this.enableTranslateLabel && (!this._translaterService || typeof this._translaterService.translate !== 'function')) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     }
 
     // always render the Select (dropdown) DOM element, even if user passed a "collectionAsync",
@@ -347,7 +368,7 @@ export class SelectEditor implements Editor {
   }
 
   getValue(): any | any[] {
-    return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
+    return this.isMultipleSelect ? this.currentValues : this.currentValue;
   }
 
   setValue(value: any | any[], isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
@@ -396,7 +417,10 @@ export class SelectEditor implements Editor {
 
     if (fieldName !== undefined) {
       // when the provided user defined the column field type as a possible number then try parsing the state value as that
-      if ((fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) && !isNaN(parseFloat(state))) {
+      if (
+        (fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) &&
+        !isNaN(parseFloat(state))
+      ) {
         newValue = parseFloat(state);
       }
 
@@ -411,7 +435,7 @@ export class SelectEditor implements Editor {
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(null, newValue);
-      newValue = (validation?.valid) ? newValue : '';
+      newValue = validation?.valid ? newValue : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -428,7 +452,13 @@ export class SelectEditor implements Editor {
   destroy(): void {
     // when autoCommitEdit is enabled, we might end up leaving an editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
-    if (this._msInstance && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposingOrCallingSave && !this.isCompositeEditor) {
+    if (
+      this._msInstance &&
+      this.hasAutoCommitEdit &&
+      this.isValueChanged() &&
+      !this._isDisposingOrCallingSave &&
+      !this.isCompositeEditor
+    ) {
       this._isDisposingOrCallingSave = true; // change destroying flag to avoid infinite loop
       this.save(true);
     }
@@ -451,8 +481,10 @@ export class SelectEditor implements Editor {
       // when it's a complex object, user could override the object path (where the editable object is located)
       // else we use the path provided in the Field Column Definition
       const objectPath = this.columnEditor?.complexObjectPath ?? fieldName;
-      const currentValue = (isComplexObject) ? getDescendantProperty(item, objectPath as string) : (item.hasOwnProperty(fieldName) && item[fieldName]);
-      const value = (isComplexObject && currentValue?.hasOwnProperty(this.valueName)) ? currentValue[this.valueName] : currentValue;
+      const currentValue = isComplexObject
+        ? getDescendantProperty(item, objectPath as string)
+        : item.hasOwnProperty(fieldName) && item[fieldName];
+      const value = isComplexObject && currentValue?.hasOwnProperty(this.valueName) ? currentValue[this.valueName] : currentValue;
 
       if (this.isMultipleSelect && Array.isArray(value)) {
         this.loadMultipleValues(value);
@@ -466,7 +498,7 @@ export class SelectEditor implements Editor {
     // convert to string because that is how the DOM will return these values
     if (Array.isArray(currentValues)) {
       // keep the default values in memory for references
-      this.originalValue = currentValues.map((i: any) => (typeof i === 'number' || typeof i === 'boolean') ? `${i}` : i);
+      this.originalValue = currentValues.map((i: any) => (typeof i === 'number' || typeof i === 'boolean' ? `${i}` : i));
       this._msInstance?.setSelects(this.originalValue);
 
       // if it's set by a Composite Editor, then also trigger a change for it
@@ -479,12 +511,12 @@ export class SelectEditor implements Editor {
 
   loadSingleValue(currentValue: any): void {
     // keep the default value in memory for references
-    this.originalValue = (typeof currentValue === 'number' || typeof currentValue === 'boolean') ? `${currentValue}` : currentValue;
+    this.originalValue = typeof currentValue === 'number' || typeof currentValue === 'boolean' ? `${currentValue}` : currentValue;
     this._msInstance?.setSelects([this.originalValue]);
   }
 
   serializeValue(): any | any[] {
-    return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
+    return this.isMultipleSelect ? this.currentValues : this.currentValue;
   }
 
   /**
@@ -493,7 +525,10 @@ export class SelectEditor implements Editor {
    * @param {string} optionName - MultipleSelect option name
    * @param {newValue} newValue - MultipleSelect new option value
    */
-  changeEditorOption<T extends keyof Required<MultipleSelectOption>, K extends Required<MultipleSelectOption>[T]>(optionName: T, newValue: K): void {
+  changeEditorOption<T extends keyof Required<MultipleSelectOption>, K extends Required<MultipleSelectOption>[T]>(
+    optionName: T,
+    newValue: K
+  ): void {
     if (this.columnEditor) {
       if (!this.columnEditor.editorOptions) {
         this.columnEditor.editorOptions = {};
@@ -514,7 +549,8 @@ export class SelectEditor implements Editor {
 
         // clear select when it's newly disabled and not yet empty
         const currentValues: string | number | Array<string | number> = this.getValue();
-        const isValueBlank = Array.isArray(currentValues) && this.isMultipleSelect ? currentValues?.[0] === '' : currentValues === '';
+        const isValueBlank =
+          Array.isArray(currentValues) && this.isMultipleSelect ? currentValues?.[0] === '' : currentValues === '';
         if (prevIsDisabled !== isDisabled && this.isCompositeEditor && !isValueBlank) {
           this.reset('', true, true);
         }
@@ -579,7 +615,7 @@ export class SelectEditor implements Editor {
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.isCompositeEditor ? false : this.columnEditor?.required;
-    const elmValue = (inputValue !== undefined) ? inputValue : this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
+    const elmValue = inputValue !== undefined ? inputValue : this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
@@ -593,7 +629,7 @@ export class SelectEditor implements Editor {
     }
 
     if (this.validator) {
-      const value = (inputValue !== undefined) ? inputValue : (this.isMultipleSelect ? this.currentValues : this.currentValue);
+      const value = inputValue !== undefined ? inputValue : this.isMultipleSelect ? this.currentValues : this.currentValue;
       return this.validator(value, this.args);
     }
 
@@ -601,13 +637,13 @@ export class SelectEditor implements Editor {
     if (isRequired && (elmValue === '' || (Array.isArray(elmValue) && elmValue.length === 0))) {
       return {
         valid: false,
-        msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD
+        msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD,
       };
     }
 
     return {
       valid: true,
-      msg: null
+      msg: null,
     };
   }
 
@@ -618,9 +654,16 @@ export class SelectEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({
-      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    }).getReturnValue();
+    const isCellEditable = this.grid.onBeforeEditCell
+      .notify({
+        ...activeCell,
+        item: this.dataContext,
+        column: this.args.column,
+        grid: this.grid,
+        target: 'composite',
+        compositeEditorOptions: this.args.compositeEditorOptions,
+      })
+      .getReturnValue();
     this.disable(isCellEditable === false);
   }
 
@@ -653,7 +696,12 @@ export class SelectEditor implements Editor {
     // user might want to sort the collection
     if (this.columnDef && this.columnEditor && this.columnEditor.collectionSortBy) {
       const sortBy = this.columnEditor.collectionSortBy;
-      outputCollection = this._collectionService.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel);
+      outputCollection = this._collectionService.sortCollection(
+        this.columnDef,
+        outputCollection,
+        sortBy,
+        this.enableTranslateLabel
+      );
     }
 
     return outputCollection;
@@ -676,13 +724,23 @@ export class SelectEditor implements Editor {
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
-    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
+    if (
+      this.collectionOptions?.addBlankEntry &&
+      Array.isArray(collection) &&
+      collection.length > 0 &&
+      collection[0][this.valueName] !== ''
+    ) {
       collection.unshift(this.createBlankEntry());
       this.collection.unshift(this.createBlankEntry()); // also make the change on the original collection
     }
 
     // user can optionally add his own custom entry at the beginning of the collection
-    if (this.collectionOptions?.addCustomFirstEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== this.collectionOptions.addCustomFirstEntry[this.valueName]) {
+    if (
+      this.collectionOptions?.addCustomFirstEntry &&
+      Array.isArray(collection) &&
+      collection.length > 0 &&
+      collection[0][this.valueName] !== this.collectionOptions.addCustomFirstEntry[this.valueName]
+    ) {
       collection.unshift(this.collectionOptions.addCustomFirstEntry);
       this.collection.unshift(this.collectionOptions.addCustomFirstEntry); // also make the change on the original collection
     }
@@ -704,7 +762,12 @@ export class SelectEditor implements Editor {
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {
-      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.dataContext, grid: this.grid, originalCollections: this.collection };
+      const overrideArgs: CollectionOverrideArgs = {
+        column: this.columnDef,
+        dataContext: this.dataContext,
+        grid: this.grid,
+        originalCollections: this.collection,
+      };
       if (this.args.compositeEditorOptions) {
         const { formValues, modalType } = this.args.compositeEditorOptions;
         overrideArgs.compositeEditorOptions = { formValues, modalType };
@@ -734,7 +797,7 @@ export class SelectEditor implements Editor {
   protected createBlankEntry(): any {
     const blankEntry = {
       [this.labelName]: '',
-      [this.valueName]: ''
+      [this.valueName]: '',
     };
     if (this.labelPrefixName) {
       blankEntry[this.labelPrefixName] = '';
@@ -768,7 +831,11 @@ export class SelectEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
+  protected handleChangeOnCompositeEditor(
+    compositeEditorOptions: CompositeEditorOption,
+    triggeredBy: 'user' | 'system' = 'user',
+    isCalledByClearValue = false
+  ): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -783,11 +850,22 @@ export class SelectEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValues);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
+    if (
+      isCalledByClearValue ||
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+    ) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
-      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      {
+        ...activeCell,
+        item,
+        grid,
+        column,
+        formValues: compositeEditorOptions.formValues,
+        editors: compositeEditorOptions.editors,
+        triggeredBy,
+      },
       new SlickEventData()
     );
   }

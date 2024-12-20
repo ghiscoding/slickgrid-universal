@@ -25,7 +25,7 @@ import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excel
 
 // mocked modules
 vi.mock('excel-builder-vanilla', async (importOriginal) => ({
-  ...await importOriginal() as any,
+  ...((await importOriginal()) as any),
   downloadExcelFile: vi.fn().mockResolvedValue(true),
 }));
 
@@ -39,8 +39,8 @@ const pubSubServiceStub = {
 // URL object is not supported in JSDOM, we can simply mock it
 (global as any).URL.createObjectURL = vi.fn();
 
-const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: `<b>${value}</b>` } : null as any;
-const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null as any;
+const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => (value !== null ? { text: `<b>${value}</b>` } : (null as any));
+const myUppercaseFormatter: Formatter = (_row, _cell, value) => (value ? { text: value.toUpperCase() } : (null as any));
 const myUppercaseGroupTotalFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column) => {
   const field = columnDef.field || '';
   const val = totals.sum && totals.sum[field];
@@ -128,15 +128,42 @@ describe('ExcelExportService', () => {
       expect(downloadExcelFile).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xlsx', { mimeType: mimeTypeXLSX });
     });
 
+    it('should not have any output since there are no column definitions provided', async () => {
+      const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+
+      service.init(gridStub, container);
+      const result = await service.exportToExcel({ ...mockExportExcelOptions, format: FileType.xls });
+
+      expect(result).toBeTruthy();
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
+      expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xls', mimeType: mimeTypeXLS });
+      expect(downloadExcelFile).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xls', { mimeType: mimeTypeXLS });
+    });
+
     describe('exportToExcel method', () => {
       beforeEach(() => {
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', width: 100 },
-          { id: 'order', field: 'order', width: 100, exportWithFormatter: true, formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+          {
+            id: 'order',
+            field: 'order',
+            width: 100,
+            exportWithFormatter: true,
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+          },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -151,7 +178,9 @@ describe('ExcelExportService', () => {
           service.init(null as any, container);
           await service.exportToExcel(mockExportExcelOptions);
         } catch (e) {
-          expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
+          expect(e.toString()).toContain(
+            '[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?'
+          );
         }
       });
 
@@ -173,7 +202,6 @@ describe('ExcelExportService', () => {
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, expect.anything());
-
       });
 
       it('should call download with a Blob and xlsx file when browser is not IE11 (basically any other browser) when exporting as xlsx', async () => {
@@ -219,7 +247,7 @@ describe('ExcelExportService', () => {
         mockGridOptions.excelExportOptions = { mimeType: mimeTypeXLSX };
         mockExportExcelOptions = {
           filename: 'export',
-          format: FileType.xlsx
+          format: FileType.xlsx,
         };
       });
 
@@ -235,20 +263,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['1E06', 'John', 'X', 'SALES_REP', '<b>10</b>'],
                 ],
-                ['1E06', 'John', 'X', 'SALES_REP', '<b>10</b>'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -264,20 +295,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
                 ],
-                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -293,20 +327,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['3C2', 'Ava Luna', '', 'HUMAN_RESOURCES', '<b>3</b>'],
                 ],
-                ['3C2', 'Ava Luna', '', 'HUMAN_RESOURCES', '<b>3</b>'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -322,20 +359,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['', 'Ava', 'LUNA', 'HUMAN_RESOURCES', '<b>3</b>'],
                 ],
-                ['', 'Ava', 'LUNA', 'HUMAN_RESOURCES', '<b>3</b>'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -351,25 +391,28 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['3C2', 'Ava', 'LUNA', 'HUMAN_RESOURCES', ''],
                 ],
-                ['3C2', 'Ava', 'LUNA', 'HUMAN_RESOURCES', ''],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
       it(`should have the UserId as empty string when its input value is null`, async () => {
-        mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 },];
+        mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -380,20 +423,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['', '', 'CASH', 'SALES_REP', '<b>3</b>'],
                 ],
-                ['', '', 'CASH', 'SALES_REP', '<b>3</b>'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -410,20 +456,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
                 ],
-                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -440,20 +489,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 4, }, value: 'User Id', },
-                  { metadata: { style: 4, }, value: 'FirstName', },
-                  { metadata: { style: 4, }, value: 'LastName', },
-                  { metadata: { style: 4, }, value: 'Position', },
-                  { metadata: { style: 4, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 4 }, value: 'User Id' },
+                    { metadata: { style: 4 }, value: 'FirstName' },
+                    { metadata: { style: 4 }, value: 'LastName' },
+                    { metadata: { style: 4 }, value: 'Position' },
+                    { metadata: { style: 4 }, value: 'Order' },
+                  ],
+                  ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
                 ],
-                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -463,8 +515,8 @@ describe('ExcelExportService', () => {
           customExcelHeader: (workbook, sheet) => {
             const stylesheet = workbook.getStyleSheet();
             const aFormatDefn = {
-              'font': { 'size': 12, 'fontName': 'Calibri', 'bold': true, color: 'FF0000FF' }, // every color starts with FF, then regular HTML color
-              'alignment': { 'wrapText': true }
+              font: { size: 12, fontName: 'Calibri', bold: true, color: 'FF0000FF' }, // every color starts with FF, then regular HTML color
+              alignment: { wrapText: true },
             };
             const excelFormat = stylesheet.createFormat(aFormatDefn);
             sheet.setRowInstructions(0, { height: 30 }); // change height of row 0
@@ -477,7 +529,7 @@ describe('ExcelExportService', () => {
             // push data in B1 cell with metadata formatter
             cols.push({ value: 'My header that is long enough to wrap', metadata: { style: excelFormat.id } });
             sheet.data.push(cols);
-          }
+          },
         };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -490,24 +542,24 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { value: '' },
-                  { metadata: { style: 4, }, value: 'My header that is long enough to wrap', }
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [{ value: '' }, { metadata: { style: 4 }, value: 'My header that is long enough to wrap' }],
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
                 ],
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
-                ],
-                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
     });
@@ -516,17 +568,19 @@ describe('ExcelExportService', () => {
       let mockCollection: any[];
 
       beforeEach(() => {
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, };
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
           { id: 'lastName', field: 'lastName', width: 100, sanitizeDataExport: true, exportWithFormatter: true },
           {
-            id: 'position', field: 'position', width: 100,
-            excelExportOptions: { style: { font: { outline: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, width: 18 }
+            id: 'position',
+            field: 'position',
+            width: 100,
+            excelExportOptions: { style: { font: { outline: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, width: 18 },
           },
-          { id: 'startDate', field: 'startDate', type: FieldType.dateIso, width: 100, exportWithFormatter: false, },
+          { id: 'startDate', field: 'startDate', type: FieldType.dateIso, width: 100, exportWithFormatter: false },
           { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso },
         ] as Column[];
 
@@ -540,7 +594,15 @@ describe('ExcelExportService', () => {
       it(`should expect Date to be formatted as ISO Date only "exportWithFormatter" is undefined or set to True but remains untouched when "exportWithFormatter" is explicitely set to False`, async () => {
         mockCollection = [
           { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', startDate: '2005-12-20T18:19:19.992Z', endDate: null },
-          { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'HUMAN_RESOURCES', startDate: '2010-10-09T18:19:19.992Z', endDate: '2024-01-02T16:02:02.000Z' },
+          {
+            id: 1,
+            userId: '1E09',
+            firstName: 'Jane',
+            lastName: 'Doe',
+            position: 'HUMAN_RESOURCES',
+            startDate: '2010-10-09T18:19:19.992Z',
+            endDate: '2024-01-02T16:02:02.000Z',
+          },
         ];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
@@ -552,22 +614,25 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'StartDate', },
-                  { metadata: { style: 1, }, value: 'EndDate', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'StartDate' },
+                    { metadata: { style: 1 }, value: 'EndDate' },
+                  ],
+                  ['1E06', 'John', 'X', { metadata: { style: 4 }, value: 'SALES_REP' }, '2005-12-20T18:19:19.992Z', ''],
+                  ['1E09', 'Jane', 'Doe', { metadata: { style: 4 }, value: 'HUMAN_RESOURCES' }, '2010-10-09T18:19:19.992Z', '2024-01-02'],
                 ],
-                ['1E06', 'John', 'X', { metadata: { style: 4 }, value: 'SALES_REP' }, '2005-12-20T18:19:19.992Z', ''],
-                ['1E09', 'Jane', 'Doe', { metadata: { style: 4 }, value: 'HUMAN_RESOURCES' }, '2010-10-09T18:19:19.992Z', '2024-01-02'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
         expect(service.regularCellExcelFormats.position).toEqual({
           getDataValueParser: getExcelSameInputDataCallback,
@@ -603,25 +668,28 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'First Name', },
-                  { metadata: { style: 1, }, value: 'Last Name', },
-                  { metadata: { style: 1, }, value: 'Position', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'First Name' },
+                    { metadata: { style: 1 }, value: 'Last Name' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                  ],
+                  ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
                 ],
-                ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
       it(`should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object`, async () => {
         mockCollection = [
           { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 },
-          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 } }
+          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 } },
         ];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
@@ -633,18 +701,21 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'First Name', },
-                  { metadata: { style: 1, }, value: 'Last Name', },
-                  { metadata: { style: 1, }, value: 'Position', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'First Name' },
+                    { metadata: { style: 1 }, value: 'Last Name' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                  ],
+                  ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
                 ],
-                ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
     });
@@ -660,9 +731,33 @@ describe('ExcelExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
-          { id: 'position', field: 'position', name: 'Position', type: FieldType.number, width: 100, formatter: Formatters.translate, exportWithFormatter: true },
-          { id: 'order', field: 'order', width: 100, exportWithFormatter: true, formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
+          {
+            id: 'position',
+            field: 'position',
+            name: 'Position',
+            type: FieldType.number,
+            width: 100,
+            formatter: Formatters.translate,
+            exportWithFormatter: true,
+          },
+          {
+            id: 'order',
+            field: 'order',
+            width: 100,
+            exportWithFormatter: true,
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+          },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -680,20 +775,23 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'First Name', },
-                  { metadata: { style: 1, }, value: 'Last Name', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'First Name' },
+                    { metadata: { style: 1 }, value: 'Last Name' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, '10'],
                 ],
-                ['1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, '10'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
     });
@@ -711,19 +809,30 @@ describe('ExcelExportService', () => {
         mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, mimeType: mimeTypeXLSX };
         mockExportExcelOptions = {
           filename: 'export',
-          format: FileType.xlsx
+          format: FileType.xlsx,
         };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', width: 100 },
           {
-            id: 'order', field: 'order', type: FieldType.number,
+            id: 'order',
+            field: 'order',
+            type: FieldType.number,
             exportWithFormatter: true,
-            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
             exportCustomGroupTotalsFormatter: myUppercaseGroupTotalFormatter,
           },
@@ -733,7 +842,7 @@ describe('ExcelExportService', () => {
           aggregateChildGroups: false,
           aggregateCollapsed: false,
           aggregateEmpty: false,
-          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
@@ -748,7 +857,12 @@ describe('ExcelExportService', () => {
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
-          collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
@@ -775,24 +889,27 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'Group By', },
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'Group By' },
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['⮟ Order: 20 (2 items)'],
+                  ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3 }, value: 10 }],
+                  ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3 }, value: 10 }],
+                  ['', '', '', '', '', { metadata: { style: 4 }, value: 20 }],
                 ],
-                ['⮟ Order: 20 (2 items)'],
-                ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3 }, value: 10 }],
-                ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3 }, value: 10 }],
-                ['', '', '', '', '', { metadata: { style: 4 }, value: 20 }],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
     });
@@ -816,26 +933,45 @@ describe('ExcelExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
           {
-            id: 'position', field: 'position', width: 100,
+            id: 'lastName',
+            field: 'lastName',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
+          {
+            id: 'position',
+            field: 'position',
+            width: 100,
             groupTotalsFormatter: GroupTotalFormatters.avgTotalsDollar,
           },
           {
-            id: 'order', field: 'order', type: FieldType.number,
+            id: 'order',
+            field: 'order',
+            type: FieldType.number,
             exportWithFormatter: true,
-            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
-            groupTotalsExcelExportOptions: { style: { font: { bold: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, },
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            groupTotalsExcelExportOptions: { style: { font: { bold: true, italic: true }, format: '€0.00##;[Red](€0.00##)' } },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
           },
-          { id: 'cost', field: 'cost', name: 'Cost', excelExportOptions: { valueParserCallback: parserCallbackSpy }, groupTotalsExcelExportOptions: { valueParserCallback: groupTotalParserCallbackSpy } }
+          {
+            id: 'cost',
+            field: 'cost',
+            name: 'Cost',
+            excelExportOptions: { valueParserCallback: parserCallbackSpy },
+            groupTotalsExcelExportOptions: { valueParserCallback: groupTotalParserCallbackSpy },
+          },
         ] as Column[];
 
         mockOrderGrouping = {
           aggregateChildGroups: false,
           aggregateCollapsed: false,
           aggregateEmpty: false,
-          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
@@ -850,7 +986,12 @@ describe('ExcelExportService', () => {
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10, cost: 22 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10, cost: '$33,01' };
         mockGroup1 = {
-          collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
@@ -878,28 +1019,38 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'Group By', },
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
-                  { metadata: { style: 1, }, value: 'Cost', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'Group By' },
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                    { metadata: { style: 1 }, value: 'Cost' },
+                  ],
+                  ['⮟ Order: 20 (2 items)'],
+                  ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3 }, value: 10 }, 8888],
+                  ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3 }, value: 10 }, 8888],
+                  ['', '', '', '', '', { value: 20, metadata: { style: 5 } }, ''],
                 ],
-                ['⮟ Order: 20 (2 items)'],
-                ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3 }, value: 10, }, 8888],
-                ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3 }, value: 10, }, 8888],
-                ['', '', '', '', '', { value: 20, metadata: { style: 5 } }, ''],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
         expect(service.groupTotalExcelFormats.order).toEqual({ groupType: 'sum', excelFormat: { fontId: 2, id: 5, numFmtId: 103 } });
-        expect(parserCallbackSpy).toHaveBeenNthCalledWith(1, 22, { columnDef: mockColumns[6], excelFormatId: undefined, stylesheet: expect.anything(), gridOptions: mockGridOptions, dataRowIdx: 1, dataContext: expect.objectContaining({ firstName: 'John' }) });
+        expect(parserCallbackSpy).toHaveBeenNthCalledWith(1, 22, {
+          columnDef: mockColumns[6],
+          excelFormatId: undefined,
+          stylesheet: expect.anything(),
+          gridOptions: mockGridOptions,
+          dataRowIdx: 1,
+          dataContext: expect.objectContaining({ firstName: 'John' }),
+        });
       });
     });
 
@@ -919,12 +1070,32 @@ describe('ExcelExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', field: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
-          { id: 'position', field: 'position', name: 'Position', type: FieldType.number, width: 100, formatter: Formatters.translate, exportWithFormatter: true },
           {
-            id: 'order', field: 'order', type: FieldType.number,
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
             exportWithFormatter: true,
-            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+          },
+          {
+            id: 'position',
+            field: 'position',
+            name: 'Position',
+            type: FieldType.number,
+            width: 100,
+            formatter: Formatters.translate,
+            exportWithFormatter: true,
+          },
+          {
+            id: 'order',
+            field: 'order',
+            type: FieldType.number,
+            exportWithFormatter: true,
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
           },
         ] as Column[];
@@ -933,7 +1104,7 @@ describe('ExcelExportService', () => {
           aggregateChildGroups: false,
           aggregateCollapsed: false,
           aggregateEmpty: false,
-          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
@@ -948,7 +1119,12 @@ describe('ExcelExportService', () => {
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
-          collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          collapsed: 0,
+          count: 2,
+          groupingKey: '10',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
@@ -975,24 +1151,27 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'Grouped By', },
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'First Name', },
-                  { metadata: { style: 1, }, value: 'Last Name', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'Grouped By' },
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'First Name' },
+                    { metadata: { style: 1 }, value: 'Last Name' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['⮟ Order: 20 (2 items)'],
+                  ['', '1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, { metadata: { style: 3 }, value: 10 }],
+                  ['', '2B02', 'Jane', 'DOE', { metadata: { style: 3 }, value: 'Finance Manager' }, { metadata: { style: 3 }, value: 10 }],
+                  ['', '', '', '', '', { metadata: { style: 4 }, value: 20 }],
                 ],
-                ['⮟ Order: 20 (2 items)'],
-                ['', '1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, { metadata: { style: 3 }, value: 10 }],
-                ['', '2B02', 'Jane', 'DOE', { metadata: { style: 3 }, value: 'Finance Manager' }, { metadata: { style: 3 }, value: 10 }],
-                ['', '', '', '', '', { metadata: { style: 4, }, value: 20, }],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
     });
@@ -1017,14 +1196,26 @@ describe('ExcelExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', field: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate },
           {
-            id: 'order', field: 'order', type: FieldType.number,
+            id: 'order',
+            field: 'order',
+            type: FieldType.number,
             exportWithFormatter: true,
-            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
-            groupTotalsExcelExportOptions: { valueParserCallback: groupTotalParserCallbackSpy }
+            groupTotalsExcelExportOptions: { valueParserCallback: groupTotalParserCallbackSpy },
           },
         ] as Column[];
 
@@ -1032,7 +1223,7 @@ describe('ExcelExportService', () => {
           aggregateChildGroups: false,
           aggregateCollapsed: false,
           aggregateEmpty: false,
-          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
@@ -1047,25 +1238,45 @@ describe('ExcelExportService', () => {
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
-          collapsed: false, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          collapsed: false,
+          count: 2,
+          groupingKey: '10',
+          groups: null,
+          level: 0,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
         mockGroup2 = {
-          collapsed: false, count: 2, groupingKey: '10:|:X', groups: null, level: 1, selectChecked: false,
+          collapsed: false,
+          count: 2,
+          groupingKey: '10:|:X',
+          groups: null,
+          level: 1,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Last Name: X <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup3 = {
-          collapsed: false, count: 2, groupingKey: '10:|:Doe', groups: null, level: 1, selectChecked: false,
+          collapsed: false,
+          count: 2,
+          groupingKey: '10:|:Doe',
+          groups: null,
+          level: 1,
+          selectChecked: false,
           rows: [mockItem1, mockItem2],
           title: `Last Name: Doe <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup4 = {
-          collapsed: true, count: 0, groupingKey: '10:|:', groups: null, level: 1, selectChecked: false,
+          collapsed: true,
+          count: 0,
+          groupingKey: '10:|:',
+          groups: null,
+          level: 1,
+          selectChecked: false,
           rows: [],
           title: `Last Name: null <span class="text-green">(0 items)</span>`,
           totals: { value: '0', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
@@ -1073,7 +1284,12 @@ describe('ExcelExportService', () => {
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         mockCollection = [
-          mockGroup1, mockGroup2, mockItem1, mockGroup3, mockItem2, mockGroup4,
+          mockGroup1,
+          mockGroup2,
+          mockItem1,
+          mockGroup3,
+          mockItem2,
+          mockGroup4,
           { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 },
           { __groupTotals: true, initialized: true, sum: { order: 10 }, group: mockGroup2 },
         ];
@@ -1102,28 +1318,31 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'Grouped By', },
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'First Name', },
-                  { metadata: { style: 1, }, value: 'Last Name', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'Grouped By' },
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'First Name' },
+                    { metadata: { style: 1 }, value: 'Last Name' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['⮟ Order: 20 (2 items)'],
+                  ['⮟      Last Name: X (1 items)'], // expanded
+                  ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3 }, value: 10 }],
+                  ['⮟      Last Name: Doe (1 items)'], // expanded
+                  ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3 }, value: 10 }],
+                  ['⮞      Last Name: null (0 items)'], // collapsed
+                  ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }],
+                  ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }],
                 ],
-                ['⮟ Order: 20 (2 items)'],
-                ['⮟      Last Name: X (1 items)'], // expanded
-                ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3 }, 'value': 10, }],
-                ['⮟      Last Name: Doe (1 items)'], // expanded
-                ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3 }, 'value': 10, }],
-                ['⮞      Last Name: null (0 items)'], // collapsed
-                ['', '', '', '', '', { metadata: { style: 4 }, 'value': 9999, }],
-                ['', '', '', '', '', { metadata: { style: 4 }, 'value': 9999, }],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -1150,29 +1369,31 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'Grouped By', },
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'First Name', },
-                  { metadata: { style: 1, }, value: 'Last Name', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'Grouped By' },
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'First Name' },
+                    { metadata: { style: 1 }, value: 'Last Name' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['Order: 20 (2 items)'],
+                  ['Last Name: X (1 items)'],
+                  ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3 }, value: 10 }],
+                  ['Last Name: Doe (1 items)'],
+                  ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3 }, value: 10 }],
+                  ['Last Name: null (0 items)'],
+                  ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }],
+                  ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }],
                 ],
-                ['Order: 20 (2 items)'],
-                ['Last Name: X (1 items)'],
-                ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3 }, value: 10 }],
-                ['Last Name: Doe (1 items)'],
-                ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3 }, value: 10 }],
-                ['Last Name: null (0 items)'],
-                ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }],
-                ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }
-                ],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
     });
@@ -1219,10 +1440,27 @@ describe('ExcelExportService', () => {
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, columnGroup: 'User Profile' },
-          { id: 'lastName', field: 'lastName', width: 100, columnGroup: 'User Profile', formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            width: 100,
+            columnGroup: 'User Profile',
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true, columnGroup: 'Company Profile' },
           { id: 'position', field: 'position', width: 100, columnGroup: 'Company Profile' },
-          { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroup: 'Sales', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+          {
+            id: 'order',
+            field: 'order',
+            width: 100,
+            exportWithFormatter: true,
+            columnGroup: 'Sales',
+            formatter: Formatters.multiple,
+            params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+          },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -1241,27 +1479,30 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 4, }, value: 'User Profile', },
-                  { metadata: { style: 4, }, value: 'User Profile', },
-                  { metadata: { style: 4, }, value: 'Company Profile', },
-                  { metadata: { style: 4, }, value: 'Company Profile', },
-                  { metadata: { style: 4, }, value: 'Sales', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 4 }, value: 'User Profile' },
+                    { metadata: { style: 4 }, value: 'User Profile' },
+                    { metadata: { style: 4 }, value: 'Company Profile' },
+                    { metadata: { style: 4 }, value: 'Company Profile' },
+                    { metadata: { style: 4 }, value: 'Sales' },
+                  ],
+                  [
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['John', 'X', '1E06', 'SALES_REP', '10'],
                 ],
-                [
-                  { metadata: { style: 1, }, value: 'FirstName', },
-                  { metadata: { style: 1, }, value: 'LastName', },
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
-                ],
-                ['John', 'X', '1E06', 'SALES_REP', '10'],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
 
@@ -1275,10 +1516,36 @@ describe('ExcelExportService', () => {
           mockColumns = [
             { id: 'id', field: 'id', excludeFromExport: true },
             { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, columnGroupKey: 'USER_PROFILE', formatter: myBoldHtmlFormatter },
-            { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, columnGroupKey: 'USER_PROFILE', formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+            {
+              id: 'lastName',
+              field: 'lastName',
+              nameKey: 'LAST_NAME',
+              width: 100,
+              columnGroupKey: 'USER_PROFILE',
+              formatter: myBoldHtmlFormatter,
+              exportCustomFormatter: myUppercaseFormatter,
+              sanitizeDataExport: true,
+              exportWithFormatter: true,
+            },
             { id: 'userId', field: 'userId', name: 'User Id', width: 100, columnGroupKey: 'COMPANY_PROFILE', exportCsvForceToKeepAsString: true },
-            { id: 'position', field: 'position', name: 'Position', width: 100, columnGroupKey: 'COMPANY_PROFILE', formatter: Formatters.translate, exportWithFormatter: true },
-            { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroupKey: 'SALES', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+            {
+              id: 'position',
+              field: 'position',
+              name: 'Position',
+              width: 100,
+              columnGroupKey: 'COMPANY_PROFILE',
+              formatter: Formatters.translate,
+              exportWithFormatter: true,
+            },
+            {
+              id: 'order',
+              field: 'order',
+              width: 100,
+              exportWithFormatter: true,
+              columnGroupKey: 'SALES',
+              formatter: Formatters.multiple,
+              params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            },
           ] as Column[];
           vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
         });
@@ -1300,27 +1567,30 @@ describe('ExcelExportService', () => {
           expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
           expect(downloadExcelFile).toHaveBeenCalledWith(
             expect.objectContaining({
-              worksheets: [expect.objectContaining({
-                data: [
-                  [
-                    { metadata: { style: 4, }, value: 'User Profile', },
-                    { metadata: { style: 4, }, value: 'User Profile', },
-                    { metadata: { style: 4, }, value: 'Company Profile', },
-                    { metadata: { style: 4, }, value: 'Company Profile', },
-                    { metadata: { style: 4, }, value: 'Sales', },
+              worksheets: [
+                expect.objectContaining({
+                  data: [
+                    [
+                      { metadata: { style: 4 }, value: 'User Profile' },
+                      { metadata: { style: 4 }, value: 'User Profile' },
+                      { metadata: { style: 4 }, value: 'Company Profile' },
+                      { metadata: { style: 4 }, value: 'Company Profile' },
+                      { metadata: { style: 4 }, value: 'Sales' },
+                    ],
+                    [
+                      { metadata: { style: 1 }, value: 'First Name' },
+                      { metadata: { style: 1 }, value: 'Last Name' },
+                      { metadata: { style: 1 }, value: 'User Id' },
+                      { metadata: { style: 1 }, value: 'Position' },
+                      { metadata: { style: 1 }, value: 'Order' },
+                    ],
+                    ['<b>John</b>', 'X', '1E06', 'Sales Rep.', '<b>10</b>'],
                   ],
-                  [
-                    { metadata: { style: 1, }, value: 'First Name', },
-                    { metadata: { style: 1, }, value: 'Last Name', },
-                    { metadata: { style: 1, }, value: 'User Id', },
-                    { metadata: { style: 1, }, value: 'Position', },
-                    { metadata: { style: 1, }, value: 'Order', },
-                  ],
-                  ['<b>John</b>', 'X', '1E06', 'Sales Rep.', '<b>10</b>'],
-                ]
-              })]
+                }),
+              ],
             }),
-            'export.xlsx', { mimeType: mimeTypeXLSX }
+            'export.xlsx',
+            { mimeType: mimeTypeXLSX }
           );
         });
       });
@@ -1338,14 +1608,22 @@ describe('ExcelExportService', () => {
         mockGridOptions.createPreHeaderPanel = false;
         mockGridOptions.showPreHeaderPanel = false;
         mockGridOptions.excelExportOptions.exportWithFormatter = true;
-        mockGridOptions.colspanCallback = (item: any) => (item.id % 2 === 1) ? evenMetatadata : oddMetatadata;
+        mockGridOptions.colspanCallback = (item: any) => (item.id % 2 === 1 ? evenMetatadata : oddMetatadata);
 
         mockColumns = [
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportWithFormatter: false },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+          },
           { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate },
-          { id: 'order', field: 'order', width: 100, },
+          { id: 'order', field: 'order', width: 100 },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -1374,8 +1652,16 @@ describe('ExcelExportService', () => {
           { id: 2, userId: '2ABC', firstName: 'Sponge', lastName: 'Bob', position: 'IT_ADMIN', order: 33 },
         ];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]).mockReturnValueOnce(mockCollection[2]);
-        vi.spyOn(dataViewStub, 'getItemMetadata').mockReturnValue(oddMetatadata).mockReturnValueOnce(evenMetatadata).mockReturnValueOnce(oddMetatadata).mockReturnValueOnce(evenMetatadata);
+        vi.spyOn(dataViewStub, 'getItem')
+          .mockReturnValue(null)
+          .mockReturnValueOnce(mockCollection[0])
+          .mockReturnValueOnce(mockCollection[1])
+          .mockReturnValueOnce(mockCollection[2]);
+        vi.spyOn(dataViewStub, 'getItemMetadata')
+          .mockReturnValue(oddMetatadata)
+          .mockReturnValueOnce(evenMetatadata)
+          .mockReturnValueOnce(oddMetatadata)
+          .mockReturnValueOnce(evenMetatadata);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
@@ -1384,22 +1670,25 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
-            worksheets: [expect.objectContaining({
-              data: [
-                [
-                  { metadata: { style: 1, }, value: 'User Id', },
-                  { metadata: { style: 1, }, value: 'First Name', },
-                  { metadata: { style: 1, }, value: 'Last Name', },
-                  { metadata: { style: 1, }, value: 'Position', },
-                  { metadata: { style: 1, }, value: 'Order', },
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'First Name' },
+                    { metadata: { style: 1 }, value: 'Last Name' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['1E06', '', '', ''],
+                  ['1E09', 'Jane', 'DOE', '', 15],
+                  ['2ABC', '', '', ''],
                 ],
-                ['1E06', '', '', ''],
-                ['1E09', 'Jane', 'DOE', '', 15],
-                ['2ABC', '', '', ''],
-              ]
-            })]
+              }),
+            ],
           }),
-          'export.xlsx', { mimeType: mimeTypeXLSX }
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
         );
       });
     });
@@ -1412,10 +1701,17 @@ describe('ExcelExportService', () => {
     });
 
     it('should throw an error if "enableTranslate" is set but the Translater Service is null', () => {
-      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, translater: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
+      const gridOptionsMock = {
+        enableTranslate: true,
+        enableGridMenu: true,
+        translater: undefined as any,
+        gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' },
+      } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub, container)).toThrow('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
+      expect(() => service.init(gridStub, container)).toThrow(
+        '[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.'
+      );
     });
   });
 });

@@ -30,7 +30,8 @@ const isPlainObject = function isPlainObject(obj: any) {
   }
 
   const hasOwnConstructor = hasOwn.call(obj, 'constructor');
-  const hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+  const hasIsPrototypeOf =
+    obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
   // Not own constructor property must be Object
   if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
     return false;
@@ -38,7 +39,9 @@ const isPlainObject = function isPlainObject(obj: any) {
 
   // Own properties are enumerated firstly, so to speed up, if last one is own, then all properties are own.
   let key;
-  for (key in obj) { /**/ }
+  for (key in obj) {
+    /**/
+  }
 
   return typeof key === 'undefined' || hasOwn.call(obj, key);
 };
@@ -50,7 +53,7 @@ const setProperty = function setProperty(target: any, options: any) {
       enumerable: true,
       configurable: true,
       value: options.newValue,
-      writable: true
+      writable: true,
     });
   } else {
     target[options.name] = options.newValue;

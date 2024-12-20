@@ -1,9 +1,9 @@
-import { createDomElement, htmlEncodeWithPadding, } from '@slickgrid-universal/utils';
+import { createDomElement, htmlEncodeWithPadding } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
 import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade.js';
-import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities.js';
+import { castObservableToPromise, getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 
@@ -18,7 +18,10 @@ export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickG
   for (const option of optionValues) {
     const optionElm = document.createElement('option');
     optionElm.value = option.operator;
-    grid.applyHtmlCode(optionElm, `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
+    grid.applyHtmlCode(
+      optionElm,
+      `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`
+    );
     selectElm.appendChild(optionElm);
   }
 
@@ -29,7 +32,11 @@ export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickG
  * When user use a CollectionAsync we will use the returned collection to render the filter DOM element
  * and reinitialize filter collection with this new collection
  */
-export function renderDomElementFromCollectionAsync(collection: any[], columnDef: Column, renderDomElementCallback: (collection: any) => void): void {
+export function renderDomElementFromCollectionAsync(
+  collection: any[],
+  columnDef: Column,
+  renderDomElementCallback: (collection: any) => void
+): void {
   const columnFilter = columnDef?.filter ?? {};
   const collectionOptions = columnFilter?.collectionOptions ?? {};
 
@@ -38,7 +45,9 @@ export function renderDomElementFromCollectionAsync(collection: any[], columnDef
     collection = getDescendantProperty(collection, collectionInsideObjectProperty as string);
   }
   if (!Array.isArray(collection)) {
-    throw new Error(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
+    throw new Error(
+      `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
+    );
   }
 
   // copy over the array received from the async call to the "collection" as the new collection to use
@@ -49,7 +58,13 @@ export function renderDomElementFromCollectionAsync(collection: any[], columnDef
   renderDomElementCallback(collection);
 }
 
-export async function renderCollectionOptionsAsync(collectionAsync: Promise<any | any[]> | Observable<any | any[]> | Subject<any | any[]>, columnDef: Column, renderDomElementCallback: (collection: any) => void, rxjs?: RxJsFacade, subscriptions?: Subscription[]): Promise<any[]> {
+export async function renderCollectionOptionsAsync(
+  collectionAsync: Promise<any | any[]> | Observable<any | any[]> | Subject<any | any[]>,
+  columnDef: Column,
+  renderDomElementCallback: (collection: any) => void,
+  rxjs?: RxJsFacade,
+  subscriptions?: Subscription[]
+): Promise<any[]> {
   const columnFilter = columnDef?.filter ?? {};
   const collectionOptions = columnFilter?.collectionOptions ?? {};
 
@@ -58,7 +73,7 @@ export async function renderCollectionOptionsAsync(collectionAsync: Promise<any 
   if (collectionAsync) {
     const isObservable = rxjs?.isObservable(collectionAsync) ?? false;
     if (isObservable && rxjs) {
-      awaitedCollection = await castObservableToPromise(rxjs, collectionAsync) as Promise<any>;
+      awaitedCollection = (await castObservableToPromise(rxjs, collectionAsync)) as Promise<any>;
     }
 
     // wait for the "collectionAsync", once resolved we will save it into the "collection"
@@ -79,7 +94,9 @@ export async function renderCollectionOptionsAsync(collectionAsync: Promise<any 
     }
 
     if (!Array.isArray(awaitedCollection)) {
-      throw new Error('Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.');
+      throw new Error(
+        'Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.'
+      );
     }
 
     // copy over the array received from the async call to the "collection" as the new collection to use
@@ -101,19 +118,32 @@ export async function renderCollectionOptionsAsync(collectionAsync: Promise<any 
 }
 
 /** Create or recreate an Observable Subject and reassign it to the "collectionAsync" object so user can call a "collectionAsync.next()" on it */
-export function createCollectionAsyncSubject(columnDef: Column, renderDomElementCallback: (collection: any) => void, rxjs?: RxJsFacade, subscriptions?: Subscription[]): void {
+export function createCollectionAsyncSubject(
+  columnDef: Column,
+  renderDomElementCallback: (collection: any) => void,
+  rxjs?: RxJsFacade,
+  subscriptions?: Subscription[]
+): void {
   const columnFilter = columnDef?.filter ?? {};
   const newCollectionAsync = rxjs?.createSubject<any>();
   columnFilter.collectionAsync = newCollectionAsync;
   if (subscriptions && newCollectionAsync) {
     subscriptions.push(
-      newCollectionAsync.subscribe(collection => renderDomElementFromCollectionAsync(collection, columnDef, renderDomElementCallback))
+      newCollectionAsync.subscribe((collection) =>
+        renderDomElementFromCollectionAsync(collection, columnDef, renderDomElementCallback)
+      )
     );
   }
 }
 
 /** Get Locale, Translated or a Default Text if first two aren't detected */
-function getOutputText(translationKey: string, localeText: string, defaultText: string, gridOptions: GridOption, translaterService?: TranslaterService): string {
+function getOutputText(
+  translationKey: string,
+  localeText: string,
+  defaultText: string,
+  gridOptions: GridOption,
+  translaterService?: TranslaterService
+): string {
   if (gridOptions?.enableTranslate && translaterService?.translate) {
     const translationPrefix = getTranslationPrefix(gridOptions);
     return translaterService.translate(`${translationPrefix}${translationKey}`);
@@ -142,17 +172,39 @@ export function compoundOperatorNumeric(gridOptions: GridOption, translaterServi
     { operator: '', desc: '' },
     { operator: '=', desc: getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to', gridOptions, translaterService) },
     { operator: '<', desc: getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than', gridOptions, translaterService) },
-    { operator: '<=', desc: getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to', gridOptions, translaterService) },
+    {
+      operator: '<=',
+      desc: getOutputText(
+        'LESS_THAN_OR_EQUAL_TO',
+        'TEXT_LESS_THAN_OR_EQUAL_TO',
+        'Less than or equal to',
+        gridOptions,
+        translaterService
+      ),
+    },
     { operator: '>', desc: getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than', gridOptions, translaterService) },
-    { operator: '>=', desc: getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to', gridOptions, translaterService) },
-    { operator: '<>', desc: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) }
+    {
+      operator: '>=',
+      desc: getOutputText(
+        'GREATER_THAN_OR_EQUAL_TO',
+        'TEXT_GREATER_THAN_OR_EQUAL_TO',
+        'Greater than or equal to',
+        gridOptions,
+        translaterService
+      ),
+    },
+    { operator: '<>', desc: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) },
   ];
 
   return operatorList;
 }
 
 // internal function to apply Operator detail alternate texts when they exists
-export function applyOperatorAltTextWhenExists(gridOptions: GridOption, operatorDetailList: OperatorDetail[], filterType: 'text' | 'numeric'): void {
+export function applyOperatorAltTextWhenExists(
+  gridOptions: GridOption,
+  operatorDetailList: OperatorDetail[],
+  filterType: 'text' | 'numeric'
+): void {
   if (gridOptions.compoundOperatorAltTexts) {
     for (const opDetail of operatorDetailList) {
       if (gridOptions.compoundOperatorAltTexts.hasOwnProperty(filterType)) {

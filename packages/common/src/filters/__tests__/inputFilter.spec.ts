@@ -42,7 +42,7 @@ describe('InputFilter', () => {
       grid: gridStub,
       columnDef: mockColumn,
       callback: vi.fn(),
-      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id),
     };
 
     filter = new InputFilter({} as any);
@@ -248,7 +248,7 @@ describe('InputFilter', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     gridOptionMock.defaultBackendServiceFilterTypingDebounce = 2;
     gridOptionMock.backendServiceApi = {
-      service: {}
+      service: {},
     } as unknown as BackendServiceApi;
 
     filter.init(filterArguments);

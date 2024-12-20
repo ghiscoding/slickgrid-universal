@@ -9,7 +9,7 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createDomElement, SlickEventHandler, } from '@slickgrid-universal/common';
+import { Constants, createDomElement, SlickEventHandler } from '@slickgrid-universal/common';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
@@ -64,25 +64,30 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService | undefined) {
+  constructor(
+    protected readonly grid: SlickGrid,
+    protected readonly customFooterOptions: CustomFooterOption,
+    protected readonly pubSubService: BasePubSubService,
+    protected readonly translaterService?: TranslaterService | undefined
+  ) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new SlickEventHandler();
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
-    this._isLeftFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.leftFooterText);
-    this._isRightFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.rightFooterText);
+    this._isLeftFooterOriginallyEmpty = !this.gridOptions.customFooterOptions?.leftFooterText;
+    this._isRightFooterOriginallyEmpty = !this.gridOptions.customFooterOptions?.rightFooterText;
     this.registerOnSelectedRowsChangedWhenEnabled(customFooterOptions);
 
     if (this._enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error(
+        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
+      );
     }
     this.translateCustomFooterTexts();
 
     if (this._enableTranslate && this.pubSubService?.subscribe) {
       const translateEventName = this.translaterService?.eventName ?? 'onLanguageChange';
-      this._subscriptions.push(
-        this.pubSubService.subscribe(translateEventName, () => this.translateCustomFooterTexts())
-      );
+      this._subscriptions.push(this.pubSubService.subscribe(translateEventName, () => this.translateCustomFooterTexts()));
     }
   }
 
@@ -117,7 +122,12 @@ export class SlickFooterComponent {
 
     // locale text changes
     if (this.customFooterOptions.metricTexts?.lastUpdate) {
-      this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'lastUpdate', 'span.text-last-update', 'textContent');
+      this._bindingHelper.addElementBinding(
+        this.customFooterOptions.metricTexts,
+        'lastUpdate',
+        'span.text-last-update',
+        'textContent'
+      );
     }
     this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'items', 'span.text-items', 'textContent');
     this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'of', 'span.text-of', 'textContent');
@@ -140,7 +150,9 @@ export class SlickFooterComponent {
       for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
         if (propName.lastIndexOf('Key') > 0) {
           const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          this.customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(this.customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' ');
+          this.customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(
+            this.customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' '
+          );
         }
       }
 
@@ -150,9 +162,12 @@ export class SlickFooterComponent {
       }
     } else if (this.locales) {
       this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
-      this.customFooterOptions.metricTexts.lastUpdate = this.customFooterOptions.metricTexts.lastUpdate || this.locales?.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
-      this.customFooterOptions.metricTexts.items = this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
-      this.customFooterOptions.metricTexts.itemsSelected = this.customFooterOptions.metricTexts.itemsSelected || this.locales?.TEXT_ITEMS_SELECTED || 'TEXT_ITEMS_SELECTED';
+      this.customFooterOptions.metricTexts.lastUpdate =
+        this.customFooterOptions.metricTexts.lastUpdate || this.locales?.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
+      this.customFooterOptions.metricTexts.items =
+        this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
+      this.customFooterOptions.metricTexts.itemsSelected =
+        this.customFooterOptions.metricTexts.itemsSelected || this.locales?.TEXT_ITEMS_SELECTED || 'TEXT_ITEMS_SELECTED';
       this.customFooterOptions.metricTexts.of = this.customFooterOptions.metricTexts.of || this.locales?.TEXT_OF || 'TEXT_OF';
     }
   }
@@ -168,7 +183,7 @@ export class SlickFooterComponent {
       style: {
         width: '100%',
         height: `${this.customFooterOptions.footerHeight || 20}px`,
-      }
+      },
     });
 
     const leftFooterElm = createDomElement('div', { className: `left-footer ${this.customFooterOptions.leftContainerClass}` });
@@ -184,7 +199,9 @@ export class SlickFooterComponent {
 
   /** Create the Right Section Footer */
   protected createFooterRightContainer(): HTMLDivElement {
-    const rightFooterElm = createDomElement('div', { className: `right-footer ${this.customFooterOptions.rightContainerClass || ''}` });
+    const rightFooterElm = createDomElement('div', {
+      className: `right-footer ${this.customFooterOptions.rightContainerClass || ''}`,
+    });
 
     if (!this._isRightFooterOriginallyEmpty) {
       this.grid.applyHtmlCode(rightFooterElm, this.customFooterOptions.rightFooterText);
@@ -222,7 +239,10 @@ export class SlickFooterComponent {
       // add carriage return which will add a space before the span
       rightFooterElm.appendChild(document.createTextNode('\r\n'));
       rightFooterElm.appendChild(
-        createDomElement('span', { className: 'text-items', textContent: ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} ` })
+        createDomElement('span', {
+          className: 'text-items',
+          textContent: ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `,
+        })
       );
     }
 
@@ -233,13 +253,18 @@ export class SlickFooterComponent {
   protected createFooterLastUpdate(): HTMLSpanElement {
     // get translated text & last timestamp
     const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? 'Last Update';
+    // prettier-ignore
     const lastUpdateTimestamp = this.metrics?.endTime ? format(this.metrics?.endTime, this.customFooterOptions.dateFormat, 'en-US') : '';
     const lastUpdateContainerElm = createDomElement('span');
 
     lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'text-last-update', textContent: lastUpdateText }));
     lastUpdateContainerElm.appendChild(document.createTextNode('\r\n'));
-    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp }));
-    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'separator', textContent: ` ${this.customFooterOptions.metricSeparator || ''} ` }));
+    lastUpdateContainerElm.appendChild(
+      createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp })
+    );
+    lastUpdateContainerElm.appendChild(
+      createDomElement('span', { className: 'separator', textContent: ` ${this.customFooterOptions.metricSeparator || ''} ` })
+    );
 
     return lastUpdateContainerElm;
   }
@@ -251,14 +276,21 @@ export class SlickFooterComponent {
    */
   protected registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption): void {
     const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
-    if (isRowSelectionEnabled && customFooterOptions && (!customFooterOptions.hideRowSelectionCount && this._isLeftFooterOriginallyEmpty)) {
+    if (
+      isRowSelectionEnabled &&
+      customFooterOptions &&
+      !customFooterOptions.hideRowSelectionCount &&
+      this._isLeftFooterOriginallyEmpty
+    ) {
       this._isLeftFooterDisplayingSelectionRowCount = true;
-      const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+      const selectedCountText =
+        customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
       customFooterOptions.leftFooterText = `0 ${selectedCountText}`;
 
       this._eventHandler.subscribe(this.grid.onSelectedRowsChanged, (_e, args) => {
         this._selectedRowCount = args.rows.length;
-        const selectedCountText2 = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+        const selectedCountText2 =
+          customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
         this.leftFooterText = `${this._selectedRowCount} ${selectedCountText2}`;
       });
     }

@@ -1,14 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type {
-  Column,
-  EditCommand,
-  GridOption,
-  OnBeforeEditCellEventArgs,
-  OnSetOptionsEventArgs,
-  RowBasedEditOptions,
-} from '../../interfaces/index.js';
+import type { Column, EditCommand, GridOption, OnBeforeEditCellEventArgs, OnSetOptionsEventArgs, RowBasedEditOptions } from '../../interfaces/index.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import {
   BTN_ACTION_CANCEL,
@@ -80,9 +73,7 @@ const gridStubBlueprint = {
   getColumns: vi.fn().mockImplementation(() => (gridStubBlueprint as any).columns || []),
 } as unknown as SlickGrid;
 
-const extensionUtilityStub = {
-
-} as ExtensionUtility;
+const extensionUtilityStub = {} as ExtensionUtility;
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -148,10 +139,7 @@ describe('Row Based Edit Plugin', () => {
 
     plugin.init(gridStub, gridService);
 
-    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as Mock<any>).mock.calls[0][1] as (
-      e: Event,
-      args: OnBeforeEditCellEventArgs
-    ) => boolean;
+    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as Mock<any>).mock.calls[0][1] as (e: Event, args: OnBeforeEditCellEventArgs) => boolean;
     expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(false);
 
     plugin.rowBasedEditCommandHandler(fakeItem, {} as Column, {} as EditCommand);
@@ -223,7 +211,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
 
@@ -248,7 +236,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: [],
           serializedValue: ['bar'],
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
 
@@ -391,9 +379,10 @@ describe('Row Based Edit Plugin', () => {
     gridStub.onSetOptions = 'onSetOptions' as any;
     plugin.init(gridStub, gridService);
 
-    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find(
-      (c) => c[0] === 'onSetOptions'
-    )![1] as (_e: Event, args: OnSetOptionsEventArgs) => void;
+    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find((c) => c[0] === 'onSetOptions')![1] as (
+      _e: Event,
+      args: OnSetOptionsEventArgs
+    ) => void;
 
     call(
       {} as Event,
@@ -423,13 +412,11 @@ describe('Row Based Edit Plugin', () => {
       {
         prevSerializedValue: 'foo',
         serializedValue: 'bar',
-        execute: () => { },
+        execute: () => {},
       } as EditCommand
     );
 
-    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find(
-      (c) => c[0] === 'onRowsOrCountChanged'
-    )![1] as () => void;
+    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find((c) => c[0] === 'onRowsOrCountChanged')![1] as () => void;
 
     call();
 
@@ -681,7 +668,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
       gridStub.invalidate.mockClear();
@@ -747,7 +734,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
       gridStub.invalidate.mockClear();
@@ -775,7 +762,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
           undo: undoSpy,
         } as unknown as EditCommand
       );
@@ -799,14 +786,15 @@ describe('Row Based Edit Plugin', () => {
       translateService.use('fr');
 
       gridStub.getOptions.mockReturnValue({
-        ...optionsMock, rowBasedEditOptions: {
+        ...optionsMock,
+        rowBasedEditOptions: {
           actionButtons: {
             updateButtonTitleKey: 'UPDATE',
             editButtonTitleKey: 'EDIT',
             deleteButtonTitleKey: 'DELETE',
             cancelButtonTitleKey: 'CANCEL',
-          }
-        }
+          },
+        },
       });
 
       plugin.init(gridStub, gridService);

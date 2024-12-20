@@ -73,5 +73,5 @@ export enum OperatorType {
   inCollection = 'IN_COLLECTION',
 
   /** Find a value that is NOT within a collection inside another collection (inversed operator of "IN_COLLECTION") */
-  notInCollection = 'NOT_IN_COLLECTION'
+  notInCollection = 'NOT_IN_COLLECTION',
 }

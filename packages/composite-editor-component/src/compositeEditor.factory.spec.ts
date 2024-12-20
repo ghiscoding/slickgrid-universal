@@ -7,7 +7,7 @@ import {
   type GridOption,
   type SlickDataView,
   SlickEvent,
-  type SlickGrid
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 
 import { SlickCompositeEditor } from './compositeEditor.factory.js';
@@ -70,8 +70,17 @@ const gridStub = {
 const columnsMock: Column[] = [
   { id: 'productName', field: 'productName', width: 100, name: 'Product', nameKey: 'PRODUCT', editorClass: Editors.text as any },
   { id: 'field2', field: 'field2', width: 75, name: 'Field 2' },
-  { id: 'field3', field: 'field3', width: 75, name: 'Field 3', nameKey: 'DURATION', editorClass: Editors.float as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
-  { id: 'zip', field: 'adress.zip', width: 75, name: 'Zip', editorClass: Editors.integer as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' }
+  {
+    id: 'field3',
+    field: 'field3',
+    width: 75,
+    name: 'Field 3',
+    nameKey: 'DURATION',
+    editorClass: Editors.float as any,
+    columnGroup: 'Group Name',
+    columnGroupKey: 'GROUP_NAME',
+  },
+  { id: 'zip', field: 'adress.zip', width: 75, name: 'Zip', editorClass: Editors.integer as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
 ];
 const compositeEditorOptionsMock = {
   labels: {
@@ -128,14 +137,14 @@ describe('Composite Editor Factory', () => {
       dataView: dataViewStub,
       event: new Event('click'),
       grid: gridStub,
-      gridPosition: { top: 0, left: 0, right: 0, bottom: 0, } as unknown as ElementPosition,
+      gridPosition: { top: 0, left: 0, right: 0, bottom: 0 } as unknown as ElementPosition,
       item: {},
-      position: { top: 0, left: 0, right: 0, bottom: 0, } as unknown as ElementPosition,
+      position: { top: 0, left: 0, right: 0, bottom: 0 } as unknown as ElementPosition,
       compositeEditorOptions: {} as unknown as CompositeEditorOption,
       cancelChanges: cancelChangeMock,
       commitChanges: commitChangeMock,
     };
-    editors = columnsMock.map(col => col.editorClass);
+    editors = columnsMock.map((col) => col.editorClass);
     compositeOptions = { destroy: destroyMock, modalType: 'create', validationMsgPrefix: '* ', formValues: {}, editors };
 
     containers = [container1, container2, container3, container4];
@@ -375,12 +384,14 @@ describe('Composite Editor Factory', () => {
     expect(validationOut).toEqual({
       valid: false,
       msg: 'Some of the fields have failed validation',
-      errors: [{
-        index: 0,
-        editor: output.getEditors()[0],
-        container: containers[0],
-        msg: 'invalid product'
-      }]
+      errors: [
+        {
+          index: 0,
+          editor: output.getEditors()[0],
+          container: containers[0],
+          msg: 'invalid product',
+        },
+      ],
     });
     expect(document.body.querySelectorAll('.invalid').length).toBe(2);
   });

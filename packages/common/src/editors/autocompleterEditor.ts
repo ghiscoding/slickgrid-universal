@@ -1,7 +1,14 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
+import {
+  classNameToList,
+  createDomElement,
+  isObject,
+  isPrimitiveValue,
+  setDeepValue,
+  toKebabCase,
+} from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants.js';
 import { FieldType } from '../enums/index.js';
@@ -22,7 +29,7 @@ import type {
 } from '../interfaces/index.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { findOrDefault, getDescendantProperty, } from '../services/utilities.js';
+import { findOrDefault, getDescendantProperty } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
 
@@ -121,14 +128,14 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor || {} as ColumnEditor;
+    return this.columnDef?.editor || ({} as ColumnEditor);
   }
 
   /** Getter for the Custom Structure if exist */
   get customStructure(): CollectionCustomStructure | undefined {
     let customStructure = this.columnEditor?.customStructure;
     const columnType = this.columnEditor?.type ?? this.columnDef?.type;
-    if (!customStructure && (columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey)) {
+    if (!customStructure && columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey) {
       customStructure = {
         label: this.columnDef.labelKey,
         value: this.columnDef.dataKey,
@@ -238,9 +245,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   setValue(inputValue: any, isApplyingValue = false, triggerOnCompositeEditorChange = true): void {
     // if user provided a custom structure, we will serialize the value returned from the object with custom structure
-    this._inputElm.value = (inputValue?.hasOwnProperty(this.labelName))
-      ? inputValue[this.labelName]
-      : inputValue;
+    this._inputElm.value = inputValue?.hasOwnProperty(this.labelName) ? inputValue[this.labelName] : inputValue;
 
     if (isApplyingValue) {
       this._currentValue = inputValue;
@@ -262,14 +267,21 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     if (fieldName !== undefined) {
       // if we have a collection defined, we will try to find the string within the collection and return it
       if (Array.isArray(this.collection) && this.collection.length > 0) {
-        newValue = findOrDefault(this.collection, (collectionItem: any) => {
-          if (collectionItem && isObject(state) && collectionItem.hasOwnProperty(this.valueName)) {
-            return (collectionItem[this.valueName].toString()) === (state.hasOwnProperty(this.valueName) && (state as any)[this.valueName].toString());
-          } else if (collectionItem && typeof state === 'string' && collectionItem.hasOwnProperty(this.valueName)) {
-            return (collectionItem[this.valueName].toString()) === state;
-          }
-          return collectionItem?.toString() === state;
-        }, '');
+        newValue = findOrDefault(
+          this.collection,
+          (collectionItem: any) => {
+            if (collectionItem && isObject(state) && collectionItem.hasOwnProperty(this.valueName)) {
+              return (
+                collectionItem[this.valueName].toString() ===
+                (state.hasOwnProperty(this.valueName) && (state as any)[this.valueName].toString())
+              );
+            } else if (collectionItem && typeof state === 'string' && collectionItem.hasOwnProperty(this.valueName)) {
+              return collectionItem[this.valueName].toString() === state;
+            }
+            return collectionItem?.toString() === state;
+          },
+          ''
+        );
       }
 
       // is the field a complex object, "address.streetNumber"
@@ -297,7 +309,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     if (this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
-    const isValueChanged = (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
+    const isValueChanged =
+      !(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined)) &&
+      elmValue !== this._defaultTextValue;
     return this._lastTriggeredByClearInput || isValueChanged;
   }
 
@@ -381,14 +395,20 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
 
     // if user provided a custom structure, we will serialize the value returned from the object with custom structure
-    if (this.customStructure && this._currentValue && this._currentValue.hasOwnProperty(this.valueName) && (this.columnDef?.type !== FieldType.object && this.columnEditor?.type !== FieldType.object)) {
+    if (
+      this.customStructure &&
+      this._currentValue &&
+      this._currentValue.hasOwnProperty(this.valueName) &&
+      this.columnDef?.type !== FieldType.object &&
+      this.columnEditor?.type !== FieldType.object
+    ) {
       return this._currentValue[this.valueName];
     } else if (this._currentValue && this._currentValue.value !== undefined) {
       // when object has a "value" property and its column is set as an Object type, we'll return an object with optional custom structure
       if (this.columnDef?.type === FieldType.object || this.columnEditor?.type === FieldType.object) {
         return {
           [this.labelName]: this._currentValue.label,
-          [this.valueName]: this._currentValue.value
+          [this.valueName]: this._currentValue.value,
         };
       }
       return this._currentValue.value;
@@ -409,7 +429,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       return { valid: true, msg: '' };
     }
 
-    const val = (inputValue !== undefined) ? inputValue : this._inputElm?.value;
+    const val = inputValue !== undefined ? inputValue : this._inputElm?.value;
     return textValidator(val, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
@@ -428,13 +448,25 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({
-      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    }).getReturnValue();
+    const isCellEditable = this.grid.onBeforeEditCell
+      .notify({
+        ...activeCell,
+        item: this.dataContext,
+        column: this.args.column,
+        grid: this.grid,
+        target: 'composite',
+        compositeEditorOptions: this.args.compositeEditorOptions,
+      })
+      .getReturnValue();
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false): void {
+  protected handleChangeOnCompositeEditor(
+    event: Event | null,
+    compositeEditorOptions: CompositeEditorOption,
+    triggeredBy: 'user' | 'system' = 'user',
+    isCalledByClearValue = false
+  ): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -449,11 +481,22 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
+    if (
+      isCalledByClearValue ||
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+    ) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
-      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      {
+        ...activeCell,
+        item,
+        grid,
+        column,
+        formValues: compositeEditorOptions.formValues,
+        editors: compositeEditorOptions.editors,
+        triggeredBy,
+      },
       new SlickEventData(event)
     );
   }
@@ -471,6 +514,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       // otherwise we know that the autocomplete lib always require a label/value pair, we can pull them directly
       const hasCustomRenderItemCallback = this.editorOptions?.renderItem ?? false;
 
+      // prettier-ignore
       const itemLabel = typeof selectedItem === 'string' ? selectedItem : (hasCustomRenderItemCallback ? selectedItem[this.labelName] : selectedItem.label);
       this.setValue(itemLabel);
 
@@ -487,13 +531,13 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
         this.editorOptions.onSelectItem(item, row, cell, this.args.column, this.args.item);
       }
 
-      window.setTimeout(() => this._lastTriggeredByClearInput = false); // reset flag after a cycle
+      window.setTimeout(() => (this._lastTriggeredByClearInput = false)); // reset flag after a cycle
     }
     return false;
   }
 
   protected renderRegularItem(item: T): HTMLDivElement {
-    const itemLabel = (typeof item === 'string' ? item : item?.label ?? '') as string;
+    const itemLabel = (typeof item === 'string' ? item : (item?.label ?? '')) as string;
     return createDomElement('div', { textContent: itemLabel || '' });
   }
 
@@ -528,16 +572,22 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     const title = this.columnEditor?.title ?? '';
 
     this._editorInputGroupElm = createDomElement('div', { className: 'autocomplete-container input-group' });
-    const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
+    const closeButtonGroupElm = createDomElement('span', {
+      className: 'input-group-btn input-group-append',
+      dataset: { clear: '' },
+    });
     this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default btn-clear' });
     this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
     this._inputElm = createDomElement(
       'input',
       {
-        type: 'text', placeholder, title,
-        autocomplete: 'off', ariaAutoComplete: 'none',
+        type: 'text',
+        placeholder,
+        title,
+        autocomplete: 'off',
+        ariaAutoComplete: 'none',
         className: `autocomplete form-control editor-text input-group-editor editor-${columnId}`,
-        dataset: { input: '' }
+        dataset: { input: '' },
       },
       this._editorInputGroupElm
     );
@@ -553,9 +603,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
 
     this._bindEventService.bind(this._inputElm, 'focus', () => this._inputElm?.select());
-    this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent & { target: HTMLInputElement; }) => {
+    this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent & { target: HTMLInputElement }) => {
       this._lastInputKeyEvent = event;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === "Home" || event.key === "End") {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End') {
         event.stopImmediatePropagation();
       }
 
@@ -571,7 +621,12 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     // user could also override the collection
     if (finalCollection && this.columnEditor?.collectionOverride) {
-      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.dataContext, grid: this.grid, originalCollections: this.collection };
+      const overrideArgs: CollectionOverrideArgs = {
+        column: this.columnDef,
+        dataContext: this.dataContext,
+        grid: this.grid,
+        originalCollections: this.collection,
+      };
       if (this.args.compositeEditorOptions) {
         const { formValues, modalType } = this.args.compositeEditorOptions;
         overrideArgs.compositeEditorOptions = { formValues, modalType };
@@ -586,16 +641,16 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     // the kradeen autocomplete lib only works with label/value pair, make sure that our array is in accordance
     if (Array.isArray(finalCollection)) {
-      if (this.collection.every(x => isPrimitiveValue(x))) {
+      if (this.collection.every((x) => isPrimitiveValue(x))) {
         // when detecting an array of primitives, we have to remap it to an array of value/pair objects
-        finalCollection = finalCollection.map(c => ({ label: c, value: c }));
+        finalCollection = finalCollection.map((c) => ({ label: c, value: c }));
       } else {
         // user might provide its own custom structures, if so remap them as the new label/value pair
         finalCollection = finalCollection.map((item) => ({
           label: item?.[this.labelName],
           value: item?.[this.valueName],
           labelPrefix: item?.[this.labelPrefixName] ?? '',
-          labelSuffix: item?.[this.labelSuffixName] ?? ''
+          labelSuffix: item?.[this.labelSuffixName] ?? '',
         }));
       }
 
@@ -608,7 +663,10 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       input: this._inputElm,
       debounceWaitMs: 200,
       className: `slick-autocomplete ${this.editorOptions?.className ?? ''}`.trim(),
-      emptyMsg: this.gridOptions.enableTranslate && this._translater?.translate ? this._translater.translate('NO_ELEMENTS_FOUND') : this._locales?.TEXT_NO_ELEMENTS_FOUND ?? 'No elements found',
+      emptyMsg:
+        this.gridOptions.enableTranslate && this._translater?.translate
+          ? this._translater.translate('NO_ELEMENTS_FOUND')
+          : (this._locales?.TEXT_NO_ELEMENTS_FOUND ?? 'No elements found'),
       customize: (_input, _inputRect, container) => {
         container.style.width = ''; // unset width that was set internally by the Autopleter lib
       },
@@ -651,10 +709,12 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
           if (finalCollection) {
             // you can also use AJAX requests instead of preloaded data
             // also at this point our collection was already modified, by the previous map, to have the "label" property (unless it's a string)
-            updateCallback(finalCollection!.filter(c => {
-              const label = (typeof c === 'string' ? c : c?.label) || '';
-              return label.toLowerCase().includes(searchTerm.toLowerCase());
-            }));
+            updateCallback(
+              finalCollection!.filter((c) => {
+                const label = (typeof c === 'string' ? c : c?.label) || '';
+                return label.toLowerCase().includes(searchTerm.toLowerCase());
+              })
+            );
           }
         },
       } as AutocompleteSettings<any>);

@@ -23,15 +23,26 @@ describe('Shared Service', () => {
   let service: SharedService;
 
   beforeEach(() => {
-    mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
-    mockHierarchicalDataset = [{
-      id: 11, file: 'Music', files: [{
-        id: 12, file: 'mp3', files: [
-          { id: 16, file: 'rock', files: [{ id: 17, file: 'soft.mp3', dateModified: '2015-05-13T13:50:00Z', size: 98, }] },
-          { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01T17:05:00Z', size: 85, }] },
-        ]
-      }]
-    }];
+    mockColumns = [
+      { id: 'field1', field: 'field1', width: 100 },
+      { id: 'field2', field: 'field2', width: 100 },
+    ];
+    mockHierarchicalDataset = [
+      {
+        id: 11,
+        file: 'Music',
+        files: [
+          {
+            id: 12,
+            file: 'mp3',
+            files: [
+              { id: 16, file: 'rock', files: [{ id: 17, file: 'soft.mp3', dateModified: '2015-05-13T13:50:00Z', size: 98 }] },
+              { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01T17:05:00Z', size: 85 }] },
+            ],
+          },
+        ],
+      },
+    ];
     mockGridOptions = { enableAutoResize: true };
     service = new SharedService();
   });
