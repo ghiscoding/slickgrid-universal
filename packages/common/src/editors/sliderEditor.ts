@@ -112,16 +112,8 @@ export class SliderEditor implements Editor {
 
       // watch on change event
       this._cellContainerElm.appendChild(this._editorElm);
-      this._bindEventService.bind(
-        this._sliderTrackElm,
-        ['click', 'mouseup'],
-        this.sliderTrackClicked.bind(this) as EventListener
-      );
-      this._bindEventService.bind(
-        this._inputElm,
-        ['change', 'mouseup', 'touchend'],
-        this.handleChangeEvent.bind(this) as EventListener
-      );
+      this._bindEventService.bind(this._sliderTrackElm, ['click', 'mouseup'], this.sliderTrackClicked.bind(this) as EventListener);
+      this._bindEventService.bind(this._inputElm, ['change', 'mouseup', 'touchend'], this.handleChangeEvent.bind(this) as EventListener);
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
@@ -501,14 +493,10 @@ export class SliderEditor implements Editor {
   protected updateTrackFilledColorWhenEnabled(): void {
     if (this.editorOptions.enableSliderTrackColoring && this._inputElm) {
       const percent1 = 0;
-      const percent2 =
-        ((+this.getValue() - +this._inputElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._inputElm.min)) * 100;
+      const percent2 = ((+this.getValue() - +this._inputElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._inputElm.min)) * 100;
       const bg = 'linear-gradient(to right, %b %p1, %c %p1, %c %p2, %b %p2)'
         .replace(/%b/g, '#eee')
-        .replace(
-          /%c/g,
-          (this.editorOptions?.sliderTrackFilledColor ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string
-        )
+        .replace(/%c/g, (this.editorOptions?.sliderTrackFilledColor ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
         .replace(/%p1/g, `${percent1}%`)
         .replace(/%p2/g, `${percent2}%`);
 

@@ -81,11 +81,9 @@ export class Constants {
     'Please enter a valid integer number that is greater than or equal to {{minValue}}';
   static readonly VALIDATION_EDITOR_NUMBER_BETWEEN = 'Please enter a valid number between {{minValue}} and {{maxValue}}';
   static readonly VALIDATION_EDITOR_NUMBER_MAX = 'Please enter a valid number that is lower than {{maxValue}}';
-  static readonly VALIDATION_EDITOR_NUMBER_MAX_INCLUSIVE =
-    'Please enter a valid number that is lower than or equal to {{maxValue}}';
+  static readonly VALIDATION_EDITOR_NUMBER_MAX_INCLUSIVE = 'Please enter a valid number that is lower than or equal to {{maxValue}}';
   static readonly VALIDATION_EDITOR_NUMBER_MIN = 'Please enter a valid number that is greater than {{minValue}}';
-  static readonly VALIDATION_EDITOR_NUMBER_MIN_INCLUSIVE =
-    'Please enter a valid number that is greater than or equal to {{minValue}}';
+  static readonly VALIDATION_EDITOR_NUMBER_MIN_INCLUSIVE = 'Please enter a valid number that is greater than or equal to {{minValue}}';
   static readonly VALIDATION_EDITOR_DECIMAL_BETWEEN = 'Please enter a valid number with a maximum of {{maxDecimal}} decimals';
   static readonly VALIDATION_EDITOR_TEXT_LENGTH_BETWEEN =
     'Please make sure your text length is between {{minLength}} and {{maxLength}} characters';
@@ -93,6 +91,5 @@ export class Constants {
   static readonly VALIDATION_EDITOR_TEXT_MAX_LENGTH_INCLUSIVE =
     'Please make sure your text is less than or equal to {{maxLength}} characters';
   static readonly VALIDATION_EDITOR_TEXT_MIN_LENGTH = 'Please make sure your text is more than {{minLength}} character(s)';
-  static readonly VALIDATION_EDITOR_TEXT_MIN_LENGTH_INCLUSIVE =
-    'Please make sure your text is at least {{minLength}} character(s)';
+  static readonly VALIDATION_EDITOR_TEXT_MIN_LENGTH_INCLUSIVE = 'Please make sure your text is at least {{minLength}} character(s)';
 }

@@ -90,10 +90,7 @@ export default class Example16 {
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(
-                () => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }),
-                this.serverApiDelay
-              );
+              window.setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
             }),
           asyncPostFormatter: this.tooltipTaskAsyncFormatter,
 
@@ -548,14 +545,7 @@ export default class Example16 {
 
   tooltipFormatter(row, cell, _value, column, dataContext, grid) {
     const tooltipTitle = 'Custom Tooltip';
-    const effortDrivenHtml = Formatters.checkmarkMaterial(
-      row,
-      cell,
-      dataContext.effortDriven,
-      column,
-      dataContext,
-      grid
-    ) as HTMLElement;
+    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid) as HTMLElement;
 
     return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>

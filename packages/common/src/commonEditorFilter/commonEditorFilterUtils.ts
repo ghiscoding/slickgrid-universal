@@ -90,10 +90,7 @@ export function setPickerDates(
       dates: [pickerDates.map((p) => format(p, isoFormat)).join(':') as FormatDateString],
       month: pickerDates[0]?.getMonth(),
       year: pickerDates[0]?.getFullYear(),
-      time:
-        inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h')
-          ? format(pickerDates[0], 'HH:mm')
-          : undefined,
+      time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
     };
 
     if (!dequal(pickerInstance.settings!.selected, newSettingSelected)) {
@@ -109,8 +106,6 @@ export function setPickerDates(
       }
     }
 
-    dateInputElm.value = newDates.length
-      ? pickerDates.map((p) => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ')
-      : '';
+    dateInputElm.value = newDates.length ? pickerDates.map((p) => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }
 }

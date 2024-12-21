@@ -114,12 +114,7 @@ export class GridService {
    * @param {Boolean} suppressRender - do we want to supress the grid re-rendering? (defaults to false)
    * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via "setColumns()" method? (defaults to false)
    */
-  setPinning(
-    pinningOptions: CurrentPinning,
-    shouldAutosizeColumns = true,
-    suppressRender = false,
-    suppressColumnSet = true
-  ): void {
+  setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true, suppressRender = false, suppressColumnSet = true): void {
     if (isObjectEmpty(pinningOptions)) {
       this.clearPinning();
     } else {
@@ -530,9 +525,7 @@ export class GridService {
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
-    items.forEach((item: T) =>
-      rowNumbers.push(this._dataView.getRowById(item[idPropName as keyof T] as string | number) as number)
-    );
+    items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById(item[idPropName as keyof T] as string | number) as number));
 
     // if user wanted to see highlighted row
     if (insertOptions.highlightRow) {
@@ -747,11 +740,7 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (
-      options.selectRow &&
-      this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
-    ) {
+    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -845,10 +834,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return row numbers in the grid
    */
-  upsertItems<T = any>(
-    items: T | T[],
-    options?: GridServiceInsertOption
-  ): { added: number | undefined; updated: number | undefined }[] {
+  upsertItems<T = any>(items: T | T[], options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined }[] {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     // when it's not an array, we can call directly the single item upsert
     if (!Array.isArray(items)) {
@@ -868,9 +854,7 @@ export class GridService {
     // end the bulk transaction since we're all done
     this._dataView.endUpdate();
 
-    const rowNumbers = upsertedRows.map((upsertRow) =>
-      upsertRow.added !== undefined ? upsertRow.added : upsertRow.updated
-    ) as number[];
+    const rowNumbers = upsertedRows.map((upsertRow) => (upsertRow.added !== undefined ? upsertRow.added : upsertRow.updated)) as number[];
 
     // only highlight at the end, all at once
     // we have to do this because doing highlight 1 by 1 would only re-select the last highlighted row which is wrong behavior
@@ -879,11 +863,7 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (
-      options.selectRow &&
-      this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
-    ) {
+    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -917,9 +897,7 @@ export class GridService {
     let isItemAdded = false;
     options = { ...GridServiceInsertOptionDefaults, ...options };
     if (!options?.skipError && itemId === undefined && !this.hasRowSelectionEnabled()) {
-      throw new Error(
-        `[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property`
-      );
+      throw new Error(`[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property`);
     }
 
     let rowNumberAdded: number | undefined;

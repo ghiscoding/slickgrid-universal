@@ -168,8 +168,7 @@ export class CustomVueComponentEditor implements Editor {
 
   isValueChanged() {
     return (
-      !(this.selectedItem.id === '' && (this.defaultId === null || this.defaultId === undefined)) &&
-      this.selectedItem.id !== this.defaultId
+      !(this.selectedItem.id === '' && (this.defaultId === null || this.defaultId === undefined)) && this.selectedItem.id !== this.defaultId
     );
   }
 

@@ -257,10 +257,7 @@ export class SlickRowMoveManager {
         this._grid.getEditorLock().cancelCurrentEdit();
       }
 
-      if (
-        this._grid.getEditorLock().isActive() ||
-        !/move|selectAndMove/.test(this._grid.getColumns()[cell.cell].behavior || '')
-      ) {
+      if (this._grid.getEditorLock().isActive() || !/move|selectAndMove/.test(this._grid.getColumns()[cell.cell].behavior || '')) {
         return false;
       }
 

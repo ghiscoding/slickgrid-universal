@@ -129,10 +129,7 @@ export class TreeDataService {
       // we wait for 1 CPU cycle to make sure that we only run it after filtering and grid initialization of tree & grid is over
       if (typeof this._treeDataRecalcHandler === 'function' && this._isOneCpuCyclePassed) {
         window.clearTimeout(this._timer);
-        this._timer = window.setTimeout(
-          () => this._treeDataRecalcHandler?.(),
-          this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0
-        );
+        this._timer = window.setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
       }
     });
   }
@@ -368,10 +365,7 @@ export class TreeDataService {
    * @param {ColumnSort | ColumnSort[]} [inputColumnSorts] - column sort(s)
    * @returns {Object} sort result object that includes both the flat & tree data arrays
    */
-  sortHierarchicalDataset<T>(
-    hierarchicalDataset: T[],
-    inputColumnSorts?: ColumnSort | ColumnSort[]
-  ): { hierarchical: T[]; flat: any[] } {
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], inputColumnSorts?: ColumnSort | ColumnSort[]): { hierarchical: T[]; flat: any[] } {
     const columnSorts = inputColumnSorts ?? this.getInitialSort(this.sharedService.allColumns, this.gridOptions);
     const finalColumnSorts = Array.isArray(columnSorts) ? columnSorts : [columnSorts];
     return this.sortService.sortHierarchicalDataset(hierarchicalDataset, finalColumnSorts);
@@ -502,13 +496,8 @@ export class TreeDataService {
 
       // also update the hierarchical tree item
       if (shouldUpdateTree) {
-        const searchTreePredicate = (treeItemToSearch: any) =>
-          treeItemToSearch[dataViewIdIdentifier] === item[dataViewIdIdentifier];
-        const treeItemFound = findItemInTreeStructure(
-          this.sharedService.hierarchicalDataset || [],
-          searchTreePredicate,
-          childrenPropName
-        );
+        const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[dataViewIdIdentifier] === item[dataViewIdIdentifier];
+        const treeItemFound = findItemInTreeStructure(this.sharedService.hierarchicalDataset || [], searchTreePredicate, childrenPropName);
         if (treeItemFound) {
           treeItemFound[collapsedPropName] = isCollapsed;
         }

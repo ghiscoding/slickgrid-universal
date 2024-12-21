@@ -157,12 +157,7 @@ describe('Example 21 - Row Detail View', () => {
       .should('contain', 'Sort Descending')
       .click();
 
-    cy.get('.grid21')
-      .find('.slick-header-column:nth(2)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid21').find('.slick-header-column:nth(2)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')

@@ -51,18 +51,7 @@ import { SlickPaginationComponent } from '@slickgrid-universal/pagination-compon
 import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { type i18n } from 'i18next';
-import {
-  type ComponentPublicInstance,
-  computed,
-  createApp,
-  inject,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  useAttrs,
-  watch,
-} from 'vue';
+import { type ComponentPublicInstance, computed, createApp, inject, nextTick, onBeforeUnmount, onMounted, ref, useAttrs, watch } from 'vue';
 
 import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
@@ -317,8 +306,7 @@ onMounted(() => {
 
   // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
   if (!hasBackendInfiniteScroll()) {
-    _gridOptions.value.enablePagination = !!(_gridOptions.value.backendServiceApi &&
-    _gridOptions.value.enablePagination === undefined
+    _gridOptions.value.enablePagination = !!(_gridOptions.value.backendServiceApi && _gridOptions.value.enablePagination === undefined
       ? true
       : _gridOptions.value.enablePagination);
   }
@@ -863,23 +851,13 @@ function bindBackendCallbackFunctions(gridOptions: GridOption) {
     // if user entered some any "presets", we need to reflect them all in the grid
     if (gridOptions?.presets) {
       // Filters "presets"
-      if (
-        backendApiService.updateFilters &&
-        Array.isArray(gridOptions.presets.filters) &&
-        gridOptions.presets.filters.length > 0
-      ) {
+      if (backendApiService.updateFilters && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
         backendApiService.updateFilters(gridOptions.presets.filters, true);
       }
       // Sorters "presets"
-      if (
-        backendApiService.updateSorters &&
-        Array.isArray(gridOptions.presets.sorters) &&
-        gridOptions.presets.sorters.length > 0
-      ) {
+      if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
         // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-        const sortColumns = _gridOptions.value?.multiColumnSort
-          ? gridOptions.presets.sorters
-          : gridOptions.presets.sorters.slice(0, 1);
+        const sortColumns = _gridOptions.value?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
         backendApiService.updateSorters(undefined, sortColumns);
       }
       // Pagination "presets"
@@ -937,12 +915,7 @@ function bindBackendCallbackFunctions(gridOptions: GridOption) {
 }
 
 function addBackendInfiniteScrollCallback(): void {
-  if (
-    grid &&
-    _gridOptions.value.backendServiceApi &&
-    hasBackendInfiniteScroll() &&
-    !_gridOptions.value.backendServiceApi?.onScrollEnd
-  ) {
+  if (grid && _gridOptions.value.backendServiceApi && hasBackendInfiniteScroll() && !_gridOptions.value.backendServiceApi?.onScrollEnd) {
     const onScrollEnd = () => {
       backendUtilityService.setInfiniteScrollBottomHit(true);
 
@@ -1004,13 +977,7 @@ function bindResizeHook(grid: SlickGrid, options: GridOption) {
   }
 
   // expand/autofit columns on first page load
-  if (
-    grid &&
-    options?.enableAutoResize &&
-    options.autoFitColumnsOnFirstLoad &&
-    options.enableAutoSizeColumns &&
-    !isAutosizeColsCalled
-  ) {
+  if (grid && options?.enableAutoResize && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && !isAutosizeColsCalled) {
     grid.autosizeColumns();
     isAutosizeColsCalled = true;
   }
@@ -1021,9 +988,7 @@ function executeAfterDataviewCreated(_grid: SlickGrid, gridOptions: GridOption) 
   if (gridOptions.enableSorting) {
     if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
       // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-      const sortColumns = _gridOptions.value.multiColumnSort
-        ? gridOptions.presets.sorters
-        : gridOptions.presets.sorters.slice(0, 1);
+      const sortColumns = _gridOptions.value.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
       sortService.loadGridSorters(sortColumns);
     }
   }
@@ -1109,8 +1074,7 @@ function refreshGridData(dataset: any[], totalCount?: number) {
     // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
     showPagination = !!(
       _gridOptions.value &&
-      (_gridOptions.value.enablePagination ||
-        (_gridOptions.value.backendServiceApi && _gridOptions.value.enablePagination === undefined))
+      (_gridOptions.value.enablePagination || (_gridOptions.value.backendServiceApi && _gridOptions.value.enablePagination === undefined))
     );
 
     if (_paginationOptions.value && _gridOptions.value?.pagination && _gridOptions.value?.backendServiceApi) {
@@ -1253,9 +1217,7 @@ function initializePaginationService(paginationOptions: Pagination) {
     paginationService.totalItems = totalItems.value;
     paginationService.init(grid!, paginationOptions, backendServiceApi);
     subscriptions.push(
-      eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: PaginationMetadata) =>
-        paginationChanged(paginationChanges)
-      ),
+      eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: PaginationMetadata) => paginationChanged(paginationChanges)),
       eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
         showPagination = visibility?.visible ?? false;
         if (_gridOptions.value?.backendServiceApi) {
@@ -1301,9 +1263,7 @@ function loadEditorCollectionAsync(column: Column) {
       // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
       queueMicrotask(() => {
         subscriptions.push(
-          (collectionAsync as Observable<any>).subscribe((resolvedCollection) =>
-            updateEditorCollection(column, resolvedCollection)
-          )
+          (collectionAsync as Observable<any>).subscribe((resolvedCollection) => updateEditorCollection(column, resolvedCollection))
         );
       });
     }
@@ -1325,18 +1285,9 @@ function insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<
 /** Load any possible Columns Grid Presets */
 function loadColumnPresetsWhenDatasetInitialized() {
   // if user entered some Columns "presets", we need to reflect them all in the grid
-  if (
-    _gridOptions.value.presets &&
-    Array.isArray(_gridOptions.value.presets.columns) &&
-    _gridOptions.value.presets.columns.length > 0
-  ) {
+  if (_gridOptions.value.presets && Array.isArray(_gridOptions.value.presets.columns) && _gridOptions.value.presets.columns.length > 0) {
     const gridPresetColumns: Column<any>[] = gridStateService.getAssociatedGridColumns(grid!, _gridOptions.value.presets.columns);
-    if (
-      gridPresetColumns &&
-      Array.isArray(gridPresetColumns) &&
-      gridPresetColumns.length > 0 &&
-      Array.isArray(_columnDefinitions.value)
-    ) {
+    if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(_columnDefinitions.value)) {
       // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
       if (_gridOptions.value.enableRowMoveManager) {
         const rmmColId = _gridOptions.value?.rowMoveManager?.columnId ?? '_move';
@@ -1401,8 +1352,7 @@ function loadLocalGridPagination(dataset?: any[]) {
 function loadRowSelectionPresetWhenExists() {
   // if user entered some Row Selections "presets"
   const presets = _gridOptions.value?.presets;
-  const enableRowSelection =
-    _gridOptions.value && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection);
+  const enableRowSelection = _gridOptions.value && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection);
   if (
     enableRowSelection &&
     grid?.getSelectionModel() &&
@@ -1440,7 +1390,7 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
   gridOptions.gridContainerId = `slickGridContainer-${props.gridId}`;
 
   // use extend to deep merge & copy to avoid immutable properties being changed in GlobalGridOptions after a route change
-  const options = extend(true, {}, GlobalGridOptions, gridOptions) as GridOption;
+  const options = extend<GridOption>(true, {}, GlobalGridOptions, gridOptions);
 
   // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
   if (!hasBackendInfiniteScroll(gridOptions)) {

@@ -227,12 +227,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // if we already have grid options, when grid was already initialized, we'll merge with those options
     // else we'll merge with global grid options
     if (this.slickGrid?.getOptions) {
-      mergedOptions = extend<GridOption>(
-        true,
-        {} as GridOption,
-        this.slickGrid.getOptions() as GridOption,
-        options
-      ) as GridOption;
+      mergedOptions = extend<GridOption>(true, {} as GridOption, this.slickGrid.getOptions() as GridOption, options) as GridOption;
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
@@ -377,8 +372,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
     // prettier-ignore
     this.sortService = services?.sortService ?? new SortService(this.collectionService, this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService =
-      services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
+    this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
 
     // prettier-ignore
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
@@ -652,10 +646,7 @@ export class SlickVanillaGridBundle<TData = any> {
       // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
       // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
       let preservedRowSelectionWithBackend = false;
-      if (
-        this._gridOptions.backendServiceApi &&
-        this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')
-      ) {
+      if (this._gridOptions.backendServiceApi && this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')) {
         preservedRowSelectionWithBackend = this._gridOptions.dataView.syncGridSelectionWithBackendService as boolean;
       }
 
@@ -959,23 +950,13 @@ export class SlickVanillaGridBundle<TData = any> {
       // if user entered some any "presets", we need to reflect them all in the grid
       if (gridOptions?.presets) {
         // Filters "presets"
-        if (
-          backendApiService.updateFilters &&
-          Array.isArray(gridOptions.presets.filters) &&
-          gridOptions.presets.filters.length > 0
-        ) {
+        if (backendApiService.updateFilters && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
           backendApiService.updateFilters(gridOptions.presets.filters, true);
         }
         // Sorters "presets"
-        if (
-          backendApiService.updateSorters &&
-          Array.isArray(gridOptions.presets.sorters) &&
-          gridOptions.presets.sorters.length > 0
-        ) {
+        if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
           // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-          const sortColumns = this._gridOptions?.multiColumnSort
-            ? gridOptions.presets.sorters
-            : gridOptions.presets.sorters.slice(0, 1);
+          const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
           backendApiService.updateSorters(undefined, sortColumns);
         }
         // Pagination "presets"
@@ -1118,9 +1099,7 @@ export class SlickVanillaGridBundle<TData = any> {
     if (gridOptions.enableSorting) {
       if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
         // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-        const sortColumns = this._gridOptions?.multiColumnSort
-          ? gridOptions.presets.sorters
-          : gridOptions.presets.sorters.slice(0, 1);
+        const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
         this.sortService.loadGridSorters(sortColumns);
       }
     }
@@ -1188,8 +1167,7 @@ export class SlickVanillaGridBundle<TData = any> {
         // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
         this.showPagination = !!(
           this._gridOptions &&
-          (this._gridOptions.enablePagination ||
-            (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))
+          (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))
         );
 
         if (this._paginationOptions && this._gridOptions?.pagination && this._gridOptions?.backendServiceApi) {
@@ -1275,9 +1253,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
     if (gridOptions.presets?.pagination && paginationOptions && !this._isPaginationInitialized) {
       if (this.hasBackendInfiniteScroll()) {
-        console.warn(
-          '[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.'
-        );
+        console.warn('[Slickgrid-Universal] `presets.pagination` is not supported with Infinite Scroll, reverting to first page.');
       } else {
         paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;
         paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
@@ -1389,8 +1365,7 @@ export class SlickVanillaGridBundle<TData = any> {
    */
   protected renderPagination(showPagination = true): void {
     if (this.slickGrid && this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
-      const PaginationClass = (this.gridOptions.customPaginationComponent ??
-        SlickPaginationComponent) as typeof BasePaginationComponent;
+      const PaginationClass = (this.gridOptions.customPaginationComponent ?? SlickPaginationComponent) as typeof BasePaginationComponent;
       this.paginationComponent = new PaginationClass();
       this.paginationComponent.init(this.slickGrid, this.paginationService, this._eventPubSubService, this.translaterService);
       this.paginationComponent.renderPagination(this._gridParentContainerElm);
@@ -1431,9 +1406,7 @@ export class SlickVanillaGridBundle<TData = any> {
         // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
         queueMicrotask(() => {
           this.subscriptions.push(
-            (collectionAsync as Observable<any>).subscribe((resolvedCollection) =>
-              this.updateEditorCollection(column, resolvedCollection)
-            )
+            (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
           );
         });
       }
@@ -1465,12 +1438,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.slickGrid,
         this.gridOptions.presets.columns
       );
-      if (
-        gridPresetColumns &&
-        Array.isArray(gridPresetColumns) &&
-        gridPresetColumns.length > 0 &&
-        Array.isArray(this._columnDefinitions)
-      ) {
+      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columnDefinitions)) {
         // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
         if (this.gridOptions.enableRowMoveManager) {
           const rmmColId = this.gridOptions?.rowMoveManager?.columnId ?? '_move';
@@ -1536,8 +1504,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // if user entered some Row Selections "presets"
     const presets = this.gridOptions?.presets;
     const selectionModel = this.slickGrid?.getSelectionModel();
-    const enableRowSelection =
-      this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
+    const enableRowSelection = this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
     if (
       this.slickGrid &&
       this.dataView &&
@@ -1730,7 +1697,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
       const currentEditor = this.slickGrid.getCellEditor() as AutocompleterEditor | SelectEditor;
-      if (currentEditor?.disable && currentEditor?.renderDomElement) {
+      if (currentEditor?.disable && currentEditor.renderDomElement) {
         if (typeof currentEditor.destroy === 'function') {
           currentEditor.destroy();
         }

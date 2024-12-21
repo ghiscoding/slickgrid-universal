@@ -162,8 +162,7 @@ export function getFunctionDetails(
   };
 
   const getFunctionParams = (func: AnyFunction): string[] => {
-    const STRIP_COMMENTS =
-      /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,)]*))/gm;
+    const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,)]*))/gm;
     const ARG_NAMES = /([^\s,]+)/g;
     const fnStr = func.toString().replace(STRIP_COMMENTS, '');
     return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARG_NAMES) ?? [];

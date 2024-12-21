@@ -172,28 +172,19 @@ export class SlickDraggableGrouping {
 
         // when calling Expand/Collapse All Groups from Context Menu, we also need to inform this plugin as well of the action
         this._subscriptions.push(
-          this.pubSubService.subscribe('onContextMenuCollapseAllGroups', () =>
-            this.toggleGroupToggler(groupTogglerIconElm, true, false)
-          ),
-          this.pubSubService.subscribe('onContextMenuExpandAllGroups', () =>
-            this.toggleGroupToggler(groupTogglerIconElm, false, false)
-          )
+          this.pubSubService.subscribe('onContextMenuCollapseAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, true, false)),
+          this.pubSubService.subscribe('onContextMenuExpandAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, false, false))
         );
       }
 
-      this._dropzonePlaceholderElm = createDomElement(
-        'div',
-        { className: 'slick-draggable-dropzone-placeholder' },
-        this._dropzoneElm
-      );
+      this._dropzonePlaceholderElm = createDomElement('div', { className: 'slick-draggable-dropzone-placeholder' }, this._dropzoneElm);
       if (this.gridOptions.enableTranslate && this._addonOptions?.dropPlaceHolderTextKey) {
         this._addonOptions.dropPlaceHolderText = this.extensionUtility.translateWhenEnabledAndServiceExist(
           this._addonOptions.dropPlaceHolderTextKey,
           'TEXT_TOGGLE_ALL_GROUPS'
         );
       }
-      this._dropzonePlaceholderElm.textContent =
-        this._addonOptions?.dropPlaceHolderText ?? this._defaults.dropPlaceHolderText ?? '';
+      this._dropzonePlaceholderElm.textContent = this._addonOptions?.dropPlaceHolderText ?? this._defaults.dropPlaceHolderText ?? '';
 
       this.setupColumnDropbox();
 
@@ -234,9 +225,7 @@ export class SlickDraggableGrouping {
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
     this._bindingEventService.unbindAll();
-    emptyElement(
-      this.gridContainer.querySelector(`.${this.gridUid} .slick-preheader-panel,.${this.gridUid} .slick-topheader-panel`)
-    );
+    emptyElement(this.gridContainer.querySelector(`.${this.gridUid} .slick-preheader-panel,.${this.gridUid} .slick-topheader-panel`));
   }
 
   clearDroppedGroups(): void {
@@ -584,9 +573,7 @@ export class SlickDraggableGrouping {
 
     if (draggablePlaceholderElm && this._dropzoneElm) {
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragover', (e: Event) => e.preventDefault());
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', () =>
-        this._dropzoneElm.classList.add('slick-dropzone-hover')
-      );
+      this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', () => this._dropzoneElm.classList.add('slick-dropzone-hover'));
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () =>
         this._dropzoneElm.classList.remove('slick-dropzone-hover')
       );

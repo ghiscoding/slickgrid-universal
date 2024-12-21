@@ -148,10 +148,7 @@ export function getValueFromParamsOrFormatterOptions(
 }
 
 /** From a FieldType, return the associated date Formatter */
-export function getAssociatedDateFormatter(
-  fieldType: (typeof FieldType)[keyof typeof FieldType],
-  defaultSeparator: string
-): Formatter {
+export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof typeof FieldType], defaultSeparator: string): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {

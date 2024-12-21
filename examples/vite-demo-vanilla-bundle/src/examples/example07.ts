@@ -713,15 +713,7 @@ export default class Example07 {
 
   showColumnSubset() {
     // note that calling this function will NOT include dynamically created columns like row selection & row move, you need to include them yourself
-    this.sgb.gridService.showColumnByIds([
-      '_move',
-      '_checkbox_selector',
-      'title',
-      'action',
-      'percentComplete',
-      'start',
-      'finish',
-    ]);
+    this.sgb.gridService.showColumnByIds(['_move', '_checkbox_selector', 'title', 'action', 'percentComplete', 'start', 'finish']);
   }
 
   // Disable/Enable Filtering/Sorting functionalities

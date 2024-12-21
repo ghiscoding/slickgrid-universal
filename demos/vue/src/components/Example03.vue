@@ -637,12 +637,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 <template>
   <h2>
     Example 3: Editors / Delete
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
     <span class="float-end">
@@ -668,13 +663,13 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </ul>
       <li>Inline Editors requires "enableCellNavigation: true" (not sure why though)</li>
       <li>
-        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag.
-        Note that it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or
-        "TextExportOptions" or the column definition)
+        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that
+        it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions"
+        or the column definition)
       </li>
       <li>
-        Support of "collectionAsync" is possible, click on "Clear Filters/Sorting" then add/delete item(s) and look at
-        "Prerequisites" Select Filter
+        Support of "collectionAsync" is possible, click on "Clear Filters/Sorting" then add/delete item(s) and look at "Prerequisites"
+        Select Filter
       </li>
     </ul>
   </div>
@@ -715,11 +710,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </span>
       <div class="row" style="margin-top: 5px">
         <div class="col-sm-12">
-          <button
-            class="btn btn-outline-secondary btn-sm btn-icon"
-            data-test="clear-filters"
-            @click="vueGrid.filterService.clearFilters()"
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" @click="vueGrid.filterService.clearFilters()">
             Clear Filters
           </button>
           <button
@@ -737,18 +728,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
           >
             Add item
           </button>
-          <button class="btn btn-outline-danger btn-sm mx-1" data-test="delete-item-btn" @click="deleteItem()">
-            Delete item
-          </button>
+          <button class="btn btn-outline-danger btn-sm mx-1" data-test="delete-item-btn" @click="deleteItem()">Delete item</button>
         </div>
       </div>
       <div class="row" style="margin-top: 5px">
         <div class="col-sm-12">
-          <button
-            class="btn btn-outline-secondary btn-sm btn-icon"
-            data-test="add-title-column"
-            @click="dynamicallyAddTitleHeader()"
-          >
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="add-title-column" @click="dynamicallyAddTitleHeader()">
             <i class="mdi mdi-shape-square-plus me-1"></i>
             Dynamically Duplicate Title Column
           </button>

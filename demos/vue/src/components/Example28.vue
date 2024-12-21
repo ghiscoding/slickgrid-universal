@@ -214,8 +214,7 @@ function defineGrid() {
 
 function changeAutoApproveParentItem() {
   isAutoApproveParentItemWhenTreeColumnIsValid.value = !isAutoApproveParentItemWhenTreeColumnIsValid.value;
-  gridOptions.value!.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid =
-    isAutoApproveParentItemWhenTreeColumnIsValid.value;
+  gridOptions.value!.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = isAutoApproveParentItemWhenTreeColumnIsValid.value;
   vueGrid.slickGrid.setOptions(gridOptions.value!);
   vueGrid.filterService.refreshTreeDataFilters();
   return true;
@@ -452,12 +451,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -471,8 +465,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
           "convertHierarchicalViewToParentChildArray()"
         </li>
         <li>
-          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in
-          the next Hierarchical Example
+          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to v-model="hierarchical" as defined in the next
+          Hierarchical Example
         </li>
       </ul>
     </ul>
@@ -505,11 +499,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-close"></span>
         <span>Clear Filters</span>
       </button>
-      <button
-        class="btn btn-outline-secondary btn-xs btn-icon"
-        title="console.log of the Flat dataset"
-        @click="logFlatStructure()"
-      >
+      <button class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset" @click="logFlatStructure()">
         <span>Log Flat Structure</span>
       </button>
       <button
@@ -532,11 +522,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
           data-test="search-string"
           @input="searchStringChanged(($event.target as HTMLInputElement).value)"
         />
-        <button
-          class="btn btn-sm btn-outline-secondary d-flex align-items-center"
-          data-test="clear-search-string"
-          @click="clearSearch()"
-        >
+        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" data-test="clear-search-string" @click="clearSearch()">
           <span class="icon mdi mdi-close-thick"></span>
         </button>
       </div>

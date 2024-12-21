@@ -144,17 +144,9 @@ export default class Example12 {
     this._bindingEventService.bind(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
-    this._bindingEventService.bind(
-      this.gridContainerElm,
-      'oncompositeeditorchange',
-      this.handleOnCompositeEditorChange.bind(this)
-    );
+    this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onrowsorcountchanged', this.handleReRenderUnsavedStyling.bind(this));
-    this._bindingEventService.bind(
-      this.gridContainerElm,
-      'onselectedrowidschanged',
-      this.handleOnSelectedRowIdsChanged.bind(this)
-    );
+    this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowidschanged', this.handleOnSelectedRowIdsChanged.bind(this));
   }
 
   dispose() {
@@ -559,9 +551,7 @@ export default class Example12 {
         const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
-        const serializedValues = Array.isArray(editCommand.serializedValue)
-          ? editCommand.serializedValue
-          : [editCommand.serializedValue];
+        const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
         const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
@@ -628,8 +618,7 @@ export default class Example12 {
         },
         complexity: i % 3 ? 0 : 2,
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
-        finish:
-          isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3) ? (isCompleted ? new Date() : randomFinish) : '', // make sure the random date is earlier than today and it's index is bigger than 3
+        finish: isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3) ? (isCompleted ? new Date() : randomFinish) : '', // make sure the random date is earlier than today and it's index is bigger than 3
         cost: i % 33 === 0 ? null : Math.round(Math.random() * 10000) / 100,
         completed: isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName },
@@ -1085,8 +1074,7 @@ export default class Example12 {
         modalTitle = 'Clone - {{title}}';
         break;
       case 'edit':
-        modalTitle =
-          'Editing - {{title}} (<span class="text-color-muted">id:</span> <span class="text-color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
+        modalTitle = 'Editing - {{title}} (<span class="text-color-muted">id:</span> <span class="text-color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
         modalTitle = 'Mass Update All Records';
@@ -1131,9 +1119,7 @@ export default class Example12 {
             return new Promise((resolve, reject) => {
               window.setTimeout(
                 () =>
-                  formValues.percentComplete >= 50
-                    ? resolve(true)
-                    : reject('Unfortunately we only accept a minimum of 50% Completion...'),
+                  formValues.percentComplete >= 50 ? resolve(true) : reject('Unfortunately we only accept a minimum of 50% Completion...'),
                 serverResponseDelay
               );
             });

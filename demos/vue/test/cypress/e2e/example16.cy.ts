@@ -87,23 +87,14 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     // Task 4 and 3 should be selected
     cy.get('input[type="checkbox"]:checked').should('have.length', 2);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
   });
 
   it('should move "Duration" column to a different position in the grid', () => {
     const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Title'];
 
-    cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(3)')
-      .contains('Duration')
-      .drag('.slick-header-column:nth(6)');
+    cy.get('.slick-header-columns').children('.slick-header-column:nth(3)').contains('Duration').drag('.slick-header-column:nth(6)');
 
     cy.get('.slick-header-column:nth(6)').contains('Duration');
 

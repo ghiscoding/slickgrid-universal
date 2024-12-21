@@ -79,10 +79,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
 
     if (gridOptions?.enableTranslate && Array.isArray(columnDefinitions)) {
       columnDefinitions.forEach((columnDef: Column) => {
-        if (
-          columnDef?.cellMenu &&
-          (Array.isArray(columnDef.cellMenu.commandItems) || Array.isArray(columnDef.cellMenu.optionItems))
-        ) {
+        if (columnDef?.cellMenu && (Array.isArray(columnDef.cellMenu.commandItems) || Array.isArray(columnDef.cellMenu.optionItems))) {
           // get both items list
           const columnCellMenuCommandItems: Array<MenuCommandItem | 'divider'> = columnDef.cellMenu.commandItems || [];
           const columnCellMenuOptionItems: Array<MenuOptionItem | 'divider'> = columnDef.cellMenu.optionItems || [];

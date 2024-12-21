@@ -49,11 +49,7 @@ export class InputMaskFilter extends InputFilter {
 
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this._bindEventService.bind(
-      this._filterInputElm,
-      ['keyup', 'blur', 'change'],
-      this.onTriggerEvent.bind(this) as EventListener
-    );
+    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change'], this.onTriggerEvent.bind(this) as EventListener);
   }
 
   /**

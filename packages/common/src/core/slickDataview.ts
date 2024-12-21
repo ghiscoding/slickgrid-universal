@@ -1104,10 +1104,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       .replace(/return!1([;}]|\}|$)/gi, filterPath1)
       .replace(/return true\s*([;}]|\}|$)/gi, filterPath2)
       .replace(/return!0([;}]|\}|$)/gi, filterPath2)
-      .replace(
-        /return ([^;}]+?)\s*([;}]|$)/gi,
-        '{ if ((_cache[_i] = $1)) { _retval[_idx++] = $item$; }; continue _coreloop; }$2'
-      );
+      .replace(/return ([^;}]+?)\s*([;}]|$)/gi, '{ if ((_cache[_i] = $1)) { _retval[_idx++] = $item$; }; continue _coreloop; }$2');
 
     // This preserves the function template code after JS compression,
     // so that replace() commands still work as expected.

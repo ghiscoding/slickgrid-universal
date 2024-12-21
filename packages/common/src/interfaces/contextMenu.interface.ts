@@ -1,11 +1,6 @@
 import type { SlickEventData } from '../core/slickCore.js';
 import type { SlickContextMenu } from '../extensions/slickContextMenu.js';
-import type {
-  ContextMenuOption,
-  MenuCommandItemCallbackArgs,
-  MenuFromCellCallbackArgs,
-  MenuOptionItemCallbackArgs,
-} from './index.js';
+import type { ContextMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs, MenuOptionItemCallbackArgs } from './index.js';
 
 export interface ContextMenu extends ContextMenuOption {
   // --

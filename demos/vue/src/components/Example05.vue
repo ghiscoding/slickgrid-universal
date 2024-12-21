@@ -160,9 +160,7 @@ function displaySpinner(isProcessing: boolean, isError?: boolean) {
   if (isError) {
     status.value = { text: 'ERROR!!!', class: 'alert alert-danger' };
   } else {
-    status.value = isProcessing
-      ? { text: 'loading', class: 'alert alert-warning' }
-      : { text: 'finished', class: 'alert alert-success' };
+    status.value = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
   }
 }
 
@@ -517,26 +515,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
     Use it when you need to support Pagination with a OData endpoint (for simple JSON, use a regular grid)<br />
-    Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/odata" target="_blank"
-      >Wiki documentation</a
-    >)
+    Take a look at the (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/backend-services/odata" target="_blank">Wiki documentation</a>)
     <br />
     <ul class="small">
-      <li>
-        Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported
-      </li>
+      <li>Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported</li>
       <li>This example also demos the Grid State feature, open the console log to see the changes</li>
       <li>
         String column also support operator (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *)
@@ -549,15 +538,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>OData Service could be replaced by other Service type in the future (GraphQL or whichever you provide)</li>
       <li>
         You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
-        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank"
-          >Wiki - Grid Preset</a
-        >
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank">Wiki - Grid Preset</a>
       </li>
       <li>
-        <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and
-        its only purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to
-        previous state before you did the action). Also changing Page Size to 50,000 will also throw which again is for demo
-        purposes.
+        <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only
+        purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state before you
+        did the action). Also changing Page Size to 50,000 will also throw which again is for demo purposes.
       </li>
     </ul>
   </div>
@@ -591,11 +577,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" @click="setFiltersDynamically()">
         Set Filters Dynamically
       </button>
-      <button
-        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
-        data-test="set-dynamic-sorting"
-        @click="setSortingDynamically()"
-      >
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
         Set Sorting Dynamically
       </button>
       <br />
@@ -625,33 +607,15 @@ function vueGridReady(grid: SlickgridVueInstance) {
         </label>
       </span>
       <label class="checkbox-inline control-label" htmlFor="enableCount" style="margin-left: 20px">
-        <input
-          id="enableCount"
-          type="checkbox"
-          data-test="enable-count"
-          :checked="isCountEnabled"
-          @click="changeCountEnableFlag()"
-        />
+        <input id="enableCount" type="checkbox" data-test="enable-count" :checked="isCountEnabled" @click="changeCountEnableFlag()" />
         <span style="font-weight: bold"> Enable Count</span> (add to OData query)
       </label>
       <label class="checkbox-inline control-label" htmlFor="enableSelect" style="margin-left: 20px">
-        <input
-          id="enableSelect"
-          type="checkbox"
-          data-test="enable-select"
-          :checked="isSelectEnabled"
-          @click="changeEnableSelectFlag()"
-        />
+        <input id="enableSelect" type="checkbox" data-test="enable-select" :checked="isSelectEnabled" @click="changeEnableSelectFlag()" />
         <span style="font-weight: bold"> Enable Select</span> (add to OData query)
       </label>
       <label class="checkbox-inline control-label" htmlFor="enableExpand" style="margin-left: 20px">
-        <input
-          id="enableExpand"
-          type="checkbox"
-          data-test="enable-expand"
-          :checked="isExpandEnabled"
-          @click="changeEnableExpandFlag()"
-        />
+        <input id="enableExpand" type="checkbox" data-test="enable-expand" :checked="isExpandEnabled" @click="changeEnableExpandFlag()" />
         <span style="font-weight: bold"> Enable Expand</span> (add to OData query)
       </label>
     </div>

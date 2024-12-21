@@ -19,16 +19,7 @@ export const avgTotalsDollarFormatter: GroupTotalsFormatter = (totals: any, colu
   );
 
   if (isNumber(val)) {
-    const formattedNumber = formatNumber(
-      val,
-      minDecimal,
-      maxDecimal,
-      wrapNegativeNumber,
-      '$',
-      '',
-      decimalSeparator,
-      thousandSeparator
-    );
+    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
     return `${prefix}${formattedNumber}${suffix}`;
   }
   return '';

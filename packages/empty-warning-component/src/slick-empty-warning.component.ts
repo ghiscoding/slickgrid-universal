@@ -58,10 +58,8 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 0;
     const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 0;
     const isFrozenGrid = this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0;
-    const leftViewportMarginLeft =
-      typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
-    const rightViewportMarginLeft =
-      typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
+    const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
+    const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM

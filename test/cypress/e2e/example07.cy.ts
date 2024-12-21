@@ -54,22 +54,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     // Task 4 and 3 should be selected
     cy.get('input[type="checkbox"]:checked').should('have.length', 4);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 6}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 7}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 6}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 7}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
   });
 
   it('should drag row to another position in the grid', () => {
@@ -136,14 +124,8 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     // Task 4 and 3 should be selected
     cy.get('input[type="checkbox"]:checked').should('have.length', 2);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should(
-      'have.length',
-      1
-    );
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
   });
 
   it('should be able to change all values of 3rd row', () => {
@@ -256,12 +238,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should hover over the last "Title" column and click on "Clear Filter" and expect grid to have all rows shown', () => {
-    cy.get('.slick-header-column:nth(10)')
-      .first()
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.slick-header-column:nth(10)').first().trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
@@ -274,19 +251,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should dynamically remove 1x of the new "Title" columns', () => {
-    const updatedTitles = [
-      '',
-      '',
-      'Title',
-      'Action',
-      'Duration',
-      '% Complete',
-      'Start',
-      'Finish',
-      'Completed',
-      'Prerequisites',
-      'Title',
-    ];
+    const updatedTitles = ['', '', 'Title', 'Action', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test=remove-title-column-btn]').click();
 
@@ -328,24 +293,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should move "Duration" column to a different position in the grid', () => {
-    const expectedTitles = [
-      '',
-      '',
-      'Title',
-      'Action',
-      '% Complete',
-      'Start',
-      'Finish',
-      'Duration',
-      'Completed',
-      'Prerequisites',
-      'Title',
-    ];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
-    cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(4)')
-      .contains('Duration')
-      .drag('.slick-header-column:nth(7)');
+    cy.get('.slick-header-columns').children('.slick-header-column:nth(4)').contains('Duration').drag('.slick-header-column:nth(7)');
 
     cy.get('.slick-header-column:nth(7)').contains('Duration');
 
@@ -472,12 +422,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('.slick-sort-indicator').should('have.length', 0);
     cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch-off-outline').should('exist');
 
-    cy.get('.grid7')
-      .find('.slick-header-column:nth(8)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid7').find('.slick-header-column:nth(8)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
@@ -580,12 +525,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('.slick-sort-indicator').should('have.length', 0);
     cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch-off-outline').should('exist');
 
-    cy.get('.grid7')
-      .find('.slick-header-column:nth(5)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid7').find('.slick-header-column:nth(5)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
@@ -614,12 +554,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     cy.get('[data-test="disable-filters-btn"]').click().click(); // even clicking twice should have same result
 
-    cy.get('.grid7')
-      .find('.slick-header-column:nth(5)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid7').find('.slick-header-column:nth(5)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
@@ -786,19 +721,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should reorder "Start" column to be after the "Completed" column', () => {
-    const expectedTitles = [
-      '',
-      '',
-      'Title',
-      'Action',
-      '% Complete',
-      'Finish',
-      'Duration',
-      'Completed',
-      'Start',
-      'Prerequisites',
-      'Title',
-    ];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
 
     cy.get('.slick-header-columns').children('.slick-header-column:nth(5)').contains('Start').drag('.slick-header-column:nth(8)');
 
@@ -811,19 +734,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should hide "Finish" column from column picker', () => {
-    const originalColumns = [
-      '',
-      '',
-      'Title',
-      'Action',
-      '% Complete',
-      'Finish',
-      'Duration',
-      'Completed',
-      'Start',
-      'Prerequisites',
-      'Title',
-    ];
+    const originalColumns = ['', '', 'Title', 'Action', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
 
     cy.get('.grid7').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
@@ -900,12 +811,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       'Cacher la colonne',
     ];
 
-    cy.get('.grid7')
-      .find('.slick-header-column:nth(9)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid7').find('.slick-header-column:nth(9)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
@@ -1228,11 +1134,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
 
     // click different sub-menu
-    cy.get('.slick-cell-menu.slick-menu-level-0')
-      .find('.slick-menu-item .slick-menu-content')
-      .contains('Feedback')
-      .should('exist')
-      .click();
+    cy.get('.slick-cell-menu.slick-menu-level-0').find('.slick-menu-item .slick-menu-content').contains('Feedback').should('exist').click();
 
     cy.get('.slick-submenu').should('have.length', 1);
     cy.get('.slick-cell-menu.slick-menu-level-1')

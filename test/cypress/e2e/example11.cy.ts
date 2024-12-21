@@ -467,22 +467,13 @@ describe('Example 11 - Batch Editing', () => {
         .invoke('val')
         .then((text) => expect(text).to.eq(`${currentYear}-01-01`));
 
-      cy.get('.slick-column-name')
-        .contains('Finish')
-        .find('~ .slick-sort-indicator.slick-sort-indicator-desc')
-        .should('have.length', 1);
+      cy.get('.slick-column-name').contains('Finish').find('~ .slick-sort-indicator.slick-sort-indicator-desc').should('have.length', 1);
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', 'True');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`)
         .find('.checkmark-icon')
@@ -525,9 +516,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.action.dropdown .dropdown-item').contains('Create New View').click({ force: true });
 
-      cy.get('@winPromptStubReturnNonNull')
-        .should('be.calledOnce')
-        .and('be.calledWith', 'Please provide a name for the new View.');
+      cy.get('@winPromptStubReturnNonNull').should('be.calledOnce').and('be.calledWith', 'Please provide a name for the new View.');
 
       cy.should(() => {
         const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
@@ -538,15 +527,9 @@ describe('Example 11 - Batch Editing', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', '0');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', '0');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).click();
       cy.get('[data-name="editor-completed"]')
@@ -599,10 +582,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.vanilla-calendar-day__btn_selected').should('have.text', '1');
 
-      cy.get('.slick-column-name')
-        .contains('Finish')
-        .find('~ .slick-sort-indicator.slick-sort-indicator-asc')
-        .should('have.length', 1);
+      cy.get('.slick-column-name').contains('Finish').find('~ .slick-sort-indicator.slick-sort-indicator-asc').should('have.length', 1);
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
 
@@ -640,15 +620,9 @@ describe('Example 11 - Batch Editing', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', '0');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', '0');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
       cy.should(() => {
         const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
@@ -906,9 +880,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.action.dropdown .dropdown-item').contains('Create New View').click();
 
-      cy.get('@winPromptStubReturnNonNull')
-        .should('be.calledOnce')
-        .and('be.calledWith', 'Please provide a name for the new View.');
+      cy.get('@winPromptStubReturnNonNull').should('be.calledOnce').and('be.calledWith', 'Please provide a name for the new View.');
 
       cy.should(() => {
         const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);

@@ -160,11 +160,7 @@ export class GraphqlService implements BackendService {
       // orderBy: [{ field:x, direction: 'ASC' }]
       datasetFilters.orderBy = this.options.sortingOptions;
     }
-    if (
-      this.options.filteringOptions &&
-      Array.isArray(this.options.filteringOptions) &&
-      this.options.filteringOptions.length > 0
-    ) {
+    if (this.options.filteringOptions && Array.isArray(this.options.filteringOptions) && this.options.filteringOptions.length > 0) {
       // filterBy: [{ field: date, operator: '>', value: '2000-10-10' }]
       datasetFilters.filterBy = this.options.filteringOptions;
     }
@@ -185,11 +181,7 @@ export class GraphqlService implements BackendService {
     queryQb.find(datasetQb);
 
     const enumSearchProperties = ['direction:', 'field:', 'operator:'];
-    return this.trimDoubleQuotesOnEnumField(
-      queryQb.toString(),
-      enumSearchProperties,
-      this.options.keepArgumentFieldDoubleQuotes || false
-    );
+    return this.trimDoubleQuotesOnEnumField(queryQb.toString(), enumSearchProperties, this.options.keepArgumentFieldDoubleQuotes || false);
   }
 
   postProcess(processResult: GraphqlPaginatedResult): void {
@@ -274,8 +266,7 @@ export class GraphqlService implements BackendService {
       paginationOptions = this.getInitPaginationOptions();
     } else {
       // first, last, offset
-      paginationOptions = ((this.options && this.options.paginationOptions) ||
-        this.getInitPaginationOptions()) as GraphqlPaginationOption;
+      paginationOptions = ((this.options && this.options.paginationOptions) || this.getInitPaginationOptions()) as GraphqlPaginationOption;
       (paginationOptions as GraphqlPaginationOption).offset = 0;
     }
 
@@ -364,9 +355,7 @@ export class GraphqlService implements BackendService {
     );
 
     // if first/last defined on args, then it is a cursor based pagination change
-    'first' in args || 'last' in args
-      ? this.updatePagination(args.newPage, pageSize, args)
-      : this.updatePagination(args.newPage, pageSize);
+    'first' in args || 'last' in args ? this.updatePagination(args.newPage, pageSize, args) : this.updatePagination(args.newPage, pageSize);
 
     // build the GraphQL query which we will use in the WebAPI callback
     return this.buildQuery();
@@ -437,12 +426,7 @@ export class GraphqlService implements BackendService {
         }
 
         let fieldName =
-          columnDef.filter?.queryField ||
-          columnDef.queryFieldFilter ||
-          columnDef.queryField ||
-          columnDef.field ||
-          columnDef.name ||
-          '';
+          columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
         if (fieldName instanceof HTMLElement) {
           fieldName = stripTags(fieldName.innerHTML);
         }
@@ -471,8 +455,7 @@ export class GraphqlService implements BackendService {
         fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
 
         // run regex to find possible filter operators unless the user disabled the feature
-        const autoParseInputFilterOperator =
-          columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+        const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
 
         // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
         const matches =
@@ -523,13 +506,11 @@ export class GraphqlService implements BackendService {
             }
             searchTerms = searchTerms[0].split('..', 2);
             if (searchTerms[0] === '') {
-              operator =
-                operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
+              operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
               searchTerms = searchTerms.slice(1);
               searchValue = searchTerms[0];
             } else if (searchTerms[1] === '') {
-              operator =
-                operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
+              operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
               searchTerms = searchTerms.slice(0, 1);
               searchValue = searchTerms[0];
             }
@@ -585,10 +566,7 @@ export class GraphqlService implements BackendService {
           // when having more than 1 search term (we need to create a CSV string for GraphQL "IN" or "NOT IN" filter search)
           if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN')) {
             searchValue = searchTerms.join(',');
-          } else if (
-            searchTerms?.length === 2 &&
-            (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)
-          ) {
+          } else if (searchTerms?.length === 2 && (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)) {
             searchByArray.push({
               field: getHtmlStringOutput(fieldName),
               operator: operator === OperatorType.rangeInclusive ? 'GE' : 'GT',

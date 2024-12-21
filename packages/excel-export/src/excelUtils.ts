@@ -33,9 +33,7 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
       Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR
     );
     const val: number | string =
-      decimalSeparator === ','
-        ? parseFloat(value.replace(/[^0-9,-]+/g, '').replace(',', '.'))
-        : parseFloat(value.replace(/[^\d.-]/g, ''));
+      decimalSeparator === ',' ? parseFloat(value.replace(/[^0-9,-]+/g, '').replace(',', '.')) : parseFloat(value.replace(/[^\d.-]/g, ''));
     outValue = isNaN(val) ? value : val;
   }
   return outValue;
@@ -289,12 +287,8 @@ function createExcelFormatFromGridFormatter(columnDef: Column, grid: SlickGrid, 
   const testingNo = parseFloat(`${leftInteger}.${excelTestingDecimalNumberPadding(minDecimal, maxDecimal)}`);
 
   if (formatterType === 'group' && columnDef.groupTotalsFormatter) {
-    positiveFormat = stripTags(
-      columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: testingNo } }, columnDef, grid)
-    );
-    negativeFormat = stripTags(
-      columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: -testingNo } }, columnDef, grid)
-    );
+    positiveFormat = stripTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: testingNo } }, columnDef, grid));
+    negativeFormat = stripTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: -testingNo } }, columnDef, grid));
   } else if (columnDef.formatter) {
     positiveFormat = stripTags(columnDef.formatter(0, 0, testingNo, columnDef, {}, grid) as string);
     negativeFormat = stripTags(columnDef.formatter(0, 0, -testingNo, columnDef, {}, grid) as string);

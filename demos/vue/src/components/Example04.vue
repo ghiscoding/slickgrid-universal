@@ -355,12 +355,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 <template>
   <h2>
     Example 4: Client Side Sort/Filter
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
     <span class="float-end">
@@ -387,22 +382,19 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <ul>
         <li>Example: &gt;100 ... &gt;=2001-01-01 ... &gt;02/28/17</li>
         <li>
-          <b>Note:</b> For filters to work properly (default is string), make sure to provide a FieldType (type is against the
-          dataset, not the Formatter)
+          <b>Note:</b> For filters to work properly (default is string), make sure to provide a FieldType (type is against the dataset, not
+          the Formatter)
         </li>
       </ul>
       <li>Date Filters</li>
       <ul>
         <li>
-          FieldType of dateUtc/date (from dataset) can use an extra option of "filterSearchType" to let user filter more easily.
-          For example, in the "UTC Date" field below, you can type "&gt;02/28/2017", also when dealing with UTC you have to take
-          the time difference in consideration.
+          FieldType of dateUtc/date (from dataset) can use an extra option of "filterSearchType" to let user filter more easily. For
+          example, in the "UTC Date" field below, you can type "&gt;02/28/2017", also when dealing with UTC you have to take the time
+          difference in consideration.
         </li>
       </ul>
-      <li>
-        On String filters, (*) can be used as startsWith (Hello* => matches "Hello Word") ... endsWith (*Doe => matches: "John
-        Doe")
-      </li>
+      <li>On String filters, (*) can be used as startsWith (Hello* => matches "Hello Word") ... endsWith (*Doe => matches: "John Doe")</li>
       <li>
         Custom Filter are now possible, "Description" column below, is a customized InputFilter with different placeholder. See
         <a href="https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/filters/custom-filter" target="_blank"
@@ -426,18 +418,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </button>
   </div>
 
-  <button
-    class="btn btn-outline-secondary btn-sm btn-icon"
-    data-test="clear-filters"
-    @click="vueGrid.filterService.clearFilters()"
-  >
+  <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" @click="vueGrid.filterService.clearFilters()">
     Clear Filters
   </button>
-  <button
-    class="btn btn-outline-secondary btn-sm btn-icon mx-1"
-    data-test="clear-sorting"
-    @click="vueGrid.sortService.clearSorting()"
-  >
+  <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="clear-sorting" @click="vueGrid.sortService.clearSorting()">
     Clear Sorting
   </button>
   <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" @click="setFiltersDynamically()">

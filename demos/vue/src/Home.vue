@@ -8,15 +8,15 @@
   <h4>Quick intro</h4>
   <p>
     One of the best JavaScript data grid
-    <a href="https://github.com/mleibman/SlickGrid" target="_blank">SlickGrid</a> which was originally developed by &#64;mleibman
-    is now available to Vue. I have tried, and used, a few data grids and SlickGrid beats most of them in terms of functionalities
-    and performance (it can even handle a million rows).
+    <a href="https://github.com/mleibman/SlickGrid" target="_blank">SlickGrid</a> which was originally developed by &#64;mleibman is now
+    available to Vue. I have tried, and used, a few data grids and SlickGrid beats most of them in terms of functionalities and performance
+    (it can even handle a million rows).
   </p>
   <h4>Documentation</h4>
   <p>
     The documentation is powered by GitBook and can be found at this link
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue" target="_blank">Slickgrid-Vue - Documentation</a>, so be sure to consult
-    it before opening any new issue.
+    <a href="https://ghiscoding.gitbook.io/slickgrid-vue" target="_blank">Slickgrid-Vue - Documentation</a>, so be sure to consult it before
+    opening any new issue.
     <br />
     The
     <a href="https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start" target="_blank">HOWTO - Quick Start</a>

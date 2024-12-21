@@ -75,9 +75,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
   mergeGridOptions(gridOptions: GridOption): GridOption {
     const extraOptions =
-      gridOptions.useSalesforceDefaultGridOptions || this._gridOptions?.useSalesforceDefaultGridOptions
-        ? SalesforceGlobalGridOptions
-        : {};
+      gridOptions.useSalesforceDefaultGridOptions || this._gridOptions?.useSalesforceDefaultGridOptions ? SalesforceGlobalGridOptions : {};
     const options = extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering

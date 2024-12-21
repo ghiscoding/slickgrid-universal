@@ -18,29 +18,11 @@
   <div class="row scroll-configs">
     <span>
       <label for="min-internal">MIN interval to show next cell (ms): </label>
-      <input
-        id="min-internal"
-        class="is-narrow input is-small"
-        type="number"
-        data-test="min-interval-input"
-        value.bind="minInterval"
-      />
+      <input id="min-internal" class="is-narrow input is-small" type="number" data-test="min-interval-input" value.bind="minInterval" />
       <label for="max-internal" class="ml-2">MAX delay to show next cell (ms): </label>
-      <input
-        id="max-internal"
-        class="is-narrow input is-small"
-        type="number"
-        data-test="max-interval-input"
-        value.bind="maxInterval"
-      />
+      <input id="max-internal" class="is-narrow input is-small" type="number" data-test="max-interval-input" value.bind="maxInterval" />
       <label for="delay-cursor" class="ml-2">Delay when cursor outside 1px (ms): </label>
-      <input
-        id="delay-cursor"
-        class="is-narrow input is-small"
-        type="number"
-        data-test="delay-cursor-input"
-        value.bind="delayCursor"
-      />
+      <input id="delay-cursor" class="is-narrow input is-small" type="number" data-test="delay-cursor-input" value.bind="delayCursor" />
     </span>
   </div>
   <div class="row my-3">
@@ -49,9 +31,7 @@
 
     <span class="ml-2">
       <button class="button is-small" data-test="set-options-btn" onclick.delegate="setOptions()">Set Options</button>
-      <button class="button is-small" data-test="default-options-btn" onclick.delegate="setDefaultOptions()">
-        Set Default Options
-      </button>
+      <button class="button is-small" data-test="default-options-btn" onclick.delegate="setDefaultOptions()">Set Default Options</button>
       <button class="button is-small" data-test="set-clear-frozen-btn" onclick.delegate="toggleFrozen()">Set/Clear Frozen</button>
       <button class="button is-small" data-test="set-clear-grouping-btn" onclick.delegate="toggleGroup()">
         Set/Clear Grouping by Duration

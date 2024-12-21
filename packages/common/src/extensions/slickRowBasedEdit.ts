@@ -205,9 +205,7 @@ export class SlickRowBasedEdit {
     const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
       ? editCommand.prevSerializedValue
       : [editCommand.prevSerializedValue];
-    const serializedValues = Array.isArray(editCommand.serializedValue)
-      ? editCommand.serializedValue
-      : [editCommand.serializedValue];
+    const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
     const editorColumns = this._gridService?.getAllColumnDefinitions().filter((col) => col.editor !== undefined);
 
     const modifiedColumns: Column[] = [];
@@ -269,9 +267,7 @@ export class SlickRowBasedEdit {
 
   protected checkOptionsRequirements(options: GridOption): void {
     if (!options?.enableCellNavigation) {
-      throw new Error(
-        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`
-      );
+      throw new Error(`[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`);
     }
 
     if (!options?.editable) {
@@ -355,10 +351,7 @@ export class SlickRowBasedEdit {
       (target.classList.contains(BTN_ACTION_DELETE) || target.parentElement?.classList.contains(BTN_ACTION_DELETE)) &&
       this._gridService
     ) {
-      if (
-        this._addonOptions?.actionButtons?.deleteButtonPrompt &&
-        !window.confirm(this._addonOptions.actionButtons.deleteButtonPrompt)
-      ) {
+      if (this._addonOptions?.actionButtons?.deleteButtonPrompt && !window.confirm(this._addonOptions.actionButtons.deleteButtonPrompt)) {
         return;
       }
 
@@ -411,13 +404,7 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected actionColumnFormatter(
-    _row: number,
-    _cell: number,
-    _value: any,
-    _columnDef: Column,
-    dataContext: any
-  ): DocumentFragment {
+  protected actionColumnFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any): DocumentFragment {
     const options = this.gridOptions;
     const isInEditMode = this._editedRows.has(dataContext?.[options.datasetIdPropertyName ?? 'id']);
     const buttonTitles = this._translations[this._currentLang] ?? this.translate();
@@ -435,8 +422,7 @@ export class SlickRowBasedEdit {
       )
       .appendChild(
         createDomElement('span', {
-          className:
-            options.rowBasedEditOptions?.actionButtons?.iconEditButtonClassName || 'mdi mdi-table-edit text-color-primary',
+          className: options.rowBasedEditOptions?.actionButtons?.iconEditButtonClassName || 'mdi mdi-table-edit text-color-primary',
         })
       );
     actionFragment
@@ -458,17 +444,15 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${
-              options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
-            } action-btns ` + BTN_ACTION_UPDATE,
+            `${options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'} action-btns ` +
+            BTN_ACTION_UPDATE,
           title: buttonTitles.btnUpdateTitle,
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
       .appendChild(
         createDomElement('span', {
-          className:
-            options.rowBasedEditOptions?.actionButtons?.iconUpdateButtonClassName || 'mdi mdi-check-bold text-color-success',
+          className: options.rowBasedEditOptions?.actionButtons?.iconUpdateButtonClassName || 'mdi mdi-check-bold text-color-success',
         })
       );
     actionFragment

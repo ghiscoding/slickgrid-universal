@@ -4,10 +4,7 @@ import type { SearchTerm } from '../enums/index.js';
 import type { FilterCondition, FilterConditionOption } from './../interfaces/index.js';
 
 /** Execute filter condition check on each cell */
-export const executeBooleanFilterCondition: FilterCondition = ((
-  options: FilterConditionOption,
-  parsedSearchValue: boolean | undefined
-) => {
+export const executeBooleanFilterCondition: FilterCondition = ((options: FilterConditionOption, parsedSearchValue: boolean | undefined) => {
   return parseBoolean(options.cellValue) === parseBoolean(parsedSearchValue);
 }) as FilterCondition;
 

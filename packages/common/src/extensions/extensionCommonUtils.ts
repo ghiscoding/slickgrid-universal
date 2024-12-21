@@ -157,10 +157,7 @@ function generatePickerCheckbox(
   return { inputElm, labelElm, labelSpanElm };
 }
 
-export function populateColumnPicker(
-  this: SlickColumnPicker | SlickGridMenu,
-  addonOptions: ColumnPickerOption | GridMenuOption
-): void {
+export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption): void {
   const context: any = this;
   const isGridMenu = context instanceof SlickGridMenu;
   const menuPrefix = isGridMenu ? 'gridmenu-' : '';
@@ -174,12 +171,7 @@ export function populateColumnPicker(
 
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
     const isChecked = context.grid.getColumnIndex(columnId) >= 0;
-    const { inputElm, labelElm, labelSpanElm } = generatePickerCheckbox(
-      columnLiElm,
-      inputId,
-      { columnid: `${columnId}` },
-      isChecked
-    );
+    const { inputElm, labelElm, labelSpanElm } = generatePickerCheckbox(columnLiElm, inputId, { columnid: `${columnId}` }, isChecked);
     context._columnCheckboxes.push(inputElm);
 
     const headerColumnValueExtractorFn =
@@ -200,12 +192,7 @@ export function populateColumnPicker(
   if (!addonOptions?.hideForceFitButton) {
     const fitLiElm = document.createElement('li');
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-forcefit`;
-    const { labelSpanElm } = generatePickerCheckbox(
-      fitLiElm,
-      inputId,
-      { option: 'autoresize' },
-      context.gridOptions.forceFitColumns
-    );
+    const { labelSpanElm } = generatePickerCheckbox(fitLiElm, inputId, { option: 'autoresize' }, context.gridOptions.forceFitColumns);
     labelSpanElm.textContent = addonOptions?.forceFitTitle ?? '';
     context._listElm.appendChild(fitLiElm);
   }
@@ -213,12 +200,7 @@ export function populateColumnPicker(
   if (!addonOptions?.hideSyncResizeButton) {
     const syncLiElm = document.createElement('li');
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-syncresize`;
-    const { labelSpanElm } = generatePickerCheckbox(
-      syncLiElm,
-      inputId,
-      { option: 'syncresize' },
-      context.gridOptions.forceFitColumns
-    );
+    const { labelSpanElm } = generatePickerCheckbox(syncLiElm, inputId, { option: 'syncresize' }, context.gridOptions.forceFitColumns);
     labelSpanElm.textContent = addonOptions?.syncResizeTitle ?? '';
     context._listElm.appendChild(syncLiElm);
   }

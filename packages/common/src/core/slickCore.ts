@@ -487,9 +487,7 @@ export class SlickGroup extends SlickNonDataItem {
    * @param group {Group} Group instance to compare to.
    */
   equals(group: SlickGroup): boolean {
-    return (
-      this.value === group.value && this.count === group.count && this.collapsed === group.collapsed && this.title === group.title
-    );
+    return this.value === group.value && this.count === group.count && this.collapsed === group.collapsed && this.title === group.title;
   }
 }
 

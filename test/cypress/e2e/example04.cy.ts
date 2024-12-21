@@ -1,28 +1,8 @@
 describe('Example 04 - Frozen Grid', () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
-  const withTitleRowTitles = [
-    'Sel',
-    'Title',
-    '% Complete',
-    'Start',
-    'Finish',
-    'Completed',
-    'Cost | Duration',
-    'City of Origin',
-    'Action',
-  ];
-  const withoutTitleRowTitles = [
-    '',
-    'Title',
-    '% Complete',
-    'Start',
-    'Finish',
-    'Completed',
-    'Cost | Duration',
-    'City of Origin',
-    'Action',
-  ];
+  const withTitleRowTitles = ['Sel', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const withoutTitleRowTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
   const GRID_ROW_HEIGHT = 45;
 
   it('should display Example title', () => {
@@ -124,12 +104,7 @@ describe('Example 04 - Frozen Grid', () => {
   it('should hide "Title" column from Header Menu and expect last frozen column to be "% Complete"', () => {
     const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
-    cy.get('.grid4')
-      .find('.slick-header-column:nth(1)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.grid4').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
@@ -596,9 +571,7 @@ describe('Example 04 - Frozen Grid', () => {
       // resize CityOfOrigin column
       cy.get('.slick-header-columns').children('.slick-header-column:nth(7)').should('contain', 'City of Origin');
 
-      cy.get('.slick-resizable-handle:nth(7)')
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('mousemove', 'bottomRight');
+      cy.get('.slick-resizable-handle:nth(7)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 
       cy.get('.slick-header-column:nth(8)')
         .trigger('mousemove', 'bottomRight')
@@ -607,9 +580,7 @@ describe('Example 04 - Frozen Grid', () => {
       // resize Cost|Duration column
       cy.get('.slick-header-columns').children('.slick-header-column:nth(6)').should('contain', 'Cost | Duration');
 
-      cy.get('.slick-resizable-handle:nth(6)')
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('mousemove', 'bottomRight');
+      cy.get('.slick-resizable-handle:nth(6)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 
       cy.get('.slick-header-column:nth(8)')
         .trigger('mousemove', 'bottomRight')
@@ -618,9 +589,7 @@ describe('Example 04 - Frozen Grid', () => {
       // resize Completed column
       cy.get('.slick-header-columns').children('.slick-header-column:nth(5)').should('contain', 'Completed');
 
-      cy.get('.slick-resizable-handle:nth(5)')
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('mousemove', 'bottomRight');
+      cy.get('.slick-resizable-handle:nth(5)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 
       cy.get('.slick-header-column:nth(7)')
         .trigger('mousemove', 'bottomRight')
@@ -629,9 +598,7 @@ describe('Example 04 - Frozen Grid', () => {
       // resize Finish column
       cy.get('.slick-header-columns').children('.slick-header-column:nth(4)').should('contain', 'Finish');
 
-      cy.get('.slick-resizable-handle:nth(4)')
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('mousemove', 'bottomRight');
+      cy.get('.slick-resizable-handle:nth(4)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 
       cy.get('.slick-header-column:nth(6)')
         .trigger('mousemove', 'bottomRight')
@@ -640,9 +607,7 @@ describe('Example 04 - Frozen Grid', () => {
       // resize Start column
       cy.get('.slick-header-columns').children('.slick-header-column:nth(3)').should('contain', 'Start');
 
-      cy.get('.slick-resizable-handle:nth(3)')
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('mousemove', 'bottomRight');
+      cy.get('.slick-resizable-handle:nth(3)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 
       cy.get('.slick-header-column:nth(6)')
         .trigger('mousemove', 'bottomRight')
@@ -651,9 +616,7 @@ describe('Example 04 - Frozen Grid', () => {
       // resize %Complete column
       cy.get('.slick-header-columns').children('.slick-header-column:nth(2)').should('contain', '% Complete');
 
-      cy.get('.slick-resizable-handle:nth(2)')
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('mousemove', 'bottomRight');
+      cy.get('.slick-resizable-handle:nth(2)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 
       cy.get('.slick-header-column:nth(3)')
         .trigger('mousemove', 'bottomRight')
@@ -662,9 +625,7 @@ describe('Example 04 - Frozen Grid', () => {
       // resize Title column
       cy.get('.slick-header-columns').children('.slick-header-column:nth(1)').should('contain', 'Title');
 
-      cy.get('.slick-resizable-handle:nth(1)')
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('mousemove', 'bottomRight');
+      cy.get('.slick-resizable-handle:nth(1)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 
       cy.get('.slick-header-column:nth(3)')
         .trigger('mousemove', 'bottomRight')

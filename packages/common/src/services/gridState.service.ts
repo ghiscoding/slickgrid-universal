@@ -117,11 +117,7 @@ export class GridStateService {
           }
 
           // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
-          this.addColumnDynamicWhenFeatureEnabled(
-            dynamicAddonColumnByIndexPositionList,
-            this.sharedService.allColumns,
-            newArrangedColumns
-          );
+          this.addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList, this.sharedService.allColumns, newArrangedColumns);
         }
 
         // keep copy the original optional `width` properties optionally provided by the user.
@@ -377,10 +373,7 @@ export class GridStateService {
 
   /** if we use Row Selection or the Checkbox Selector, we need to reset any selection */
   resetRowSelectionWhenRequired(): void {
-    if (
-      !this.needToPreserveRowSelection() &&
-      (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector)
-    ) {
+    if (!this.needToPreserveRowSelection() && (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector)) {
       // this also requires the Row Selection Model to be registered as well
       const rowSelectionExtension = this.extensionService?.getExtensionByName?.(ExtensionName.rowSelection);
       if (rowSelectionExtension?.instance) {
@@ -532,9 +525,7 @@ export class GridStateService {
 
       if (pluginColumnIdx >= 0 && associatedGridCheckboxColumnIdx === -1) {
         const pluginColumn = fullColumnDefinitions[pluginColumnIdx];
-        pluginColumnIdx === 0
-          ? newArrangedColumns.unshift(pluginColumn)
-          : newArrangedColumns.splice(pluginColumnIdx, 0, pluginColumn);
+        pluginColumnIdx === 0 ? newArrangedColumns.unshift(pluginColumn) : newArrangedColumns.splice(pluginColumnIdx, 0, pluginColumn);
       }
     });
   }
@@ -587,11 +578,7 @@ export class GridStateService {
   protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid): void {
     const onSetOptionsHandler = grid.onSetOptions;
     this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
-      const {
-        frozenBottom: frozenBottomBefore,
-        frozenColumn: frozenColumnBefore,
-        frozenRow: frozenRowBefore,
-      } = args.optionsBefore;
+      const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
       const { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter } = args.optionsAfter;
 
       // prettier-ignore

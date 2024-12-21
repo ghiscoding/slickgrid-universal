@@ -81,9 +81,7 @@ export class ExtensionService {
       // dispose each extension
       extensionNames.forEach((extensionName) => {
         if (this._extensionList.hasOwnProperty(extensionName)) {
-          const extension = this._extensionList[
-            extensionName as keyof Record<ExtensionName, ExtensionModel<any>>
-          ] as ExtensionModel<any>;
+          const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any>>] as ExtensionModel<any>;
           if (typeof extension?.instance?.dispose === 'function') {
             extension.instance.dispose();
           }
@@ -132,9 +130,7 @@ export class ExtensionService {
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
    *  @param name
    */
-  getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(
-    name: ExtensionName
-  ): ExtensionModel<P> | undefined {
+  getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(name: ExtensionName): ExtensionModel<P> | undefined {
     if (this._extensionCreatedList?.hasOwnProperty(name)) {
       return this._extensionCreatedList[name];
     }
@@ -175,8 +171,7 @@ export class ExtensionService {
       // Row Based Edit Plugin
       if (this.gridOptions.enableRowBasedEdit) {
         this._rowBasedEdit =
-          this._rowBasedEdit ||
-          new SlickRowBasedEdit(this.extensionUtility, this.pubSubService, this.gridOptions.rowBasedEditOptions);
+          this._rowBasedEdit || new SlickRowBasedEdit(this.extensionUtility, this.pubSubService, this.gridOptions.rowBasedEditOptions);
         const gridService = this.lazyGridService?.();
         if (!gridService) {
           throw new Error('[Slickgrid-Universal] the RowBasedEdit Plugin requires a GridService to be configured and available');
@@ -199,10 +194,7 @@ export class ExtensionService {
       // Cell External Copy Manager Plugin (Excel Like)
       if (this.gridOptions.enableExcelCopyBuffer) {
         this._cellExcelCopyManagerPlugin = new SlickCellExcelCopyManager();
-        this._cellExcelCopyManagerPlugin.init(
-          this.sharedService.slickGrid,
-          this.sharedService.gridOptions.excelCopyBufferOptions
-        );
+        this._cellExcelCopyManagerPlugin.init(this.sharedService.slickGrid, this.sharedService.gridOptions.excelCopyBufferOptions);
         if (this.gridOptions.excelCopyBufferOptions?.onExtensionRegistered) {
           this.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._cellExcelCopyManagerPlugin);
         }
@@ -273,12 +265,7 @@ export class ExtensionService {
 
       // Context Menu Control
       if (this.gridOptions.enableContextMenu) {
-        this._contextMenuPlugin = new SlickContextMenu(
-          this.extensionUtility,
-          this.pubSubService,
-          this.sharedService,
-          this.treeDataService
-        );
+        this._contextMenuPlugin = new SlickContextMenu(this.extensionUtility, this.pubSubService, this.sharedService, this.treeDataService);
         if (this.gridOptions.contextMenu?.onExtensionRegistered) {
           this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
         }
@@ -377,10 +364,7 @@ export class ExtensionService {
     // we push them into a array and we'll process them by their position (if provided, else use same order that they were inserted)
     if (gridOptions.enableCheckboxSelector) {
       if (!this.getCreatedExtensionByName(ExtensionName.checkboxSelector)) {
-        this._checkboxSelectColumn = new SlickCheckboxSelectColumn(
-          this.pubSubService,
-          this.sharedService.gridOptions.checkboxSelector
-        );
+        this._checkboxSelectColumn = new SlickCheckboxSelectColumn(this.pubSubService, this.sharedService.gridOptions.checkboxSelector);
         featureWithColumnIndexPositions.push({
           name: ExtensionName.checkboxSelector,
           instance: this._checkboxSelectColumn,

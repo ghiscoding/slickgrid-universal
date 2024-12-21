@@ -10,12 +10,8 @@ export const numericSortComparer: SortComparer = (
 ) => {
   const checkForUndefinedValues = sortColumn?.valueCouldBeUndefined ?? gridOptions?.cellValueCouldBeUndefined ?? false;
   const x =
-    isNaN(value1) || value1 === '' || value1 === null || (checkForUndefinedValues && value1 === undefined)
-      ? -Infinity
-      : parseFloat(value1);
+    isNaN(value1) || value1 === '' || value1 === null || (checkForUndefinedValues && value1 === undefined) ? -Infinity : parseFloat(value1);
   const y =
-    isNaN(value2) || value2 === '' || value2 === null || (checkForUndefinedValues && value2 === undefined)
-      ? -Infinity
-      : parseFloat(value2);
+    isNaN(value2) || value2 === '' || value2 === null || (checkForUndefinedValues && value2 === undefined) ? -Infinity : parseFloat(value2);
   return sortDirection * (x === y ? 0 : x > y ? 1 : -1);
 };

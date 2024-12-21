@@ -21,9 +21,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
     cy.get('[data-test=graphql-query-result]').should(($span) => {
       const text = removeWhitespaces($span.text()); // remove all white spaces
       expect(text).to.eq(
-        removeWhitespaces(
-          `query { users (first:30,offset:0,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`
-        )
+        removeWhitespaces(`query { users (first:30,offset:0,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`)
       );
     });
   });
@@ -38,9 +36,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
     cy.get('[data-test=graphql-query-result]').should(($span) => {
       const text = removeWhitespaces($span.text()); // remove all white spaces
       expect(text).to.eq(
-        removeWhitespaces(
-          `query { users (first:30,offset:30,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`
-        )
+        removeWhitespaces(`query { users (first:30,offset:30,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`)
       );
     });
   });
@@ -55,9 +51,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
     cy.get('[data-test=graphql-query-result]').should(($span) => {
       const text = removeWhitespaces($span.text()); // remove all white spaces
       expect(text).to.eq(
-        removeWhitespaces(
-          `query { users (first:30,offset:60,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`
-        )
+        removeWhitespaces(`query { users (first:30,offset:60,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`)
       );
     });
   });
@@ -76,9 +70,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
     cy.get('[data-test=graphql-query-result]').should(($span) => {
       const text = removeWhitespaces($span.text()); // remove all white spaces
       expect(text).to.eq(
-        removeWhitespaces(
-          `query { users (first:30,offset:90,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`
-        )
+        removeWhitespaces(`query { users (first:30,offset:90,locale:"en",userId:123) { totalCount, nodes { id,name,gender,company } } }`)
       );
     });
 

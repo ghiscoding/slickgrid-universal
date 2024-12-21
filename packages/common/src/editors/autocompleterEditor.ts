@@ -1,14 +1,7 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import {
-  classNameToList,
-  createDomElement,
-  isObject,
-  isPrimitiveValue,
-  setDeepValue,
-  toKebabCase,
-} from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants.js';
 import { FieldType } from '../enums/index.js';

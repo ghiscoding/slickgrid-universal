@@ -449,12 +449,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -467,8 +462,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>optionally change the simulation changes refresh rate in ms (lower number means more changes).</li>
       <li>you can Group by 1 of these columns: Currency, Market or Type</li>
       <li>
-        to show SlickGrid HUGE PERF., do the following: (1) lower Changes Rate (2) increase both Changes per Cycle and (3) lower
-        Highlight Duration
+        to show SlickGrid HUGE PERF., do the following: (1) lower Changes Rate (2) increase both Changes per Cycle and (3) lower Highlight
+        Duration
       </li>
     </ul>
   </div>

@@ -30,10 +30,7 @@ export interface BasePubSubService {
    * @param callback The callback to be invoked when the specified message is published.
    * @return possibly a Subscription
    */
-  subscribeEvent?<T = any>(
-    _eventName: string | Function,
-    _callback: (event: CustomEventInit<T>) => void
-  ): EventSubscription | any;
+  subscribeEvent?<T = any>(_eventName: string | Function, _callback: (event: CustomEventInit<T>) => void): EventSubscription | any;
 
   /**
    * Unsubscribes a message name

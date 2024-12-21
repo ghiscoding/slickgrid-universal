@@ -257,8 +257,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow
           ? this._addonOptions.name || ''
           : this.createCheckboxElement(`header-selector${this._selectAll_UID}`),
-      toolTip:
-        this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow ? '' : this._addonOptions.toolTip,
+      toolTip: this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow ? '' : this._addonOptions.toolTip,
       field: columnId,
       cssClass: this._addonOptions.cssClass,
       excludeFromExport: true,
@@ -436,10 +435,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected handleClick(e: SlickEventData, args: { row: number; cell: number; grid: SlickGrid }): void {
     // clicking on a row select checkbox
-    if (
-      this._grid.getColumns()[args.cell].id === this._addonOptions.columnId &&
-      (e.target as HTMLInputElement).type === 'checkbox'
-    ) {
+    if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && (e.target as HTMLInputElement).type === 'checkbox') {
       (e.target as HTMLInputElement).ariaChecked = String((e.target as HTMLInputElement).checked);
 
       // if editing, try to commit

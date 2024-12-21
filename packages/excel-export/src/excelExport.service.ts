@@ -35,12 +35,7 @@ import {
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
-import {
-  type ExcelFormatter,
-  getGroupTotalValue,
-  getExcelFormatFromGridFormatter,
-  useCellFormatByFieldType,
-} from './excelUtils.js';
+import { type ExcelFormatter, getGroupTotalValue, getExcelFormatFromGridFormatter, useCellFormatByFieldType } from './excelUtils.js';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
@@ -144,11 +139,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       );
     }
     this._pubSubService?.publish(`onBeforeExportToExcel`, true);
-    this._excelExportOptions = extend(
-      true,
-      {},
-      { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options }
-    );
+    this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
     this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
 
     // reset references of detected Excel formats
@@ -254,11 +245,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    if (
-      this._gridOptions.createPreHeaderPanel &&
-      this._gridOptions.showPreHeaderPanel &&
-      !this._gridOptions.enableDraggableGrouping
-    ) {
+    if (this._gridOptions.createPreHeaderPanel && this._gridOptions.showPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
       // when having Grouped Header Titles (in the pre-header), then make the cell Bold & Aligned Center
       const boldCenterAlign = this._stylesheet.createFormat({ alignment: { horizontal: 'center' }, font: { bold: true } });
       outputData.push(this.getColumnGroupedHeaderTitlesData(columns, { style: boldCenterAlign?.id }));
@@ -321,8 +308,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     for (let cellIndex = 0; cellIndex < headersLn; cellIndex++) {
       if (
         cellIndex + 1 === headersLn ||
-        (cellIndex + 1 < headersLn &&
-          this._groupedColumnHeaders[cellIndex].title !== this._groupedColumnHeaders[cellIndex + 1].title)
+        (cellIndex + 1 < headersLn && this._groupedColumnHeaders[cellIndex].title !== this._groupedColumnHeaders[cellIndex + 1].title)
       ) {
         const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1);
         const rightExcelColumnChar = this.getExcelColumnNameByIndex(cellIndex + 1);
@@ -516,10 +502,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       // when using grid with colspan, we will merge some cells together
-      if (
-        (prevColspan === '*' && col > 0) ||
-        (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)
-      ) {
+      if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)) {
         // -- Merge Data
         // Excel row starts at 2 or at 3 when dealing with pre-header grouping
         const excelRowNumber = row + (this._hasColumnTitlePreHeader ? 3 : 2);
@@ -559,8 +542,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // auto-detect best possible Excel format, unless the user provide his own formatting,
         // we only do this check once per column (everything after that will be pull from temp ref)
         if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
-          const autoDetectCellFormat =
-            columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
+          const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
           const cellStyleFormat = useCellFormatByFieldType(
             this._stylesheet,
             this._stylesheetFormats,
@@ -622,11 +604,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * For example if we grouped by "salesRep" and we have a Sum Aggregator on "sales", then the returned output would be:: ["Sum 123$"]
    * @param itemObj
    */
-  protected readGroupedTotalRows(
-    columns: Column[],
-    itemObj: any,
-    dataRowIdx: number
-  ): Array<ExcelColumnMetadata | string | number> {
+  protected readGroupedTotalRows(columns: Column[], itemObj: any, dataRowIdx: number): Array<ExcelColumnMetadata | string | number> {
     const groupingAggregatorRowText = this._excelExportOptions.groupingAggregatorRowText || '';
     const outputStrings: Array<ExcelColumnMetadata | string | number> = [groupingAggregatorRowText];
 
@@ -643,18 +621,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
       // we only do this check once per column (everything after that will be pull from temp ref)
-      const autoDetectCellFormat =
-        columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
+      const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
       if (fieldType === FieldType.number && autoDetectCellFormat !== false) {
         let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
         if (!groupCellFormat?.groupType) {
-          groupCellFormat = getExcelFormatFromGridFormatter(
-            this._stylesheet,
-            this._stylesheetFormats,
-            columnDef,
-            this._grid,
-            'group'
-          );
+          groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');
           if (columnDef.groupTotalsExcelExportOptions?.style) {
             groupCellFormat.excelFormat = this._stylesheet.createFormat(columnDef.groupTotalsExcelExportOptions.style);
           }

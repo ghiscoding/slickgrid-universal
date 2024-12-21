@@ -16,15 +16,11 @@ describe('Example 1 - Basic Grids', () => {
   it('should have 2 grids of size 800 by 225px', () => {
     cy.get('#slickGridContainer-grid1-1').should('have.css', 'width', '800px');
 
-    cy.get('#slickGridContainer-grid1-1 > .slickgrid-container').should(($el) =>
-      expect(parseInt(`${$el.height()}`, 10)).to.eq(225)
-    );
+    cy.get('#slickGridContainer-grid1-1 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
 
     cy.get('#slickGridContainer-grid1-2').should('have.css', 'width', '800px');
 
-    cy.get('#slickGridContainer-grid1-2 > .slickgrid-container').should(($el) =>
-      expect(parseInt(`${$el.height()}`, 10)).to.eq(225)
-    );
+    cy.get('#slickGridContainer-grid1-2 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
   });
 
   it('should have exact column titles on 1st grid', () => {
@@ -96,17 +92,9 @@ describe('Example 1 - Basic Grids', () => {
       .children('.slick-menu-item:nth-of-type(4)')
       .click();
 
-    cy.get('#grid1-2')
-      .find('.slick-sort-indicator-asc')
-      .should('have.length', 1)
-      .siblings('.slick-sort-indicator-numbered')
-      .contains('1');
+    cy.get('#grid1-2').find('.slick-sort-indicator-asc').should('have.length', 1).siblings('.slick-sort-indicator-numbered').contains('1');
 
-    cy.get('#grid1-2')
-      .find('.slick-sort-indicator-desc')
-      .should('have.length', 1)
-      .siblings('.slick-sort-indicator-numbered')
-      .contains('2');
+    cy.get('#grid1-2').find('.slick-sort-indicator-desc').should('have.length', 1).siblings('.slick-sort-indicator-numbered').contains('2');
   });
 
   it('should clear sorting of grid2 using the Grid Menu "Clear all Sorting" command', () => {

@@ -333,12 +333,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -353,8 +348,8 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
       <li>Single Select, you can click on any cell to make the row active</li>
       <li>Multiple Selections, you need to specifically click on the checkbox to make 1 or more selections</li>
       <li>
-        NOTE: Any Row Selection(s) will be reset when using Pagination and changing Page (you will need to set it back manually if
-        you want it back)
+        NOTE: Any Row Selection(s) will be reset when using Pagination and changing Page (you will need to set it back manually if you want
+        it back)
       </li>
     </ul>
   </div>
@@ -407,11 +402,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
       </label>
       <span v-if="isGrid2WithPagination" style="margin-left: 5px">
         <div class="btn-group" role="group">
-          <button
-            class="btn btn-outline-secondary btn-xs btn-icon px-2"
-            data-test="goto-first-page"
-            @click="goToGrid2FirstPage()"
-          >
+          <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page" @click="goToGrid2FirstPage()">
             <i class="mdi mdi-page-first"></i>
           </button>
           <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page" @click="goToGrid2LastPage()">

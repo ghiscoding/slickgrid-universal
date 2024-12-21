@@ -251,12 +251,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -273,9 +268,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <li>The "Completed" column uses a the "onCellClick" event and a formatter to simulate a toggle action</li>
       </ul>
       <li>
-        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag.
-        Note that it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or
-        "TextExportOptions" or the column definition)
+        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that
+        it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions"
+        or the column definition)
       </li>
       <li>This example also has auto-resize enabled, and we also demo how you can pause the resizer if you wish to</li>
     </ul>

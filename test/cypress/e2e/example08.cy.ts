@@ -189,26 +189,11 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
     cy.get('[data-test="search-value-input"]').type('5');
 
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 5'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 15'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 25'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 35'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 45'
-    );
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 5');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 15');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 25');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 35');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 45');
 
     cy.get('.grid2')
       .find('.slick-custom-footer')
@@ -249,26 +234,11 @@ describe('Example 08 - Column Span & Header Grouping', () => {
   it('should clear search input and expect empty dataset warning to go away and also expect data back (Task 0, 1, 2, ...)', () => {
     cy.get('[data-test="clear-search-input"]').click();
 
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 0'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 1'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 2'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 3'
-    );
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should(
-      'contain',
-      'Task 4'
-    );
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
+    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
 
     cy.get('.grid2')
       .find('.slick-custom-footer')

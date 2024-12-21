@@ -173,12 +173,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
@@ -187,12 +182,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
     The SlickGrid option "autoHeight" can be used if you wish to keep the full height of the grid without any scrolling
     <ul>
       <li>You define a fixed grid width via "gridWidth" in the View</li>
+      <li>You can still use the "autoResize" for the width to be resized automatically (the height will never change in this case)</li>
       <li>
-        You can still use the "autoResize" for the width to be resized automatically (the height will never change in this case)
-      </li>
-      <li>
-        This dataset has 25 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling
-        (though you might have browser scrolling)
+        This dataset has 25 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling (though you
+        might have browser scrolling)
       </li>
     </ul>
   </div>

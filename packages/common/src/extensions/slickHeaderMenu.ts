@@ -133,12 +133,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this._menuElm = undefined;
   }
 
-  repositionSubMenu(
-    e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData,
-    item: MenuCommandItem,
-    level: number,
-    columnDef: Column
-  ): void {
+  repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, item: MenuCommandItem, level: number, columnDef: Column): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const subMenuElm = this.createCommandMenu(item.commandItems || [], columnDef, level + 1, item);
     document.body.appendChild(subMenuElm);
@@ -148,9 +143,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   repositionMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, menuElm: HTMLDivElement): void {
     const buttonElm = e.target as HTMLDivElement; // get header button createElement
     const isSubMenu = menuElm.classList.contains('slick-submenu');
-    const parentElm = isSubMenu
-      ? ((e.target as HTMLElement).closest('.slick-menu-item') as HTMLDivElement)
-      : (buttonElm as HTMLElement);
+    const parentElm = isSubMenu ? ((e.target as HTMLElement).closest('.slick-menu-item') as HTMLDivElement) : (buttonElm as HTMLElement);
 
     const relativePos = getOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
     const gridPos = this.grid.getGridPosition();
@@ -234,11 +227,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement(
-        'div',
-        { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' },
-        args.node
-      );
+      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' }, args.node);
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...classNameToList(this.addonOptions.buttonCssClass));
@@ -283,10 +272,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         isMenuClicked = true;
       }
 
-      if (
-        (this._menuElm !== e.target && !isMenuClicked && !e.defaultPrevented) ||
-        (e.target.className === 'close' && parentMenuElm)
-      ) {
+      if ((this._menuElm !== e.target && !isMenuClicked && !e.defaultPrevented) || (e.target.className === 'close' && parentMenuElm)) {
         this.hideMenu();
       }
     }
@@ -416,10 +402,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           }
 
           // add a divider (separator) between the top freeze columns commands and the rest of the commands
-          if (
-            hasFrozenOrResizeCommand &&
-            !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)
-          ) {
+          if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
             columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 48 });
           }
 
@@ -538,20 +521,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Clear the Filter on the current column (if it's actually filtered) */
-  protected clearColumnFilter(
-    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
-    args: MenuCommandItemCallbackArgs
-  ): void {
+  protected clearColumnFilter(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs): void {
     if (args?.column) {
       this.filterService.clearFilterByColumnId(event, args.column.id);
     }
   }
 
   /** Clear the Sort on the current column (if it's actually sorted) */
-  protected clearColumnSort(
-    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
-    args: MenuCommandItemCallbackArgs
-  ): void {
+  protected clearColumnSort(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs): void {
     if (args?.column && this.sharedService) {
       this.sortService.clearSortByColumnId(event, args.column.id);
     }
@@ -632,10 +609,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
     if (typeof e.stopPropagation === 'function') {
       this.pubSubService.publish('onHeaderMenuBeforeMenuShow', callbackArgs);
-      if (
-        typeof this.addonOptions?.onBeforeMenuShow === 'function' &&
-        this.addonOptions?.onBeforeMenuShow(e, callbackArgs) === false
-      ) {
+      if (typeof this.addonOptions?.onBeforeMenuShow === 'function' && this.addonOptions?.onBeforeMenuShow(e, callbackArgs) === false) {
         return;
       }
     }
@@ -647,10 +621,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // execute optional callback method defined by the user
     this.pubSubService.publish('onHeaderMenuAfterMenuShow', callbackArgs);
-    if (
-      typeof this.addonOptions?.onAfterMenuShow === 'function' &&
-      this.addonOptions?.onAfterMenuShow(e, callbackArgs) === false
-    ) {
+    if (typeof this.addonOptions?.onAfterMenuShow === 'function' && this.addonOptions?.onAfterMenuShow(e, callbackArgs) === false) {
       return;
     }
 
