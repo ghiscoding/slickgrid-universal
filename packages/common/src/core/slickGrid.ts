@@ -126,9 +126,6 @@ interface RowCaching {
 export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O extends BaseGridOption<C> = BaseGridOption<C>> {
   // -- Public API
 
-  /** optional grid state clientId */
-  cid = '';
-
   // Events
   onActiveCellChanged: SlickEvent<OnActiveCellChangedEventArgs>;
   onActiveCellPositionChanged: SlickEvent<{ grid: SlickGrid }>;
@@ -484,7 +481,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected slickResizableInstances: Array<InteractionBase> = [];
   protected sortableSideLeftInstance?: Sortable;
   protected sortableSideRightInstance?: Sortable;
-  protected logMessageMaxCount = 30;
   protected _pubSubService?: BasePubSub;
 
   /**
@@ -521,15 +517,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onBeforeColumnsResize = new SlickEvent<OnBeforeColumnsResizeEventArgs>('onBeforeColumnsResize', externalPubSub);
     this.onBeforeDestroy = new SlickEvent<{ grid: SlickGrid }>('onBeforeDestroy', externalPubSub);
     this.onBeforeEditCell = new SlickEvent<OnBeforeEditCellEventArgs>('onBeforeEditCell', externalPubSub);
-    this.onBeforeFooterRowCellDestroy = new SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>(
-      'onBeforeFooterRowCellDestroy',
-      externalPubSub
-    );
+    // prettier-ignore
+    this.onBeforeFooterRowCellDestroy = new SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>('onBeforeFooterRowCellDestroy', externalPubSub);
     this.onBeforeHeaderCellDestroy = new SlickEvent<OnBeforeHeaderCellDestroyEventArgs>('onBeforeHeaderCellDestroy', externalPubSub);
-    this.onBeforeHeaderRowCellDestroy = new SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>(
-      'onBeforeHeaderRowCellDestroy',
-      externalPubSub
-    );
+    // prettier-ignore
+    this.onBeforeHeaderRowCellDestroy = new SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>('onBeforeHeaderRowCellDestroy', externalPubSub);
     this.onBeforeSetColumns = new SlickEvent<OnBeforeSetColumnsEventArgs>('onBeforeSetColumns', externalPubSub);
     this.onBeforeSort = new SlickEvent<SingleColumnSort | MultiColumnSort>('onBeforeSort', externalPubSub);
     this.onBeforeUpdateColumns = new SlickEvent<OnBeforeUpdateColumnsEventArgs>('onBeforeUpdateColumns', externalPubSub);
@@ -662,12 +654,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.updateColumnProps();
-
-    // validate loaded JavaScript modules against requested options
-    /* v8 ignore next 3 */
-    if (this._options.enableColumnReorder && (!Sortable || !Sortable.create)) {
-      throw new Error('SlickGrid requires Sortable.js module to be loaded');
-    }
 
     this.editController = {
       commitCurrentEdit: this.commitCurrentEdit.bind(this),
@@ -2154,11 +2140,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setupColumnResize(): void {
-    /* v8 ignore next 3 */
-    if (typeof Resizable === 'undefined') {
-      throw new Error(`SlickResizable is undefined, make sure to import "slick.interactions.js"`);
-    }
-
     let j: number;
     let k: number;
     let c: C;
@@ -2267,7 +2248,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             const targetEvent = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
             this.columnResizeDragging = true;
             let actualMinWidth;
-            const d = Math.min(maxPageX, Math.max(minPageX, (targetEvent as MouseEvent).pageX)) - pageX;
+            const targetPageX = (targetEvent as MouseEvent).pageX;
+            const d = Math.min(maxPageX, Math.max(minPageX, targetPageX)) - pageX;
             let x;
             let newCanvasWidthL = 0;
             let newCanvasWidthR = 0;
