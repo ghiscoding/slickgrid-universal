@@ -2753,7 +2753,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Create CSS rules via template in case the first approach with createElement('style') doesn't work */
-  /* v8 ignore next 19 */
+  /* v8 ignore next 21 */
   protected createCssRulesAlternative(rules: string[]): void {
     const template = document.createElement('template');
     template.innerHTML = '<style type="text/css" rel="stylesheet" />';
@@ -2770,8 +2770,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     if ((this._style as any).styleSheet) {
-      // IE
-      (this._style as any).styleSheet.cssText = rules.join(' ');
+      (this._style as any).styleSheet.cssText = rules.join(' '); // IE
     } else {
       this._style.appendChild(document.createTextNode(rules.join(' ')));
     }

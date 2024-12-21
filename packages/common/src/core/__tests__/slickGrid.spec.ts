@@ -81,6 +81,20 @@ describe('SlickGrid core file', () => {
     expect(grid.getGridPosition()).toBeTruthy();
   });
 
+  it('should be able to instantiate SlickGrid without DataView and always show vertical scroll', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, alwaysShowVerticalScroll: true });
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(grid.getData()).toEqual([]);
+    expect(grid.getCanvases()).toBeTruthy();
+    expect(grid.getCanvasNode()).toBeTruthy();
+    expect(grid.getActiveCanvasNode()).toBeTruthy();
+    expect(grid.getContainerNode()).toEqual(container);
+    expect(grid.getGridPosition()).toBeTruthy();
+  });
+
   it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
@@ -643,6 +657,33 @@ describe('SlickGrid core file', () => {
       grid.setTopHeaderPanelVisibility(false);
       topheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-topheader-panel');
       expect(topheaderElms[0].style.display).toBe('none');
+    });
+
+    it('should hide column headers div when "showTopHeaderPanel" is disabled and always show vertical scroll', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        alwaysShowVerticalScroll: true,
+        enableCellNavigation: true,
+        topHeaderPanelHeight: 30,
+        showTopHeaderPanel: false,
+        createTopHeaderPanel: true,
+      } as GridOption;
+      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
+      grid.init();
+      const topheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-topheader-panel');
+      const vpTopLeft = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const vpTopRight = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+      const vpBottomLeft = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      const vpBottomRight = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
+
+      expect(grid).toBeTruthy();
+      expect(topheaderElms).toBeTruthy();
+      expect(topheaderElms[0].style.display).toBe('none');
+      expect(vpTopLeft.style.overflowY).toBe('scroll');
+      expect(vpTopRight.style.overflowY).toBe('scroll');
+      expect(vpBottomLeft.style.overflowY).toBe('scroll');
+      expect(vpBottomRight.style.overflowY).toBe('scroll');
     });
   });
 
