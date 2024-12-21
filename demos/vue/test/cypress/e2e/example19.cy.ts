@@ -44,7 +44,9 @@ describe('Example 19 - Row Detail View', () => {
     cy.get('@detailContainer')
       .find('input')
       .invoke('val')
-      .then((text) => (assignee = text as string));
+      .then((text) => (assignee = `${text || ''}`));
+
+    cy.wait(10);
 
     cy.get('@detailContainer')
       .find('[data-test=assignee-btn]')
