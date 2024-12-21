@@ -778,6 +778,96 @@ describe('SlickGrid core file', () => {
       expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
     });
 
+    it('should define colspan and expect to cleanup rendered cells when SlickDataView and cell metadata are defined', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 2 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+        { id: 'gender', field: 'gender', name: 'gender' },
+        { id: 'scholarity', field: 'scholarity', name: 'scholarity', colspan: '*' },
+        { id: 'bornCity', field: 'bornCity', name: 'bornCity' },
+      ] as Column[];
+      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, minRowBuffer: 10 } as GridOption;
+      const data: any[] = [];
+      for (let i = 0; i < 1000; i++) {
+        data.push({ id: i, firstName: 'John', lastName: 'Doe', age: 30 });
+      }
+      const dv = new SlickDataView({});
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, gridOptions);
+      grid.init();
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      const onBeforeFooterRowCellDestroySpy = vi.spyOn(grid.onBeforeFooterRowCellDestroy, 'notify');
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
+      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
+        cssClasses: 'text-bold',
+        focusable: true,
+        formatter: (r, c, val) => val,
+        columns: { 0: { colspan: '*' } },
+      });
+
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(footerElms).toBeTruthy();
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setActiveCell(200, 1);
+      grid.updateCell(344, 5);
+      grid.setFooterRowVisibility(true);
+      grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
+
+      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(data.length);
+      grid.updateRowCount();
+
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalled();
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+    });
+
+    it('should hide/show column headers div when "showFooterRow" is disabled and expect some row cache to be cleaned up', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 3 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', colspan: 2 },
+      ] as Column[];
+      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0 } as GridOption;
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
+      grid.init();
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      const onBeforeFooterRowCellDestroySpy = vi.spyOn(grid.onBeforeFooterRowCellDestroy, 'notify');
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({
+        bottom: 1,
+        leftPx: 0,
+        rightPx: -1,
+        top: 0,
+      });
+
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(footerElms).toBeTruthy();
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setActiveCell(2, 1);
+      grid.setFooterRowVisibility(true);
+      grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
+
+      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(-1);
+      grid.updateRowCount();
+
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
+    });
+
     it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow/frozenBottom) and expect footer row column exists', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
@@ -2717,7 +2807,8 @@ describe('SlickGrid core file', () => {
       grid.scrollTo(33);
       vi.advanceTimersByTime(10);
 
-      grid.updateCell(0, 1);
+      vi.spyOn(grid, 'getCellNode').mockReturnValueOnce(document.createElement('div'));
+      grid.updateCell(30, 1);
       grid.invalidateRows([31]);
       grid.scrollTo(2);
       vi.advanceTimersByTime(12);
@@ -2818,8 +2909,8 @@ describe('SlickGrid core file', () => {
   describe('Column Resizing', () => {
     const columns = [
       { id: 'id', field: 'id', name: 'Id', hidden: true },
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true, width: 77, rerenderOnResize: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, minWidth: 35 },
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true, width: 77, previousWidth: 20, rerenderOnResize: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, minWidth: 35, maxWidth: 78 },
       { id: 'age', field: 'age', name: 'Age', sortable: true, minWidth: 82, width: 86, maxWidth: 88 },
       { id: 'gender', field: 'gender', name: 'Gender', sortable: true },
     ] as Column[];
@@ -2943,12 +3034,14 @@ describe('SlickGrid core file', () => {
 
       const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
       const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+      const invalidateRowSpy = vi.spyOn(grid, 'invalidateAllRows');
       const columnElms = container.querySelectorAll('.slick-header-column');
       const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
 
       const cMouseDownEvent = new CustomEvent('mousedown');
       const bodyMouseMoveEvent = new CustomEvent('mousemove');
       const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(columnElms[0], 'offsetWidth', { writable: true, value: 40 });
       Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
       Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
       Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
@@ -2963,15 +3056,17 @@ describe('SlickGrid core file', () => {
       expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
       // end resizing
+      Object.defineProperty(columnElms[0], 'offsetWidth', { writable: true, value: 38 });
       document.body.dispatchEvent(bodyMouseUpEvent);
 
       vi.advanceTimersByTime(10);
 
+      expect(invalidateRowSpy).toHaveBeenCalled();
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(59);
+      expect(columns[1].width).toBe(40); // go over freezing column limit, assign offsetWidth found from column element
+      expect(columns[2].width).toBe(59 - 40);
       expect(columns[3].width).toBe(88);
       expect(columns[4].width).toBe(80);
     });
@@ -3059,6 +3154,50 @@ describe('SlickGrid core file', () => {
       expect(columns[4].width).toBe(198);
     });
 
+    it('should resize 2nd column with forceFitColumns and frozenColumn options enabled', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, frozenColumn: 1 });
+      grid.init();
+      grid.autosizeColumns();
+
+      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+      const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 70 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
+      Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 72 });
+      Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent1);
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
+      document.body.dispatchEvent(bodyMouseMoveEvent2);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(0);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(76);
+      expect(columns[3].width).toBe(131);
+      expect(columns[4].width).toBe(198);
+    });
+
     it('should resize 2nd column without forceFitColumns option', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
       grid.init();
@@ -3100,7 +3239,7 @@ describe('SlickGrid core file', () => {
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(88);
-      expect(columns[4].width).toBe(467);
+      expect(columns[4].width).toBe(551);
     });
 
     it('should resize 2nd column with forceFitColumns option enabled', () => {
@@ -3260,7 +3399,7 @@ describe('SlickGrid core file', () => {
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(132);
-      expect(columns[4].width).toBe(468);
+      expect(columns[4].width).toBe(552);
     });
 
     it('should resize 4th column with forceFitColumns option enabled and a column with maxWidth and a frozen column', () => {
