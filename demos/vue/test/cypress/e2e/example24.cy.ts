@@ -438,17 +438,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should click on the "Show Action Commands Only" button and see both list when opening Context Menu', () => {
-      const commands = [
-        'Command 1',
-        'Command 2',
-        '',
-        'Supprimer la ligne',
-        'Aide',
-        'Commande désactivée',
-        '',
-        'Exports',
-        'Feedback',
-      ];
+      const commands = ['Command 1', 'Command 2', '', 'Supprimer la ligne', 'Aide', 'Commande désactivée', '', 'Exports', 'Feedback'];
 
       cy.get('[data-test=cell-menu-commands-and-options-false-button]').click();
 

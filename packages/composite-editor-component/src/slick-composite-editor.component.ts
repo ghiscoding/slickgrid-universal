@@ -176,9 +176,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
     if (typeof editor?.setValue === 'function' && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true, triggerOnCompositeEditorChange);
-      const editorContainerElm = (this._editorContainers as HTMLElement[]).find(
-        (editorElm) => editorElm!.dataset!.editorid === columnId
-      );
+      const editorContainerElm = (this._editorContainers as HTMLElement[]).find((editorElm) => editorElm!.dataset!.editorid === columnId);
       const excludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
 
       if (!editor.disabled || (editor.disabled && !excludeDisabledFieldFormValues)) {
@@ -397,11 +395,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template {{ }}
         // for example {{title}} => display the item title, or even complex object works {{product.name}} => display item product name
-        const parsedHeaderTitle = headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) =>
-          getDescendantProperty(dataContext, group)
-        );
-        const layoutColCount =
-          viewColumnLayout === 'auto' ? this.autoCalculateLayoutColumnCount(modalColumns.length) : viewColumnLayout;
+        const parsedHeaderTitle = headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) => getDescendantProperty(dataContext, group));
+        const layoutColCount = viewColumnLayout === 'auto' ? this.autoCalculateLayoutColumnCount(modalColumns.length) : viewColumnLayout;
 
         this._modalElm = createDomElement('div', { className: `slick-editor-modal ${gridUid}` });
         const modalContentElm = createDomElement('div', { className: 'slick-editor-modal-content' });
@@ -411,10 +406,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           modalContentElm.classList.add('slick-dark-mode');
         }
 
-        if (
-          (!isNaN(viewColumnLayout as number) && +viewColumnLayout > 1) ||
-          (viewColumnLayout === 'auto' && layoutColCount > 1)
-        ) {
+        if ((!isNaN(viewColumnLayout as number) && +viewColumnLayout > 1) || (viewColumnLayout === 'auto' && layoutColCount > 1)) {
           const splitClassName = layoutColCount === 2 ? 'split-view' : 'triple-split-view';
           modalContentElm.classList.add(splitClassName);
         }
@@ -460,20 +452,12 @@ export class SlickCompositeEditorComponent implements ExternalResource {
             saveButtonText = this.getLabelText('cloneButton', 'TEXT_CLONE', 'Clone');
             break;
           case 'mass-update':
-            const footerUnparsedText = this.getLabelText(
-              'massUpdateStatus',
-              'TEXT_ALL_X_RECORDS_SELECTED',
-              'All {{x}} records selected'
-            );
+            const footerUnparsedText = this.getLabelText('massUpdateStatus', 'TEXT_ALL_X_RECORDS_SELECTED', 'All {{x}} records selected');
             leftFooterText = this.parseText(footerUnparsedText, { x: fullDatasetLength });
             saveButtonText = this.getLabelText('massUpdateButton', 'TEXT_APPLY_MASS_UPDATE', 'Mass Update');
             break;
           case 'mass-selection':
-            const selectionUnparsedText = this.getLabelText(
-              'massSelectionStatus',
-              'TEXT_X_OF_Y_MASS_SELECTED',
-              '{{x}} of {{y}} selected'
-            );
+            const selectionUnparsedText = this.getLabelText('massSelectionStatus', 'TEXT_X_OF_Y_MASS_SELECTED', '{{x}} of {{y}} selected');
             leftFooterText = this.parseText(selectionUnparsedText, { x: dataContextIds.length, y: fullDatasetLength });
             saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Update Selection');
             break;
@@ -558,8 +542,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         }
 
         this._editors = {};
-        this._editorContainers =
-          modalColumns.map((col) => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid='${col.id}']`)) || [];
+        this._editorContainers = modalColumns.map((col) => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid='${col.id}']`)) || [];
         this._compositeOptions = {
           destroy: this.disposeComponent.bind(this),
           modalType,
@@ -742,11 +725,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    */
   protected createFormResetButtonElement(): HTMLDivElement {
     const resetButtonContainerElm = createDomElement('div', { className: 'reset-container' });
-    const resetButtonElm = createDomElement(
-      'button',
-      { type: 'button', className: 'btn btn-sm reset-form' },
-      resetButtonContainerElm
-    );
+    const resetButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-sm reset-form' }, resetButtonContainerElm);
     createDomElement('span', { className: this._options?.resetFormButtonIconCssClass ?? '' }, resetButtonElm);
     resetButtonElm.appendChild(document.createTextNode(' Reset Form'));
 
@@ -870,12 +849,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     return !!activeEditorCellNode;
   }
 
-  protected findNextAvailableEditorColumnIndex(
-    columns: Column[],
-    dataContext: any,
-    rowIndex: number,
-    isWithMassUpdate: boolean
-  ): number {
+  protected findNextAvailableEditorColumnIndex(columns: Column[], dataContext: any, rowIndex: number, isWithMassUpdate: boolean): number {
     let columnIndexWithEditor = -1;
 
     for (let colIndex = 0; colIndex < columns.length; colIndex++) {
@@ -959,9 +933,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       const translationKey = textLabels[`${labelProperty}Key` as keyof CompositeEditorLabel];
       return this.translaterService.translate(translationKey || '');
     }
-    return (
-      textLabels?.[labelProperty as keyof CompositeEditorLabel] ?? this._locales?.[localeText as keyof Locale] ?? defaultText
-    );
+    return textLabels?.[labelProperty as keyof CompositeEditorLabel] ?? this._locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /** Retrieve the current selection of row indexes & data context Ids */

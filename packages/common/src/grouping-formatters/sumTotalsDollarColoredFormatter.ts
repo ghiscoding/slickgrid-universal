@@ -20,16 +20,7 @@ export const sumTotalsDollarColoredFormatter: GroupTotalsFormatter = (totals: an
 
   if (isNumber(val)) {
     const colorStyle = val >= 0 ? 'green' : 'red';
-    const formattedNumber = formatNumber(
-      val,
-      minDecimal,
-      maxDecimal,
-      wrapNegativeNumber,
-      '$',
-      '',
-      decimalSeparator,
-      thousandSeparator
-    );
+    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
     return createDomElement('span', { style: { color: colorStyle }, textContent: `${prefix}${formattedNumber}${suffix}` });
   }
   return '';

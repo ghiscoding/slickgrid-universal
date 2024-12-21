@@ -69,18 +69,7 @@ export interface ViewDefinition {
 
 export default class Example11 {
   private _bindingEventService: BindingEventService;
-  allColumnIds = [
-    'title',
-    'duration',
-    'cost',
-    'percentComplete',
-    'start',
-    'finish',
-    'completed',
-    'product',
-    'countryOfOrigin',
-    'action',
-  ];
+  allColumnIds = ['title', 'duration', 'cost', 'percentComplete', 'start', 'finish', 'completed', 'product', 'countryOfOrigin', 'action'];
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
@@ -782,9 +771,7 @@ export default class Example11 {
       return;
     }
     if (this.currentSelectedViewPreset) {
-      const selectedViewIndex = this.predefinedViews.findIndex(
-        (preset) => preset.value === this.currentSelectedViewPreset?.value
-      );
+      const selectedViewIndex = this.predefinedViews.findIndex((preset) => preset.value === this.currentSelectedViewPreset?.value);
       this.predefinedViews.splice(selectedViewIndex, 1);
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedViews));
@@ -810,10 +797,7 @@ export default class Example11 {
     const { columns, filters, sorters, pinning } = currentGridState;
 
     if (this.currentSelectedViewPreset && filters) {
-      const filterName = (await prompt(
-        `Update View name or click on OK to continue.`,
-        this.currentSelectedViewPreset.label
-      )) as string;
+      const filterName = (await prompt(`Update View name or click on OK to continue.`, this.currentSelectedViewPreset.label)) as string;
       this.currentSelectedViewPreset.label = filterName;
       this.currentSelectedViewPreset.value = filterName.replace(/\s/g, '');
       this.currentSelectedViewPreset.columns = columns || [];

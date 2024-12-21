@@ -50,10 +50,7 @@ export function integerValidator(inputValue: any, options: IntegerValidatorOptio
     isValid = false;
     outputMsg =
       errorMsg ||
-      Constants.VALIDATION_EDITOR_INTEGER_BETWEEN.replace(
-        /{{minValue}}|{{maxValue}}/gi,
-        (matched) => (mapValidation as any)[matched]
-      );
+      Constants.VALIDATION_EDITOR_INTEGER_BETWEEN.replace(/{{minValue}}|{{maxValue}}/gi, (matched) => (mapValidation as any)[matched]);
   } else if (
     minValue !== undefined &&
     intNumber !== null &&
@@ -64,9 +61,7 @@ export function integerValidator(inputValue: any, options: IntegerValidatorOptio
     // when decimal value has to be higher then provided minValue
     isValid = false;
     const defaultErrorMsg =
-      operatorConditionalType === 'inclusive'
-        ? Constants.VALIDATION_EDITOR_INTEGER_MIN_INCLUSIVE
-        : Constants.VALIDATION_EDITOR_INTEGER_MIN;
+      operatorConditionalType === 'inclusive' ? Constants.VALIDATION_EDITOR_INTEGER_MIN_INCLUSIVE : Constants.VALIDATION_EDITOR_INTEGER_MIN;
     outputMsg = errorMsg || defaultErrorMsg.replace(/{{minValue}}/gi, (matched) => (mapValidation as any)[matched]);
   } else if (
     maxValue !== undefined &&
@@ -78,9 +73,7 @@ export function integerValidator(inputValue: any, options: IntegerValidatorOptio
     // when decimal value has to be lower then provided maxValue
     isValid = false;
     const defaultErrorMsg =
-      operatorConditionalType === 'inclusive'
-        ? Constants.VALIDATION_EDITOR_INTEGER_MAX_INCLUSIVE
-        : Constants.VALIDATION_EDITOR_INTEGER_MAX;
+      operatorConditionalType === 'inclusive' ? Constants.VALIDATION_EDITOR_INTEGER_MAX_INCLUSIVE : Constants.VALIDATION_EDITOR_INTEGER_MAX;
     outputMsg = errorMsg || defaultErrorMsg.replace(/{{maxValue}}/gi, (matched) => (mapValidation as any)[matched]);
   }
 

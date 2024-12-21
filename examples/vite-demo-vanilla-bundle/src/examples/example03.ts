@@ -129,9 +129,7 @@ export default class Example03 {
           getter: 'duration',
           formatter: (g) => `Duration: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           comparer: (a, b) => {
-            return this.durationOrderByCount
-              ? a.count - b.count
-              : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
+            return this.durationOrderByCount ? a.count - b.count : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
           aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
@@ -252,8 +250,7 @@ export default class Example03 {
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
-          formatter: (g) =>
-            `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
           collapsed: false,
         },

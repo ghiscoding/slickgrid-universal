@@ -246,19 +246,14 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">
-    This example demonstrates using the <b>Slick.Plugins.HeaderButtons</b> plugin to easily add buttons to colum headers. These
-    buttons can be specified directly in the column definition, and are very easy to configure and use. (<a
+    This example demonstrates using the <b>Slick.Plugins.HeaderButtons</b> plugin to easily add buttons to colum headers. These buttons can
+    be specified directly in the column definition, and are very easy to configure and use. (<a
       href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/header-menu-header-buttons"
       target="_blank"
       >Wiki docs</a
@@ -268,8 +263,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
       <li>Mouse hover the 2nd column to see it's icon/command</li>
       <li>For all the other columns, click on top-right red circle icon to enable highlight of negative numbers.</li>
       <li>
-        Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the
-        list
+        Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list
       </li>
       <ol>
         <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>

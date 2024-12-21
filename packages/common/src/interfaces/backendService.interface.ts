@@ -34,12 +34,7 @@ export interface BackendService {
   clearSorters?: () => void;
 
   /** initialize the backend service with certain options */
-  init?: (
-    serviceOptions?: BackendServiceOption | any,
-    pagination?: Pagination,
-    grid?: SlickGrid,
-    sharedService?: SharedService
-  ) => void;
+  init?: (serviceOptions?: BackendServiceOption | any, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService) => void;
 
   /** Get the dataset name */
   getDatasetName?: () => string;

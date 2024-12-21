@@ -160,9 +160,7 @@ export default class Example05 {
             }
           }
           const childrenRowIndexes = childItemsIdxAndIds.map((childItem) => childItem.rowIdx);
-          const currentSelectionPlusChildrenIndexes: number[] = Array.from(
-            new Set(currentSelectedRows?.concat(childrenRowIndexes))
-          ); // use Set to remove duplicates
+          const currentSelectionPlusChildrenIndexes: number[] = Array.from(new Set(currentSelectedRows?.concat(childrenRowIndexes))); // use Set to remove duplicates
 
           // if we are unselecting the row then we'll remove the children from the final list of selections else just use that entire tree Ids
           const finalSelection = isRowBeingUnselected
@@ -508,9 +506,7 @@ export default class Example05 {
     const parentItemFound = this.sgb.dataView?.getItemByIdx(childItemFound[parentPropName]);
 
     if (childItemFound && parentItemFound) {
-      this.sgb.treeDataService.dynamicallyToggleItemState([
-        { itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed },
-      ]);
+      this.sgb.treeDataService.dynamicallyToggleItemState([{ itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed }]);
     }
   }
 

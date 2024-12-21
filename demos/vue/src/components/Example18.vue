@@ -425,12 +425,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
     <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" @click="toggleDarkMode()">
@@ -442,15 +437,13 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="subtitle">
     <ul>
       <li>
-        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grouping-aggregators" target="_blank"
-          >Wiki docs</a
-        >
+        <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grouping-aggregators" target="_blank">Wiki docs</a>
       </li>
       <li>This example shows 3 ways of grouping</li>
       <ol>
         <li>
-          Drag any Column Header on the top placeholder to group by that column (support moti-columns grouping by adding more
-          columns to the drop area).
+          Drag any Column Header on the top placeholder to group by that column (support moti-columns grouping by adding more columns to the
+          drop area).
         </li>
         <li>Use buttons and defined functions to group by whichever field you want</li>
         <li>Use the Select dropdown to group, the position of the Selects represent the grouping level</li>
@@ -464,9 +457,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="form-inline">
     <div class="row">
       <div class="col-sm-12">
-        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">
-          500 rows
-        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">500 rows</button>
         <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">
           50k rows
         </button>
@@ -511,19 +502,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
         >
           Group by Duration then Effort-Driven
         </button>
-        <button
-          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
-          data-test="set-dynamic-filter"
-          @click="setFiltersDynamically()"
-        >
+        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="set-dynamic-filter" @click="setFiltersDynamically()">
           <span class="mdi mdi-filter-outline"></span>
           <span> Set Filters Dynamically </span>
         </button>
-        <button
-          class="btn btn-outline-secondary btn-xs btn-icon"
-          data-test="set-dynamic-sorting"
-          @click="setSortingDynamically()"
-        >
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
           <span class="mdi mdi-sort-ascending"></span>
           <span> Set Sorting Dynamically </span>
         </button>

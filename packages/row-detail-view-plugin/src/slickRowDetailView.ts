@@ -227,8 +227,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
       // add new row detail column unless it was already added
       if (!columnDefinitions.some((col) => col.id === newRowDetailViewColumn.id)) {
-        const rowDetailColDef =
-          Array.isArray(columnDefinitions) && columnDefinitions.find((col) => col?.behavior === 'selectAndMove');
+        const rowDetailColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col) => col?.behavior === 'selectAndMove');
         const finalRowDetailViewColumn = rowDetailColDef ? rowDetailColDef : newRowDetailViewColumn;
 
         // column index position in the grid
@@ -438,9 +437,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
 
     // Grad each of the DOM elements
-    const mainContainer = document.querySelector<HTMLDivElement>(
-      `.${this.gridUid} .detailViewContainer_${item[this._dataViewIdProperty]}`
-    );
+    const mainContainer = document.querySelector<HTMLDivElement>(`.${this.gridUid} .detailViewContainer_${item[this._dataViewIdProperty]}`);
     const cellItem = document.querySelector<HTMLDivElement>(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`);
     const inner = document.querySelector<HTMLDivElement>(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
 
@@ -571,11 +568,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           }
 
           // If row index is i higher than bottom with some added value (To ignore top rows off view) and is with view and was our of range
-          if (
-            isRowOutOfRange &&
-            rowIndex + rowPadding + this._outsideRange > renderedRange.bottom &&
-            rowIndex < rowIndex + rowPadding
-          ) {
+          if (isRowOutOfRange && rowIndex + rowPadding + this._outsideRange > renderedRange.bottom && rowIndex < rowIndex + rowPadding) {
             this.notifyBackToViewportWhenDomExist(row, row[this._dataViewIdProperty]);
           } else if (!isRowOutOfRange && rowIndex < renderedRange.top) {
             // if our row is outside top of and the buffering zone but not in the array of outOfVisable range notify it
@@ -667,10 +660,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         const rowHeight = this.gridOptions.rowHeight || 0;
         let outterHeight = (dataContext[`${this._keyPrefix}sizePadding`] || 0) * this.gridOptions.rowHeight!;
 
-        if (
-          this._addonOptions.maxRows !== null &&
-          (dataContext[`${this._keyPrefix}sizePadding`] || 0) > this._addonOptions.maxRows!
-        ) {
+        if (this._addonOptions.maxRows !== null && (dataContext[`${this._keyPrefix}sizePadding`] || 0) > this._addonOptions.maxRows!) {
           outterHeight = this._addonOptions.maxRows! * rowHeight!;
           dataContext[`${this._keyPrefix}sizePadding`] = this._addonOptions.maxRows;
         }

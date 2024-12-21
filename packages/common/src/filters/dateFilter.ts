@@ -5,15 +5,7 @@ import VanillaCalendar from 'vanilla-calendar-pro';
 import type { IOptions } from 'vanilla-calendar-pro/types';
 
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
-import type {
-  Column,
-  ColumnFilter,
-  Filter,
-  FilterArguments,
-  FilterCallback,
-  GridOption,
-  OperatorDetail,
-} from '../interfaces/index.js';
+import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
@@ -251,11 +243,7 @@ export class DateFilter implements Filter {
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
     // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
-    if (
-      outputFormat &&
-      this.inputFilterType !== 'range' &&
-      (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))
-    ) {
+    if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
     const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
@@ -532,8 +520,7 @@ export class DateFilter implements Filter {
           this.gridOptions.skipCompoundOperatorFilterWithNullInput ??
           this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
         const hasSkipNullValChanged =
-          (skipNullInput && isDefined(this._currentDateOrDates)) ||
-          (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
+          (skipNullInput && isDefined(this._currentDateOrDates)) || (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
 
         if (!skipNullInput || !skipNullInput || hasSkipNullValChanged) {
           this.callback(e, {

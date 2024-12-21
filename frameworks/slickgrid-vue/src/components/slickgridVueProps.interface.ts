@@ -149,9 +149,7 @@ export interface SlickgridVueProps {
   onOnBeforeMenuShow?: (e: CustomEvent<{ eventData: any; args: MenuFromCellCallbackArgs }>) => void;
   onOnBeforeMenuClose?: (e: CustomEvent<{ eventData: any; args: MenuFromCellCallbackArgs }>) => void;
   onOnCommand?: (e: CustomEvent<{ eventData: any; args: MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs }>) => void;
-  onOnOptionSelected?: (
-    e: CustomEvent<{ eventData: any; args: MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs }>
-  ) => void;
+  onOnOptionSelected?: (e: CustomEvent<{ eventData: any; args: MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs }>) => void;
   onOnColumnPickerColumnsChanged?: (
     e: CustomEvent<{
       eventData: any;

@@ -20,9 +20,7 @@ export const executeStringFilterCondition: FilterCondition = ((options: FilterCo
     ? removeAccentFromText(options.cellValue, true)
     : options.cellValue.toLowerCase();
   if (typeof searchValue1 === 'string') {
-    searchValue1 = options?.ignoreAccentOnStringFilterAndSort
-      ? removeAccentFromText(searchValue1, true)
-      : searchValue1.toLowerCase();
+    searchValue1 = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(searchValue1, true) : searchValue1.toLowerCase();
   }
   if (typeof searchValue2 === 'string') {
     // prettier-ignore

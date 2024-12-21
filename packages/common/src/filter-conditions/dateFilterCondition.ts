@@ -40,9 +40,7 @@ export function executeDateFilterCondition(options: FilterConditionOption, parse
 
   // comparing against a single search date
   const dateSearchTimestamp1 =
-    FORMAT === 'ISO8601' || FORMAT.toLowerCase().includes('h')
-      ? searchDate1.valueOf()
-      : dayStart(new Date(searchDate1)).valueOf();
+    FORMAT === 'ISO8601' || FORMAT.toLowerCase().includes('h') ? searchDate1.valueOf() : dayStart(new Date(searchDate1)).valueOf();
   return testFilterCondition(options.operator || '==', dateCellTimestamp, dateSearchTimestamp1);
 }
 

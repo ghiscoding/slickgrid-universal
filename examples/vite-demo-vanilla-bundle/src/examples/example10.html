@@ -20,11 +20,11 @@
 </h3>
 <h6 class="italic content example-details">
   <span class="text-red">(*) NO DATA SHOWN</span>
-  - just change any of Filters/Sorting/Pages and look at the "GraphQL Query" changing. Also note that the column Name has a filter
-  with a custom %% operator that behaves like an SQL LIKE operator supporting % wildcards. Depending on your configuration, your
-  GraphQL Server might already support regex querying (e.g. Hasura
-  <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex">_regex</a>) or you could add your
-  own implementation (e.g. see this <a href="https://stackoverflow.com/a/37981802/1212166">SO</a>).
+  - just change any of Filters/Sorting/Pages and look at the "GraphQL Query" changing. Also note that the column Name has a filter with a
+  custom %% operator that behaves like an SQL LIKE operator supporting % wildcards. Depending on your configuration, your GraphQL Server
+  might already support regex querying (e.g. Hasura
+  <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex">_regex</a>) or you could add your own
+  implementation (e.g. see this <a href="https://stackoverflow.com/a/37981802/1212166">SO</a>).
 </h6>
 
 <div class="row">
@@ -37,15 +37,11 @@
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter &amp; Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
-    Set Filters Dynamically
-  </button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
   <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
-  <button class="button is-small" data-test="reset-presets" onclick.delegate="resetToOriginalPresets()">
-    Reset Original Presets
-  </button>
+  <button class="button is-small" data-test="reset-presets" onclick.delegate="resetToOriginalPresets()">Reset Original Presets</button>
 
   <label for="serverdelay" class="ml-4">Server Delay: </label>
   <input
@@ -92,13 +88,7 @@
           Offset
         </label>
         <label class="radio-inline control-label" for="radioCursor">
-          <input
-            type="radio"
-            name="inlineRadioOptions"
-            data-test="cursor"
-            id="radioCursor"
-            onclick.delegate="setIsWithCursor(true)"
-          />
+          <input type="radio" name="inlineRadioOptions" data-test="cursor" id="radioCursor" onclick.delegate="setIsWithCursor(true)" />
           Cursor
         </label>
       </span>

@@ -20,9 +20,7 @@ export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _da
   let outputLink = columnParams.hyperlinkUrl ? columnParams.hyperlinkUrl : value;
   outputLink = grid.sanitizeHtmlString(outputLink);
 
-  const matchUrl = outputLink.match(
-    /^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&amp;:/~+#]*[\w\-@?^=%&amp;/~+#])?/i
-  );
+  const matchUrl = outputLink.match(/^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&amp;:/~+#]*[\w\-@?^=%&amp;/~+#])?/i);
 
   if (matchUrl && Array.isArray(matchUrl) && matchUrl.length > 0) {
     const finalUrl = matchUrl[0];

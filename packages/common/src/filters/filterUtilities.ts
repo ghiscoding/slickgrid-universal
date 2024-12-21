@@ -18,10 +18,7 @@ export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickG
   for (const option of optionValues) {
     const optionElm = document.createElement('option');
     optionElm.value = option.operator;
-    grid.applyHtmlCode(
-      optionElm,
-      `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`
-    );
+    grid.applyHtmlCode(optionElm, `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
     selectElm.appendChild(optionElm);
   }
 
@@ -129,9 +126,7 @@ export function createCollectionAsyncSubject(
   columnFilter.collectionAsync = newCollectionAsync;
   if (subscriptions && newCollectionAsync) {
     subscriptions.push(
-      newCollectionAsync.subscribe((collection) =>
-        renderDomElementFromCollectionAsync(collection, columnDef, renderDomElementCallback)
-      )
+      newCollectionAsync.subscribe((collection) => renderDomElementFromCollectionAsync(collection, columnDef, renderDomElementCallback))
     );
   }
 }
@@ -174,13 +169,7 @@ export function compoundOperatorNumeric(gridOptions: GridOption, translaterServi
     { operator: '<', desc: getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than', gridOptions, translaterService) },
     {
       operator: '<=',
-      desc: getOutputText(
-        'LESS_THAN_OR_EQUAL_TO',
-        'TEXT_LESS_THAN_OR_EQUAL_TO',
-        'Less than or equal to',
-        gridOptions,
-        translaterService
-      ),
+      desc: getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to', gridOptions, translaterService),
     },
     { operator: '>', desc: getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than', gridOptions, translaterService) },
     {

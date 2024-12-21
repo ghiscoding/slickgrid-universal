@@ -252,9 +252,7 @@ export class SortService {
       updatedColumnDefinitions = this.disableAllSortingCommands(true);
     } else {
       updatedColumnDefinitions = this.disableAllSortingCommands(false);
-      this._eventHandler.subscribe(this._grid.onSort, (e, args) =>
-        this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort)
-      );
+      this._eventHandler.subscribe(this._grid.onSort, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
     }
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
     this.sharedService.gridOptions = this._gridOptions;
@@ -342,8 +340,7 @@ export class SortService {
             let errorMsg =
               '[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column or remove it from your list of columns to sort.';
             if (this._gridOptions.enableTreeData) {
-              errorMsg +=
-                ' Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.';
+              errorMsg += ' Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.';
             }
             throw new Error(errorMsg);
           }
@@ -548,12 +545,7 @@ export class SortService {
     const sortColFieldId =
       (this._gridOptions && this._gridOptions.defaultColumnSortFieldId) || this._gridOptions.datasetIdPropertyName || 'id';
     const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
-    this.onLocalSortChanged(
-      this._grid,
-      new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }),
-      false,
-      true
-    );
+    this.onLocalSortChanged(this._grid, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }), false, true);
   }
 
   sortComparers(sortColumns: ColumnSort[], dataRow1: any, dataRow2: any): number {

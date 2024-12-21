@@ -36,12 +36,7 @@ export default class Example28 {
     const gridContainerElm = document.querySelector(`.grid28`) as HTMLDivElement;
     const dataset = this.loadData(0, FETCH_SIZE);
 
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
     this.metricsItemCount = FETCH_SIZE;
     this.metricsTotalItemCount = FETCH_SIZE;
 

@@ -42,14 +42,7 @@ const headerRowFormatter: Formatter = (_row, _cell, _value: any, column: Column)
 
 const tooltipFormatter: Formatter = (row, cell, _value: any, column: Column, dataContext: any, grid: SlickGrid) => {
   const tooltipTitle = 'Custom Tooltip';
-  const effortDrivenHtml = Formatters.checkmarkMaterial(
-    row,
-    cell,
-    dataContext.effortDriven,
-    column,
-    dataContext,
-    grid
-  ) as HTMLElement;
+  const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid) as HTMLElement;
 
   return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
@@ -115,10 +108,7 @@ function defineGrid() {
         formatter: () => `<div><span class="mdi mdi-load mdi-spin"></span> loading...</div>`,
         asyncProcess: () =>
           new Promise((resolve) => {
-            window.setTimeout(
-              () => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }),
-              serverApiDelay.value
-            );
+            window.setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), serverApiDelay.value);
           }),
         asyncPostFormatter: tooltipTaskAsyncFormatter as Formatter,
 
@@ -329,9 +319,7 @@ function defineGrid() {
         // OR 2- use a Promise
         collectionAsync: new Promise<any>((resolve) => {
           window.setTimeout(() => {
-            resolve(
-              Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' }))
-            );
+            resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
           }, 500);
         }),
         customStructure: {
@@ -579,12 +567,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>

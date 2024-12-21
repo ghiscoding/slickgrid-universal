@@ -78,24 +78,14 @@ function toggleSubTitle() {
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      @click="toggleSubTitle()"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
 
   <div class="subtitle">Simple Grids with a custom header and footer via named slots</div>
 
-  <slickgrid-vue
-    v-model:options="gridOptions"
-    v-model:columns="columnDefinitions as Column[]"
-    v-model:data="dataset"
-    grid-id="grid2"
-  >
+  <slickgrid-vue v-model:options="gridOptions" v-model:columns="columnDefinitions as Column[]" v-model:data="dataset" grid-id="grid2">
     <template #header>
       <div class="custom-header-slot">
         <h3>Grid with header and footer slot</h3>

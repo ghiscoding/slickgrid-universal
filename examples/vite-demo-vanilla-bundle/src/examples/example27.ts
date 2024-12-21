@@ -118,9 +118,7 @@ export default class Example27 {
         filterable: true,
         filter: {
           model: Filters.multipleSelect,
-          collection: this.jsonData
-            .sort((a, b) => (a.company < b.company ? -1 : 1))
-            .map((m) => ({ value: m.company, label: m.company })),
+          collection: this.jsonData.sort((a, b) => (a.company < b.company ? -1 : 1)).map((m) => ({ value: m.company, label: m.company })),
           filterOptions: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,

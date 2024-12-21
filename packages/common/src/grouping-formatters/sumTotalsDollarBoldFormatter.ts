@@ -19,16 +19,7 @@ export const sumTotalsDollarBoldFormatter: GroupTotalsFormatter = (totals: any, 
   );
 
   if (isNumber(val)) {
-    const formattedNumber = formatNumber(
-      val,
-      minDecimal,
-      maxDecimal,
-      wrapNegativeNumber,
-      '$',
-      '',
-      decimalSeparator,
-      thousandSeparator
-    );
+    const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
     return createDomElement('span', { style: { fontWeight: 'bold' }, textContent: `${prefix}${formattedNumber}${suffix}` });
   }
   return '';

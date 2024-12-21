@@ -71,10 +71,7 @@ describe('Example 13 - Header Button Plugin', () => {
       cy.get('.grid13-1 .slick-header-columns').children('.slick-header-column:nth(4)').should('contain', 'Column E');
 
       // column E should not have the icon
-      cy.get('.grid13-1 .slick-header-columns')
-        .children('.slick-header-column:nth(4)')
-        .find('.slick-header-button')
-        .should('not.exist');
+      cy.get('.grid13-1 .slick-header-columns').children('.slick-header-column:nth(4)').find('.slick-header-button').should('not.exist');
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
@@ -153,10 +150,7 @@ describe('Example 13 - Header Button Plugin', () => {
 
       // header buttons are displayed in inverse mode by default,
       // so we need to start at the end
-      cy.get('.grid13-1 .slick-header-columns')
-        .children('.slick-header-column:nth(0)')
-        .find('.slick-header-button:nth(3)')
-        .click();
+      cy.get('.grid13-1 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(3)').click();
     });
 
     it('should click on second "Comment" header button and expect an alert with that text when clicked', (done) => {
@@ -169,10 +163,7 @@ describe('Example 13 - Header Button Plugin', () => {
       });
 
       // header buttons are displayed in inverse mode by default
-      cy.get('.grid13-1 .slick-header-columns')
-        .children('.slick-header-column:nth(0)')
-        .find('.slick-header-button:nth(2)')
-        .click();
+      cy.get('.grid13-1 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(2)').click();
     });
 
     it('should resize column to its previous size and still expect some icons to be hidden', () => {
@@ -258,10 +249,7 @@ describe('Example 13 - Header Button Plugin', () => {
       cy.get('.grid13-2 .slick-header-columns').children('.slick-header-column:nth(4)').should('contain', 'Column E');
 
       // column E should not have the icon
-      cy.get('.grid13-2 .slick-header-columns')
-        .children('.slick-header-column:nth(4)')
-        .find('.slick-header-button')
-        .should('not.exist');
+      cy.get('.grid13-2 .slick-header-columns').children('.slick-header-column:nth(4)').find('.slick-header-button').should('not.exist');
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
@@ -339,10 +327,7 @@ describe('Example 13 - Header Button Plugin', () => {
       });
 
       // header buttons are displayed in same order as provided
-      cy.get('.grid13-2 .slick-header-columns')
-        .children('.slick-header-column:nth(0)')
-        .find('.slick-header-button:nth(0)')
-        .click();
+      cy.get('.grid13-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(0)').click();
     });
 
     it('should click on second "Comment" header button and expect an alert with that text when clicked', (done) => {
@@ -355,10 +340,7 @@ describe('Example 13 - Header Button Plugin', () => {
       });
 
       // header buttons are displayed in same order as provided
-      cy.get('.grid13-2 .slick-header-columns')
-        .children('.slick-header-column:nth(0)')
-        .find('.slick-header-button:nth(1)')
-        .click();
+      cy.get('.grid13-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(1)').click();
     });
 
     it('should resize column to its previous size and still expect some icons to be hidden', () => {

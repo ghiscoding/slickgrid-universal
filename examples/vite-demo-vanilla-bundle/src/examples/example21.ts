@@ -384,13 +384,7 @@ export default class Example21 {
   addDeleteRowOnClickListener(itemId: string) {
     const deleteBtnElm = document.querySelector('#delete_row_' + itemId);
     if (deleteBtnElm) {
-      this._bindingEventService.bind(
-        deleteBtnElm,
-        'click',
-        this.handleDeleteRow.bind(this, itemId),
-        undefined,
-        `event-detail-${itemId}`
-      );
+      this._bindingEventService.bind(deleteBtnElm, 'click', this.handleDeleteRow.bind(this, itemId), undefined, `event-detail-${itemId}`);
     }
   }
 

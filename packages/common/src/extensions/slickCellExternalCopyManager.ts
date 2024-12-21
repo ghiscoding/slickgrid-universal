@@ -60,9 +60,7 @@ export class SlickCellExternalCopyManager {
     this.onCopyCells = new SlickEvent<{ ranges: SlickRange[] }>('onCopyCells');
     this.onCopyCancelled = new SlickEvent<{ ranges: SlickRange[] }>('onCopyCancelled');
     this.onPasteCells = new SlickEvent<{ ranges: SlickRange[] }>('onPasteCells');
-    this.onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any }>(
-      'onBeforePasteCell'
-    );
+    this.onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any }>('onBeforePasteCell');
     this._eventHandler = new SlickEventHandler();
   }
 

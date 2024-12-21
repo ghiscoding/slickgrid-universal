@@ -221,19 +221,13 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     if (grouping && Array.isArray(grouping) && grouping.length > 0) {
       this._hasGroupedItems = true;
       outputDataString +=
-        this._fileFormat === FileType.csv
-          ? `"${groupByColumnHeader}"${this._delimiter}`
-          : `${groupByColumnHeader}${this._delimiter}`;
+        this._fileFormat === FileType.csv ? `"${groupByColumnHeader}"${this._delimiter}` : `${groupByColumnHeader}${this._delimiter}`;
     } else {
       this._hasGroupedItems = false;
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    if (
-      this._gridOptions.createPreHeaderPanel &&
-      this._gridOptions.showPreHeaderPanel &&
-      !this._gridOptions.enableDraggableGrouping
-    ) {
+    if (this._gridOptions.createPreHeaderPanel && this._gridOptions.showPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
       this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
       if (this._groupedColumnHeaders && Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
         // add the header row + add a new line at the end of the row
@@ -402,10 +396,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         }
       }
 
-      if (
-        (prevColspan === '*' && col > 0) ||
-        (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)
-      ) {
+      if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)) {
         rowOutputStrings.push('');
         if (!isNaN(prevColspan as number) && +prevColspan > 1) {
           (prevColspan as number)--;

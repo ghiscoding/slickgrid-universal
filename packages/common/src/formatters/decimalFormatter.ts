@@ -14,16 +14,7 @@ export const decimalFormatter: Formatter = (_row, _cell, value, columnDef, _data
     retrieveFormatterOptions(columnDef, grid, 'decimal', 'cell');
 
   if (isNumber(value)) {
-    return formatNumber(
-      value,
-      minDecimal,
-      maxDecimal,
-      wrapNegativeNumber,
-      numberPrefix,
-      numberSuffix,
-      decimalSeparator,
-      thousandSeparator
-    );
+    return formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator);
   }
   return value;
 };

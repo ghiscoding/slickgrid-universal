@@ -51,13 +51,9 @@ provide('i18next', useTranslation().i18next);
           <a class="nav-link" href="https://ghiscoding.gitbook.io/slickgrid-vue/" target="_blank"> 📘 Documentation </a>
         </li>
         <li v-for="(route, index) in routes" :key="index" class="nav-item">
-          <RouterLink
-            v-if="route.name !== 'root' && route.name !== 'home'"
-            class="nav-link"
-            active-class="active"
-            :to="route.path"
-            >{{ route.name }}</RouterLink
-          >
+          <RouterLink v-if="route.name !== 'root' && route.name !== 'home'" class="nav-link" active-class="active" :to="route.path">{{
+            route.name
+          }}</RouterLink>
         </li>
       </ul>
     </section>

@@ -70,9 +70,7 @@ Cypress.Commands.add('getNthCell', (row, nthCol, viewport = 'topLeft', { parentS
   const canvasSelectorX = position.x ? `.grid-canvas-${position.x}` : '';
   const canvasSelectorY = position.y ? `.grid-canvas-${position.y}` : '';
 
-  return cy.get(
-    `${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="top: ${row * rowHeight}px;"] > .slick-cell:nth(${nthCol})`
-  );
+  return cy.get(`${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="top: ${row * rowHeight}px;"] > .slick-cell:nth(${nthCol})`);
 });
 const LOCAL_STORAGE_MEMORY: any = {};
 

@@ -27,10 +27,7 @@ const removeScript = (scriptId: string) => {
   }
 };
 
-function fetchJsonp<T = any>(
-  _url: string,
-  options: Partial<JsonpOptions> = {}
-): Promise<{ ok: boolean; json: () => Promise<T> }> {
+function fetchJsonp<T = any>(_url: string, options: Partial<JsonpOptions> = {}): Promise<{ ok: boolean; json: () => Promise<T> }> {
   // to avoid param reassign
   let url = _url;
   const timeout = options.timeout || defaultOptions.timeout;

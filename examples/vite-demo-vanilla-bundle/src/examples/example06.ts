@@ -207,8 +207,7 @@ export default class Example06 {
 
   changeAutoApproveParentItem(checked: boolean) {
     this.isAutoApproveParentItemWhenTreeColumnIsValid = checked;
-    this.gridOptions.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid =
-      this.isAutoApproveParentItemWhenTreeColumnIsValid;
+    this.gridOptions.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = this.isAutoApproveParentItemWhenTreeColumnIsValid;
     this.sgb.slickGrid?.setOptions(this.gridOptions);
     this.sgb.filterService.refreshTreeDataFilters();
     return true;

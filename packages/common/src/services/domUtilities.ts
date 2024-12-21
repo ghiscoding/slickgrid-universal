@@ -67,10 +67,7 @@ export function buildMsSelectCollectionList(
     } else {
       // array of objects will require a label/value pair unless a customStructure is passed
       collection.forEach((option: SelectOption) => {
-        if (
-          option === undefined ||
-          (typeof option === 'object' && option[labelName] === undefined && option.labelKey === undefined)
-        ) {
+        if (option === undefined || (typeof option === 'object' && option[labelName] === undefined && option.labelKey === undefined)) {
           throw new Error(
             `[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list, for example:: { filter: model: Filters.multipleSelect, collection: [ { value: '1', label: 'One' } ]')`
           );

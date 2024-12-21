@@ -1,22 +1,9 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 
-import type {
-  Column,
-  ColumnFilter,
-  Filter,
-  FilterArguments,
-  FilterCallback,
-  GridOption,
-  OperatorDetail,
-} from '../interfaces/index.js';
+import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
-import {
-  applyOperatorAltTextWhenExists,
-  buildSelectOperator,
-  compoundOperatorNumeric,
-  compoundOperatorString,
-} from './filterUtilities.js';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities.js';
 import { mapOperatorToShorthandDesignation, type TranslaterService } from '../services/index.js';
 import { type SlickGrid } from '../core/index.js';
 
@@ -112,11 +99,7 @@ export class InputFilter implements Filter {
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
-    this._bindEventService.bind(
-      this._filterInputElm,
-      ['keyup', 'blur', 'change'],
-      this.onTriggerEvent.bind(this) as EventListener
-    );
+    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change'], this.onTriggerEvent.bind(this) as EventListener);
     this._bindEventService.bind(this._filterInputElm, 'wheel', this.onTriggerEvent.bind(this) as EventListener, {
       passive: true,
     });

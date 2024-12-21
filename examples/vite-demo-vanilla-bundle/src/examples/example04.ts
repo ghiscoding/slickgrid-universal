@@ -75,12 +75,7 @@ export default class Example04 {
     // this._bindingEventService.bind(gridContainerElm, 'onclick', handleOnClick);
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleOnItemDeleted.bind(this));
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
   dispose() {

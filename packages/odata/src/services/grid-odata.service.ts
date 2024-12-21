@@ -21,14 +21,7 @@ import type {
   SingleColumnSort,
   SlickGrid,
 } from '@slickgrid-universal/common';
-import {
-  CaseType,
-  FieldType,
-  mapOperatorByFieldType,
-  OperatorType,
-  parseUtcDate,
-  SortDirection,
-} from '@slickgrid-universal/common';
+import { CaseType, FieldType, mapOperatorByFieldType, OperatorType, parseUtcDate, SortDirection } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service.js';
 import type { OdataOption, OdataSortingOption } from '../interfaces/index.js';
@@ -132,9 +125,7 @@ export class GridOdataService implements BackendService {
       if (Array.isArray(dataset)) {
         // Flatten navigation fields (fields containing /) in the dataset (regardless of enableExpand).
         // E.g. given columndefinition 'product/name' and dataset [{id: 1,product:{'name':'flowers'}}], then flattens to [{id:1,'product/name':'flowers'}]
-        const navigationFields = new Set(
-          this._columnDefinitions.flatMap((x) => x.fields ?? [x.field]).filter((x) => x.includes('/'))
-        );
+        const navigationFields = new Set(this._columnDefinitions.flatMap((x) => x.fields ?? [x.field]).filter((x) => x.includes('/')));
         if (navigationFields.size > 0) {
           const navigations = new Set<string>();
           for (const item of dataset) {
@@ -262,9 +253,7 @@ export class GridOdataService implements BackendService {
     this._currentFilters = this.castFilterToColumnFilters(args.columnFilters);
 
     if (!args || !args.grid) {
-      throw new Error(
-        'Something went wrong when trying create the GridOdataService, it seems that "args" is not populated correctly'
-      );
+      throw new Error('Something went wrong when trying create the GridOdataService, it seems that "args" is not populated correctly');
     }
 
     // loop through all columns to inspect filters & set the query
@@ -346,12 +335,7 @@ export class GridOdataService implements BackendService {
         }
 
         let fieldName =
-          columnDef.filter?.queryField ||
-          columnDef.queryFieldFilter ||
-          columnDef.queryField ||
-          columnDef.field ||
-          columnDef.name ||
-          '';
+          columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
         if (fieldName instanceof HTMLElement) {
           fieldName = stripTags(fieldName.innerHTML);
         }
@@ -376,8 +360,7 @@ export class GridOdataService implements BackendService {
         fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
 
         // run regex to find possible filter operators unless the user disabled the feature
-        const autoParseInputFilterOperator =
-          columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+        const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
 
         // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
         const matches =
@@ -415,13 +398,11 @@ export class GridOdataService implements BackendService {
 
           searchTerms = searchTerms[0].split('..', 2);
           if (searchTerms[0] === '') {
-            operator =
-              operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
+            operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
             searchTerms = searchTerms.slice(1);
             searchValue = searchTerms[0];
           } else if (searchTerms[1] === '') {
-            operator =
-              operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
+            operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
             searchTerms = searchTerms.slice(0, 1);
             searchValue = searchTerms[0];
           }
@@ -578,9 +559,7 @@ export class GridOdataService implements BackendService {
     // unless user specifically set "enablePagination" to False, we'll update pagination options in every other cases
     if (
       this._gridOptions &&
-      (this._gridOptions.enablePagination ||
-        !this._gridOptions.hasOwnProperty('enablePagination') ||
-        this.options?.infiniteScroll)
+      (this._gridOptions.enablePagination || !this._gridOptions.hasOwnProperty('enablePagination') || this.options?.infiniteScroll)
     ) {
       this._odataService.updateOptions({
         top: pageSize,
@@ -634,11 +613,9 @@ export class GridOdataService implements BackendService {
         if (sortColumns) {
           for (const columnDef of sortColumns) {
             if (columnDef.sortCol) {
-              let fieldName =
-                (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field) + '';
+              let fieldName = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field) + '';
               let columnFieldName = (columnDef.sortCol.field || columnDef.sortCol.id) + '';
-              let queryField =
-                (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field || '') + '';
+              let queryField = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field || '') + '';
               if (this._odataService.options.caseType === CaseType.pascalCase) {
                 fieldName = titleCase(fieldName);
                 columnFieldName = titleCase(columnFieldName);
@@ -720,11 +697,7 @@ export class GridOdataService implements BackendService {
   /**
    * Filter by a range of searchTerms (2 searchTerms OR 1 string separated by 2 dots "value1..value2")
    */
-  protected filterBySearchTermRange(
-    fieldName: string,
-    operator: OperatorType | OperatorString,
-    searchTerms: SearchTerm[]
-  ): string {
+  protected filterBySearchTermRange(fieldName: string, operator: OperatorType | OperatorString, searchTerms: SearchTerm[]): string {
     let query = '';
     if (Array.isArray(searchTerms) && searchTerms.length === 2) {
       if (operator === OperatorType.rangeInclusive) {

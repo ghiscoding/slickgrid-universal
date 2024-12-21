@@ -652,9 +652,7 @@ describe('Example 31 - OData Grid using RxJS', () => {
       cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
-        expect($span.text()).to.eq(
-          `$top=10&$orderby=Category/name asc&$select=id,name,gender,company&$expand=category($select=name)`
-        );
+        expect($span.text()).to.eq(`$top=10&$orderby=Category/name asc&$select=id,name,gender,company&$expand=category($select=name)`);
       });
 
       cy.get('input.search-filter.filter-category_name').type('Silver');

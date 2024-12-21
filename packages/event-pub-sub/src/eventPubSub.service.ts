@@ -91,8 +91,7 @@ export class EventPubSubService implements BasePubSubService {
         outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(inputEventName)}` : inputEventName;
         break;
       case EventNamingStyle.kebabCase:
-        outputEventName =
-          eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(inputEventName)}` : toKebabCase(inputEventName);
+        outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(inputEventName)}` : toKebabCase(inputEventName);
         break;
       case EventNamingStyle.lowerCase:
         outputEventName = `${eventNamePrefix}${inputEventName}`.toLowerCase();
@@ -113,12 +112,7 @@ export class EventPubSubService implements BasePubSubService {
    * @param {Function} externalizeEventCallback - user can optionally retrieve the CustomEvent used in the PubSub for its own usage via a callback (called just before the event dispatch)
    * @returns {Boolean | Promise} - return type will be a Boolean unless a `delay` is provided then a `Promise<Boolean>` will be returned
    */
-  publish<T = any>(
-    eventName: string,
-    data?: T,
-    delay?: number,
-    externalizeEventCallback?: (e: Event) => void
-  ): boolean | Promise<boolean> {
+  publish<T = any>(eventName: string, data?: T, delay?: number, externalizeEventCallback?: (e: Event) => void): boolean | Promise<boolean> {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
     if (delay) {
@@ -149,9 +143,7 @@ export class EventPubSubService implements BasePubSubService {
 
       // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
       // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
-      this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) =>
-        callback.call(null, event.detail as T)
-      );
+      this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail as T));
       this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
       subscriptions.push(() => this.unsubscribe(eventNameByConvention, callback as never));
     });
@@ -187,11 +179,7 @@ export class EventPubSubService implements BasePubSubService {
    * @param {Boolean} [shouldRemoveFromEventList] - should we also remove the event from the subscriptions array?
    * @return possibly a Subscription
    */
-  unsubscribe<T = any>(
-    eventName: string,
-    listener: (event: T | CustomEventInit<T>) => void,
-    shouldRemoveFromEventList = true
-  ): void {
+  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList = true): void {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.removeEventListener(eventNameByConvention, listener);
     if (shouldRemoveFromEventList) {

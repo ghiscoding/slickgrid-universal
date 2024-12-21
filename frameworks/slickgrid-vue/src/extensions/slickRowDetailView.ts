@@ -107,8 +107,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       // when those are Vue Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadComponent = this.gridOptions?.rowDetailView?.preloadComponent;
-        this.addonOptions.preTemplate = () =>
-          this._grid.sanitizeHtmlString(`<div class="${PRELOAD_CONTAINER_PREFIX}"></div>`) as string;
+        this.addonOptions.preTemplate = () => this._grid.sanitizeHtmlString(`<div class="${PRELOAD_CONTAINER_PREFIX}"></div>`) as string;
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._component = this.gridOptions?.rowDetailView?.viewComponent;

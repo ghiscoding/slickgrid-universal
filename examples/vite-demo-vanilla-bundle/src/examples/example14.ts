@@ -135,11 +135,7 @@ export default class Example14 {
     this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handlePaginationChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onbeforeresizebycontent', this.showSpinner.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onafterresizebycontent', this.hideSpinner.bind(this));
-    this._bindingEventService.bind(
-      this.gridContainerElm,
-      'onselectedrowidschanged',
-      this.handleOnSelectedRowIdsChanged.bind(this)
-    );
+    this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowidschanged', this.handleOnSelectedRowIdsChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
   }
 
@@ -612,9 +608,7 @@ export default class Example14 {
         const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
-        const serializedValues = Array.isArray(editCommand.serializedValue)
-          ? editCommand.serializedValue
-          : [editCommand.serializedValue];
+        const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
         const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
@@ -690,8 +684,7 @@ export default class Example14 {
         },
         complexity: i % 3 ? 0 : 2,
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
-        finish:
-          isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3) ? (isCompleted ? new Date() : randomFinish) : '', // make sure the random date is earlier than today and it's index is bigger than 3
+        finish: isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3) ? (isCompleted ? new Date() : randomFinish) : '', // make sure the random date is earlier than today and it's index is bigger than 3
         cost: i % 33 === 0 ? null : Math.round(Math.random() * 10000) / 100,
         completed: isCompleted || (i % 3 === 0 && randomFinish > new Date() && i > 3),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName },
