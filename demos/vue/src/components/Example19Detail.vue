@@ -16,7 +16,7 @@ interface Item {
 const props = defineProps<RowDetailViewProps<Item>>();
 
 function alertAssignee(name: string) {
-  if (typeof name === 'string') {
+  if (name) {
     alert(`Assignee on this task is: ${name.toUpperCase()}`);
   } else {
     alert('No one is assigned to this task.');
