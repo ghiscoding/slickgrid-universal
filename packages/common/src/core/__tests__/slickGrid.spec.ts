@@ -1042,6 +1042,18 @@ describe('SlickGrid core file', () => {
       expect(divElm.outerHTML).toBe('<div>text not erased<span>some text</span></div>');
     });
 
+    it('should be able to skip empty text content assignment to HTMLElement', () => {
+      const divElm = document.createElement('div');
+      divElm.textContent = 'text not erased';
+      const spanElm = document.createElement('span');
+      spanElm.textContent = '';
+
+      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
+      grid.applyHtmlCode(divElm, spanElm, { emptyTarget: false, skipEmptyReassignment: true });
+
+      expect(divElm.outerHTML).toBe('<div>text not erased<span></span></div>');
+    });
+
     it('should be able to apply DocumentFragment to a HTMLElement target', () => {
       const fragment = document.createDocumentFragment();
       const divElm = document.createElement('div');

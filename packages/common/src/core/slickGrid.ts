@@ -2055,7 +2055,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               sortCols: this.sortColumns
                 .map((col) => {
                   const tempCol = this.columns[this.getColumnIndex(col.columnId)];
-                  return !tempCol || tempCol.hidden ? null : { columnId: tempCol.id, sortCol: tempCol, sortAsc: col.sortAsc };
+                  return tempCol && !tempCol.hidden ? { columnId: tempCol.id, sortCol: tempCol, sortAsc: col.sortAsc } : null;
                 })
                 .filter((el) => el),
             };
@@ -2260,20 +2260,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 shrinkLeewayOnLeft += (c.previousWidth || 0) - Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
               }
             }
-            if (shrinkLeewayOnRight === null) {
-              shrinkLeewayOnRight = 100000;
-            }
-            if (shrinkLeewayOnLeft === null) {
-              shrinkLeewayOnLeft = 100000;
-            }
-            if (stretchLeewayOnRight === null) {
-              stretchLeewayOnRight = 100000;
-            }
-            if (stretchLeewayOnLeft === null) {
-              stretchLeewayOnLeft = 100000;
-            }
-            maxPageX = pageX + Math.min(shrinkLeewayOnRight, stretchLeewayOnLeft);
-            minPageX = pageX - Math.min(shrinkLeewayOnLeft, stretchLeewayOnRight);
+            maxPageX = pageX + Math.min(shrinkLeewayOnRight ?? 100000, stretchLeewayOnLeft ?? 100000);
+            minPageX = pageX - Math.min(shrinkLeewayOnLeft ?? 100000, stretchLeewayOnRight ?? 100000);
           },
           onResize: (e, resizeElms) => {
             const targetEvent = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
@@ -2283,7 +2271,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             let x;
             let newCanvasWidthL = 0;
             let newCanvasWidthR = 0;
-            // prettier-ignore
             const viewportWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
 
             if (d < 0) {
