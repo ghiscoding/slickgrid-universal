@@ -778,6 +778,48 @@ describe('SlickGrid core file', () => {
       expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
     });
 
+    it('should hide/show column headers div when "showFooterRow" is disabled and expect some row cache to be cleaned up', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 3 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', colspan: 2 },
+      ] as Column[];
+      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0 } as GridOption;
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
+      grid.init();
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      const onBeforeFooterRowCellDestroySpy = vi.spyOn(grid.onBeforeFooterRowCellDestroy, 'notify');
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({
+        bottom: 1,
+        leftPx: 0,
+        rightPx: -1,
+        top: 0,
+      });
+
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(footerElms).toBeTruthy();
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setActiveCell(2, 1);
+      grid.setFooterRowVisibility(true);
+      grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
+
+      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(-1);
+      grid.updateRowCount();
+
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
+    });
+
     it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow/frozenBottom) and expect footer row column exists', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
@@ -2717,7 +2759,8 @@ describe('SlickGrid core file', () => {
       grid.scrollTo(33);
       vi.advanceTimersByTime(10);
 
-      grid.updateCell(0, 1);
+      vi.spyOn(grid, 'getCellNode').mockReturnValueOnce(document.createElement('div'));
+      grid.updateCell(30, 1);
       grid.invalidateRows([31]);
       grid.scrollTo(2);
       vi.advanceTimersByTime(12);
