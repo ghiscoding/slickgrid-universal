@@ -382,16 +382,16 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <ul>
         <li>Example: &gt;100 ... &gt;=2001-01-01 ... &gt;02/28/17</li>
         <li>
-          <b>Note:</b> For filters to work properly (default is string), make sure to provide a FieldType (type is against the dataset, not the
-          Formatter)
+          <b>Note:</b> For filters to work properly (default is string), make sure to provide a FieldType (type is against the dataset, not
+          the Formatter)
         </li>
       </ul>
       <li>Date Filters</li>
       <ul>
         <li>
-          FieldType of dateUtc/date (from dataset) can use an extra option of "filterSearchType" to let user filter more easily. For example, in
-          the "UTC Date" field below, you can type "&gt;02/28/2017", also when dealing with UTC you have to take the time difference in
-          consideration.
+          FieldType of dateUtc/date (from dataset) can use an extra option of "filterSearchType" to let user filter more easily. For
+          example, in the "UTC Date" field below, you can type "&gt;02/28/2017", also when dealing with UTC you have to take the time
+          difference in consideration.
         </li>
       </ul>
       <li>On String filters, (*) can be used as startsWith (Hello* => matches "Hello Word") ... endsWith (*Doe => matches: "John Doe")</li>

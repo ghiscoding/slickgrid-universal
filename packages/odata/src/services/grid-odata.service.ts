@@ -73,7 +73,8 @@ export class GridOdataService implements BackendService {
       this._odataService.options = { ...mergedOptions, top: undefined };
       this._currentPagination = null;
     } else {
-      const topOption = (mergedOptions.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? pagination?.pageSize ?? this.defaultOptions.top;
+      const topOption =
+        (mergedOptions.infiniteScroll as InfiniteScrollOption)?.fetchSize ?? pagination?.pageSize ?? this.defaultOptions.top;
       this._odataService.options = { ...mergedOptions, top: topOption };
       this._currentPagination = {
         pageNumber: 1,

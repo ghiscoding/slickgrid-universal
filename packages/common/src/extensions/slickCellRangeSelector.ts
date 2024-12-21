@@ -286,7 +286,8 @@ export class SlickCellRangeSelector {
       // ... or frozen row(s)
       if (
         this._gridOptions.frozenRow! >= 0 &&
-        ((!this._isBottomCanvas && end.row >= this._gridOptions.frozenRow!) || (this._isBottomCanvas && end.row < this._gridOptions.frozenRow!))
+        ((!this._isBottomCanvas && end.row >= this._gridOptions.frozenRow!) ||
+          (this._isBottomCanvas && end.row < this._gridOptions.frozenRow!))
       ) {
         return;
       }

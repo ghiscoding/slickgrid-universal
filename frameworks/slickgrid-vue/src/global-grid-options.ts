@@ -1,4 +1,12 @@
-import { type Column, DelimiterType, EventNamingStyle, FileType, Filters, OperatorType, type TreeDataOption } from '@slickgrid-universal/common';
+import {
+  type Column,
+  DelimiterType,
+  EventNamingStyle,
+  FileType,
+  Filters,
+  OperatorType,
+  type TreeDataOption,
+} from '@slickgrid-universal/common';
 
 import type { GridOption, RowDetailView } from './models/index.js';
 

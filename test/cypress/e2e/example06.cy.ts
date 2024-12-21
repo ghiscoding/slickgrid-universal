@@ -388,9 +388,15 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
 
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 14.46 MB / avg: 1.45 MB (total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 14.46 MB / avg: 1.45 MB (total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'misc');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 0.4 MB / avg: 0.4 MB (sub-total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 0.4 MB / avg: 0.4 MB (sub-total)'
+      );
     });
 
     it('should retype filter "map" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
@@ -414,9 +420,15 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'bucket-list.txt');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 4.02 MB / avg: 1.34 MB (total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 4.02 MB / avg: 1.34 MB (total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'internet-bill.pdf');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should('contain', 'phone-bill.pdf');
@@ -434,7 +446,10 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (total)');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'internet-bill.pdf');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'phone-bill.pdf');
@@ -455,9 +470,15 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'bucket-list.txt');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 4.02 MB / avg: 1.34 MB (total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 4.02 MB / avg: 1.34 MB (total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'zebra.dll');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(3)`).should('contain', '1.22 MB');
 
@@ -472,9 +493,15 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
       cy.get('.search-filter.filter-file').type('so');
 
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 0.79 MB / avg: 0.79 MB (total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 0.79 MB / avg: 0.79 MB (total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'sum: 104.3 MB / avg: 52.15 MB (total)');
+      cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+        'contain',
+        'sum: 104.3 MB / avg: 52.15 MB (total)'
+      );
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'something.txt');
       cy.get(`.grid6 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', '90 MB');
 

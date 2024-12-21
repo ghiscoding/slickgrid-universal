@@ -106,7 +106,11 @@ export class BackendUtilityService {
           // but make sure the observable is actually defined with the iif condition check before piping it to the takeUntil
           .pipe(
             rxjs.takeUntil(
-              rxjs.iif(() => rxjs.isObservable(extraCallbacks?.httpCancelRequestSubject), extraCallbacks?.httpCancelRequestSubject, rxjs.EMPTY)
+              rxjs.iif(
+                () => rxjs.isObservable(extraCallbacks?.httpCancelRequestSubject),
+                extraCallbacks?.httpCancelRequestSubject,
+                rxjs.EMPTY
+              )
             )
           )
           .subscribe(

@@ -53,7 +53,13 @@ describe('Example 1 - Basic Grids', () => {
   it('should hover over the "Title" column of 2nd grid and click on "Sort Ascending" command', () => {
     const tasks = ['Task 0', 'Task 1', 'Task 10', 'Task 100', 'Task 101'];
 
-    cy.get('#grid1-2').find('.slick-header-column').first().trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+    cy.get('#grid1-2')
+      .find('.slick-header-column')
+      .first()
+      .trigger('mouseover')
+      .children('.slick-header-menu-button')
+      .invoke('show')
+      .click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')

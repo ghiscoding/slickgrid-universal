@@ -84,7 +84,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     resizeOnShowHeaderRow: false,
     syncResizeTitle: 'Synchronous resize',
     subMenuOpenByEvent: 'mouseover',
-    headerColumnValueExtractor: (columnDef: Column) => getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML'),
+    headerColumnValueExtractor: (columnDef: Column) =>
+      getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML'),
   } as GridMenuOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
@@ -200,7 +201,13 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
 
       // update all columns on any of the column title button click from column picker
-      this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
+      this._bindEventService.bind(
+        this._menuElm,
+        'click',
+        handleColumnPickerItemClick.bind(this) as EventListener,
+        undefined,
+        'parent-menu'
+      );
     }
   }
 
@@ -272,7 +279,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this._gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`);
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
+      `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
+    );
 
     // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
     if (bodyMenuElm) {
@@ -576,7 +585,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
       // prettier-ignore
       const originalCommandItems = this._userOriginalGridMenu && Array.isArray(this._userOriginalGridMenu.commandItems) ? this._userOriginalGridMenu.commandItems : [];
-      this.sharedService.gridOptions.gridMenu.commandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
+      this.sharedService.gridOptions.gridMenu.commandItems = [
+        ...originalCommandItems,
+        ...this.addGridMenuCustomCommands(originalCommandItems),
+      ];
       this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions?.commandItems || [], 'commandItems');
       this.extensionUtility.sortItems(this.sharedService.gridOptions.gridMenu.commandItems, 'positionOrder');
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
@@ -757,7 +769,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       // add the custom "Commands" title if there are any commands
       const commandItems = this._addonOptions?.commandItems || [];
-      if ((Array.isArray(gridMenuCommandItems) && gridMenuCommandItems.length > 0) || (Array.isArray(commandItems) && commandItems.length > 0)) {
+      if (
+        (Array.isArray(gridMenuCommandItems) && gridMenuCommandItems.length > 0) ||
+        (Array.isArray(commandItems) && commandItems.length > 0)
+      ) {
         this._addonOptions.commandTitle =
           this._addonOptions.commandTitle || this.extensionUtility.getPickerTitleOutputString('commandTitle', 'gridMenu');
       }
@@ -1010,7 +1025,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     return null;
   }
 
-  protected repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement>, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number): void {
+  protected repositionSubMenu(
+    e: DOMMouseOrTouchEvent<HTMLElement>,
+    item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+    level: number
+  ): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const commandItems = (item as GridMenuItem)?.commandItems || [];
     const subMenuElm = this.createCommandMenu(commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);

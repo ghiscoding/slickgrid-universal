@@ -155,7 +155,11 @@ export class SortService {
     const allSortedCols = this.getCurrentColumnSorts() as ColumnSort[];
     const sortedColsWithoutCurrent = this.getCurrentColumnSorts(`${columnId}`) as ColumnSort[];
 
-    if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
+    if (
+      Array.isArray(allSortedCols) &&
+      Array.isArray(sortedColsWithoutCurrent) &&
+      allSortedCols.length !== sortedColsWithoutCurrent.length
+    ) {
       if (this._gridOptions.backendServiceApi) {
         this.onBackendSortChanged(event, { multiColumnSort: true, sortCols: sortedColsWithoutCurrent, grid: this._grid });
       } else if (this._dataView) {
@@ -538,7 +542,8 @@ export class SortService {
 
   /** Call a local grid sort by its default sort field id (user can customize default field by configuring "defaultColumnSortFieldId" in the grid options, defaults to "id") */
   sortLocalGridByDefaultSortFieldId(): void {
-    const sortColFieldId = (this._gridOptions && this._gridOptions.defaultColumnSortFieldId) || this._gridOptions.datasetIdPropertyName || 'id';
+    const sortColFieldId =
+      (this._gridOptions && this._gridOptions.defaultColumnSortFieldId) || this._gridOptions.datasetIdPropertyName || 'id';
     const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
     this.onLocalSortChanged(this._grid, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }), false, true);
   }

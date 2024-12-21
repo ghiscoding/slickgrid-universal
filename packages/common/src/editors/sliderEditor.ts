@@ -217,10 +217,10 @@ export class SliderEditor implements Editor {
    * @param {string} optionName - Slider editor option name
    * @param {newValue} newValue - Slider editor new option value
    */
-  changeEditorOption<T extends keyof Required<CurrentSliderOption & SliderOption>, K extends Required<CurrentSliderOption & SliderOption>[T]>(
-    optionName: T,
-    newValue: K
-  ): void {
+  changeEditorOption<
+    T extends keyof Required<CurrentSliderOption & SliderOption>,
+    K extends Required<CurrentSliderOption & SliderOption>[T],
+  >(optionName: T, newValue: K): void {
     if (this.columnEditor) {
       this.columnEditor.editorOptions ??= {};
       this.columnEditor.editorOptions[optionName] = newValue;

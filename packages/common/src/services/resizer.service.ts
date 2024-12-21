@@ -640,7 +640,8 @@ export class ResizerService {
         const isGreaterThanFullViewportWidth = leftViewportWidthMinusCurrentCol + newColumnWidth > viewportFullWidth;
 
         if (isGreaterThanFullViewportWidth) {
-          const resizeWidthToRemoveFromExceededWidthReadjustment = this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
+          const resizeWidthToRemoveFromExceededWidthReadjustment =
+            this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
           adjustedWidth =
             leftViewportWidth - leftViewportWidthMinusCurrentCol + rightViewportWidth - resizeWidthToRemoveFromExceededWidthReadjustment;
         }

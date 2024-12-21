@@ -122,7 +122,10 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     // make sure there's at least something to show before creating the Menu
     if (this._camelPluginName === 'contextMenu') {
       isColumnOptionAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [], columnDef.id);
-      isColumnCommandAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [], columnDef.id);
+      isColumnCommandAllowed = this.checkIsColumnAllowed(
+        (this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [],
+        columnDef.id
+      );
       if (!columnDef || ((!isColumnCommandAllowed || !commandItems.length) && (!isColumnOptionAllowed || !optionItems.length))) {
         this.hideMenu();
         return;
@@ -134,7 +137,9 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`);
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
+      `.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`
+    );
 
     // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
     if (bodyMenuElm) {
@@ -310,7 +315,12 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     level = 0
   ): void {
-    if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider) {
+    if (
+      (item as never)?.[type] !== undefined &&
+      item !== 'divider' &&
+      !item.disabled &&
+      !(item as MenuCommandItem | MenuOptionItem).divider
+    ) {
       if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
         this.repositionSubMenu(item, type, level, e);
         this._lastMenuTypeClicked = type;

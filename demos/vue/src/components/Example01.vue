@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { type Column, Formatters, type GridOption, type PaginationChangedArgs, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
+import {
+  type Column,
+  Formatters,
+  type GridOption,
+  type PaginationChangedArgs,
+  SlickgridVue,
+  type SlickgridVueInstance,
+} from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref } from 'vue';
 
 import { zeroPadding } from './utilities';

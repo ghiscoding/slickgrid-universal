@@ -2,7 +2,14 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, findWidthOrDefault, getOffset } from '@slickgrid-universal/utils';
 
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type.js';
-import type { Column, DragRowMove, FormatterResultWithHtml, GridOption, RowMoveManager, RowMoveManagerOption } from '../interfaces/index.js';
+import type {
+  Column,
+  DragRowMove,
+  FormatterResultWithHtml,
+  GridOption,
+  RowMoveManager,
+  RowMoveManagerOption,
+} from '../interfaces/index.js';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, Utils as SlickUtils } from '../core/index.js';
 
 /**
@@ -100,7 +107,8 @@ export class SlickRowMoveManager {
 
       // add new row move column unless it was already added
       if (!columnDefinitions.some((col) => col.id === newRowMoveColumn.id)) {
-        const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
+        const rowMoveColDef =
+          Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
         const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
 
         // column index position in the grid

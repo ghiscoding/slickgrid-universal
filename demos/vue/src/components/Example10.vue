@@ -348,8 +348,8 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
       <li>Single Select, you can click on any cell to make the row active</li>
       <li>Multiple Selections, you need to specifically click on the checkbox to make 1 or more selections</li>
       <li>
-        NOTE: Any Row Selection(s) will be reset when using Pagination and changing Page (you will need to set it back manually if you want it
-        back)
+        NOTE: Any Row Selection(s) will be reset when using Pagination and changing Page (you will need to set it back manually if you want
+        it back)
       </li>
     </ul>
   </div>

@@ -1,5 +1,16 @@
 describe('Example 7 - Header Button Plugin', () => {
-  const titles = ['Resize me!', 'Hover me!', 'Column C', 'Column D', 'Column E', 'Column F', 'Column G', 'Column H', 'Column I', 'Column J'];
+  const titles = [
+    'Resize me!',
+    'Hover me!',
+    'Column C',
+    'Column D',
+    'Column E',
+    'Column F',
+    'Column G',
+    'Column H',
+    'Column I',
+    'Column J',
+  ];
 
   beforeEach(() => {
     // create a console.log spy for later use
@@ -102,7 +113,10 @@ describe('Example 7 - Header Button Plugin', () => {
 
       cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(0)').should('contain', 'Resize me!');
 
-      cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(3)').should('be.hidden');
+      cy.get('#grid7-1 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button:nth(3)')
+        .should('be.hidden');
 
       // Cypress does not yet support the .hover() method and because of that we need to manually resize the element
       // this is not ideal since it only resizes the cell not the entire column but it's enough to test the functionality
@@ -119,7 +133,10 @@ describe('Example 7 - Header Button Plugin', () => {
         expect($el.width()).lessThan(expectedWidth + 1);
       });
 
-      cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button').should('have.length', 4);
+      cy.get('#grid7-1 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button')
+        .should('have.length', 4);
     });
 
     it('should resize column to its previous size and still expect some icons to be hidden', () => {
@@ -130,9 +147,15 @@ describe('Example 7 - Header Button Plugin', () => {
         .should('be.visible')
         .invoke('show');
 
-      cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(3)').should('be.hidden');
+      cy.get('#grid7-1 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button:nth(3)')
+        .should('be.hidden');
 
-      cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(1)').should('be.hidden');
+      cy.get('#grid7-1 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button:nth(1)')
+        .should('be.hidden');
     });
 
     it('should go on the 2nd column "Hover me!" and expect the header button to appear only when doing hover over it', () => {
@@ -235,7 +258,10 @@ describe('Example 7 - Header Button Plugin', () => {
 
       cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(0)').should('contain', 'Resize me!');
 
-      cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(3)').should('be.hidden');
+      cy.get('#grid7-2 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button:nth(3)')
+        .should('be.hidden');
 
       // Cypress does not yet support the .hover() method and because of that we need to manually resize the element
       // this is not ideal since it only resizes the cell not the entire column but it's enough to test the functionality
@@ -252,7 +278,10 @@ describe('Example 7 - Header Button Plugin', () => {
         expect($el.width()).lessThan(expectedWidth + 1);
       });
 
-      cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button').should('have.length', 4);
+      cy.get('#grid7-2 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button')
+        .should('have.length', 4);
     });
 
     it('should resize column to its previous size and still expect some icons to be hidden', () => {
@@ -263,9 +292,15 @@ describe('Example 7 - Header Button Plugin', () => {
         .should('be.visible')
         .invoke('show');
 
-      cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(3)').should('be.hidden');
+      cy.get('#grid7-2 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button:nth(3)')
+        .should('be.hidden');
 
-      cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(1)').should('be.hidden');
+      cy.get('#grid7-2 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .find('.slick-header-button:nth(1)')
+        .should('be.hidden');
     });
 
     it('should go on the 2nd column "Hover me!" and expect the header button to appear only when doing hover over it', () => {
@@ -294,7 +329,12 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should hover over the "Column C" and click on "Clear Filter" and expect grid to have all rows shown', () => {
-      cy.get('#grid7-2 .slick-header-column:nth(2)').first().trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+      cy.get('#grid7-2 .slick-header-column:nth(2)')
+        .first()
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
 
       cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list')
         .should('be.visible')

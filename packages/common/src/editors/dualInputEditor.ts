@@ -123,7 +123,8 @@ export class DualInputEditor implements Editor {
       containerElm.appendChild(this._rightInput);
     }
 
-    this._bindEventService.bind(this._leftInput, 'keydown', ((event: KeyboardEvent) => this.handleKeyDown(event, 'leftInput')) as EventListener);
+    this._bindEventService.bind(this._leftInput, 'keydown', ((event: KeyboardEvent) =>
+      this.handleKeyDown(event, 'leftInput')) as EventListener);
     this._bindEventService.bind(this._rightInput, 'keydown', ((event: KeyboardEvent) =>
       this.handleKeyDown(event, 'rightInput')) as EventListener);
 

@@ -190,7 +190,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         let mimeType = this._excelExportOptions?.mimeType;
         if (mimeType === undefined) {
           mimeType =
-            this._fileFormat === FileType.xls ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            this._fileFormat === FileType.xls
+              ? 'application/vnd.ms-excel'
+              : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         }
 
         const filename = `${this._excelExportOptions.filename}.${this._fileFormat}`;

@@ -442,8 +442,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>This example shows 3 ways of grouping</li>
       <ol>
         <li>
-          Drag any Column Header on the top placeholder to group by that column (support moti-columns grouping by adding more columns to the drop
-          area).
+          Drag any Column Header on the top placeholder to group by that column (support moti-columns grouping by adding more columns to the
+          drop area).
         </li>
         <li>Use buttons and defined functions to group by whichever field you want</li>
         <li>Use the Select dropdown to group, the position of the Selects represent the grouping level</li>
@@ -458,7 +458,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <div class="row">
       <div class="col-sm-12">
         <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">500 rows</button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">50k rows</button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">
+          50k rows
+        </button>
         <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" @click="clearGroupsAndSelects()">
           <i class="mdi mdi-close"></i> Clear grouping
         </button>
@@ -493,7 +495,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
         >
           Group by duration &amp; sort groups by count
         </button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-effort-btn" @click="groupByDurationEffortDriven()">
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="group-duration-effort-btn"
+          @click="groupByDurationEffortDriven()"
+        >
           Group by Duration then Effort-Driven
         </button>
         <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="set-dynamic-filter" @click="setFiltersDynamically()">

@@ -430,7 +430,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="collapse-all-noevent-btn" @click="collapseAllWithoutEvent()">
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon mx-1"
+        data-test="collapse-all-noevent-btn"
+        @click="collapseAllWithoutEvent()"
+      >
         <span class="mdi mdi-arrow-collapse"></span>
         <span>Collapse All (without triggering event)</span>
       </button>

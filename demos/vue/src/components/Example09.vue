@@ -331,8 +331,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    This example demonstrates using the <b>Slick.Controls.GridMenu</b> plugin to easily add a Grid Menu (aka hamburger menu) on the top right
-    corner of the grid.<br />
+    This example demonstrates using the <b>Slick.Controls.GridMenu</b> plugin to easily add a Grid Menu (aka hamburger menu) on the top
+    right corner of the grid.<br />
     (<a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-menu" target="_blank">Wiki docs</a>)
     <ul>
       <li>

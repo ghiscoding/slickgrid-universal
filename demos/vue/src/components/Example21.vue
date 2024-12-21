@@ -184,8 +184,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>You define a fixed grid width via "gridWidth" in the View</li>
       <li>You can still use the "autoResize" for the width to be resized automatically (the height will never change in this case)</li>
       <li>
-        This dataset has 25 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling (though you might
-        have browser scrolling)
+        This dataset has 25 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling (though you
+        might have browser scrolling)
       </li>
     </ul>
   </div>

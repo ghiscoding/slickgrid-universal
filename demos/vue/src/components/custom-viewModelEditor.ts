@@ -1,4 +1,11 @@
-import { type Column, type Editor, type EditorValidator, type EditorValidationResult, type GridOption, type SlickGrid } from 'slickgrid-vue';
+import {
+  type Column,
+  type Editor,
+  type EditorValidator,
+  type EditorValidationResult,
+  type GridOption,
+  type SlickGrid,
+} from 'slickgrid-vue';
 import { type App, type ComponentPublicInstance, createApp } from 'vue';
 
 interface Props {

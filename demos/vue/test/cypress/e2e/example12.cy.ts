@@ -201,7 +201,12 @@ describe('Example 12: Localization (i18n)', () => {
     it('should select the row with "Task 1497" and expect the Grid State to be called with it in the console', () => {
       cy.get('#slickGridContainer-grid12').as('grid12');
 
-      cy.get('#grid12').contains('Task 1497').parent().children('.slick-cell-checkboxsel').find('input[type=checkbox]').click({ force: true });
+      cy.get('#grid12')
+        .contains('Task 1497')
+        .parent()
+        .children('.slick-cell-checkboxsel')
+        .find('input[type=checkbox]')
+        .click({ force: true });
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(2);

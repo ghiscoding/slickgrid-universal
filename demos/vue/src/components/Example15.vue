@@ -304,7 +304,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <ul class="small">
       <li>Uses Local Storage to persist the Grid State and uses Grid Options "presets" to put the grid back to it's previous state</li>
       <ul>
-        <li>to demo this, simply change any columns (position reorder, visibility, size, filter, sort), then refresh your browser with (F5)</li>
+        <li>
+          to demo this, simply change any columns (position reorder, visibility, size, filter, sort), then refresh your browser with (F5)
+        </li>
       </ul>
       <li>Local Storage is just one option, you can use whichever is more convenient for you (Local Storage, Session Storage, DB, ...)</li>
     </ul>

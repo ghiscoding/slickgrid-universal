@@ -140,7 +140,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   init(grid: SlickGrid): void {
     this._grid = grid;
     if (!grid) {
-      throw new Error('[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.');
+      throw new Error(
+        '[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.'
+      );
     }
     this._grid = grid;
     this._gridUid = grid.getUID();

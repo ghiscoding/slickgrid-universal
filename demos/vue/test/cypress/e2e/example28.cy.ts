@@ -96,7 +96,9 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     });
 
     it('should expand "pdf" folder and expect all folders to be expanded', () => {
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click();
+      cy.get(
+        `#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`
+      ).click();
 
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
     });
@@ -501,7 +503,10 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should type filter "b" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file').type('b');
 
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'bucket-list.txt');
+      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'bucket-list.txt'
+      );
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
         'contain',
@@ -512,9 +517,15 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
         'contain',
         'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
       );
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'internet-bill.pdf');
+      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'internet-bill.pdf'
+      );
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should('contain', 'phone-bill.pdf');
+      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'phone-bill.pdf'
+      );
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(3)`).should('contain', '1.5 MB');
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(0)`).should('contain', 'zebra.dll');
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(3)`).should('contain', '1.22 MB');
@@ -536,9 +547,15 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
         'contain',
         'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
       );
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'internet-bill.pdf');
+      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'internet-bill.pdf'
+      );
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'phone-bill.pdf');
+      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'phone-bill.pdf'
+      );
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(3)`).should('contain', '1.5 MB');
 
       cy.get('.right-footer .item-count').contains('4');
@@ -550,11 +567,16 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     });
 
     it('should collapse "pdf" folder and filter with "b" again and expect same updated tree totals as earlier collapsed or expanded should still be Sum(2.8MB) / Avg(1.4MB)', () => {
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).click();
+      cy.get(
+        `#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`
+      ).click();
 
       cy.get('.search-filter.filter-file').type('b');
 
-      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'bucket-list.txt');
+      cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'bucket-list.txt'
+      );
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
       cy.get(`#slickGridContainer-grid28 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
         'contain',

@@ -230,7 +230,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <li>Try hiding any columns (you use the "Column Picker" plugin by doing a right+click on the header to show the column back)</li>
         <li>Note: The "Header Button" & "Header Menu" Plugins cannot be used at the same time</li>
         <li>You can change the menu icon via SASS variables as shown in this demo (check all SASS variables)</li>
-        <li>Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list</li>
+        <li>
+          Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list
+        </li>
         <ol>
           <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>
           <li>for example if we want to disable the "Help" command over the "Title" and "Completed" column</li>

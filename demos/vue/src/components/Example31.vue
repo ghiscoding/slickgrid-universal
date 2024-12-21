@@ -459,7 +459,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </button>
   </h2>
 
-  <div class="subtitle">Optionally use RxJS instead of Promises, you would typically use this with a Backend Service API (OData/GraphQL)</div>
+  <div class="subtitle">
+    Optionally use RxJS instead of Promises, you would typically use this with a Backend Service API (OData/GraphQL)
+  </div>
 
   <div class="row">
     <div class="col-md-12" aria-label="Basic Editing Commands">

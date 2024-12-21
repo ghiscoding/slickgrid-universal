@@ -663,13 +663,13 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </ul>
       <li>Inline Editors requires "enableCellNavigation: true" (not sure why though)</li>
       <li>
-        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that it
-        will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions" or the
-        column definition)
+        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that
+        it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions"
+        or the column definition)
       </li>
       <li>
-        Support of "collectionAsync" is possible, click on "Clear Filters/Sorting" then add/delete item(s) and look at "Prerequisites" Select
-        Filter
+        Support of "collectionAsync" is possible, click on "Clear Filters/Sorting" then add/delete item(s) and look at "Prerequisites"
+        Select Filter
       </li>
     </ul>
   </div>
@@ -685,7 +685,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
             ON (single-click)
           </label>
           <label class="radio-inline control-label" for="radioFalse">
-            <input id="radioFalse" type="radio" name="inlineRadioOptions" :value="isAutoEdit" @click="setAutoEdit(false)" /> OFF (double-click)
+            <input id="radioFalse" type="radio" name="inlineRadioOptions" :value="isAutoEdit" @click="setAutoEdit(false)" /> OFF
+            (double-click)
           </label>
         </div>
         <div class="row col-sm-12">
@@ -712,7 +713,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
           <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" @click="vueGrid.filterService.clearFilters()">
             Clear Filters
           </button>
-          <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="clear-sorting" @click="vueGrid.sortService.clearSorting()">
+          <button
+            class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            data-test="clear-sorting"
+            @click="vueGrid.sortService.clearSorting()"
+          >
             Clear Sorting
           </button>
           <button
@@ -732,7 +737,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
             <i class="mdi mdi-shape-square-plus me-1"></i>
             Dynamically Duplicate Title Column
           </button>
-          <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="remove-title-column" @click="dynamicallyRemoveLastColumn()">
+          <button
+            class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            data-test="remove-title-column"
+            @click="dynamicallyRemoveLastColumn()"
+          >
             <i class="mdi mdi-minus"></i>
             Dynamically Remove Last Column
           </button>

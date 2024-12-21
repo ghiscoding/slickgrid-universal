@@ -9,8 +9,8 @@
   <p>
     One of the best JavaScript data grid
     <a href="https://github.com/mleibman/SlickGrid" target="_blank">SlickGrid</a> which was originally developed by &#64;mleibman is now
-    available to Vue. I have tried, and used, a few data grids and SlickGrid beats most of them in terms of functionalities and performance (it
-    can even handle a million rows).
+    available to Vue. I have tried, and used, a few data grids and SlickGrid beats most of them in terms of functionalities and performance
+    (it can even handle a million rows).
   </p>
   <h4>Documentation</h4>
   <p>

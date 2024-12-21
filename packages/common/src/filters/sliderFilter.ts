@@ -407,13 +407,21 @@ export class SliderFilter implements Filter {
     // attach events
     this._bindEventService.bind(this._sliderTrackElm, 'click', this.sliderTrackClicked.bind(this) as EventListener);
     this._bindEventService.bind(this._sliderRightInputElm, ['input', 'change'], this.slideRightInputChanged.bind(this) as EventListener);
-    this._bindEventService.bind(this._sliderRightInputElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
+    this._bindEventService.bind(
+      this._sliderRightInputElm,
+      ['change', 'mouseup', 'touchend'],
+      this.onValueChanged.bind(this) as EventListener
+    );
 
     if (this.sliderType === 'compound' && this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, ['change'], this.onValueChanged.bind(this) as EventListener);
     } else if (this.sliderType === 'double' && this._sliderLeftInputElm) {
       this._bindEventService.bind(this._sliderLeftInputElm, ['input', 'change'], this.slideLeftInputChanged.bind(this) as EventListener);
-      this._bindEventService.bind(this._sliderLeftInputElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
+      this._bindEventService.bind(
+        this._sliderLeftInputElm,
+        ['change', 'mouseup', 'touchend'],
+        this.onValueChanged.bind(this) as EventListener
+      );
     }
 
     return this._divContainerFilterElm;
@@ -504,7 +512,8 @@ export class SliderFilter implements Filter {
 
     if (
       this._sliderLeftInputElm &&
-      sliderRightVal - sliderLeftVal <= ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
+      sliderRightVal - sliderLeftVal <=
+        ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
     ) {
       this._sliderLeftInputElm.value = String(
         sliderLeftVal - ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
@@ -534,7 +543,8 @@ export class SliderFilter implements Filter {
     if (
       this.sliderType === 'double' &&
       this._sliderRightInputElm &&
-      sliderRightVal - sliderLeftVal <= ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
+      sliderRightVal - sliderLeftVal <=
+        ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)
     ) {
       this._sliderRightInputElm.value = String(
         sliderLeftVal + ((this.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES)

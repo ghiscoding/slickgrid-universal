@@ -1,6 +1,12 @@
 import { uniqueArray } from '@slickgrid-universal/utils';
 
-import { FilterMultiplePassType, type FilterMultiplePassTypeString, FieldType, OperatorType, SortDirectionNumber } from './../enums/index.js';
+import {
+  FilterMultiplePassType,
+  type FilterMultiplePassTypeString,
+  FieldType,
+  OperatorType,
+  SortDirectionNumber,
+} from './../enums/index.js';
 import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
@@ -140,7 +146,12 @@ export class CollectionService<T = any> {
    * @param sortByOptions
    * @param enableTranslateLabel
    */
-  sortCollection(columnDef: Column, collection: T[], sortByOptions: CollectionSortBy | CollectionSortBy[], enableTranslateLabel?: boolean): T[] {
+  sortCollection(
+    columnDef: Column,
+    collection: T[],
+    sortByOptions: CollectionSortBy | CollectionSortBy[],
+    enableTranslateLabel?: boolean
+  ): T[] {
     if (enableTranslateLabel && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error(
         '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'

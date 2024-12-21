@@ -211,7 +211,10 @@ export default class Example23 {
         formatter: Formatters.multiple,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
         params: {
-          formatters: [(_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty, Formatters.dollar] as Formatter[],
+          formatters: [
+            (_row, _cell, _value, _coldef, dataContext) => dataContext.price * dataContext.qty,
+            Formatters.dollar,
+          ] as Formatter[],
         },
         excelExportOptions: {
           style: {

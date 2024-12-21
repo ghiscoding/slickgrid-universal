@@ -16,7 +16,10 @@ import { isColumnDateType } from '../services/utilities.js';
 export type GeneralVariableDataType = 'boolean' | 'date' | 'number' | 'object' | 'string';
 
 /** Execute mapped condition (per field type) for each cell in the grid */
-export const executeFilterConditionTest: FilterCondition = ((options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
+export const executeFilterConditionTest: FilterCondition = ((
+  options: FilterConditionOption,
+  parsedSearchTerms: SearchTerm | SearchTerm[]
+) => {
   // when using a multi-select ('IN' operator) we will not use the field type but instead go directly with a collection search
   if (isCollectionOperator(options.operator)) {
     return executeCollectionSearchFilterCondition(options);

@@ -159,7 +159,11 @@ export class LongTextEditor implements Editor {
         { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText },
         editorFooterElm
       );
-      const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText }, editorFooterElm);
+      const saveBtnElm = createDomElement(
+        'button',
+        { className: 'btn btn-save btn-primary btn-xs', textContent: saveText },
+        editorFooterElm
+      );
       this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);
       this._bindEventService.bind(saveBtnElm, 'click', this.save.bind(this) as EventListener);
       this.position(this.args?.position as ElementPosition);

@@ -90,7 +90,11 @@ export class GridStateService {
    * @param {Boolean} triggerAutoSizeColumns - True by default, do we also want to call the "autosizeColumns()" method to make the columns fit in the grid?
    * @param {Boolean} triggerColumnsFullResizeByContent - False by default, do we also want to call full columns resize by their content?
    */
-  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
+  changeColumnsArrangement(
+    definedColumns: CurrentColumn[],
+    triggerAutoSizeColumns = true,
+    triggerColumnsFullResizeByContent = false
+  ): void {
     if (Array.isArray(definedColumns) && definedColumns.length > 0) {
       const newArrangedColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
 

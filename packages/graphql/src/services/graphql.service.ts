@@ -304,7 +304,9 @@ export class GraphqlService implements BackendService {
     this._currentFilters = this.castFilterToColumnFilters(args.columnFilters);
 
     if (!args || !args.grid) {
-      throw new Error('Something went wrong when trying create the GraphQL Backend Service, it seems that "args" is not populated correctly');
+      throw new Error(
+        'Something went wrong when trying create the GraphQL Backend Service, it seems that "args" is not populated correctly'
+      );
     }
 
     // loop through all columns to inspect filters & set the query

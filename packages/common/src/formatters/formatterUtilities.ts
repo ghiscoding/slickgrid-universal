@@ -131,7 +131,12 @@ export function retrieveFormatterOptions(
  * 2- Grid Options "formatterOptions"
  * 3- nothing found, return default value provided
  */
-export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, gridOptions: GridOption, defaultValue?: any): any {
+export function getValueFromParamsOrFormatterOptions(
+  optionName: string,
+  columnDef: Column,
+  gridOptions: GridOption,
+  defaultValue?: any
+): any {
   const params = columnDef && columnDef.params;
 
   if (params && params.hasOwnProperty(optionName)) {

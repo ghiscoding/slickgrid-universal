@@ -432,7 +432,11 @@ describe('Example 03 - Draggable Grouping', () => {
         'Action',
       ];
 
-      cy.get('.grid3').find('.slick-preheader-panel .slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.grid3')
+        .find('.slick-preheader-panel .slick-header-column:nth(1)')
+        .trigger('mouseover')
+        .trigger('contextmenu')
+        .invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -467,7 +471,11 @@ describe('Example 03 - Draggable Grouping', () => {
         'Action',
       ];
 
-      cy.get('.grid3').find('.slick-preheader-panel .slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.grid3')
+        .find('.slick-preheader-panel .slick-header-column:nth(1)')
+        .trigger('mouseover')
+        .trigger('contextmenu')
+        .invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')

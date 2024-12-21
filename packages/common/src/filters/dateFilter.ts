@@ -57,7 +57,9 @@ export class DateFilter implements Filter {
 
   /** Getter to know what would be the default operator when none is specified */
   get defaultOperator(): OperatorType | OperatorString {
-    return this.inputFilterType === 'compound' ? OperatorType.empty : this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
+    return this.inputFilterType === 'compound'
+      ? OperatorType.empty
+      : this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
   }
 
   /** Getter for the date picker options */
@@ -193,7 +195,10 @@ export class DateFilter implements Filter {
       pickerValues = Array.isArray(values) ? values[0] : values;
     } else {
       // get the picker values, if it's a string with the "..", we'll do the split else we'll use the array of search terms
-      if (typeof values === 'string' || (Array.isArray(values) && typeof values[0] === 'string' && (values[0] as string).indexOf('..') > 0)) {
+      if (
+        typeof values === 'string' ||
+        (Array.isArray(values) && typeof values[0] === 'string' && (values[0] as string).indexOf('..') > 0)
+      ) {
         pickerValues = typeof values === 'string' ? [values as string] : (values[0] as string).split('..');
       } else if (Array.isArray(values)) {
         pickerValues = values;

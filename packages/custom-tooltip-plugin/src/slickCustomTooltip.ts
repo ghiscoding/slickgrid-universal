@@ -193,7 +193,13 @@ export class SlickCustomTooltip {
    * Async process callback will hide any prior tooltip & then merge the new result with the item `dataContext` under a `__params` property
    * (unless a new prop name is provided) to provice as dataContext object to the asyncPostFormatter.
    */
-  protected asyncProcessCallback(asyncResult: any, cell: { row: number; cell: number }, value: any, columnDef: Column, dataContext: any): void {
+  protected asyncProcessCallback(
+    asyncResult: any,
+    cell: { row: number; cell: number },
+    value: any,
+    columnDef: Column,
+    dataContext: any
+  ): void {
     this.hideTooltip();
     const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
     if (this._cellAddonOptions?.useRegularTooltip) {
@@ -355,7 +361,9 @@ export class SlickCustomTooltip {
       const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
       // prettier-ignore
       const formatterText = isPrimitiveOrHTML(tooltipResult) ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text;
-      return this._grid.sanitizeHtmlString((formatterText instanceof HTMLElement ? formatterText.textContent : (formatterText as string)) || '');
+      return this._grid.sanitizeHtmlString(
+        (formatterText instanceof HTMLElement ? formatterText.textContent : (formatterText as string)) || ''
+      );
     } else if (typeof formatterOrText === 'string') {
       return this._grid.sanitizeHtmlString(formatterOrText);
     }
@@ -380,7 +388,9 @@ export class SlickCustomTooltip {
 
     let tmpTitleElm: HTMLElement | null | undefined;
     const cellElm =
-      this._cellAddonOptions?.useRegularTooltipFromCellTextOnly || !this._mouseTarget ? (this._cellNodeElm as HTMLElement) : this._mouseTarget;
+      this._cellAddonOptions?.useRegularTooltipFromCellTextOnly || !this._mouseTarget
+        ? (this._cellNodeElm as HTMLElement)
+        : this._mouseTarget;
 
     let tooltipText = columnDef?.toolTip ?? '';
     if (!tooltipText) {

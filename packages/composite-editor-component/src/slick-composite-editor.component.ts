@@ -331,7 +331,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         onError({
           type: 'error',
           code: 'ENABLE_ADD_ROW_REQUIRED',
-          message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when cloning/creating a new item.',
+          message:
+            'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when cloning/creating a new item.',
         });
         return null;
       } else if (!activeCell && (modalType === 'clone' || modalType === 'edit')) {
@@ -430,7 +431,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         modalHeaderElm.appendChild(modalCloseButtonElm);
 
         const modalBodyElm = createDomElement('div', { className: 'slick-editor-modal-body' });
-        this._modalBodyTopValidationElm = createDomElement('div', { className: 'validation-summary', style: { display: 'none' } }, modalBodyElm);
+        this._modalBodyTopValidationElm = createDomElement(
+          'div',
+          { className: 'validation-summary', style: { display: 'none' } },
+          modalBodyElm
+        );
         const modalFooterElm = createDomElement('div', { className: 'slick-editor-modal-footer' });
         const modalCancelButtonElm = createDomElement('button', {
           type: 'button',
@@ -768,7 +773,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           }
           // call the custon onSave callback when defined and note that the item data context will only be filled for create/clone/edit
           const dataContextOrUpdatedDatasetPreview = isMassChange ? updatedDataset : itemDataContext;
-          const successful = await this._options?.onSave(this.formValues, this.getCurrentRowSelections(), dataContextOrUpdatedDatasetPreview);
+          const successful = await this._options?.onSave(
+            this.formValues,
+            this.getCurrentRowSelections(),
+            dataContextOrUpdatedDatasetPreview
+          );
 
           if (successful) {
             // apply the changes in the grid (if it's not yet applied)

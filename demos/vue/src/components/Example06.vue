@@ -274,7 +274,9 @@ function displaySpinner(isProcessing: boolean, isError?: boolean) {
   if (isError) {
     status.value = { text: 'ERROR!!!', class: 'alert alert-danger' };
   } else {
-    status.value = isProcessing ? { text: 'processing...', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
+    status.value = isProcessing
+      ? { text: 'processing...', class: 'alert alert-warning' }
+      : { text: 'finished', class: 'alert alert-success' };
   }
 }
 
@@ -490,8 +492,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </li>
       <li>
         Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura
-        <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex" target="_blank">_regex</a>) or you could
-        add your own implementation (e.g. see this SO <a href="https://stackoverflow.com/a/37981802/1212166">Question</a>).
+        <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex" target="_blank">_regex</a>) or you
+        could add your own implementation (e.g. see this SO <a href="https://stackoverflow.com/a/37981802/1212166">Question</a>).
       </li>
     </ul>
   </div>
@@ -565,7 +567,14 @@ function vueGridReady(grid: SlickgridVueInstance) {
               Offset
             </label>
             <label class="ms-1 radio-inline control-label" for="radioCursor">
-              <input id="radioCursor" type="radio" name="inlineRadioOptions" data-test="cursor" :value="true" @click="setIsWithCursor(true)" />
+              <input
+                id="radioCursor"
+                type="radio"
+                name="inlineRadioOptions"
+                data-test="cursor"
+                :value="true"
+                @click="setIsWithCursor(true)"
+              />
               Cursor
             </label>
           </span>

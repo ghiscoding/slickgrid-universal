@@ -408,7 +408,10 @@ export class SelectEditor implements Editor {
 
     if (fieldName !== undefined) {
       // when the provided user defined the column field type as a possible number then try parsing the state value as that
-      if ((fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) && !isNaN(parseFloat(state))) {
+      if (
+        (fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) &&
+        !isNaN(parseFloat(state))
+      ) {
         newValue = parseFloat(state);
       }
 
@@ -700,7 +703,12 @@ export class SelectEditor implements Editor {
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
-    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
+    if (
+      this.collectionOptions?.addBlankEntry &&
+      Array.isArray(collection) &&
+      collection.length > 0 &&
+      collection[0][this.valueName] !== ''
+    ) {
       collection.unshift(this.createBlankEntry());
       this.collection.unshift(this.createBlankEntry()); // also make the change on the original collection
     }

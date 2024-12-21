@@ -151,7 +151,10 @@ export function getFunctionDetails(
       return matches.length >= 1 ? `return ${matches[0]!.trimStart()}` : fnStr;
     }
     const isOneLinerArrowFn = !fnStr.includes('{') && fnStr.includes('=>');
-    const body = fnStr.substring(fnStr.indexOf('{') + 1 || fnStr.indexOf('=>') + 2, fnStr.includes('}') ? fnStr.lastIndexOf('}') : fnStr.length);
+    const body = fnStr.substring(
+      fnStr.indexOf('{') + 1 || fnStr.indexOf('=>') + 2,
+      fnStr.includes('}') ? fnStr.lastIndexOf('}') : fnStr.length
+    );
     if (addReturn && isOneLinerArrowFn && !body.startsWith('return')) {
       return 'return ' + body.trimStart(); // add the `return ...` to the body for ES6 arrow fn
     }
@@ -259,7 +262,9 @@ export function setDeepValue<T = unknown>(obj: T, path: string | string[], value
     if (obj && e !== undefined) {
       setDeepValue(
         (obj[e] =
-          isDefined(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call(obj[e]) === '[object Object]') ? obj[e] : ({} as any)),
+          isDefined(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call(obj[e]) === '[object Object]')
+            ? obj[e]
+            : ({} as any)),
         path,
         value
       );

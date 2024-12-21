@@ -349,7 +349,12 @@ export class SelectFilter implements Filter {
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
-    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
+    if (
+      this.collectionOptions?.addBlankEntry &&
+      Array.isArray(collection) &&
+      collection.length > 0 &&
+      collection[0][this.valueName] !== ''
+    ) {
       collection.unshift(this.createBlankEntry());
     }
 

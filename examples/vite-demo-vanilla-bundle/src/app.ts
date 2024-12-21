@@ -44,7 +44,9 @@ export class App {
       }
     }
 
-    let route = this.routerConfig.pushState ? location.pathname.replace(this.stateBangChar, '') : location.hash.replace(this.stateBangChar, '');
+    let route = this.routerConfig.pushState
+      ? location.pathname.replace(this.stateBangChar, '')
+      : location.hash.replace(this.stateBangChar, '');
     if (!route || route === '/') {
       route = this.defaultRouteName;
     }

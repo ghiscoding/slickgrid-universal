@@ -231,8 +231,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
         form, the more the user scrolls down, the more rows get loaded.
       </li>
       <li>
-        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we
-        keep appending data, we always have to start from index zero (no offset).
+        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since
+        we keep appending data, we always have to start from index zero (no offset).
       </li>
     </ul>
   </h6>
@@ -254,7 +254,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
         Set Sorting Dynamically
       </button>
-      <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-duration" @click="groupByDuration()">Group by Duration</button>
+      <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-duration" @click="groupByDuration()">
+        Group by Duration
+      </button>
 
       <label class="ml-4">Reset Dataset <code>onSort</code>:</label>
       <button class="btn btn-outline-secondary btn-sm mx-1" data-test="onsort-on" @click="onSortReset(true)">ON</button>

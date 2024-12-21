@@ -35,7 +35,8 @@ import './example12.scss';
 const myCustomTitleValidator = (value, args) => {
   if (
     (value === null || value === undefined || !value.length) &&
-    ((args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create') || args.compositeEditorOptions.modalType === 'edit')
+    ((args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create') ||
+      args.compositeEditorOptions.modalType === 'edit')
   ) {
     // we will only check if the field is supplied when it's an inline editing OR a composite editor of type create/edit
     return { valid: false, msg: 'This is a required field.' };
@@ -454,7 +455,8 @@ export default class Example12 {
         maxWidth: 70,
         excludeFromExport: true,
         cssClass: 'justify-center flex',
-        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-dots-vertical mdi-22px text-color-primary"></span></div>`,
+        formatter: () =>
+          `<div class="button-style action-btn"><span class="mdi mdi-dots-vertical mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -1116,7 +1118,8 @@ export default class Example12 {
             // simulate a backend server call which will reject if the "% Complete" is below 50%
             return new Promise((resolve, reject) => {
               window.setTimeout(
-                () => (formValues.percentComplete >= 50 ? resolve(true) : reject('Unfortunately we only accept a minimum of 50% Completion...')),
+                () =>
+                  formValues.percentComplete >= 50 ? resolve(true) : reject('Unfortunately we only accept a minimum of 50% Completion...'),
                 serverResponseDelay
               );
             });

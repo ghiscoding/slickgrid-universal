@@ -61,7 +61,8 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
 const myCustomTitleValidator = (value: any, args: any) => {
   if (
     (value === null || value === undefined || !value.length) &&
-    ((args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create') || args.compositeEditorOptions.modalType === 'edit')
+    ((args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create') ||
+      args.compositeEditorOptions.modalType === 'edit')
   ) {
     // we will only check if the field is supplied when it's an inline editing OR a composite editor of type create/edit
     return { valid: false, msg: 'This is a required field.' };
@@ -1069,9 +1070,10 @@ function renderItemCallbackWith4Corners(item: any): string {
 
   <div class="subtitle">
     Composite Editor allows you to Create, Clone, Edit, Mass Update & Mass Selection Changes inside a nice Modal Window.
-    <br />The modal is simply populated by looping through your column definition list and also uses a lot of the same logic as inline editing
-    (see
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/composite-editor-modal" target="_blank">Composite Editor - Wiki</a
+    <br />The modal is simply populated by looping through your column definition list and also uses a lot of the same logic as inline
+    editing (see
+    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/composite-editor-modal" target="_blank"
+      >Composite Editor - Wiki</a
     >.)
   </div>
 

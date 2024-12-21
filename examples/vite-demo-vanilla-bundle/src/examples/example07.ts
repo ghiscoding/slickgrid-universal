@@ -50,7 +50,12 @@ export default class Example07 {
     const gridContainerElm = document.querySelector(`.grid7`) as HTMLDivElement;
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
     document.body.classList.add('material-theme');
   }
 
@@ -563,7 +568,10 @@ export default class Example07 {
   onBeforeMoveRow(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
     for (const rowIdx of data.rows) {
       // no point in moving before or after itself
-      if (rowIdx === data.insertBefore || (rowIdx === data.insertBefore - 1 && data.insertBefore - 1 !== this.sgb.dataView?.getItemCount())) {
+      if (
+        rowIdx === data.insertBefore ||
+        (rowIdx === data.insertBefore - 1 && data.insertBefore - 1 !== this.sgb.dataView?.getItemCount())
+      ) {
         e.stopPropagation();
         return false;
       }
@@ -590,7 +598,9 @@ export default class Example07 {
     const filteredItems = this.sgb.dataView?.getFilteredItems() as any[];
 
     const itemOnRight = this.sgb.dataView?.getItem(insertBefore);
-    const insertBeforeFilteredIdx = (itemOnRight ? this.sgb.dataView?.getIdxById(itemOnRight.id) : this.sgb.dataView?.getItemCount()) as number;
+    const insertBeforeFilteredIdx = (
+      itemOnRight ? this.sgb.dataView?.getIdxById(itemOnRight.id) : this.sgb.dataView?.getItemCount()
+    ) as number;
 
     const filteredRowItems: any[] = [];
     rows.forEach((row) => filteredRowItems.push(filteredItems[row] as any));

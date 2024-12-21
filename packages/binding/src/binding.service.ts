@@ -17,7 +17,11 @@ export class BindingService {
     this._binding = binding;
     this._property = binding.property || '';
     this._elementBindings = [];
-    if (binding.property && binding.variable && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
+    if (
+      binding.property &&
+      binding.variable &&
+      (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)
+    ) {
       this._value = binding.variable[binding.property];
     } else {
       this._value = binding.variable;

@@ -62,9 +62,18 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px'));
+    this._bindingEventService.bind(
+      gridContainerElm,
+      'onbeforeexporttoexcel',
+      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px')
+    );
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
   }
 
   dispose() {

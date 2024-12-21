@@ -335,12 +335,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <br />
     <ul class="small">
       <li>
-        All input filters support the following operators: (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *) and now also the (..) for an input
-        range
+        All input filters support the following operators: (&gt;, &gt;=, &lt;, &lt;=, &lt;&gt;, !=, =, ==, *) and now also the (..) for an
+        input range
       </li>
       <li>
-        All filters (which support ranges) can be defined via the 2 dots (..) which represents a range, this also works for dates and slider in
-        the "presets"
+        All filters (which support ranges) can be defined via the 2 dots (..) which represents a range, this also works for dates and slider
+        in the "presets"
       </li>
       <ul>
         <li>For a numeric range defined in an input filter (must be of type text), you can use 2 dots (..) to represent a range</li>

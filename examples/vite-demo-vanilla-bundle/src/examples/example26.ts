@@ -449,7 +449,9 @@ export default class Example26 {
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
       this.tagDataClass =
-        this.metricsItemCount === this.metricsTotalItemCount ? 'tag tag-data is-primary fully-loaded' : 'tag tag-data is-primary partial-load';
+        this.metricsItemCount === this.metricsTotalItemCount
+          ? 'tag tag-data is-primary fully-loaded'
+          : 'tag tag-data is-primary partial-load';
     }
   }
 

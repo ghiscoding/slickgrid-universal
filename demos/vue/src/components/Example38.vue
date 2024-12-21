@@ -142,7 +142,13 @@ function displaySpinner(isProcessing: boolean, isError?: boolean) {
   }
 }
 
-function getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[] }) {
+function getCustomerCallback(data: {
+  '@odata.count': number;
+  infiniteScrollBottomHit: boolean;
+  metrics: Metrics;
+  query: string;
+  value: any[];
+}) {
   // totalItems property needs to be filled for pagination to work correctly
   // however we need to force a dirty check, doing a clone object will do just that
   const totalItemCount: number = data['@odata.count'];
@@ -444,22 +450,24 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <h6 class="subtitle italic content">
       <ul>
         <li>
-          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest
-          form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and there is no more data to load,
-          then we'll assume to have the entire dataset loaded in memory. This contrast with the regular Pagination approach which will only hold
-          a single page data at a time.
+          Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its
+          simplest form, the more the user scrolls down, the more rows get loaded. If we reached the end of the dataset and there is no more
+          data to load, then we'll assume to have the entire dataset loaded in memory. This contrast with the regular Pagination approach
+          which will only hold a single page data at a time.
         </li>
         <li>NOTES</li>
         <ol>
           <li>
-            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we keep
-            appending data, we always have to start from index zero (no offset).
+            <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since we
+            keep appending data, we always have to start from index zero (no offset).
           </li>
           <li>
             Pagination is not shown BUT in fact, that is what is being used behind the scene whenever reaching the scroll end (fetching next
             batch).
           </li>
-          <li>Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).</li>
+          <li>
+            Also note that whenever the user changes the Sort(s)/Filter(s) it will always reset and go back to zero index (first page).
+          </li>
         </ol>
       </ul>
     </h6>

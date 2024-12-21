@@ -374,7 +374,8 @@ export class DateEditor implements Editor {
     }
 
     if (this.columnDef) {
-      isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && this._originalDate === '') && elmDateStr !== this._originalDate);
+      isChanged =
+        this._lastTriggeredByClearDate || (!(elmDateStr === '' && this._originalDate === '') && elmDateStr !== this._originalDate);
     }
 
     return isChanged;

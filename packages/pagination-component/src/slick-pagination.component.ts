@@ -167,9 +167,13 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const leftNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const leftUlElm = createDomElement('ul', { className: 'pagination' });
     this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
-    this._seekFirstElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' }));
+    this._seekFirstElm.appendChild(
+      createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' })
+    );
     this._seekPrevElm = createDomElement('li', { className: 'page-item seek-prev' }, leftUlElm);
-    this._seekPrevElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' }));
+    this._seekPrevElm.appendChild(
+      createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
+    );
     leftNavElm.appendChild(leftUlElm);
 
     const pageNumberSectionElm = this.createPageNumberSection();
@@ -370,7 +374,11 @@ export class SlickPaginationComponent implements BasePaginationComponent {
 
     const spanPaginationCount = createDomElement('span', { className: 'slick-pagination-count' }, spanContainerElm);
     this._spanInfoFromToElm = createDomElement('span', { className: 'page-info-from-to' }, spanPaginationCount);
-    createDomElement('span', { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } }, this._spanInfoFromToElm);
+    createDomElement(
+      'span',
+      { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } },
+      this._spanInfoFromToElm
+    );
     this._spanInfoFromToElm.appendChild(document.createTextNode('-'));
     createDomElement('span', { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } }, this._spanInfoFromToElm);
     this._spanInfoFromToElm.appendChild(document.createTextNode(' '));

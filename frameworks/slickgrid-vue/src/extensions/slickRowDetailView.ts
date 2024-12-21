@@ -273,7 +273,9 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Render (or re-render) the View Component (Row Detail) */
   async renderViewModel(item: any) {
-    const containerElements = this.gridContainerElement.getElementsByClassName(`${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
+    const containerElements = this.gridContainerElement.getElementsByClassName(
+      `${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
+    );
     if (this._component && containerElements?.length) {
       const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
       const bindableData = {

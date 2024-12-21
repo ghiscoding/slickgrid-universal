@@ -8,7 +8,19 @@ describe('Example 11 - Batch Editing', () => {
   const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
-  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
+  const fullTitles = [
+    '',
+    'Title',
+    'Duration',
+    'Cost',
+    '% Complete',
+    'Start',
+    'Finish',
+    'Completed',
+    'Product',
+    'Country of Origin',
+    'Action',
+  ];
   const currentYear = new Date().getFullYear();
 
   beforeEach(() => {
@@ -531,7 +543,18 @@ describe('Example 11 - Batch Editing', () => {
     });
 
     it('should change pre-defined view to "Tasks Finishing in Future Years" and expect data to be filtered accordingly', () => {
-      const expectedTitles = ['', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
+      const expectedTitles = [
+        '',
+        'Title',
+        'Duration',
+        '% Complete',
+        'Start',
+        'Finish',
+        'Completed',
+        'Product',
+        'Country of Origin',
+        'Action',
+      ];
 
       cy.get('.selected-view').select('greaterCurrentYear');
       cy.get('.selected-view').should('have.value', 'greaterCurrentYear');

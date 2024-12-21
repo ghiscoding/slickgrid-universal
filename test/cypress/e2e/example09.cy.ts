@@ -822,7 +822,12 @@ describe('Example 09 - OData Grid', () => {
     });
 
     it('should hide column from header menu and expect grid state change to reflect that', () => {
-      cy.get('.grid9').find('.slick-header-column:nth(2)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+      cy.get('.grid9')
+        .find('.slick-header-column:nth(2)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')

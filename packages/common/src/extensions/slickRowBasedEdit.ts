@@ -347,7 +347,10 @@ export class SlickRowBasedEdit {
     const target = event.target as HTMLElement;
     const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     const targetRow = this._editedRows.get(dataContext[idProperty]);
-    if ((target.classList.contains(BTN_ACTION_DELETE) || target.parentElement?.classList.contains(BTN_ACTION_DELETE)) && this._gridService) {
+    if (
+      (target.classList.contains(BTN_ACTION_DELETE) || target.parentElement?.classList.contains(BTN_ACTION_DELETE)) &&
+      this._gridService
+    ) {
       if (this._addonOptions?.actionButtons?.deleteButtonPrompt && !window.confirm(this._addonOptions.actionButtons.deleteButtonPrompt)) {
         return;
       }

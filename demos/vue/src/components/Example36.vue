@@ -532,9 +532,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <li>The "Completed" column uses a the "onCellClick" event and a formatter to simulate a toggle action</li>
       </ul>
       <li>
-        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that it
-        will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions" or the
-        column definition)
+        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that
+        it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions"
+        or the column definition)
       </li>
       <li>This example also has auto-resize enabled, and we also demo how you can pause the resizer if you wish to</li>
     </ul>
@@ -546,8 +546,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
       target="_blank"
       >Wiki docs</a
     >). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via
-    <code>excelExportOptions.valueParserCallback</code> When Grouped we will also calculate the Group Totals in the UI via Group Formatter and we
-    again use Excel Formula to calculate the Group Totals (sum) dynamically. For Grouping we need to use
+    <code>excelExportOptions.valueParserCallback</code> When Grouped we will also calculate the Group Totals in the UI via Group Formatter
+    and we again use Excel Formula to calculate the Group Totals (sum) dynamically. For Grouping we need to use
     <code>groupTotalsExcelExportOptions.valueParserCallback</code> instead.
   </div>
 

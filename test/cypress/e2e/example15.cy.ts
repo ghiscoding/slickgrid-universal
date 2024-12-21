@@ -554,7 +554,10 @@ describe('Example 15 - OData Grid using RxJS', () => {
         .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
 
-      cy.get('[data-name="editor-gender"]').find('li.selected').find('input[data-name=selectItemeditor-gender][value=male]').should('exist');
+      cy.get('[data-name="editor-gender"]')
+        .find('li.selected')
+        .find('input[data-name=selectItemeditor-gender][value=male]')
+        .should('exist');
     });
 
     it('should click on "Add Other Gender via RxJS" button', () => {
@@ -582,7 +585,10 @@ describe('Example 15 - OData Grid using RxJS', () => {
         .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
 
-      cy.get('[data-name="editor-gender"]').find('li.selected').find('input[data-name=selectItemeditor-gender][value=male]').should('exist');
+      cy.get('[data-name="editor-gender"]')
+        .find('li.selected')
+        .find('input[data-name=selectItemeditor-gender][value=male]')
+        .should('exist');
     });
 
     it('should be able to change the Gender editor on the first row to the new option "other"', () => {
@@ -792,7 +798,9 @@ describe('Example 15 - OData Grid using RxJS', () => {
       cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
-        expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'female' and startswith(Name, 'C') and endswith(Name, 'n'))`);
+        expect($span.text()).to.eq(
+          `$top=10&$orderby=Name desc&$filter=(Gender eq 'female' and startswith(Name, 'C') and endswith(Name, 'n'))`
+        );
       });
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Consuelo Dickson');
@@ -826,7 +834,9 @@ describe('Example 15 - OData Grid using RxJS', () => {
       cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
-        expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'male' and startswith(Name, 'ba') and endswith(Name, 'E'))`);
+        expect($span.text()).to.eq(
+          `$top=10&$orderby=Name desc&$filter=(Gender eq 'male' and startswith(Name, 'ba') and endswith(Name, 'E'))`
+        );
       });
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Barr Page');

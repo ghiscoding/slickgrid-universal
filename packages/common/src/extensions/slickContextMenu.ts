@@ -10,7 +10,12 @@ import type {
 } from '../interfaces/index.js';
 import type { SlickEventData, SlickGrid } from '../core/index.js';
 import { DelimiterType, FileType } from '../enums/index.js';
-import { type ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, type TextExportService } from '../services/index.js';
+import {
+  type ExcelExportService,
+  getCellValueFromQueryFieldGetter,
+  getTranslationPrefix,
+  type TextExportService,
+} from '../services/index.js';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
@@ -65,7 +70,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     this._addonOptions = { ...this._defaults, ...contextMenuOptions };
 
     // merge the original commands with the built-in internal commands
-    const originalCommandItems = this._addonOptions && Array.isArray(this._addonOptions.commandItems) ? this._addonOptions.commandItems : [];
+    const originalCommandItems =
+      this._addonOptions && Array.isArray(this._addonOptions.commandItems) ? this._addonOptions.commandItems : [];
     this._addonOptions.commandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
     this._addonOptions = { ...this._addonOptions };
     this.sharedService.gridOptions.contextMenu = this._addonOptions;
@@ -190,7 +196,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
                 return true;
               }
             } else if (columnDef && dataContext.hasOwnProperty(columnDef.field)) {
-              return dataContext[columnDef.field] !== '' && dataContext[columnDef.field] !== null && dataContext[columnDef.field] !== undefined;
+              return (
+                dataContext[columnDef.field] !== '' && dataContext[columnDef.field] !== null && dataContext[columnDef.field] !== undefined
+              );
             }
             return false;
           },

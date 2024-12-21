@@ -837,9 +837,9 @@ function renderItemCallbackWith4Corners(item: any): string {
   </h2>
 
   <div class="subtitle">
-    The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons to see the
-    difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional because it
-    requires to read the first thousand rows and do extra width calculation.
+    The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons to see
+    the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional
+    because it requires to read the first thousand rows and do extra width calculation.
   </div>
 
   <h4 class="ml-3">Container Width (950px)</h4>
@@ -847,11 +847,19 @@ function renderItemCallbackWith4Corners(item: any): string {
   <div class="row">
     <div class="ml-2 mb-2 mr-2">
       <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
-        <label class="btn btn-sm btn-outline-secondary btn-icon" :class="isUsingDefaultResize ? 'active' : ''" data-test="autosize-columns-btn">
+        <label
+          class="btn btn-sm btn-outline-secondary btn-icon"
+          :class="isUsingDefaultResize ? 'active' : ''"
+          data-test="autosize-columns-btn"
+        >
           <input type="radio" class="btn-check" name="options" :checked="isUsingDefaultResize" @click="handleDefaultResizeColumns()" />
           <i class="mdi mdi-arrow-expand"></i> (default resize) by "autosizeColumns"
         </label>
-        <label class="btn btn-sm btn-outline-secondary btn-icon" :class="isUsingDefaultResize ? '' : 'active'" data-test="resize-by-content-btn">
+        <label
+          class="btn btn-sm btn-outline-secondary btn-icon"
+          :class="isUsingDefaultResize ? '' : 'active'"
+          data-test="resize-by-content-btn"
+        >
           <input type="radio" class="btn-check" name="options" :checked="!isUsingDefaultResize" @click="handleNewResizeColumns()" />
           <i class="mdi mdi-arrow-expand"></i> Resize by Cell Content
         </label>

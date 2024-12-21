@@ -391,7 +391,10 @@ export class FilterService {
           // in the rare case of an empty search term (it can happen when creating an external grid global search)
           // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
           if (parsedSearchTerms === undefined) {
-            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, searchColFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
+            parsedSearchTerms = getParsedSearchTermsByFieldType(
+              searchColFilter.searchTerms,
+              searchColFilter.columnDef.type || FieldType.string
+            ); // parsed term could be a single value or an array of values
             if (parsedSearchTerms !== undefined) {
               searchColFilter.parsedSearchTerms = parsedSearchTerms;
             }
@@ -638,7 +641,12 @@ export class FilterService {
 
             // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
             // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)
-            if (conditionResult && isNotExcludingChildAndValidateOnlyTreeColumn && hasChildren && columnFilter.columnId === treeDataColumnId) {
+            if (
+              conditionResult &&
+              isNotExcludingChildAndValidateOnlyTreeColumn &&
+              hasChildren &&
+              columnFilter.columnId === treeDataColumnId
+            ) {
               filteredParents.set(item[primaryDataId], true);
               break;
             }
@@ -1027,7 +1035,8 @@ export class FilterService {
 
       if (
         Array.isArray(filter.searchTerms) &&
-        (filter.searchTerms.length > 1 || (filter.searchTerms.length === 1 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')))
+        (filter.searchTerms.length > 1 ||
+          (filter.searchTerms.length === 1 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')))
       ) {
         // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
         this._columnFilters[filter.columnId] = {
@@ -1240,11 +1249,15 @@ export class FilterService {
 
       // event might have been created as a CustomEvent (e.g. CompoundDateFilter), without being a valid SlickEventData,
       // if so we will create a new SlickEventData and merge it with that CustomEvent to avoid having SlickGrid errors
-      const eventData = event && typeof (event as any).isPropagationStopped !== 'function' ? extend({}, new SlickEventData(), event) : event;
+      const eventData =
+        event && typeof (event as any).isPropagationStopped !== 'function' ? extend({}, new SlickEventData(), event) : event;
 
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = (event as KeyboardEvent)?.key;
-      if (this._onSearchChange && (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))) {
+      if (
+        this._onSearchChange &&
+        (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))
+      ) {
         const eventArgs = {
           clearFilterTriggered: args.clearFilterTriggered,
           shouldTriggerQuery: args.shouldTriggerQuery,

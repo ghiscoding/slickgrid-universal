@@ -134,7 +134,11 @@ defineExpose({
         <nav aria-label="Page navigation">
           <ul class="custom-pagination-ul">
             <li class="li page-item seek-next" :class="{ disabled: isRightPaginationDisabled }" @click="onNextPageClicked($event)">
-              <a class="pagination-link icon-seek-next mdi mdi-chevron-down mdi-22px mdi-rotate-270" aria-label="Next Page" role="button"></a>
+              <a
+                class="pagination-link icon-seek-next mdi mdi-chevron-down mdi-22px mdi-rotate-270"
+                aria-label="Next Page"
+                role="button"
+              ></a>
             </li>
             <li class="li page-item seek-end" :class="{ disabled: isRightPaginationDisabled }">
               <a

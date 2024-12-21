@@ -541,9 +541,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/grid-state-preset" target="_blank">Wiki - Grid Preset</a>
       </li>
       <li>
-        <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only purpose
-        is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state before you did the
-        action). Also changing Page Size to 50,000 will also throw which again is for demo purposes.
+        <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only
+        purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state before you
+        did the action). Also changing Page Size to 50,000 will also throw which again is for demo purposes.
       </li>
     </ul>
   </div>

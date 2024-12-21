@@ -387,9 +387,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <ul>
         <li>Why can't we use Vue Component as Customer Formatter and why do I see a slight delay in loading the data?</li>
         <li>
-          It's totally normal since SlickGrid Formatters only accept strings (synchronously), so we cannot use that (Vue requires at least 1 full
-          cycle to render the element), so we are left with SlickGrid "asyncPostRender" and it works but as the name suggest it's async users
-          might see noticeable delay in loading the data
+          It's totally normal since SlickGrid Formatters only accept strings (synchronously), so we cannot use that (Vue requires at least 1
+          full cycle to render the element), so we are left with SlickGrid "asyncPostRender" and it works but as the name suggest it's async
+          users might see noticeable delay in loading the data
         </li>
       </ul>
     </ul>
@@ -436,7 +436,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
           <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" @click="vueGrid.filterService.clearFilters()">
             Clear Filters
           </button>
-          <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="clear-sorting" @click="vueGrid.sortService.clearSorting()">
+          <button
+            class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            data-test="clear-sorting"
+            @click="vueGrid.sortService.clearSorting()"
+          >
             Clear Sorting
           </button>
         </div>

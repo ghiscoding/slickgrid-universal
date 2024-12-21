@@ -558,7 +558,10 @@ describe('Example 31 - OData Grid using RxJS', () => {
         .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
 
-      cy.get('[data-name="editor-gender"]').find('li.selected').find('input[data-name=selectItemeditor-gender][value=male]').should('exist');
+      cy.get('[data-name="editor-gender"]')
+        .find('li.selected')
+        .find('input[data-name=selectItemeditor-gender][value=male]')
+        .should('exist');
     });
 
     it('should click on "Add Other Gender via RxJS" button', () => {
@@ -586,7 +589,10 @@ describe('Example 31 - OData Grid using RxJS', () => {
         .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
 
-      cy.get('[data-name="editor-gender"]').find('li.selected').find('input[data-name=selectItemeditor-gender][value=male]').should('exist');
+      cy.get('[data-name="editor-gender"]')
+        .find('li.selected')
+        .find('input[data-name=selectItemeditor-gender][value=male]')
+        .should('exist');
     });
 
     it('should be able to change the Gender editor on the first row to the new option "other"', () => {

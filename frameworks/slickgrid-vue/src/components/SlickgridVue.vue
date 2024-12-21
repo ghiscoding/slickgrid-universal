@@ -136,7 +136,14 @@ const extensionService: ExtensionService = new ExtensionService(
   translaterService,
   () => gridService
 );
-const gridStateService = new GridStateService(extensionService, filterService, eventPubSubService, sharedService, sortService, treeDataService);
+const gridStateService = new GridStateService(
+  extensionService,
+  filterService,
+  eventPubSubService,
+  sharedService,
+  sortService,
+  treeDataService
+);
 const gridService = new GridService(
   gridStateService,
   filterService,
@@ -686,7 +693,9 @@ function createBackendApiInternalPostProcessCallback(gridOptions: GridOption) {
     if (typeof backendApiService.getDatasetName === 'function') {
       backendApi.internalPostProcess = (processResult: any) => {
         const datasetName =
-          backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function' ? backendApiService.getDatasetName() : '';
+          backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function'
+            ? backendApiService.getDatasetName()
+            : '';
         if (processResult?.data[datasetName]) {
           const data =
             'nodes' in processResult.data[datasetName]
@@ -792,7 +801,10 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
         handleOnItemCountChanged(dataView.getFilteredItemCount() || 0, args.itemCount);
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
-        if (args.itemCount > 0 && (gridOptions.autosizeColumnsByCellContentOnFirstLoad || gridOptions.enableAutoResizeColumnsByCellContent)) {
+        if (
+          args.itemCount > 0 &&
+          (gridOptions.autosizeColumnsByCellContentOnFirstLoad || gridOptions.enableAutoResizeColumnsByCellContent)
+        ) {
           resizerService.resizeColumnsByCellContent(!gridOptions?.resizeByContentOnlyOnFirstLoad);
         }
       });
@@ -886,7 +898,8 @@ function bindBackendCallbackFunctions(gridOptions: GridOption) {
         } else if (process && rxjs?.isObservable(process)) {
           subscriptions.push(
             (process as Observable<any>).subscribe(
-              (processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
+              (processResult: any) =>
+                backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
               (error: any) => backendUtilityService.onBackendError(error, backendApi)
             )
           );
@@ -1065,7 +1078,10 @@ function refreshGridData(dataset: any[], totalCount?: number) {
     );
 
     if (_paginationOptions.value && _gridOptions.value?.pagination && _gridOptions.value?.backendServiceApi) {
-      const paginationOptions = setPaginationOptionsWhenPresetDefined(_gridOptions.value as GridOption, _paginationOptions.value as Pagination);
+      const paginationOptions = setPaginationOptionsWhenPresetDefined(
+        _gridOptions.value as GridOption,
+        _paginationOptions.value as Pagination
+      );
       // when we have a totalCount use it, else we'll take it from the pagination object
       // only update the total items if it's different to avoid refreshing the UI
       const totalRecords = totalCount !== undefined ? totalCount : _gridOptions.value?.pagination?.totalItems;

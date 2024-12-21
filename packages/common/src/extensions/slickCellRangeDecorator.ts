@@ -57,7 +57,8 @@ export class SlickCellRangeDecorator {
     if (!this._elem) {
       this._elem = createDomElement('div', { className: this._options.selectionCssClass });
       Object.keys(this._options.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {
-        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = this._options.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
+        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] =
+          this._options.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
       });
       this._elem.style.position = 'absolute';
       this.grid.getActiveCanvasNode()?.appendChild(this._elem);

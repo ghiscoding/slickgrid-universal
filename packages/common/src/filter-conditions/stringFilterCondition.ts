@@ -16,7 +16,9 @@ export const executeStringFilterCondition: FilterCondition = ((options: FilterCo
   options.cellValue = options.cellValue === undefined || options.cellValue === null ? '' : options.cellValue.toString();
 
   // make both the cell value and search value lower for case insensitive comparison
-  const cellValue = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(options.cellValue, true) : options.cellValue.toLowerCase();
+  const cellValue = options?.ignoreAccentOnStringFilterAndSort
+    ? removeAccentFromText(options.cellValue, true)
+    : options.cellValue.toLowerCase();
   if (typeof searchValue1 === 'string') {
     searchValue1 = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(searchValue1, true) : searchValue1.toLowerCase();
   }

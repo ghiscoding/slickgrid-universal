@@ -114,9 +114,9 @@ function toggleSubTitle() {
   </h2>
 
   <div class="subtitle">
-    Allow creating a grid dynamically by importing an external CSV or Excel file. This script demo will read the CSV file and will consider the
-    first row as the column header and create the column definitions accordingly, while the next few rows will be considered the dataset. Note
-    that this example is demoing a CSV file import but in your application you could easily implemnt an Excel file uploading.
+    Allow creating a grid dynamically by importing an external CSV or Excel file. This script demo will read the CSV file and will consider
+    the first row as the column header and create the column definitions accordingly, while the next few rows will be considered the
+    dataset. Note that this example is demoing a CSV file import but in your application you could easily implemnt an Excel file uploading.
   </div>
 
   <div>A default CSV file can be download <a id="template-dl" :href="templateUrl">here</a>.</div>

@@ -408,7 +408,9 @@ export class SlickDraggableGrouping {
     entry: any
   ): void {
     this._bindingEventService.bind(groupRemoveIconElm, 'click', () => {
-      const boundedElms = this._bindingEventService.boundedEvents.filter((boundedEvent: any) => boundedEvent.element === groupRemoveIconElm);
+      const boundedElms = this._bindingEventService.boundedEvents.filter(
+        (boundedEvent: any) => boundedEvent.element === groupRemoveIconElm
+      );
       for (const boundedEvent of boundedElms) {
         this._bindingEventService.unbind(boundedEvent.element, 'click', boundedEvent.listener);
       }
@@ -572,7 +574,9 @@ export class SlickDraggableGrouping {
     if (draggablePlaceholderElm && this._dropzoneElm) {
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragover', (e: Event) => e.preventDefault());
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', () => this._dropzoneElm.classList.add('slick-dropzone-hover'));
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () => this._dropzoneElm.classList.remove('slick-dropzone-hover'));
+      this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () =>
+        this._dropzoneElm.classList.remove('slick-dropzone-hover')
+      );
     }
   }
 

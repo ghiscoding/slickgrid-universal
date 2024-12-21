@@ -533,7 +533,11 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (insertOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (
+      insertOptions.selectRow &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+    ) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -842,7 +846,9 @@ export class GridService {
 
     const upsertedRows: { added: number | undefined; updated: number | undefined }[] = [];
     items.forEach((item: T) => {
-      upsertedRows.push(this.upsertItem<T>(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false }));
+      upsertedRows.push(
+        this.upsertItem<T>(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false })
+      );
     });
 
     // end the bulk transaction since we're all done

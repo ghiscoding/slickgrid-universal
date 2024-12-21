@@ -29,21 +29,25 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should select border shown in cell selection model, and hidden in row selection model when dragging', { scrollBehavior: false }, () => {
-    cy.getNthCell(0, 1, '', { parentSelector: '.grid17-1', rowHeight: CELL_HEIGHT }).as('cell1').dragStart();
-    cy.get('.grid17-1 .slick-range-decorator').should('be.exist').and('have.css', 'border-color').and('not.equal', 'none');
-    cy.get('@cell1').dragCell(0, 5).dragEnd('.grid17-1');
-    cy.get('.grid17-1 .slick-range-decorator').should('not.be.exist');
-    cy.get('.grid17-1 .slick-cell.selected').should('have.length', 6);
+  it(
+    'should select border shown in cell selection model, and hidden in row selection model when dragging',
+    { scrollBehavior: false },
+    () => {
+      cy.getNthCell(0, 1, '', { parentSelector: '.grid17-1', rowHeight: CELL_HEIGHT }).as('cell1').dragStart();
+      cy.get('.grid17-1 .slick-range-decorator').should('be.exist').and('have.css', 'border-color').and('not.equal', 'none');
+      cy.get('@cell1').dragCell(0, 5).dragEnd('.grid17-1');
+      cy.get('.grid17-1 .slick-range-decorator').should('not.be.exist');
+      cy.get('.grid17-1 .slick-cell.selected').should('have.length', 6);
 
-    cy.getNthCell(0, 1, '', { parentSelector: '.grid17-2', rowHeight: CELL_HEIGHT }).as('cell2').dragStart();
-    cy.get('.grid17-2 .slick-range-decorator').should('be.exist').and('have.css', 'border-style').and('equal', 'none');
-    cy.get('@cell2').dragCell(5, 1).dragEnd('.grid17-2');
-    cy.get('.grid17-2 .slick-range-decorator').should('not.be.exist');
-    cy.get('.grid17-2 .slick-row:nth-child(-n+6)')
-      .children(':not(.cell-unselectable)')
-      .each(($child) => expect($child.attr('class')).to.include('selected'));
-  });
+      cy.getNthCell(0, 1, '', { parentSelector: '.grid17-2', rowHeight: CELL_HEIGHT }).as('cell2').dragStart();
+      cy.get('.grid17-2 .slick-range-decorator').should('be.exist').and('have.css', 'border-style').and('equal', 'none');
+      cy.get('@cell2').dragCell(5, 1).dragEnd('.grid17-2');
+      cy.get('.grid17-2 .slick-range-decorator').should('not.be.exist');
+      cy.get('.grid17-2 .slick-row:nth-child(-n+6)')
+        .children(':not(.cell-unselectable)')
+        .each(($child) => expect($child.attr('class')).to.include('selected'));
+    }
+  );
 
   function testScroll() {
     return getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topLeft', 'right', 0, 1).then((cellScrollDistance) => {
@@ -267,13 +271,17 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     resetScrollInFrozen();
   });
 
-  it('should have a frozen & grouping by Duration grid after click Set/Clear grouping by Duration button', { scrollBehavior: false }, () => {
-    cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
-    cy.get(`.grid17-1 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
-    cy.get(`.grid17-2 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
-    cy.get('.grid17-1 .grid-canvas-top.grid-canvas-left').contains('Duration');
-    cy.get('.grid17-2 .grid-canvas-top.grid-canvas-left').contains('Duration');
-  });
+  it(
+    'should have a frozen & grouping by Duration grid after click Set/Clear grouping by Duration button',
+    { scrollBehavior: false },
+    () => {
+      cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
+      cy.get(`.grid17-1 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
+      cy.get(`.grid17-2 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
+      cy.get('.grid17-1 .grid-canvas-top.grid-canvas-left').contains('Duration');
+      cy.get('.grid17-2 .grid-canvas-top.grid-canvas-left').contains('Duration');
+    }
+  );
 
   function testDragInGrouping(selector) {
     cy.getNthCell(7, 0, 'bottomRight', { parentSelector: selector, rowHeight: CELL_HEIGHT }).dragStart();

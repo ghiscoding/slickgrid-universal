@@ -41,7 +41,11 @@ export function cancellablePromise<T = any>(inputPromise: Promise<T>): Cancellab
  * @param object which could be of type Promise or Observable
  * @param fromServiceName string representing the caller service name and will be used if we throw a casting problem error
  */
-export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> | Observable<T> | Subject<T>, fromServiceName = ''): Promise<T> {
+export function castObservableToPromise<T>(
+  rxjs: RxJsFacade,
+  input: Promise<T> | Observable<T> | Subject<T>,
+  fromServiceName = ''
+): Promise<T> {
   let promise: any = input;
 
   if (input instanceof Promise) {

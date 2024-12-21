@@ -45,7 +45,10 @@ export function textValidator(inputValue: any, options: TextValidatorOptions): E
     isValid = false;
     outputMsg =
       errorMsg ||
-      Constants.VALIDATION_EDITOR_TEXT_LENGTH_BETWEEN.replace(/{{minLength}}|{{maxLength}}/gi, (matched) => (mapValidation as any)[matched]);
+      Constants.VALIDATION_EDITOR_TEXT_LENGTH_BETWEEN.replace(
+        /{{minLength}}|{{maxLength}}/gi,
+        (matched) => (mapValidation as any)[matched]
+      );
   } else if (
     minLength !== undefined &&
     inputValueLength !== null &&

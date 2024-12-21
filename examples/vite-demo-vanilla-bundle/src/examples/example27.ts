@@ -59,7 +59,12 @@ export default class Example27 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid27`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(
+      gridContainerElm,
+      this.columnDefinitions,
+      { ...ExampleGridOptions, ...this.gridOptions },
+      this.dataset
+    );
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
@@ -347,7 +352,9 @@ export default class Example27 {
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataset.length || 0;
       this.tagDataClass =
-        this.metricsItemCount === this.metricsTotalItemCount ? 'tag tag-data is-primary fully-loaded' : 'tag tag-data is-primary partial-load';
+        this.metricsItemCount === this.metricsTotalItemCount
+          ? 'tag tag-data is-primary fully-loaded'
+          : 'tag tag-data is-primary partial-load';
     }
   }
 

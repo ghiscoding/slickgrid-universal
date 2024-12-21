@@ -299,7 +299,11 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         'Analysis - Effort-Driven',
       ];
 
-      cy.get('#grid18').find('.slick-preheader-panel .slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('#grid18')
+        .find('.slick-preheader-panel .slick-header-column:nth(1)')
+        .trigger('mouseover')
+        .trigger('contextmenu')
+        .invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -332,7 +336,11 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         'Analysis - Effort-Driven',
       ];
 
-      cy.get('#grid18').find('.slick-preheader-panel .slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('#grid18')
+        .find('.slick-preheader-panel .slick-header-column:nth(1)')
+        .trigger('mouseover')
+        .trigger('contextmenu')
+        .invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')

@@ -57,7 +57,14 @@ const tooltipTaskAsyncFormatter: Formatter = (row, cell, _value, column: Column,
 
   // use a 2nd Formatter to get the percent completion
   // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
-  const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid) as HTMLElement;
+  const completionBar = Formatters.percentCompleteBarWithText(
+    row,
+    cell,
+    dataContext.percentComplete,
+    column,
+    dataContext,
+    grid
+  ) as HTMLElement;
   const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>
       <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>

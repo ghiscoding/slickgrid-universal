@@ -659,7 +659,11 @@ export class SlickVanillaGridBundle<TData = any> {
         }
         this.dataView?.syncGridSelection(this.slickGrid, preservedRowSelection);
       } else if (typeof syncGridSelection === 'object') {
-        this.dataView?.syncGridSelection(this.slickGrid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
+        this.dataView?.syncGridSelection(
+          this.slickGrid,
+          syncGridSelection.preserveHidden,
+          syncGridSelection.preserveHiddenOnSelectionChange
+        );
       }
     }
 
@@ -994,7 +998,8 @@ export class SlickVanillaGridBundle<TData = any> {
           } else if (process && this.rxjs?.isObservable(process)) {
             this.subscriptions.push(
               (process as Observable<any>).subscribe(
-                (processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
+                (processResult: any) =>
+                  backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
                 (error: any) => backendUtilityService.onBackendError(error, backendApi)
               )
             );
@@ -1077,7 +1082,13 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     // expand/autofit columns on first page load
-    if (grid && options?.enableAutoResize && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && !this._isAutosizeColsCalled) {
+    if (
+      grid &&
+      options?.enableAutoResize &&
+      options.autoFitColumnsOnFirstLoad &&
+      options.enableAutoSizeColumns &&
+      !this._isAutosizeColsCalled
+    ) {
       grid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
@@ -1686,7 +1697,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
       const currentEditor = this.slickGrid.getCellEditor() as AutocompleterEditor | SelectEditor;
-      if (currentEditor?.disable && currentEditor?.renderDomElement) {
+      if (currentEditor?.disable && currentEditor.renderDomElement) {
         if (typeof currentEditor.destroy === 'function') {
           currentEditor.destroy();
         }

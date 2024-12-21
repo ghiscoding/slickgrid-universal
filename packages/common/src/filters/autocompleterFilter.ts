@@ -297,7 +297,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // user might want to filter certain items of the collection
     if (this.columnFilter && this.columnFilter.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
-      const filterCollectionBy = (this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass) || null;
+      const filterCollectionBy =
+        (this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass) || null;
       outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
     }
 

@@ -307,7 +307,8 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       this._bindEventService.bind(
         commandLiElm,
         'click',
-        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
+        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
+          itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
         undefined,
         eventGroupName
       );

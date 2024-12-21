@@ -59,7 +59,10 @@ describe('Example 13 - Grouping & Aggregators', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-1 .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-1 .slick-group-title`).should('contain', 'Effort-Driven: True');
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-0 .slick-cell:nth(2)`).should('contain', 'Total: 0');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-0 .slick-cell:nth(2)`).should(
+        'contain',
+        'Total: 0'
+      );
     });
 
     it('should "Group by Duration then Effort-Driven then Percent" and expect fist 2 rows to be expanded, 3rd row to be collapsed then 4th row to have group total', () => {
@@ -80,7 +83,9 @@ describe('Example 13 - Grouping & Aggregators', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-2 .slick-group-toggle.collapsed`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"].slick-group-level-2 .slick-group-title`).contains(/^% Complete: [0-9]/);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`).contains(/^Avg: [0-9]%$/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2 .slick-cell:nth(3)`).contains(
+        /^Avg: [0-9]%$/
+      );
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"].slick-group-totals.slick-group-level-2`)
         .find('.slick-cell:nth(3)')
         .contains('Avg: ');
@@ -188,7 +193,9 @@ describe('Example 13 - Grouping & Aggregators', () => {
     it('should open Grid Menu and have a "Custom Label" as the 1st column label', () => {
       cy.get('#grid13').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
-      cy.get(`.slick-grid-menu:visible`).find('.slick-column-picker-list li:nth-child(1) .checkbox-label').should('have.text', 'Custom Label');
+      cy.get(`.slick-grid-menu:visible`)
+        .find('.slick-column-picker-list li:nth-child(1) .checkbox-label')
+        .should('have.text', 'Custom Label');
 
       cy.get('[data-dismiss="slick-grid-menu"]').click();
     });

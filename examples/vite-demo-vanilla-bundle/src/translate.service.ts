@@ -1,4 +1,9 @@
-import { getDescendantProperty, type PubSubService, type TranslaterService, type TranslateServiceEventName } from '@slickgrid-universal/common';
+import {
+  getDescendantProperty,
+  type PubSubService,
+  type TranslaterService,
+  type TranslateServiceEventName,
+} from '@slickgrid-universal/common';
 import { fetch } from 'whatwg-fetch/fetch';
 
 interface Locales {
