@@ -92,7 +92,7 @@
     "eslint-plugin-cypress": "^4.1.0",
     "eslint-plugin-n": "^17.15.0",
     "globals": "^15.13.0",
-    "happy-dom": "^15.11.7",
+    "happy-dom": "^16.0.1",
     "husky": "^9.1.7",
     "jsdom": "^25.0.1",
     "jsdom-global": "^3.0.2",
