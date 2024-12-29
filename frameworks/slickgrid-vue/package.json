@@ -2,6 +2,8 @@
   "name": "slickgrid-vue",
   "version": "0.2.1",
   "description": "Slickgrid-Vue",
+  "license": "MIT",
+  "author": "Ghislain B.",
   "type": "module",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
