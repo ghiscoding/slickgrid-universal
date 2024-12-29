@@ -30,7 +30,7 @@ This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) 
 
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it is a monorepo project:
-1. it was originally created to remove duplicated code from the first 2 framework ports
+1. originally created to remove duplicated code from these 2 ports
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
    - prior to this monorepo, these 2 projects had ~90% duplicated code in common which was not very DRY.
    - being a common source makes it a lot easier to maintain by pushing fixes in this common project here.
