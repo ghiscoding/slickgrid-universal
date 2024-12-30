@@ -247,12 +247,16 @@ export class SlickCellSelectionModel implements SelectionModel {
             this._prevSelectedRow = active.row;
           }
 
-          if (e.shiftKey && !e.ctrlKey && e.key === 'Home') {
+          if ((!e.ctrlKey && e.shiftKey && e.key === 'Home') || (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft')) {
             toCell = 0;
             toRow = active.row;
-          } else if (e.shiftKey && !e.ctrlKey && e.key === 'End') {
+          } else if ((!e.ctrlKey && e.shiftKey && e.key === 'End') || (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight')) {
             toCell = colLn - 1;
             toRow = active.row;
+          } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
+            toRow = 0;
+          } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
+            toRow = dataLn - 1;
           } else if (e.ctrlKey && e.shiftKey && e.key === 'Home') {
             toCell = 0;
             toRow = 0;

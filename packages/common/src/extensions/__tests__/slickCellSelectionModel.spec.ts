@@ -489,6 +489,30 @@ describe('CellSelectionModel Plugin', () => {
     expect(scrollCellSpy).toHaveBeenCalledWith(100, 2, false);
   });
 
+  it('should call "setSelectedRanges" with Slick Range from current position to row index 0 horizontally when using Shift+Ctrl+ArrowLeft key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 100;
+    const expectedRowZeroIdx = 0;
+    vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 120, contains: () => false },
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['ctrlKey', 'shiftKey'], 'ArrowLeft');
+    gridStub.onKeyDown.notify({ cell: 2, row: 101, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: expect.any(Function) } as unknown as SlickRange,
+      { fromCell: expectedRowZeroIdx, fromRow: notifyingRowNumber, toCell: 2, toRow: 100 },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(100, 2, false);
+  });
+
   it('should call "setSelectedRanges" with Slick Range from current position to same row last cell index horizontally when using Shift+End key combo when triggered by "onKeyDown"', () => {
     const notifyingRowNumber = 100;
     const columnsLn = mockColumns.length;
@@ -511,6 +535,76 @@ describe('CellSelectionModel Plugin', () => {
     ];
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
     expect(scrollCellSpy).toHaveBeenCalledWith(100, 2, false);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to same row last cell index horizontally when using Shift+Ctrl+ArrowRight key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 100;
+    const columnsLn = mockColumns.length;
+    vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 120, contains: () => false },
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['ctrlKey', 'shiftKey'], 'ArrowRight');
+    gridStub.onKeyDown.notify({ cell: 1, row: 101, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: expect.any(Function) } as unknown as SlickRange,
+      { fromCell: columnsLn - 1, fromRow: notifyingRowNumber, toCell: 2, toRow: 100 },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(100, 2, false);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to grid top on same column when using Ctrl+Shift+ArrowUp key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 100;
+    vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 120, contains: () => false },
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['ctrlKey', 'shiftKey'], 'ArrowUp');
+    gridStub.onKeyDown.notify({ cell: 2, row: 101, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: expect.any(Function) } as unknown as SlickRange,
+      { fromCell: 2, fromRow: 0, toCell: 2, toRow: 100 },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(100, 2, false);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to grid bottom on same column when using Ctrl+Shift+ArrowDown key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 100;
+    vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = vi.spyOn(gridStub, 'scrollCellIntoView');
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 120, contains: () => false },
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['ctrlKey', 'shiftKey'], 'ArrowDown');
+    gridStub.onKeyDown.notify({ cell: 2, row: 101, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: expect.any(Function) } as unknown as SlickRange,
+      { fromCell: 2, fromRow: 100, toCell: 2, toRow: NB_ITEMS - 1 },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(NB_ITEMS - 1, 2, false);
   });
 
   it('should call "setSelectedRanges" with Slick Range from current position to cell,row index 0 when using Ctrl+Shift+Home key combo when triggered by "onKeyDown"', () => {
