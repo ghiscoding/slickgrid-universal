@@ -5191,10 +5191,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             return;
           }
         }
-        if (e.key === 'Home') {
-          handled = e.ctrlKey ? this.navigateTop() : this.navigateRowStart();
-        } else if (e.key === 'End') {
-          handled = e.ctrlKey ? this.navigateBottom() : this.navigateRowEnd();
+        if (e.ctrlKey && e.key === 'Home') {
+          this.navigateTopStart();
+        } else if (e.ctrlKey && e.key === 'End') {
+          this.navigateBottomEnd();
+        } else if (e.ctrlKey && e.key === 'ArrowUp') {
+          this.navigateTop();
+        } else if (e.ctrlKey && e.key === 'ArrowDown') {
+          this.navigateBottom();
+        } else if ((e.ctrlKey && e.key === 'ArrowLeft') || (!e.ctrlKey && e.key === 'Home')) {
+          this.navigateRowStart();
+        } else if ((e.ctrlKey && e.key === 'ArrowRight') || (!e.ctrlKey && e.key === 'End')) {
+          this.navigateRowEnd();
         }
       }
     }
@@ -6106,7 +6114,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.navigateToRow(this.getDataLength() - 1);
   }
 
-  protected navigateToRow(row: number): boolean {
+  navigateToRow(row: number): boolean {
     const num_rows = this.getDataLength();
     if (!num_rows) {
       return true;
@@ -6423,6 +6431,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Navigate to the end row in the grid */
   navigateRowEnd(): boolean | undefined {
+    return this.navigate('end');
+  }
+
+  /** Navigate to coordinate 0,0 (top left home) */
+  navigateTopStart(): boolean | undefined {
+    this.navigateToRow(0);
+    return this.navigate('home');
+  }
+
+  /** Navigate to bottom row end (bottom right end) */
+  navigateBottomEnd(): boolean | undefined {
+    this.navigateBottom();
     return this.navigate('end');
   }
 

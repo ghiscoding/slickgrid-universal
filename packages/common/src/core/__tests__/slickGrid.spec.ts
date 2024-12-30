@@ -6504,13 +6504,48 @@ describe('SlickGrid core file', () => {
         const navigateRowStartSpy = vi.spyOn(grid, 'navigateRowStart');
         const event = new CustomEvent('keydown');
         Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: false });
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigateRowStartSpy).toHaveBeenCalled();
       });
 
-      it('should call navigateTop() when triggering Ctrl+Home key', () => {
+      it('should call navigateRowStart() when triggering Ctrl+ArrowLeft key', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+        const navigateRowStartSpy = vi.spyOn(grid, 'navigateRowStart');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowLeft' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRowStartSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateTopStart() when triggering Ctrl+Home key', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+        const navigateTopStartSpy = vi.spyOn(grid, 'navigateTopStart');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateTopStartSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateTop() when triggering Ctrl+ArrowUp key', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
           { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
@@ -6519,12 +6554,29 @@ describe('SlickGrid core file', () => {
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
         const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
         Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigateTopSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateBottomEnd() when triggering Ctrl+End key', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+        const navigateBottomEndSpy = vi.spyOn(grid, 'navigateBottomEnd');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateBottomEndSpy).toHaveBeenCalled();
       });
 
       it('should call navigateRowEnd() when triggering End key', () => {
@@ -6543,7 +6595,24 @@ describe('SlickGrid core file', () => {
         expect(navigateRowEndSpy).toHaveBeenCalled();
       });
 
-      it('should call navigateBottom() when triggering Ctrl+End key', () => {
+      it('should call navigateRowEnd() when triggering Ctrl+ArrowRight key', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+        const navigateRowEndSpy = vi.spyOn(grid, 'navigateRowEnd');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowRight' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRowEndSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateBottom() when triggering Ctrl+ArrowDown key', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
           { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
@@ -6552,12 +6621,29 @@ describe('SlickGrid core file', () => {
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateBottomSpy = vi.spyOn(grid, 'navigateBottom');
         const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowDown' });
         Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigateBottomSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateTop() when triggering Ctrl+ArrowUp key', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+        const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateTopSpy).toHaveBeenCalled();
       });
 
       it('should call navigatePageDown() when triggering PageDown key', () => {

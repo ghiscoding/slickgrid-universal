@@ -66,7 +66,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell B14 then Ctrl+Shift+End with selection B14-CV19', () => {
       cy.getCell(14, 3, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_B14').click();
 
-      cy.get('@cell_B14').type('{ctrl}{shift}{end}');
+      cy.get('@cell_B14').type('{ctrl}{shift}{end}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":14,"fromCell":3,"toRow":19,"toCell":101}');
     });
@@ -74,7 +74,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell CP3 then Ctrl+Shift+Home with selection A0-CP3', () => {
       cy.getCell(3, 94, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CP3').click();
 
-      cy.get('@cell_CP3').type('{ctrl}{shift}{home}');
+      cy.get('@cell_CP3').type('{ctrl}{shift}{home}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":0,"fromCell":0,"toRow":3,"toCell":94}');
     });
@@ -82,7 +82,15 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell CE7 then Shift+Home with selection A0-CE7', () => {
       cy.getCell(3, 83, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CE7').click();
 
-      cy.get('@cell_CE7').type('{shift}{home}');
+      cy.get('@cell_CE7').type('{shift}{home}', { release: false });
+
+      cy.get('#selectionRange').should('have.text', '{"fromRow":3,"fromCell":0,"toRow":3,"toCell":83}');
+    });
+
+    it('should click on cell CE7 then Shift+Ctrl+ArrowLeft with selection A0-CE7', () => {
+      cy.getCell(3, 83, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CE7').click();
+
+      cy.get('@cell_CE7').type('{shift}{ctrl}{leftarrow}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":3,"fromCell":0,"toRow":3,"toCell":83}');
     });
@@ -90,7 +98,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell CG3 then Shift+PageDown multiple times with current page selection starting at E3 with selection E3-19', () => {
       cy.getCell(3, 85, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CG3').click();
 
-      cy.get('@cell_CG3').type('{shift}{pagedown}{pagedown}{pagedown}');
+      cy.get('@cell_CG3').type('{shift}{pagedown}{pagedown}{pagedown}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":3,"fromCell":85,"toRow":19,"toCell":85}');
     });
@@ -154,18 +162,42 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
       cy.get('#selectionRange').should('have.text', '{"fromRow":46,"fromCell":6,"toRow":46,"toCell":101}');
     });
 
-    it('should click on cell CP54 then Ctrl+Shift+End keys with selection E46-CV99', () => {
-      cy.getCell(54, 95, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CP54').click();
+    it('should click on cell E46 then Shift+Ctrl+ArrowRight key with full row horizontal selection E46-CV46', () => {
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46').click();
 
-      cy.get('@cell_CP54').type('{ctrl}{shift}{end}');
+      cy.get('@cell_E46').type('{shift}{ctrl}{rightarrow}', { release: false });
 
-      cy.get('#selectionRange').should('have.text', '{"fromRow":54,"fromCell":95,"toRow":99,"toCell":101}');
+      cy.get('#selectionRange').should('have.text', '{"fromRow":46,"fromCell":6,"toRow":46,"toCell":101}');
+    });
+
+    it('should click on cell E46 then Shift+Ctrl+ArrowUp key with full column vertical top selection E0-E46', () => {
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46').click();
+
+      cy.get('@cell_E46').type('{shift}{ctrl}{uparrow}', { release: false });
+
+      cy.get('#selectionRange').should('have.text', '{"fromRow":0,"fromCell":6,"toRow":46,"toCell":6}');
+    });
+
+    it('should click on cell E46 then Shift+Ctrl+ArrowDown key with full column vertical bottom selection E46-E99', () => {
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46').click();
+
+      cy.get('@cell_E46').type('{shift}{ctrl}{downarrow}', { release: false });
+
+      cy.get('#selectionRange').should('have.text', '{"fromRow":46,"fromCell":6,"toRow":99,"toCell":6}');
+    });
+
+    it('should click on cell F85 then Ctrl+Shift+End keys with selection F85-CV99', () => {
+      cy.getCell(85, 7, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_F85').click();
+
+      cy.get('@cell_F85').type('{ctrl}{shift}{end}', { release: false });
+
+      cy.get('#selectionRange').should('have.text', '{"fromRow":85,"fromCell":7,"toRow":99,"toCell":101}');
     });
 
     it('should click on cell CP95 then Ctrl+Shift+Home keys with selection C0-CP95', () => {
       cy.getCell(95, 99, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CP95').click();
 
-      cy.get('@cell_CP95').type('{ctrl}{shift}{home}');
+      cy.get('@cell_CP95').type('{ctrl}{shift}{home}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":0,"fromCell":0,"toRow":95,"toCell":99}');
     });
@@ -173,9 +205,17 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell CR5 again then Ctrl+Home keys and expect to scroll back to cell A0 without any selection range', () => {
       cy.getCell(5, 95, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CR95').click();
 
-      cy.get('@cell_CR95').type('{ctrl}{home}');
+      cy.get('@cell_CR95').type('{ctrl}{home}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '');
+    });
+
+    it('should click on cell E20 again then Ctrl+A keys and expect to scroll select everything in the grid', () => {
+      cy.getCell(20, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E20').click();
+
+      cy.get('@cell_E20').type('{ctrl}{a}', { release: false });
+
+      cy.get('#selectionRange').should('have.text', '{"fromRow":0,"fromCell":0,"toRow":99,"toCell":101}');
     });
   });
 
@@ -187,7 +227,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell B14 then Shift+End with selection B14-24', () => {
       cy.getCell(14, 3, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_B14').click();
 
-      cy.get('@cell_B14').type('{shift}{end}');
+      cy.get('@cell_B14').type('{shift}{end}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":14,"fromCell":3,"toRow":14,"toCell":101}');
     });
@@ -195,7 +235,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell CS14 then Shift+Home with selection A14-CS14', () => {
       cy.getCell(14, 97, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CS14').click();
 
-      cy.get('@cell_CS14').type('{shift}{home}');
+      cy.get('@cell_CS14').type('{shift}{home}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":14,"fromCell":0,"toRow":14,"toCell":97}');
     });
@@ -203,7 +243,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     it('should click on cell CN3 then Shift+PageDown multiple times with current page selection starting at E3 w/selection E3-19', () => {
       cy.getCell(3, 95, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CN3').click();
 
-      cy.get('@cell_CN3').type('{shift}{pagedown}{pagedown}{pagedown}');
+      cy.get('@cell_CN3').type('{shift}{pagedown}{pagedown}{pagedown}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":3,"fromCell":95,"toRow":19,"toCell":95}');
     });
@@ -213,7 +253,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
 
       cy.getCell(15, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CN41').click();
 
-      cy.get('@cell_CN41').type('{shift}{pageup}{pageup}{pageup}');
+      cy.get('@cell_CN41').type('{shift}{pageup}{pageup}{pageup}', { release: false });
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":0,"fromCell":92,"toRow":15,"toCell":92}');
     });
