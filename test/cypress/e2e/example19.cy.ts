@@ -209,6 +209,14 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
 
       cy.get('#selectionRange').should('have.text', '');
     });
+
+    it('should click on cell E20 again then Ctrl+A keys and expect to scroll select everything in the grid', () => {
+      cy.getCell(20, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E20').click();
+
+      cy.get('@cell_E20').type('{ctrl}{a}', { release: false });
+
+      cy.get('#selectionRange').should('have.text', '{"fromRow":0,"fromCell":0,"toRow":99,"toCell":101}');
+    });
   });
 
   describe('with Pagination', () => {

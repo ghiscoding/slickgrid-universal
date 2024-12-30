@@ -187,7 +187,7 @@ export class SlickCellSelectionModel implements SelectionModel {
   }
 
   protected isKeyAllowed(key: string): boolean {
-    return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'Home', 'End'].some((k) => k === key);
+    return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'Home', 'End', 'a', 'A'].some((k) => k === key);
   }
 
   protected handleKeyDown(e: SlickEventData): void {
@@ -218,13 +218,22 @@ export class SlickCellSelectionModel implements SelectionModel {
         }
         let dRow = last.toRow - last.fromRow;
         let dCell = last.toCell - last.fromCell;
+        let toCell: undefined | number;
+        let toRow = 0;
+
+        // when using Ctrl+{a, A} we will change our position to cell 0,0 and select all grid cells
+        if (e.ctrlKey && e.key?.toLowerCase() === 'a') {
+          this._grid.setActiveCell(0, 0, false, false, true);
+          active.row = 0;
+          active.cell = 0;
+          toCell = colLn - 1;
+          toRow = dataLn - 1;
+        }
 
         // walking direction
         const dirRow = active.row === last.fromRow ? 1 : -1;
         const dirCell = active.cell === last.fromCell ? 1 : -1;
         const isSingleKeyMove = e.key!.startsWith('Arrow');
-        let toCell: undefined | number;
-        let toRow = 0;
 
         if (isSingleKeyMove && !e.ctrlKey) {
           // single cell move: (Arrow{Up/ArrowDown/ArrowLeft/ArrowRight})
