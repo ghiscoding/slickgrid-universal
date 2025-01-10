@@ -16,14 +16,16 @@ function disposeGrid() {
 }
 
 function handleFileImport(event: any) {
-  const file = event.target.files[0];
-  if (file) {
+  const file: File = event.target.files[0];
+  if (file.name.endsWith('.csv')) {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const content = e.target.result;
       dynamicallyCreateGrid(content);
     };
     reader.readAsText(file);
+  } else {
+    alert('File must be a CSV file');
   }
 }
 
