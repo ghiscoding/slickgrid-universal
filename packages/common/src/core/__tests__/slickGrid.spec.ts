@@ -4015,6 +4015,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
+      Object.defineProperty(mouseEvent, 'shiftKey', { writable: true, value: true });
       const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;

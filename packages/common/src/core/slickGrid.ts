@@ -5133,8 +5133,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected handleMouseWheel(e: MouseEvent, _delta: number, deltaX: number, deltaY: number): void {
     this.scrollHeight = this._viewportScrollContainerY.scrollHeight;
-    this.scrollTop = Math.max(0, this._viewportScrollContainerY.scrollTop - deltaY * this._options.rowHeight!);
-    this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
+    if (e.shiftKey) {
+      this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
+    } else {
+      this.scrollTop = Math.max(0, this._viewportScrollContainerY.scrollTop - deltaY * this._options.rowHeight!);
+      this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
+    }
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.preventDefault();
