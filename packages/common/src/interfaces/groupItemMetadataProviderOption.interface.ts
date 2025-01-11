@@ -1,6 +1,10 @@
 import type { Formatter } from './formatter.interface.js';
 import type { SlickCheckboxSelectColumn } from '../extensions/slickCheckboxSelectColumn.js';
 
+export interface ItemMetadataProvider {
+  getRowMetadata(item: any, row?: number, cell?: number): any;
+}
+
 export interface GroupItemMetadataProviderOption {
   /** Whether or not we want to use group select checkbox. */
   checkboxSelect?: boolean;

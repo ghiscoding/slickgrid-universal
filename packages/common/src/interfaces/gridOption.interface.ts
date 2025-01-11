@@ -59,7 +59,7 @@ export interface CellViewportRange {
 
 export interface CustomDataView<T = any> {
   getItem: (index: number) => T;
-  getItemMetadata(index: number): ItemMetadata | null;
+  getItemMetadata(row: number, cell?: boolean | number): ItemMetadata | null;
   getLength: () => number;
 }
 
@@ -387,6 +387,13 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to false, which will let user click on cell and navigate with arrow keys. */
   enableCellNavigation?: boolean;
 
+  /**
+   * Do we want to enable cell rowspan?
+   * Note: this is an opt-in option because of the multiple row/column/cells looping that it has to do
+   * (which is at least an O^n3 but only for visible range)
+   */
+  enableCellRowSpan?: boolean;
+
   /** Defaults to false, when enabled it will add a column for checkbox selection at the 1st column position. A selection will trigger the "onSelectedRowsChanged" event. */
   enableCheckboxSelector?: boolean;
 
@@ -648,6 +655,9 @@ export interface GridOption<C extends Column = Column> {
 
   /** What is the minimum row buffer to use? */
   minRowBuffer?: number;
+
+  /** What is the maximum row buffer to use? */
+  maxRowBuffer?: number;
 
   /** Defaults to false, which leads to be able to do multiple columns sorting (or single sort when false) */
   multiColumnSort?: boolean;

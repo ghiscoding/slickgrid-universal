@@ -895,7 +895,7 @@ export class SlickVanillaGridBundle<TData = any> {
         }
       });
 
-      if (gridOptions?.enableFiltering && !gridOptions.enableRowDetailView) {
+      if ((gridOptions?.enableFiltering || gridOptions?.dataView?.globalItemMetadataProvider) && !gridOptions.enableRowDetailView) {
         this._eventHandler.subscribe(dataView.onRowsChanged, (_e, { calledOnRowCountChanged, rows }) => {
           // filtering data with local dataset will not always show correctly unless we call this updateRow/render
           // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
@@ -903,6 +903,10 @@ export class SlickVanillaGridBundle<TData = any> {
           if (!calledOnRowCountChanged && Array.isArray(rows)) {
             const ranges = grid.getRenderedRange();
             rows.filter((row) => row >= ranges.top && row <= ranges.bottom).forEach((row: number) => grid.updateRow(row));
+            grid.render();
+          } else if (calledOnRowCountChanged) {
+            // when onRowCountChanged event is called, on first page load, we'll invalidate all rows (required for colspan/rowspan)
+            grid.invalidateRows(rows);
             grid.render();
           }
         });

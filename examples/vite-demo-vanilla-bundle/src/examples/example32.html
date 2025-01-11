@@ -1,0 +1,55 @@
+<h3 class="title is-3">
+  Example 32 - Column & Row Span
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example32.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="columns">
+  <div class="column">
+    <p class="italic example-details">
+      This page demonstrates <code>colspan</code> & <code>rowspan</code> using DataView with item metadata. <br />
+      <b>Note</b>: <code>colspan</code> & <code>rowspan</code> are rendered via a row/cell indexes, any operations that could change these
+      indexes (i.e. Filtering/Sorting) will require you, it becomes your responsability, to implement proper logic to recalculate these
+      indexes. This demo does not show this because it is up to you to decide what to do when the span changes shape (i.e. you default to 3
+      rowspan but you filter a row in the middle, how do you want to proceed?).
+    </p>
+  </div>
+</div>
+
+<section class="mb-2">
+  <div class="row mb-1">
+    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
+    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(5000)">5k rows</button>
+    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(500000)">500k rows</button>
+    <button class="button is-small mr-1" onclick.delegate="handleToggleSpans()" data-test="toggle-spans-btn">
+      <span class="mdi mdi-flip-vertical"></span>
+      <span>Toggle blue cell colspan &amp; rowspan</span>
+    </button>
+    <button class="button is-small" onclick.delegate="handleScrollTo()" data-test="scroll-to-row-btn">
+      <span class="mdi mdi-arrow-down"></span>
+      <span>Scroll To Row</span>
+    </button>
+    <span>
+      <input
+        data-test="input-nbrows"
+        type="number"
+        class="is-narrow input is-small"
+        data-test="scroll-to-value"
+        value.bind="scrollToRow"
+      />
+    </span>
+    </p>
+  </div>
+</section>
+
+<div class="grid-container grid32-container">
+  <div class="grid32"></div>
+</div>

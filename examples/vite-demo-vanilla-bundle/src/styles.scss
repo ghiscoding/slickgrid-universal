@@ -1,13 +1,13 @@
-$link-color: #006DCC;
+$link-color: #006dcc;
 
 // @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 
 /** or SalesForce Theme */
 // @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss' with (
-  $slick-primary-color:           #006DCC,
-  $slick-link-color:              $link-color,
-  $slick-checkbox-opacity-hover:  0.35,
+  $slick-primary-color: #006dcc,
+  $slick-link-color: $link-color,
+  $slick-checkbox-opacity-hover: 0.35
 );
 
 @use './bulma.scss';
@@ -27,10 +27,10 @@ $navbar-height: 52px;
 body {
   height: calc(100vh - $navbar-height);
 }
-[data-theme=light] {
+[data-theme='light'] {
   background-color: white;
 }
-[data-theme=dark] {
+[data-theme='dark'] {
   background-color: #33393e;
 }
 .demo-container.container {
@@ -58,14 +58,14 @@ body {
 }
 
 .fake-hyperlink {
-    cursor: pointer;
-    color: $link-color;
-    &:hover {
-      text-decoration: underline;
-    }
+  cursor: pointer;
+  color: $link-color;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 .disabled {
-    color: #ccc;
+  color: #ccc;
 }
 
 .github-button-container {
@@ -84,10 +84,10 @@ body {
   margin-top: -15px;
 }
 .notification.is-narrow {
-  padding: 0.75rem 1.0rem;
+  padding: 0.75rem 1rem;
 }
 input.is-narrow {
-  width: 55px;
+  width: 60px;
 }
 .ml-8 {
   margin-left: 50px;

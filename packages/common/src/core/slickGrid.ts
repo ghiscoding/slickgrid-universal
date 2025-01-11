@@ -30,6 +30,7 @@ import type { SelectionModel } from '../enums/index.js';
 import type {
   CellViewportRange,
   Column,
+  ColumnMetadata,
   ColumnSort,
   CSSStyleDeclarationWritable,
   CssStyleHash,
@@ -119,6 +120,7 @@ import type { SlickDataView } from './slickDataview.js';
 interface RowCaching {
   rowNode: HTMLElement[] | null;
   cellColSpans: Array<number | '*'>;
+  cellRowSpans: Array<number>;
   cellNodesByColumnIdx: HTMLElement[];
   cellRenderQueue: any[];
 }
@@ -248,6 +250,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     rowHighlightDuration: 400,
     selectedCellCssClass: 'selected',
     multiSelect: true,
+    enableCellRowSpan: false,
     enableTextSelectionOnCells: false,
     dataItemColumnValueExtractor: null,
     frozenBottom: false,
@@ -377,6 +380,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _activeCanvasNode!: HTMLDivElement;
   protected _activeViewportNode!: HTMLDivElement;
   protected activePosX!: number;
+  protected activePosY!: number;
   protected activeRow!: number;
   protected activeCell!: number;
   protected activeCellNode: HTMLDivElement | null = null;
@@ -384,7 +388,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected serializedEditorValue: any;
   protected editController?: EditController;
 
-  protected rowsCache: Array<RowCaching> = {} as any;
+  protected cellSpans: Record<number, Array<any>> = {};
+  protected rowsCache: Record<number, RowCaching> = {};
   protected renderedRows = 0;
   protected numVisibleRows = 0;
   protected prevScrollTop = 0;
@@ -413,7 +418,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // async call handles
   protected h_editorLoader?: number;
-  protected h_render = null;
   protected h_postrender?: number;
   protected h_postrenderCleanup?: number;
   protected postProcessedRows: any = {};
@@ -469,6 +473,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _headerScrollContainer!: HTMLDivElement;
   protected _headerRowScrollContainer!: HTMLDivElement;
   protected _footerRowScrollContainer!: HTMLDivElement;
+  protected _rowsWithRowSpan: Set<number> = new Set<number>();
 
   // store css attributes if display:none is active in container or parent
   protected cssShow = { position: 'absolute', visibility: 'hidden', display: 'block' };
@@ -3453,6 +3458,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return (this.data as TData[])[i] as TData;
   }
 
+  /**
+   * Returns item metadata by a row index when it exists
+   * @param {Number} row
+   * @returns {ItemMetadata | null}
+   */
+  getItemMetadaWhenExists(row: number): ItemMetadata | null {
+    return 'getItemMetadata' in this.data ? (this.data as CustomDataView<TData>).getItemMetadata(row) : null;
+  }
+
   /** Get Top Panel DOM element */
   getTopPanel(): HTMLDivElement {
     return this._topPanels[0];
@@ -3539,8 +3553,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // Rendering / Scrolling
 
+  protected getRowHeight(): number {
+    return this._options.rowHeight!;
+  }
+
   protected getRowTop(row: number): number {
     return Math.round(this._options.rowHeight! * row - this.offset);
+  }
+
+  protected getRowBottom(row: number): number {
+    return this.getRowTop(row) + this._options.rowHeight!;
   }
 
   protected getRowFromPosition(y: number): number {
@@ -3613,7 +3635,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected getEditor(row: number, cell: number): Editor | EditorConstructor | null | undefined {
     const column = this.columns[cell];
-    const rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
+    const rowMetadata = this.getItemMetadaWhenExists(row);
     const columnMetadata = rowMetadata?.columns;
 
     if (columnMetadata?.[column.id]?.editorClass !== undefined) {
@@ -3653,13 +3675,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       rowCss += ` ${this._options.addNewRowCssClass}`;
     }
 
-    const metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
+    const metadata = this.getItemMetadaWhenExists(row);
 
     if (metadata?.cssClasses) {
       rowCss += ` ${metadata.cssClasses}`;
     }
 
-    const rowDiv = createDomElement('div', { className: `slick-widget-content ${rowCss}`, role: 'row' });
+    const rowDiv = createDomElement('div', {
+      className: `ui-widget-content ${rowCss}`,
+      role: 'row',
+      dataset: { row: `${row}` },
+    });
     const frozenRowOffset = this.getFrozenRowOffset(row);
     const topOffset = this.getRowTop(row) - frozenRowOffset;
     if (this._options.rowTopOffsetRenderType === 'transform') {
@@ -3678,44 +3704,85 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       divArrayR.push(rowDivR);
     }
 
+    const columnCount = this.columns.length;
+    let columnData: ColumnMetadata | null;
     let colspan: number | string;
+    let rowspan: number;
+    const rowSpans = this.cellSpans[row];
     let m: C;
-    for (let i = 0, ii = this.columns.length; i < ii; i++) {
+    let isRenderCell = true;
+
+    for (let i = 0, ii = columnCount; i < ii; i++) {
+      isRenderCell = true;
       m = this.columns[i];
       if (m && !m.hidden) {
         colspan = 1;
+        rowspan = 1;
+        columnData = null;
         if (metadata?.columns) {
-          const columnData = metadata.columns[m.id] || metadata.columns[i];
+          columnData = metadata.columns[m.id] || metadata.columns[i];
           colspan = columnData?.colspan || 1;
+          rowspan = columnData?.rowspan || 1;
           if (colspan === '*') {
             colspan = ii - i;
+          }
+          if (rowspan > dataLength - row) {
+            rowspan = dataLength - row;
+          }
+        }
+
+        if (!this._options.enableCellRowSpan && rowspan > 1) {
+          console.warn(
+            '[SlickGrid] Cell "rowspan" is an opt-in grid option because of its small perf hit, you must enable it via the "enableCellRowSpan" grid option.'
+          );
+        }
+
+        const ncolspan = colspan as number; // at this point colspan is for sure a number
+        const spanCell = rowSpans[i] || (rowSpans[i] = new Array(2));
+
+        if (spanCell[0] < row /* || spanCell[1] < i */) {
+          continue;
+        }
+
+        // save pointers to span head cell
+        for (let rs = row; rs < row + rowspan; rs++) {
+          for (let cs = i; cs < i + ncolspan; cs++) {
+            const cellspan = this.cellSpans[rs] || (this.cellSpans[rs] = new Array(columnCount));
+            cellspan[cs] = rs === row && cs === i && (rowspan > 1 || ncolspan > 1) ? [row, i, rowspan, colspan] : [row, i];
           }
         }
 
         // Do not render cells outside of the viewport.
-        if (this.columnPosRight[Math.min(ii - 1, i + (colspan as number) - 1)] > range.leftPx) {
+        if (this.columnPosRight[Math.min(ii - 1, i + ncolspan - 1)] > range.leftPx) {
           if (!m.alwaysRenderColumn && this.columnPosLeft[i] > range.rightPx) {
-            // All columns to the right are outside the range.
-            break;
+            isRenderCell = false; // render as false but keep looping to correctly save cellspan pointers
           }
 
-          if (this.hasFrozenColumns() && i > this._options.frozenColumn!) {
-            this.appendCellHtml(rowDivR!, row, i, colspan as number, d);
-          } else {
-            this.appendCellHtml(rowDiv, row, i, colspan as number, d);
+          // All columns to the right are outside the range, so no need to render them
+          if (isRenderCell) {
+            const targetedRowDiv = this.hasFrozenColumns() && i > this._options.frozenColumn! ? rowDivR! : rowDiv;
+            this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d);
           }
         } else if (m.alwaysRenderColumn || (this.hasFrozenColumns() && i <= this._options.frozenColumn!)) {
-          this.appendCellHtml(rowDiv, row, i, colspan as number, d);
+          this.appendCellHtml(rowDiv, row, i, ncolspan, rowspan, columnData, d);
         }
 
-        if ((colspan as number) > 1) {
-          i += (colspan as number) - 1;
+        if (ncolspan > 1) {
+          i += ncolspan - 1;
         }
       }
     }
   }
 
-  protected appendCellHtml(divRow: HTMLElement, row: number, cell: number, colspan: number, item: TData): void {
+  protected appendCellHtml(
+    divRow: HTMLElement,
+    row: number,
+    cell: number,
+    colspan: number,
+    rowspan: number,
+    columnMetadata: ColumnMetadata | null,
+    item: TData
+  ): void {
     // divRow: the html element to append items too
     // row, cell: row and column index
     // colspan: HTML colspan
@@ -3723,7 +3790,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const m = this.columns[cell];
     let cellCss =
-      'slick-cell l' + cell + ' r' + Math.min(this.columns.length - 1, cell + colspan - 1) + (m.cssClass ? ' ' + m.cssClass : '');
+      `slick-cell l${cell} r${Math.min(this.columns.length - 1, cell + colspan - 1)}` +
+      (m.cssClass ? ` ${m.cssClass}` : '') +
+      (rowspan > 1 ? ' rowspan' : '') +
+      (columnMetadata?.cssClass ? ` ${columnMetadata.cssClass}` : '');
 
     if (this.hasFrozenColumns() && cell <= this._options.frozenColumn!) {
       cellCss += ' frozen';
@@ -3733,7 +3803,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cellCss += ' active';
     }
 
-    // TODO:  merge them together in the setter
+    // TODO: merge them together in the setter
     Object.keys(this.cellCssClasses).forEach((key) => {
       if (this.cellCssClasses[key][row]?.[m.id]) {
         cellCss += ` ${this.cellCssClasses[key][row][m.id]}`;
@@ -3770,6 +3840,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cellDiv.setAttribute('title', toolTipText);
     }
 
+    // update cell rowspan height when spanning more than 1 row
+    const cellHeight = this.getCellHeight(row, rowspan);
+    if (rowspan > 1 && cellHeight !== this._options.rowHeight! - this.cellHeightDiff) {
+      cellDiv.style.height = `${cellHeight || 0}px`;
+    }
+
     if (m.hasOwnProperty('cellAttrs') && m.cellAttrs instanceof Object) {
       Object.keys(m.cellAttrs).forEach((key) => {
         if (m.cellAttrs.hasOwnProperty(key)) {
@@ -3785,7 +3861,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         : (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
       this.applyHtmlCode(cellDiv, cellResult as string | HTMLElement);
     }
-
     divRow.appendChild(cellDiv);
 
     // Formatter can optional add an "insertElementAfterTarget" option but it must be inserted only after the `.slick-row` div exists
@@ -3795,6 +3870,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this.rowsCache[row].cellRenderQueue.push(cell);
     this.rowsCache[row].cellColSpans[cell] = colspan;
+    this.rowsCache[row].cellRowSpans[cell] = rowspan;
   }
 
   protected cleanupRows(rangeToKeep: { bottom: number; top: number }): void {
@@ -3811,7 +3887,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           removeFrozenRow = false;
         }
 
-        if ((i = parseInt(rowId, 10)) !== this.activeRow && (i < rangeToKeep.top || i > rangeToKeep.bottom) && removeFrozenRow) {
+        if (
+          (i = parseInt(rowId, 10)) !== this.activeRow &&
+          (i < rangeToKeep.top || i > rangeToKeep.bottom) &&
+          removeFrozenRow &&
+          !this._rowsWithRowSpan.has(i)
+        ) {
           this.removeRowFromCache(i);
         }
       }
@@ -3852,21 +3933,70 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number[]} rows
    */
   invalidateRows(rows: number[]): void {
+    console.time('invalidate rows');
     if (rows?.length) {
+      let row;
+      let c;
+      let span = [];
+      rows.sort((a, b) => a - b);
       this.vScrollDir = 0;
+      const columnCount = this.columns.length;
       const rl = rows.length;
+
       for (let i = 0; i < rl; i++) {
-        if (this.currentEditor && this.activeRow === rows[i]) {
+        row = rows[i];
+        if (this.currentEditor && this.activeRow === row) {
           this.makeActiveCellNormal();
         }
-        if (this.rowsCache[rows[i]]) {
-          this.removeRowFromCache(rows[i]);
+        if (this.rowsCache[row]) {
+          this.removeRowFromCache(row);
+        }
+        if (this._options.enableCellRowSpan) {
+          const metadata = this.getItemMetadaWhenExists(row);
+          if (metadata) {
+            // check changes in row/colspans
+            const spanRow = this.cellSpans[row] || [];
+            let colspan = 1;
+            for (c = 0; c < columnCount; c += colspan as number) {
+              const cellMetadata = metadata.columns && (metadata.columns[this.columns[c].id] || metadata.columns[c]);
+              colspan = 1;
+              if (cellMetadata) {
+                const rowspan = cellMetadata.rowspan || 1;
+                // when a rowspan is defined then,
+                // we'll consider this row as a mandatory row to always be cached/rendered
+                if (rowspan > 1) {
+                  this._rowsWithRowSpan.add(row);
+                }
+                colspan = (cellMetadata.colspan as number) || 1;
+                span = spanRow[c];
+                const oldRowspan = span?.[2] || 1;
+                const oldColspan = span?.[3] || 1;
+                if (oldRowspan !== rowspan || oldColspan !== colspan) {
+                  // if spans change, fix pointers to span head cell
+                  for (let rs = row; rs < row + Math.max(rowspan, oldRowspan); rs++) {
+                    for (let cs = c; cs < c + Math.max(colspan, oldColspan); cs++) {
+                      if (this.cellSpans[rs]) {
+                        this.cellSpans[rs][cs] =
+                          rs === row && cs === c && (rowspan > 1 || colspan > 1)
+                            ? [row, c, rowspan, colspan] // span cell head
+                            : rs < row + rowspan - 1 && cs < c + colspan - 1
+                              ? [row, c] // overlapped cell coordinates
+                              : [rs, cs]; // simple cell
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
+
       if (this._options.enableAsyncPostRenderCleanup) {
         this.startPostProcessingCleanup();
       }
     }
+    console.timeEnd('invalidate rows');
   }
 
   /**
@@ -3875,7 +4005,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   invalidateRow(row: number): void {
     if (row >= 0) {
-      this.invalidateRows([row]);
+      const rows = [row, ...this._rowsWithRowSpan.values()];
+      this.invalidateRows(rows);
     }
   }
 
@@ -3978,6 +4109,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this.currentEditor && this.activeRow === row && this.activeCell === cell) {
         this.currentEditor.loadValue(d);
       } else {
+        // if the cell has other coordinates because of row/cell span, update that cell (which will invalidate this cellNode)
+        const spans = this.getSpans(row, cell);
+        if (spans[0] !== row || spans[1] !== cell) {
+          this.updateCell(spans[0], spans[1]);
+          return;
+        }
         const formatterResult = d
           ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid)
           : '';
@@ -4027,6 +4164,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
 
     this.invalidatePostProcessingResults(row);
+  }
+
+  getCellHeight(row: number, rowspan: number): number {
+    let cellHeight = this._options.rowHeight || 0;
+    if (rowspan > 1) {
+      const rowSpanBottomIdx = row + rowspan - 1;
+      cellHeight = this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row);
+    } else {
+      const rowHeight = this.getRowHeight();
+      if (rowHeight !== cellHeight - this.cellHeightDiff) {
+        cellHeight = rowHeight;
+      }
+    }
+    cellHeight -= this.cellHeightDiff;
+    return Math.ceil(cellHeight);
   }
 
   /**
@@ -4463,6 +4615,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let cellsAdded: number;
     let totalCellsAdded = 0;
     let colspan: number | string;
+    let columnData: ColumnMetadata | null;
+    const columnCount = this.columns.length;
 
     for (let row = range.top as number, btm = range.bottom as number; row <= btm; row++) {
       cacheEntry = this.rowsCache[row];
@@ -4470,18 +4624,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // cellRenderQueue populated in renderRows() needs to be cleared first
         this.ensureCellNodesInRowsCache(row);
 
-        this.cleanUpCells(range, row);
+        if (!this._rowsWithRowSpan.has(row)) {
+          this.cleanUpCells(range, row);
+        }
 
         // Render missing cells.
         cellsAdded = 0;
 
-        let metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row) ?? ({} as ItemMetadata);
+        let metadata = this.getItemMetadaWhenExists(row);
         metadata = metadata?.columns as ItemMetadata;
 
         const d = this.getDataItem(row);
 
         // TODO: shorten this loop (index? heuristics? binary search?)
-        for (let i = 0, ii = this.columns.length; i < ii; i++) {
+        for (let i = 0, ii = columnCount; i < ii; i++) {
           if (this.columns[i] && !this.columns[i].hidden) {
             // Cells to the right are outside the range.
             if (this.columnPosLeft[i] > range.rightPx) {
@@ -4495,21 +4651,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             }
 
             colspan = 1;
+            columnData = null;
             if (metadata) {
-              const columnData = metadata[this.columns[i].id as keyof ItemMetadata] || (metadata as any)[i];
+              columnData = metadata[this.columns[i].id as keyof ItemMetadata] || (metadata as any)[i];
               colspan = columnData?.colspan ?? 1;
               if (colspan === '*') {
                 colspan = ii - i;
               }
             }
 
-            const colspanNb = colspan as number; // at this point colspan is for sure a number
-            if (this.columnPosRight[Math.min(ii - 1, i + colspanNb - 1)] > range.leftPx) {
-              this.appendCellHtml(divRow, row, i, colspanNb, d);
+            const ncolspan = colspan as number; // at this point colspan is for sure a number
+            const parentRowSpan = this.getSpans(row, i)?.[2] || 1;
+            if (parentRowSpan > 1) {
+              continue;
+            }
+
+            if (this.columnPosRight[Math.min(ii - 1, i + ncolspan - 1)] > range.leftPx) {
+              const rowspan = this.getRowspan(row, i);
+              this.appendCellHtml(divRow, row, i, ncolspan, rowspan, columnData, d);
               cellsAdded++;
             }
 
-            i += colspanNb > 1 ? colspanNb - 1 : 0;
+            i += ncolspan > 1 ? ncolspan - 1 : 0;
           }
         }
 
@@ -4568,6 +4731,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // Can also be used for checking whether a cell has been rendered.
         cellColSpans: [],
 
+        // ColSpans of rendered cells (by column idx).
+        // Can also be used for checking whether a cell has been rendered.
+        cellRowSpans: [],
+
         // Cell nodes (by column idx).  Lazy-populated by ensureCellNodesInRowsCache().
         cellNodesByColumnIdx: [],
 
@@ -4576,6 +4743,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // end of the row.
         cellRenderQueue: [],
       };
+
+      if (!this.cellSpans[i]) {
+        this.cellSpans[i] = new Array(this.columns.length);
+      }
 
       this.appendRowHtml(divArrayL, divArrayR, i, range, dataLength);
       if (this.activeCellNode && this.activeRow === i) {
@@ -4670,6 +4841,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** (re)Render the grid */
   render(): void {
+    console.time('render');
     if (this.initialized) {
       this.scrollThrottle.dequeue();
 
@@ -4724,9 +4896,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       this.lastRenderedScrollTop = this.scrollTop;
       this.lastRenderedScrollLeft = this.scrollLeft;
-      this.h_render = null;
       this.triggerEvent(this.onRendered, { startRow: visible.top, endRow: visible.bottom, grid: this });
     }
+    console.timeEnd('render');
   }
 
   protected handleHeaderRowScroll(): void {
@@ -5679,7 +5851,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       const cell = this.getCellFromPoint(activeCellOffset.left, Math.ceil(activeCellOffset.top) - rowOffset);
       this.activeRow = cell.row;
-      this.activeCell = this.activePosX = this.activeCell = this.activePosX = this.getCellFromNode(this.activeCellNode);
+      this.activePosY = cell.row;
+      this.activeCell = this.activePosX = this.getCellFromNode(this.activeCellNode);
 
       if (!isDefined(opt_editMode) && this._options.autoEditNewRow) {
         opt_editMode = this.activeRow === this.getDataLength() || this._options.autoEdit;
@@ -5842,7 +6015,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         emptyElement(this.activeCellNode);
       }
 
-      let metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(this.activeRow);
+      let metadata = this.getItemMetadaWhenExists(this.activeRow);
       metadata = metadata?.columns as any;
       const columnMetaData = metadata && (metadata[columnDef.id as keyof ItemMetadata] || (metadata as any)[this.activeCell]);
 
@@ -6110,14 +6283,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Navigate to the bottom of the grid */
-  navigateBottom(): boolean {
-    return this.navigateToRow(this.getDataLength() - 1);
+  navigateBottom(): void {
+    let row = this.getDataLength() - 1;
+    let isValidMove = false;
+    do {
+      this.setActiveRow(row);
+      isValidMove = this.navigateToRow(row);
+      if (isValidMove && this.activeCell === this.activePosX) {
+        break;
+      }
+    } while (--row > 0);
   }
 
   navigateToRow(row: number): boolean {
     const num_rows = this.getDataLength();
     if (!num_rows) {
-      return true;
+      return false;
     }
 
     /* v8 ignore next 5 */
@@ -6128,6 +6309,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.scrollCellIntoView(row, 0, true);
+    let isValidMove = false;
+
     if (this._options.enableCellNavigation && isDefined(this.activeRow)) {
       let cell = 0;
       let prevCell: number | null = null;
@@ -6135,6 +6318,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       while (cell <= this.activePosX) {
         if (this.canCellBeActive(row, cell)) {
           prevCell = cell;
+          if (cell === this.activeCell) {
+            isValidMove = true;
+          }
         }
         cell += this.getColspan(row, cell);
       }
@@ -6146,30 +6332,41 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.resetActiveCell();
       }
     }
-    return true;
+    return isValidMove;
+  }
+
+  protected getSpans(row: number, cell: number): any {
+    const spans = this.cellSpans[row]?.[cell];
+    return spans && this.cellSpans[spans[0]][spans[1]];
+  }
+
+  /** Returns the column index of the cell that spans to the cell specified by `row` and `cell`. */
+  protected getSpanCell(row: number, cell: number): any {
+    return this.cellSpans[row]?.[cell]?.[1];
+  }
+
+  /** Returns the row index of the cell that spans to the cell specified by `row` and `cell`. */
+  protected getSpanRow(row: number, cell: number): any {
+    return this.cellSpans[row]?.[cell]?.[0];
   }
 
   protected getColspan(row: number, cell: number): number {
-    const metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
-    if (!metadata || !metadata.columns) {
-      return 1;
-    }
+    const spans = this.getSpans(row, cell);
+    return spans ? (spans[3] || 1) - cell + spans[1] : 1;
+  }
 
-    const columnData = metadata.columns[this.columns[cell].id] || metadata.columns[cell];
-    let colspan = columnData?.colspan;
-    if (colspan === '*') {
-      colspan = this.columns.length - cell;
-    } else {
-      colspan = colspan || 1;
-    }
-
-    return colspan as number;
+  protected getRowspan(row: number, cell: number): any {
+    const spans = this.getSpans(row, cell);
+    return spans ? (spans[2] || 1) - row + spans[0] : 1;
   }
 
   protected findFirstFocusableCell(row: number): number | null {
     let cell = 0;
+    let spanRow: number;
     while (cell < this.columns.length) {
-      if (this.canCellBeActive(row, cell)) {
+      spanRow = this.getSpanRow(row, cell);
+      if (this.canCellBeActive(spanRow, cell)) {
+        console.log('findFirstFocusableCell', cell);
         return cell;
       }
       cell += this.getColspan(row, cell);
@@ -6178,197 +6375,204 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected findLastFocusableCell(row: number): number | null {
-    let cell = 0;
+    let cell = this.columns.length - 1;
     let lastFocusableCell: number | null = null;
-    while (cell < this.columns.length) {
-      if (this.canCellBeActive(row, cell)) {
+    let spanRow: number;
+    let spanCell: number;
+
+    while (cell >= 0) {
+      spanCell = this.getSpanCell(row, cell);
+      spanRow = this.getSpanRow(row, cell);
+      if (this.canCellBeActive(spanRow, spanCell)) {
         lastFocusableCell = cell;
+        break;
       }
-      cell += this.getColspan(row, cell);
+      cell = this.getSpanCell(row, cell - 1);
     }
     return lastFocusableCell;
   }
 
-  protected gotoRight(row: number, cell: number, _posX?: number): { row: number; cell: number; posX: number } | null {
+  protected gotoRight(
+    row: number,
+    cell: number,
+    posY: number,
+    _posX?: number
+  ): { row: number; cell: number; posX: number; posY: number } | null {
     /* v8 ignore next 3 */
     if (cell >= this.columns.length) {
       return null;
     }
 
     do {
-      cell += this.getColspan(row, cell);
-    } while (cell < this.columns.length && !this.canCellBeActive(row, cell));
+      cell += this.getColspan(posY, cell);
+    } while (cell < this.columns.length && !this.canCellBeActive((row = this.getSpanRow(posY, cell)), cell));
 
     if (cell < this.columns.length) {
       return {
         row,
         cell,
         posX: cell,
+        posY,
       };
     }
     return null;
   }
 
-  protected gotoLeft(row: number, cell: number, _posX?: number): void | null | { row: number; cell: number; posX: number } {
+  protected gotoLeft(
+    row: number,
+    cell: number,
+    posY: number,
+    _posX?: number
+  ): null | { row: number; cell: number; posX: number; posY: number } {
     if (cell <= 0) {
       return null;
     }
 
-    const firstFocusableCell = this.findFirstFocusableCell(row);
-    if (firstFocusableCell === null || firstFocusableCell >= cell) {
+    do {
+      cell = this.getSpanCell(posY, cell - 1);
+      row = this.getSpanRow(posY, cell);
+    } while (cell >= 0 && !this.canCellBeActive(row, cell));
+
+    if (cell < this.columns.length) {
+      return {
+        row,
+        cell,
+        posX: cell,
+        posY,
+      };
+    }
+    return null;
+  }
+
+  protected gotoDown(
+    row: number,
+    cell: number,
+    _posY: number,
+    posX: number
+  ): void | null | { row: number; cell: number; posX: number; posY: number } {
+    const ub = this.getDataLengthIncludingAddNew();
+    do {
+      row += this.getRowspan(row, posX);
+    } while (row <= ub && !this.canCellBeActive(row, (cell = this.getSpanCell(row, posX))));
+
+    if (row <= ub) {
+      return {
+        row,
+        cell,
+        posX,
+        posY: row,
+      };
+    }
+    return null;
+  }
+
+  protected gotoUp(
+    row: number,
+    cell: number,
+    _posY: number,
+    posX: number
+  ): void | null | { row: number; cell: number; posX: number; posY: number } {
+    if (row <= 0) {
       return null;
     }
+    do {
+      row = this.getSpanRow(row - 1, posX);
+      cell = this.getSpanCell(row, posX);
+      console.log('go up', row, cell);
+    } while (row >= 0 && !this.canCellBeActive(row, cell));
 
-    let prev = {
-      row,
-      cell: firstFocusableCell,
-      posX: firstFocusableCell,
-    };
-    let pos;
-    let cond = true;
-    while (cond) {
-      pos = this.gotoRight(prev.row, prev.cell, prev.posX);
-      if (!pos) {
-        cond = false;
-        return null;
-      }
-      if (pos.cell >= cell) {
-        cond = false;
-        return prev;
-      }
-      prev = pos;
+    if (cell < this.columns.length) {
+      return {
+        row,
+        cell,
+        posX,
+        posY: row,
+      };
     }
+    return null;
   }
 
-  protected gotoDown(row: number, cell: number, posX: number): void | null | { row: number; cell: number; posX: number } {
-    let prevCell;
-    const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
-    let condition = true;
-    while (condition) {
-      if (++row >= dataLengthIncludingAddNew) {
-        condition = false;
-        return null;
-      }
-
-      prevCell = cell = 0;
-      while (cell <= posX) {
-        prevCell = cell;
-        cell += this.getColspan(row, cell);
-      }
-
-      if (this.canCellBeActive(row, prevCell)) {
-        condition = false;
-        return {
-          row,
-          cell: prevCell,
-          posX,
-        };
-      }
-    }
-  }
-
-  protected gotoUp(row: number, cell: number, posX: number): void | null | { row: number; cell: number; posX: number } {
-    let prevCell;
-    let condition = true;
-    while (condition) {
-      if (--row < 0) {
-        condition = false;
-        return null;
-      }
-
-      prevCell = cell = 0;
-      while (cell <= posX) {
-        prevCell = cell;
-        cell += this.getColspan(row, cell);
-      }
-
-      if (this.canCellBeActive(row, prevCell)) {
-        condition = false;
-        return {
-          row,
-          cell: prevCell,
-          posX,
-        };
-      }
-    }
-  }
-
-  protected gotoNext(row: number, cell: number, posX?: number): { row: number; cell: number; posX: number } | null {
+  protected gotoNext(
+    row: number,
+    cell: number,
+    posY: number,
+    posX?: number
+  ): { row: number; cell: number; posX: number; posY: number } | null {
     if (!isDefinedNumber(row) && !isDefinedNumber(cell)) {
-      row = cell = posX = 0;
+      row = cell = posY = posX = 0;
       if (this.canCellBeActive(row, cell)) {
         return {
           row,
           cell,
           posX: cell,
+          posY,
         };
       }
     }
 
-    const pos = this.gotoRight(row, cell, posX);
-    if (pos) {
-      return pos;
-    }
-
-    let firstFocusableCell: number | null = null;
-    const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
-
-    // if at last row, cycle through columns rather than get stuck in the last one
-    if (row === dataLengthIncludingAddNew - 1) {
-      row--;
-    }
-
-    while (++row < dataLengthIncludingAddNew) {
-      firstFocusableCell = this.findFirstFocusableCell(row);
-      if (firstFocusableCell !== null) {
-        return {
-          row,
-          cell: firstFocusableCell,
-          posX: firstFocusableCell,
-        };
+    let pos = this.gotoRight(row, cell, posY, posX);
+    if (!pos) {
+      let firstFocusableCell;
+      while (!pos && ++posY < this.getDataLength() + (this._options.enableAddRow ? 1 : 0)) {
+        firstFocusableCell = this.findFirstFocusableCell(posY);
+        if (firstFocusableCell !== null) {
+          row = this.getSpanRow(posY, firstFocusableCell);
+          pos = {
+            row,
+            cell: firstFocusableCell,
+            posX: firstFocusableCell,
+            posY,
+          };
+        }
       }
     }
-    return null;
+    return pos;
   }
 
-  protected gotoPrev(row: number, cell: number, posX?: number): { row: number; cell: number; posX: number } | null {
+  protected gotoPrev(
+    row: number,
+    cell: number,
+    posY: number,
+    posX?: number
+  ): { row: number; cell: number; posX: number; posY: number } | null {
     if (!isDefinedNumber(row) && !isDefinedNumber(cell)) {
-      row = this.getDataLengthIncludingAddNew() - 1;
+      row = posY = this.getDataLengthIncludingAddNew() - 1;
       cell = posX = this.columns.length - 1;
       if (this.canCellBeActive(row, cell)) {
         return {
           row,
           cell,
           posX: cell,
+          posY,
         };
       }
     }
 
-    let pos;
-    let lastSelectableCell;
-    while (!pos) {
-      pos = this.gotoLeft(row, cell, posX);
-      if (pos) {
-        break;
-      }
-      if (--row < 0) {
-        return null;
-      }
-
-      cell = 0;
-      lastSelectableCell = this.findLastFocusableCell(row);
-      if (lastSelectableCell !== null) {
-        pos = {
-          row,
-          cell: lastSelectableCell,
-          posX: lastSelectableCell,
-        };
+    let pos = this.gotoLeft(row, cell, posY, posX);
+    if (!pos) {
+      let lastSelectableCell;
+      while (!pos && --posY >= 0) {
+        lastSelectableCell = this.findLastFocusableCell(posY);
+        if (lastSelectableCell !== null) {
+          row = this.getSpanRow(posY, lastSelectableCell);
+          pos = {
+            row,
+            cell: lastSelectableCell,
+            posX: lastSelectableCell,
+            posY,
+          };
+        }
       }
     }
     return pos;
   }
 
-  protected gotoRowStart(row: number, _cell: number, _posX?: number): { row: number; cell: number; posX: number } | null {
+  protected gotoRowStart(
+    row: number,
+    _cell: number,
+    _posY: number,
+    _posX?: number
+  ): { row: number; cell: number; posX: number; posY: number } | null {
     const newCell = this.findFirstFocusableCell(row);
     if (newCell === null) {
       return null;
@@ -6378,10 +6582,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       row,
       cell: newCell,
       posX: newCell,
+      posY: row,
     };
   }
 
-  protected gotoRowEnd(row: number, _cell: number, _posX?: number): { row: number; cell: number; posX: number } | null {
+  protected gotoRowEnd(
+    row: number,
+    _cell: number,
+    _posY: number,
+    _posX?: number
+  ): { row: number; cell: number; posX: number; posY: number } | null {
     const newCell = this.findLastFocusableCell(row);
     if (newCell === null) {
       return null;
@@ -6391,6 +6601,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       row,
       cell: newCell,
       posX: newCell,
+      posY: row,
     };
   }
 
@@ -6451,7 +6662,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @return {boolean} Whether navigation resulted in a change of active cell.
    */
   protected navigate(dir: 'up' | 'down' | 'left' | 'right' | 'prev' | 'next' | 'home' | 'end'): boolean | undefined {
-    if (!this._options.enableCellNavigation || (!this.activeCellNode && dir !== 'prev' && dir !== 'next')) {
+    if (!this._options.enableCellNavigation) {
+      return false;
+    }
+
+    if (!this.activeCellNode && dir !== 'prev' && dir !== 'next') {
       return false;
     }
 
@@ -6483,14 +6698,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       end: this.gotoRowEnd,
     };
     const stepFn = stepFunctions[dir];
-    const pos = stepFn.call(this, this.activeRow, this.activeCell, this.activePosX);
+    const pos = stepFn.call(this, this.activeRow, this.activeCell, this.activePosY, this.activePosX);
     if (pos) {
-      const dataLn = this.getDataLength();
-      if (this.hasFrozenRows && this._options.frozenBottom && pos.row === dataLn) {
+      if (this.hasFrozenRows && this._options.frozenBottom && pos.row === this.getDataLength()) {
         return;
       }
 
-      const isAddNewRow = pos.row === dataLn;
+      const isAddNewRow = pos.row === this.getDataLength();
 
       if (
         (!this._options.frozenBottom && pos.row >= this.actualFrozenRow) ||
@@ -6500,6 +6714,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
       this.setActiveCellInternal(this.getCellNode(pos.row, pos.cell));
       this.activePosX = pos.posX;
+      this.activePosY = pos.posY;
       return true;
     } else {
       this.setActiveCellInternal(this.getCellNode(this.activeRow, this.activeCell));
@@ -6597,7 +6812,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
 
-    const rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
+    // cell not found in rows that are spanned (rowspan of 1 or more) are invalid
+    // i.e.: if the 5th cell has rowspan that reaches the end of the grid, then the last cell that can be active is 5 (anything above 5 on same column is invalid)
+    const spanRow = this.getSpanRow(row, cell);
+    if (spanRow !== row) {
+      return false;
+    }
+
+    const rowMetadata = this.getItemMetadaWhenExists(row);
     if (rowMetadata?.focusable !== undefined) {
       return !!rowMetadata.focusable;
     }
@@ -6627,7 +6849,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
 
-    const rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
+    const rowMetadata = this.getItemMetadaWhenExists(row);
     if (rowMetadata?.selectable !== undefined) {
       return !!rowMetadata.selectable;
     }
