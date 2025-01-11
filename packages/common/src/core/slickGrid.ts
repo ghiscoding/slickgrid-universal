@@ -5599,9 +5599,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // Cell switching
 
-  /**  Resets active cell. */
+  /** Resets active cell by making cell normal and other internal resets. */
   resetActiveCell(): void {
     this.setActiveCellInternal(null, false);
+  }
+
+  /** Clear active cell by making cell normal & removing "active" CSS class. */
+  unsetActiveCell(): void {
+    if (isDefined(this.activeCellNode)) {
+      this.makeActiveCellNormal();
+      this.activeCellNode.classList.remove('active');
+      this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.remove('active'));
+    }
   }
 
   /** @alias `setFocus` */
@@ -5659,11 +5668,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     suppressActiveCellChangedEvent?: boolean,
     e?: Event | SlickEvent
   ): void {
-    if (isDefined(this.activeCellNode)) {
-      this.makeActiveCellNormal();
-      this.activeCellNode.classList.remove('active');
-      this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.remove('active'));
-    }
+    // make current active cell as normal cell & remove "active" CSS classes
+    this.unsetActiveCell();
 
     // let activeCellChanged = (this.activeCellNode !== newCell);
     this.activeCellNode = newCell;
@@ -6106,11 +6112,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Navigate to the top of the grid */
   navigateTop(): void {
+    this.unsetActiveCell();
     this.navigateToRow(0);
   }
 
   /** Navigate to the bottom of the grid */
   navigateBottom(): boolean {
+    this.unsetActiveCell();
     return this.navigateToRow(this.getDataLength() - 1);
   }
 
@@ -6436,12 +6444,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Navigate to coordinate 0,0 (top left home) */
   navigateTopStart(): boolean | undefined {
+    this.unsetActiveCell();
     this.navigateToRow(0);
     return this.navigate('home');
   }
 
   /** Navigate to bottom row end (bottom right end) */
   navigateBottomEnd(): boolean | undefined {
+    this.unsetActiveCell();
     this.navigateBottom();
     return this.navigate('end');
   }
