@@ -144,6 +144,23 @@ describe('SlickDatView core file', () => {
       dv.setItems(items);
       expect(dv.mapRowsToIds([0, 1, 999])).toEqual([4, 3]);
     });
+
+    it('should work with a custom global item metadata provider provided to the DataView constructor options', () => {
+      dv = new SlickDataView({
+        globalItemMetadataProvider: {
+          getRowMetadata(item, row) {
+            return `row ${row} with name: ${item.name}`;
+          },
+        },
+      });
+      const items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
+      dv.setItems(items);
+      expect(dv.getItemMetadata(0)).toBe('row 0 with name: John');
+      expect(dv.getItemMetadata(1)).toBe('row 1 with name: Jane');
+    });
   });
 
   describe('CRUD methods', () => {

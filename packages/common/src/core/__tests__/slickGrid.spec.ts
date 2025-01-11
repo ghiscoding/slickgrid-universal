@@ -4015,6 +4015,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
+      Object.defineProperty(mouseEvent, 'shiftKey', { writable: true, value: true });
       const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
@@ -6637,6 +6638,7 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
+        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
         const event = new CustomEvent('keydown');
         Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
         Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
@@ -6644,6 +6646,7 @@ describe('SlickGrid core file', () => {
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigateTopSpy).toHaveBeenCalled();
+        expect(unsetActiveCellSpy).toHaveBeenCalled();
       });
 
       it('should call navigatePageDown() when triggering PageDown key', () => {
@@ -6654,12 +6657,14 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigatePageDownSpy = vi.spyOn(grid, 'navigatePageDown');
+        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
         const event = new CustomEvent('keydown');
         Object.defineProperty(event, 'key', { writable: true, value: 'PageDown' });
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigatePageDownSpy).toHaveBeenCalled();
+        expect(unsetActiveCellSpy).toHaveBeenCalled();
       });
 
       it('should call navigatePageUp() when triggering PageDown key', () => {
@@ -6670,12 +6675,14 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigatePageUpSpy = vi.spyOn(grid, 'navigatePageUp');
+        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
         const event = new CustomEvent('keydown');
         Object.defineProperty(event, 'key', { writable: true, value: 'PageUp' });
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigatePageUpSpy).toHaveBeenCalled();
+        expect(unsetActiveCellSpy).toHaveBeenCalled();
       });
 
       it('should call navigateLeft() when triggering PageDown key', () => {
@@ -6750,12 +6757,14 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigateNextSpy = vi.spyOn(grid, 'navigateNext');
+        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
         const event = new CustomEvent('keydown');
         Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigateNextSpy).toHaveBeenCalled();
+        expect(unsetActiveCellSpy).toHaveBeenCalled();
       });
 
       it('should call navigatePrev() when triggering Enter key', () => {
@@ -6766,6 +6775,7 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const navigatePrevSpy = vi.spyOn(grid, 'navigatePrev');
+        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
         const event = new CustomEvent('keydown');
         Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
         Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
@@ -6773,6 +6783,7 @@ describe('SlickGrid core file', () => {
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigatePrevSpy).toHaveBeenCalled();
+        expect(unsetActiveCellSpy).toHaveBeenCalled();
       });
 
       it('should do nothing when triggering Escape key without any editor to cancel', () => {

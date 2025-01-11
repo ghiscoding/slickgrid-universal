@@ -8,10 +8,10 @@
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml)
 
 > [!WARNING]
-> Please note that Slickgrid-Vue is still in active development and usage might change depending on the feedback provided by external users like you. However, I don't expect much changes, all examples seem to work as expected. Give it a try!
+> Please note that Slickgrid-Vue is still in active development and usage might change depending on feedback provided by external users like you. However, I don't expect much changes though since all examples are working as expected. Give it a try and ⭐ the project if you like it!
 
 ## Documentation
-📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) website powered by GitBook.
+📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) website is powered by GitBook.
 
 ## Installation
 
@@ -25,7 +25,6 @@ npm install slickgrid-vue
 <script setup lang="ts">
 import { type Column, type GridOption, SlickgridVue } from 'slickgrid-vue';
 
-const gridOptions = ref<GridOption>({ /*...*/ });
 const columnDefinitions = ref<Column[]>([
   { id: 'username', name: 'Username', field: 'username'},
   { id: 'age', name: 'Age', field: 'age' }
@@ -34,13 +33,14 @@ const dataset = ref([
   { id: 1, username: 'John', age: 20 },
   { id: 2, username: 'Jane', age: 21 }
 ]);
+const gridOptions = ref<GridOption>({ /*...*/ }); // optional
 </script>
 
 <slickgrid-vue
-    v-model:options="gridOptions"
+    grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:data="dataset"
-    grid-id="grid1"
+    v-model:options="gridOptions"    
 ></slickgrid-vue>
 ```
 
@@ -49,11 +49,11 @@ const dataset = ref([
   
 ### Stackblitz
 
-You can even play with the [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) Stackblitz live. It is recommended as a way provide a repro when opening a new bug/feature request.
+You can also play with the live Stackbliz [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos). It is also the recommended way to provide a repro when opening a new bug/feature request.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
 
-Refer to the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
+Refer to the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository for a local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
 
 ### Styling Themes
 
@@ -62,14 +62,14 @@ Multiple styling themes are available
 - Material (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example07))
 - Salesforce (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example16))
 
-Also note that all of these themes also have **Dark Theme** equivalent and even though Bootstrap if often used as the default, it also works well with any other UI framework like Bulma, Material, ...
+Also note that all of these themes also have **Dark Theme** equivalent and even though Bootstrap is often used as the default, it does work as well with any other UI framework like Bulma, Material, ...
 
 ### Live Demo page
-`Slickgrid-Vue` works with all `Bootstrap` versions, you can see a demo of each one below. It also works well with any other frameworks like Material or Bulma and there are also couple of extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
+`Slickgrid-Vue` works with all `Bootstrap` versions, you can see a demo of each one below. It also works well with any other frameworks like Material or Bulma and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
 - [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos)
 
 #### Working Demos
-For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-Vue Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository (instructions are provided in the demo repo). The repo provides multiple demos and they are updated every time a new version is out, so it is updated frequently and is also used as the GitHub live demo page.
+For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-Vue Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository (instructions are provided in it). The repo provides multiple examples which are updated frequently (basically every time a new version is out) and is also used as the GitHub live demo page.
 
 ## License
 [MIT License](LICENSE)
@@ -78,7 +78,7 @@ For a complete set of working demos (40+ examples), we strongly suggest you to c
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
 
 ### Tested with [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Examples are tested with [Cypress](https://www.cypress.io/) as E2E tests and that is whenever a new PR is created.
+Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Examples are tested with [Cypress](https://www.cypress.io/) for E2E testing and they run anytime a new PR is created.
 
 ### Like it? ⭐ it
 You like **Slickgrid-Vue**? Be sure to upvote ⭐, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) and feel free to contribute. 👷👷‍♀️

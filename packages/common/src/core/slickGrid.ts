@@ -5305,8 +5305,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected handleMouseWheel(e: MouseEvent, _delta: number, deltaX: number, deltaY: number): void {
     this.scrollHeight = this._viewportScrollContainerY.scrollHeight;
-    this.scrollTop = Math.max(0, this._viewportScrollContainerY.scrollTop - deltaY * this._options.rowHeight!);
-    this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
+    if (e.shiftKey) {
+      this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
+    } else {
+      this.scrollTop = Math.max(0, this._viewportScrollContainerY.scrollTop - deltaY * this._options.rowHeight!);
+      this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
+    }
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.preventDefault();
@@ -5771,9 +5775,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // Cell switching
 
-  /**  Resets active cell. */
+  /** Resets active cell by making cell normal and other internal resets. */
   resetActiveCell(): void {
     this.setActiveCellInternal(null, false);
+  }
+
+  /** Clear active cell by making cell normal & removing "active" CSS class. */
+  unsetActiveCell(): void {
+    if (isDefined(this.activeCellNode)) {
+      this.makeActiveCellNormal();
+      this.activeCellNode.classList.remove('active');
+      this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.remove('active'));
+    }
   }
 
   /** @alias `setFocus` */
@@ -5831,11 +5844,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     suppressActiveCellChangedEvent?: boolean,
     e?: Event | SlickEvent
   ): void {
-    if (isDefined(this.activeCellNode)) {
-      this.makeActiveCellNormal();
-      this.activeCellNode.classList.remove('active');
-      this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.remove('active'));
-    }
+    // make current active cell as normal cell & remove "active" CSS classes
+    this.unsetActiveCell();
 
     // let activeCellChanged = (this.activeCellNode !== newCell);
     this.activeCellNode = newCell;
@@ -6269,21 +6279,25 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Navigate (scroll) by a page down */
   navigatePageDown(): void {
+    this.unsetActiveCell();
     this.scrollPage(1);
   }
 
   /** Navigate (scroll) by a page up */
   navigatePageUp(): void {
+    this.unsetActiveCell();
     this.scrollPage(-1);
   }
 
   /** Navigate to the top of the grid */
   navigateTop(): void {
+    this.unsetActiveCell();
     this.navigateToRow(0);
   }
 
   /** Navigate to the bottom of the grid */
   navigateBottom(): void {
+    this.unsetActiveCell();
     let row = this.getDataLength() - 1;
     let isValidMove = false;
     do {
@@ -6674,6 +6688,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
     this.setFocus();
+    this.unsetActiveCell();
 
     const tabbingDirections = {
       up: -1,

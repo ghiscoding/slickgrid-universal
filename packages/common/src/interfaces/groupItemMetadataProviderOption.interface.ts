@@ -2,7 +2,7 @@ import type { Formatter } from './formatter.interface.js';
 import type { SlickCheckboxSelectColumn } from '../extensions/slickCheckboxSelectColumn.js';
 
 export interface ItemMetadataProvider {
-  getRowMetadata(item: any, row?: number, cell?: number): any;
+  getRowMetadata(item: any, row: number): any;
 }
 
 export interface GroupItemMetadataProviderOption {

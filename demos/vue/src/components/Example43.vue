@@ -16,14 +16,16 @@ function disposeGrid() {
 }
 
 function handleFileImport(event: any) {
-  const file = event.target.files[0];
-  if (file) {
+  const file: File = event.target.files[0];
+  if (file.name.endsWith('.csv')) {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const content = e.target.result;
       dynamicallyCreateGrid(content);
     };
     reader.readAsText(file);
+  } else {
+    alert('File must be a CSV file');
   }
 }
 
@@ -131,7 +133,8 @@ function toggleSubTitle() {
       <button id="uploadBtn" data-test="static-data-btn" class="btn btn-outline-secondary" @click="handleDefaultCsv">
         Use default CSV data
       </button>
-      <button class="btn btn-outline-secondary ms-1" @click="disposeGrid()">Destroy Grid</button>
+      &nbsp;/
+      <button class="btn btn-outline-danger btn-sm ms-2" @click="disposeGrid()">Destroy Grid</button>
     </div>
   </div>
 
