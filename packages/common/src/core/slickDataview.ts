@@ -7,6 +7,7 @@ import type {
   Grouping,
   GroupingFormatterItem,
   ItemMetadata,
+  ItemMetadataProvider,
   OnGroupCollapsedEventArgs,
   OnGroupExpandedEventArgs,
   OnRowCountChangedEventArgs,
@@ -26,6 +27,9 @@ export interface DataViewOption {
    * Note: please use with great care as this will break built-in filters
    */
   inlineFilters: boolean;
+
+  /** global override for all rows */
+  globalItemMetadataProvider: ItemMetadataProvider | null;
 
   /** Optionally provide a GroupItemMetadataProvider in order to use Grouping/DraggableGrouping features */
   groupItemMetadataProvider: SlickGroupItemMetadataProvider | null;
@@ -52,6 +56,7 @@ export type GroupGetterFn = (val: any) => string | number;
  */
 export class SlickDataView<TData extends SlickDataItem = any> implements CustomDataView {
   protected defaults: DataViewOption = {
+    globalItemMetadataProvider: null,
     groupItemMetadataProvider: null,
     inlineFilters: false,
     useCSPSafeFilter: false,
@@ -749,20 +754,25 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return item;
   }
 
-  getItemMetadata(i: number): ItemMetadata | null {
-    const item = this.rows[i];
+  getItemMetadata(row: number): ItemMetadata | null {
+    const item = this.rows[row];
     if (item === undefined) {
       return null;
     }
 
+    // global override for all regular rows
+    if (this._options.globalItemMetadataProvider?.getRowMetadata) {
+      return this._options.globalItemMetadataProvider.getRowMetadata(item, row);
+    }
+
     // overrides for grouping rows
-    if ((item as SlickGroup).__group) {
-      return this._options.groupItemMetadataProvider!.getGroupRowMetadata(item as GroupingFormatterItem);
+    if ((item as SlickGroup).__group && this._options.groupItemMetadataProvider?.getGroupRowMetadata) {
+      return this._options.groupItemMetadataProvider.getGroupRowMetadata(item as GroupingFormatterItem, row);
     }
 
     // overrides for totals rows
-    if ((item as SlickGroupTotals).__groupTotals) {
-      return this._options.groupItemMetadataProvider!.getTotalsRowMetadata(item as { group: GroupingFormatterItem });
+    if ((item as SlickGroupTotals).__groupTotals && this._options.groupItemMetadataProvider?.getTotalsRowMetadata) {
+      return this._options.groupItemMetadataProvider.getTotalsRowMetadata(item as { group: GroupingFormatterItem }, row);
     }
 
     return null;

@@ -85,7 +85,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     this._options = { ...this._options, ...inputOptions };
   }
 
-  getGroupRowMetadata(item: GroupingFormatterItem): ItemMetadata {
+  getGroupRowMetadata(item: GroupingFormatterItem, _row: number): ItemMetadata {
     return {
       selectable: false,
       focusable: this._options.groupFocusable,
@@ -101,7 +101,8 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     };
   }
 
-  getTotalsRowMetadata(item: { group: GroupingFormatterItem }): {
+  // prettier-ignore
+  getTotalsRowMetadata(item: { group: GroupingFormatterItem }, _row: number): {
     selectable: boolean;
     focusable: boolean | undefined;
     cssClasses: string;
