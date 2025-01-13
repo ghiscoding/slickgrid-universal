@@ -25,7 +25,7 @@
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/vanilla-bundle": "workspace:~",
     "@slickgrid-universal/vanilla-force-bundle": "workspace:~",
-    "bulma": "^1.0.2",
+    "bulma": "^1.0.3",
     "dompurify": "^3.1.6",
     "multiple-select-vanilla": "^3.4.2",
     "rxjs": "^7.8.1",
