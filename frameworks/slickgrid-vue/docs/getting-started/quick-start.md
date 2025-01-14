@@ -28,7 +28,10 @@ createApp(App);
 
 ### 3. CSS / SASS Styles
 
-Load the default Bootstrap theme style and/or customize it to your taste (customization requires SASS)
+Load the default Bootstrap theme style and/or customize it to your taste (customization requires SASS).
+
+> Note: the default CSS/SASS Theme name is `slickgrid-theme-bootstrap` but it **does not** require Bootstrap to work.
+> It is the recommended Theme even if you use any other UI framework, try this default theme first and tweak it if necessary.
 
 #### CSS
 
@@ -120,7 +123,7 @@ function defineGrid() {
     gridWidth: 800,
   };
 
-  dataset.value = getData();
+  dataset.value = getData(500);
 }
 
 function getData(count: number) {
@@ -148,7 +151,7 @@ function getData(count: number) {
 </script>
 
 <template>
-  <SlickgridVue grid-id="grid1" v-model:columns="columnDefinitions" v-model:options="gridOptions" v-model:data="dataset" />
+  <SlickgridVue grid-id="grid1" v-model:columns="columnDefinitions as Column[]" v-model:options="gridOptions" v-model:data="dataset" />
 </template>
 ```
 
