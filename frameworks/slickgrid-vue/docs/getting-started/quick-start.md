@@ -42,7 +42,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
 import 'styles.css';
-import 'node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
 </script>
 ```
 
