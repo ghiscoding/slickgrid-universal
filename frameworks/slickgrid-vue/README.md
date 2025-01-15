@@ -62,10 +62,10 @@ Multiple styling themes are available
 - Material (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example07))
 - Salesforce (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example16))
 
-Also note that all of these themes also have **Dark Theme** equivalent and even though Bootstrap is often used as the default, it does work as well with any other UI framework like Bulma, Material, ...
+Also note that all of these themes also have **Dark Theme** equivalent and even though Bootstrap is often used as the default, it does work as well with any other UI framework like Bulma, Material, Quasar...
 
 ### Live Demo page
-`Slickgrid-Vue` works with all `Bootstrap` versions, you can see a demo of each one below. It also works well with any other frameworks like Material or Bulma and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
+`Slickgrid-Vue` works with all Bootstrap versions, you can see a demo of each one below. It also works well with any other frameworks like Material, Bulma, Quasar... and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
 - [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos)
 
 #### Working Demos
