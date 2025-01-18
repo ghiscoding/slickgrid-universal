@@ -341,6 +341,9 @@ export interface Column<T = any> {
   /** Do we want to re-render the grid on a grid resize */
   rerenderOnResize?: boolean;
 
+  /** Row span in cell count or use `*` to span across the entire row */
+  rowspan?: number;
+
   /** Defaults to false, which leads to Sanitizing all data (striping out any HTML tags) when being evaluated on export. */
   sanitizeDataExport?: boolean;
 

@@ -49,6 +49,7 @@
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Add, Update or Highlight a Datagrid Item](grid-functionalities/add-update-highlight.md)
 * [Dynamically Add CSS Classes to Item Rows](grid-functionalities/dynamic-item-metadata.md)
+* [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
 * [Context Menu](grid-functionalities/context-menu.md)
 * [Custom Footer](grid-functionalities/custom-footer.md)
 * [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)

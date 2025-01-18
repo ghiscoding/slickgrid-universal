@@ -16,6 +16,16 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('h3').should('contain', 'Example 14 - Columns Resize by Content');
     });
 
+    it('should navigate to bottom/top of the grid with command execution', () => {
+      cy.get('.items-per-page').select('500');
+      cy.get('[data-test="navigate-bottom"]').click();
+      cy.get('[data-row=399] > .slick-cell.l1.r1').should('contain', 'Task 399');
+
+      cy.get('[data-test="navigate-top"]').click();
+      cy.get('[data-row=1]').should('contain', 'Task 1');
+      cy.get('.items-per-page').select('10');
+    });
+
     it('should have cell that fit the text content', () => {
       cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('equal', 79);
       cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('equal', 98);

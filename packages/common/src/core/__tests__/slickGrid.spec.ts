@@ -114,7 +114,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] Zoom level other than 100% is not supported'));
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid] Zoom level other than 100% is not supported'));
   });
 
   it('should not display a console warning when body zoom level is 100%', () => {
@@ -126,7 +126,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid-Universal] Zoom level other than 100% is not supported');
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid] Zoom level other than 100% is not supported');
   });
 
   it('should not display a console warning when body zoom is not defined', () => {
@@ -138,7 +138,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid-Universal] Zoom level other than 100% is not supported');
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid] Zoom level other than 100% is not supported');
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
@@ -4362,9 +4362,8 @@ describe('SlickGrid core file', () => {
       const scrollToSpy = vi.spyOn(grid, 'scrollTo');
       grid.setActiveCell(0, 1);
       grid.navigateLeft();
-      const result = grid.navigateBottom();
+      grid.navigateBottom();
 
-      expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
       expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
       expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
@@ -4401,7 +4400,6 @@ describe('SlickGrid core file', () => {
       ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
       const scrollToSpy = vi.spyOn(grid, 'scrollTo');
       const renderSpy = vi.spyOn(grid, 'render');
@@ -4410,7 +4408,6 @@ describe('SlickGrid core file', () => {
 
       expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
       expect(scrollToSpy).toHaveBeenCalledWith(600);
-      expect(resetCellSpy).toHaveBeenCalled();
       expect(renderSpy).toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
@@ -4422,7 +4419,6 @@ describe('SlickGrid core file', () => {
       ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
       const scrollToSpy = vi.spyOn(grid, 'scrollTo');
       const renderSpy = vi.spyOn(grid, 'render');
@@ -4431,7 +4427,6 @@ describe('SlickGrid core file', () => {
 
       expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
       expect(scrollToSpy).toHaveBeenCalledWith(-600);
-      expect(resetCellSpy).toHaveBeenCalled();
       expect(renderSpy).toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
@@ -4476,9 +4471,8 @@ describe('SlickGrid core file', () => {
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
       vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
       grid.setActiveCell(0, 2);
-      const result = grid.navigateLeft();
+      grid.navigateLeft();
 
-      expect(result).toBe(false);
       expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
@@ -4752,9 +4746,8 @@ describe('SlickGrid core file', () => {
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
       vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
       grid.setActiveCell(1, 1);
-      const result = grid.navigatePrev();
+      grid.navigatePrev();
 
-      expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
@@ -4769,9 +4762,8 @@ describe('SlickGrid core file', () => {
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
       vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
       grid.setActiveCell(1, 2);
-      const result = grid.navigateNext();
+      grid.navigateNext();
 
-      expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
@@ -4786,9 +4778,8 @@ describe('SlickGrid core file', () => {
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
       grid.setActiveCell(1, 2);
-      const result = grid.navigateNext();
+      grid.navigateNext();
 
-      expect(result).toBe(false);
       expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
@@ -4850,9 +4841,8 @@ describe('SlickGrid core file', () => {
       vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
       const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
       grid.setActiveCell(0, 0);
-      const result = grid.navigateRowStart();
+      grid.navigateRowStart();
 
-      expect(result).toBe(false);
       expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
     });

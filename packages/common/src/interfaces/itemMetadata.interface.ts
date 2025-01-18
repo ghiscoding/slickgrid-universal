@@ -1,5 +1,10 @@
 import type { Column, Formatter, GroupTotalsFormatter } from './index.js';
 
+export type ColumnMetadata = Pick<
+  Column,
+  'colspan' | 'rowspan' | 'cssClass' | 'editor' | 'editorClass' | 'focusable' | 'formatter' | 'selectable'
+>;
+
 /**
  * Provides a powerful way to specify additional informations of data item that can be used customize the grid appearance
  * and handling of a particular data item. The method should return `null` when the item requires no special handling,
@@ -23,6 +28,6 @@ export interface ItemMetadata {
   /** column-level metadata */
   columns?: {
     // properties describing metadata related to individual columns
-    [colIdOrIdx in string | number]: Pick<Column, 'colspan' | 'editorClass' | 'focusable' | 'formatter' | 'selectable'>;
+    [colIdOrIdx in string | number]: ColumnMetadata;
   };
 }

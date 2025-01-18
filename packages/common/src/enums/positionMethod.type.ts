@@ -1,3 +1,3 @@
-import type { ElementPosition } from '../interfaces/elementPosition.interface.js';
+import type { ElementPosition } from '../interfaces/position.interface.js';
 
 export type PositionMethod = () => ElementPosition;

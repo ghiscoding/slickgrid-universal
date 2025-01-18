@@ -44,6 +44,24 @@
 
   <div class="column field has-addons is-narrow">
     <p class="control">
+      <button
+        class="button is-small"
+        onclick.delegate="handleNavigateBottom()"
+        data-test="navigate-bottom"
+        title="Navigate to Bottom of Grid"
+      >
+        <span class="mdi mdi-arrow-down"></span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button is-small" onclick.delegate="handleNavigateTop()" data-test="navigate-top" title="Navigate to Top of Grid">
+        <span class="mdi mdi-arrow-down mdi-rotate-180"></span>
+      </button>
+    </p>
+  </div>
+
+  <div class="column field has-addons is-narrow">
+    <p class="control">
       <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="mdi mdi-table-edit"></span>
         <span>Toggle Readonly</span>
