@@ -1,10 +1,10 @@
-describe('Example 43 - Dynamically Create Grid from CSV / Excel import', () => {
+describe('Example 17 - Dynamically Create Grid from CSV / Excel import', () => {
   const defaultCsvTitles = ['First Name', 'Last Name', 'Age', 'Type'];
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example43`);
-    cy.get('h2').should('contain', 'Example 43: Dynamically Create Grid from CSV / Excel import');
+    cy.visit(`${Cypress.config('baseUrl')}/example17`);
+    cy.get('h2').should('contain', 'Example 17: Dynamically Create Grid from CSV / Excel import');
   });
 
   it('should load default CSV file and expect default column titles', () => {
