@@ -55,6 +55,7 @@ export class SlickDraggableGrouping {
   protected _gridColumns: Column[] = [];
   protected _gridUid = '';
   protected _groupToggler?: HTMLDivElement;
+  protected _isInitialized = false;
   protected _reorderedColumns: Column[] = [];
   protected _sortableLeftInstance?: Sortable;
   protected _sortableRightInstance?: Sortable;
@@ -124,6 +125,10 @@ export class SlickDraggableGrouping {
     return this.grid.getContainerNode();
   }
 
+  set isInitialized(state: boolean) {
+    this._isInitialized = state;
+  }
+
   /** Initialize plugin. */
   init(grid: SlickGrid, groupingOptions?: DraggableGrouping): this {
     this._addonOptions = { ...this._defaults, ...groupingOptions };
@@ -132,6 +137,11 @@ export class SlickDraggableGrouping {
       this._gridUid = grid.getUID();
       this._gridColumns = grid.getColumns();
       this._dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
+      if (!this._dropzoneElm) {
+        throw new Error(
+          '[Slickgrid-Universal] Draggable Grouping requires the pre-header to be created and shown for the plugin to work correctly (use `createPreHeaderPanel` and `showPreHeaderPanel`).'
+        );
+      }
       this._dropzoneElm.classList.add('slick-dropzone');
 
       // add PubSub instance to all SlickEvent
@@ -385,6 +395,12 @@ export class SlickDraggableGrouping {
       this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement,
       sortableOptions
     ) as Sortable;
+
+    // user can optionally provide initial groupBy columns
+    if (this._addonOptions.initialGroupBy && !this._isInitialized) {
+      this.setDroppedGroups(this._addonOptions.initialGroupBy);
+    }
+    this._isInitialized = true;
 
     return {
       sortableLeftInstance: this._sortableLeftInstance,
