@@ -62,14 +62,6 @@ export default class Example33 {
     },
   };
 
-  get slickerGridInstance() {
-    return this.sgb?.instances;
-  }
-
-  set isFilteringEnabled(enabled: boolean) {
-    this.filteringEnabledClass = enabled ? 'mdi mdi-toggle-switch' : 'mdi mdi-toggle-switch-off-outline';
-  }
-
   constructor() {
     this._bindingEventService = new BindingEventService();
   }

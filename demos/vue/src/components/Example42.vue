@@ -142,7 +142,7 @@ function defineGrid() {
     },
     enableExcelCopyBuffer: true,
     enableFiltering: true,
-    customPaginationComponent: CustomPagerComponent as DefineComponent<any, BasePaginationModel>, // load our Custom Pagination Component
+    customPaginationComponent: CustomPagerComponent as DefineComponent<any, BasePaginationModel, any>, // load our Custom Pagination Component
     enablePagination: true,
     pagination: {
       pageSize: pageSize.value,

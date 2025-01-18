@@ -1,6 +1,12 @@
 ### Description
 You can use Colspan and/or Rowspan by using the DataView Item Metadata Provider, however please note that row spanning is under a flag because of its small perf hit (`rowspan` requires an initial loop through of all row item metadata to map all row span).
 
+> [!NOTE]
+> Please note that `colspan` and `rowspan` have multiple constraints that you must be aware,
+> any side effects will **not** keep anything in sync since metadata are based on grid row index based...
+> for example: Filtering/Sorting/Paging/ColumnReorder/ColumnHidding
+> These side effect will require user's own logic to deal with such things!
+
 ### Demo
 
 #### Colspan / Rowspan

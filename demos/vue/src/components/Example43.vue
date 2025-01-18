@@ -1,94 +1,400 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, type GridOption, SlickgridVue, toCamelCase } from 'slickgrid-vue';
-import { ref } from 'vue';
+import { type Column, Editors, type GridOption, type ItemMetadata, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
+import { onBeforeMount, ref } from 'vue';
 
-const gridCreated = ref(false);
+const isEditable = ref(false);
 const gridOptions = ref<GridOption>();
 const columnDefinitions = ref<Column[]>([]);
 const dataset = ref<any[]>([]);
-const templateUrl = ref(new URL('./data/users.csv', import.meta.url).href);
-const uploadFileRef = ref('');
 const showSubTitle = ref(true);
+let vueGrid!: SlickgridVueInstance;
+const metadata: ItemMetadata | Record<number, ItemMetadata> = {
+  // 10001: Davolio
+  0: {
+    columns: {
+      1: { rowspan: 2 },
+      2: { colspan: 2 },
+      6: { colspan: 3 },
+      10: { colspan: 3, rowspan: 10 },
+      13: { colspan: 2 },
+      17: { colspan: 2, rowspan: 2 },
+    },
+  },
+  // 10002: (Buchanan... name not shown since Davolio has rowspan=2)
+  1: {
+    columns: {
+      3: { colspan: 3 },
+      6: { colspan: 4 },
+      13: { colspan: 2, rowspan: 5 },
+      15: { colspan: 2 },
+    },
+  },
+  // 10003: Fuller
+  2: {
+    columns: {
+      2: { colspan: 3, rowspan: 2 },
+      5: { colspan: 2 },
+      7: { colspan: 3 },
+      15: { colspan: 2 },
+      17: { colspan: 2 },
+    },
+  },
+  // 10004: Leverling
+  3: {
+    columns: {
+      6: { colspan: 4 },
+      16: { colspan: 2 },
+    },
+  },
+  // 10005: Peacock
+  4: {
+    columns: {
+      2: { colspan: 4 },
+      7: { colspan: 3 },
+      15: { colspan: 2, rowspan: 2 },
+      17: { colspan: 2 },
+    },
+  },
+  // 10006: Janet
+  5: {
+    columns: {
+      2: { colspan: 2 },
+      4: { colspan: 3 },
+      7: { colspan: 3 },
+      17: { colspan: 2 },
+    },
+  },
+  // 10007: Suyama
+  6: {
+    columns: {
+      2: { colspan: 2 },
+      5: { colspan: 2 },
+      7: { colspan: 3 },
+      14: { colspan: 2 },
+      16: { colspan: 3 },
+    },
+  },
+  // 10008: Robert
+  7: {
+    columns: {
+      2: { colspan: 3 },
+      5: { colspan: 3 },
+      13: { colspan: 3, rowspan: 2 },
+      16: { colspan: 2 },
+    },
+  },
+  // 10009: Andrew
+  8: {
+    columns: {
+      2: { colspan: 3 },
+      7: { colspan: 3, rowspan: 2 },
+      17: { colspan: 2 },
+    },
+  },
+  // 10010: Michael
+  9: {
+    columns: {
+      2: { colspan: 3 },
+      5: { colspan: 2 },
+      13: { colspan: 3 },
+      16: { colspan: 3 },
+    },
+  },
+};
 
-function disposeGrid() {
-  gridCreated.value = false;
-}
+onBeforeMount(() => {
+  defineGrid();
+  // mock some data (different in each dataset)
+  dataset.value = loadData();
+});
 
-function handleFileImport(event: any) {
-  const file: File = event.target.files[0];
-  if (file.name.endsWith('.csv')) {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const content = e.target.result;
-      dynamicallyCreateGrid(content);
-    };
-    reader.readAsText(file);
-  } else {
-    alert('File must be a CSV file');
-  }
-}
-
-function handleDefaultCsv() {
-  const staticDataCsv = `First Name,Last Name,Age,Type\nBob,Smith,33,Teacher\nJohn,Doe,20,Student\nJane,Doe,21,Student`;
-  dynamicallyCreateGrid(staticDataCsv);
-  uploadFileRef.value = '';
-}
-
-function dynamicallyCreateGrid(csvContent: string) {
-  // dispose of any previous grid before creating a new one
-  gridCreated.value = false;
-
-  const dataRows = csvContent?.split('\n');
-  const colDefs: Column[] = [];
-  const outputData: any[] = [];
-
-  // create column definitions
-  dataRows.forEach((dataRow, rowIndex) => {
-    const cellValues = dataRow.split(',');
-    const dataEntryObj: any = {};
-
-    if (rowIndex === 0) {
-      // the 1st row is considered to be the header titles, we can create the column definitions from it
-      for (const cellVal of cellValues) {
-        const camelFieldName = toCamelCase(cellVal);
-        colDefs.push({
-          id: camelFieldName,
-          name: cellVal,
-          field: camelFieldName,
-          filterable: true,
-          sortable: true,
-        });
-      }
-    } else {
-      // at this point all column defs were created and we can loop through them and
-      // we can now start adding data as an object and then simply push it to the dataset array
-      cellValues.forEach((cellVal, colIndex) => {
-        dataEntryObj[colDefs[colIndex].id] = cellVal;
-      });
-
-      // a unique "id" must be provided, if not found then use the row index and push it to the dataset
-      if ('id' in dataEntryObj) {
-        outputData.push(dataEntryObj);
-      } else {
-        outputData.push({ ...dataEntryObj, id: rowIndex });
-      }
-    }
-  });
+/* Define grid Options and Columns */
+function defineGrid() {
+  columnDefinitions.value = [
+    { id: 'employeeID', name: 'Employee ID', field: 'employeeID', minWidth: 100 },
+    { id: 'employeeName', name: 'Employee Name', field: 'employeeName', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '9:00', name: '9:00 AM', field: '9:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '9:30', name: '9:30 AM', field: '9:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '10:00', name: '10:00 AM', field: '10:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '10:30', name: '10:30 AM', field: '10:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '11:00', name: '11:00 AM', field: '11:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '11:30', name: '11:30 AM', field: '11:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '12:00', name: '12:00 PM', field: '12:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '12:30', name: '12:30 PM', field: '12:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '1:00', name: '1:00 PM', field: '1:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '1:30', name: '1:30 PM', field: '1:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '2:00', name: '2:00 PM', field: '2:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '2:30', name: '2:30 PM', field: '2:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '3:00', name: '3:00 PM', field: '3:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '3:30', name: '3:30 PM', field: '3:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '4:00', name: '4:00 PM', field: '4:00', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '4:30', name: '4:30 PM', field: '4:30', editor: { model: Editors.text }, minWidth: 120 },
+    { id: '5:00', name: '5:00 PM', field: '5:00', editor: { model: Editors.text }, minWidth: 120 },
+  ];
 
   gridOptions.value = {
-    gridHeight: 300,
-    gridWidth: 800,
-    enableFiltering: true,
+    autoResize: {
+      bottomPadding: 30,
+      rightPadding: 50,
+    },
+    enableCellNavigation: true,
+    enableColumnReorder: true,
+    enableCellRowSpan: true,
     enableExcelExport: true,
     externalResources: [new ExcelExportService()],
-    headerRowHeight: 35,
-    rowHeight: 33,
+    enableExcelCopyBuffer: true,
+    autoEdit: true,
+    editable: false,
+    datasetIdPropertyName: 'employeeID',
+    frozenColumn: 0,
+    gridHeight: 348,
+    rowHeight: 30,
+    dataView: {
+      globalItemMetadataProvider: {
+        getRowMetadata: (_item, row) => {
+          return (metadata as Record<number, ItemMetadata>)[row];
+        },
+      },
+    },
+    rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
   };
+}
 
-  dataset.value = outputData;
-  columnDefinitions.value = colDefs;
-  gridCreated.value = true;
+function navigateDown() {
+  vueGrid?.slickGrid?.navigateDown();
+}
+
+function navigateUp() {
+  vueGrid?.slickGrid?.navigateUp();
+}
+
+function navigateNext() {
+  vueGrid?.slickGrid?.navigateNext();
+}
+
+function navigatePrev() {
+  vueGrid?.slickGrid?.navigatePrev();
+}
+
+function toggleEditing() {
+  isEditable.value = !isEditable.value;
+  vueGrid.slickGrid.setOptions({ editable: isEditable.value });
+}
+
+function loadData() {
+  return [
+    {
+      employeeID: 10001,
+      employeeName: 'Davolio',
+      '9:00': 'Analysis Tasks',
+      '9:30': 'Analysis Tasks',
+      '10:00': 'Team Meeting',
+      '10:30': 'Testing',
+      '11:00': 'Development',
+      '11:30': 'Development',
+      '12:00': 'Development',
+      '12:30': 'Support',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Testing',
+      '3:00': 'Testing',
+      '3:30': 'Development',
+      '4:00': 'Conference',
+      '4:30': 'Team Meeting',
+      '5:00': 'Team Meeting',
+    },
+    {
+      employeeID: 10002,
+      employeeName: 'Buchanan',
+      '9:00': 'Task Assign',
+      '9:30': 'Support',
+      '10:00': 'Support',
+      '10:30': 'Support',
+      '11:00': 'Testing',
+      '11:30': 'Testing',
+      '12:00': 'Testing',
+      '12:30': 'Testing',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Development',
+      '3:00': 'Development',
+      '3:30': 'Check Mail',
+      '4:00': 'Check Mail',
+      '4:30': 'Team Meeting',
+      '5:00': 'Team Meeting',
+    },
+    {
+      employeeID: 10003,
+      employeeName: 'Fuller',
+      '9:00': 'Check Mail',
+      '9:30': 'Check Mail',
+      '10:00': 'Check Mail',
+      '10:30': 'Analysis Tasks',
+      '11:00': 'Analysis Tasks',
+      '11:30': 'Support',
+      '12:00': 'Support',
+      '12:30': 'Support',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Development',
+      '3:00': 'Development',
+      '3:30': 'Team Meeting',
+      '4:00': 'Team Meeting',
+      '4:30': 'Development',
+      '5:00': 'Development',
+    },
+    {
+      employeeID: 10004,
+      employeeName: 'Leverling',
+      '9:00': 'Testing',
+      '9:30': 'Check Mail',
+      '10:00': 'Check Mail',
+      '10:30': 'Support',
+      '11:00': 'Testing',
+      '11:30': 'Testing',
+      '12:00': 'Testing',
+      '12:30': 'Testing',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Development',
+      '3:00': 'Development',
+      '3:30': 'Check Mail',
+      '4:00': 'Conference',
+      '4:30': 'Conference',
+      '5:00': 'Team Meeting',
+    },
+    {
+      employeeID: 10005,
+      employeeName: 'Peacock',
+      '9:00': 'Task Assign',
+      '9:30': 'Task Assign',
+      '10:00': 'Task Assign',
+      '10:30': 'Task Assign',
+      '11:00': 'Check Mail',
+      '11:30': 'Support',
+      '12:00': 'Support',
+      '12:30': 'Support',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Development',
+      '3:00': 'Development',
+      '3:30': 'Team Meeting',
+      '4:00': 'Team Meeting',
+      '4:30': 'Testing',
+      '5:00': 'Testing',
+    },
+    {
+      employeeID: 10006,
+      employeeName: 'Janet',
+      '9:00': 'Testing',
+      '9:30': 'Testing',
+      '10:00': 'Support',
+      '10:30': 'Support',
+      '11:00': 'Support',
+      '11:30': 'Team Meeting',
+      '12:00': 'Team Meeting',
+      '12:30': 'Team Meeting',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Development',
+      '3:00': 'Development',
+      '3:30': 'Team Meeting',
+      '4:00': 'Team Meeting',
+      '4:30': 'Development',
+      '5:00': 'Development',
+    },
+    {
+      employeeID: 10007,
+      employeeName: 'Suyama',
+      '9:00': 'Analysis Tasks',
+      '9:30': 'Analysis Tasks',
+      '10:00': 'Testing',
+      '10:30': 'Development',
+      '11:00': 'Development',
+      '11:30': 'Testing',
+      '12:00': 'Testing',
+      '12:30': 'Testing',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Support',
+      '3:00': 'Build',
+      '3:30': 'Build',
+      '4:00': 'Check Mail',
+      '4:30': 'Check Mail',
+      '5:00': 'Check Mail',
+    },
+    {
+      employeeID: 10008,
+      employeeName: 'Robert',
+      '9:00': 'Task Assign',
+      '9:30': 'Task Assign',
+      '10:00': 'Task Assign',
+      '10:30': 'Development',
+      '11:00': 'Development',
+      '11:30': 'Development',
+      '12:00': 'Testing',
+      '12:30': 'Support',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Check Mail',
+      '3:00': 'Check Mail',
+      '3:30': 'Check Mail',
+      '4:00': 'Team Meeting',
+      '4:30': 'Team Meeting',
+      '5:00': 'Build',
+    },
+    {
+      employeeID: 10009,
+      employeeName: 'Andrew',
+      '9:00': 'Check Mail',
+      '9:30': 'Team Meeting',
+      '10:00': 'Team Meeting',
+      '10:30': 'Support',
+      '11:00': 'Testing',
+      '11:30': 'Development',
+      '12:00': 'Development',
+      '12:30': 'Development',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Check Mail',
+      '3:00': 'Check Mail',
+      '3:30': 'Check Mail',
+      '4:00': 'Team Meeting',
+      '4:30': 'Development',
+      '5:00': 'Development',
+    },
+    {
+      employeeID: 10010,
+      employeeName: 'Michael',
+      '9:00': 'Task Assign',
+      '9:30': 'Task Assign',
+      '10:00': 'Task Assign',
+      '10:30': 'Analysis Tasks',
+      '11:00': 'Analysis Tasks',
+      '11:30': 'Development',
+      '12:00': 'Development',
+      '12:30': 'Development',
+      '1:00': 'Lunch Break',
+      '1:30': 'Lunch Break',
+      '2:00': 'Lunch Break',
+      '2:30': 'Testing',
+      '3:00': 'Testing',
+      '3:30': 'Testing',
+      '4:00': 'Build',
+      '4:30': 'Build',
+      '5:00': 'Build',
+    },
+  ];
 }
 
 function toggleSubTitle() {
@@ -96,11 +402,15 @@ function toggleSubTitle() {
   const action = showSubTitle.value ? 'remove' : 'add';
   document.querySelector('.subtitle')?.classList[action]('hidden');
 }
+
+function vueGridReady(grid: SlickgridVueInstance) {
+  vueGrid = grid;
+}
 </script>
 
 <template>
   <h2>
-    Example 43: Dynamically Create Grid from CSV / Excel import
+    Example 43: colspan/rowspan - Employees Timesheets
     <span class="float-end">
       <a
         style="font-size: 18px"
@@ -116,42 +426,104 @@ function toggleSubTitle() {
   </h2>
 
   <div class="subtitle">
-    Allow creating a grid dynamically by importing an external CSV or Excel file. This script demo will read the CSV file and will consider
-    the first row as the column header and create the column definitions accordingly, while the next few rows will be considered the
-    dataset. Note that this example is demoing a CSV file import but in your application you could easily implemnt an Excel file uploading.
+    <p class="italic example-details">
+      <b>NOTES</b>: <code>rowspan</code> is an opt-in feature, because of its small perf hit (it needs to loop through all row metadatas to
+      map all rowspan), and requires the <code>enableCellRowSpan</code> grid option to be enabled to work properly. The
+      <code>colspan</code>/<code>rowspan</code> are both using DataView item metadata and are both based on row indexes and will
+      <b>not</b> keep the row in sync with the data. It is really up to you the user to update the metadata logic of how and where the cells
+      should span when a side effect kicks in. (i.e: Filtering/Sorting/Paging/Column Reorder... will <b>not</b> change/update the spanning
+      in the grid by itself and that is why they these features are all disabled in this example). Also, column/row freezing (pinning) are
+      also not supported, or at least not recommended unless you know exactly what you're doing (like in this demo here because we know our
+      pinning doesn't intersect)! Any freezing column/row that could intersect with a <code>colspan</code>/<code>rowspan</code>
+      <b>will cause problems</b>.
+    </p>
   </div>
 
-  <div>A default CSV file can be download <a id="template-dl" :href="templateUrl">here</a>.</div>
+  <button
+    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+    data-test="goto-up"
+    @click="navigateUp()"
+    title="from an active cell, navigate to cell above"
+  >
+    <span class="mdi mdi-chevron-down mdi-rotate-180"></span>
+    Navigate Up Cell
+  </button>
+  <button
+    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+    data-test="goto-down"
+    @click="navigateDown()"
+    title="from an active cell, navigate to cell below"
+  >
+    <span class="mdi mdi-chevron-down"></span>
+    Navigate Down Cell
+  </button>
+  <button
+    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+    data-test="goto-prev"
+    @click="navigatePrev()"
+    title="from an active cell, navigate to previous left cell"
+  >
+    <span class="mdi mdi-chevron-down mdi-rotate-90"></span>
+    Navigate to Left Cell
+  </button>
+  <button
+    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+    data-test="goto-next"
+    @click="navigateNext()"
+    title="from an active cell, navigate to next right cell"
+  >
+    <span class="mdi mdi-chevron-down mdi-rotate-270"></span>
+    Navigate to Right Cell
+  </button>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon mx-1" @click="toggleEditing()" data-test="toggle-editing">
+    <span class="mdi mdi-pencil-outline"></span>
+    <span
+      >Toggle Editing: <span id="isEditable" class="text-italic">{{ isEditable }}</span></span
+    >
+  </button>
 
-  <div class="d-flex mt-5 align-items-end">
-    <div class="file-upload">
-      <label for="formFile" class="form-label">Choose a CSV file…</label>
-      <input class="form-control" type="file" data-test="file-upload-input" :value="uploadFileRef" @change="handleFileImport" />
-    </div>
-    <span class="mx-3">or</span>
-    <div>
-      <button id="uploadBtn" data-test="static-data-btn" class="btn btn-outline-secondary" @click="handleDefaultCsv">
-        Use default CSV data
-      </button>
-      &nbsp;/
-      <button class="btn btn-outline-danger btn-sm ms-2" @click="disposeGrid()">Destroy Grid</button>
-    </div>
+  <div class="grid-container grid43-container">
+    <div class="grid43"></div>
   </div>
-
-  <hr />
 
   <slickgrid-vue
-    v-if="gridCreated"
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions as Column[]"
     v-model:data="dataset"
     grid-id="grid43"
+    @onVueGridCreated="vueGridReady($event.detail)"
   >
   </slickgrid-vue>
 </template>
 
 <style lang="scss">
-.file-upload {
-  max-width: 300px;
+#grid43 {
+  --slick-border-color: #d4d4d4;
+  // --slick-cell-border-left: 1px solid var(--slick-border-color);
+  --slick-header-menu-display: none;
+  --slick-header-column-height: 20px;
+  --slick-grid-border-color: #d4d4d4;
+  --slick-row-selected-color: #d4ebfd;
+  --slick-cell-active-box-shadow: inset 0 0 0 1px #3ca4ff;
+
+  --slick-row-mouse-hover-box-shadow: 0;
+  --slick-cell-odd-background-color: #fff;
+  // --slick-cell-border-top: 0;
+  --slick-cell-border-right: 1px solid var(--slick-border-color);
+  --slick-cell-border-bottom: 1px solid var(--slick-border-color);
+  // --slick-cell-border-left: 1px;
+  --slick-cell-box-shadow: none;
+  --slick-row-mouse-hover-color: #fff;
+  --slick-cell-display: flex;
+
+  .slick-cell.rowspan {
+    // background: white;
+    z-index: 9;
+  }
+  .slick-cell {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+  }
 }
 </style>

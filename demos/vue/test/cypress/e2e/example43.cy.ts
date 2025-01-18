@@ -1,83 +1,406 @@
-describe('Example 43 - Dynamically Create Grid from CSV / Excel import', () => {
-  const defaultCsvTitles = ['First Name', 'Last Name', 'Age', 'Type'];
-  const GRID_ROW_HEIGHT = 33;
+describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, () => {
+  const GRID_ROW_HEIGHT = 30;
+  const fullTitles = [
+    'Employee ID',
+    'Employee Name',
+    '9:00 AM',
+    '9:30 AM',
+    '10:00 AM',
+    '10:30 AM',
+    '11:00 AM',
+    '11:30 AM',
+    '12:00 PM',
+    '12:30 PM',
+    '1:00 PM',
+    '1:30 PM',
+    '2:00 PM',
+    '2:30 PM',
+    '3:00 PM',
+    '3:30 PM',
+    '4:00 PM',
+    '4:30 PM',
+    '5:00 PM',
+  ];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example43`);
-    cy.get('h2').should('contain', 'Example 43: Dynamically Create Grid from CSV / Excel import');
+    cy.get('h2').should('contain', 'Example 43: colspan/rowspan - Employees Timesheets');
   });
 
-  it('should load default CSV file and expect default column titles', () => {
-    cy.get('[data-test="static-data-btn"]').click();
-
+  it('should have exact column titles', () => {
     cy.get('.slick-header-columns')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(defaultCsvTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should expect default data in the grid', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Bob');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Smith');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', 'Teacher');
-
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'John');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Doe');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(2)`).should('contain', '20');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'Student');
-
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'Jane');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Doe');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(2)`).should('contain', '21');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', 'Student');
+  it('should expect 1st column to be frozen (frozen)', () => {
+    cy.get('.grid-canvas-left .slick-cell.frozen').should('have.length', 10);
+    cy.get('.grid-canvas-right .slick-cell:not(.frozen)').should('have.length.above', 60);
   });
 
-  it('should sort by "Age" and expect it to be sorted in ascending order', () => {
-    cy.get('.slick-header-columns .slick-header-column:nth(2)').click();
+  describe('Spanning', () => {
+    it('should expect "Davolio", "Check Mail", and "Development" to all have rowspan of 2 in morning hours', () => {
+      cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should('contain', 'Davolio');
+      cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+      );
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'John');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Doe');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '20');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', 'Student');
+      cy.get(`[data-row=2] > .slick-cell.l2.r4.rowspan`).should('contain', 'Check Mail');
+      cy.get(`[data-row=2] > .slick-cell.l2.r4.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+      );
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'Jane');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Doe');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(2)`).should('contain', '21');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'Student');
+      cy.get(`[data-row=8] > .slick-cell.l7.r9.rowspan`).should('contain', 'Development');
+      cy.get(`[data-row=8] > .slick-cell.l7.r9.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+      );
+    });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'Bob');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Smith');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(2)`).should('contain', '33');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', 'Teacher');
+    it('should expect "Lunch Break" to span over 3 columns and over all rows', () => {
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan`).should('contain', 'Lunch Break');
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 10)
+      );
+    });
+
+    it('should expect a large "Development" section that spans over multiple columns & rows in the afternoon', () => {
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).should('contain', 'Development');
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+      );
+    });
   });
 
-  it('should click again the "Age" column and expect it to be sorted in descending order', () => {
-    cy.get('.slick-header-columns .slick-header-column:nth(2)').click();
+  describe('Basic Key Navigations', () => {
+    it('should start at Employee 10001, then type "End" key and expect to be in "Team Meeting" between 4:30-5:00pm', () => {
+      cy.get('[data-row=0] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l0.r0.active').should('contain', '10001');
+      cy.get('@active_cell').type('{end}');
+      cy.get('[data-row=0] > .slick-cell.l17.r18.active').should('contain', 'Team Meeting');
+    });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Bob');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Smith');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', 'Teacher');
+    it('should start at Employee 10002, then type "End" key and also expect to be in "Team Meeting" between 4:30-5:00pm', () => {
+      cy.get('[data-row=1] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=1] > .slick-cell.l0.r0.active').should('contain', '10002');
+      cy.get('@active_cell').type('{end}');
+      cy.get('[data-row=0] > .slick-cell.l17.r18.active').should('contain', 'Team Meeting');
+    });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'Jane');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Doe');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(2)`).should('contain', '21');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', 'Student');
+    it('should start at Employee 10004, then type "ArrowRight" key twice and expect to be in "Check Mail" between 9:00-10:30am', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}');
+      cy.get('[data-row=2] > .slick-cell.l2.r4.active').should('contain', 'Check Mail');
+    });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'John');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Doe');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(2)`).should('contain', '20');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', 'Student');
+    it('should start at Employee 10004, then type "ArrowRight" key 4x times and expect to be in "Testing" between 11:00-1:00pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}');
+      cy.get('[data-row=3] > .slick-cell.l6.r9.active').should('contain', 'Testing');
+    });
+
+    it('should start at Employee 10004, then type "ArrowRight" key 5x times and expect to be in "Lunch Break"', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}');
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan`).should('contain', 'Lunch Break');
+    });
+
+    it('should start at Employee 10004, then type "ArrowRight" key 6x times and expect to be in "Development" between 2:30-3:30pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}');
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan.active`).should('contain', 'Development');
+    });
+
+    // then rollback by going backward
+    it('should be on Employee 10004 row at previous "Development" cell, then type "ArrowLeft" key once and expect to be in "Lunch Break"', () => {
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).as('active_cell').click();
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).should('contain', 'Development');
+      cy.get('@active_cell').type('{leftarrow}');
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan.active`).should('contain', 'Lunch Break');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "ArrowLeft" key once and expect to be in "Conference" between 4:00-5:00pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).should('contain', 'Team Meeting');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).type('{leftarrow}');
+      cy.get(`[data-row=3] > .slick-cell.l16.r17.active`).should('contain', 'Conference');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "ArrowLeft" key 3x times and expect to be back to "Development" between 2:30-3:30pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).should('contain', 'Team Meeting');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).type('{leftarrow}{leftarrow}{leftarrow}');
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan.active`).should('contain', 'Development');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "ArrowLeft" key 4x times and expect to be back to "Lunch Break"', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).as('active_cell').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{leftarrow}{leftarrow}{leftarrow}{leftarrow}');
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan.active`).should('contain', 'Lunch Break');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "ArrowLeft" key 5x times and expect to be back to "Testing" between 11:00-1:00pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).as('active_cell').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}');
+      cy.get(`[data-row=3] > .slick-cell.l6.r9.active`).should('contain', 'Testing');
+    });
+
+    // going down
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key once and expect to be in "Support" between 9:30-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}');
+      cy.get(`[data-row=1] > .slick-cell.l3.r5.active`).should('contain', 'Support');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key twice and expect to be in "Check Email" between 9:00-10:30am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}{downarrow}');
+      cy.get(`[data-row=2] > .slick-cell.l2.r4.active`).should('contain', 'Check Mail');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 3x times and expect to be in "Task Assign" between 9:00-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}{downarrow}{downarrow}');
+      cy.get(`[data-row=4] > .slick-cell.l2.r5.active`).should('contain', 'Task Assign');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times and expect to be in "Support" between 10:00-11:30am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}{downarrow}{downarrow}{downarrow}');
+      cy.get(`[data-row=5] > .slick-cell.l4.r6.active`).should('contain', 'Support');
+    });
+
+    // going up from inverse
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" once and expect to be in "Task Assign" between 9:00-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}{downarrow}{downarrow}{downarrow}{uparrow}');
+      cy.get(`[data-row=4] > .slick-cell.l2.r5.active`).should('contain', 'Task Assign');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" 2x times and expect to be in "Task Assign" between 9:00-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}{downarrow}{downarrow}{downarrow}{uparrow}{uparrow}');
+      cy.get(`[data-row=2] > .slick-cell.l2.r4.active`).should('contain', 'Check Mail');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" 3x times and expect to be in "Support" between 10:00-11:30am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}{downarrow}{downarrow}{downarrow}{uparrow}{uparrow}{uparrow}');
+      cy.get(`[data-row=1] > .slick-cell.l3.r5.active`).should('contain', 'Support');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" 4x times and expect to be back to same "Team Meeting"', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('@active_cell').type('{downarrow}{downarrow}{downarrow}{downarrow}{uparrow}{uparrow}{uparrow}{uparrow}');
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+    });
   });
 
-  it('should filter Smith as "Last Name" and expect only 1 row in the grid', () => {
-    cy.get('.slick-headerrow .slick-headerrow-column:nth(1) input').type('Smith');
+  describe('Grid Navigate Functions', () => {
+    it('should start at Employee 10004, then type "Navigate Right" twice and expect to be in "Check Mail" between 9:00-10:30am', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-test="goto-next"]').click().click();
+      cy.get('[data-row=2] > .slick-cell.l2.r4.active').should('contain', 'Check Mail');
+    });
 
-    cy.get('.slick-row').should('have.length', 1);
+    it('should start at Employee 10004, then type "Navigate Right" 4x times and expect to be in "Testing" between 11:00-1:00pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('[data-test="goto-next"]').click().click().click().click();
+      cy.get('[data-row=3] > .slick-cell.l6.r9.active').should('contain', 'Testing');
+    });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Bob');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Smith');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', 'Teacher');
+    it('should start at Employee 10004, then type "Navigate Right" 5x times and expect to be in "Lunch Break"', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('[data-test="goto-next"]').click().click().click().click().click();
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan`).should('contain', 'Lunch Break');
+    });
+
+    it('should start at Employee 10004, then type "Navigate Right" 6x times and expect to be in "Development" between 2:30-3:30pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('[data-test="goto-next"]').click().click().click().click().click().click();
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan.active`).should('contain', 'Development');
+    });
+
+    // then rollback by going backward
+    it('should be on Employee 10004 row at previous "Development" cell, then type "Navigate Left" once and expect to be in "Lunch Break"', () => {
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).as('active_cell').click();
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).should('contain', 'Development');
+      cy.get('[data-test="goto-prev"]').click();
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan.active`).should('contain', 'Lunch Break');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "Navigate Left" once and expect to be in "Conference" between 4:00-5:00pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-prev"]').click();
+      cy.get(`[data-row=3] > .slick-cell.l16.r17.active`).should('contain', 'Conference');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "Navigate Left" 3x times and expect to be back to "Development" between 2:30-3:30pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-prev"]').click().click().click();
+      cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan.active`).should('contain', 'Development');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "Navigate Left" 4x times and expect to be back to "Lunch Break"', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).as('active_cell').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-prev"]').click().click().click().click();
+      cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan.active`).should('contain', 'Lunch Break');
+    });
+
+    it('should start at Employee 10004, type "End" and be at "Team Meeting" at 5pm, then type "Navigate Left" 5x times and expect to be back to "Testing" between 11:00-1:00pm', () => {
+      cy.get('[data-row=3] > .slick-cell.l0.r0').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l0.r0.active').should('contain', '10004');
+      cy.get('@active_cell').type('{end}');
+      cy.get(`[data-row=3] > .slick-cell.l18.r18.active`).as('active_cell').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-prev"]').click().click().click().click().click();
+      cy.get(`[data-row=3] > .slick-cell.l6.r9.active`).should('contain', 'Testing');
+    });
+
+    // going down
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key once and expect to be in "Support" between 9:30-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click();
+      cy.get(`[data-row=1] > .slick-cell.l3.r5.active`).should('contain', 'Support');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key twice and expect to be in "Check Email" between 9:00-10:30am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click().click();
+      cy.get(`[data-row=2] > .slick-cell.l2.r4.active`).should('contain', 'Check Mail');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 3x times and expect to be in "Task Assign" between 9:00-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click().click().click();
+      cy.get(`[data-row=4] > .slick-cell.l2.r5.active`).should('contain', 'Task Assign');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times and expect to be in "Support" between 10:00-11:30am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click().click().click().click();
+      cy.get(`[data-row=5] > .slick-cell.l4.r6.active`).should('contain', 'Support');
+    });
+
+    // going up from inverse
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" once and expect to be in "Task Assign" between 9:00-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click().click().click().click();
+      cy.get('[data-test="goto-up"]').click();
+      cy.get(`[data-row=4] > .slick-cell.l2.r5.active`).should('contain', 'Task Assign');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" 2x times and expect to be in "Task Assign" between 9:00-11:00am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click().click().click().click();
+      cy.get('[data-test="goto-up"]').click().click();
+      cy.get(`[data-row=2] > .slick-cell.l2.r4.active`).should('contain', 'Check Mail');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" 3x times and expect to be in "Support" between 10:00-11:30am', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click().click().click().click();
+      cy.get('[data-test="goto-up"]').click().click().click();
+      cy.get(`[data-row=1] > .slick-cell.l3.r5.active`).should('contain', 'Support');
+    });
+
+    it('should start at 10am "Team Meeting, then type "ArrowDown" key 4x times, then "ArrowUp" 4x times and expect to be back to same "Team Meeting"', () => {
+      cy.get('[data-row=0] > .slick-cell.l4.r4').as('active_cell').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+      cy.get('[data-test="goto-down"]').click().click().click().click();
+      cy.get('[data-test="goto-up"]').click().click().click().click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
+    });
+  });
+
+  describe('Grid Editing', () => {
+    it('should toggle editing', () => {
+      cy.get('#isEditable').contains('false');
+      cy.get('[data-row=0] > .slick-cell.l4.r4').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active .editor-text').should('not.exist');
+
+      cy.get('[data-test=toggle-editing]').click();
+      cy.get('#isEditable').contains('true');
+
+      cy.get('[data-row=0] > .slick-cell.l4.r4').click();
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active.editable .editor-text').should('exist');
+      cy.get('[data-row=0] > .slick-cell.l4.r4.active.editable .editor-text').type('Team Meeting.xyz{enter}');
+    });
+
+    // going down
+    it('should have changed active cell to "Support" between 9:30-11:00am', () => {
+      cy.get('[data-row=1] > .slick-cell.l3.r5.active.editable .editor-text')
+        .invoke('val')
+        .then((text) => expect(text).to.eq('Support'));
+      cy.get('[data-row=1] > .slick-cell.l3.r5.active.editable .editor-text').type('Support.xyz{enter}');
+    });
+
+    it('should have changed active cell to "Check Email" between 9:00-10:30am', () => {
+      cy.get('[data-row=2] > .slick-cell.l2.r4.active.editable .editor-text')
+        .invoke('val')
+        .then((text) => expect(text).to.eq('Check Mail'));
+      cy.get('[data-row=2] > .slick-cell.l2.r4.active.editable .editor-text').type('Check Mail.xyz{enter}');
+    });
+
+    it('should have changed active cell to "Task Assign" between 9:00-11:00am', () => {
+      cy.get('[data-row=4] > .slick-cell.l2.r5.active.editable .editor-text')
+        .invoke('val')
+        .then((text) => expect(text).to.eq('Task Assign'));
+      cy.get('[data-row=4] > .slick-cell.l2.r5.active.editable .editor-text').type('Task Assign.xyz{enter}');
+    });
+
+    it('should have changed active cell to "Support" between 10:00-11:30am', () => {
+      cy.get('[data-row=5] > .slick-cell.l4.r6.active.editable .editor-text')
+        .invoke('val')
+        .then((text) => expect(text).to.eq('Support'));
+      cy.get('[data-row=5] > .slick-cell.l4.r6.active.editable .editor-text').type('Support.xyz{enter}');
+    });
+
+    it('should have changed active cell to "Testing" and cancel editing when typing "Escape" key', () => {
+      cy.get('[data-row=6] > .slick-cell.l4.r4.active.editable .editor-text')
+        .invoke('val')
+        .then((text) => expect(text).to.eq('Testing'));
+      cy.get('[data-row=6] > .slick-cell.l4.r4.active.editable .editor-text').type('{esc}');
+      cy.get('[data-row=6] > .slick-cell.l4.r4.active.editable .editor-text').should('not.exist');
+    });
   });
 });
