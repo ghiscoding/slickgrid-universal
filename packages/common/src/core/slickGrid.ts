@@ -6442,8 +6442,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let tmpRow = this.getParentRowSpanByCell(row, this.activeCell)?.start ?? row;
 
     do {
-      this.setActiveRow(tmpRow);
-      if (this.navigateToRow(tmpRow) && this.activeCell === this.activePosX) {
+      if (this._options.enableCellRowSpan) {
+        this.setActiveRow(tmpRow);
+      }
+      const isValidMode = this.navigateToRow(tmpRow);
+      if ((isValidMode && this.activeCell === this.activePosX) || !isDefined(this.activeCell)) {
         break;
       }
     } while (--tmpRow > 0);
@@ -6463,7 +6466,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.scrollCellIntoView(row, 0, true);
-    let isValidMove = false;
+    let isValidMove = !isDefined(this.activeCell) || !isDefined(this.activeRow);
 
     if (this._options.enableCellNavigation && isDefined(this.activeRow)) {
       let cell = 0;
@@ -6472,7 +6475,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       while (cell <= this.activePosX) {
         if (this.canCellBeActive(row, cell)) {
           prevCell = cell;
-          if (cell === this.activeCell) {
+          if (!isDefined(this.activeCell) || cell === this.activeCell) {
             isValidMove = true;
           }
         }

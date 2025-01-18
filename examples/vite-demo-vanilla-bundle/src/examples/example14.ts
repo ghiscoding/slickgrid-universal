@@ -699,6 +699,14 @@ export default class Example14 {
     return tmpArray;
   }
 
+  handleNavigateBottom() {
+    this.sgb.slickGrid?.navigateBottom();
+  }
+
+  handleNavigateTop() {
+    this.sgb.slickGrid?.navigateTop();
+  }
+
   handleOnGridStateChanged(event) {
     // console.log('handleOnGridStateChanged', event?.detail ?? '')
     const gridStateChanges: GridStateChange = event?.detail;
