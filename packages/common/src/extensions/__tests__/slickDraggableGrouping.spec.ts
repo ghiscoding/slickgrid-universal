@@ -180,6 +180,11 @@ describe('Draggable Grouping Plugin', () => {
     expect(plugin.addonOptions).toEqual(addonOptions);
   });
 
+  it('should throw when pre-header is missing and not enabled', () => {
+    vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValueOnce(null as any);
+    expect(() => plugin.init(gridStub, addonOptions)).toThrow('[Slickgrid-Universal] Draggable Grouping requires the pre-header to be created and shown');
+  });
+
   it('should initialize the Draggable Grouping and expect optional "Toggle All" button text when provided to the plugin', () => {
     plugin.init(gridStub, { ...addonOptions, toggleAllButtonText: 'Toggle all Groups' });
 
@@ -510,6 +515,17 @@ describe('Draggable Grouping Plugin', () => {
         afterEach(() => {
           plugin.dispose();
           vi.clearAllMocks();
+        });
+
+        it('should initialize the Draggable Grouping with initial groups when provided to the plugin', () => {
+          const setGroupingSpy = vi.spyOn(plugin, 'setDroppedGroups');
+          plugin.init(gridStub, { ...addonOptions, initialGroupBy: ['duration'] });
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
+          plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+          const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
+          expect(preHeaderElm).toBeTruthy();
+          expect(setGroupingSpy).toHaveBeenCalledWith(['duration']);
         });
 
         it('should call sortable "update" from setupColumnDropbox and expect "updateGroupBy" to be called with a sort-group', () => {

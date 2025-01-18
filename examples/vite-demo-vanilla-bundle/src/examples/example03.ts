@@ -384,6 +384,7 @@ export default class Example03 {
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => (this.draggableGroupingPlugin = extension),
         // groupIconCssClass: 'mdi mdi-drag-vertical',
+        initialGroupBy: ['duration'],
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,

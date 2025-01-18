@@ -23,6 +23,21 @@ describe('Example 03 - Draggable Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should initially be grouped by "Duration" when loading the grid', () => {
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(2)`).should('contain', '0');
+  });
+
+  it('should clear all groups with "Clear all Grouping" and no longer expect any grouping', () => {
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.get('.grid3').find('.slick-group-toggle-all').should('be.hidden');
+
+    cy.get('.grid3')
+      .find('.slick-draggable-dropzone-placeholder')
+      .should('be.visible')
+      .should('have.text', 'Drop a column header here to group by the column');
+  });
+
   it('should have a draggable dropzone on top of the grid in the top-header section', () => {
     cy.get('.grid3').find('.slick-topheader-panel .slick-dropzone:visible').contains('Drop a column header here to group by the column');
   });
