@@ -44,6 +44,7 @@
 * [Column Picker](grid-functionalities/Column-Picker.md)
 * [Composite Editor Modal](grid-functionalities/Composite-Editor-Modal.md)
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
+* [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
 * [Context Menu](grid-functionalities/Context-Menu.md)
 * [Custom Footer](grid-functionalities/Custom-Footer.md)
 * [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)

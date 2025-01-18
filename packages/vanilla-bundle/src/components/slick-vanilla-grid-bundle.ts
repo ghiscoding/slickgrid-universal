@@ -904,10 +904,6 @@ export class SlickVanillaGridBundle<TData = any> {
             const ranges = grid.getRenderedRange();
             rows.filter((row) => row >= ranges.top && row <= ranges.bottom).forEach((row: number) => grid.updateRow(row));
             grid.render();
-          } else if (calledOnRowCountChanged) {
-            // when onRowCountChanged event is called, on first page load, we'll invalidate all rows (required for colspan/rowspan)
-            grid.invalidateRows(rows);
-            grid.render();
           }
         });
       }

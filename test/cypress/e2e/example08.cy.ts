@@ -248,4 +248,54 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         expect(text).to.eq(`500 of 500 items`);
       });
   });
+
+  describe('Basic Key Navigations', () => {
+    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key once and be on Task 8 with full colspan', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}');
+      cy.get('[data-row=8] > .slick-cell.l0.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key 2x times and be on Task 15 with colspan of 3', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}{pagedown}');
+      cy.get('[data-row=15] > .slick-cell.l1.r3.active').should('have.length', 1);
+    });
+
+    it('should start at Task 15 on Duration colspan 5 days and type "PageUp" key 2x times and be on Task 1 with full colspan', () => {
+      cy.get('[data-row=15] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}{pageup}');
+      cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
+    });
+
+    it('should start at Task 2 on Duration colspan 5 days and type "PageDown" key 2x times and "PageUp" twice and be back to Task 1 with colspan of 3', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}{pagedown}{pageup}{pageup}');
+      cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
+    });
+
+    it('should start at Task 2 on Duration colspan 5 days and type "PageDown" key 2x times and "PageUp" 3x times and be on Task 0 with full colspan', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}{pagedown}{pageup}{pageup}{pageup}');
+      cy.get('[data-row=0] > .slick-cell.l0.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 1 on Duration colspan 5 days and type "ArrowDown" key once and be on Task 2 with full colspan', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{downarrow}');
+      cy.get('[data-row=2] > .slick-cell.l0.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 1 on Duration colspan 5 days and type "ArrowDown" key 2x times and be on Task 1 with colspan of 3', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{downarrow}{downarrow}');
+      cy.get('[data-row=3] > .slick-cell.l1.r3.active').should('have.length', 1);
+    });
+
+    it('should start at Task 1 on Duration colspan 5 days and type "ArrowDown" key 2x times, then "ArrowUp" key 2x times and be back on Task 1 with colspan of 3', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{downarrow}{downarrow}{uparrow}{uparrow}');
+      cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
+    });
+  });
 });

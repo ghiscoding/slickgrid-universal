@@ -650,6 +650,12 @@ export interface GridOption<C extends Column = Column> {
   /** Set of Locale translations used by the library */
   locales?: Locale;
 
+  /**
+   * Defaults to 5000, max number of rows that we'll consider doing a partial rowspan remapping.
+   * Anything else will be considered to require a full rowspan remap when necessary
+   */
+  maxPartialRowSpanRemap?: number;
+
   /** Max supported CSS height */
   maxSupportedCssHeight?: number;
 

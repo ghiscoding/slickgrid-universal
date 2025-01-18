@@ -68,7 +68,7 @@ function updateItemMetadataForDurationOver50(previousItemMetadata: any) {
 </script>
 
 <template>
-  <button class="btn btn-default" onClick={() => changeDurationBackgroundColor()}>Highlight Rows with Duration over 50</button>
+  <button class="btn btn-default" @click="changeDurationBackgroundColor()">Highlight Rows with Duration over 50</button>
   <SlickgridVue
     grid-id="grid1"
     v-model:columns="columnDefinitions"

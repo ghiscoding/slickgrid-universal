@@ -1,5 +1,5 @@
 <h3 class="title is-3">
-  Example 32 - Column & Row Span
+  Example 32 - colspan/rowspan - Employees Timesheets
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -15,37 +15,38 @@
 <div class="columns">
   <div class="column">
     <p class="italic example-details">
-      This page demonstrates <code>colspan</code> & <code>rowspan</code> using DataView with item metadata. <br />
-      <b>Note</b>: <code>colspan</code> & <code>rowspan</code> are rendered via a row/cell indexes, any operations that could change these
-      indexes (i.e. Filtering/Sorting) will require you, it becomes your responsability, to implement proper logic to recalculate these
-      indexes. This demo does not show this because it is up to you to decide what to do when the span changes shape (i.e. you default to 3
-      rowspan but you filter a row in the middle, how do you want to proceed?).
+        <b>NOTES</b>: <code>rowspan</code> is an opt-in feature, because of its small perf hit (it needs to loop through all row metadatas to map all rowspan), and requires the <code>enableCellRowSpan</code> grid option to be enabled to work properly.
+        The <code>colspan</code>/<code>rowspan</code> are both using DataView item metadata and are both based on row indexes and will <b>not</b>
+        keep the row in sync with the data. It is really up to you the user to update the metadata logic of how and where the cells should span when a side effect kicks in.
+        (i.e: Filtering/Sorting/Paging/Column Reorder... will <b>not</b> change/update the spanning in the grid by itself and that is why they these features are all disabled in this example).
+        Also, column/row freezing (pinning) are also not supported, or at least not recommended unless you know exactly what you're doing (like in this demo here because we know our pinning doesn't intersect)!
+        Any freezing column/row that could intersect with a <code>colspan</code>/<code>rowspan</code> <b>will cause problems</b>.
     </p>
   </div>
 </div>
 
 <section class="mb-2">
   <div class="row mb-1">
-    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(5000)">5k rows</button>
-    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(500000)">500k rows</button>
-    <button class="button is-small mr-1" onclick.delegate="handleToggleSpans()" data-test="toggle-spans-btn">
-      <span class="mdi mdi-flip-vertical"></span>
-      <span>Toggle blue cell colspan &amp; rowspan</span>
+    <button class="button is-small" data-test="goto-up" onclick.delegate="navigateUp()" title="from an active cell, navigate to cell above">
+        <span class="mdi mdi-chevron-down mdi-rotate-180"></span>
+        Navigate Up Cell
     </button>
-    <button class="button is-small" onclick.delegate="handleScrollTo()" data-test="scroll-to-row-btn">
-      <span class="mdi mdi-arrow-down"></span>
-      <span>Scroll To Row</span>
+    <button class="button is-small" data-test="goto-down" onclick.delegate="navigateDown()" title="from an active cell, navigate to cell below">
+      <span class="mdi mdi-chevron-down"></span>
+      Navigate Down Cell
     </button>
-    <span>
-      <input
-        data-test="input-nbrows"
-        type="number"
-        class="is-narrow input is-small"
-        data-test="scroll-to-value"
-        value.bind="scrollToRow"
-      />
-    </span>
+    <button class="button is-small" data-test="goto-prev" onclick.delegate="navigatePrev()" title="from an active cell, navigate to previous left cell">
+      <span class="mdi mdi-chevron-down mdi-rotate-90"></span>
+      Navigate to Left Cell
+    </button>
+    <button class="button is-small" data-test="goto-next" onclick.delegate="navigateNext()" title="from an active cell, navigate to next right cell">
+      <span class="mdi mdi-chevron-down  mdi-rotate-270"></span>
+      Navigate to Right Cell
+    </button>
+    <button class="button is-small mx-1" onclick.delegate="toggleEditing()" data-test="toggle-editing">
+      <span class="mdi mdi-pencil-outline"></span>
+      <span>Toggle Editing: <span id="isEditable" class="text-italic" textcontent.bind="isEditable">false</span>
+    </button>
     </p>
   </div>
 </section>

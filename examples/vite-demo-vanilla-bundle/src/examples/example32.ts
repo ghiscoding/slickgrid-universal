@@ -1,74 +1,112 @@
-import { type Column, type Formatter, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
+import { Editors, type Column, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example32.scss';
 
-const NB_ITEMS = 500;
-
-const rowCellValueFormatter: Formatter = (row, cell, value) => {
-  return `<div class="cellValue">${value.toFixed(2)}</div><div class="valueComment">${row}.${cell}</div>`;
-};
-
 export default class Example32 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
+  isEditable = false;
   gridOptions: GridOption;
   dataset: any[] = [];
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
-  filteringEnabledClass = 'mdi mdi-toggle-switch';
-  scrollToRow = 100;
   metadata: ItemMetadata | Record<number, ItemMetadata> = {
+    // 10001: Davolio
     0: {
       columns: {
-        1: { rowspan: 3 },
+        1: { rowspan: 2 },
+        2: { colspan: 2 },
+        6: { colspan: 3 },
+        10: { colspan: 3, rowspan: 10 },
+        13: { colspan: 2 },
+        17: { colspan: 2, rowspan: 2 },
       },
     },
+    // 10002: (Buchanan... name not shown since Davolio has rowspan=2)
+    1: {
+      columns: {
+        3: { colspan: 3 },
+        6: { colspan: 4 },
+        13: { colspan: 2, rowspan: 5 },
+        15: { colspan: 2 },
+      },
+    },
+    // 10003: Fuller
     2: {
       columns: {
-        0: { rowspan: 3 },
-        3: { colspan: 3 },
+        2: { colspan: 3, rowspan: 2 },
+        5: { colspan: 2 },
+        7: { colspan: 3 },
+        15: { colspan: 2 },
+        17: { colspan: 2 },
       },
     },
+    // 10004: Leverling
     3: {
       columns: {
-        1: { rowspan: 5, colspan: 1, cssClass: 'cell-var-span' },
-        // 1: { rowspan: 3, colspan: 2, cssClass: "cell-var-span" },
-        3: { rowspan: 3, colspan: 5 },
+        6: { colspan: 4 },
+        16: { colspan: 2 },
       },
     },
+    // 10005: Peacock
+    4: {
+      columns: {
+        2: { colspan: 4 },
+        7: { colspan: 3 },
+        15: { colspan: 2, rowspan: 2 },
+        17: { colspan: 2 },
+      },
+    },
+    // 10006: Janet
+    5: {
+      columns: {
+        2: { colspan: 2 },
+        4: { colspan: 3 },
+        7: { colspan: 3 },
+        17: { colspan: 2 },
+      },
+    },
+    // 10007: Suyama
+    6: {
+      columns: {
+        2: { colspan: 2 },
+        5: { colspan: 2 },
+        7: { colspan: 3 },
+        14: { colspan: 2 },
+        16: { colspan: 3 },
+      },
+    },
+    // 10008: Robert
+    7: {
+      columns: {
+        2: { colspan: 3 },
+        5: { colspan: 3 },
+        13: { colspan: 3, rowspan: 2 },
+        16: { colspan: 2 },
+      },
+    },
+    // 10009: Andrew
     8: {
       columns: {
-        1: { rowspan: 80 },
-        3: { rowspan: 1999, colspan: 2, cssClass: 'cell-very-high' },
+        2: { colspan: 3 },
+        7: { colspan: 3, rowspan: 2 },
+        17: { colspan: 2 },
       },
     },
-    12: {
+    // 10010: Michael
+    9: {
       columns: {
-        11: { rowspan: 3 },
-      },
-    },
-    15: {
-      columns: {
-        18: { colspan: 4, rowspan: 3 },
-      },
-    },
-    85: {
-      columns: {
-        5: { rowspan: 20 },
+        2: { colspan: 3 },
+        5: { colspan: 2 },
+        13: { colspan: 3 },
+        16: { colspan: 3 },
       },
     },
   };
-
-  get slickerGridInstance() {
-    return this.sgb?.instances;
-  }
-
-  set isFilteringEnabled(enabled: boolean) {
-    this.filteringEnabledClass = enabled ? 'mdi mdi-toggle-switch' : 'mdi mdi-toggle-switch-off-outline';
-  }
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -76,7 +114,7 @@ export default class Example32 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(NB_ITEMS);
+    this.dataset = this.loadData();
     this.gridContainerElm = document.querySelector('.grid32') as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(
@@ -86,148 +124,300 @@ export default class Example32 {
       this.dataset
     );
 
-    document.body.classList.add('material-theme');
+    document.body.classList.add('salesforce-theme');
   }
 
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
-    document.body.classList.remove('material-theme');
+    document.body.classList.remove('salesforce-theme');
   }
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', minWidth: 80 },
-      { id: 'revenueGrowth', name: 'Revenue Growth', field: 'revenueGrowth', formatter: rowCellValueFormatter, minWidth: 120 },
-      {
-        id: 'pricingPolicy',
-        name: 'Pricing Policy',
-        field: 'pricingPolicy',
-        minWidth: 110,
-        sortable: true,
-        formatter: rowCellValueFormatter,
-      },
-      { id: 'policyIndex', name: 'Policy Index', field: 'policyIndex', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'expenseControl', name: 'Expense Control', field: 'expenseControl', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'excessCash', name: 'Excess Cash', field: 'excessCash', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'netTradeCycle', name: 'Net Trade Cycle', field: 'netTradeCycle', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'costCapital', name: 'Cost of Capital', field: 'costCapital', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'revenueGrowth2', name: 'Revenue Growth', field: 'revenueGrowth2', formatter: rowCellValueFormatter, minWidth: 120 },
-      {
-        id: 'pricingPolicy2',
-        name: 'Pricing Policy',
-        field: 'pricingPolicy2',
-        minWidth: 110,
-        sortable: true,
-        formatter: rowCellValueFormatter,
-      },
-      { id: 'policyIndex2', name: 'Policy Index', field: 'policyIndex2', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'expenseControl2', name: 'Expense Control', field: 'expenseControl2', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'excessCash2', name: 'Excess Cash', field: 'excessCash2', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'netTradeCycle2', name: 'Net Trade Cycle', field: 'netTradeCycle2', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'costCapital2', name: 'Cost of Capital', field: 'costCapital2', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'revenueGrowth3', name: 'Revenue Growth', field: 'revenueGrowth3', formatter: rowCellValueFormatter, minWidth: 120 },
-      {
-        id: 'pricingPolicy3',
-        name: 'Pricing Policy',
-        field: 'pricingPolicy3',
-        minWidth: 110,
-        sortable: true,
-        formatter: rowCellValueFormatter,
-      },
-      { id: 'policyIndex3', name: 'Policy Index', field: 'policyIndex3', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'expenseControl3', name: 'Expense Control', field: 'expenseControl3', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'excessCash3', name: 'Excess Cash', field: 'excessCash3', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'netTradeCycle3', name: 'Net Trade Cycle', field: 'netTradeCycle3', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'costCapital3', name: 'Cost of Capital', field: 'costCapital3', minWidth: 100, formatter: rowCellValueFormatter },
+      { id: 'employeeID', name: 'Employee ID', field: 'employeeID', minWidth: 100 },
+      { id: 'employeeName', name: 'Employee Name', field: 'employeeName', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '9:00', name: '9:00 AM', field: '9:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '9:30', name: '9:30 AM', field: '9:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '10:00', name: '10:00 AM', field: '10:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '10:30', name: '10:30 AM', field: '10:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '11:00', name: '11:00 AM', field: '11:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '11:30', name: '11:30 AM', field: '11:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '12:00', name: '12:00 PM', field: '12:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '12:30', name: '12:30 PM', field: '12:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '1:00', name: '1:00 PM', field: '1:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '1:30', name: '1:30 PM', field: '1:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '2:00', name: '2:00 PM', field: '2:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '2:30', name: '2:30 PM', field: '2:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '3:00', name: '3:00 PM', field: '3:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '3:30', name: '3:30 PM', field: '3:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '4:00', name: '4:00 PM', field: '4:00', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '4:30', name: '4:30 PM', field: '4:30', editor: { model: Editors.text }, minWidth: 120 },
+      { id: '5:00', name: '5:00 PM', field: '5:00', editor: { model: Editors.text }, minWidth: 120 },
     ];
 
     this.gridOptions = {
+      autoResize: {
+        bottomPadding: 30,
+        rightPadding: 50,
+      },
       enableCellNavigation: true,
       enableColumnReorder: true,
       enableCellRowSpan: true,
-      gridHeight: 500,
-      gridWidth: 800,
+      enableExcelExport: true,
+      externalResources: [new ExcelExportService()],
+      enableExcelCopyBuffer: true,
+      autoEdit: true,
+      editable: false,
+      datasetIdPropertyName: 'employeeID',
+      frozenColumn: 0,
+      gridHeight: 348,
       rowHeight: 30,
       dataView: {
         globalItemMetadataProvider: {
-          getRowMetadata: this.renderDifferentColspan.bind(this),
+          getRowMetadata: (_item, row) => {
+            return this.metadata[row];
+          },
         },
       },
+      rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
     };
   }
 
-  loadData(count: number) {
-    // mock data
-    const tmpArray: any[] = [];
-    for (let i = 0; i < count; i++) {
-      tmpArray[i] = {
-        id: i,
-        title: 'Task ' + i,
-        revenueGrowth: Math.random() * Math.pow(10, Math.random() * 3),
-        pricingPolicy: Math.random() * Math.pow(10, Math.random() * 3),
-        policyIndex: Math.random() * Math.pow(10, Math.random() * 3),
-        expenseControl: Math.random() * Math.pow(10, Math.random() * 3),
-        excessCash: Math.random() * Math.pow(10, Math.random() * 3),
-        netTradeCycle: Math.random() * Math.pow(10, Math.random() * 3),
-        costCapital: Math.random() * Math.pow(10, Math.random() * 3),
-        revenueGrowth2: Math.random() * Math.pow(10, Math.random() * 3),
-        pricingPolicy2: Math.random() * Math.pow(10, Math.random() * 3),
-        policyIndex2: Math.random() * Math.pow(10, Math.random() * 3),
-        expenseControl2: Math.random() * Math.pow(10, Math.random() * 3),
-        excessCash2: Math.random() * Math.pow(10, Math.random() * 3),
-        netTradeCycle2: Math.random() * Math.pow(10, Math.random() * 3),
-        costCapital2: Math.random() * Math.pow(10, Math.random() * 3),
-        revenueGrowth3: Math.random() * Math.pow(10, Math.random() * 3),
-        pricingPolicy3: Math.random() * Math.pow(10, Math.random() * 3),
-        policyIndex3: Math.random() * Math.pow(10, Math.random() * 3),
-        expenseControl3: Math.random() * Math.pow(10, Math.random() * 3),
-        excessCash3: Math.random() * Math.pow(10, Math.random() * 3),
-        netTradeCycle3: Math.random() * Math.pow(10, Math.random() * 3),
-        costCapital3: Math.random() * Math.pow(10, Math.random() * 3),
-      };
-    }
-
-    // let's keep column 3-4 as the row spanning from row 8 until the end of the grid
-    this.metadata[8].columns[3].rowspan = tmpArray.length - 8;
-
-    this.sgb?.dataView?.beginUpdate();
-    this.sgb?.dataView?.setItems(tmpArray);
-    this.sgb?.dataView?.endUpdate();
-
-    return tmpArray;
+  navigateDown() {
+    this.sgb.slickGrid?.navigateDown();
   }
 
-  /**
-   * A callback to render different row column span
-   * Your callback will always have the "item" argument which you can use to decide on the colspan
-   * Your return object must always be in the form of:: { columns: { [columnName]: { colspan: number|'*' } }}
-   */
-  renderDifferentColspan(_item: any, row: any): any {
-    return this.metadata[row]?.attributes
-      ? this.metadata[row]
-      : (this.metadata[row] = { attributes: { 'data-row': row }, ...this.metadata[row] });
+  navigateUp() {
+    this.sgb.slickGrid?.navigateUp();
   }
 
-  handleToggleSpans() {
-    const cell = this.metadata[3].columns[1];
-    if (cell.colspan === 1) {
-      cell.rowspan = 3;
-      cell.colspan = 2;
-    } else {
-      cell.rowspan = 5;
-      cell.colspan = 1;
-    }
-
-    // row index 3 can have a rowspan of up to 5 rows, so we need to invalidate from row 3 + 5 (-1 because of zero index)
-    // so: 3 + 5 - 1 => row indexes 3 to 7
-    this.sgb.slickGrid?.invalidateRows([3, 4, 5, 6, 7]);
-    this.sgb.slickGrid?.render();
+  navigateNext() {
+    this.sgb.slickGrid?.navigateNext();
   }
 
-  handleScrollTo() {
-    // const args = event.detail && event.detail.args;
-    this.sgb.slickGrid?.scrollRowToTop(this.scrollToRow);
-    return false;
+  navigatePrev() {
+    this.sgb.slickGrid?.navigatePrev();
+  }
+
+  toggleEditing() {
+    this.isEditable = !this.isEditable;
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isEditable };
+    this.gridOptions = this.sgb.gridOptions;
+  }
+
+  loadData() {
+    return [
+      {
+        employeeID: 10001,
+        employeeName: 'Davolio',
+        '9:00': 'Analysis Tasks',
+        '9:30': 'Analysis Tasks',
+        '10:00': 'Team Meeting',
+        '10:30': 'Testing',
+        '11:00': 'Development',
+        '11:30': 'Development',
+        '12:00': 'Development',
+        '12:30': 'Support',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Testing',
+        '3:00': 'Testing',
+        '3:30': 'Development',
+        '4:00': 'Conference',
+        '4:30': 'Team Meeting',
+        '5:00': 'Team Meeting',
+      },
+      {
+        employeeID: 10002,
+        employeeName: 'Buchanan',
+        '9:00': 'Task Assign',
+        '9:30': 'Support',
+        '10:00': 'Support',
+        '10:30': 'Support',
+        '11:00': 'Testing',
+        '11:30': 'Testing',
+        '12:00': 'Testing',
+        '12:30': 'Testing',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Development',
+        '3:00': 'Development',
+        '3:30': 'Check Mail',
+        '4:00': 'Check Mail',
+        '4:30': 'Team Meeting',
+        '5:00': 'Team Meeting',
+      },
+      {
+        employeeID: 10003,
+        employeeName: 'Fuller',
+        '9:00': 'Check Mail',
+        '9:30': 'Check Mail',
+        '10:00': 'Check Mail',
+        '10:30': 'Analysis Tasks',
+        '11:00': 'Analysis Tasks',
+        '11:30': 'Support',
+        '12:00': 'Support',
+        '12:30': 'Support',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Development',
+        '3:00': 'Development',
+        '3:30': 'Team Meeting',
+        '4:00': 'Team Meeting',
+        '4:30': 'Development',
+        '5:00': 'Development',
+      },
+      {
+        employeeID: 10004,
+        employeeName: 'Leverling',
+        '9:00': 'Testing',
+        '9:30': 'Check Mail',
+        '10:00': 'Check Mail',
+        '10:30': 'Support',
+        '11:00': 'Testing',
+        '11:30': 'Testing',
+        '12:00': 'Testing',
+        '12:30': 'Testing',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Development',
+        '3:00': 'Development',
+        '3:30': 'Check Mail',
+        '4:00': 'Conference',
+        '4:30': 'Conference',
+        '5:00': 'Team Meeting',
+      },
+      {
+        employeeID: 10005,
+        employeeName: 'Peacock',
+        '9:00': 'Task Assign',
+        '9:30': 'Task Assign',
+        '10:00': 'Task Assign',
+        '10:30': 'Task Assign',
+        '11:00': 'Check Mail',
+        '11:30': 'Support',
+        '12:00': 'Support',
+        '12:30': 'Support',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Development',
+        '3:00': 'Development',
+        '3:30': 'Team Meeting',
+        '4:00': 'Team Meeting',
+        '4:30': 'Testing',
+        '5:00': 'Testing',
+      },
+      {
+        employeeID: 10006,
+        employeeName: 'Janet',
+        '9:00': 'Testing',
+        '9:30': 'Testing',
+        '10:00': 'Support',
+        '10:30': 'Support',
+        '11:00': 'Support',
+        '11:30': 'Team Meeting',
+        '12:00': 'Team Meeting',
+        '12:30': 'Team Meeting',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Development',
+        '3:00': 'Development',
+        '3:30': 'Team Meeting',
+        '4:00': 'Team Meeting',
+        '4:30': 'Development',
+        '5:00': 'Development',
+      },
+      {
+        employeeID: 10007,
+        employeeName: 'Suyama',
+        '9:00': 'Analysis Tasks',
+        '9:30': 'Analysis Tasks',
+        '10:00': 'Testing',
+        '10:30': 'Development',
+        '11:00': 'Development',
+        '11:30': 'Testing',
+        '12:00': 'Testing',
+        '12:30': 'Testing',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Support',
+        '3:00': 'Build',
+        '3:30': 'Build',
+        '4:00': 'Check Mail',
+        '4:30': 'Check Mail',
+        '5:00': 'Check Mail',
+      },
+      {
+        employeeID: 10008,
+        employeeName: 'Robert',
+        '9:00': 'Task Assign',
+        '9:30': 'Task Assign',
+        '10:00': 'Task Assign',
+        '10:30': 'Development',
+        '11:00': 'Development',
+        '11:30': 'Development',
+        '12:00': 'Testing',
+        '12:30': 'Support',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Check Mail',
+        '3:00': 'Check Mail',
+        '3:30': 'Check Mail',
+        '4:00': 'Team Meeting',
+        '4:30': 'Team Meeting',
+        '5:00': 'Build',
+      },
+      {
+        employeeID: 10009,
+        employeeName: 'Andrew',
+        '9:00': 'Check Mail',
+        '9:30': 'Team Meeting',
+        '10:00': 'Team Meeting',
+        '10:30': 'Support',
+        '11:00': 'Testing',
+        '11:30': 'Development',
+        '12:00': 'Development',
+        '12:30': 'Development',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Check Mail',
+        '3:00': 'Check Mail',
+        '3:30': 'Check Mail',
+        '4:00': 'Team Meeting',
+        '4:30': 'Development',
+        '5:00': 'Development',
+      },
+      {
+        employeeID: 10010,
+        employeeName: 'Michael',
+        '9:00': 'Task Assign',
+        '9:30': 'Task Assign',
+        '10:00': 'Task Assign',
+        '10:30': 'Analysis Tasks',
+        '11:00': 'Analysis Tasks',
+        '11:30': 'Development',
+        '12:00': 'Development',
+        '12:30': 'Development',
+        '1:00': 'Lunch Break',
+        '1:30': 'Lunch Break',
+        '2:00': 'Lunch Break',
+        '2:30': 'Testing',
+        '3:00': 'Testing',
+        '3:30': 'Testing',
+        '4:00': 'Build',
+        '4:30': 'Build',
+        '5:00': 'Build',
+      },
+    ];
   }
 }
