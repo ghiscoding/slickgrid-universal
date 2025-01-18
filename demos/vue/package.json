@@ -13,7 +13,7 @@
     "vue:cypress": "cypress open --config-file test/cypress.config.mjs"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.3.0",
+    "@faker-js/faker": "^9.4.0",
     "@fnando/sparkline": "^0.3.10",
     "@formkit/tempo": "^0.1.2",
     "@popperjs/core": "^2.11.8",
@@ -29,7 +29,7 @@
     "@slickgrid-universal/text-export": "workspace:*",
     "bootstrap": "^5.3.3",
     "dompurify": "^3.2.3",
-    "i18next": "^24.2.0",
+    "i18next": "^24.2.1",
     "i18next-http-backend": "^3.0.1",
     "i18next-vue": "^5.0.0",
     "rxjs": "^7.8.1",
@@ -43,7 +43,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "cypress": "^13.17.0",
     "cypress-real-events": "^1.13.0",
-    "sass": "^1.83.0",
+    "sass": "^1.83.4",
     "typescript": "^5.7.2",
     "vite": "^6.0.7"
   }
