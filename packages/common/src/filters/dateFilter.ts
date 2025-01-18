@@ -463,7 +463,7 @@ export class DateFilter implements Filter {
     } else {
       this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.grid);
       const filterContainerElm = createDomElement('div', {
-        className: `date-picker form-group search-filter filter-${columnId}`,
+        className: `date-picker form-group search-filter slick-filter filter-${columnId}`,
       });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group date-picker' }, filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement(

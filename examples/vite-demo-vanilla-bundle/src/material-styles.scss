@@ -22,7 +22,7 @@
     --slick-form-control-focus-border-color: #00c840;
     --slick-form-control-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
     --slick-editor-focus-border-color: #00b93c;
-    --slick-editor-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(#00a033, .3);
+    --slick-editor-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(#00a033, 0.3);
     --slick-multiselect-input-focus-border-color: #00c840;
     --slick-focus-color: #00c840;
     --slick-input-focus-border-color: #00c840;
@@ -39,9 +39,9 @@
     --slick-container-border-bottom: 1px solid #ccc;
     --slick-header-background-color: #fff;
     --slick-header-row-filter-padding: 8px 4px;
-    --slick-header-text-color:  rgba(0, 0, 0, 0.87);
+    --slick-header-text-color: rgba(0, 0, 0, 0.87);
     --slick-sorting-header-color: rgba(0, 0, 0, 0.87);
-    --slick-font-family: Roboto, "Helvetica Neue", sans-serif;
+    --slick-font-family: Roboto, 'Helvetica Neue', sans-serif;
     --slick-font-size-base-value: 14;
     --slick-header-font-size: 12px;
     --slick-filled-filter-font-weight: normal;
@@ -65,11 +65,11 @@
     --slick-pagination-icon-color: #009530;
     --slick-slider-filter-filled-track-color: #9ac49c;
     --slick-slider-filter-focus-box-shadow: var(--slick-input-focus-box-shadow);
-    --slick-slider-filter-thumb-border: 2px solid rgba(0, 149, 48, .68);
+    --slick-slider-filter-thumb-border: 2px solid rgba(0, 149, 48, 0.68);
     --slick-slider-filter-thumb-active-bg-color: #fff;
-    --slick-slider-filter-thumb-active-color: rgba(#02bf3e, .88);
-    --slick-slider-filter-thumb-active-border: 2px solid #55B876;
-    --slick-slider-filter-thumb-active-box-shadow: 0 0 0 2px rgba(#02bf3e, .15);
+    --slick-slider-filter-thumb-active-color: rgba(#02bf3e, 0.88);
+    --slick-slider-filter-thumb-active-border: 2px solid #55b876;
+    --slick-slider-filter-thumb-active-box-shadow: 0 0 0 2px rgba(#02bf3e, 0.15);
     --slick-header-resizable-hover-border-bottom: 2px solid #83d9a0;
     --slick-header-resizable-hover-border-left: 2px solid #83d9a0;
     --slick-header-resizable-hover-border-top: 2px solid #83d9a0;
@@ -83,7 +83,7 @@
     --ms-ok-button-text-color: #009530;
     --ms-select-all-text-color: #007c28;
     --ms-checkbox-color: var(--slick-primary-color);
-    --ms-choice-focus-box-shadow: 0 0 0 1.5px rgba(#66bb6a,.55);
+    --ms-choice-focus-box-shadow: 0 0 0 1.5px rgba(#66bb6a, 0.55);
     --ms-choice-focus-border-color: #86d56c;
 
     .icon-checkbox-container {
@@ -98,6 +98,9 @@
     }
 
     .slick-headerrow {
+      .search-filter {
+        width: 100%;
+      }
       input.search-filter.filled,
       .search-filter.filled input,
       .search-filter.filled input.date-picker,
@@ -106,9 +109,10 @@
       .search-filter.filled .input-group-addon select {
         color: #555;
         font-weight: normal;
-        border: 1px solid #55B876;
+        border: 1px solid #55b876;
         box-shadow: none;
-        &.focus, &:focus {
+        &.focus,
+        &:focus {
           box-shadow: var(--slick-input-focus-box-shadow);
         }
       }
@@ -118,7 +122,7 @@
       }
       .search-filter.filled .ms-choice {
         box-shadow: var(--slick-multiselect-input-focus-box-shadow);
-        border: 1px solid #55B876;
+        border: 1px solid #55b876;
         span {
           font-weight: normal;
           color: var(--slick-dark-text-color);
@@ -141,7 +145,7 @@
     .slick-dark-mode {
       --slick-base-dark-menu-bg-color: #212121;
       --slick-primary-color: #66bb6a;
-      --slick-button-primary-bg-color:#66bb6a;
+      --slick-button-primary-bg-color: #66bb6a;
       --slick-filled-filter-border: 1px solid #438446;
       --slick-form-control-focus-border-color: #438446;
       --slick-form-control-focus-box-shadow: #{0 0 0 2px rgba(#66bb6a, 0.25)};
