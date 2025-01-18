@@ -518,14 +518,15 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should initialize the Draggable Grouping with initial groups when provided to the plugin', () => {
-          const setGroupingSpy = vi.spyOn(plugin, 'setDroppedGroups');
+          const setGroupedSpy = vi.spyOn(plugin, 'setDroppedGroups');
           plugin.init(gridStub, { ...addonOptions, initialGroupBy: ['duration'] });
+          plugin.isInitialized = false;
           vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
           plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
 
           const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
           expect(preHeaderElm).toBeTruthy();
-          expect(setGroupingSpy).toHaveBeenCalledWith(['duration']);
+          expect(setGroupedSpy).toHaveBeenCalledWith(['duration']);
         });
 
         it('should call sortable "update" from setupColumnDropbox and expect "updateGroupBy" to be called with a sort-group', () => {

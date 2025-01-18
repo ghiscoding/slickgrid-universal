@@ -125,6 +125,10 @@ export class SlickDraggableGrouping {
     return this.grid.getContainerNode();
   }
 
+  set isInitialized(state: boolean) {
+    this._isInitialized = state;
+  }
+
   /** Initialize plugin. */
   init(grid: SlickGrid, groupingOptions?: DraggableGrouping): this {
     this._addonOptions = { ...this._defaults, ...groupingOptions };
