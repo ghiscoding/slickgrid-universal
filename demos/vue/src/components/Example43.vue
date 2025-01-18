@@ -508,10 +508,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   --slick-row-mouse-hover-box-shadow: 0;
   --slick-cell-odd-background-color: #fff;
-  // --slick-cell-border-top: 0;
   --slick-cell-border-right: 1px solid var(--slick-border-color);
-  --slick-cell-border-bottom: 1px solid var(--slick-border-color);
-  // --slick-cell-border-left: 1px;
+  --slick-cell-border-bottom: 0;
+  --slick-cell-border-top: 1px solid var(--slick-border-color);
+  --slick-header-filter-row-border-bottom: 1px solid var(--slick-border-color);
+  --slick-cell-border-left: 0;
   --slick-cell-box-shadow: none;
   --slick-row-mouse-hover-color: #fff;
   --slick-cell-display: flex;
