@@ -41,7 +41,7 @@
     "@4tw/cypress-drag-drop": "^2.2.5",
     "@types/fnando__sparkline": "^0.3.7",
     "@vitejs/plugin-vue": "^5.2.1",
-    "cypress": "^13.17.0",
+    "cypress": "^14.0.0",
     "cypress-real-events": "^1.13.0",
     "sass": "^1.83.4",
     "typescript": "^5.7.2",
