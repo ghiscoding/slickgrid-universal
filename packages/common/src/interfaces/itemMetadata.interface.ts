@@ -10,8 +10,10 @@ export type ColumnMetadata = Pick<
  * and handling of a particular data item. The method should return `null` when the item requires no special handling,
  * or an object following the ItemMetadata interface
  */
+// properties describing metadata related to the item (e.g. grid row) itself
 export interface ItemMetadata {
-  // properties describing metadata related to the item (e.g. grid row) itself
+  /** any attribute types */
+  attributes?: any;
 
   /** One or more (space-separated) CSS classes that will be added to the entire row. */
   cssClasses?: string;

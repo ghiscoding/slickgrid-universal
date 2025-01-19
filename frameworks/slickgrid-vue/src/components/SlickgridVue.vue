@@ -194,7 +194,7 @@ const paginationModel = defineModel<Pagination>('pagination');
 watch(paginationModel, (newPaginationOptions) => paginationOptionsChanged(newPaginationOptions!));
 
 const _columnDefinitions = ref<Column[]>();
-const columnDefinitionsModel = defineModel<Column[]>('columns', { required: true, default: [] });
+const columnDefinitionsModel = defineModel<Column[]>('columns', { required: true, default: [] as Column[] });
 watch(columnDefinitionsModel, (columnDefinitions) => columnDefinitionsChanged(columnDefinitions), { immediate: true });
 
 const dataModel = defineModel<any[]>('data', { required: false }); // technically true but user could use datasetHierarchical instead
@@ -401,7 +401,10 @@ function initialization() {
   }
 
   const dataviewInlineFilters = (_gridOptions.value?.dataView && _gridOptions.value.dataView.inlineFilters) || false;
-  let dataViewOptions: Partial<DataViewOption> = { inlineFilters: dataviewInlineFilters };
+  let dataViewOptions: Partial<DataViewOption> = {
+    ..._gridOptions.value.dataView,
+    inlineFilters: dataviewInlineFilters,
+  } as Partial<DataViewOption>;
 
   if (_gridOptions.value?.draggableGrouping || _gridOptions.value?.enableGrouping) {
     groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
@@ -809,7 +812,7 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
         }
       });
 
-      if (gridOptions?.enableFiltering && !gridOptions.enableRowDetailView) {
+      if ((gridOptions?.enableFiltering || gridOptions?.dataView?.globalItemMetadataProvider) && !gridOptions.enableRowDetailView) {
         eventHandler.subscribe(dataView.onRowsChanged, (_e, { calledOnRowCountChanged, rows }) => {
           // filtering data with local dataset will not always show correctly unless we call this updateRow/render
           // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row

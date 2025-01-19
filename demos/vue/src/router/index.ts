@@ -17,6 +17,7 @@ import Example13 from '../components/Example13.vue';
 import Example14 from '../components/Example14.vue';
 import Example15 from '../components/Example15.vue';
 import Example16 from '../components/Example16.vue';
+import Example17 from '../components/Example17.vue';
 import Example18 from '../components/Example18.vue';
 import Example19 from '../components/Example19.vue';
 import Example20 from '../components/Example20.vue';
@@ -43,6 +44,7 @@ import Example40 from '../components/Example40.vue';
 import Example41 from '../components/Example41.vue';
 import Example42 from '../components/Example42.vue';
 import Example43 from '../components/Example43.vue';
+import Example44 from '../components/Example44.vue';
 import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -64,6 +66,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example14', name: '14- Column Span & Header Grouping', component: Example14 },
   { path: '/example15', name: '15- Grid State & Local Storage', component: Example15 },
   { path: '/example16', name: '16- Row Move Plugin', component: Example16 },
+  { path: '/example17', name: '17- Create Grid from CSV', component: Example17 },
   { path: '/example18', name: '18- Draggable Grouping', component: Example18 },
   { path: '/example19', name: '19- Row Detail View', component: Example19 },
   { path: '/example20', name: '20- Pinned Columns / Rows', component: Example20 },
@@ -89,7 +92,8 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example40', name: '40- Infinite Scroll from JSON data', component: Example40 },
   { path: '/example41', name: '41- Drag & Drop', component: Example41 },
   { path: '/example42', name: '42- Custom Pagination', component: Example42 },
-  { path: '/example43', name: '43- Create Grid from CSV', component: Example43 },
+  { path: '/example43', name: '43- Colspan/Rowspan (timesheets)', component: Example43 },
+  { path: '/example44', name: '44- Colspan/Rowspan (large data)', component: Example44 },
 ];
 
 export const router = createRouter({
