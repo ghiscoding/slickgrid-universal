@@ -482,10 +482,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
     >
   </button>
 
-  <div class="grid-container grid43-container">
-    <div class="grid43"></div>
-  </div>
-
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions as Column[]"

@@ -167,9 +167,7 @@ function loadData(count: number) {
     // let's keep column 3-4 as the row spanning from row 8 until the end of the grid
     metadata[8].columns![3].rowspan = tmpArray.length - 8;
 
-    vueGrid?.dataView?.beginUpdate();
-    vueGrid?.dataView?.setItems(tmpArray);
-    vueGrid?.dataView?.endUpdate();
+    dataset.value = tmpArray;
     dataLn.value = count;
   }, 20);
 }
@@ -245,13 +243,15 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </p>
   </div>
 
-  <div class="row">
-    <div class="col">
+  <section class="row mb-2">
+    <div class="d-flex">
       <button class="ms-1 btn btn-outline-secondary btn-sm" data-test="add-500-rows-btn" @click="loadData(500)">500 rows</button>
       <button class="ms-1 btn btn-outline-secondary btn-sm" data-test="add-5k-rows-btn" @click="loadData(5000)">5k rows</button>
       <button class="ms-1 btn btn-outline-secondary btn-sm" data-test="add-50k-rows-btn" @click="loadData(50000)">50k rows</button>
       <button class="mx-1 btn btn-outline-secondary btn-sm" data-test="add-50k-rows-btn" @click="loadData(500000)">500k rows</button>
-      <label>data length: </label><span id="dataLn" :textcontent="dataLn"></span>
+      <div class="mx-2">
+        <label>data length: </label><span id="dataLn">{{ dataLn }}</span>
+      </div>
       <button
         id="toggleSpans"
         class="ms-1 btn btn-outline-secondary btn-sm btn-icon mx-1"
@@ -265,9 +265,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span class="mdi mdi-arrow-down"></span>
         <span>Scroll To Row</span>
       </button>
-    </div>
-    <div class="col">
-      <div class="input-group input-group-sm" style="width: 100px">
+      <div class="input-group input-group-sm ms-1" style="width: 100px">
         <input
           v-model="scrollToRow"
           id="nRow"
@@ -282,7 +280,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         </button>
       </div>
     </div>
-  </div>
+  </section>
 
   <slickgrid-vue
     v-model:options="gridOptions"
