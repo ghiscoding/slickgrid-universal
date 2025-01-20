@@ -827,6 +827,7 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
     }
   }
 
+  // @deprecated @user `dataview.globalItemMetadataProvider.getRowMetadata`
   // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
   if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
     dataView.getItemMetadata = (rowNumber: number) => {

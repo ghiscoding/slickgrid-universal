@@ -49,7 +49,11 @@ function definedGrid1() {
     },
     externalResources: [new ExcelExportService()],
     explicitInitialization: true,
-    colspanCallback: renderDifferentColspan,
+    dataView: {
+      globalItemMetadataProvider: {
+        getRowMetadata: (item: any, row: number) => renderDifferentColspan(item, row),
+      },
+    },
     gridMenu: {
       iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
     },
@@ -124,8 +128,8 @@ function setFrozenColumns2(frozenCols: number) {
  * Your callback will always have the "item" argument which you can use to decide on the colspan
  * Your return must always be in the form of:: return { columns: {}}
  */
-function renderDifferentColspan(item: any): ItemMetadata {
-  if (item.id % 2 === 1) {
+function renderDifferentColspan(item: any, row: number): ItemMetadata {
+  if (item.id % 2 === 1 || row % 2 === 1) {
     return {
       columns: {
         duration: {
