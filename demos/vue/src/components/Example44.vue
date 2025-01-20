@@ -117,7 +117,7 @@ function defineGrid() {
     rowHeight: 30,
     dataView: {
       globalItemMetadataProvider: {
-        getRowMetadata: (item: any, row: any) => renderDifferentColspan(item, row),
+        getRowMetadata: (item: any, row: number) => renderDifferentColspan(item, row),
       },
     },
     rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
