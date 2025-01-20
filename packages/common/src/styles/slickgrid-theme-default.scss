@@ -1,0 +1,18 @@
+/*!
+ * default SlickGrid custom styling for an agnostic UI (https://github.com/ghiscoding/slickgrid-universal)
+ * Licensed under MIT (https://github.com/ghiscoding/slickgrid-universal/blob/master/LICENSE)
+ * @author: Ghislain B. (ghiscoding)
+ */
+
+@forward './variables';
+
+/** SlickGrid Bootstrap Theme */
+@use './slick-without-bootstrap-min-styling';
+@use './slick-grid';
+@use './slick-editors';
+@use './slick-plugins';
+@use './slick-component';
+@use './slickgrid-examples';
+@use './slick-autocomplete';
+@use './slickgrid-icons-svg-utils';
+@use './slickgrid-icons';
