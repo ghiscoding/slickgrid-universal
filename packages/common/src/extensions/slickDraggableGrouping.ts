@@ -315,7 +315,6 @@ export class SlickDraggableGrouping {
 
     const sortableOptions = {
       animation: 50,
-      chosenClass: 'slick-header-column-active',
       ghostClass: 'slick-sortable-placeholder',
       draggable: '.slick-header-column',
       dataIdAttr: 'data-id',
@@ -330,7 +329,8 @@ export class SlickDraggableGrouping {
       //   // NOTE: need to disable for now since it also blocks the column reordering
       //   return columnsGroupBy.some(c => c.id === target.getAttribute('data-id'));
       // },
-      onStart: () => {
+      onStart: (e) => {
+        e.item.classList.add('slick-header-column-active');
         if (draggablePlaceholderElm) {
           draggablePlaceholderElm.style.display = 'inline-block';
         }
@@ -340,7 +340,8 @@ export class SlickDraggableGrouping {
           groupTogglerElm.style.display = 'none';
         }
       },
-      onEnd: (e: Event & { item: any; clone: HTMLElement }) => {
+      onEnd: (e) => {
+        e.item.classList.remove('slick-header-column-active');
         dropzoneElm?.classList.remove('slick-dropzone-hover');
         draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
 
