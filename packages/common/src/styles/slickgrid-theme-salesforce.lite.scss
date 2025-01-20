@@ -7,11 +7,12 @@
 /**
  * SlickGrid Salesforce Theme (lite)
  * sames as `slickgrid-theme-salesforce.scss` but without:
- *   `slick-without-bootstrap-min-styling.scss`, colors, extra-styling, slick-filters, slickgrid-icons and slickgrid-icons-svg-utils
+ *   colors, extra-styling, slick-filters, slickgrid-icons and slickgrid-icons-svg-utils
  */
 
 @forward './variables-theme-salesforce';
 
+@use './slick-without-bootstrap-min-styling';
 @use './variables-theme-salesforce';
 @use './slick-grid';
 @use './slick-editors';
