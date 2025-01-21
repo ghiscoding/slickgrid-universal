@@ -1,3 +1,5 @@
 *.md
-
+_variables.scss
+_variables-theme-material.scss
+_variables-theme-salesforce.scss
 **/test/vitest-coverage/*.*

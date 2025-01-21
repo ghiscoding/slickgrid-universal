@@ -543,6 +543,9 @@
         padding: 0;
       }
       .slick-group-title {
+        display: (var(--slick-draggable-group-title-display, v.$slick-draggable-group-title-display));
+        align-items: (var(--slick-draggable-group-title-align-items, v.$slick-draggable-group-title-align-items));
+        gap: (var(--slick-draggable-group-title-gap, v.$slick-draggable-group-title-gap));
         height: var(--slick-draggable-group-title-height, v.$slick-draggable-group-title-height);
         line-height: var(--slick-draggable-group-title-line-height, v.$slick-draggable-group-title-line-height);
         vertical-align: var(--slick-draggable-group-title-vertical-align, v.$slick-draggable-group-title-vertical-align);
