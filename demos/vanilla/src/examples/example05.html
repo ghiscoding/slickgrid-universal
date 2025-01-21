@@ -21,21 +21,21 @@
 <div class="columns">
   <div class="column is-narrow">
     <div class="row mb-1">
-      <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-      <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(25000)">25k rows</button>
-      <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small" data-test="change-filter-dynamically">
+      <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+      <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(25000)">25k rows</button>
+      <button onclick.trigger="dynamicallyChangeFilter()" class="button is-small" data-test="change-filter-dynamically">
         <span class="mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
-      <button onclick.delegate="collapseAllWithoutEvent()" data-test="collapse-all-noevent-btn" class="button is-small">
+      <button onclick.trigger="collapseAllWithoutEvent()" data-test="collapse-all-noevent-btn" class="button is-small">
         <span class="mdi mdi-arrow-collapse"></span>
         <span>Collapse All (without triggering event)</span>
       </button>
-      <button onclick.delegate="dynamicallyToggledFirstParent()" data-test="dynamically-toggle-first-parent-btn" class="button is-small">
+      <button onclick.trigger="dynamicallyToggledFirstParent()" data-test="dynamically-toggle-first-parent-btn" class="button is-small">
         <span>Dynamically Toggle First Parent</span>
       </button>
       <button
-        onclick.delegate="reapplyToggledItems()"
+        onclick.trigger="reapplyToggledItems()"
         data-test="reapply-toggled-items-btn"
         class="button is-small"
         disabled.bind="hasNoExpandCollapseChanged"
@@ -46,29 +46,29 @@
     </div>
 
     <div class="row mb-1">
-      <button onclick.delegate="addNewRow()" data-test="add-item-btn" class="button is-small is-info">
+      <button onclick.trigger="addNewRow()" data-test="add-item-btn" class="button is-small is-info">
         <span class="mdi mdi-plus"></span>
         <span>Add New Item to "Task 1" group</span>
       </button>
-      <button onclick.delegate="updateFirstRow()" data-test="update-item-btn" class="button is-small">
+      <button onclick.trigger="updateFirstRow()" data-test="update-item-btn" class="button is-small">
         <span class="mdi mdi-pencil"></span>
         <span>Update 1st Row Item</span>
       </button>
-      <button onclick.delegate="collapseAll()" data-test="collapse-all-btn" class="button is-small">
+      <button onclick.trigger="collapseAll()" data-test="collapse-all-btn" class="button is-small">
         <span class="mdi mdi-arrow-collapse"></span>
         <span>Collapse All</span>
       </button>
-      <button onclick.delegate="expandAll()" data-test="expand-all-btn" class="button is-small">
+      <button onclick.trigger="expandAll()" data-test="expand-all-btn" class="button is-small">
         <span class="mdi mdi-arrow-expand"></span>
         <span>Expand All</span>
       </button>
-      <button onclick.delegate="logTreeDataToggledItems()" class="button is-small">
+      <button onclick.trigger="logTreeDataToggledItems()" class="button is-small">
         <span>Log Tree Toggled Items</span>
       </button>
-      <button onclick.delegate="logFlatStructure()" class="button is-small">
+      <button onclick.trigger="logFlatStructure()" class="button is-small">
         <span>Log Flat Structure</span>
       </button>
-      <button onclick.delegate="logHierarchicalStructure()" class="button is-small">
+      <button onclick.trigger="logHierarchicalStructure()" class="button is-small">
         <span>Log Hierarchical Structure</span>
       </button>
       <span class.bind="loadingClass"></span>

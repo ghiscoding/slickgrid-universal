@@ -16,25 +16,25 @@
 <div class="columns is-desktop example11-body">
   <section class="column field has-addons is-narrow">
     <div class="row">
-      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+      <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="mdi mdi-table-edit"></span>
         <span>Toggle Edit/Readonly Grid</span>
       </button>
-      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit</span>
       </button>
-      <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit(true)" data-test="undo-open-editor-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit &amp; Open Editor</span>
       </button>
-      <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
+      <button class="button is-small" onclick.trigger="undoAllEdits()" data-test="undo-all-edits-btn">
         <span class="mdi mdi-history"></span>
         <span>Undo All Edits</span>
       </button>
       <button
         class="button is-small is-info"
-        onclick.delegate="saveAll()"
+        onclick.trigger="saveAll()"
         data-test="save-all-btn"
         title="Check your console log for the result"
       >
@@ -50,7 +50,7 @@
         class="select is-small selected-view ml-1"
         id="selectedView"
         name="selectedView"
-        onchange.delegate="usePredefinedView(event.target.value)"
+        onchange.trigger="usePredefinedView(event.target.value)"
       ></select>
       <div class="dropdown action ml-1-negative">
         <div class="dropdown-trigger">
@@ -63,18 +63,18 @@
         </div>
         <div class="dropdown-menu is-small" id="dropdown-menu" role="menu">
           <div class="dropdown-content">
-            <span class="dropdown-item" onclick.delegate="createView(event)" data-test="save-view-btn"> Create New View </span>
-            <span class.bind="dropdownDeleteViewClass" onclick.delegate="updateView(event)" data-test="update-view-btn">
+            <span class="dropdown-item" onclick.trigger="createView(event)" data-test="save-view-btn"> Create New View </span>
+            <span class.bind="dropdownDeleteViewClass" onclick.trigger="updateView(event)" data-test="update-view-btn">
               Update Current View
             </span>
-            <span class.bind="dropdownUpdateViewClass" onclick.delegate="deleteView(event)" data-test="delete-view-btn">
+            <span class.bind="dropdownUpdateViewClass" onclick.trigger="deleteView(event)" data-test="delete-view-btn">
               Delete Current View
             </span>
           </div>
         </div>
       </div>
       <span class="ml-1">
-        <button class="button is-small" onclick.delegate="clearLocalStorage()" data-test="clear-storage-btn">
+        <button class="button is-small" onclick.trigger="clearLocalStorage()" data-test="clear-storage-btn">
           <span class="mdi mdi-close-circle mdi-14px"></span>
           <span>Clear LocalStorage</span>
         </button>

@@ -19,7 +19,7 @@
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class="button is-small" onclick.delegate="toggleDarkModeGrid1()" data-test="toggle-dark-mode">
+      <button class="button is-small" onclick.trigger="toggleDarkModeGrid1()" data-test="toggle-dark-mode">
         <span class="mdi mdi-theme-light-dark"></span>
         <span> Toggle Light/Dark</span>
       </button>
@@ -39,11 +39,11 @@
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class="button is-small" onclick.delegate="togglePaginationGrid2()" data-text="toggle-pagination-btn">
+      <button class="button is-small" onclick.trigger="togglePaginationGrid2()" data-text="toggle-pagination-btn">
         <span class="mdi mdi-swap-vertical"></span>
         <span>Toggle Pagination</span>
       </button>
-      <button class="button is-small" data-test="external-gridmenu2-btn" onclick.delegate="toggleGridMenu(event)">
+      <button class="button is-small" data-test="external-gridmenu2-btn" onclick.trigger="toggleGridMenu(event)">
         <span class="mdi mdi-menu"></span>
         <span>Grid Menu</span>
       </button>

@@ -29,13 +29,13 @@
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class.bind="classDefaultResizeButton" onclick.delegate="handleDefaultResizeColumns()" data-test="autosize-columns-btn">
+      <button class.bind="classDefaultResizeButton" onclick.trigger="handleDefaultResizeColumns()" data-test="autosize-columns-btn">
         <span class="mdi mdi-arrow-expand"></span>
         <span>(default resize) "autosizeColumns"</span>
       </button>
     </p>
     <p class="control">
-      <button class.bind="classNewResizeButton" onclick.delegate="handleNewResizeColumns()" data-test="resize-by-content-btn">
+      <button class.bind="classNewResizeButton" onclick.trigger="handleNewResizeColumns()" data-test="resize-by-content-btn">
         <span class="mdi mdi-arrow-expand"></span>
         <span>Resize by Cell Content</span>
       </button>
@@ -46,7 +46,7 @@
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="handleNavigateBottom()"
+        onclick.trigger="handleNavigateBottom()"
         data-test="navigate-bottom"
         title="Navigate to Bottom of Grid"
       >
@@ -54,7 +54,7 @@
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="handleNavigateTop()" data-test="navigate-top" title="Navigate to Top of Grid">
+      <button class="button is-small" onclick.trigger="handleNavigateTop()" data-test="navigate-top" title="Navigate to Top of Grid">
         <span class="mdi mdi-arrow-down mdi-rotate-180"></span>
       </button>
     </p>
@@ -62,13 +62,13 @@
 
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+      <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="mdi mdi-table-edit"></span>
         <span>Toggle Readonly</span>
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit</span>
       </button>
@@ -76,7 +76,7 @@
     <p class="control">
       <button
         class="button is-small is-success is-outlined"
-        onclick.delegate="saveAll()"
+        onclick.trigger="saveAll()"
         data-test="save-all-btn"
         title="Check your console log for the result"
       >
@@ -87,7 +87,7 @@
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="setSelectedRowIds()"
+        onclick.trigger="setSelectedRowIds()"
         data-test="set-dynamic-rows-btn"
         title="Change Row Selection across multiple pages"
       >

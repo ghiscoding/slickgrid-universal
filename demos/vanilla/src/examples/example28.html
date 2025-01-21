@@ -30,23 +30,23 @@
     <button
       class="button is-small"
       data-test="clear-filters-sorting"
-      onclick.delegate="clearAllFiltersAndSorts()"
+      onclick.trigger="clearAllFiltersAndSorts()"
       title="Clear all Filters & Sorts"
     >
       <span class="mdi mdi-close"></span>
       <span>Clear all Filter & Sorts</span>
     </button>
-    <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
       Set Filters Dynamically
     </button>
-    <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
+    <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">
       Set Sorting Dynamically
     </button>
-    <button class="button is-small" data-test="group-by-duration" onclick.delegate="groupByDuration()">Group by Duration</button>
+    <button class="button is-small" data-test="group-by-duration" onclick.trigger="groupByDuration()">Group by Duration</button>
 
     <label class="ml-4">Reset Dataset <code>onSort</code>:</label>
-    <button class="button is-small" data-test="onsort-on" onclick.delegate="onSortReset(true)">ON</button>
-    <button class="button is-small" data-test="onsort-off" onclick.delegate="onSortReset(false)">OFF</button>
+    <button class="button is-small" data-test="onsort-on" onclick.trigger="onSortReset(true)">ON</button>
+    <button class="button is-small" data-test="onsort-off" onclick.trigger="onSortReset(false)">OFF</button>
   </div>
 
   <div class="mt-3 mb-2">

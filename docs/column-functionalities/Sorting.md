@@ -88,7 +88,7 @@ You can update/change the Sorting dynamically (on the fly) via the `updateSortin
 
 ##### View
 ```html
-<button class="btn btn-default btn-sm" data-test="set-dynamic-sorting" click.delegate="setSortingDynamically()">
+<button class="btn btn-default btn-sm" data-test="set-dynamic-sorting" click.trigger="setSortingDynamically()">
     Set Sorting Dynamically
 </button>
 

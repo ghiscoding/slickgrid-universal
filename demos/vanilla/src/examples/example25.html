@@ -20,15 +20,13 @@
 </span>
 
 <div class="row mb-3">
-  <button class="button is-small" data-test="clear-filters" onclick.delegate="clearFilters()">Clear Filters</button>
-  <button class="button is-small" data-test="clear-sorting" onclick.delegate="clearSorting()">Clear Sorting</button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
-  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
+  <button class="button is-small" data-test="clear-filters" onclick.trigger="clearFilters()">Clear Filters</button>
+  <button class="button is-small" data-test="clear-sorting" onclick.trigger="clearSorting()">Clear Sorting</button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
 
   <span class="ml-4">
-    <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+    <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
       <span class="mdi mdi-translate"></span>
       <span>Switch Language</span>
     </button>

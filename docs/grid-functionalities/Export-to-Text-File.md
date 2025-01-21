@@ -101,10 +101,10 @@ What we can see from the example, is that it will use all Formatters (when exist
 You can use the export from the Grid Menu and/or you can simply create your own buttons to export.
 #### View
 ```html
-<button class="btn btn-default btn-sm" click.delegate="exportToFile('csv')">
+<button class="btn btn-default btn-sm" click.trigger="exportToFile('csv')">
    Download to CSV
 </button>
-<button class="btn btn-default btn-sm" click.delegate="exportToFile('txt')">
+<button class="btn btn-default btn-sm" click.trigger="exportToFile('txt')">
     Download to Text
 </button>
 ```

@@ -23,12 +23,12 @@
 </h6>
 <div class="columns">
   <div class="column">
-    <button onclick.delegate="addNewFile()" class="button is-small is-info" data-test="add-item-btn">
+    <button onclick.trigger="addNewFile()" class="button is-small is-info" data-test="add-item-btn">
       <span class="mdi mdi-plus"></span>
       <span>Add New Pop Song</span>
     </button>
     <button
-      onclick.delegate="deleteFile()"
+      onclick.trigger="deleteFile()"
       class="button is-small"
       data-test="remove-item-btn"
       disabled.bind="isRemoveLastInsertedPopSongDisabled"
@@ -36,25 +36,25 @@
       <span class="mdi mdi-minus"></span>
       <span>Remove Last Inserted Pop Song</span>
     </button>
-    <button onclick.delegate="collapseAll()" class="button is-small" data-test="collapse-all-btn">
+    <button onclick.trigger="collapseAll()" class="button is-small" data-test="collapse-all-btn">
       <span class="mdi mdi-arrow-collapse"></span>
       <span>Collapse All</span>
     </button>
-    <button onclick.delegate="expandAll()" class="button is-small" data-test="expand-all-btn">
+    <button onclick.trigger="expandAll()" class="button is-small" data-test="expand-all-btn">
       <span class="mdi mdi-arrow-expand"></span>
       <span>Expand All</span>
     </button>
-    <button class="button is-small" data-test="clear-filters-btn" onclick.delegate="clearFilters()">
+    <button class="button is-small" data-test="clear-filters-btn" onclick.trigger="clearFilters()">
       <span class="mdi mdi-close"></span>
       <span>Clear Filters</span>
     </button>
-    <button onclick.delegate="logFlatStructure()" class="button is-small" title="console.log of the Flat dataset">
+    <button onclick.trigger="logFlatStructure()" class="button is-small" title="console.log of the Flat dataset">
       <span>Log Flat Structure</span>
     </button>
-    <button onclick.delegate="logHierarchicalStructure()" class="button is-small" title="console.log of the Hierarchical Tree dataset">
+    <button onclick.trigger="logHierarchicalStructure()" class="button is-small" title="console.log of the Hierarchical Tree dataset">
       <span>Log Hierarchical Structure</span>
     </button>
-    <!-- <button onclick.delegate="displaySumAggregator()" class="button is-small">
+    <!-- <button onclick.trigger="displaySumAggregator()" class="button is-small">
       <span>Show Sum Aggregator only</span>
     </button> -->
   </div>
@@ -67,9 +67,9 @@
         <div class="field is-expanded">
           <div class="field has-addons">
             <p class="control is-expanded">
-              <input type="text" class="input search is-small" data-test="search-string" onkeyup.delegate="searchFile(event)" />
+              <input type="text" class="input search is-small" data-test="search-string" onkeyup.trigger="searchFile(event)" />
             </p>
-            <p class="control pointer" onclick.delegate="clearSearch()" data-test="clear-search-string">
+            <p class="control pointer" onclick.trigger="clearSearch()" data-test="clear-search-string">
               <a class="button is-static is-small">
                 <span class="mdi mdi-close-thick"></span>
               </a>
@@ -88,7 +88,7 @@
       id="excludeChildWhenFiltering"
       data-test="exclude-child-when-filtering"
       checked.bind="isExcludingChildWhenFiltering"
-      onclick.delegate="changeExcludeChildWhenFiltering(event.target.checked)"
+      onclick.trigger="changeExcludeChildWhenFiltering(event.target.checked)"
     />
     <span
       title="for example if we filter the word 'pop' and we exclude children, then only the folder 'pop' will show up without any content unless we uncheck this flag"
@@ -102,7 +102,7 @@
       id="autoApproveParentItem"
       data-test="auto-approve-parent-item"
       checked.bind="isAutoApproveParentItemWhenTreeColumnIsValid"
-      onclick.delegate="changeAutoApproveParentItem(event.target.checked)"
+      onclick.trigger="changeAutoApproveParentItem(event.target.checked)"
     />
     <span
       title="for example in this demo if we filter with 'music' and size '> 70' nothing will show up unless we have this flag enabled
@@ -118,7 +118,7 @@
       id="autoRecalcTotalsOnFilterChange"
       data-test="auto-recalc-totals"
       checked.bind="isAutoRecalcTotalsOnFilterChange"
-      onclick.delegate="changeAutoRecalcTotalsOnFilterChange(event.target.checked)"
+      onclick.trigger="changeAutoRecalcTotalsOnFilterChange(event.target.checked)"
     />
     <span
       title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default."

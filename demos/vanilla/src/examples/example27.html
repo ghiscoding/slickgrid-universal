@@ -40,7 +40,7 @@
     <button
       class="button is-small"
       data-test="clear-filters-sorting"
-      onclick.delegate="clearAllFiltersAndSorts()"
+      onclick.trigger="clearAllFiltersAndSorts()"
       title="Clear all Filters & Sorts"
     >
       <span class="mdi mdi-close"></span>
@@ -58,7 +58,7 @@
     />
 
     <div class="row col-md-12 mt-2">
-      <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+      <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
         <span class="mdi mdi-translate"></span>
         <span>Switch Language</span>
       </button>
