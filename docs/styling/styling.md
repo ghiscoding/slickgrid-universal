@@ -26,10 +26,11 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 ##### with CSS
 ```scss
 /* style.css */
-@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-default.css';
 
 // or other Themes
-@use '@slickgrid-universal/common/dist/styles/styles/css/slickgrid-theme-material.css';
+@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-material.css';
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-salesforce.css';
 ```
 
@@ -37,13 +38,14 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 ```scss
 /* change any SASS variables before loading the theme */
 /* style.scss */
-@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-default.scss' with (
   $slick-primary-color: green,
   $slick-cell-odd-background-color: lightyellow,
   $slick-row-mouse-hover-color: lightgreen
 );
 
 // or other Themes
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 
@@ -51,7 +53,7 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 $slick-primary-color: red;
 $slick-cell-odd-background-color: pink;
 $slick-row-mouse-hover-color: lightpink;
-@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-default.scss';
 ```
 
 ### Using CSS Variables _(instead of SASS)_

@@ -13,11 +13,12 @@ npm install --save slickgrid-vue bootstrap
 # or with yarn add
 ```
 
-_Note: `Bootstrap` is totally optional, you can use any other framework_
+_Note: `Bootstrap` is totally optional, you can use any other framework (for example Quasar)_
 
 ### 2. Import all necessary dependencies in `main.ts`
 
 ```ts
+// again Bootstrap is optional
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
@@ -28,9 +29,9 @@ createApp(App);
 
 ### 3. CSS / SASS Styles
 
-Load the default Bootstrap theme style and/or customize it to your taste (customization requires SASS).
+Load the default SlickGrid theme style and/or customize it to your taste (customization requires SASS).
 
-> Note: the default CSS/SASS Theme name is `slickgrid-theme-bootstrap` but it **does not** require Bootstrap to work.
+> Note: the default CSS/SASS Theme name is `slickgrid-theme-default` and is as much as possible framework agnostic.
 > It is the recommended Theme even if you use any other UI framework, try this default theme first and tweak it if necessary.
 
 #### CSS
@@ -55,7 +56,7 @@ You could also compile the SASS files with your own customization, for that simp
 
 ```scss
 /* for example, let's change the mouse hover color */
-@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-default.scss' with (
   $cell-odd-background-color: lightyellow,
   $row-mouse-hover-color: lightgreen
 );

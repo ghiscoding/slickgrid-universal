@@ -77,7 +77,7 @@ Default compiled `css`, you can load it through HTML or import it in your JS cod
 
 ```html
 # Bootstrap Theme
-<link rel="stylesheet" href="@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css">
+<link rel="stylesheet" href="@slickgrid-universal/common/dist/styles/css/slickgrid-theme-default.css">
 ```
 
 > **Note** to use a different theme, simply replace the theme suffix, for example `"slickgrid-theme-material.css"` for the Material Theme.
@@ -87,7 +87,7 @@ You could also compile the SASS files with your own customization, for that simp
 
 ```scss
 /* for example, let's change the mouse hover color */
-@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-default.scss' with (
   $cell-odd-background-color: lightyellow,
   $row-mouse-hover-color: lightgreen
 );
