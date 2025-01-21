@@ -1,0 +1,50 @@
+<h3 class="title is-3">
+  Example 04 - Pinned (frozen) Columns/Rows
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example04.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+  <h6 class="italic content example-details">
+    The Autocomplete Editor (City of Origin) might throw some console errors because it uses "http://gd.geobytes.com/" request (which is not
+    using https). You can allow "Insecure content" in your browser for this website only to test the Autocomplete
+  </h6>
+</h3>
+
+<div class="row mb-3">
+  <span>
+    <label for="">Pinned Rows: </label>
+    <input type="number" class="frozen-row-count is-narrow input is-small" value.bind="frozenRowCount" />
+    <button class="button is-small" onclick.delegate="changeFrozenRowCount()">Set</button>
+  </span>
+  <span class="ml-1">
+    <label for="">Pinned Columns: </label>
+    <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="frozenColumnCount" />
+    <button class="button is-small" onclick.delegate="changeFrozenColumnCount()">Set</button>
+  </span>
+  <span class="ml-3">
+    <button class="button is-small" onclick.delegate="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
+      <span class="mdi mdi-close"></span>
+      <span>Remove Frozen Columns</span>
+    </button>
+    <button class="button is-small" data-test="set-3frozen-columns" onclick.delegate="setFrozenColumns(2)">
+      <span class="mdi mdi-pin-outline"></span>
+      <span>Set 3 Frozen Columns</span>
+    </button>
+    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.delegate="toggleFrozenBottomRows()">
+      <span class="mdi mdi-flip-vertical"></span>
+      <span>Toggle Pinned Rows (top/bottom)</span>
+    </button>
+    <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.delegate="toggleWhichRowToShowSelectAll()">
+      <span class="mdi mdi-swap-horizontal mdi-rotate-90"></span>
+      <span>Toggle which row to show "Select All" checkbox</span>
+    </button>
+  </span>
+</div>
+
+<div class="grid4"></div>

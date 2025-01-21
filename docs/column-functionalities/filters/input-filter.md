@@ -176,7 +176,7 @@ this.gridOptions = {
 ```
 
 ### Custom Filter Predicate
-You can provide a custom predicate by using the `filterPredicate` when defining your `filter`, the callback will provide you with 2 arguments (`dataContext` and `searchFilterArgs`). The `searchFilterArgs` has a type of `SearchColumnFilter` interface which will provide you more info about the filter itself (like parsed operator, search terms, column definition, column id and type as well). You can see a live demo at [Example 14](https://ghiscoding.github.io/slickgrid-universal/#/example14) and the associated [lines](https://github.com/ghiscoding/slickgrid-universal/blob/1a2c2ff4b72ac3f51b30b1d3d101e84ed9ec9ece/examples/vite-demo-vanilla-bundle/src/examples/example14.ts#L153-L178) of code.
+You can provide a custom predicate by using the `filterPredicate` when defining your `filter`, the callback will provide you with 2 arguments (`dataContext` and `searchFilterArgs`). The `searchFilterArgs` has a type of `SearchColumnFilter` interface which will provide you more info about the filter itself (like parsed operator, search terms, column definition, column id and type as well). You can see a live demo at [Example 14](https://ghiscoding.github.io/slickgrid-universal/#/example14) and the associated [lines](https://github.com/ghiscoding/slickgrid-universal/blob/1a2c2ff4b72ac3f51b30b1d3d101e84ed9ec9ece/demos/vanilla/src/examples/example14.ts#L153-L178) of code.
 
 ```ts
 this.columnDefinitions = [
