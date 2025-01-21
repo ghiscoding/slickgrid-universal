@@ -36,7 +36,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example01.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example01.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -49,7 +49,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class="button is-small" onclick.delegate="toggleDarkModeGrid1()" data-test="toggle-dark-mode">
+      <button class="button is-small" onclick.trigger="toggleDarkModeGrid1()" data-test="toggle-dark-mode">
         <span class="mdi mdi-theme-light-dark"></span>
         <span> Toggle Light/Dark</span>
       </button>
@@ -69,11 +69,11 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class="button is-small" onclick.delegate="togglePaginationGrid2()" data-text="toggle-pagination-btn">
+      <button class="button is-small" onclick.trigger="togglePaginationGrid2()" data-text="toggle-pagination-btn">
         <span class="mdi mdi-swap-vertical"></span>
         <span>Toggle Pagination</span>
       </button>
-      <button class="button is-small" data-test="external-gridmenu2-btn" onclick.delegate="toggleGridMenu(event)">
+      <button class="button is-small" data-test="external-gridmenu2-btn" onclick.trigger="toggleGridMenu(event)">
         <span class="mdi mdi-menu"></span>
         <span>Grid Menu</span>
       </button>
@@ -90,7 +90,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example02.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example02.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -99,43 +99,43 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 
 <section class="mb-2">
   <div class="row mb-1">
-    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(50000)">50k rows</button>
-    <button class="button is-small" data-test="clear-grouping-btn" onclick.delegate="clearGrouping()">
+    <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+    <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(50000)">50k rows</button>
+    <button class="button is-small" data-test="clear-grouping-btn" onclick.trigger="clearGrouping()">
       <span class="mdi mdi-playlist-remove"></span>
       <span>Clear grouping</span>
     </button>
-    <button class="button is-small" data-test="collapse-all-btn" onclick.delegate="collapseAllGroups()">
+    <button class="button is-small" data-test="collapse-all-btn" onclick.trigger="collapseAllGroups()">
       <span class="mdi mdi-arrow-collapse"></span>
       <span>Collapse all groups</span>
     </button>
-    <button class="button is-small" data-test="expand-all-btn" onclick.delegate="expandAllGroups()">
+    <button class="button is-small" data-test="expand-all-btn" onclick.trigger="expandAllGroups()">
       <span class="mdi mdi-arrow-expand"></span>
       <span>Expand all groups</span>
     </button>
-    <button class="button is-small" data-test="export-excel-btn" onclick.delegate="exportToExcel()">
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportToExcel()">
       <span class="mdi mdi-file-excel-outline"></span>
       <span>Export to Excel</span>
     </button>
-    <button class="button is-small" data-test="export-excel-btn" onclick.delegate="logItems()">
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="logItems()">
       <span>Log Items</span>
     </button>
   </div>
 
   <div class="row">
-    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.delegate="groupByDuration()">
+    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDuration()">
       Group by Duration &amp; sort groups by value
     </button>
-    <button class="button is-small" data-test="group-duration-sort-count-btn" onclick.delegate="groupByDurationOrderByCount(false)">
+    <button class="button is-small" data-test="group-duration-sort-count-btn" onclick.trigger="groupByDurationOrderByCount(false)">
       Group by Duration &amp; sort groups by count
     </button>
-    <button class="button is-small" data-test="group-duration-sort-count-collapse-btn" onclick.delegate="groupByDurationOrderByCount(true)">
+    <button class="button is-small" data-test="group-duration-sort-count-collapse-btn" onclick.trigger="groupByDurationOrderByCount(true)">
       Group by Duration &amp; sort groups by count, aggregate collapsed
     </button>
-    <button class="button is-small" data-test="group-duration-effort-btn" onclick.delegate="groupByDurationEffortDriven()">
+    <button class="button is-small" data-test="group-duration-effort-btn" onclick.trigger="groupByDurationEffortDriven()">
       Group by Duration then Effort-Driven
     </button>
-    <button class="button is-small" data-test="group-duration-effort-percent-btn" onclick.delegate="groupByDurationEffortDrivenPercent()">
+    <button class="button is-small" data-test="group-duration-effort-percent-btn" onclick.trigger="groupByDurationEffortDrivenPercent()">
       Group by Duration then Effort-Driven then Percent.
     </button>
     <span class.bind="loadingClass"></span>
@@ -147,7 +147,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   Example 03 - Draggable Grouping
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -157,7 +157,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example03.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example03.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -166,40 +166,40 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 
 <section>
   <div class="row">
-    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-    <button class="button is-small" data-test="add-500k-rows-btn" onclick.delegate="loadData(500000)">500k rows</button>
-    <button class="button is-small" data-test="clear-grouping-btn" onclick.delegate="clearGrouping()">
+    <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+    <button class="button is-small" data-test="add-500k-rows-btn" onclick.trigger="loadData(500000)">500k rows</button>
+    <button class="button is-small" data-test="clear-grouping-btn" onclick.trigger="clearGrouping()">
       <span class="mdi mdi-playlist-remove"></span>
       <span>Clear Grouping</span>
     </button>
-    <button class="button is-small" data-test="collapse-all-btn" onclick.delegate="collapseAllGroups()">
+    <button class="button is-small" data-test="collapse-all-btn" onclick.trigger="collapseAllGroups()">
       <span class="mdi mdi-arrow-collapse"></span>
       <span>Collapse all Groups</span>
     </button>
-    <button class="button is-small" data-test="expand-all-btn" onclick.delegate="expandAllGroups()">
+    <button class="button is-small" data-test="expand-all-btn" onclick.trigger="expandAllGroups()">
       <span class="mdi mdi-arrow-expand"></span>
       <span>Expand all Groups</span>
     </button>
-    <button class="button is-small" data-test="toggle-draggable-grouping-row" onclick.delegate="toggleDraggableGroupingRow()">
+    <button class="button is-small" data-test="toggle-draggable-grouping-row" onclick.trigger="toggleDraggableGroupingRow()">
       <span>Toggle Dragging Grouping Row</span>
     </button>
-    <button class="button is-small" data-test="export-excel-btn" onclick.delegate="exportToExcel()">
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportToExcel()">
       <span class="mdi mdi-file-excel-outline"></span>
       <span>Export to Excel</span>
     </button>
   </div>
 
   <div class="row mt-1 mb-5">
-    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.delegate="groupByDurationOrderByCount(false)">
+    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDurationOrderByCount(false)">
       Group by duration &amp; sort groups by value
     </button>
-    <button class="button is-small" data-test="group-duration-sort-count-btn" onclick.delegate="groupByDurationOrderByCount(true)">
+    <button class="button is-small" data-test="group-duration-sort-count-btn" onclick.trigger="groupByDurationOrderByCount(true)">
       Group by duration &amp; sort groups by count
     </button>
-    <button class="button is-small" data-test="group-duration-effort-btn" onclick.delegate="groupByDurationEffortDriven()">
+    <button class="button is-small" data-test="group-duration-effort-btn" onclick.trigger="groupByDurationEffortDriven()">
       Group by Duration then Effort-Driven
     </button>
-    <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
       <span class="mdi mdi-filter-outline"></span>
       <span> Set Filters Dynamically </span>
     </button>
@@ -215,7 +215,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example04.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example04.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -230,27 +230,27 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   <span>
     <label for="">Pinned Rows: </label>
     <input type="number" class="frozen-row-count is-narrow input is-small" value.bind="frozenRowCount" />
-    <button class="button is-small" onclick.delegate="changeFrozenRowCount()">Set</button>
+    <button class="button is-small" onclick.trigger="changeFrozenRowCount()">Set</button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Columns: </label>
     <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="frozenColumnCount" />
-    <button class="button is-small" onclick.delegate="changeFrozenColumnCount()">Set</button>
+    <button class="button is-small" onclick.trigger="changeFrozenColumnCount()">Set</button>
   </span>
   <span class="ml-3">
-    <button class="button is-small" onclick.delegate="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
+    <button class="button is-small" onclick.trigger="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
       <span class="mdi mdi-close"></span>
       <span>Remove Frozen Columns</span>
     </button>
-    <button class="button is-small" data-test="set-3frozen-columns" onclick.delegate="setFrozenColumns(2)">
+    <button class="button is-small" data-test="set-3frozen-columns" onclick.trigger="setFrozenColumns(2)">
       <span class="mdi mdi-pin-outline"></span>
       <span>Set 3 Frozen Columns</span>
     </button>
-    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.delegate="toggleFrozenBottomRows()">
+    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.trigger="toggleFrozenBottomRows()">
       <span class="mdi mdi-flip-vertical"></span>
       <span>Toggle Pinned Rows (top/bottom)</span>
     </button>
-    <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.delegate="toggleWhichRowToShowSelectAll()">
+    <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.trigger="toggleWhichRowToShowSelectAll()">
       <span class="mdi mdi-swap-horizontal mdi-rotate-90"></span>
       <span>Toggle which row to show "Select All" checkbox</span>
     </button>
@@ -267,7 +267,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example05.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example05.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -281,21 +281,21 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 <div class="columns">
   <div class="column is-narrow">
     <div class="row mb-1">
-      <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-      <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(25000)">25k rows</button>
-      <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small" data-test="change-filter-dynamically">
+      <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+      <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(25000)">25k rows</button>
+      <button onclick.trigger="dynamicallyChangeFilter()" class="button is-small" data-test="change-filter-dynamically">
         <span class="mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
-      <button onclick.delegate="collapseAllWithoutEvent()" data-test="collapse-all-noevent-btn" class="button is-small">
+      <button onclick.trigger="collapseAllWithoutEvent()" data-test="collapse-all-noevent-btn" class="button is-small">
         <span class="mdi mdi-arrow-collapse"></span>
         <span>Collapse All (without triggering event)</span>
       </button>
-      <button onclick.delegate="dynamicallyToggledFirstParent()" data-test="dynamically-toggle-first-parent-btn" class="button is-small">
+      <button onclick.trigger="dynamicallyToggledFirstParent()" data-test="dynamically-toggle-first-parent-btn" class="button is-small">
         <span>Dynamically Toggle First Parent</span>
       </button>
       <button
-        onclick.delegate="reapplyToggledItems()"
+        onclick.trigger="reapplyToggledItems()"
         data-test="reapply-toggled-items-btn"
         class="button is-small"
         disabled.bind="hasNoExpandCollapseChanged"
@@ -306,29 +306,29 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     </div>
 
     <div class="row mb-1">
-      <button onclick.delegate="addNewRow()" data-test="add-item-btn" class="button is-small is-info">
+      <button onclick.trigger="addNewRow()" data-test="add-item-btn" class="button is-small is-info">
         <span class="mdi mdi-plus"></span>
         <span>Add New Item to "Task 1" group</span>
       </button>
-      <button onclick.delegate="updateFirstRow()" data-test="update-item-btn" class="button is-small">
+      <button onclick.trigger="updateFirstRow()" data-test="update-item-btn" class="button is-small">
         <span class="mdi mdi-pencil"></span>
         <span>Update 1st Row Item</span>
       </button>
-      <button onclick.delegate="collapseAll()" data-test="collapse-all-btn" class="button is-small">
+      <button onclick.trigger="collapseAll()" data-test="collapse-all-btn" class="button is-small">
         <span class="mdi mdi-arrow-collapse"></span>
         <span>Collapse All</span>
       </button>
-      <button onclick.delegate="expandAll()" data-test="expand-all-btn" class="button is-small">
+      <button onclick.trigger="expandAll()" data-test="expand-all-btn" class="button is-small">
         <span class="mdi mdi-arrow-expand"></span>
         <span>Expand All</span>
       </button>
-      <button onclick.delegate="logTreeDataToggledItems()" class="button is-small">
+      <button onclick.trigger="logTreeDataToggledItems()" class="button is-small">
         <span>Log Tree Toggled Items</span>
       </button>
-      <button onclick.delegate="logFlatStructure()" class="button is-small">
+      <button onclick.trigger="logFlatStructure()" class="button is-small">
         <span>Log Flat Structure</span>
       </button>
-      <button onclick.delegate="logHierarchicalStructure()" class="button is-small">
+      <button onclick.trigger="logHierarchicalStructure()" class="button is-small">
         <span>Log Hierarchical Structure</span>
       </button>
       <span class.bind="loadingClass"></span>
@@ -346,7 +346,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example06.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example06.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -362,12 +362,12 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 </h6>
 <div class="columns">
   <div class="column">
-    <button onclick.delegate="addNewFile()" class="button is-small is-info" data-test="add-item-btn">
+    <button onclick.trigger="addNewFile()" class="button is-small is-info" data-test="add-item-btn">
       <span class="mdi mdi-plus"></span>
       <span>Add New Pop Song</span>
     </button>
     <button
-      onclick.delegate="deleteFile()"
+      onclick.trigger="deleteFile()"
       class="button is-small"
       data-test="remove-item-btn"
       disabled.bind="isRemoveLastInsertedPopSongDisabled"
@@ -375,25 +375,25 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       <span class="mdi mdi-minus"></span>
       <span>Remove Last Inserted Pop Song</span>
     </button>
-    <button onclick.delegate="collapseAll()" class="button is-small" data-test="collapse-all-btn">
+    <button onclick.trigger="collapseAll()" class="button is-small" data-test="collapse-all-btn">
       <span class="mdi mdi-arrow-collapse"></span>
       <span>Collapse All</span>
     </button>
-    <button onclick.delegate="expandAll()" class="button is-small" data-test="expand-all-btn">
+    <button onclick.trigger="expandAll()" class="button is-small" data-test="expand-all-btn">
       <span class="mdi mdi-arrow-expand"></span>
       <span>Expand All</span>
     </button>
-    <button class="button is-small" data-test="clear-filters-btn" onclick.delegate="clearFilters()">
+    <button class="button is-small" data-test="clear-filters-btn" onclick.trigger="clearFilters()">
       <span class="mdi mdi-close"></span>
       <span>Clear Filters</span>
     </button>
-    <button onclick.delegate="logFlatStructure()" class="button is-small" title="console.log of the Flat dataset">
+    <button onclick.trigger="logFlatStructure()" class="button is-small" title="console.log of the Flat dataset">
       <span>Log Flat Structure</span>
     </button>
-    <button onclick.delegate="logHierarchicalStructure()" class="button is-small" title="console.log of the Hierarchical Tree dataset">
+    <button onclick.trigger="logHierarchicalStructure()" class="button is-small" title="console.log of the Hierarchical Tree dataset">
       <span>Log Hierarchical Structure</span>
     </button>
-    <!-- <button onclick.delegate="displaySumAggregator()" class="button is-small">
+    <!-- <button onclick.trigger="displaySumAggregator()" class="button is-small">
       <span>Show Sum Aggregator only</span>
     </button> -->
   </div>
@@ -406,9 +406,9 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         <div class="field is-expanded">
           <div class="field has-addons">
             <p class="control is-expanded">
-              <input type="text" class="input search is-small" data-test="search-string" onkeyup.delegate="searchFile(event)" />
+              <input type="text" class="input search is-small" data-test="search-string" onkeyup.trigger="searchFile(event)" />
             </p>
-            <p class="control pointer" onclick.delegate="clearSearch()" data-test="clear-search-string">
+            <p class="control pointer" onclick.trigger="clearSearch()" data-test="clear-search-string">
               <a class="button is-static is-small">
                 <span class="mdi mdi-close-thick"></span>
               </a>
@@ -427,7 +427,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       id="excludeChildWhenFiltering"
       data-test="exclude-child-when-filtering"
       checked.bind="isExcludingChildWhenFiltering"
-      onclick.delegate="changeExcludeChildWhenFiltering(event.target.checked)"
+      onclick.trigger="changeExcludeChildWhenFiltering(event.target.checked)"
     />
     <span
       title="for example if we filter the word 'pop' and we exclude children, then only the folder 'pop' will show up without any content unless we uncheck this flag"
@@ -441,7 +441,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       id="autoApproveParentItem"
       data-test="auto-approve-parent-item"
       checked.bind="isAutoApproveParentItemWhenTreeColumnIsValid"
-      onclick.delegate="changeAutoApproveParentItem(event.target.checked)"
+      onclick.trigger="changeAutoApproveParentItem(event.target.checked)"
     />
     <span
       title="for example in this demo if we filter with 'music' and size '> 70' nothing will show up unless we have this flag enabled
@@ -457,7 +457,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       id="autoRecalcTotalsOnFilterChange"
       data-test="auto-recalc-totals"
       checked.bind="isAutoRecalcTotalsOnFilterChange"
-      onclick.delegate="changeAutoRecalcTotalsOnFilterChange(event.target.checked)"
+      onclick.trigger="changeAutoRecalcTotalsOnFilterChange(event.target.checked)"
     />
     <span
       title="Should we recalculate Tree Data Totals (when Aggregators are defined) while filtering? This feature is disabled by default."
@@ -471,7 +471,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 `,sy=`<h3 class="title is-size-3">
   Example 07 - Row Move &amp; Row Selections
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -481,7 +481,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example07.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example07.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -489,64 +489,59 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 </h3>
 
 <div class="row mb-3">
-  <button class="button is-small" data-test="add-title-column-btn" onclick.delegate="dynamicallyAddTitleHeader()">
+  <button class="button is-small" data-test="add-title-column-btn" onclick.trigger="dynamicallyAddTitleHeader()">
     <span class="mdi mdi-plus"></span>
     <span>Dynamically Duplicate Title Column</span>
   </button>
-  <button class="button is-small" data-test="remove-title-column-btn" onclick.delegate="dynamicallyRemoveLastColumn()">
+  <button class="button is-small" data-test="remove-title-column-btn" onclick.trigger="dynamicallyRemoveLastColumn()">
     <span class="mdi mdi-minus"></span>
     <span>Dynamically Remove Last Column</span>
   </button>
-  <button class="button is-small" data-test="hide-finish-btn" onclick.delegate="hideFinishColumnDynamically()">
+  <button class="button is-small" data-test="hide-finish-btn" onclick.trigger="hideFinishColumnDynamically()">
     <span class="mdi mdi-eye-off-outline"></span>
     <span>Dynamically Hide "Finish"</span>
   </button>
-  <button class="button is-small" data-test="show-column-subset-btn" onclick.delegate="showColumnSubset()">
+  <button class="button is-small" data-test="show-column-subset-btn" onclick.trigger="showColumnSubset()">
     <span class="mdi mdi-eye-outline"></span>
     <span>Show Certain Columns</span>
   </button>
-  <button
-    class="button is-small"
-    data-test="add-item-btn"
-    onclick.delegate="addItem()"
-    title="Clear Filters &amp; Sorting to see it better"
-  >
+  <button class="button is-small" data-test="add-item-btn" onclick.trigger="addItem()" title="Clear Filters &amp; Sorting to see it better">
     <span class="mdi mdi-plus"></span>
     <span>Add item</span>
   </button>
-  <button class="button is-small" data-test="delete-item-btn" onclick.delegate="deleteItem()">
+  <button class="button is-small" data-test="delete-item-btn" onclick.trigger="deleteItem()">
     <span class="mdi mdi-minus"></span>
     <span>Delete item</span>
   </button>
 
   <div class="mx-2 my-1"></div>
 
-  <button class="button is-small" data-test="disable-filters-btn" onclick.delegate="disableFilters()">
+  <button class="button is-small" data-test="disable-filters-btn" onclick.trigger="disableFilters()">
     <span class="mdi mdi-filter-off-outline"></span>
     <span>Disable Filters</span>
   </button>
-  <button class="button is-small" data-test="disable-sorting-btn" onclick.delegate="disableSorting()">
+  <button class="button is-small" data-test="disable-sorting-btn" onclick.trigger="disableSorting()">
     <span class="mdi mdi-sort-variant-remove"></span>
     <span>Disable Sorting</span>
   </button>
-  <button class="button is-small" data-test="toggle-filtering-btn" onclick.delegate="toggleFilter()">
+  <button class="button is-small" data-test="toggle-filtering-btn" onclick.trigger="toggleFilter()">
     <span class.bind="filteringEnabledClass"></span>
     <span>Toggle Filtering</span>
   </button>
-  <button class="button is-small" data-test="toggle-sorting-btn" onclick.delegate="toggleSorting()">
+  <button class="button is-small" data-test="toggle-sorting-btn" onclick.trigger="toggleSorting()">
     <span class.bind="sortingEnabledClass"></span>
     <span>Toggle Sorting</span>
   </button>
-  <button class="button is-small" data-test="clear-filters-btn" onclick.delegate="clearFilters()">
+  <button class="button is-small" data-test="clear-filters-btn" onclick.trigger="clearFilters()">
     <span class="mdi mdi-close"></span>
     <span>Clear Filters</span>
   </button>
-  <button class="button is-small" data-test="modal-filters-btn" onclick.delegate="allFilters()">
+  <button class="button is-small" data-test="modal-filters-btn" onclick.trigger="allFilters()">
     <span class="mdi mdi-text-box-search-outline"></span>
     <span>Modal Filters</span>
   </button>
   <span class="ml-4">
-    <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+    <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
       <span class="mdi mdi-translate"></span>
       <span>Switch Language</span>
     </button>
@@ -563,7 +558,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example08.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example08.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -586,14 +581,14 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         id="columnSelect"
         class="select is-small selected-column"
         data-test="search-column-list"
-        onchange.delegate="selectedColumnChanged(event.target.value)"
+        onchange.trigger="selectedColumnChanged(event.target.value)"
       ></select>
     </div>
     <div>
       <select
         class="select is-small selected-operator"
         data-test="search-operator-list"
-        onchange.delegate="selectedOperatorChanged(event.target.value)"
+        onchange.trigger="selectedOperatorChanged(event.target.value)"
       ></select>
     </div>
 
@@ -603,10 +598,10 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
           type="text"
           class="input search is-small"
           data-test="search-value-input"
-          onkeyup.delegate="searchValueChanged(event.target.value)"
+          onkeyup.trigger="searchValueChanged(event.target.value)"
         />
       </p>
-      <p class="control pointer" onclick.delegate="cleargrid2SearchInput()" data-test="clear-search-input">
+      <p class="control pointer" onclick.trigger="cleargrid2SearchInput()" data-test="clear-search-input">
         <a class="button is-static is-small">
           <span class="mdi mdi-close-thick"></span>
         </a>
@@ -614,11 +609,11 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     </div>
     <div>&nbsp;&nbsp;</div>
     <div class="pl-2">
-      <button class="button is-small" onclick.delegate="setFrozenColumns2(-1)" data-test="remove-frozen-column-button">
+      <button class="button is-small" onclick.trigger="setFrozenColumns2(-1)" data-test="remove-frozen-column-button">
         <span class="mdi mdi-close"></span>
         <span>Remove Frozen Columns</span>
       </button>
-      <button class="button is-small" onclick.delegate="setFrozenColumns2(2)" data-test="set-3frozen-columns">
+      <button class="button is-small" onclick.trigger="setFrozenColumns2(2)" data-test="set-3frozen-columns">
         <span class="mdi mdi-pin-outline"></span>
         <span>Set 3 Frozen Columns</span>
       </button>
@@ -634,7 +629,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example09.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example09.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -653,18 +648,16 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   <button
     class="button is-small"
     data-test="clear-filters-sorting"
-    onclick.delegate="clearAllFiltersAndSorts()"
+    onclick.trigger="clearAllFiltersAndSorts()"
     title="Clear all Filters & Sorts"
   >
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter & Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
-  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
-  <button class="button is-small" data-test="clear-local-storage" onclick.delegate="clearLocalStorage()">Clear Local Storage</button>
-  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.delegate="throwPageChangeError()">
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
+  <button class="button is-small" data-test="clear-local-storage" onclick.trigger="clearLocalStorage()">Clear Local Storage</button>
+  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.trigger="throwPageChangeError()">
     <span>Throw Error Going to Last Page... </span>
     <i class="mdi mdi-page-last"></i>
   </button>
@@ -674,10 +667,10 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   <div class="column">
     <span>
       <label>Programmatically go to first/last page:</label>
-      <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+      <button class="button is-small" data-test="goto-first-page" onclick.trigger="goToFirstPage()">
         <i class="mdi mdi-page-first"></i>
       </button>
-      <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+      <button class="button is-small" data-test="goto-last-page" onclick.trigger="goToLastPage()">
         <i class="mdi mdi-page-last"></i>
       </button>
     </span>
@@ -686,11 +679,11 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       <label>OData Version: </label>
       <span data-test="radioVersion">
         <label class="radio-inline control-label" for="radio2">
-          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.delegate="setOdataVersion(2)" />
+          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.trigger="setOdataVersion(2)" />
           2
         </label>
         <label class="radio-inline control-label" for="radio4">
-          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" onclick.delegate="setOdataVersion(4)" />
+          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" onclick.trigger="setOdataVersion(4)" />
           4
         </label>
       </span>
@@ -701,7 +694,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         id="enableCount"
         data-test="enable-count"
         checked.bind="isCountEnabled"
-        onclick.delegate="changeCountEnableFlag(event.target.checked)"
+        onclick.trigger="changeCountEnableFlag(event.target.checked)"
       />
       <span class="text-bold">Enable Count</span> (add to OData query)
     </label>
@@ -711,7 +704,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         id="enableSelect"
         data-test="enable-select"
         checked.bind="isSelectEnabled"
-        onclick.delegate="changeEnableSelectFlag(event.target.checked)"
+        onclick.trigger="changeEnableSelectFlag(event.target.checked)"
       />
       <span class="text-bold">Enable Select</span> (add to OData query)
     </label>
@@ -721,7 +714,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         id="enableExpand"
         data-test="enable-expand"
         checked.bind="isExpandEnabled"
-        onclick.delegate="changeEnableExpandFlag(event.target.checked)"
+        onclick.trigger="changeEnableExpandFlag(event.target.checked)"
       />
       <span class="text-bold">Enable Expand</span> (add to OData query)
     </label>
@@ -750,7 +743,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 `,ly=`<h3 class="title is-3">
   Example 10 - Grid with GraphQL Backend Service
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -761,7 +754,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example10.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example10.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -780,17 +773,15 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   <button
     class="button is-small"
     data-test="clear-filters-sorting"
-    onclick.delegate="clearAllFiltersAndSorts()"
+    onclick.trigger="clearAllFiltersAndSorts()"
     title="Clear all Filters & Sorts"
   >
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter &amp; Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
-  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
-  <button class="button is-small" data-test="reset-presets" onclick.delegate="resetToOriginalPresets()">Reset Original Presets</button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
+  <button class="button is-small" data-test="reset-presets" onclick.trigger="resetToOriginalPresets()">Reset Original Presets</button>
 
   <label for="serverdelay" class="ml-4">Server Delay: </label>
   <input
@@ -805,16 +796,16 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   <div class="row col-md-12 mt-2">
     <span>
       <label>Programmatically go to first/last page:</label>
-      <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+      <button class="button is-small" data-test="goto-first-page" onclick.trigger="goToFirstPage()">
         <i class="mdi mdi-page-first"></i>
       </button>
-      <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+      <button class="button is-small" data-test="goto-last-page" onclick.trigger="goToLastPage()">
         <i class="mdi mdi-page-last"></i>
       </button>
     </span>
 
     <span class="ml-4">
-      <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+      <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
         <span class="mdi mdi-translate"></span>
         <span>Switch Language</span>
       </button>
@@ -832,12 +823,12 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
             data-test="offset"
             id="radioOffset"
             checked
-            onclick.delegate="setIsWithCursor(false)"
+            onclick.trigger="setIsWithCursor(false)"
           />
           Offset
         </label>
         <label class="radio-inline control-label" for="radioCursor">
-          <input type="radio" name="inlineRadioOptions" data-test="cursor" id="radioCursor" onclick.delegate="setIsWithCursor(true)" />
+          <input type="radio" name="inlineRadioOptions" data-test="cursor" id="radioCursor" onclick.trigger="setIsWithCursor(true)" />
           Cursor
         </label>
       </span>
@@ -872,8 +863,8 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     </section>
     <footer class="modal-card-foot is-justify-content-flex-end">
       <button class="button close">Cancel</button>
-      <button class="button is-info" onclick.delegate="saveMassUpdate('mass')">Mass Update</button>
-      <button class="button is-success" onclick.delegate="saveMassUpdate('selection')">Update Selected Rows</button>
+      <button class="button is-info" onclick.trigger="saveMassUpdate('mass')">Mass Update</button>
+      <button class="button is-success" onclick.trigger="saveMassUpdate('selection')">Update Selected Rows</button>
     </footer>
   </div>
 </div>
@@ -885,7 +876,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example11.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example11.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -895,25 +886,25 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 <div class="columns is-desktop example11-body">
   <section class="column field has-addons is-narrow">
     <div class="row">
-      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+      <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="mdi mdi-table-edit"></span>
         <span>Toggle Edit/Readonly Grid</span>
       </button>
-      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit</span>
       </button>
-      <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit(true)" data-test="undo-open-editor-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit &amp; Open Editor</span>
       </button>
-      <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
+      <button class="button is-small" onclick.trigger="undoAllEdits()" data-test="undo-all-edits-btn">
         <span class="mdi mdi-history"></span>
         <span>Undo All Edits</span>
       </button>
       <button
         class="button is-small is-info"
-        onclick.delegate="saveAll()"
+        onclick.trigger="saveAll()"
         data-test="save-all-btn"
         title="Check your console log for the result"
       >
@@ -929,7 +920,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         class="select is-small selected-view ml-1"
         id="selectedView"
         name="selectedView"
-        onchange.delegate="usePredefinedView(event.target.value)"
+        onchange.trigger="usePredefinedView(event.target.value)"
       ></select>
       <div class="dropdown action ml-1-negative">
         <div class="dropdown-trigger">
@@ -942,18 +933,18 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         </div>
         <div class="dropdown-menu is-small" id="dropdown-menu" role="menu">
           <div class="dropdown-content">
-            <span class="dropdown-item" onclick.delegate="createView(event)" data-test="save-view-btn"> Create New View </span>
-            <span class.bind="dropdownDeleteViewClass" onclick.delegate="updateView(event)" data-test="update-view-btn">
+            <span class="dropdown-item" onclick.trigger="createView(event)" data-test="save-view-btn"> Create New View </span>
+            <span class.bind="dropdownDeleteViewClass" onclick.trigger="updateView(event)" data-test="update-view-btn">
               Update Current View
             </span>
-            <span class.bind="dropdownUpdateViewClass" onclick.delegate="deleteView(event)" data-test="delete-view-btn">
+            <span class.bind="dropdownUpdateViewClass" onclick.trigger="deleteView(event)" data-test="delete-view-btn">
               Delete Current View
             </span>
           </div>
         </div>
       </div>
       <span class="ml-1">
-        <button class="button is-small" onclick.delegate="clearLocalStorage()" data-test="clear-storage-btn">
+        <button class="button is-small" onclick.trigger="clearLocalStorage()" data-test="clear-storage-btn">
           <span class="mdi mdi-close-circle mdi-14px"></span>
           <span>Clear LocalStorage</span>
         </button>
@@ -969,7 +960,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   Example 12 - Composite Editor Modal
   <span class="subtitle is-size-5">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -979,7 +970,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example12.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example12.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -989,25 +980,25 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 <section class="columns is-desktop mb-3">
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+      <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="mdi mdi-table-edit"></span>
         <span>Toggle Edit/Readonly Grid</span>
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit</span>
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit(true)" data-test="undo-open-editor-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit &amp; Open Editor</span>
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
+      <button class="button is-small" onclick.trigger="undoAllEdits()" data-test="undo-all-edits-btn">
         <span class="mdi mdi-history"></span>
         <span>Undo All Edits</span>
       </button>
@@ -1015,7 +1006,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small is-info"
-        onclick.delegate="saveAll()"
+        onclick.trigger="saveAll()"
         data-test="save-all-btn"
         title="Check your console log for the result"
       >
@@ -1028,7 +1019,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="openCompositeModal('create')"
+        onclick.trigger="openCompositeModal('create')"
         data-test="open-modal-create-btn"
         disabled.bind="isCompositeDisabled"
       >
@@ -1039,7 +1030,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="openCompositeModal('clone')"
+        onclick.trigger="openCompositeModal('clone')"
         data-test="open-modal-clone-btn"
         disabled.bind="isCompositeDisabled"
       >
@@ -1050,7 +1041,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="openCompositeModal('edit')"
+        onclick.trigger="openCompositeModal('edit')"
         data-test="open-modal-edit-btn"
         disabled.bind="isCompositeDisabled"
       >
@@ -1061,7 +1052,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="openCompositeModal('mass-update')"
+        onclick.trigger="openCompositeModal('mass-update')"
         data-test="open-modal-mass-update-btn"
         disabled.bind="isCompositeDisabled"
       >
@@ -1072,7 +1063,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="openCompositeModal('mass-selection')"
+        onclick.trigger="openCompositeModal('mass-selection')"
         data-test="open-modal-mass-selection-btn"
         disabled.bind="isMassSelectionDisabled"
       >
@@ -1091,7 +1082,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example13.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example13.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1117,7 +1108,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example14.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example14.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1140,13 +1131,13 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   </div>
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class.bind="classDefaultResizeButton" onclick.delegate="handleDefaultResizeColumns()" data-test="autosize-columns-btn">
+      <button class.bind="classDefaultResizeButton" onclick.trigger="handleDefaultResizeColumns()" data-test="autosize-columns-btn">
         <span class="mdi mdi-arrow-expand"></span>
         <span>(default resize) "autosizeColumns"</span>
       </button>
     </p>
     <p class="control">
-      <button class.bind="classNewResizeButton" onclick.delegate="handleNewResizeColumns()" data-test="resize-by-content-btn">
+      <button class.bind="classNewResizeButton" onclick.trigger="handleNewResizeColumns()" data-test="resize-by-content-btn">
         <span class="mdi mdi-arrow-expand"></span>
         <span>Resize by Cell Content</span>
       </button>
@@ -1157,7 +1148,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="handleNavigateBottom()"
+        onclick.trigger="handleNavigateBottom()"
         data-test="navigate-bottom"
         title="Navigate to Bottom of Grid"
       >
@@ -1165,7 +1156,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="handleNavigateTop()" data-test="navigate-top" title="Navigate to Top of Grid">
+      <button class="button is-small" onclick.trigger="handleNavigateTop()" data-test="navigate-top" title="Navigate to Top of Grid">
         <span class="mdi mdi-arrow-down mdi-rotate-180"></span>
       </button>
     </p>
@@ -1173,13 +1164,13 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 
   <div class="column field has-addons is-narrow">
     <p class="control">
-      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+      <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="mdi mdi-table-edit"></span>
         <span>Toggle Readonly</span>
       </button>
     </p>
     <p class="control">
-      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+      <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
         <span class="mdi mdi-undo"></span>
         <span>Undo Last Edit</span>
       </button>
@@ -1187,7 +1178,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small is-success is-outlined"
-        onclick.delegate="saveAll()"
+        onclick.trigger="saveAll()"
         data-test="save-all-btn"
         title="Check your console log for the result"
       >
@@ -1198,7 +1189,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <p class="control">
       <button
         class="button is-small"
-        onclick.delegate="setSelectedRowIds()"
+        onclick.trigger="setSelectedRowIds()"
         data-test="set-dynamic-rows-btn"
         title="Change Row Selection across multiple pages"
       >
@@ -1220,7 +1211,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example15.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example15.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1237,22 +1228,22 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   <button
     class="button is-small"
     data-test="clear-filters-sorting"
-    onclick.delegate="clearAllFiltersAndSorts()"
+    onclick.trigger="clearAllFiltersAndSorts()"
     title="Clear all Filters & Sorts"
   >
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter & Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter-btn" onclick.delegate="setFiltersDynamically()">
+  <button class="button is-small" data-test="set-dynamic-filter-btn" onclick.trigger="setFiltersDynamically()">
     Set Filters Dynamically
   </button>
-  <button class="button is-small" data-test="set-dynamic-sorting-btn" onclick.delegate="setSortingDynamically()">
+  <button class="button is-small" data-test="set-dynamic-sorting-btn" onclick.trigger="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
-  <button class="button is-small ml-1" data-test="add-gender-btn" onclick.delegate="addOtherGender()" disabled.bind="isOtherGenderAdded">
+  <button class="button is-small ml-1" data-test="add-gender-btn" onclick.trigger="addOtherGender()" disabled.bind="isOtherGenderAdded">
     Add Other Gender via RxJS
   </button>
-  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.delegate="throwPageChangeError()">
+  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.trigger="throwPageChangeError()">
     <span>Throw Error Going to Last Page... </span>
     <i class="mdi mdi-page-last"></i>
   </button>
@@ -1262,10 +1253,10 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   <div class="column">
     <span>
       <label>Programmatically go to first/last page:</label>
-      <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+      <button class="button is-small" data-test="goto-first-page" onclick.trigger="goToFirstPage()">
         <i class="mdi mdi-page-first"></i>
       </button>
-      <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+      <button class="button is-small" data-test="goto-last-page" onclick.trigger="goToLastPage()">
         <i class="mdi mdi-page-last"></i>
       </button>
     </span>
@@ -1274,11 +1265,11 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       <label>OData Version: </label>
       <span data-test="radioVersion">
         <label class="radio-inline control-label" for="radio2">
-          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.delegate="setOdataVersion(2)" />
+          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.trigger="setOdataVersion(2)" />
           2
         </label>
         <label class="radio-inline control-label" for="radio4">
-          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" onclick.delegate="setOdataVersion(4)" />
+          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" onclick.trigger="setOdataVersion(4)" />
           4
         </label>
       </span>
@@ -1289,7 +1280,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         id="enableCount"
         data-test="enable-count"
         checked.bind="isCountEnabled"
-        onclick.delegate="changeCountEnableFlag(event.target.checked)"
+        onclick.trigger="changeCountEnableFlag(event.target.checked)"
       />
       <span class="text-bold">Enable Count</span> (add to OData query)
     </label>
@@ -1318,7 +1309,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   Example 16 - Regular & Custom Tooltips
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -1328,7 +1319,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example16.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example16.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1351,7 +1342,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example17.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example17.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1375,10 +1366,10 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
 
     <span class="ml-2">
-      <button class="button is-small" data-test="set-options-btn" onclick.delegate="setOptions()">Set Options</button>
-      <button class="button is-small" data-test="default-options-btn" onclick.delegate="setDefaultOptions()">Set Default Options</button>
-      <button class="button is-small" data-test="set-clear-frozen-btn" onclick.delegate="toggleFrozen()">Set/Clear Frozen</button>
-      <button class="button is-small" data-test="set-clear-grouping-btn" onclick.delegate="toggleGroup()">
+      <button class="button is-small" data-test="set-options-btn" onclick.trigger="setOptions()">Set Options</button>
+      <button class="button is-small" data-test="default-options-btn" onclick.trigger="setDefaultOptions()">Set Default Options</button>
+      <button class="button is-small" data-test="set-clear-frozen-btn" onclick.trigger="toggleFrozen()">Set/Clear Frozen</button>
+      <button class="button is-small" data-test="set-clear-grouping-btn" onclick.trigger="toggleGroup()">
         Set/Clear Grouping by Duration
       </button>
     </span>
@@ -1398,7 +1389,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   Example 18 - Real-Time Trading Platform
   <span class="subtitle">(with Material Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -1408,7 +1399,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example18.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example18.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1430,13 +1421,13 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         </span>
       </div>
       <span>
-        <button class="button is-small" data-test="start-btn" onclick.delegate="startSimulation()">
+        <button class="button is-small" data-test="start-btn" onclick.trigger="startSimulation()">
           <span class="mdi mdi-play-circle-outline"></span>
           <span>Start Simulation</span>
         </button>
       </span>
       <span>
-        <button class="button is-small" data-test="stop-btn" onclick.delegate="stopSimulation()">
+        <button class="button is-small" data-test="stop-btn" onclick.trigger="stopSimulation()">
           <span class="mdi mdi-stop-circle-outline"></span>
           <span>Stop Simulation</span>
         </button>
@@ -1466,7 +1457,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
         />
       </span>
       <span class="float-right">
-        <button class="button is-small" onclick.delegate="toggleFullScreen()">
+        <button class="button is-small" onclick.trigger="toggleFullScreen()">
           <span class.bind="toggleClassName"></span>
           <span>Toggle Full-Screen</span>
         </button>
@@ -1490,7 +1481,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example19.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example19.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1508,11 +1499,11 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   </p>
 </h5>
 <h6 class="title is-6">
-  <button class="button is-small is-primary" onclick.delegate="togglePagination()" data-text="toggle-pagination-btn">
+  <button class="button is-small is-primary" onclick.trigger="togglePagination()" data-text="toggle-pagination-btn">
     <span class="mdi mdi-swap-vertical"></span>
     <span>Toggle Pagination</span>
   </button>
-  <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+  <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
     <span class="mdi mdi-table-edit"></span>
     <span>Toggle Edit/Readonly Grid</span>
   </button>
@@ -1529,7 +1520,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example20.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example20.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1541,7 +1532,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   Example 21 - Row Detail View
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -1552,7 +1543,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example21.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example21.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1561,10 +1552,10 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 
 <div class="columns">
   <div class="column is-12">
-    <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+    <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
       Toggle Edit/Readonly Grid
     </button>
-    <button class="button is-small" onclick.delegate="closeAllRowDetail()" data-test="collapse-all-btn">Close All Row Details</button>
+    <button class="button is-small" onclick.trigger="closeAllRowDetail()" data-test="collapse-all-btn">Close All Row Details</button>
     &nbsp;&nbsp;
     <label for="">Detail View Rows Shown: </label>
     <input
@@ -1573,7 +1564,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       value.bind="detailViewRowCount"
       title="Please note that the change will be applied the next time the row is expanded"
     />
-    <button class="button is-small" onclick.delegate="changeDetailViewRowCount()" data-test="set-count-btn">Set</button>
+    <button class="button is-small" onclick.trigger="changeDetailViewRowCount()" data-test="set-count-btn">Set</button>
 
     <span class="ml-2">
       <label for="server-delay">Simulated Server Delay (ms): </label>
@@ -1602,7 +1593,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example22.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example22.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1615,10 +1606,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       </li>
       <li>
         Editedable rows, as well as modified cells are highlighted with a different color, which you can customize using css variables (see
-        <a
-          target="_blank"
-          href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example22.scss"
-        >
+        <a target="_blank" href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example22.scss">
           example22.scss </a
         >)
       </li>
@@ -1646,10 +1634,10 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 
 <section>
   <div class="row mb-1">
-    <button class="button is-small" data-test="single-multi-toggle" onclick.delegate="toggleSingleMultiRowEdit()">
+    <button class="button is-small" data-test="single-multi-toggle" onclick.trigger="toggleSingleMultiRowEdit()">
       Toggle Single/Multi Row Edit
     </button>
-    <button class="button is-small" data-test="toggle-language" onclick.delegate="switchLanguage()">
+    <button class="button is-small" data-test="toggle-language" onclick.trigger="switchLanguage()">
       <span class="mdi mdi-translate"></span>
       <span>Switch Language for Action column buttons</span>
     </button>
@@ -1677,7 +1665,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example23.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example23.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1696,22 +1684,22 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 
 <section class="row mb-2">
   <div class="mb-1">
-    <button class="button is-small" onclick.delegate="exportToExcel()" data-test="export-excel-btn">
+    <button class="button is-small" onclick.trigger="exportToExcel()" data-test="export-excel-btn">
       <span class="mdi mdi-file-excel-outline text-color-success"></span>
       <span>Export to Excel</span>
     </button>
     <span>
-      <button class="button is-small" onclick.delegate="groupByTaxable()" data-test="group-by-btn">
+      <button class="button is-small" onclick.trigger="groupByTaxable()" data-test="group-by-btn">
         <span>Group by Taxable</span>
       </button>
-      <button class="button is-small" onclick.delegate="clearGrouping()" data-test="clear-grouping-btn">
+      <button class="button is-small" onclick.trigger="clearGrouping()" data-test="clear-grouping-btn">
         <span>Clear grouping</span>
       </button>
     </span>
     <span class="ml-6 text-bold">
       Tax Rate (%):
       <input type="number" value.bind="taxRate" class="is-narrow input is-small" step="0.25" data-test="taxrate" />
-      <button class="button is-small" onclick.delegate="updateTaxRate()" data-test="update-btn">Update</button>
+      <button class="button is-small" onclick.trigger="updateTaxRate()" data-test="update-btn">Update</button>
     </span>
   </div>
 </section>
@@ -1721,7 +1709,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   Example 24 - Footer Totals Row
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -1732,7 +1720,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example24.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example24.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1750,7 +1738,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example25.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example25.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -1764,15 +1752,13 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 </span>
 
 <div class="row mb-3">
-  <button class="button is-small" data-test="clear-filters" onclick.delegate="clearFilters()">Clear Filters</button>
-  <button class="button is-small" data-test="clear-sorting" onclick.delegate="clearSorting()">Clear Sorting</button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
-  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
+  <button class="button is-small" data-test="clear-filters" onclick.trigger="clearFilters()">Clear Filters</button>
+  <button class="button is-small" data-test="clear-sorting" onclick.trigger="clearSorting()">Clear Sorting</button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
 
   <span class="ml-4">
-    <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+    <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
       <span class="mdi mdi-translate"></span>
       <span>Switch Language</span>
     </button>
@@ -1790,7 +1776,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       <a
         class="is-size-5"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example26.ts"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example26.ts"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
@@ -1824,19 +1810,19 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <button
       class="button is-small"
       data-test="clear-filters-sorting"
-      onclick.delegate="clearAllFiltersAndSorts()"
+      onclick.trigger="clearAllFiltersAndSorts()"
       title="Clear all Filters & Sorts"
     >
       <span class="mdi mdi-close"></span>
       <span>Clear all Filter & Sorts</span>
     </button>
-    <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
       Set Filters Dynamically
     </button>
-    <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
+    <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">
       Set Sorting Dynamically
     </button>
-    <button class="button is-small" data-test="group-by-gender" onclick.delegate="groupByGender()">Group by Gender</button>
+    <button class="button is-small" data-test="group-by-gender" onclick.trigger="groupByGender()">Group by Gender</button>
   </div>
 
   <div class="columns">
@@ -1876,7 +1862,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       <a
         class="is-size-5"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example27.ts"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example27.ts"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
@@ -1910,7 +1896,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <button
       class="button is-small"
       data-test="clear-filters-sorting"
-      onclick.delegate="clearAllFiltersAndSorts()"
+      onclick.trigger="clearAllFiltersAndSorts()"
       title="Clear all Filters & Sorts"
     >
       <span class="mdi mdi-close"></span>
@@ -1928,7 +1914,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     />
 
     <div class="row col-md-12 mt-2">
-      <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+      <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
         <span class="mdi mdi-translate"></span>
         <span>Switch Language</span>
       </button>
@@ -1966,7 +1952,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       <a
         class="is-size-5"
         target="_blank"
-        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example28.ts"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example28.ts"
       >
         <span class="mdi mdi-link-variant"></span> code
       </a>
@@ -1990,23 +1976,23 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <button
       class="button is-small"
       data-test="clear-filters-sorting"
-      onclick.delegate="clearAllFiltersAndSorts()"
+      onclick.trigger="clearAllFiltersAndSorts()"
       title="Clear all Filters & Sorts"
     >
       <span class="mdi mdi-close"></span>
       <span>Clear all Filter & Sorts</span>
     </button>
-    <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
       Set Filters Dynamically
     </button>
-    <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
+    <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">
       Set Sorting Dynamically
     </button>
-    <button class="button is-small" data-test="group-by-duration" onclick.delegate="groupByDuration()">Group by Duration</button>
+    <button class="button is-small" data-test="group-by-duration" onclick.trigger="groupByDuration()">Group by Duration</button>
 
     <label class="ml-4">Reset Dataset <code>onSort</code>:</label>
-    <button class="button is-small" data-test="onsort-on" onclick.delegate="onSortReset(true)">ON</button>
-    <button class="button is-small" data-test="onsort-off" onclick.delegate="onSortReset(false)">OFF</button>
+    <button class="button is-small" data-test="onsort-on" onclick.trigger="onSortReset(true)">ON</button>
+    <button class="button is-small" data-test="onsort-off" onclick.trigger="onSortReset(false)">OFF</button>
   </div>
 
   <div class="mt-3 mb-2">
@@ -2025,7 +2011,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example29.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example29.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -2060,7 +2046,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example30.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example30.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -2068,7 +2054,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 </h3>
 
 <div>
-  <button class="button is-small" onclick.delegate="togglePaginationPosition()" data-text="toggle-pagination-btn">
+  <button class="button is-small" onclick.trigger="togglePaginationPosition()" data-text="toggle-pagination-btn">
     <span class="mdi mdi-swap-vertical"></span>
     <span>Toggle Pagination Position</span>
   </button>
@@ -2080,7 +2066,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
       class="input is-small is-narrow"
       data-test="page-size-input"
       value.bind="pageSize"
-      onkeyup.delegate="setPaginationSize(event.target.value)"
+      onkeyup.trigger="setPaginationSize(event.target.value)"
     />
   </span>
 </div>
@@ -2100,7 +2086,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example31.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example31.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -2145,7 +2131,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example32.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example32.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -2170,14 +2156,14 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 
 <section class="mb-2">
   <div class="row mb-1">
-    <button class="button is-small" data-test="goto-up" onclick.delegate="navigateUp()" title="from an active cell, navigate to cell above">
+    <button class="button is-small" data-test="goto-up" onclick.trigger="navigateUp()" title="from an active cell, navigate to cell above">
       <span class="mdi mdi-chevron-down mdi-rotate-180"></span>
       Navigate Up Cell
     </button>
     <button
       class="button is-small"
       data-test="goto-down"
-      onclick.delegate="navigateDown()"
+      onclick.trigger="navigateDown()"
       title="from an active cell, navigate to cell below"
     >
       <span class="mdi mdi-chevron-down"></span>
@@ -2186,7 +2172,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <button
       class="button is-small"
       data-test="goto-prev"
-      onclick.delegate="navigatePrev()"
+      onclick.trigger="navigatePrev()"
       title="from an active cell, navigate to previous left cell"
     >
       <span class="mdi mdi-chevron-down mdi-rotate-90"></span>
@@ -2195,13 +2181,13 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <button
       class="button is-small"
       data-test="goto-next"
-      onclick.delegate="navigateNext()"
+      onclick.trigger="navigateNext()"
       title="from an active cell, navigate to next right cell"
     >
       <span class="mdi mdi-chevron-down mdi-rotate-270"></span>
       Navigate to Right Cell
     </button>
-    <button class="button is-small mx-1" onclick.delegate="toggleEditing()" data-test="toggle-editing">
+    <button class="button is-small mx-1" onclick.trigger="toggleEditing()" data-test="toggle-editing">
       <span class="mdi mdi-pencil-outline"></span>
       <span>Toggle Editing: <span id="isEditable" class="text-italic" textcontent.bind="isEditable">false</span></span>
     </button>
@@ -2218,7 +2204,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
     <a
       class="is-size-5"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example33.ts"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example33.ts"
     >
       <span class="mdi mdi-link-variant"></span> code
     </a>
@@ -2238,16 +2224,16 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 </div>
 
 <div class="columns mb-2 gap-5px">
-  <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-  <button class="button is-small" data-test="add-5k-rows-btn" onclick.delegate="loadData(5000)">5k rows</button>
-  <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(50000)">50k rows</button>
-  <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(500000)">500k rows</button>
+  <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+  <button class="button is-small" data-test="add-5k-rows-btn" onclick.trigger="loadData(5000)">5k rows</button>
+  <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(50000)">50k rows</button>
+  <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(500000)">500k rows</button>
   <label>data length: </label><span id="dataLn" textcontent.bind="dataLn"></span>
-  <button id="toggleSpans" class="button is-small mx-1" onclick.delegate="handleToggleSpans()" data-test="toggleSpans">
+  <button id="toggleSpans" class="button is-small mx-1" onclick.trigger="handleToggleSpans()" data-test="toggleSpans">
     <span class="mdi mdi-flip-vertical"></span>
     <span>Toggle blue cell colspan &amp; rowspan</span>
   </button>
-  <button id="scrollTo" class="button is-small" onclick.delegate="handleScrollTo()" data-test="scrollToBtn">
+  <button id="scrollTo" class="button is-small" onclick.trigger="handleScrollTo()" data-test="scrollToBtn">
     <span class="mdi mdi-arrow-down"></span>
     <span>Scroll To Row</span>
   </button>
@@ -2259,7 +2245,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
             <p class="control is-expanded">
               <input id="nRow" type="text" class="is-narrow input search is-small" data-test="nbrows" value.bind="scrollToRow" />
             </p>
-            <p class="control pointer" onclick.delegate="clearScrollTo()" data-test="clearScrollTo" id="clearScroll">
+            <p class="control pointer" onclick.trigger="clearScrollTo()" data-test="clearScrollTo" id="clearScroll">
               <a class="button is-static is-small">
                 <span class="mdi mdi-close-thick"></span>
               </a>
@@ -2278,7 +2264,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
   SlickGrid Material Icons
   <span class="subtitle">(icons &amp; utilities that are available in Slickgrid-Universal)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -2597,7 +2583,7 @@ var Xm=Object.defineProperty;var Qm=(s,e,t)=>e in s?Xm(s,e,{enumerable:!0,config
 </h4>
 <div class="icons-container section-container"></div>
 `;class My{constructor(){b(this,"_darkMode",!1)}attached(){const e=document.querySelector(".icons-container"),t=document.querySelector(".icon-counter"),i=this.getIcons();t.textContent=`(${i.length} icons)`,i.forEach(n=>{const a=document.createElement("div");a.className="slick-col-medium-2 icon-box",a.style.marginBottom="5px";const r=document.createElement("span");r.className=n.replace(/\./gi," "),n.includes("mdi-change-record-type")?r.classList.add("mdi-20px"):r.classList.add("mdi-24px"),r.title=n.replace(".mdi.",""),r.style.marginRight="5px",a.appendChild(r);const o=document.createElement("span");o.textContent=n.replace(".mdi.",""),a.appendChild(o),e.appendChild(a)})}dispose(){var e;(e=document.querySelector(".demo-container"))==null||e.classList.remove("dark-mode"),document.body.setAttribute("data-theme","light")}toggleDarkMode(){var e,t;this._darkMode=!this._darkMode,this._darkMode?(document.body.setAttribute("data-theme","dark"),(e=document.querySelector(".demo-container"))==null||e.classList.add("dark-mode")):(document.body.setAttribute("data-theme","light"),(t=document.querySelector(".demo-container"))==null||t.classList.remove("dark-mode"))}getIcons(){return[".mdi.mdi-account",".mdi.mdi-account-box",".mdi.mdi-account-box-outline",".mdi.mdi-account-circle",".mdi.mdi-account-edit",".mdi.mdi-account-minus",".mdi.mdi-account-off",".mdi.mdi-account-plus",".mdi.mdi-account-search",".mdi.mdi-alarm",".mdi.mdi-alarm-check",".mdi.mdi-alarm-off",".mdi.mdi-alert",".mdi.mdi-alert-box",".mdi.mdi-alert-box-outline",".mdi.mdi-alert-circle",".mdi.mdi-alert-octagon",".mdi.mdi-alert-outline",".mdi.mdi-alert-rhombus",".mdi.mdi-alert-rhombus-outline",".mdi.mdi-arrow-collapse",".mdi.mdi-arrow-down",".mdi.mdi-arrow-down-bold",".mdi.mdi-arrow-down-bold-box",".mdi.mdi-arrow-down-bold-box-outline",".mdi.mdi-arrow-down-bold-outline",".mdi.mdi-arrow-expand",".mdi.mdi-arrow-expand-horizontal",".mdi.mdi-arrow-split-vertical",".mdi.mdi-book-open-blank-variant-outline",".mdi.mdi-brightness-4",".mdi.mdi-calendar",".mdi.mdi-calendar-check",".mdi.mdi-calendar-clock",".mdi.mdi-calendar-edit",".mdi.mdi-calendar-remove",".mdi.mdi-calendar-search",".mdi.mdi-call-split",".mdi.mdi-cancel",".mdi.mdi-cash-check",".mdi.mdi-cash-remove",".mdi.mdi-certificate",".mdi.mdi-certificate-outline",".mdi.mdi-change-record-type",".mdi.mdi-check",".mdi.mdi-check-all",".mdi.mdi-check-bold",".mdi.mdi-checkbox-blank-outline",".mdi.mdi-checkbox-marked-circle-outline",".mdi.mdi-check-box-outline",".mdi.mdi-checkbox-marked",".mdi.mdi-check-circle",".mdi.mdi-check-circle-outline",".mdi.mdi-check-outline",".mdi.mdi-check-underline",".mdi.mdi-chevron-down",".mdi.mdi-chevron-down-box",".mdi.mdi-chevron-down-box-outline",".mdi.mdi-chevron-down-circle",".mdi.mdi-chevron-down-circle-outline",".mdi.mdi-clipboard-check",".mdi.mdi-clipboard-check-outline",".mdi.mdi-clipboard-edit",".mdi.mdi-clipboard-edit-outline",".mdi.mdi-clipboard-multiple",".mdi.mdi-clipboard-multiple-outline",".mdi.mdi-clipboard-outline",".mdi.mdi-close",".mdi.mdi-close-circle",".mdi.mdi-close-circle-outline",".mdi.mdi-close-thick",".mdi.mdi-coffee",".mdi.mdi-coffee-outline",".mdi.mdi-cog",".mdi.mdi-cog-outline",".mdi.mdi-content-copy",".mdi.mdi-currency-usd",".mdi.mdi-currency-usd-off",".mdi.mdi-database-refresh",".mdi.mdi-delete",".mdi.mdi-delete-outline",".mdi.mdi-dots-grid",".mdi.mdi-dots-vertical",".mdi.mdi-download",".mdi.mdi-drag",".mdi.mdi-drag-vertical",".mdi.mdi-eye-off-outline",".mdi.mdi-eye-outline",".mdi.mdi-file",".mdi.mdi-file-alert",".mdi.mdi-file-alert-outline",".mdi.mdi-file-cad",".mdi.mdi-file-check",".mdi.mdi-file-check-outline",".mdi.mdi-file-document-outline",".mdi.mdi-file-excel-outline",".mdi.mdi-file-move",".mdi.mdi-file-move-outline",".mdi.mdi-file-multiple",".mdi.mdi-file-multiple-outline",".mdi.mdi-file-music-outline",".mdi.mdi-file-outline",".mdi.mdi-file-pdf-outline",".mdi.mdi-file-question",".mdi.mdi-file-question-outline",".mdi.mdi-file-search-outline",".mdi.mdi-file-send",".mdi.mdi-file-send-outline",".mdi.mdi-file-tree",".mdi.mdi-file-tree-outline",".mdi.mdi-file-upload",".mdi.mdi-file-upload-outline",".mdi.mdi-filter",".mdi.mdi-filter-minus-outline",".mdi.mdi-filter-off-outline",".mdi.mdi-filter-outline",".mdi.mdi-filter-plus-outline",".mdi.mdi-filter-remove-outline",".mdi.mdi-fire",".mdi.mdi-flip-vertical",".mdi.mdi-folder",".mdi.mdi-folder-open",".mdi.mdi-forum",".mdi.mdi-forum-outline",".mdi.mdi-github",".mdi.mdi-help",".mdi.mdi-help-circle",".mdi.mdi-help-circle-outline",".mdi.mdi-history",".mdi.mdi-information",".mdi.mdi-information-outline",".mdi.mdi-lightbulb",".mdi.mdi-lightbulb-off",".mdi.mdi-lightbulb-off-outline",".mdi.mdi-lightbulb-on",".mdi.mdi-lightbulb-on-outline",".mdi.mdi-lightbulb-outline",".mdi.mdi-link",".mdi.mdi-link-variant",".mdi.mdi-load",".mdi.mdi-magnify",".mdi.mdi-map-marker-radius",".mdi.mdi-map-marker-radius-outline",".mdi.mdi-menu",".mdi.mdi-message-text",".mdi.mdi-message-text-outline",".mdi.mdi-microsoft-excel",".mdi.mdi-minus",".mdi.mdi-minus-circle",".mdi.mdi-minus-circle-outline",".mdi.mdi-order-bool-ascending-variant",".mdi.mdi-page-first",".mdi.mdi-page-last",".mdi.mdi-paperclip",".mdi.mdi-pencil",".mdi.mdi-pencil-outline",".mdi.mdi-pencil-box-multiple",".mdi.mdi-pencil-box-multiple-outline",".mdi.mdi-percent",".mdi.mdi-percent-outline",".mdi.mdi-pin-off-outline",".mdi.mdi-pin-outline",".mdi.mdi-play-circle-outline",".mdi.mdi-playlist-plus",".mdi.mdi-playlist-remove",".mdi.mdi-plus",".mdi.mdi-plus-circle",".mdi.mdi-plus-circle-outline",".mdi.mdi-progress-download",".mdi.mdi-redo",".mdi.mdi-refresh",".mdi.mdi-shape-square-plus",".mdi.mdi-snowflake",".mdi.mdi-sort-ascending",".mdi.mdi-sort-descending",".mdi.mdi-sort-variant-off",".mdi.mdi-sort-variant-remove",".mdi.mdi-square-edit-outline",".mdi.mdi-star",".mdi.mdi-star-outline",".mdi.mdi-stop-circle-outline",".mdi.mdi-subdirectory-arrow-right",".mdi.mdi-swap-horizontal",".mdi.mdi-swap-vertical",".mdi.mdi-sync",".mdi.mdi-sync-circle",".mdi.mdi-table-edit",".mdi.mdi-table-refresh",".mdi.mdi-text-box-remove",".mdi.mdi-text-box-remove-outline",".mdi.mdi-text-box-search-outline",".mdi.mdi-theme-light-dark",".mdi.mdi-toggle-switch",".mdi.mdi-toggle-switch-off-outline",".mdi.mdi-trash-can",".mdi.mdi-trash-can-outline",".mdi.mdi-truck",".mdi.mdi-truck-delivery-outline",".mdi.mdi-tune",".mdi.mdi-tune-variant",".mdi.mdi-undo",".mdi.mdi-upload",".mdi.mdi-vanish",".mdi.mdi-wrench",".mdi.mdi-wrench-outline"]}}/*! @license DOMPurify 3.2.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.2.3/LICENSE */const{entries:kh,setPrototypeOf:tu,isFrozen:Iy,getPrototypeOf:By,getOwnPropertyDescriptor:Py}=Object;let{freeze:At,seal:Yt,create:Th}=Object,{apply:Do,construct:ko}=typeof Reflect<"u"&&Reflect;At||(At=function(e){return e});Yt||(Yt=function(e){return e});Do||(Do=function(e,t,i){return e.apply(t,i)});ko||(ko=function(e,t){return new e(...t)});const ts=$t(Array.prototype.forEach),iu=$t(Array.prototype.pop),ia=$t(Array.prototype.push),Es=$t(String.prototype.toLowerCase),Ur=$t(String.prototype.toString),nu=$t(String.prototype.match),na=$t(String.prototype.replace),Ly=$t(String.prototype.indexOf),Ny=$t(String.prototype.trim),Qt=$t(Object.prototype.hasOwnProperty),Dt=$t(RegExp.prototype.test),aa=Hy(TypeError);function $t(s){return function(e){for(var t=arguments.length,i=new Array(t>1?t-1:0),n=1;n<t;n++)i[n-1]=arguments[n];return Do(s,e,i)}}function Hy(s){return function(){for(var e=arguments.length,t=new Array(e),i=0;i<e;i++)t[i]=arguments[i];return ko(s,t)}}function be(s,e){let t=arguments.length>2&&arguments[2]!==void 0?arguments[2]:Es;tu&&tu(s,null);let i=e.length;for(;i--;){let n=e[i];if(typeof n=="string"){const a=t(n);a!==n&&(Iy(e)||(e[i]=a),n=a)}s[n]=!0}return s}function Gy(s){for(let e=0;e<s.length;e++)Qt(s,e)||(s[e]=null);return s}function tn(s){const e=Th(null);for(const[t,i]of kh(s))Qt(s,t)&&(Array.isArray(i)?e[t]=Gy(i):i&&typeof i=="object"&&i.constructor===Object?e[t]=tn(i):e[t]=i);return e}function sa(s,e){for(;s!==null;){const i=Py(s,e);if(i){if(i.get)return $t(i.get);if(typeof i.value=="function")return $t(i.value)}s=By(s)}function t(){return null}return t}const au=At(["a","abbr","acronym","address","area","article","aside","audio","b","bdi","bdo","big","blink","blockquote","body","br","button","canvas","caption","center","cite","code","col","colgroup","content","data","datalist","dd","decorator","del","details","dfn","dialog","dir","div","dl","dt","element","em","fieldset","figcaption","figure","font","footer","form","h1","h2","h3","h4","h5","h6","head","header","hgroup","hr","html","i","img","input","ins","kbd","label","legend","li","main","map","mark","marquee","menu","menuitem","meter","nav","nobr","ol","optgroup","option","output","p","picture","pre","progress","q","rp","rt","ruby","s","samp","section","select","shadow","small","source","spacer","span","strike","strong","style","sub","summary","sup","table","tbody","td","template","textarea","tfoot","th","thead","time","tr","track","tt","u","ul","var","video","wbr"]),Kr=At(["svg","a","altglyph","altglyphdef","altglyphitem","animatecolor","animatemotion","animatetransform","circle","clippath","defs","desc","ellipse","filter","font","g","glyph","glyphref","hkern","image","line","lineargradient","marker","mask","metadata","mpath","path","pattern","polygon","polyline","radialgradient","rect","stop","style","switch","symbol","text","textpath","title","tref","tspan","view","vkern"]),jr=At(["feBlend","feColorMatrix","feComponentTransfer","feComposite","feConvolveMatrix","feDiffuseLighting","feDisplacementMap","feDistantLight","feDropShadow","feFlood","feFuncA","feFuncB","feFuncG","feFuncR","feGaussianBlur","feImage","feMerge","feMergeNode","feMorphology","feOffset","fePointLight","feSpecularLighting","feSpotLight","feTile","feTurbulence"]),Wy=At(["animate","color-profile","cursor","discard","font-face","font-face-format","font-face-name","font-face-src","font-face-uri","foreignobject","hatch","hatchpath","mesh","meshgradient","meshpatch","meshrow","missing-glyph","script","set","solidcolor","unknown","use"]),Yr=At(["math","menclose","merror","mfenced","mfrac","mglyph","mi","mlabeledtr","mmultiscripts","mn","mo","mover","mpadded","mphantom","mroot","mrow","ms","mspace","msqrt","mstyle","msub","msup","msubsup","mtable","mtd","mtext","mtr","munder","munderover","mprescripts"]),zy=At(["maction","maligngroup","malignmark","mlongdiv","mscarries","mscarry","msgroup","mstack","msline","msrow","semantics","annotation","annotation-xml","mprescripts","none"]),su=At(["#text"]),ru=At(["accept","action","align","alt","autocapitalize","autocomplete","autopictureinpicture","autoplay","background","bgcolor","border","capture","cellpadding","cellspacing","checked","cite","class","clear","color","cols","colspan","controls","controlslist","coords","crossorigin","datetime","decoding","default","dir","disabled","disablepictureinpicture","disableremoteplayback","download","draggable","enctype","enterkeyhint","face","for","headers","height","hidden","high","href","hreflang","id","inputmode","integrity","ismap","kind","label","lang","list","loading","loop","low","max","maxlength","media","method","min","minlength","multiple","muted","name","nonce","noshade","novalidate","nowrap","open","optimum","pattern","placeholder","playsinline","popover","popovertarget","popovertargetaction","poster","preload","pubdate","radiogroup","readonly","rel","required","rev","reversed","role","rows","rowspan","spellcheck","scope","selected","shape","size","sizes","span","srclang","start","src","srcset","step","style","summary","tabindex","title","translate","type","usemap","valign","value","width","wrap","xmlns","slot"]),qr=At(["accent-height","accumulate","additive","alignment-baseline","amplitude","ascent","attributename","attributetype","azimuth","basefrequency","baseline-shift","begin","bias","by","class","clip","clippathunits","clip-path","clip-rule","color","color-interpolation","color-interpolation-filters","color-profile","color-rendering","cx","cy","d","dx","dy","diffuseconstant","direction","display","divisor","dur","edgemode","elevation","end","exponent","fill","fill-opacity","fill-rule","filter","filterunits","flood-color","flood-opacity","font-family","font-size","font-size-adjust","font-stretch","font-style","font-variant","font-weight","fx","fy","g1","g2","glyph-name","glyphref","gradientunits","gradienttransform","height","href","id","image-rendering","in","in2","intercept","k","k1","k2","k3","k4","kerning","keypoints","keysplines","keytimes","lang","lengthadjust","letter-spacing","kernelmatrix","kernelunitlength","lighting-color","local","marker-end","marker-mid","marker-start","markerheight","markerunits","markerwidth","maskcontentunits","maskunits","max","mask","media","method","mode","min","name","numoctaves","offset","operator","opacity","order","orient","orientation","origin","overflow","paint-order","path","pathlength","patterncontentunits","patterntransform","patternunits","points","preservealpha","preserveaspectratio","primitiveunits","r","rx","ry","radius","refx","refy","repeatcount","repeatdur","restart","result","rotate","scale","seed","shape-rendering","slope","specularconstant","specularexponent","spreadmethod","startoffset","stddeviation","stitchtiles","stop-color","stop-opacity","stroke-dasharray","stroke-dashoffset","stroke-linecap","stroke-linejoin","stroke-miterlimit","stroke-opacity","stroke","stroke-width","style","surfacescale","systemlanguage","tabindex","tablevalues","targetx","targety","transform","transform-origin","text-anchor","text-decoration","text-rendering","textlength","type","u1","u2","unicode","values","viewbox","visibility","version","vert-adv-y","vert-origin-x","vert-origin-y","width","word-spacing","wrap","writing-mode","xchannelselector","ychannelselector","x","x1","x2","xmlns","y","y1","y2","z","zoomandpan"]),ou=At(["accent","accentunder","align","bevelled","close","columnsalign","columnlines","columnspan","denomalign","depth","dir","display","displaystyle","encoding","fence","frame","height","href","id","largeop","length","linethickness","lspace","lquote","mathbackground","mathcolor","mathsize","mathvariant","maxsize","minsize","movablelimits","notation","numalign","open","rowalign","rowlines","rowspacing","rowspan","rspace","rquote","scriptlevel","scriptminsize","scriptsizemultiplier","selection","separator","separators","stretchy","subscriptshift","supscriptshift","symmetric","voffset","width","xmlns"]),is=At(["xlink:href","xml:id","xlink:title","xml:space","xmlns:xlink"]),Vy=Yt(/\{\{[\w\W]*|[\w\W]*\}\}/gm),$y=Yt(/<%[\w\W]*|[\w\W]*%>/gm),Uy=Yt(/\$\{[\w\W]*}/gm),Ky=Yt(/^data-[\-\w.\u00B7-\uFFFF]+$/),jy=Yt(/^aria-[\-\w]+$/),Ah=Yt(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i),Yy=Yt(/^(?:\w+script|data):/i),qy=Yt(/[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g),xh=Yt(/^html$/i),Jy=Yt(/^[a-z][.\w]*(-[.\w]+)+$/i);var lu=Object.freeze({__proto__:null,ARIA_ATTR:jy,ATTR_WHITESPACE:qy,CUSTOM_ELEMENT:Jy,DATA_ATTR:Ky,DOCTYPE_NAME:xh,ERB_EXPR:$y,IS_ALLOWED_URI:Ah,IS_SCRIPT_OR_DATA:Yy,MUSTACHE_EXPR:Vy,TMPLIT_EXPR:Uy});const ra={element:1,attribute:2,text:3,cdataSection:4,entityReference:5,entityNode:6,progressingInstruction:7,comment:8,document:9,documentType:10,documentFragment:11,notation:12},Xy=function(){return typeof window>"u"?null:window},Qy=function(e,t){if(typeof e!="object"||typeof e.createPolicy!="function")return null;let i=null;const n="data-tt-policy-suffix";t&&t.hasAttribute(n)&&(i=t.getAttribute(n));const a="dompurify"+(i?"#"+i:"");try{return e.createPolicy(a,{createHTML(r){return r},createScriptURL(r){return r}})}catch{return console.warn("TrustedTypes policy "+a+" could not be created."),null}},du=function(){return{afterSanitizeAttributes:[],afterSanitizeElements:[],afterSanitizeShadowDOM:[],beforeSanitizeAttributes:[],beforeSanitizeElements:[],beforeSanitizeShadowDOM:[],uponSanitizeAttribute:[],uponSanitizeElement:[],uponSanitizeShadowNode:[]}};function Rh(){let s=arguments.length>0&&arguments[0]!==void 0?arguments[0]:Xy();const e=q=>Rh(q);if(e.version="3.2.3",e.removed=[],!s||!s.document||s.document.nodeType!==ra.document)return e.isSupported=!1,e;let{document:t}=s;const i=t,n=i.currentScript,{DocumentFragment:a,HTMLTemplateElement:r,Node:o,Element:l,NodeFilter:d,NamedNodeMap:u=s.NamedNodeMap||s.MozNamedAttrMap,HTMLFormElement:c,DOMParser:h,trustedTypes:m}=s,p=l.prototype,g=sa(p,"cloneNode"),f=sa(p,"remove"),F=sa(p,"nextSibling"),y=sa(p,"childNodes"),v=sa(p,"parentNode");if(typeof r=="function"){const q=t.createElement("template");q.content&&q.content.ownerDocument&&(t=q.content.ownerDocument)}let C,_="";const{implementation:w,createNodeIterator:A,createDocumentFragment:k,getElementsByTagName:x}=t,{importNode:I}=i;let P=du();e.isSupported=typeof kh=="function"&&typeof v=="function"&&w&&w.createHTMLDocument!==void 0;const{MUSTACHE_EXPR:V,ERB_EXPR:z,TMPLIT_EXPR:Y,DATA_ATTR:re,ARIA_ATTR:me,IS_SCRIPT_OR_DATA:de,ATTR_WHITESPACE:oe,CUSTOM_ELEMENT:Ge}=lu;let{IS_ALLOWED_URI:nt}=lu,K=null;const we=be({},[...au,...Kr,...jr,...Yr,...su]);let ue=null;const Te=be({},[...ru,...qr,...ou,...is]);let ee=Object.seal(Th(null,{tagNameCheck:{writable:!0,configurable:!1,enumerable:!0,value:null},attributeNameCheck:{writable:!0,configurable:!1,enumerable:!0,value:null},allowCustomizedBuiltInElements:{writable:!0,configurable:!1,enumerable:!0,value:!1}})),X=null,Ee=null,ct=!0,Jt=!0,Ut=!1,$=!0,ce=!1,We=!0,ze=!1,ht=!1,mt=!1,Nt=!1,xt=!1,rt=!1,Ri=!0,Pl=!1;const Vm="user-content-";let gr=!0,qn=!1,pn={},gn=null;const Ll=be({},["annotation-xml","audio","colgroup","desc","foreignobject","head","iframe","math","mi","mn","mo","ms","mtext","noembed","noframes","noscript","plaintext","script","style","svg","template","thead","title","video","xmp"]);let Nl=null;const Hl=be({},["audio","video","img","source","image","track"]);let fr=null;const Gl=be({},["alt","class","for","id","label","name","pattern","placeholder","role","summary","title","value","style","xmlns"]),La="http://www.w3.org/1998/Math/MathML",Na="http://www.w3.org/2000/svg",gi="http://www.w3.org/1999/xhtml";let fn=gi,Fr=!1,br=null;const $m=be({},[La,Na,gi],Ur);let Ha=be({},["mi","mo","mn","ms","mtext"]),Ga=be({},["annotation-xml"]);const Um=be({},["title","style","font","a","script"]);let Jn=null;const Km=["application/xhtml+xml","text/html"],jm="text/html";let lt=null,Fn=null;const Ym=t.createElement("form"),Wl=function(D){return D instanceof RegExp||D instanceof Function},yr=function(){let D=arguments.length>0&&arguments[0]!==void 0?arguments[0]:{};if(!(Fn&&Fn===D)){if((!D||typeof D!="object")&&(D={}),D=tn(D),Jn=Km.indexOf(D.PARSER_MEDIA_TYPE)===-1?jm:D.PARSER_MEDIA_TYPE,lt=Jn==="application/xhtml+xml"?Ur:Es,K=Qt(D,"ALLOWED_TAGS")?be({},D.ALLOWED_TAGS,lt):we,ue=Qt(D,"ALLOWED_ATTR")?be({},D.ALLOWED_ATTR,lt):Te,br=Qt(D,"ALLOWED_NAMESPACES")?be({},D.ALLOWED_NAMESPACES,Ur):$m,fr=Qt(D,"ADD_URI_SAFE_ATTR")?be(tn(Gl),D.ADD_URI_SAFE_ATTR,lt):Gl,Nl=Qt(D,"ADD_DATA_URI_TAGS")?be(tn(Hl),D.ADD_DATA_URI_TAGS,lt):Hl,gn=Qt(D,"FORBID_CONTENTS")?be({},D.FORBID_CONTENTS,lt):Ll,X=Qt(D,"FORBID_TAGS")?be({},D.FORBID_TAGS,lt):{},Ee=Qt(D,"FORBID_ATTR")?be({},D.FORBID_ATTR,lt):{},pn=Qt(D,"USE_PROFILES")?D.USE_PROFILES:!1,ct=D.ALLOW_ARIA_ATTR!==!1,Jt=D.ALLOW_DATA_ATTR!==!1,Ut=D.ALLOW_UNKNOWN_PROTOCOLS||!1,$=D.ALLOW_SELF_CLOSE_IN_ATTR!==!1,ce=D.SAFE_FOR_TEMPLATES||!1,We=D.SAFE_FOR_XML!==!1,ze=D.WHOLE_DOCUMENT||!1,Nt=D.RETURN_DOM||!1,xt=D.RETURN_DOM_FRAGMENT||!1,rt=D.RETURN_TRUSTED_TYPE||!1,mt=D.FORCE_BODY||!1,Ri=D.SANITIZE_DOM!==!1,Pl=D.SANITIZE_NAMED_PROPS||!1,gr=D.KEEP_CONTENT!==!1,qn=D.IN_PLACE||!1,nt=D.ALLOWED_URI_REGEXP||Ah,fn=D.NAMESPACE||gi,Ha=D.MATHML_TEXT_INTEGRATION_POINTS||Ha,Ga=D.HTML_INTEGRATION_POINTS||Ga,ee=D.CUSTOM_ELEMENT_HANDLING||{},D.CUSTOM_ELEMENT_HANDLING&&Wl(D.CUSTOM_ELEMENT_HANDLING.tagNameCheck)&&(ee.tagNameCheck=D.CUSTOM_ELEMENT_HANDLING.tagNameCheck),D.CUSTOM_ELEMENT_HANDLING&&Wl(D.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)&&(ee.attributeNameCheck=D.CUSTOM_ELEMENT_HANDLING.attributeNameCheck),D.CUSTOM_ELEMENT_HANDLING&&typeof D.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements=="boolean"&&(ee.allowCustomizedBuiltInElements=D.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements),ce&&(Jt=!1),xt&&(Nt=!0),pn&&(K=be({},su),ue=[],pn.html===!0&&(be(K,au),be(ue,ru)),pn.svg===!0&&(be(K,Kr),be(ue,qr),be(ue,is)),pn.svgFilters===!0&&(be(K,jr),be(ue,qr),be(ue,is)),pn.mathMl===!0&&(be(K,Yr),be(ue,ou),be(ue,is))),D.ADD_TAGS&&(K===we&&(K=tn(K)),be(K,D.ADD_TAGS,lt)),D.ADD_ATTR&&(ue===Te&&(ue=tn(ue)),be(ue,D.ADD_ATTR,lt)),D.ADD_URI_SAFE_ATTR&&be(fr,D.ADD_URI_SAFE_ATTR,lt),D.FORBID_CONTENTS&&(gn===Ll&&(gn=tn(gn)),be(gn,D.FORBID_CONTENTS,lt)),gr&&(K["#text"]=!0),ze&&be(K,["html","head","body"]),K.table&&(be(K,["tbody"]),delete X.tbody),D.TRUSTED_TYPES_POLICY){if(typeof D.TRUSTED_TYPES_POLICY.createHTML!="function")throw aa('TRUSTED_TYPES_POLICY configuration option must provide a "createHTML" hook.');if(typeof D.TRUSTED_TYPES_POLICY.createScriptURL!="function")throw aa('TRUSTED_TYPES_POLICY configuration option must provide a "createScriptURL" hook.');C=D.TRUSTED_TYPES_POLICY,_=C.createHTML("")}else C===void 0&&(C=Qy(m,n)),C!==null&&typeof _=="string"&&(_=C.createHTML(""));At&&At(D),Fn=D}},zl=be({},[...Kr,...jr,...Wy]),Vl=be({},[...Yr,...zy]),qm=function(D){let H=v(D);(!H||!H.tagName)&&(H={namespaceURI:fn,tagName:"template"});const U=Es(D.tagName),Ve=Es(H.tagName);return br[D.namespaceURI]?D.namespaceURI===Na?H.namespaceURI===gi?U==="svg":H.namespaceURI===La?U==="svg"&&(Ve==="annotation-xml"||Ha[Ve]):!!zl[U]:D.namespaceURI===La?H.namespaceURI===gi?U==="math":H.namespaceURI===Na?U==="math"&&Ga[Ve]:!!Vl[U]:D.namespaceURI===gi?H.namespaceURI===Na&&!Ga[Ve]||H.namespaceURI===La&&!Ha[Ve]?!1:!Vl[U]&&(Um[U]||!zl[U]):!!(Jn==="application/xhtml+xml"&&br[D.namespaceURI]):!1},ni=function(D){ia(e.removed,{element:D});try{v(D).removeChild(D)}catch{f(D)}},Wa=function(D,H){try{ia(e.removed,{attribute:H.getAttributeNode(D),from:H})}catch{ia(e.removed,{attribute:null,from:H})}if(H.removeAttribute(D),D==="is")if(Nt||xt)try{ni(H)}catch{}else try{H.setAttribute(D,"")}catch{}},$l=function(D){let H=null,U=null;if(mt)D="<remove></remove>"+D;else{const pt=nu(D,/^[\r\n\t ]+/);U=pt&&pt[0]}Jn==="application/xhtml+xml"&&fn===gi&&(D='<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>'+D+"</body></html>");const Ve=C?C.createHTML(D):D;if(fn===gi)try{H=new h().parseFromString(Ve,Jn)}catch{}if(!H||!H.documentElement){H=w.createDocument(fn,"template",null);try{H.documentElement.innerHTML=Fr?_:Ve}catch{}}const vt=H.body||H.documentElement;return D&&U&&vt.insertBefore(t.createTextNode(U),vt.childNodes[0]||null),fn===gi?x.call(H,ze?"html":"body")[0]:ze?H.documentElement:vt},Ul=function(D){return A.call(D.ownerDocument||D,D,d.SHOW_ELEMENT|d.SHOW_COMMENT|d.SHOW_TEXT|d.SHOW_PROCESSING_INSTRUCTION|d.SHOW_CDATA_SECTION,null)},Cr=function(D){return D instanceof c&&(typeof D.nodeName!="string"||typeof D.textContent!="string"||typeof D.removeChild!="function"||!(D.attributes instanceof u)||typeof D.removeAttribute!="function"||typeof D.setAttribute!="function"||typeof D.namespaceURI!="string"||typeof D.insertBefore!="function"||typeof D.hasChildNodes!="function")},Kl=function(D){return typeof o=="function"&&D instanceof o};function fi(q,D,H){ts(q,U=>{U.call(e,D,H,Fn)})}const jl=function(D){let H=null;if(fi(P.beforeSanitizeElements,D,null),Cr(D))return ni(D),!0;const U=lt(D.nodeName);if(fi(P.uponSanitizeElement,D,{tagName:U,allowedTags:K}),D.hasChildNodes()&&!Kl(D.firstElementChild)&&Dt(/<[/\w]/g,D.innerHTML)&&Dt(/<[/\w]/g,D.textContent)||D.nodeType===ra.progressingInstruction||We&&D.nodeType===ra.comment&&Dt(/<[/\w]/g,D.data))return ni(D),!0;if(!K[U]||X[U]){if(!X[U]&&ql(U)&&(ee.tagNameCheck instanceof RegExp&&Dt(ee.tagNameCheck,U)||ee.tagNameCheck instanceof Function&&ee.tagNameCheck(U)))return!1;if(gr&&!gn[U]){const Ve=v(D)||D.parentNode,vt=y(D)||D.childNodes;if(vt&&Ve){const pt=vt.length;for(let Rt=pt-1;Rt>=0;--Rt){const ai=g(vt[Rt],!0);ai.__removalCount=(D.__removalCount||0)+1,Ve.insertBefore(ai,F(D))}}}return ni(D),!0}return D instanceof l&&!qm(D)||(U==="noscript"||U==="noembed"||U==="noframes")&&Dt(/<\/no(script|embed|frames)/i,D.innerHTML)?(ni(D),!0):(ce&&D.nodeType===ra.text&&(H=D.textContent,ts([V,z,Y],Ve=>{H=na(H,Ve," ")}),D.textContent!==H&&(ia(e.removed,{element:D.cloneNode()}),D.textContent=H)),fi(P.afterSanitizeElements,D,null),!1)},Yl=function(D,H,U){if(Ri&&(H==="id"||H==="name")&&(U in t||U in Ym))return!1;if(!(Jt&&!Ee[H]&&Dt(re,H))){if(!(ct&&Dt(me,H))){if(!ue[H]||Ee[H]){if(!(ql(D)&&(ee.tagNameCheck instanceof RegExp&&Dt(ee.tagNameCheck,D)||ee.tagNameCheck instanceof Function&&ee.tagNameCheck(D))&&(ee.attributeNameCheck instanceof RegExp&&Dt(ee.attributeNameCheck,H)||ee.attributeNameCheck instanceof Function&&ee.attributeNameCheck(H))||H==="is"&&ee.allowCustomizedBuiltInElements&&(ee.tagNameCheck instanceof RegExp&&Dt(ee.tagNameCheck,U)||ee.tagNameCheck instanceof Function&&ee.tagNameCheck(U))))return!1}else if(!fr[H]){if(!Dt(nt,na(U,oe,""))){if(!((H==="src"||H==="xlink:href"||H==="href")&&D!=="script"&&Ly(U,"data:")===0&&Nl[D])){if(!(Ut&&!Dt(de,na(U,oe,"")))){if(U)return!1}}}}}}return!0},ql=function(D){return D!=="annotation-xml"&&nu(D,Ge)},Jl=function(D){fi(P.beforeSanitizeAttributes,D,null);const{attributes:H}=D;if(!H||Cr(D))return;const U={attrName:"",attrValue:"",keepAttr:!0,allowedAttributes:ue,forceKeepAttr:void 0};let Ve=H.length;for(;Ve--;){const vt=H[Ve],{name:pt,namespaceURI:Rt,value:ai}=vt,Xn=lt(pt);let _t=pt==="value"?ai:Ny(ai);if(U.attrName=Xn,U.attrValue=_t,U.keepAttr=!0,U.forceKeepAttr=void 0,fi(P.uponSanitizeAttribute,D,U),_t=U.attrValue,Pl&&(Xn==="id"||Xn==="name")&&(Wa(pt,D),_t=Vm+_t),We&&Dt(/((--!?|])>)|<\/(style|title)/i,_t)){Wa(pt,D);continue}if(U.forceKeepAttr||(Wa(pt,D),!U.keepAttr))continue;if(!$&&Dt(/\/>/i,_t)){Wa(pt,D);continue}ce&&ts([V,z,Y],Ql=>{_t=na(_t,Ql," ")});const Xl=lt(D.nodeName);if(Yl(Xl,Xn,_t)){if(C&&typeof m=="object"&&typeof m.getAttributeType=="function"&&!Rt)switch(m.getAttributeType(Xl,Xn)){case"TrustedHTML":{_t=C.createHTML(_t);break}case"TrustedScriptURL":{_t=C.createScriptURL(_t);break}}try{Rt?D.setAttributeNS(Rt,pt,_t):D.setAttribute(pt,_t),Cr(D)?ni(D):iu(e.removed)}catch{}}}fi(P.afterSanitizeAttributes,D,null)},Jm=function q(D){let H=null;const U=Ul(D);for(fi(P.beforeSanitizeShadowDOM,D,null);H=U.nextNode();)fi(P.uponSanitizeShadowNode,H,null),jl(H),Jl(H),H.content instanceof a&&q(H.content);fi(P.afterSanitizeShadowDOM,D,null)};return e.sanitize=function(q){let D=arguments.length>1&&arguments[1]!==void 0?arguments[1]:{},H=null,U=null,Ve=null,vt=null;if(Fr=!q,Fr&&(q="<!-->"),typeof q!="string"&&!Kl(q))if(typeof q.toString=="function"){if(q=q.toString(),typeof q!="string")throw aa("dirty is not a string, aborting")}else throw aa("toString is not a function");if(!e.isSupported)return q;if(ht||yr(D),e.removed=[],typeof q=="string"&&(qn=!1),qn){if(q.nodeName){const ai=lt(q.nodeName);if(!K[ai]||X[ai])throw aa("root node is forbidden and cannot be sanitized in-place")}}else if(q instanceof o)H=$l("<!---->"),U=H.ownerDocument.importNode(q,!0),U.nodeType===ra.element&&U.nodeName==="BODY"||U.nodeName==="HTML"?H=U:H.appendChild(U);else{if(!Nt&&!ce&&!ze&&q.indexOf("<")===-1)return C&&rt?C.createHTML(q):q;if(H=$l(q),!H)return Nt?null:rt?_:""}H&&mt&&ni(H.firstChild);const pt=Ul(qn?q:H);for(;Ve=pt.nextNode();)jl(Ve),Jl(Ve),Ve.content instanceof a&&Jm(Ve.content);if(qn)return q;if(Nt){if(xt)for(vt=k.call(H.ownerDocument);H.firstChild;)vt.appendChild(H.firstChild);else vt=H;return(ue.shadowroot||ue.shadowrootmode)&&(vt=I.call(i,vt,!0)),vt}let Rt=ze?H.outerHTML:H.innerHTML;return ze&&K["!doctype"]&&H.ownerDocument&&H.ownerDocument.doctype&&H.ownerDocument.doctype.name&&Dt(xh,H.ownerDocument.doctype.name)&&(Rt="<!DOCTYPE "+H.ownerDocument.doctype.name+`>
-`+Rt),ce&&ts([V,z,Y],ai=>{Rt=na(Rt,ai," ")}),C&&rt?C.createHTML(Rt):Rt},e.setConfig=function(){let q=arguments.length>0&&arguments[0]!==void 0?arguments[0]:{};yr(q),ht=!0},e.clearConfig=function(){Fn=null,ht=!1},e.isValidAttribute=function(q,D,H){Fn||yr({});const U=lt(q),Ve=lt(D);return Yl(U,Ve,H)},e.addHook=function(q,D){typeof D=="function"&&ia(P[q],D)},e.removeHook=function(q){return iu(P[q])},e.removeHooks=function(q){P[q]=[]},e.removeAllHooks=function(){P=du()},e}var Oh=Rh();const Fe={enableSorting:!0,headerRowHeight:45,rowHeight:45,topPanelHeight:30,sanitizer:s=>Oh.sanitize(s,{ADD_ATTR:["level"],RETURN_TRUSTED_TYPE:!0})};class yl{constructor(e){b(this,"_className","");b(this,"_viewModel");b(this,"_observers",[]);this.viewTemplate=e,this.viewTemplate.textContent="Loading..."}get className(){return this._className}dispose(){let e=this._observers.pop();for(;e;)e.dispose(),e=this._observers.pop();this._observers=[]}getModuleClassName(e){let t="";const i=typeof e=="object"&&Object.keys(e);return Array.isArray(i)&&i.length>0?t=i[0]:e!=null&&e.name&&(t=e.name),t}loadView(e){const t=this.parseTemplate(e);this.render(t)}loadViewModel(e){return this._className=this.getModuleClassName(e),this._viewModel=e!=null&&e.name?new e:new e[this._className],this._className?(window[this._className]=this._viewModel,this._viewModel):null}parseTemplate(e){return e.replace(/([a-z]*){1}.(delegate)="?(.*?)(\))"/gi,this.parseMethodBinding.bind(this)).replace(/([a-z]*){1}.(bind)="?([^">\s]*)"?/gi,this.parsePropertyBinding.bind(this)).replace(/\${(.*)}/gi,this.parseLogicExecution.bind(this))}parseLogicExecution(e,t){return window[this._className][t]}parseMethodBinding(e,t,i,n,a){let r="";switch(i){case"delegate":r=`${t.toLowerCase()}="window.${this._className.trim()}.${n.trim()}${a}"`;break}return r||""}parsePropertyBinding(e,t,i,n){return window.setTimeout(()=>{const a=document.querySelectorAll(`[${t}\\.${i}=${n}]`),r=t.toLowerCase();let o=this._observers.find(l=>l.property===n);switch(o||(o=new Oa({variable:window[this._className],property:n}),this._observers.push(o)),r){case"class":case"classname":case"className":o.bind(a,"className");break;case"innerhtml":case"innerHTML":o.bind(a,"innerHTML");break;case"innertext":case"innerText":o.bind(a,"innerText");break;case"style":o.bind(a,"style");break;case"textcontent":case"textContent":o.bind(a,"textContent");break;case"value":o.bind(a,r,"change").bind(a,r,"keyup");break;case"checked":case"min":case"max":default:o.bind(a,r,"change");break}},0),e}render(e){return this.viewTemplate.innerHTML=e,this.viewTemplate}renderError(e){this.viewTemplate.innerHTML+=`<br /><br /><div class="alert alert-danger">${e}</div>`}}function Zy(s,e,t,i){if(s){const n=new yl(s),a=n.loadViewModel(t);if(a!=null&&a.dispose&&(window.onunload=a.dispose),n.loadView(e),a!=null&&a.attached&&n.className){const r={};r[n.className]=a,a.attached(),a!=null&&a.bind&&a.bind(i)}return a}return null}function vn(s){const e=parseInt(s,10);return e<10?`0${e}`:e}const uu=995;class eC{constructor(){b(this,"_darkModeGrid1",!1);b(this,"gridOptions1");b(this,"gridOptions2");b(this,"columnDefinitions1");b(this,"columnDefinitions2");b(this,"dataset1");b(this,"dataset2");b(this,"sgb1");b(this,"sgb2");b(this,"isGrid2WithPagination",!0)}attached(){this.defineGrids(),this.dataset1=this.mockData(uu),this.dataset2=this.mockData(uu),this.sgb1=new he.GridBundle(document.querySelector(".grid1"),this.columnDefinitions1,{...Fe,...this.gridOptions1},this.dataset1),this.sgb2=new he.GridBundle(document.querySelector(".grid2"),this.columnDefinitions2,{...Fe,...this.gridOptions2},this.dataset2)}dispose(){var e,t;(e=this.sgb1)==null||e.dispose(),(t=this.sgb2)==null||t.dispose()}isBrowserDarkModeEnabled(){var e;return((e=window.matchMedia)==null?void 0:e.call(window,"(prefers-color-scheme: dark)").matches)??!1}defineGrids(){this.columnDefinitions1=[{id:"title",name:"Title",field:"title",sortable:!0,minWidth:100,filterable:!0},{id:"duration",name:"Duration (days)",field:"duration",sortable:!0,minWidth:100,filterable:!0,type:S.number},{id:"%",name:"% Complete",field:"percentComplete",sortable:!0,minWidth:100,filterable:!0,type:S.number},{id:"start",name:"Start",field:"start",formatter:R.dateIso,exportWithFormatter:!0,filterable:!0},{id:"finish",name:"Finish",field:"finish",formatter:R.dateIso,exportWithFormatter:!0,filterable:!0},{id:"effort-driven",name:"Effort Driven",field:"effortDriven",sortable:!0,minWidth:100,filterable:!0}],this._darkModeGrid1=this.isBrowserDarkModeEnabled(),this.gridOptions1={enableAutoResize:!1,darkMode:this._darkModeGrid1,gridHeight:225,gridWidth:800,rowHeight:33,gridMenu:{hideToggleDarkModeCommand:!1,onCommand:(e,t)=>{t.command==="toggle-dark-mode"&&(this._darkModeGrid1=!this._darkModeGrid1)}}},this.columnDefinitions2=this.columnDefinitions1,this.gridOptions2={...this.gridOptions1,darkMode:!1,gridHeight:255,headerRowHeight:40,columnPicker:{onColumnsChanged:(e,t)=>console.log("onColumnPickerColumnsChanged - visible columns count",t.visibleColumns.length)},gridMenu:{subItemChevronClass:"mdi mdi-chevron-down mdi-rotate-270",commandItems:[{command:"",divider:!0,positionOrder:98},{command:"export",title:"Exports",iconCssClass:"mdi mdi-download",positionOrder:99,commandItems:[{command:"exports-txt",title:"Text (tab delimited)"},{command:"sub-menu",title:"Excel",cssClass:"green",subMenuTitle:"available formats",subMenuTitleCssClass:"text-italic orange",commandItems:[{command:"exports-csv",title:"Excel (csv)"},{command:"exports-xlsx",title:"Excel (xlsx)"}]}]},{command:"feedback",title:"Feedback",iconCssClass:"mdi mdi-information-outline",positionOrder:100,commandItems:[{command:"request-update",title:"Request update from supplier",iconCssClass:"mdi mdi-star",tooltip:"this will automatically send an alert to the shipping team to contact the user for an update"},"divider",{command:"sub-menu",title:"Contact Us",iconCssClass:"mdi mdi-account",subMenuTitle:"contact us...",subMenuTitleCssClass:"italic",commandItems:[{command:"contact-email",title:"Email us",iconCssClass:"mdi mdi-pencil-outline"},{command:"contact-chat",title:"Chat with us",iconCssClass:"mdi mdi-message-text-outline"},{command:"contact-meeting",title:"Book an appointment",iconCssClass:"mdi mdi-coffee"}]}]}],onBeforeMenuShow:()=>{console.log("onGridMenuBeforeMenuShow")},onAfterMenuShow:()=>console.log("onGridMenuAfterMenuShow"),onColumnsChanged:(e,t)=>console.log("onGridMenuColumnsChanged",t),onCommand:(e,t)=>{var n;const i=(n=t.item)==null?void 0:n.command;i.includes("exports-")?alert("Exporting as "+(t==null?void 0:t.item.title)):i.includes("contact-")?alert("Command: "+(t==null?void 0:t.command)):console.log("onGridMenuCommand",t.command)},onMenuClose:(e,t)=>console.log("onGridMenuMenuClose - visible columns count",t.visibleColumns.length)},enableFiltering:!0,enablePagination:!0,pagination:{pageSizes:[5,10,15,20,25,50,75,100],pageSize:5},presets:{pagination:{pageNumber:2,pageSize:5},sorters:[{columnId:"title",direction:"ASC"}],filters:[{columnId:"title",searchTerms:["2"]}]}}}mockData(e){const t=[];for(let i=0;i<e;i++){const n=2e3+Math.floor(Math.random()*10),a=Math.floor(Math.random()*11),r=Math.floor(Math.random()*29),o=Math.round(Math.random()*100);t[i]={id:i,title:"Task "+i,duration:Math.round(Math.random()*100)+"",percentComplete:o,start:`${vn(n)}-${vn(a+1)}-${vn(r)}`,finish:`${vn(n+1)}-${vn(a+1)}-${vn(r)}`,effortDriven:i%5===0}}return t}toggleDarkModeGrid1(){var e,t,i;this._darkModeGrid1=!this._darkModeGrid1,this._darkModeGrid1?(e=document.querySelector(".grid1"))==null||e.classList.add("dark-mode"):(t=document.querySelector(".grid1"))==null||t.classList.remove("dark-mode"),(i=this.sgb1.slickGrid)==null||i.setOptions({darkMode:this._darkModeGrid1})}togglePaginationGrid2(){this.isGrid2WithPagination=!this.isGrid2WithPagination,this.sgb2.paginationService.togglePaginationVisibility(this.isGrid2WithPagination)}toggleGridMenu(e){var t;(t=this.sgb2)!=null&&t.extensionService&&this.sgb2.extensionService.getExtensionInstanceByName(ne.gridMenu).showGridMenu(e,{dropSide:"right"})}}var cu={},tC=function(s,e,t,i,n){var a=new Worker(cu[e]||(cu[e]=URL.createObjectURL(new Blob([s+';addEventListener("error",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})'],{type:"text/javascript"}))));return a.onmessage=function(r){var o=r.data,l=o.$e$;if(l){var d=new Error(l[0]);d.code=l[1],d.stack=l[2],n(d,null)}else n(null,o)},a.postMessage(t,i),a},Ct=Uint8Array,Pt=Uint16Array,ur=Int32Array,cr=new Ct([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0,0]),hr=new Ct([0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,0,0]),To=new Ct([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),Mh=function(s,e){for(var t=new Pt(31),i=0;i<31;++i)t[i]=e+=1<<s[i-1];for(var n=new ur(t[30]),i=1;i<30;++i)for(var a=t[i];a<t[i+1];++a)n[a]=a-t[i]<<5|i;return{b:t,r:n}},Ih=Mh(cr,2),iC=Ih.b,Vs=Ih.r;iC[28]=258,Vs[258]=28;var nC=Mh(hr,0),Ao=nC.r,$s=new Pt(32768);for(var Le=0;Le<32768;++Le){var Mi=(Le&43690)>>1|(Le&21845)<<1;Mi=(Mi&52428)>>2|(Mi&13107)<<2,Mi=(Mi&61680)>>4|(Mi&3855)<<4,$s[Le]=((Mi&65280)>>8|(Mi&255)<<8)>>1}var Mn=function(s,e,t){for(var i=s.length,n=0,a=new Pt(e);n<i;++n)s[n]&&++a[s[n]-1];var r=new Pt(e);for(n=1;n<e;++n)r[n]=r[n-1]+a[n-1]<<1;var o;if(t){o=new Pt(1<<e);var l=15-e;for(n=0;n<i;++n)if(s[n])for(var d=n<<4|s[n],u=e-s[n],c=r[s[n]-1]++<<u,h=c|(1<<u)-1;c<=h;++c)o[$s[c]>>l]=d}else for(o=new Pt(i),n=0;n<i;++n)s[n]&&(o[n]=$s[r[s[n]-1]++]>>15-s[n]);return o},Ui=new Ct(288);for(var Le=0;Le<144;++Le)Ui[Le]=8;for(var Le=144;Le<256;++Le)Ui[Le]=9;for(var Le=256;Le<280;++Le)Ui[Le]=7;for(var Le=280;Le<288;++Le)Ui[Le]=8;var ka=new Ct(32);for(var Le=0;Le<32;++Le)ka[Le]=5;var Bh=Mn(Ui,9,0),Ph=Mn(ka,5,0),Cl=function(s){return(s+7)/8|0},vl=function(s,e,t){return(e==null||e<0)&&(e=0),(t==null||t>s.length)&&(t=s.length),new Ct(s.subarray(e,t))},aC=["unexpected EOF","invalid block type","invalid length/literal","invalid distance","stream finished","no stream handler",,"no callback","invalid UTF-8 data","extra field too long","date not in range 1980-2099","filename too long","stream finishing","invalid zip data"],Wn=function(s,e,t){var i=new Error(e||aC[s]);if(i.code=s,Error.captureStackTrace&&Error.captureStackTrace(i,Wn),!t)throw i;return i},ri=function(s,e,t){t<<=e&7;var i=e/8|0;s[i]|=t,s[i+1]|=t>>8},En=function(s,e,t){t<<=e&7;var i=e/8|0;s[i]|=t,s[i+1]|=t>>8,s[i+2]|=t>>16},ws=function(s,e){for(var t=[],i=0;i<s.length;++i)s[i]&&t.push({s:i,f:s[i]});var n=t.length,a=t.slice();if(!n)return{t:El,l:0};if(n==1){var r=new Ct(t[0].s+1);return r[t[0].s]=1,{t:r,l:1}}t.sort(function(_,w){return _.f-w.f}),t.push({s:-1,f:25001});var o=t[0],l=t[1],d=0,u=1,c=2;for(t[0]={s:-1,f:o.f+l.f,l:o,r:l};u!=n-1;)o=t[t[d].f<t[c].f?d++:c++],l=t[d!=u&&t[d].f<t[c].f?d++:c++],t[u++]={s:-1,f:o.f+l.f,l:o,r:l};for(var h=a[0].s,i=1;i<n;++i)a[i].s>h&&(h=a[i].s);var m=new Pt(h+1),p=Us(t[u-1],m,0);if(p>e){var i=0,g=0,f=p-e,F=1<<f;for(a.sort(function(w,A){return m[A.s]-m[w.s]||w.f-A.f});i<n;++i){var y=a[i].s;if(m[y]>e)g+=F-(1<<p-m[y]),m[y]=e;else break}for(g>>=f;g>0;){var v=a[i].s;m[v]<e?g-=1<<e-m[v]++-1:++i}for(;i>=0&&g;--i){var C=a[i].s;m[C]==e&&(--m[C],++g)}p=e}return{t:new Ct(m),l:p}},Us=function(s,e,t){return s.s==-1?Math.max(Us(s.l,e,t+1),Us(s.r,e,t+1)):e[s.s]=t},xo=function(s){for(var e=s.length;e&&!s[--e];);for(var t=new Pt(++e),i=0,n=s[0],a=1,r=function(l){t[i++]=l},o=1;o<=e;++o)if(s[o]==n&&o!=e)++a;else{if(!n&&a>2){for(;a>138;a-=138)r(32754);a>2&&(r(a>10?a-11<<5|28690:a-3<<5|12305),a=0)}else if(a>3){for(r(n),--a;a>6;a-=6)r(8304);a>2&&(r(a-3<<5|8208),a=0)}for(;a--;)r(n);a=1,n=s[o]}return{c:t.subarray(0,i),n:e}},wn=function(s,e){for(var t=0,i=0;i<e.length;++i)t+=s[i]*e[i];return t},Sl=function(s,e,t){var i=t.length,n=Cl(e+2);s[n]=i&255,s[n+1]=i>>8,s[n+2]=s[n]^255,s[n+3]=s[n+1]^255;for(var a=0;a<i;++a)s[n+a+4]=t[a];return(n+4+i)*8},Ro=function(s,e,t,i,n,a,r,o,l,d,u){ri(e,u++,t),++n[256];for(var c=ws(n,15),h=c.t,m=c.l,p=ws(a,15),g=p.t,f=p.l,F=xo(h),y=F.c,v=F.n,C=xo(g),_=C.c,w=C.n,A=new Pt(19),k=0;k<y.length;++k)++A[y[k]&31];for(var k=0;k<_.length;++k)++A[_[k]&31];for(var x=ws(A,7),I=x.t,P=x.l,V=19;V>4&&!I[To[V-1]];--V);var z=d+5<<3,Y=wn(n,Ui)+wn(a,ka)+r,re=wn(n,h)+wn(a,g)+r+14+3*V+wn(A,I)+2*A[16]+3*A[17]+7*A[18];if(l>=0&&z<=Y&&z<=re)return Sl(e,u,s.subarray(l,l+d));var me,de,oe,Ge;if(ri(e,u,1+(re<Y)),u+=2,re<Y){me=Mn(h,m,0),de=h,oe=Mn(g,f,0),Ge=g;var nt=Mn(I,P,0);ri(e,u,v-257),ri(e,u+5,w-1),ri(e,u+10,V-4),u+=14;for(var k=0;k<V;++k)ri(e,u+3*k,I[To[k]]);u+=3*V;for(var K=[y,_],we=0;we<2;++we)for(var ue=K[we],k=0;k<ue.length;++k){var Te=ue[k]&31;ri(e,u,nt[Te]),u+=I[Te],Te>15&&(ri(e,u,ue[k]>>5&127),u+=ue[k]>>12)}}else me=Bh,de=Ui,oe=Ph,Ge=ka;for(var k=0;k<o;++k){var ee=i[k];if(ee>255){var Te=ee>>18&31;En(e,u,me[Te+257]),u+=de[Te+257],Te>7&&(ri(e,u,ee>>23&31),u+=cr[Te]);var X=ee&31;En(e,u,oe[X]),u+=Ge[X],X>3&&(En(e,u,ee>>5&8191),u+=hr[X])}else En(e,u,me[ee]),u+=de[ee]}return En(e,u,me[256]),u+de[256]},Lh=new ur([65540,131080,131088,131104,262176,1048704,1048832,2114560,2117632]),El=new Ct(0),Nh=function(s,e,t,i,n,a){var r=a.z||s.length,o=new Ct(i+r+5*(1+Math.ceil(r/7e3))+n),l=o.subarray(i,o.length-n),d=a.l,u=(a.r||0)&7;if(e){u&&(l[0]=a.r>>3);for(var c=Lh[e-1],h=c>>13,m=c&8191,p=(1<<t)-1,g=a.p||new Pt(32768),f=a.h||new Pt(p+1),F=Math.ceil(t/3),y=2*F,v=function(ze){return(s[ze]^s[ze+1]<<F^s[ze+2]<<y)&p},C=new ur(25e3),_=new Pt(288),w=new Pt(32),A=0,k=0,x=a.i||0,I=0,P=a.w||0,V=0;x+2<r;++x){var z=v(x),Y=x&32767,re=f[z];if(g[Y]=re,f[z]=Y,P<=x){var me=r-x;if((A>7e3||I>24576)&&(me>423||!d)){u=Ro(s,l,0,C,_,w,k,I,V,x-V,u),I=A=k=0,V=x;for(var de=0;de<286;++de)_[de]=0;for(var de=0;de<30;++de)w[de]=0}var oe=2,Ge=0,nt=m,K=Y-re&32767;if(me>2&&z==v(x-K))for(var we=Math.min(h,me)-1,ue=Math.min(32767,x),Te=Math.min(258,me);K<=ue&&--nt&&Y!=re;){if(s[x+oe]==s[x+oe-K]){for(var ee=0;ee<Te&&s[x+ee]==s[x+ee-K];++ee);if(ee>oe){if(oe=ee,Ge=K,ee>we)break;for(var X=Math.min(K,ee-2),Ee=0,de=0;de<X;++de){var ct=x-K+de&32767,Jt=g[ct],Ut=ct-Jt&32767;Ut>Ee&&(Ee=Ut,re=ct)}}}Y=re,re=g[Y],K+=Y-re&32767}if(Ge){C[I++]=268435456|Vs[oe]<<18|Ao[Ge];var $=Vs[oe]&31,ce=Ao[Ge]&31;k+=cr[$]+hr[ce],++_[257+$],++w[ce],P=x+oe,++A}else C[I++]=s[x],++_[s[x]]}}for(x=Math.max(x,P);x<r;++x)C[I++]=s[x],++_[s[x]];u=Ro(s,l,d,C,_,w,k,I,V,x-V,u),d||(a.r=u&7|l[u/8|0]<<3,u-=7,a.h=f,a.p=g,a.i=x,a.w=P)}else{for(var x=a.w||0;x<r+d;x+=65535){var We=x+65535;We>=r&&(l[u/8|0]=d,We=r),u=Sl(l,u+1,s.subarray(x,We))}a.i=r}return vl(o,0,i+Cl(u)+n)},sC=function(){for(var s=new Int32Array(256),e=0;e<256;++e){for(var t=e,i=9;--i;)t=(t&1&&-306674912)^t>>>1;s[e]=t}return s}(),rC=function(){var s=-1;return{p:function(e){for(var t=s,i=0;i<e.length;++i)t=sC[t&255^e[i]]^t>>>8;s=t},d:function(){return~s}}},Hh=function(s,e,t,i,n){if(!n&&(n={l:1},e.dictionary)){var a=e.dictionary.subarray(-32768),r=new Ct(a.length+s.length);r.set(a),r.set(s,a.length),s=r,n.w=a.length}return Nh(s,e.level==null?6:e.level,e.mem==null?n.l?Math.ceil(Math.max(8,Math.min(13,Math.log(s.length)))*1.5):20:12+e.mem,t,i,n)},wl=function(s,e){var t={};for(var i in s)t[i]=s[i];for(var i in e)t[i]=e[i];return t},hu=function(s,e,t){for(var i=s(),n=s.toString(),a=n.slice(n.indexOf("[")+1,n.lastIndexOf("]")).replace(/\s+/g,"").split(","),r=0;r<i.length;++r){var o=i[r],l=a[r];if(typeof o=="function"){e+=";"+l+"=";var d=o.toString();if(o.prototype)if(d.indexOf("[native code]")!=-1){var u=d.indexOf(" ",8)+1;e+=d.slice(u,d.indexOf("(",u))}else{e+=d;for(var c in o.prototype)e+=";"+l+".prototype."+c+"="+o.prototype[c].toString()}else e+=d}else t[l]=o}return e},ns=[],oC=function(s){var e=[];for(var t in s)s[t].buffer&&e.push((s[t]=new s[t].constructor(s[t])).buffer);return e},lC=function(s,e,t,i){if(!ns[t]){for(var n="",a={},r=s.length-1,o=0;o<r;++o)n=hu(s[o],n,a);ns[t]={c:hu(s[r],n,a),e:a}}var l=wl({},ns[t].e);return tC(ns[t].c+";onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage="+e.toString()+"}",t,l,oC(l),i)},dC=function(){return[Ct,Pt,ur,cr,hr,To,Vs,Ao,Bh,Ui,Ph,ka,$s,Lh,El,Mn,ri,En,ws,Us,xo,wn,Sl,Ro,Cl,vl,Nh,Hh,_l,Gh]},Gh=function(s){return postMessage(s,[s.buffer])},uC=function(s,e,t,i,n,a){var r=lC(t,i,n,function(o,l){r.terminate(),a(o,l)});return r.postMessage([s,e],e.consume?[s.buffer]:[]),function(){r.terminate()}},Ft=function(s,e,t){for(;t;++e)s[e]=t,t>>>=8};function cC(s,e,t){return t||(t=e,e={}),typeof t!="function"&&Wn(7),uC(s,e,[dC],function(i){return Gh(_l(i.data[0],i.data[1]))},0,t)}function _l(s,e){return Hh(s,e||{},0,0)}var Wh=function(s,e,t,i){for(var n in s){var a=s[n],r=e+n,o=i;Array.isArray(a)&&(o=wl(i,a[1]),a=a[0]),a instanceof Ct?t[r]=[a,o]:(t[r+="/"]=[new Ct(0),o],Wh(a,r,t,i))}},mu=typeof TextEncoder<"u"&&new TextEncoder,hC=typeof TextDecoder<"u"&&new TextDecoder,mC=0;try{hC.decode(El,{stream:!0}),mC=1}catch{}function Oo(s,e){var t;if(mu)return mu.encode(s);for(var i=s.length,n=new Ct(s.length+(s.length>>1)),a=0,r=function(d){n[a++]=d},t=0;t<i;++t){if(a+5>n.length){var o=new Ct(a+8+(i-t<<1));o.set(n),n=o}var l=s.charCodeAt(t);l<128||e?r(l):l<2048?(r(192|l>>6),r(128|l&63)):l>55295&&l<57344?(l=65536+(l&1047552)|s.charCodeAt(++t)&1023,r(240|l>>18),r(128|l>>12&63),r(128|l>>6&63),r(128|l&63)):(r(224|l>>12),r(128|l>>6&63),r(128|l&63))}return vl(n,0,a)}var Mo=function(s){var e=0;if(s)for(var t in s){var i=s[t].length;i>65535&&Wn(9),e+=i+4}return e},pu=function(s,e,t,i,n,a,r,o){var l=i.length,d=t.extra,u=o&&o.length,c=Mo(d);Ft(s,e,r!=null?33639248:67324752),e+=4,r!=null&&(s[e++]=20,s[e++]=t.os),s[e]=20,e+=2,s[e++]=t.flag<<1|(a<0&&8),s[e++]=n&&8,s[e++]=t.compression&255,s[e++]=t.compression>>8;var h=new Date(t.mtime==null?Date.now():t.mtime),m=h.getFullYear()-1980;if((m<0||m>119)&&Wn(10),Ft(s,e,m<<25|h.getMonth()+1<<21|h.getDate()<<16|h.getHours()<<11|h.getMinutes()<<5|h.getSeconds()>>1),e+=4,a!=-1&&(Ft(s,e,t.crc),Ft(s,e+4,a<0?-a-2:a),Ft(s,e+8,t.size)),Ft(s,e+12,l),Ft(s,e+14,c),e+=16,r!=null&&(Ft(s,e,u),Ft(s,e+6,t.attrs),Ft(s,e+10,r),e+=14),s.set(i,e),e+=l,c)for(var p in d){var g=d[p],f=g.length;Ft(s,e,+p),Ft(s,e+2,f),s.set(g,e+4),e+=4+f}return u&&(s.set(o,e),e+=u),e},pC=function(s,e,t,i,n){Ft(s,e,101010256),Ft(s,e+8,t),Ft(s,e+10,t),Ft(s,e+12,i),Ft(s,e+16,n)};function gC(s,e,t){t||(t=e,e={}),typeof t!="function"&&Wn(7);var i={};Wh(s,"",i,e);var n=Object.keys(i),a=n.length,r=0,o=0,l=a,d=new Array(a),u=[],c=function(){for(var f=0;f<u.length;++f)u[f]()},h=function(f,F){gu(function(){t(f,F)})};gu(function(){h=t});var m=function(){var f=new Ct(o+22),F=r,y=o-r;o=0;for(var v=0;v<l;++v){var C=d[v];try{var _=C.c.length;pu(f,o,C,C.f,C.u,_);var w=30+C.f.length+Mo(C.extra),A=o+w;f.set(C.c,A),pu(f,r,C,C.f,C.u,_,o,C.m),r+=16+w+(C.m?C.m.length:0),o=A+_}catch(k){return h(k,null)}}pC(f,r,d.length,y,F),h(null,f)};a||m();for(var p=function(f){var F=n[f],y=i[F],v=y[0],C=y[1],_=rC(),w=v.length;_.p(v);var A=Oo(F),k=A.length,x=C.comment,I=x&&Oo(x),P=I&&I.length,V=Mo(C.extra),z=C.level==0?0:8,Y=function(re,me){if(re)c(),h(re,null);else{var de=me.length;d[f]=wl(C,{size:w,crc:_.d(),c:me,f:A,m:I,u:k!=F.length||I&&x.length!=P,compression:z}),r+=30+k+V+de,o+=76+2*(k+V)+(P||0)+de,--a||m()}};if(k>65535&&Y(Wn(11,0,1),null),!z)Y(null,v);else if(w<16e4)try{Y(null,_l(v,C))}catch(re){Y(re,null)}else u.push(cC(v,C,Y))},g=0;g<l;++g)p(g);return c}var gu=typeof queueMicrotask=="function"?queueMicrotask:typeof setTimeout=="function"?setTimeout:function(s){s()},fC=Object.defineProperty,FC=(s,e,t)=>e in s?fC(s,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):s[e]=t,W=(s,e,t)=>FC(s,typeof e!="symbol"?e+"":e,t);function bi(s){const e=typeof s;return s!=null&&(e==="object"||e==="function")}function bC(s){if(typeof s!="object"||s===null||Object.prototype.toString.call(s)!=="[object Object]")return!1;const e=Object.getPrototypeOf(s);if(e===null)return!0;const t=Object.prototype.hasOwnProperty.call(e,"constructor")&&e.constructor;return typeof t=="function"&&t instanceof t&&Function.prototype.call(t)===Function.prototype.call(s)}function _n(s){return s!=null&&typeof s.valueOf()=="string"}const yC={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"},zh=s=>(typeof s!="string"&&(s=`${s}`),s.replace(/[&<>"']/g,e=>yC[e]));let mr=class{constructor(e,t){W(this,"documentElement"),this.documentElement=this.createElement(t),this.documentElement.setAttribute("xmlns",e)}createElement(e){return new $h({nodeName:e})}createTextNode(e){return new Vh(e)}toString(){return this.documentElement.toString()}};W(mr,"Node",{Create:s=>{switch(s.type){case"XML":return new $h(s);case"TEXT":return new Vh(s.nodeValue);default:return null}}});let Vh=class{constructor(e){W(this,"nodeValue"),this.nodeValue=e}toJSON(){return{nodeValue:this.nodeValue,type:"TEXT"}}toString(){return zh(this.nodeValue)}},$h=class Uh{constructor(e){if(W(this,"nodeName",""),W(this,"children"),W(this,"nodeValue"),W(this,"attributes"),W(this,"firstChild"),this.nodeName=e.nodeName,this.children=[],this.nodeValue=e.nodeValue||"",this.attributes={},e.children)for(let t=0,i=e.children.length;t<i;t++)this.appendChild(mr.Node.Create(e.children[t]));if(e.attributes)for(const t in e.attributes)e.attributes.hasOwnProperty(t)&&this.setAttribute(t,e.attributes[t])}toString(){let e=`<${this.nodeName}`;for(const i in this.attributes)this.attributes.hasOwnProperty(i)&&(e=`${e} ${i}="${zh(this.attributes[i])}"`);let t="";for(let i=0,n=this.children.length;i<n;i++)t+=this.children[i].toString();return t?e+=`>${t}</${this.nodeName}>`:e+="/>",e}toJSON(){const e=[];for(let t=0,i=this.children.length;t<i;t++)e.push(this.children[t].toJSON());return{nodeName:this.nodeName,children:e,nodeValue:this.nodeValue,attributes:this.attributes,type:"XML"}}setAttribute(e,t){if(t===null){delete this.attributes[e],delete this[e];return}this.attributes[e]=t,this[e]=t}appendChild(e){this.children.push(e),this.firstChild=this.children[0]}cloneNode(e){return new Uh(this.toJSON())}};const _s=class nn{static uniqueId(e){return nn._idSpaces[e]||(nn._idSpaces[e]=1),nn._idSpaces[e]++}static createXmlDoc(e,t){return new mr(e||null,t)}static createElement(e,t,i){const n=e.createElement(t);i=i||[];let a=i.length;for(;a--;)n.setAttribute(i[a][0],i[a][1]);return n}static setAttributesOnDoc(e,t){for(let[i,n]of Object.entries(t)){if(bC(n))if(n.v!==null&&n.v!==void 0)switch(n.type){case Boolean:n=n.v?"1":"0";break}else n=null;n!=null&&e.setAttribute(i,n)}}static positionToLetterRef(e,t){let i=1,n,a=e,r="";const o="ABCDEFGHIJKLMNOPQRSTUVWXYZ";if(nn.LETTER_REFS[e])return nn.LETTER_REFS[e].concat(t);for(;a>0;)a-=Math.pow(26,i-1),n=a%Math.pow(26,i),a-=n,n=n/Math.pow(26,i-1),r=o.charAt(n)+r,i+=1;return nn.LETTER_REFS[e]=r,r.concat(String(t))}};W(_s,"_idSpaces",{}),W(_s,"LETTER_REFS",{}),W(_s,"schemas",{worksheet:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",sharedStrings:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",stylesheet:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",relationships:"http://schemas.openxmlformats.org/officeDocument/2006/relationships",relationshipPackage:"http://schemas.openxmlformats.org/package/2006/relationships",contentTypes:"http://schemas.openxmlformats.org/package/2006/content-types",spreadsheetml:"http://schemas.openxmlformats.org/spreadsheetml/2006/main",markupCompat:"http://schemas.openxmlformats.org/markup-compatibility/2006",x14ac:"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac",officeDocument:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",package:"http://schemas.openxmlformats.org/package/2006/relationships",table:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/table",spreadsheetDrawing:"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",drawing:"http://schemas.openxmlformats.org/drawingml/2006/main",drawingRelationship:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing",image:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",chart:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart",hyperlink:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink"});let Q=_s;const Jr={};function Ki(s="$lodash$"){Jr[s]||(Jr[s]=0);const e=++Jr[s];return s==="$lodash$"?`${e}`:`${s}${e}`}const Ii={};let Io=class{constructor(){W(this,"relations",{}),W(this,"lastId",1),Ki("rId")}importData(e){this.relations=e.relations,this.lastId=e.lastId}exportData(){return{relations:this.relations,lastId:this.lastId}}addRelation(e,t){return this.relations[e.id]={id:Ki("rId"),schema:Q.schemas[t],object:e},this.relations[e.id].id}getRelationshipId(e){return this.relations[e.id]?this.relations[e.id].id:null}toXML(){const e=Q.createXmlDoc(Q.schemas.relationshipPackage,"Relationships"),t=e.documentElement;for(const[i,n]of Object.entries(this.relations)){const a=Q.createElement(e,"Relationship",[["Id",n.id],["Type",n.schema],["Target",n.object.target||Ii[i]]]);n.object.targetMode&&a.setAttribute("TargetMode",n.object.targetMode),t.appendChild(a)}return e}},CC=class{constructor(){W(this,"state",null),W(this,"xSplit",null),W(this,"ySplit",null),W(this,"activePane","bottomRight"),W(this,"topLeftCell",null),W(this,"_freezePane")}freezePane(e,t,i){this._freezePane={xSplit:e,ySplit:t,cell:i}}exportXML(e){const t=e.createElement("pane");return this.state!==null&&(t.setAttribute("xSplit",this._freezePane.xSplit),t.setAttribute("ySplit",this._freezePane.ySplit),t.setAttribute("topLeftCell",this._freezePane.cell),t.setAttribute("activePane","bottomRight"),t.setAttribute("state","frozen")),t}},fu=class{constructor(){W(this,"strings",{}),W(this,"stringArray",[]),W(this,"id",Ki("SharedStrings"))}addString(e){return this.strings[e]=this.stringArray.length,this.stringArray[this.stringArray.length]=e,this.strings[e]}exportData(){return this.strings}toXML(){const e=Q.createXmlDoc(Q.schemas.spreadsheetml,"sst"),t=e.documentElement;this.stringArray.reverse();let i=this.stringArray.length;t.setAttribute("count",i),t.setAttribute("uniqueCount",i);const n=e.createElement("si"),a=e.createElement("t");a.appendChild(e.createTextNode("--placeholder--")),n.appendChild(a);const r=this.stringArray;for(;i--;){const o=n.cloneNode(!0);typeof r[i]=="string"&&r[i].match(/\s+/)&&o.firstChild.setAttribute("xml:space","preserve"),o.firstChild.firstChild.nodeValue=r[i],t.appendChild(o)}return e}},vC=class{constructor(e){W(this,"pane"),W(this,"showZeros",null),W(this,"defaultGridColor",null),W(this,"colorId",null),W(this,"rightToLeft",null),W(this,"showFormulas",null),W(this,"showGridLines",null),W(this,"showOutlineSymbols",null),W(this,"showRowColHeaders",null),W(this,"showRuler",null),W(this,"showWhiteSpace",null),W(this,"tabSelected",null),W(this,"topLeftCell",null),W(this,"viewType",null),W(this,"windowProtection",null),W(this,"zoomScale",null),W(this,"zoomScaleNormal",null),W(this,"zoomScalePageLayoutView",null),W(this,"zoomScaleSheetLayoutView",null);const t=e||{};this.pane=t.pane||new CC}freezePane(e,t,i){this.pane.state="frozen",this.pane.xSplit=e,this.pane.ySplit=t,this.pane.topLeftCell=i}exportXML(e){const t=e.createElement("sheetViews"),i=e.createElement("sheetView");return Q.setAttributesOnDoc(i,{workbookViewId:0,showZeros:{v:this.showZeros,type:Boolean},defaultGridColor:{v:this.defaultGridColor,type:Boolean},colorId:this.colorId,rightToLeft:{v:this.rightToLeft,type:Boolean},showFormulas:{v:this.showFormulas,type:Boolean},showGridLines:{v:this.showGridLines,type:Boolean},showOutlineSymbols:{v:this.showOutlineSymbols,type:Boolean},showRowColHeaders:{v:this.showRowColHeaders,type:Boolean},showRuler:{v:this.showRuler,type:Boolean},showWhiteSpace:{v:this.showWhiteSpace,type:Boolean},tabSelected:{v:this.tabSelected,type:Boolean},viewType:this.viewType,windowProtection:{v:this.windowProtection,type:Boolean},zoomScale:{v:this.zoomScale,type:Boolean},zoomScaleNormal:this.zoomScaleNormal,zoomScalePageLayoutView:this.zoomScalePageLayoutView,zoomScaleSheetLayoutView:this.zoomScaleSheetLayoutView}),i.appendChild(this.pane.exportXML(e)),t.appendChild(i),t}};function SC(s,e){return e.reduce((t,i)=>(s!=null&&s.hasOwnProperty(i)&&(t[i]=s[i]),t),{})}let Fu=class{constructor(){W(this,"id",Ki("StyleSheet")),W(this,"cellStyles",[{name:"Normal",xfId:"0",builtinId:"0"}]),W(this,"defaultTableStyle",!1),W(this,"differentialStyles",[{}]),W(this,"masterCellFormats",[{numFmtId:0,fontId:0,fillId:0,borderId:0,xfid:0}]),W(this,"masterCellStyles",[{numFmtId:0,fontId:0,fillId:0,borderId:0}]),W(this,"fonts",[{}]),W(this,"numberFormatters",[]),W(this,"fills",[{},{type:"pattern",patternType:"gray125",fgColor:"FF333333",bgColor:"FF333333"}]),W(this,"borders",[{top:{},left:{},right:{},bottom:{},diagonal:{}}]),W(this,"tableStyles",[])}createSimpleFormatter(e){const t={id:this.masterCellFormats.length};switch(e){case"date":t.numFmtId=14;break}return this.masterCellFormats.push(t),t}createFill(e){const t=this.fills.length,i=e;return i.id=t,this.fills.push(i),i}createNumberFormatter(e){const t={id:this.numberFormatters.length+100,formatCode:e};return this.numberFormatters.push(t),t}createFormat(e){const t={id:this.masterCellFormats.length};if(e.protection&&(t.protection=e.protection),e.font&&bi(e.font))t.fontId=this.createFontStyle(e.font).id;else if(e.font){if(Number.isNaN(Number.parseInt(e.font,10)))throw new Error("Passing a non-numeric font id is not supported");t.fontId=e.font}if(e.format&&_n(e.format))t.numFmtId=this.createNumberFormatter(e.format).id;else if(e.format){if(Number.isNaN(Number.parseInt(e.format,10)))throw new Error("Invalid number formatter id");t.numFmtId=e.format}if(e.border&&bi(e.border))t.borderId=this.createBorderFormatter(e.border).id;else if(e.border){if(Number.isNaN(Number.parseInt(e.border,10)))throw new Error("Passing a non-numeric border id is not supported");t.borderId=e.border}if(e.fill&&bi(e.fill))t.fillId=this.createFill(e.fill).id;else if(e.fill){if(Number.isNaN(Number.parseInt(e.fill,10)))throw new Error("Passing a non-numeric fill id is not supported");t.fillId=e.fill}return e.alignment&&bi(e.alignment)&&(t.alignment=SC(e.alignment,["horizontal","justifyLastLine","readingOrder","relativeIndent","shrinkToFit","textRotation","vertical","wrapText"])),this.masterCellFormats.push(t),t}createDifferentialStyle(e){const t=this.differentialStyles.length,i={id:t};return e.font&&bi(e.font)&&(i.font=e.font),e.border&&bi(e.border)&&(i.border=Object.assign({top:{},left:{},right:{},bottom:{},diagonal:{}},e.border)),e.fill&&bi(e.fill)&&(i.fill=e.fill),e.alignment&&bi(e.alignment)&&(i.alignment=e.alignment),e.format&&_n(e.format)&&(i.numFmt=e.format),this.differentialStyles[t]=i,i}createTableStyle(e){this.tableStyles.push(e)}createBorderFormatter(e){return e={top:{},left:{},right:{},bottom:{},diagonal:{},id:this.borders.length,...e},this.borders.push(e),e}createFontStyle(e){const t={id:this.fonts.length};return e.bold&&(t.bold=!0),e.italic&&(t.italic=!0),e.superscript&&(t.vertAlign="superscript"),e.subscript&&(t.vertAlign="subscript"),e.underline&&(typeof e.underline=="string"&&["double","singleAccounting","doubleAccounting"].includes(e.underline)?t.underline=e.underline:t.underline=!0),e.strike&&(t.strike=!0),e.outline&&(t.outline=!0),e.shadow&&(t.shadow=!0),e.size&&(t.size=e.size),e.color&&(t.color=e.color),e.fontName&&(t.fontName=e.fontName),this.fonts.push(t),t}exportBorders(e){const t=e.createElement("borders");t.setAttribute("count",this.borders.length);for(let i=0,n=this.borders.length;i<n;i++)t.appendChild(this.exportBorder(e,this.borders[i]));return t}exportBorder(e,t){const i=e.createElement("border"),n=a=>{const r=e.createElement(a);return t[a].style&&r.setAttribute("style",t[a].style),t[a].color&&r.appendChild(this.exportColor(e,t[a].color)),r};return i.appendChild(n("left")),i.appendChild(n("right")),i.appendChild(n("top")),i.appendChild(n("bottom")),i.appendChild(n("diagonal")),i}exportColor(e,t){const i=e.createElement("color");return _n(t)?(i.setAttribute("rgb",t),i):(t.tint!==void 0&&i.setAttribute("tint",t.tint),t.auto!==void 0&&i.setAttribute("auto",String(!!t.auto)),t.theme!==void 0&&i.setAttribute("theme",t.theme),i)}exportMasterCellFormats(e){const t=Q.createElement(e,"cellXfs",[["count",this.masterCellFormats.length]]);for(let i=0,n=this.masterCellFormats.length;i<n;i++){const a=this.masterCellFormats[i];t.appendChild(this.exportCellFormatElement(e,a))}return t}exportMasterCellStyles(e){const t=Q.createElement(e,"cellStyleXfs",[["count",this.masterCellStyles.length]]);for(let i=0,n=this.masterCellStyles.length;i<n;i++){const a=this.masterCellStyles[i];t.appendChild(this.exportCellFormatElement(e,a))}return t}exportCellFormatElement(e,t){const i=e.createElement("xf"),n=["applyAlignment","applyBorder","applyFill","applyFont","applyNumberFormat","applyProtection","borderId","fillId","fontId","numFmtId","pivotButton","quotePrefix","xfId"],a=Object.keys(t).filter(o=>n.indexOf(o)!==-1);if(t.alignment){const o=t.alignment;i.appendChild(this.exportAlignment(e,o))}t.protection&&(i.appendChild(this.exportProtection(e,t.protection)),i.setAttribute("applyProtection","1"));let r=a.length;for(;r--;)i.setAttribute(a[r],t[a[r]]);return t.fillId&&i.setAttribute("applyFill","1"),t.fontId&&i.setAttribute("applyFont","1"),t.borderId&&i.setAttribute("applyBorder","1"),t.alignment&&i.setAttribute("applyAlignment","1"),t.numFmtId&&i.setAttribute("applyNumberFormat","1"),t.numFmtId!==void 0&&t.xfId===void 0&&i.setAttribute("xfId","0"),i}exportAlignment(e,t){const i=e.createElement("alignment"),n=Object.keys(t);for(let a=0,r=n.length;a<r;a++)i.setAttribute(n[a],t[n[a]]);return i}exportFonts(e){const t=e.createElement("fonts");t.setAttribute("count",String(this.fonts.length));for(let i=0,n=this.fonts.length;i<n;i++){const a=this.fonts[i];t.appendChild(this.exportFont(e,a))}return t}exportFont(e,t){const i=e.createElement("font");if(t.size){const n=e.createElement("sz");n.setAttribute("val",t.size),i.appendChild(n)}if(t.fontName){const n=e.createElement("name");n.setAttribute("val",t.fontName),i.appendChild(n)}if(t.bold&&i.appendChild(e.createElement("b")),t.italic&&i.appendChild(e.createElement("i")),t.vertAlign){const n=e.createElement("vertAlign");n.setAttribute("val",t.vertAlign),i.appendChild(n)}if(t.underline){const n=e.createElement("u");t.underline!==!0&&n.setAttribute("val",t.underline),i.appendChild(n)}return t.strike&&i.appendChild(e.createElement("strike")),t.shadow&&i.appendChild(e.createElement("shadow")),t.outline&&i.appendChild(e.createElement("outline")),t.color&&i.appendChild(this.exportColor(e,t.color)),i}exportFills(e){const t=e.createElement("fills");t.setAttribute("count",String(this.fills.length));for(let i=0,n=this.fills.length;i<n;i++){const a=this.fills[i];t.appendChild(this.exportFill(e,a))}return t}exportFill(e,t){let i;const n=e.createElement("fill");return t.type==="pattern"?(i=this.exportPatternFill(e,t),n.appendChild(i)):t.type==="gradient"&&(i=this.exportGradientFill(e,t),n.appendChild(i)),n}exportGradientFill(e,t){const i=e.createElement("gradientFill");t.degree?i.setAttribute("degree",t.degree):t.left&&(i.setAttribute("left",t.left),i.setAttribute("right",t.right),i.setAttribute("top",t.top),i.setAttribute("bottom",t.bottom));const n=e.createElement("stop");n.setAttribute("position",t.start.pureAt||0);const a=e.createElement("color");typeof t.start=="string"||t.start.color?a.setAttribute("rgb",t.start.color||t.start):t.start.theme&&a.setAttribute("theme",t.start.theme);const r=e.createElement("stop"),o=e.createElement("color");return r.setAttribute("position",t.end.pureAt||1),typeof t.start=="string"||t.end.color?o.setAttribute("rgb",t.end.color||t.end):t.end.theme&&o.setAttribute("theme",t.end.theme),n.appendChild(a),r.appendChild(o),i.appendChild(n),i.appendChild(r),i}exportPatternFill(e,t){const i=Q.createElement(e,"patternFill",[["patternType",t.patternType]]);t.bgColor||(t.bgColor="FFFFFFFF"),t.fgColor||(t.fgColor="FFFFFFFF");const n=e.createElement("bgColor");_n(t.bgColor)?n.setAttribute("rgb",t.bgColor):t.bgColor.theme?n.setAttribute("theme",t.bgColor.theme):n.setAttribute("rgb",t.bgColor.rbg);const a=e.createElement("fgColor");return _n(t.fgColor)?a.setAttribute("rgb",t.fgColor):t.fgColor.theme?a.setAttribute("theme",t.fgColor.theme):a.setAttribute("rgb",t.fgColor.rbg),i.appendChild(a),i.appendChild(n),i}exportNumberFormatters(e){const t=e.createElement("numFmts");t.setAttribute("count",String(this.numberFormatters.length));for(let i=0,n=this.numberFormatters.length;i<n;i++){const a=this.numberFormatters[i];t.appendChild(this.exportNumberFormatter(e,a))}return t}exportNumberFormatter(e,t){const i=e.createElement("numFmt");return i.setAttribute("numFmtId",t.id),i.setAttribute("formatCode",t.formatCode),i}exportCellStyles(e){const t=e.createElement("cellStyles");t.setAttribute("count",String(this.cellStyles.length));for(let i=0,n=this.cellStyles.length;i<n;i++){const a=this.cellStyles[i];delete a.id;const r=Q.createElement(e,"cellStyle");t.appendChild(r);const o=Object.keys(a);let l=o.length;for(;l--;)r.setAttribute(o[l],a[o[l]])}return t}exportDifferentialStyles(e){const t=e.createElement("dxfs");t.setAttribute("count",String(this.differentialStyles.length));for(let i=0,n=this.differentialStyles.length;i<n;i++){const a=this.differentialStyles[i];t.appendChild(this.exportDFX(e,a))}return t}exportDFX(e,t){const i=e.createElement("dxf");return t.font&&i.appendChild(this.exportFont(e,t.font)),t.fill&&i.appendChild(this.exportFill(e,t.fill)),t.border&&i.appendChild(this.exportBorder(e,t.border)),t.numFmt&&i.appendChild(this.exportNumberFormatter(e,t.numFmt)),t.alignment&&i.appendChild(this.exportAlignment(e,t.alignment)),i}exportTableStyles(e){const t=e.createElement("tableStyles");t.setAttribute("count",String(this.tableStyles.length)),this.defaultTableStyle&&t.setAttribute("defaultTableStyle",String(this.defaultTableStyle));for(let i=0,n=this.tableStyles.length;i<n;i++)t.appendChild(this.exportTableStyle(e,this.tableStyles[i]));return t}exportTableStyle(e,t){const i=e.createElement("tableStyle");i.setAttribute("name",t.name),i.setAttribute("pivot",String(0));let n=0;return Object.entries(t).forEach(([a,r])=>{if(a==="name")return;n++;const o=e.createElement("tableStyleElement");o.setAttribute("type",a),o.setAttribute("dxfId",r),i.appendChild(o)}),i.setAttribute("count",String(n)),i}exportProtection(e,t){const i=e.createElement("protection");for(const n in t)n in t&&i.setAttribute(n,t[n]);return i}toXML(){const e=Q.createXmlDoc(Q.schemas.spreadsheetml,"styleSheet"),t=e.documentElement;return t.appendChild(this.exportNumberFormatters(e)),t.appendChild(this.exportFonts(e)),t.appendChild(this.exportFills(e)),t.appendChild(this.exportBorders(e)),t.appendChild(this.exportMasterCellStyles(e)),t.appendChild(this.exportMasterCellFormats(e)),t.appendChild(this.exportCellStyles(e)),t.appendChild(this.exportDifferentialStyles(e)),this.tableStyles.length&&t.appendChild(this.exportTableStyles(e)),e}},EC=class{constructor(e){W(this,"name",""),W(this,"id",Ki("Worksheet")),W(this,"_timezoneOffset"),W(this,"relations",null),W(this,"columnFormats",[]),W(this,"data",[]),W(this,"mergedCells",[]),W(this,"columns",[]),W(this,"sheetProtection",!1),W(this,"_headers",[]),W(this,"_footers",[]),W(this,"_tables",[]),W(this,"_drawings",[]),W(this,"_orientation"),W(this,"_margin"),W(this,"_rowInstructions",{}),W(this,"_freezePane",{}),W(this,"sharedStrings",null),W(this,"hyperlinks",[]),W(this,"sheetView"),W(this,"showZeros",null),this._timezoneOffset=new Date().getTimezoneOffset()*60*1e3,this.sheetView=e.sheetView||new vC,this.initialize(e)}initialize(e){e=e||{},this.name=e.name,this.id=Ki("Worksheet"),this._timezoneOffset=new Date().getTimezoneOffset()*60*1e3,e.columns&&this.setColumns(e.columns),this.relations=new Io}exportData(){return{relations:this.relations.exportData(),columnFormats:this.columnFormats,data:this.data,columns:this.columns,mergedCells:this.mergedCells,_headers:this._headers,_footers:this._footers,_tables:this._tables,_rowInstructions:this._rowInstructions,_freezePane:this._freezePane,name:this.name,id:this.id}}importData(e){this.relations.importData(e.relations),delete e.relations,Object.assign(this,e)}setSharedStringCollection(e){this.sharedStrings=e}addTable(e){this._tables.push(e),this.relations.addRelation(e,"table")}addDrawings(e){this._drawings.push(e),this.relations.addRelation(e,"drawingRelationship")}setRowInstructions(e,t){this._rowInstructions[e]=t}setHeader(e){if(!Array.isArray(e))throw"Invalid argument type - setHeader expects an array of three instructions";this._headers=e}setFooter(e){if(!Array.isArray(e))throw"Invalid argument type - setFooter expects an array of three instructions";this._footers=e}compilePageDetailPackage(e){return e=e||"",["&L",this.compilePageDetailPiece(e[0]||""),"&C",this.compilePageDetailPiece(e[1]||""),"&R",this.compilePageDetailPiece(e[2]||"")].join("")}compilePageDetailPiece(e){if(_n(e))return'&"-,Regular"'.concat(e);if(bi(e)&&!Array.isArray(e)){let t="";if(e.font||e.bold){const i=e.bold?"Bold":"Regular";t+=`&"${e.font||"-"}`,t+=`,${i}"`}else t+='&"-,Regular"';return e.underline&&(t+="&U"),e.fontSize&&(t+=`&${e.fontSize}`),t+=e.text,t}if(Array.isArray(e))return e.reduce((t,i)=>t.concat(this.compilePageDetailPiece(i)),"")}exportHeader(e){const t=e.createElement("oddHeader");return t.appendChild(e.createTextNode(this.compilePageDetailPackage(this._headers))),t}exportFooter(e){const t=e.createElement("oddFooter");return t.appendChild(e.createTextNode(this.compilePageDetailPackage(this._footers))),t}_buildCache(e){const t=e.createElement("c"),i=e.createElement("v");i.appendChild(e.createTextNode("--temp--")),t.appendChild(i);const n=e.createElement("c"),a=e.createElement("f");a.appendChild(e.createTextNode("--temp--")),n.appendChild(a);const r=e.createElement("c");r.setAttribute("t","s");const o=e.createElement("v");return o.appendChild(e.createTextNode("--temp--")),r.appendChild(o),{number:t,date:t,string:r,formula:n}}collectSharedStrings(){const e=this.data,t={};for(let i=0,n=e.length;i<n;i++){const a=e[i],r=a.length;for(let o=0;o<r;o++){let l=a[o];const d=(l==null?void 0:l.metadata)||{};l&&typeof l=="object"&&(l=l.value),d.type||typeof l=="number"&&(d.type="number"),(d.type==="text"||!d.type)&&typeof t[l]>"u"&&(t[l]=!0)}}return Object.keys(t)}toXML(){var e,t,i;const n=this.data,a=this.columns||[],r=Q.createXmlDoc(Q.schemas.spreadsheetml,"worksheet"),o=r.documentElement;let l,d,u;o.setAttribute("xmlns:r",Q.schemas.relationships),o.setAttribute("xmlns:mc",Q.schemas.markupCompat);let c=0;const h=Q.createElement(r,"sheetData"),m=this._buildCache(r);for(u=0,d=n.length;u<d;u++){const p=n[u],g=p.length;c=g>c?g:c;const f=r.createElement("row");for(let F=0;F<g;F++){a[F]=a[F]||{};let y=p[F],v;const C=(y==null?void 0:y.metadata)||{};switch(y&&typeof y=="object"&&(y=y.value),C.type||typeof y=="number"&&(C.type="number"),C.type){case"number":v=m.number.cloneNode(!0),v.firstChild.firstChild.nodeValue=y;break;case"date":v=m.date.cloneNode(!0),y instanceof Date&&(y=y.getTime()),v.firstChild.firstChild.nodeValue=25569+(y-this._timezoneOffset)/(60*60*24*1e3);break;case"formula":v=m.formula.cloneNode(!0),v.firstChild.firstChild.nodeValue=y;break;case"text":default:{let _;typeof((e=this.sharedStrings)==null?void 0:e.strings[y])<"u"?_=this.sharedStrings.strings[y]:_=(t=this.sharedStrings)==null?void 0:t.addString(y),v=m.string.cloneNode(!0),v.firstChild.firstChild.nodeValue=_;break}}C.style?v.setAttribute("s",C.style):((i=this._rowInstructions[u])==null?void 0:i.style)!==void 0&&v.setAttribute("s",this._rowInstructions[u].style),v.setAttribute("r",Q.positionToLetterRef(F+1,String(u+1))),f.appendChild(v)}if(f.setAttribute("r",u+1),this._rowInstructions[u]){const F=this._rowInstructions[u];F.height!==void 0&&(f.setAttribute("customHeight","1"),f.setAttribute("ht",F.height)),F.style!==void 0&&(f.setAttribute("customFormat","1"),f.setAttribute("s",F.style))}h.appendChild(f)}if(c!==0?o.appendChild(Q.createElement(r,"dimension",[["ref",`${Q.positionToLetterRef(1,1)}:${Q.positionToLetterRef(c,String(n.length))}`]])):o.appendChild(Q.createElement(r,"dimension",[["ref",Q.positionToLetterRef(1,1)]])),o.appendChild(this.sheetView.exportXML(r)),this.columns.length&&o.appendChild(this.exportColumns(r)),o.appendChild(h),this.sheetProtection&&o.appendChild(this.sheetProtection.exportXML(r)),this.hyperlinks.length>0){const p=r.createElement("hyperlinks"),g=this.hyperlinks;for(l=0,d=g.length;l<d;l++){const f=r.createElement("hyperlink"),F=g[l];f.setAttribute("ref",String(F.cell)),F.id=Q.uniqueId("hyperlink"),this.relations.addRelation({id:F.id,target:F.location,targetMode:F.targetMode||"External"},"hyperlink"),f.setAttribute("r:id",this.relations.getRelationshipId(F)),p.appendChild(f)}o.appendChild(p)}if(this.mergedCells.length>0){const p=r.createElement("mergeCells");for(l=0,d=this.mergedCells.length;l<d;l++){const g=r.createElement("mergeCell");g.setAttribute("ref",`${this.mergedCells[l][0]}:${this.mergedCells[l][1]}`),p.appendChild(g)}o.appendChild(p)}if(this.exportPageSettings(r,o),this._headers.length>0||this._footers.length>0){const p=r.createElement("headerFooter");this._headers.length>0&&p.appendChild(this.exportHeader(r)),this._footers.length>0&&p.appendChild(this.exportFooter(r)),o.appendChild(p)}for(l=0,d=this._drawings.length;l<d;l++){const p=r.createElement("drawing");p.setAttribute("r:id",this.relations.getRelationshipId(this._drawings[l])),o.appendChild(p)}if(this._tables.length>0){const p=r.createElement("tableParts");for(p.setAttribute("count",this._tables.length),l=0,d=this._tables.length;l<d;l++){const g=r.createElement("tablePart");g.setAttribute("r:id",this.relations.getRelationshipId(this._tables[l])),p.appendChild(g)}o.appendChild(p)}return r}exportColumns(e){const t=Q.createElement(e,"cols");for(let i=0,n=this.columns.length;i<n;i++){const a=this.columns[i],r=Q.createElement(e,"col",[["min",a.min||i+1],["max",a.max||i+1]]);a.hidden&&r.setAttribute("hidden",String(1)),a.bestFit&&r.setAttribute("bestFit",String(1)),(a.customWidth||a.width)&&r.setAttribute("customWidth",String(1)),a.width?r.setAttribute("width",a.width):r.setAttribute("width",String(9.140625)),t.appendChild(r)}return t}exportPageSettings(e,t){if(this._margin){let i=.7;const n=this._margin.left?this._margin.left:i,a=this._margin.right?this._margin.right:i,r=this._margin.top?this._margin.top:i,o=this._margin.bottom?this._margin.bottom:i;i=.3;const l=this._margin.header?this._margin.header:i,d=this._margin.footer?this._margin.footer:i;t.appendChild(Q.createElement(e,"pageMargins",[["top",r],["bottom",o],["left",n],["right",a],["header",l],["footer",d]]))}this._orientation&&t.appendChild(Q.createElement(e,"pageSetup",[["orientation",this._orientation]]))}setPageOrientation(e){this._orientation=e}setPageMargin(e){this._margin=e}setColumns(e){this.columns=e}setData(e){this.data=e}mergeCells(e,t){this.mergedCells.push([e,t])}freezePane(e,t,i){this.sheetView.freezePane(e,t,i)}setColumnFormats(e){this.columnFormats=e}},wC=class{constructor(){W(this,"id",Ki("Workbook")),W(this,"styleSheet",new Fu),W(this,"sharedStrings",new fu),W(this,"relations",new Io),W(this,"worksheets",[]),W(this,"tables",[]),W(this,"drawings",[]),W(this,"media",{}),W(this,"printTitles"),this.initialize()}initialize(){this.id=Ki("Workbook"),this.styleSheet=new Fu,this.sharedStrings=new fu,this.relations=new Io,this.relations.addRelation(this.styleSheet,"stylesheet"),this.relations.addRelation(this.sharedStrings,"sharedStrings")}createWorksheet(e){return e=Object.assign({},{name:"Sheet ".concat(String(this.worksheets.length+1))},e),new EC(e)}getStyleSheet(){return this.styleSheet}addTable(e){this.tables.push(e)}addDrawings(e){this.drawings.push(e)}setPrintTitleTop(e,t){this.printTitles==null&&(this.printTitles={}),this.printTitles[e]==null&&(this.printTitles[e]={}),this.printTitles[e].top=t}setPrintTitleLeft(e,t){this.printTitles==null&&(this.printTitles={}),this.printTitles[e]==null&&(this.printTitles[e]={}),this.printTitles[e].left=String.fromCharCode(64+t)}addMedia(e,t,i,n){const a=t.split("."),r=a[a.length-1];if(!n)switch(r.toLowerCase()){case"jpeg":case"jpg":n="image/jpeg";break;case"png":n="image/png";break;case"gif":n="image/gif";break;default:n=null;break}return this.media[t]||(this.media[t]={id:t,data:i,fileName:t,contentType:n,extension:r}),this.media[t]}addWorksheet(e){this.relations.addRelation(e,"worksheet"),e.setSharedStringCollection(this.sharedStrings),this.worksheets.push(e)}createContentTypes(){const e=Q.createXmlDoc(Q.schemas.contentTypes,"Types"),t=e.documentElement;let i,n;t.appendChild(Q.createElement(e,"Default",[["Extension","rels"],["ContentType","application/vnd.openxmlformats-package.relationships+xml"]])),t.appendChild(Q.createElement(e,"Default",[["Extension","xml"],["ContentType","application/xml"]]));const a={};for(const r in this.media)r in this.media&&(a[this.media[r].extension]=this.media[r].contentType);for(const r in a)r in a&&t.appendChild(Q.createElement(e,"Default",[["Extension",r],["ContentType",a[r]]]));for(t.appendChild(Q.createElement(e,"Override",[["PartName","/xl/workbook.xml"],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"]])),t.appendChild(Q.createElement(e,"Override",[["PartName","/xl/sharedStrings.xml"],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"]])),t.appendChild(Q.createElement(e,"Override",[["PartName","/xl/styles.xml"],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"]])),i=0,n=this.worksheets.length;i<n;i++)t.appendChild(Q.createElement(e,"Override",[["PartName",`/xl/worksheets/sheet${i+1}.xml`],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"]]));for(i=0,n=this.tables.length;i<n;i++)t.appendChild(Q.createElement(e,"Override",[["PartName",`/xl/tables/table${i+1}.xml`],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"]]));for(i=0,n=this.drawings.length;i<n;i++)t.appendChild(Q.createElement(e,"Override",[["PartName",`/xl/drawings/drawing${i+1}.xml`],["ContentType","application/vnd.openxmlformats-officedocument.drawing+xml"]]));return e}toXML(){const e=Q.createXmlDoc(Q.schemas.spreadsheetml,"workbook"),t=e.documentElement;t.setAttribute("xmlns:r",Q.schemas.relationships);const i=31,n=Q.createElement(e,"sheets");for(let o=0,l=this.worksheets.length;o<l;o++){const d=e.createElement("sheet");typeof console<"u"&&this.worksheets[o].name.length>i&&console.log(`Microsoft Excel requires work sheet names to be less than ${i+1} characters long, work sheet name "${this.worksheets[o].name}" is ${this.worksheets[o].name.length} characters long`),d.setAttribute("name",this.worksheets[o].name),d.setAttribute("sheetId",o+1),d.setAttribute("r:id",this.relations.getRelationshipId(this.worksheets[o])),n.appendChild(d)}t.appendChild(n);const a=Q.createElement(e,"definedNames");let r=0;for(const o in this.printTitles)if(o in this.printTitles){const l=this.printTitles[o],d=e.createElement("definedName");d.setAttribute("name","_xlnm.Print_Titles"),d.setAttribute("localSheetId",r++);let u="";l.top&&(u+=`${o}!$1:$${l.top}`,l.left&&(u+=",")),l.left&&(u+=`${o}!$A:$${l.left}`),d.appendChild(e.createTextNode(u)),a.appendChild(d)}return t.appendChild(a),e}createWorkbookRelationship(){const e=Q.createXmlDoc(Q.schemas.relationshipPackage,"Relationships");return e.documentElement.appendChild(Q.createElement(e,"Relationship",[["Id","rId1"],["Type",Q.schemas.officeDocument],["Target","xl/workbook.xml"]])),e}_generateCorePaths(e){let t,i;for(Ii[this.styleSheet.id]="styles.xml",Ii[this.sharedStrings.id]="sharedStrings.xml",Ii[this.id]="/xl/workbook.xml",t=0,i=this.tables.length;t<i;t++)e[`/xl/tables/table${t+1}.xml`]=this.tables[t].toXML(),Ii[this.tables[t].id]=`/xl/tables/table${t+1}.xml`;for(const n in this.media)if(n in this.media){const a=this.media[n];e[`/xl/media/${n}`]=a.data,Ii[n]=`/xl/media/${n}`}for(t=0,i=this.drawings.length;t<i;t++)e[`/xl/drawings/drawing${t+1}.xml`]=this.drawings[t].toXML(),Ii[this.drawings[t].id]=`/xl/drawings/drawing${t+1}.xml`,e[`/xl/drawings/_rels/drawing${t+1}.xml.rels`]=this.drawings[t].relations.toXML()}_prepareFilesForPackaging(e){Object.assign(e,{"/[Content_Types].xml":this.createContentTypes(),"/_rels/.rels":this.createWorkbookRelationship(),"/xl/styles.xml":this.styleSheet.toXML(),"/xl/workbook.xml":this.toXML(),"/xl/sharedStrings.xml":this.sharedStrings.toXML(),"/xl/_rels/workbook.xml.rels":this.relations.toXML()});for(const[t,i]of Object.entries(e))if(t.indexOf(".xml")!==-1||t.indexOf(".rels")!==-1){i instanceof mr?e[t]=i.toString():e[t]=i.xml||new window.XMLSerializer().serializeToString(i);let n=e[t].replace(/xmlns=""/g,"");n=n.replace(/NS[\d]+:/g,""),n=n.replace(/xmlns:NS[\d]+=""/g,""),e[t]=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+`+Rt),ce&&ts([V,z,Y],ai=>{Rt=na(Rt,ai," ")}),C&&rt?C.createHTML(Rt):Rt},e.setConfig=function(){let q=arguments.length>0&&arguments[0]!==void 0?arguments[0]:{};yr(q),ht=!0},e.clearConfig=function(){Fn=null,ht=!1},e.isValidAttribute=function(q,D,H){Fn||yr({});const U=lt(q),Ve=lt(D);return Yl(U,Ve,H)},e.addHook=function(q,D){typeof D=="function"&&ia(P[q],D)},e.removeHook=function(q){return iu(P[q])},e.removeHooks=function(q){P[q]=[]},e.removeAllHooks=function(){P=du()},e}var Oh=Rh();const Fe={enableSorting:!0,headerRowHeight:45,rowHeight:45,topPanelHeight:30,sanitizer:s=>Oh.sanitize(s,{ADD_ATTR:["level"],RETURN_TRUSTED_TYPE:!0})};class yl{constructor(e){b(this,"_className","");b(this,"_viewModel");b(this,"_observers",[]);this.viewTemplate=e,this.viewTemplate.textContent="Loading..."}get className(){return this._className}dispose(){let e=this._observers.pop();for(;e;)e.dispose(),e=this._observers.pop();this._observers=[]}getModuleClassName(e){let t="";const i=typeof e=="object"&&Object.keys(e);return Array.isArray(i)&&i.length>0?t=i[0]:e!=null&&e.name&&(t=e.name),t}loadView(e){const t=this.parseTemplate(e);this.render(t)}loadViewModel(e){return this._className=this.getModuleClassName(e),this._viewModel=e!=null&&e.name?new e:new e[this._className],this._className?(window[this._className]=this._viewModel,this._viewModel):null}parseTemplate(e){return e.replace(/([a-z]*){1}.(trigger)="?(.*?)(\))"/gi,this.parseMethodBinding.bind(this)).replace(/([a-z]*){1}.(bind)="?([^">\s]*)"?/gi,this.parsePropertyBinding.bind(this)).replace(/\${(.*)}/gi,this.parseLogicExecution.bind(this))}parseLogicExecution(e,t){return window[this._className][t]}parseMethodBinding(e,t,i,n,a){let r="";switch(i){case"trigger":r=`${t.toLowerCase()}="window.${this._className.trim()}.${n.trim()}${a}"`;break}return r||""}parsePropertyBinding(e,t,i,n){return window.setTimeout(()=>{const a=document.querySelectorAll(`[${t}\\.${i}=${n}]`),r=t.toLowerCase();let o=this._observers.find(l=>l.property===n);switch(o||(o=new Oa({variable:window[this._className],property:n}),this._observers.push(o)),r){case"class":case"classname":case"className":o.bind(a,"className");break;case"innerhtml":case"innerHTML":o.bind(a,"innerHTML");break;case"innertext":case"innerText":o.bind(a,"innerText");break;case"style":o.bind(a,"style");break;case"textcontent":case"textContent":o.bind(a,"textContent");break;case"value":o.bind(a,r,"change").bind(a,r,"keyup");break;case"checked":case"min":case"max":default:o.bind(a,r,"change");break}},0),e}render(e){return this.viewTemplate.innerHTML=e,this.viewTemplate}renderError(e){this.viewTemplate.innerHTML+=`<br /><br /><div class="alert alert-danger">${e}</div>`}}function Zy(s,e,t,i){if(s){const n=new yl(s),a=n.loadViewModel(t);if(a!=null&&a.dispose&&(window.onunload=a.dispose),n.loadView(e),a!=null&&a.attached&&n.className){const r={};r[n.className]=a,a.attached(),a!=null&&a.bind&&a.bind(i)}return a}return null}function vn(s){const e=parseInt(s,10);return e<10?`0${e}`:e}const uu=995;class eC{constructor(){b(this,"_darkModeGrid1",!1);b(this,"gridOptions1");b(this,"gridOptions2");b(this,"columnDefinitions1");b(this,"columnDefinitions2");b(this,"dataset1");b(this,"dataset2");b(this,"sgb1");b(this,"sgb2");b(this,"isGrid2WithPagination",!0)}attached(){this.defineGrids(),this.dataset1=this.mockData(uu),this.dataset2=this.mockData(uu),this.sgb1=new he.GridBundle(document.querySelector(".grid1"),this.columnDefinitions1,{...Fe,...this.gridOptions1},this.dataset1),this.sgb2=new he.GridBundle(document.querySelector(".grid2"),this.columnDefinitions2,{...Fe,...this.gridOptions2},this.dataset2)}dispose(){var e,t;(e=this.sgb1)==null||e.dispose(),(t=this.sgb2)==null||t.dispose()}isBrowserDarkModeEnabled(){var e;return((e=window.matchMedia)==null?void 0:e.call(window,"(prefers-color-scheme: dark)").matches)??!1}defineGrids(){this.columnDefinitions1=[{id:"title",name:"Title",field:"title",sortable:!0,minWidth:100,filterable:!0},{id:"duration",name:"Duration (days)",field:"duration",sortable:!0,minWidth:100,filterable:!0,type:S.number},{id:"%",name:"% Complete",field:"percentComplete",sortable:!0,minWidth:100,filterable:!0,type:S.number},{id:"start",name:"Start",field:"start",formatter:R.dateIso,exportWithFormatter:!0,filterable:!0},{id:"finish",name:"Finish",field:"finish",formatter:R.dateIso,exportWithFormatter:!0,filterable:!0},{id:"effort-driven",name:"Effort Driven",field:"effortDriven",sortable:!0,minWidth:100,filterable:!0}],this._darkModeGrid1=this.isBrowserDarkModeEnabled(),this.gridOptions1={enableAutoResize:!1,darkMode:this._darkModeGrid1,gridHeight:225,gridWidth:800,rowHeight:33,gridMenu:{hideToggleDarkModeCommand:!1,onCommand:(e,t)=>{t.command==="toggle-dark-mode"&&(this._darkModeGrid1=!this._darkModeGrid1)}}},this.columnDefinitions2=this.columnDefinitions1,this.gridOptions2={...this.gridOptions1,darkMode:!1,gridHeight:255,headerRowHeight:40,columnPicker:{onColumnsChanged:(e,t)=>console.log("onColumnPickerColumnsChanged - visible columns count",t.visibleColumns.length)},gridMenu:{subItemChevronClass:"mdi mdi-chevron-down mdi-rotate-270",commandItems:[{command:"",divider:!0,positionOrder:98},{command:"export",title:"Exports",iconCssClass:"mdi mdi-download",positionOrder:99,commandItems:[{command:"exports-txt",title:"Text (tab delimited)"},{command:"sub-menu",title:"Excel",cssClass:"green",subMenuTitle:"available formats",subMenuTitleCssClass:"text-italic orange",commandItems:[{command:"exports-csv",title:"Excel (csv)"},{command:"exports-xlsx",title:"Excel (xlsx)"}]}]},{command:"feedback",title:"Feedback",iconCssClass:"mdi mdi-information-outline",positionOrder:100,commandItems:[{command:"request-update",title:"Request update from supplier",iconCssClass:"mdi mdi-star",tooltip:"this will automatically send an alert to the shipping team to contact the user for an update"},"divider",{command:"sub-menu",title:"Contact Us",iconCssClass:"mdi mdi-account",subMenuTitle:"contact us...",subMenuTitleCssClass:"italic",commandItems:[{command:"contact-email",title:"Email us",iconCssClass:"mdi mdi-pencil-outline"},{command:"contact-chat",title:"Chat with us",iconCssClass:"mdi mdi-message-text-outline"},{command:"contact-meeting",title:"Book an appointment",iconCssClass:"mdi mdi-coffee"}]}]}],onBeforeMenuShow:()=>{console.log("onGridMenuBeforeMenuShow")},onAfterMenuShow:()=>console.log("onGridMenuAfterMenuShow"),onColumnsChanged:(e,t)=>console.log("onGridMenuColumnsChanged",t),onCommand:(e,t)=>{var n;const i=(n=t.item)==null?void 0:n.command;i.includes("exports-")?alert("Exporting as "+(t==null?void 0:t.item.title)):i.includes("contact-")?alert("Command: "+(t==null?void 0:t.command)):console.log("onGridMenuCommand",t.command)},onMenuClose:(e,t)=>console.log("onGridMenuMenuClose - visible columns count",t.visibleColumns.length)},enableFiltering:!0,enablePagination:!0,pagination:{pageSizes:[5,10,15,20,25,50,75,100],pageSize:5},presets:{pagination:{pageNumber:2,pageSize:5},sorters:[{columnId:"title",direction:"ASC"}],filters:[{columnId:"title",searchTerms:["2"]}]}}}mockData(e){const t=[];for(let i=0;i<e;i++){const n=2e3+Math.floor(Math.random()*10),a=Math.floor(Math.random()*11),r=Math.floor(Math.random()*29),o=Math.round(Math.random()*100);t[i]={id:i,title:"Task "+i,duration:Math.round(Math.random()*100)+"",percentComplete:o,start:`${vn(n)}-${vn(a+1)}-${vn(r)}`,finish:`${vn(n+1)}-${vn(a+1)}-${vn(r)}`,effortDriven:i%5===0}}return t}toggleDarkModeGrid1(){var e,t,i;this._darkModeGrid1=!this._darkModeGrid1,this._darkModeGrid1?(e=document.querySelector(".grid1"))==null||e.classList.add("dark-mode"):(t=document.querySelector(".grid1"))==null||t.classList.remove("dark-mode"),(i=this.sgb1.slickGrid)==null||i.setOptions({darkMode:this._darkModeGrid1})}togglePaginationGrid2(){this.isGrid2WithPagination=!this.isGrid2WithPagination,this.sgb2.paginationService.togglePaginationVisibility(this.isGrid2WithPagination)}toggleGridMenu(e){var t;(t=this.sgb2)!=null&&t.extensionService&&this.sgb2.extensionService.getExtensionInstanceByName(ne.gridMenu).showGridMenu(e,{dropSide:"right"})}}var cu={},tC=function(s,e,t,i,n){var a=new Worker(cu[e]||(cu[e]=URL.createObjectURL(new Blob([s+';addEventListener("error",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})'],{type:"text/javascript"}))));return a.onmessage=function(r){var o=r.data,l=o.$e$;if(l){var d=new Error(l[0]);d.code=l[1],d.stack=l[2],n(d,null)}else n(null,o)},a.postMessage(t,i),a},Ct=Uint8Array,Pt=Uint16Array,ur=Int32Array,cr=new Ct([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0,0]),hr=new Ct([0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,0,0]),To=new Ct([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),Mh=function(s,e){for(var t=new Pt(31),i=0;i<31;++i)t[i]=e+=1<<s[i-1];for(var n=new ur(t[30]),i=1;i<30;++i)for(var a=t[i];a<t[i+1];++a)n[a]=a-t[i]<<5|i;return{b:t,r:n}},Ih=Mh(cr,2),iC=Ih.b,Vs=Ih.r;iC[28]=258,Vs[258]=28;var nC=Mh(hr,0),Ao=nC.r,$s=new Pt(32768);for(var Le=0;Le<32768;++Le){var Mi=(Le&43690)>>1|(Le&21845)<<1;Mi=(Mi&52428)>>2|(Mi&13107)<<2,Mi=(Mi&61680)>>4|(Mi&3855)<<4,$s[Le]=((Mi&65280)>>8|(Mi&255)<<8)>>1}var Mn=function(s,e,t){for(var i=s.length,n=0,a=new Pt(e);n<i;++n)s[n]&&++a[s[n]-1];var r=new Pt(e);for(n=1;n<e;++n)r[n]=r[n-1]+a[n-1]<<1;var o;if(t){o=new Pt(1<<e);var l=15-e;for(n=0;n<i;++n)if(s[n])for(var d=n<<4|s[n],u=e-s[n],c=r[s[n]-1]++<<u,h=c|(1<<u)-1;c<=h;++c)o[$s[c]>>l]=d}else for(o=new Pt(i),n=0;n<i;++n)s[n]&&(o[n]=$s[r[s[n]-1]++]>>15-s[n]);return o},Ui=new Ct(288);for(var Le=0;Le<144;++Le)Ui[Le]=8;for(var Le=144;Le<256;++Le)Ui[Le]=9;for(var Le=256;Le<280;++Le)Ui[Le]=7;for(var Le=280;Le<288;++Le)Ui[Le]=8;var ka=new Ct(32);for(var Le=0;Le<32;++Le)ka[Le]=5;var Bh=Mn(Ui,9,0),Ph=Mn(ka,5,0),Cl=function(s){return(s+7)/8|0},vl=function(s,e,t){return(e==null||e<0)&&(e=0),(t==null||t>s.length)&&(t=s.length),new Ct(s.subarray(e,t))},aC=["unexpected EOF","invalid block type","invalid length/literal","invalid distance","stream finished","no stream handler",,"no callback","invalid UTF-8 data","extra field too long","date not in range 1980-2099","filename too long","stream finishing","invalid zip data"],Wn=function(s,e,t){var i=new Error(e||aC[s]);if(i.code=s,Error.captureStackTrace&&Error.captureStackTrace(i,Wn),!t)throw i;return i},ri=function(s,e,t){t<<=e&7;var i=e/8|0;s[i]|=t,s[i+1]|=t>>8},En=function(s,e,t){t<<=e&7;var i=e/8|0;s[i]|=t,s[i+1]|=t>>8,s[i+2]|=t>>16},ws=function(s,e){for(var t=[],i=0;i<s.length;++i)s[i]&&t.push({s:i,f:s[i]});var n=t.length,a=t.slice();if(!n)return{t:El,l:0};if(n==1){var r=new Ct(t[0].s+1);return r[t[0].s]=1,{t:r,l:1}}t.sort(function(_,w){return _.f-w.f}),t.push({s:-1,f:25001});var o=t[0],l=t[1],d=0,u=1,c=2;for(t[0]={s:-1,f:o.f+l.f,l:o,r:l};u!=n-1;)o=t[t[d].f<t[c].f?d++:c++],l=t[d!=u&&t[d].f<t[c].f?d++:c++],t[u++]={s:-1,f:o.f+l.f,l:o,r:l};for(var h=a[0].s,i=1;i<n;++i)a[i].s>h&&(h=a[i].s);var m=new Pt(h+1),p=Us(t[u-1],m,0);if(p>e){var i=0,g=0,f=p-e,F=1<<f;for(a.sort(function(w,A){return m[A.s]-m[w.s]||w.f-A.f});i<n;++i){var y=a[i].s;if(m[y]>e)g+=F-(1<<p-m[y]),m[y]=e;else break}for(g>>=f;g>0;){var v=a[i].s;m[v]<e?g-=1<<e-m[v]++-1:++i}for(;i>=0&&g;--i){var C=a[i].s;m[C]==e&&(--m[C],++g)}p=e}return{t:new Ct(m),l:p}},Us=function(s,e,t){return s.s==-1?Math.max(Us(s.l,e,t+1),Us(s.r,e,t+1)):e[s.s]=t},xo=function(s){for(var e=s.length;e&&!s[--e];);for(var t=new Pt(++e),i=0,n=s[0],a=1,r=function(l){t[i++]=l},o=1;o<=e;++o)if(s[o]==n&&o!=e)++a;else{if(!n&&a>2){for(;a>138;a-=138)r(32754);a>2&&(r(a>10?a-11<<5|28690:a-3<<5|12305),a=0)}else if(a>3){for(r(n),--a;a>6;a-=6)r(8304);a>2&&(r(a-3<<5|8208),a=0)}for(;a--;)r(n);a=1,n=s[o]}return{c:t.subarray(0,i),n:e}},wn=function(s,e){for(var t=0,i=0;i<e.length;++i)t+=s[i]*e[i];return t},Sl=function(s,e,t){var i=t.length,n=Cl(e+2);s[n]=i&255,s[n+1]=i>>8,s[n+2]=s[n]^255,s[n+3]=s[n+1]^255;for(var a=0;a<i;++a)s[n+a+4]=t[a];return(n+4+i)*8},Ro=function(s,e,t,i,n,a,r,o,l,d,u){ri(e,u++,t),++n[256];for(var c=ws(n,15),h=c.t,m=c.l,p=ws(a,15),g=p.t,f=p.l,F=xo(h),y=F.c,v=F.n,C=xo(g),_=C.c,w=C.n,A=new Pt(19),k=0;k<y.length;++k)++A[y[k]&31];for(var k=0;k<_.length;++k)++A[_[k]&31];for(var x=ws(A,7),I=x.t,P=x.l,V=19;V>4&&!I[To[V-1]];--V);var z=d+5<<3,Y=wn(n,Ui)+wn(a,ka)+r,re=wn(n,h)+wn(a,g)+r+14+3*V+wn(A,I)+2*A[16]+3*A[17]+7*A[18];if(l>=0&&z<=Y&&z<=re)return Sl(e,u,s.subarray(l,l+d));var me,de,oe,Ge;if(ri(e,u,1+(re<Y)),u+=2,re<Y){me=Mn(h,m,0),de=h,oe=Mn(g,f,0),Ge=g;var nt=Mn(I,P,0);ri(e,u,v-257),ri(e,u+5,w-1),ri(e,u+10,V-4),u+=14;for(var k=0;k<V;++k)ri(e,u+3*k,I[To[k]]);u+=3*V;for(var K=[y,_],we=0;we<2;++we)for(var ue=K[we],k=0;k<ue.length;++k){var Te=ue[k]&31;ri(e,u,nt[Te]),u+=I[Te],Te>15&&(ri(e,u,ue[k]>>5&127),u+=ue[k]>>12)}}else me=Bh,de=Ui,oe=Ph,Ge=ka;for(var k=0;k<o;++k){var ee=i[k];if(ee>255){var Te=ee>>18&31;En(e,u,me[Te+257]),u+=de[Te+257],Te>7&&(ri(e,u,ee>>23&31),u+=cr[Te]);var X=ee&31;En(e,u,oe[X]),u+=Ge[X],X>3&&(En(e,u,ee>>5&8191),u+=hr[X])}else En(e,u,me[ee]),u+=de[ee]}return En(e,u,me[256]),u+de[256]},Lh=new ur([65540,131080,131088,131104,262176,1048704,1048832,2114560,2117632]),El=new Ct(0),Nh=function(s,e,t,i,n,a){var r=a.z||s.length,o=new Ct(i+r+5*(1+Math.ceil(r/7e3))+n),l=o.subarray(i,o.length-n),d=a.l,u=(a.r||0)&7;if(e){u&&(l[0]=a.r>>3);for(var c=Lh[e-1],h=c>>13,m=c&8191,p=(1<<t)-1,g=a.p||new Pt(32768),f=a.h||new Pt(p+1),F=Math.ceil(t/3),y=2*F,v=function(ze){return(s[ze]^s[ze+1]<<F^s[ze+2]<<y)&p},C=new ur(25e3),_=new Pt(288),w=new Pt(32),A=0,k=0,x=a.i||0,I=0,P=a.w||0,V=0;x+2<r;++x){var z=v(x),Y=x&32767,re=f[z];if(g[Y]=re,f[z]=Y,P<=x){var me=r-x;if((A>7e3||I>24576)&&(me>423||!d)){u=Ro(s,l,0,C,_,w,k,I,V,x-V,u),I=A=k=0,V=x;for(var de=0;de<286;++de)_[de]=0;for(var de=0;de<30;++de)w[de]=0}var oe=2,Ge=0,nt=m,K=Y-re&32767;if(me>2&&z==v(x-K))for(var we=Math.min(h,me)-1,ue=Math.min(32767,x),Te=Math.min(258,me);K<=ue&&--nt&&Y!=re;){if(s[x+oe]==s[x+oe-K]){for(var ee=0;ee<Te&&s[x+ee]==s[x+ee-K];++ee);if(ee>oe){if(oe=ee,Ge=K,ee>we)break;for(var X=Math.min(K,ee-2),Ee=0,de=0;de<X;++de){var ct=x-K+de&32767,Jt=g[ct],Ut=ct-Jt&32767;Ut>Ee&&(Ee=Ut,re=ct)}}}Y=re,re=g[Y],K+=Y-re&32767}if(Ge){C[I++]=268435456|Vs[oe]<<18|Ao[Ge];var $=Vs[oe]&31,ce=Ao[Ge]&31;k+=cr[$]+hr[ce],++_[257+$],++w[ce],P=x+oe,++A}else C[I++]=s[x],++_[s[x]]}}for(x=Math.max(x,P);x<r;++x)C[I++]=s[x],++_[s[x]];u=Ro(s,l,d,C,_,w,k,I,V,x-V,u),d||(a.r=u&7|l[u/8|0]<<3,u-=7,a.h=f,a.p=g,a.i=x,a.w=P)}else{for(var x=a.w||0;x<r+d;x+=65535){var We=x+65535;We>=r&&(l[u/8|0]=d,We=r),u=Sl(l,u+1,s.subarray(x,We))}a.i=r}return vl(o,0,i+Cl(u)+n)},sC=function(){for(var s=new Int32Array(256),e=0;e<256;++e){for(var t=e,i=9;--i;)t=(t&1&&-306674912)^t>>>1;s[e]=t}return s}(),rC=function(){var s=-1;return{p:function(e){for(var t=s,i=0;i<e.length;++i)t=sC[t&255^e[i]]^t>>>8;s=t},d:function(){return~s}}},Hh=function(s,e,t,i,n){if(!n&&(n={l:1},e.dictionary)){var a=e.dictionary.subarray(-32768),r=new Ct(a.length+s.length);r.set(a),r.set(s,a.length),s=r,n.w=a.length}return Nh(s,e.level==null?6:e.level,e.mem==null?n.l?Math.ceil(Math.max(8,Math.min(13,Math.log(s.length)))*1.5):20:12+e.mem,t,i,n)},wl=function(s,e){var t={};for(var i in s)t[i]=s[i];for(var i in e)t[i]=e[i];return t},hu=function(s,e,t){for(var i=s(),n=s.toString(),a=n.slice(n.indexOf("[")+1,n.lastIndexOf("]")).replace(/\s+/g,"").split(","),r=0;r<i.length;++r){var o=i[r],l=a[r];if(typeof o=="function"){e+=";"+l+"=";var d=o.toString();if(o.prototype)if(d.indexOf("[native code]")!=-1){var u=d.indexOf(" ",8)+1;e+=d.slice(u,d.indexOf("(",u))}else{e+=d;for(var c in o.prototype)e+=";"+l+".prototype."+c+"="+o.prototype[c].toString()}else e+=d}else t[l]=o}return e},ns=[],oC=function(s){var e=[];for(var t in s)s[t].buffer&&e.push((s[t]=new s[t].constructor(s[t])).buffer);return e},lC=function(s,e,t,i){if(!ns[t]){for(var n="",a={},r=s.length-1,o=0;o<r;++o)n=hu(s[o],n,a);ns[t]={c:hu(s[r],n,a),e:a}}var l=wl({},ns[t].e);return tC(ns[t].c+";onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage="+e.toString()+"}",t,l,oC(l),i)},dC=function(){return[Ct,Pt,ur,cr,hr,To,Vs,Ao,Bh,Ui,Ph,ka,$s,Lh,El,Mn,ri,En,ws,Us,xo,wn,Sl,Ro,Cl,vl,Nh,Hh,_l,Gh]},Gh=function(s){return postMessage(s,[s.buffer])},uC=function(s,e,t,i,n,a){var r=lC(t,i,n,function(o,l){r.terminate(),a(o,l)});return r.postMessage([s,e],e.consume?[s.buffer]:[]),function(){r.terminate()}},Ft=function(s,e,t){for(;t;++e)s[e]=t,t>>>=8};function cC(s,e,t){return t||(t=e,e={}),typeof t!="function"&&Wn(7),uC(s,e,[dC],function(i){return Gh(_l(i.data[0],i.data[1]))},0,t)}function _l(s,e){return Hh(s,e||{},0,0)}var Wh=function(s,e,t,i){for(var n in s){var a=s[n],r=e+n,o=i;Array.isArray(a)&&(o=wl(i,a[1]),a=a[0]),a instanceof Ct?t[r]=[a,o]:(t[r+="/"]=[new Ct(0),o],Wh(a,r,t,i))}},mu=typeof TextEncoder<"u"&&new TextEncoder,hC=typeof TextDecoder<"u"&&new TextDecoder,mC=0;try{hC.decode(El,{stream:!0}),mC=1}catch{}function Oo(s,e){var t;if(mu)return mu.encode(s);for(var i=s.length,n=new Ct(s.length+(s.length>>1)),a=0,r=function(d){n[a++]=d},t=0;t<i;++t){if(a+5>n.length){var o=new Ct(a+8+(i-t<<1));o.set(n),n=o}var l=s.charCodeAt(t);l<128||e?r(l):l<2048?(r(192|l>>6),r(128|l&63)):l>55295&&l<57344?(l=65536+(l&1047552)|s.charCodeAt(++t)&1023,r(240|l>>18),r(128|l>>12&63),r(128|l>>6&63),r(128|l&63)):(r(224|l>>12),r(128|l>>6&63),r(128|l&63))}return vl(n,0,a)}var Mo=function(s){var e=0;if(s)for(var t in s){var i=s[t].length;i>65535&&Wn(9),e+=i+4}return e},pu=function(s,e,t,i,n,a,r,o){var l=i.length,d=t.extra,u=o&&o.length,c=Mo(d);Ft(s,e,r!=null?33639248:67324752),e+=4,r!=null&&(s[e++]=20,s[e++]=t.os),s[e]=20,e+=2,s[e++]=t.flag<<1|(a<0&&8),s[e++]=n&&8,s[e++]=t.compression&255,s[e++]=t.compression>>8;var h=new Date(t.mtime==null?Date.now():t.mtime),m=h.getFullYear()-1980;if((m<0||m>119)&&Wn(10),Ft(s,e,m<<25|h.getMonth()+1<<21|h.getDate()<<16|h.getHours()<<11|h.getMinutes()<<5|h.getSeconds()>>1),e+=4,a!=-1&&(Ft(s,e,t.crc),Ft(s,e+4,a<0?-a-2:a),Ft(s,e+8,t.size)),Ft(s,e+12,l),Ft(s,e+14,c),e+=16,r!=null&&(Ft(s,e,u),Ft(s,e+6,t.attrs),Ft(s,e+10,r),e+=14),s.set(i,e),e+=l,c)for(var p in d){var g=d[p],f=g.length;Ft(s,e,+p),Ft(s,e+2,f),s.set(g,e+4),e+=4+f}return u&&(s.set(o,e),e+=u),e},pC=function(s,e,t,i,n){Ft(s,e,101010256),Ft(s,e+8,t),Ft(s,e+10,t),Ft(s,e+12,i),Ft(s,e+16,n)};function gC(s,e,t){t||(t=e,e={}),typeof t!="function"&&Wn(7);var i={};Wh(s,"",i,e);var n=Object.keys(i),a=n.length,r=0,o=0,l=a,d=new Array(a),u=[],c=function(){for(var f=0;f<u.length;++f)u[f]()},h=function(f,F){gu(function(){t(f,F)})};gu(function(){h=t});var m=function(){var f=new Ct(o+22),F=r,y=o-r;o=0;for(var v=0;v<l;++v){var C=d[v];try{var _=C.c.length;pu(f,o,C,C.f,C.u,_);var w=30+C.f.length+Mo(C.extra),A=o+w;f.set(C.c,A),pu(f,r,C,C.f,C.u,_,o,C.m),r+=16+w+(C.m?C.m.length:0),o=A+_}catch(k){return h(k,null)}}pC(f,r,d.length,y,F),h(null,f)};a||m();for(var p=function(f){var F=n[f],y=i[F],v=y[0],C=y[1],_=rC(),w=v.length;_.p(v);var A=Oo(F),k=A.length,x=C.comment,I=x&&Oo(x),P=I&&I.length,V=Mo(C.extra),z=C.level==0?0:8,Y=function(re,me){if(re)c(),h(re,null);else{var de=me.length;d[f]=wl(C,{size:w,crc:_.d(),c:me,f:A,m:I,u:k!=F.length||I&&x.length!=P,compression:z}),r+=30+k+V+de,o+=76+2*(k+V)+(P||0)+de,--a||m()}};if(k>65535&&Y(Wn(11,0,1),null),!z)Y(null,v);else if(w<16e4)try{Y(null,_l(v,C))}catch(re){Y(re,null)}else u.push(cC(v,C,Y))},g=0;g<l;++g)p(g);return c}var gu=typeof queueMicrotask=="function"?queueMicrotask:typeof setTimeout=="function"?setTimeout:function(s){s()},fC=Object.defineProperty,FC=(s,e,t)=>e in s?fC(s,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):s[e]=t,W=(s,e,t)=>FC(s,typeof e!="symbol"?e+"":e,t);function bi(s){const e=typeof s;return s!=null&&(e==="object"||e==="function")}function bC(s){if(typeof s!="object"||s===null||Object.prototype.toString.call(s)!=="[object Object]")return!1;const e=Object.getPrototypeOf(s);if(e===null)return!0;const t=Object.prototype.hasOwnProperty.call(e,"constructor")&&e.constructor;return typeof t=="function"&&t instanceof t&&Function.prototype.call(t)===Function.prototype.call(s)}function _n(s){return s!=null&&typeof s.valueOf()=="string"}const yC={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"},zh=s=>(typeof s!="string"&&(s=`${s}`),s.replace(/[&<>"']/g,e=>yC[e]));let mr=class{constructor(e,t){W(this,"documentElement"),this.documentElement=this.createElement(t),this.documentElement.setAttribute("xmlns",e)}createElement(e){return new $h({nodeName:e})}createTextNode(e){return new Vh(e)}toString(){return this.documentElement.toString()}};W(mr,"Node",{Create:s=>{switch(s.type){case"XML":return new $h(s);case"TEXT":return new Vh(s.nodeValue);default:return null}}});let Vh=class{constructor(e){W(this,"nodeValue"),this.nodeValue=e}toJSON(){return{nodeValue:this.nodeValue,type:"TEXT"}}toString(){return zh(this.nodeValue)}},$h=class Uh{constructor(e){if(W(this,"nodeName",""),W(this,"children"),W(this,"nodeValue"),W(this,"attributes"),W(this,"firstChild"),this.nodeName=e.nodeName,this.children=[],this.nodeValue=e.nodeValue||"",this.attributes={},e.children)for(let t=0,i=e.children.length;t<i;t++)this.appendChild(mr.Node.Create(e.children[t]));if(e.attributes)for(const t in e.attributes)e.attributes.hasOwnProperty(t)&&this.setAttribute(t,e.attributes[t])}toString(){let e=`<${this.nodeName}`;for(const i in this.attributes)this.attributes.hasOwnProperty(i)&&(e=`${e} ${i}="${zh(this.attributes[i])}"`);let t="";for(let i=0,n=this.children.length;i<n;i++)t+=this.children[i].toString();return t?e+=`>${t}</${this.nodeName}>`:e+="/>",e}toJSON(){const e=[];for(let t=0,i=this.children.length;t<i;t++)e.push(this.children[t].toJSON());return{nodeName:this.nodeName,children:e,nodeValue:this.nodeValue,attributes:this.attributes,type:"XML"}}setAttribute(e,t){if(t===null){delete this.attributes[e],delete this[e];return}this.attributes[e]=t,this[e]=t}appendChild(e){this.children.push(e),this.firstChild=this.children[0]}cloneNode(e){return new Uh(this.toJSON())}};const _s=class nn{static uniqueId(e){return nn._idSpaces[e]||(nn._idSpaces[e]=1),nn._idSpaces[e]++}static createXmlDoc(e,t){return new mr(e||null,t)}static createElement(e,t,i){const n=e.createElement(t);i=i||[];let a=i.length;for(;a--;)n.setAttribute(i[a][0],i[a][1]);return n}static setAttributesOnDoc(e,t){for(let[i,n]of Object.entries(t)){if(bC(n))if(n.v!==null&&n.v!==void 0)switch(n.type){case Boolean:n=n.v?"1":"0";break}else n=null;n!=null&&e.setAttribute(i,n)}}static positionToLetterRef(e,t){let i=1,n,a=e,r="";const o="ABCDEFGHIJKLMNOPQRSTUVWXYZ";if(nn.LETTER_REFS[e])return nn.LETTER_REFS[e].concat(t);for(;a>0;)a-=Math.pow(26,i-1),n=a%Math.pow(26,i),a-=n,n=n/Math.pow(26,i-1),r=o.charAt(n)+r,i+=1;return nn.LETTER_REFS[e]=r,r.concat(String(t))}};W(_s,"_idSpaces",{}),W(_s,"LETTER_REFS",{}),W(_s,"schemas",{worksheet:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",sharedStrings:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",stylesheet:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",relationships:"http://schemas.openxmlformats.org/officeDocument/2006/relationships",relationshipPackage:"http://schemas.openxmlformats.org/package/2006/relationships",contentTypes:"http://schemas.openxmlformats.org/package/2006/content-types",spreadsheetml:"http://schemas.openxmlformats.org/spreadsheetml/2006/main",markupCompat:"http://schemas.openxmlformats.org/markup-compatibility/2006",x14ac:"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac",officeDocument:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",package:"http://schemas.openxmlformats.org/package/2006/relationships",table:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/table",spreadsheetDrawing:"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",drawing:"http://schemas.openxmlformats.org/drawingml/2006/main",drawingRelationship:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing",image:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",chart:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart",hyperlink:"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink"});let Q=_s;const Jr={};function Ki(s="$lodash$"){Jr[s]||(Jr[s]=0);const e=++Jr[s];return s==="$lodash$"?`${e}`:`${s}${e}`}const Ii={};let Io=class{constructor(){W(this,"relations",{}),W(this,"lastId",1),Ki("rId")}importData(e){this.relations=e.relations,this.lastId=e.lastId}exportData(){return{relations:this.relations,lastId:this.lastId}}addRelation(e,t){return this.relations[e.id]={id:Ki("rId"),schema:Q.schemas[t],object:e},this.relations[e.id].id}getRelationshipId(e){return this.relations[e.id]?this.relations[e.id].id:null}toXML(){const e=Q.createXmlDoc(Q.schemas.relationshipPackage,"Relationships"),t=e.documentElement;for(const[i,n]of Object.entries(this.relations)){const a=Q.createElement(e,"Relationship",[["Id",n.id],["Type",n.schema],["Target",n.object.target||Ii[i]]]);n.object.targetMode&&a.setAttribute("TargetMode",n.object.targetMode),t.appendChild(a)}return e}},CC=class{constructor(){W(this,"state",null),W(this,"xSplit",null),W(this,"ySplit",null),W(this,"activePane","bottomRight"),W(this,"topLeftCell",null),W(this,"_freezePane")}freezePane(e,t,i){this._freezePane={xSplit:e,ySplit:t,cell:i}}exportXML(e){const t=e.createElement("pane");return this.state!==null&&(t.setAttribute("xSplit",this._freezePane.xSplit),t.setAttribute("ySplit",this._freezePane.ySplit),t.setAttribute("topLeftCell",this._freezePane.cell),t.setAttribute("activePane","bottomRight"),t.setAttribute("state","frozen")),t}},fu=class{constructor(){W(this,"strings",{}),W(this,"stringArray",[]),W(this,"id",Ki("SharedStrings"))}addString(e){return this.strings[e]=this.stringArray.length,this.stringArray[this.stringArray.length]=e,this.strings[e]}exportData(){return this.strings}toXML(){const e=Q.createXmlDoc(Q.schemas.spreadsheetml,"sst"),t=e.documentElement;this.stringArray.reverse();let i=this.stringArray.length;t.setAttribute("count",i),t.setAttribute("uniqueCount",i);const n=e.createElement("si"),a=e.createElement("t");a.appendChild(e.createTextNode("--placeholder--")),n.appendChild(a);const r=this.stringArray;for(;i--;){const o=n.cloneNode(!0);typeof r[i]=="string"&&r[i].match(/\s+/)&&o.firstChild.setAttribute("xml:space","preserve"),o.firstChild.firstChild.nodeValue=r[i],t.appendChild(o)}return e}},vC=class{constructor(e){W(this,"pane"),W(this,"showZeros",null),W(this,"defaultGridColor",null),W(this,"colorId",null),W(this,"rightToLeft",null),W(this,"showFormulas",null),W(this,"showGridLines",null),W(this,"showOutlineSymbols",null),W(this,"showRowColHeaders",null),W(this,"showRuler",null),W(this,"showWhiteSpace",null),W(this,"tabSelected",null),W(this,"topLeftCell",null),W(this,"viewType",null),W(this,"windowProtection",null),W(this,"zoomScale",null),W(this,"zoomScaleNormal",null),W(this,"zoomScalePageLayoutView",null),W(this,"zoomScaleSheetLayoutView",null);const t=e||{};this.pane=t.pane||new CC}freezePane(e,t,i){this.pane.state="frozen",this.pane.xSplit=e,this.pane.ySplit=t,this.pane.topLeftCell=i}exportXML(e){const t=e.createElement("sheetViews"),i=e.createElement("sheetView");return Q.setAttributesOnDoc(i,{workbookViewId:0,showZeros:{v:this.showZeros,type:Boolean},defaultGridColor:{v:this.defaultGridColor,type:Boolean},colorId:this.colorId,rightToLeft:{v:this.rightToLeft,type:Boolean},showFormulas:{v:this.showFormulas,type:Boolean},showGridLines:{v:this.showGridLines,type:Boolean},showOutlineSymbols:{v:this.showOutlineSymbols,type:Boolean},showRowColHeaders:{v:this.showRowColHeaders,type:Boolean},showRuler:{v:this.showRuler,type:Boolean},showWhiteSpace:{v:this.showWhiteSpace,type:Boolean},tabSelected:{v:this.tabSelected,type:Boolean},viewType:this.viewType,windowProtection:{v:this.windowProtection,type:Boolean},zoomScale:{v:this.zoomScale,type:Boolean},zoomScaleNormal:this.zoomScaleNormal,zoomScalePageLayoutView:this.zoomScalePageLayoutView,zoomScaleSheetLayoutView:this.zoomScaleSheetLayoutView}),i.appendChild(this.pane.exportXML(e)),t.appendChild(i),t}};function SC(s,e){return e.reduce((t,i)=>(s!=null&&s.hasOwnProperty(i)&&(t[i]=s[i]),t),{})}let Fu=class{constructor(){W(this,"id",Ki("StyleSheet")),W(this,"cellStyles",[{name:"Normal",xfId:"0",builtinId:"0"}]),W(this,"defaultTableStyle",!1),W(this,"differentialStyles",[{}]),W(this,"masterCellFormats",[{numFmtId:0,fontId:0,fillId:0,borderId:0,xfid:0}]),W(this,"masterCellStyles",[{numFmtId:0,fontId:0,fillId:0,borderId:0}]),W(this,"fonts",[{}]),W(this,"numberFormatters",[]),W(this,"fills",[{},{type:"pattern",patternType:"gray125",fgColor:"FF333333",bgColor:"FF333333"}]),W(this,"borders",[{top:{},left:{},right:{},bottom:{},diagonal:{}}]),W(this,"tableStyles",[])}createSimpleFormatter(e){const t={id:this.masterCellFormats.length};switch(e){case"date":t.numFmtId=14;break}return this.masterCellFormats.push(t),t}createFill(e){const t=this.fills.length,i=e;return i.id=t,this.fills.push(i),i}createNumberFormatter(e){const t={id:this.numberFormatters.length+100,formatCode:e};return this.numberFormatters.push(t),t}createFormat(e){const t={id:this.masterCellFormats.length};if(e.protection&&(t.protection=e.protection),e.font&&bi(e.font))t.fontId=this.createFontStyle(e.font).id;else if(e.font){if(Number.isNaN(Number.parseInt(e.font,10)))throw new Error("Passing a non-numeric font id is not supported");t.fontId=e.font}if(e.format&&_n(e.format))t.numFmtId=this.createNumberFormatter(e.format).id;else if(e.format){if(Number.isNaN(Number.parseInt(e.format,10)))throw new Error("Invalid number formatter id");t.numFmtId=e.format}if(e.border&&bi(e.border))t.borderId=this.createBorderFormatter(e.border).id;else if(e.border){if(Number.isNaN(Number.parseInt(e.border,10)))throw new Error("Passing a non-numeric border id is not supported");t.borderId=e.border}if(e.fill&&bi(e.fill))t.fillId=this.createFill(e.fill).id;else if(e.fill){if(Number.isNaN(Number.parseInt(e.fill,10)))throw new Error("Passing a non-numeric fill id is not supported");t.fillId=e.fill}return e.alignment&&bi(e.alignment)&&(t.alignment=SC(e.alignment,["horizontal","justifyLastLine","readingOrder","relativeIndent","shrinkToFit","textRotation","vertical","wrapText"])),this.masterCellFormats.push(t),t}createDifferentialStyle(e){const t=this.differentialStyles.length,i={id:t};return e.font&&bi(e.font)&&(i.font=e.font),e.border&&bi(e.border)&&(i.border=Object.assign({top:{},left:{},right:{},bottom:{},diagonal:{}},e.border)),e.fill&&bi(e.fill)&&(i.fill=e.fill),e.alignment&&bi(e.alignment)&&(i.alignment=e.alignment),e.format&&_n(e.format)&&(i.numFmt=e.format),this.differentialStyles[t]=i,i}createTableStyle(e){this.tableStyles.push(e)}createBorderFormatter(e){return e={top:{},left:{},right:{},bottom:{},diagonal:{},id:this.borders.length,...e},this.borders.push(e),e}createFontStyle(e){const t={id:this.fonts.length};return e.bold&&(t.bold=!0),e.italic&&(t.italic=!0),e.superscript&&(t.vertAlign="superscript"),e.subscript&&(t.vertAlign="subscript"),e.underline&&(typeof e.underline=="string"&&["double","singleAccounting","doubleAccounting"].includes(e.underline)?t.underline=e.underline:t.underline=!0),e.strike&&(t.strike=!0),e.outline&&(t.outline=!0),e.shadow&&(t.shadow=!0),e.size&&(t.size=e.size),e.color&&(t.color=e.color),e.fontName&&(t.fontName=e.fontName),this.fonts.push(t),t}exportBorders(e){const t=e.createElement("borders");t.setAttribute("count",this.borders.length);for(let i=0,n=this.borders.length;i<n;i++)t.appendChild(this.exportBorder(e,this.borders[i]));return t}exportBorder(e,t){const i=e.createElement("border"),n=a=>{const r=e.createElement(a);return t[a].style&&r.setAttribute("style",t[a].style),t[a].color&&r.appendChild(this.exportColor(e,t[a].color)),r};return i.appendChild(n("left")),i.appendChild(n("right")),i.appendChild(n("top")),i.appendChild(n("bottom")),i.appendChild(n("diagonal")),i}exportColor(e,t){const i=e.createElement("color");return _n(t)?(i.setAttribute("rgb",t),i):(t.tint!==void 0&&i.setAttribute("tint",t.tint),t.auto!==void 0&&i.setAttribute("auto",String(!!t.auto)),t.theme!==void 0&&i.setAttribute("theme",t.theme),i)}exportMasterCellFormats(e){const t=Q.createElement(e,"cellXfs",[["count",this.masterCellFormats.length]]);for(let i=0,n=this.masterCellFormats.length;i<n;i++){const a=this.masterCellFormats[i];t.appendChild(this.exportCellFormatElement(e,a))}return t}exportMasterCellStyles(e){const t=Q.createElement(e,"cellStyleXfs",[["count",this.masterCellStyles.length]]);for(let i=0,n=this.masterCellStyles.length;i<n;i++){const a=this.masterCellStyles[i];t.appendChild(this.exportCellFormatElement(e,a))}return t}exportCellFormatElement(e,t){const i=e.createElement("xf"),n=["applyAlignment","applyBorder","applyFill","applyFont","applyNumberFormat","applyProtection","borderId","fillId","fontId","numFmtId","pivotButton","quotePrefix","xfId"],a=Object.keys(t).filter(o=>n.indexOf(o)!==-1);if(t.alignment){const o=t.alignment;i.appendChild(this.exportAlignment(e,o))}t.protection&&(i.appendChild(this.exportProtection(e,t.protection)),i.setAttribute("applyProtection","1"));let r=a.length;for(;r--;)i.setAttribute(a[r],t[a[r]]);return t.fillId&&i.setAttribute("applyFill","1"),t.fontId&&i.setAttribute("applyFont","1"),t.borderId&&i.setAttribute("applyBorder","1"),t.alignment&&i.setAttribute("applyAlignment","1"),t.numFmtId&&i.setAttribute("applyNumberFormat","1"),t.numFmtId!==void 0&&t.xfId===void 0&&i.setAttribute("xfId","0"),i}exportAlignment(e,t){const i=e.createElement("alignment"),n=Object.keys(t);for(let a=0,r=n.length;a<r;a++)i.setAttribute(n[a],t[n[a]]);return i}exportFonts(e){const t=e.createElement("fonts");t.setAttribute("count",String(this.fonts.length));for(let i=0,n=this.fonts.length;i<n;i++){const a=this.fonts[i];t.appendChild(this.exportFont(e,a))}return t}exportFont(e,t){const i=e.createElement("font");if(t.size){const n=e.createElement("sz");n.setAttribute("val",t.size),i.appendChild(n)}if(t.fontName){const n=e.createElement("name");n.setAttribute("val",t.fontName),i.appendChild(n)}if(t.bold&&i.appendChild(e.createElement("b")),t.italic&&i.appendChild(e.createElement("i")),t.vertAlign){const n=e.createElement("vertAlign");n.setAttribute("val",t.vertAlign),i.appendChild(n)}if(t.underline){const n=e.createElement("u");t.underline!==!0&&n.setAttribute("val",t.underline),i.appendChild(n)}return t.strike&&i.appendChild(e.createElement("strike")),t.shadow&&i.appendChild(e.createElement("shadow")),t.outline&&i.appendChild(e.createElement("outline")),t.color&&i.appendChild(this.exportColor(e,t.color)),i}exportFills(e){const t=e.createElement("fills");t.setAttribute("count",String(this.fills.length));for(let i=0,n=this.fills.length;i<n;i++){const a=this.fills[i];t.appendChild(this.exportFill(e,a))}return t}exportFill(e,t){let i;const n=e.createElement("fill");return t.type==="pattern"?(i=this.exportPatternFill(e,t),n.appendChild(i)):t.type==="gradient"&&(i=this.exportGradientFill(e,t),n.appendChild(i)),n}exportGradientFill(e,t){const i=e.createElement("gradientFill");t.degree?i.setAttribute("degree",t.degree):t.left&&(i.setAttribute("left",t.left),i.setAttribute("right",t.right),i.setAttribute("top",t.top),i.setAttribute("bottom",t.bottom));const n=e.createElement("stop");n.setAttribute("position",t.start.pureAt||0);const a=e.createElement("color");typeof t.start=="string"||t.start.color?a.setAttribute("rgb",t.start.color||t.start):t.start.theme&&a.setAttribute("theme",t.start.theme);const r=e.createElement("stop"),o=e.createElement("color");return r.setAttribute("position",t.end.pureAt||1),typeof t.start=="string"||t.end.color?o.setAttribute("rgb",t.end.color||t.end):t.end.theme&&o.setAttribute("theme",t.end.theme),n.appendChild(a),r.appendChild(o),i.appendChild(n),i.appendChild(r),i}exportPatternFill(e,t){const i=Q.createElement(e,"patternFill",[["patternType",t.patternType]]);t.bgColor||(t.bgColor="FFFFFFFF"),t.fgColor||(t.fgColor="FFFFFFFF");const n=e.createElement("bgColor");_n(t.bgColor)?n.setAttribute("rgb",t.bgColor):t.bgColor.theme?n.setAttribute("theme",t.bgColor.theme):n.setAttribute("rgb",t.bgColor.rbg);const a=e.createElement("fgColor");return _n(t.fgColor)?a.setAttribute("rgb",t.fgColor):t.fgColor.theme?a.setAttribute("theme",t.fgColor.theme):a.setAttribute("rgb",t.fgColor.rbg),i.appendChild(a),i.appendChild(n),i}exportNumberFormatters(e){const t=e.createElement("numFmts");t.setAttribute("count",String(this.numberFormatters.length));for(let i=0,n=this.numberFormatters.length;i<n;i++){const a=this.numberFormatters[i];t.appendChild(this.exportNumberFormatter(e,a))}return t}exportNumberFormatter(e,t){const i=e.createElement("numFmt");return i.setAttribute("numFmtId",t.id),i.setAttribute("formatCode",t.formatCode),i}exportCellStyles(e){const t=e.createElement("cellStyles");t.setAttribute("count",String(this.cellStyles.length));for(let i=0,n=this.cellStyles.length;i<n;i++){const a=this.cellStyles[i];delete a.id;const r=Q.createElement(e,"cellStyle");t.appendChild(r);const o=Object.keys(a);let l=o.length;for(;l--;)r.setAttribute(o[l],a[o[l]])}return t}exportDifferentialStyles(e){const t=e.createElement("dxfs");t.setAttribute("count",String(this.differentialStyles.length));for(let i=0,n=this.differentialStyles.length;i<n;i++){const a=this.differentialStyles[i];t.appendChild(this.exportDFX(e,a))}return t}exportDFX(e,t){const i=e.createElement("dxf");return t.font&&i.appendChild(this.exportFont(e,t.font)),t.fill&&i.appendChild(this.exportFill(e,t.fill)),t.border&&i.appendChild(this.exportBorder(e,t.border)),t.numFmt&&i.appendChild(this.exportNumberFormatter(e,t.numFmt)),t.alignment&&i.appendChild(this.exportAlignment(e,t.alignment)),i}exportTableStyles(e){const t=e.createElement("tableStyles");t.setAttribute("count",String(this.tableStyles.length)),this.defaultTableStyle&&t.setAttribute("defaultTableStyle",String(this.defaultTableStyle));for(let i=0,n=this.tableStyles.length;i<n;i++)t.appendChild(this.exportTableStyle(e,this.tableStyles[i]));return t}exportTableStyle(e,t){const i=e.createElement("tableStyle");i.setAttribute("name",t.name),i.setAttribute("pivot",String(0));let n=0;return Object.entries(t).forEach(([a,r])=>{if(a==="name")return;n++;const o=e.createElement("tableStyleElement");o.setAttribute("type",a),o.setAttribute("dxfId",r),i.appendChild(o)}),i.setAttribute("count",String(n)),i}exportProtection(e,t){const i=e.createElement("protection");for(const n in t)n in t&&i.setAttribute(n,t[n]);return i}toXML(){const e=Q.createXmlDoc(Q.schemas.spreadsheetml,"styleSheet"),t=e.documentElement;return t.appendChild(this.exportNumberFormatters(e)),t.appendChild(this.exportFonts(e)),t.appendChild(this.exportFills(e)),t.appendChild(this.exportBorders(e)),t.appendChild(this.exportMasterCellStyles(e)),t.appendChild(this.exportMasterCellFormats(e)),t.appendChild(this.exportCellStyles(e)),t.appendChild(this.exportDifferentialStyles(e)),this.tableStyles.length&&t.appendChild(this.exportTableStyles(e)),e}},EC=class{constructor(e){W(this,"name",""),W(this,"id",Ki("Worksheet")),W(this,"_timezoneOffset"),W(this,"relations",null),W(this,"columnFormats",[]),W(this,"data",[]),W(this,"mergedCells",[]),W(this,"columns",[]),W(this,"sheetProtection",!1),W(this,"_headers",[]),W(this,"_footers",[]),W(this,"_tables",[]),W(this,"_drawings",[]),W(this,"_orientation"),W(this,"_margin"),W(this,"_rowInstructions",{}),W(this,"_freezePane",{}),W(this,"sharedStrings",null),W(this,"hyperlinks",[]),W(this,"sheetView"),W(this,"showZeros",null),this._timezoneOffset=new Date().getTimezoneOffset()*60*1e3,this.sheetView=e.sheetView||new vC,this.initialize(e)}initialize(e){e=e||{},this.name=e.name,this.id=Ki("Worksheet"),this._timezoneOffset=new Date().getTimezoneOffset()*60*1e3,e.columns&&this.setColumns(e.columns),this.relations=new Io}exportData(){return{relations:this.relations.exportData(),columnFormats:this.columnFormats,data:this.data,columns:this.columns,mergedCells:this.mergedCells,_headers:this._headers,_footers:this._footers,_tables:this._tables,_rowInstructions:this._rowInstructions,_freezePane:this._freezePane,name:this.name,id:this.id}}importData(e){this.relations.importData(e.relations),delete e.relations,Object.assign(this,e)}setSharedStringCollection(e){this.sharedStrings=e}addTable(e){this._tables.push(e),this.relations.addRelation(e,"table")}addDrawings(e){this._drawings.push(e),this.relations.addRelation(e,"drawingRelationship")}setRowInstructions(e,t){this._rowInstructions[e]=t}setHeader(e){if(!Array.isArray(e))throw"Invalid argument type - setHeader expects an array of three instructions";this._headers=e}setFooter(e){if(!Array.isArray(e))throw"Invalid argument type - setFooter expects an array of three instructions";this._footers=e}compilePageDetailPackage(e){return e=e||"",["&L",this.compilePageDetailPiece(e[0]||""),"&C",this.compilePageDetailPiece(e[1]||""),"&R",this.compilePageDetailPiece(e[2]||"")].join("")}compilePageDetailPiece(e){if(_n(e))return'&"-,Regular"'.concat(e);if(bi(e)&&!Array.isArray(e)){let t="";if(e.font||e.bold){const i=e.bold?"Bold":"Regular";t+=`&"${e.font||"-"}`,t+=`,${i}"`}else t+='&"-,Regular"';return e.underline&&(t+="&U"),e.fontSize&&(t+=`&${e.fontSize}`),t+=e.text,t}if(Array.isArray(e))return e.reduce((t,i)=>t.concat(this.compilePageDetailPiece(i)),"")}exportHeader(e){const t=e.createElement("oddHeader");return t.appendChild(e.createTextNode(this.compilePageDetailPackage(this._headers))),t}exportFooter(e){const t=e.createElement("oddFooter");return t.appendChild(e.createTextNode(this.compilePageDetailPackage(this._footers))),t}_buildCache(e){const t=e.createElement("c"),i=e.createElement("v");i.appendChild(e.createTextNode("--temp--")),t.appendChild(i);const n=e.createElement("c"),a=e.createElement("f");a.appendChild(e.createTextNode("--temp--")),n.appendChild(a);const r=e.createElement("c");r.setAttribute("t","s");const o=e.createElement("v");return o.appendChild(e.createTextNode("--temp--")),r.appendChild(o),{number:t,date:t,string:r,formula:n}}collectSharedStrings(){const e=this.data,t={};for(let i=0,n=e.length;i<n;i++){const a=e[i],r=a.length;for(let o=0;o<r;o++){let l=a[o];const d=(l==null?void 0:l.metadata)||{};l&&typeof l=="object"&&(l=l.value),d.type||typeof l=="number"&&(d.type="number"),(d.type==="text"||!d.type)&&typeof t[l]>"u"&&(t[l]=!0)}}return Object.keys(t)}toXML(){var e,t,i;const n=this.data,a=this.columns||[],r=Q.createXmlDoc(Q.schemas.spreadsheetml,"worksheet"),o=r.documentElement;let l,d,u;o.setAttribute("xmlns:r",Q.schemas.relationships),o.setAttribute("xmlns:mc",Q.schemas.markupCompat);let c=0;const h=Q.createElement(r,"sheetData"),m=this._buildCache(r);for(u=0,d=n.length;u<d;u++){const p=n[u],g=p.length;c=g>c?g:c;const f=r.createElement("row");for(let F=0;F<g;F++){a[F]=a[F]||{};let y=p[F],v;const C=(y==null?void 0:y.metadata)||{};switch(y&&typeof y=="object"&&(y=y.value),C.type||typeof y=="number"&&(C.type="number"),C.type){case"number":v=m.number.cloneNode(!0),v.firstChild.firstChild.nodeValue=y;break;case"date":v=m.date.cloneNode(!0),y instanceof Date&&(y=y.getTime()),v.firstChild.firstChild.nodeValue=25569+(y-this._timezoneOffset)/(60*60*24*1e3);break;case"formula":v=m.formula.cloneNode(!0),v.firstChild.firstChild.nodeValue=y;break;case"text":default:{let _;typeof((e=this.sharedStrings)==null?void 0:e.strings[y])<"u"?_=this.sharedStrings.strings[y]:_=(t=this.sharedStrings)==null?void 0:t.addString(y),v=m.string.cloneNode(!0),v.firstChild.firstChild.nodeValue=_;break}}C.style?v.setAttribute("s",C.style):((i=this._rowInstructions[u])==null?void 0:i.style)!==void 0&&v.setAttribute("s",this._rowInstructions[u].style),v.setAttribute("r",Q.positionToLetterRef(F+1,String(u+1))),f.appendChild(v)}if(f.setAttribute("r",u+1),this._rowInstructions[u]){const F=this._rowInstructions[u];F.height!==void 0&&(f.setAttribute("customHeight","1"),f.setAttribute("ht",F.height)),F.style!==void 0&&(f.setAttribute("customFormat","1"),f.setAttribute("s",F.style))}h.appendChild(f)}if(c!==0?o.appendChild(Q.createElement(r,"dimension",[["ref",`${Q.positionToLetterRef(1,1)}:${Q.positionToLetterRef(c,String(n.length))}`]])):o.appendChild(Q.createElement(r,"dimension",[["ref",Q.positionToLetterRef(1,1)]])),o.appendChild(this.sheetView.exportXML(r)),this.columns.length&&o.appendChild(this.exportColumns(r)),o.appendChild(h),this.sheetProtection&&o.appendChild(this.sheetProtection.exportXML(r)),this.hyperlinks.length>0){const p=r.createElement("hyperlinks"),g=this.hyperlinks;for(l=0,d=g.length;l<d;l++){const f=r.createElement("hyperlink"),F=g[l];f.setAttribute("ref",String(F.cell)),F.id=Q.uniqueId("hyperlink"),this.relations.addRelation({id:F.id,target:F.location,targetMode:F.targetMode||"External"},"hyperlink"),f.setAttribute("r:id",this.relations.getRelationshipId(F)),p.appendChild(f)}o.appendChild(p)}if(this.mergedCells.length>0){const p=r.createElement("mergeCells");for(l=0,d=this.mergedCells.length;l<d;l++){const g=r.createElement("mergeCell");g.setAttribute("ref",`${this.mergedCells[l][0]}:${this.mergedCells[l][1]}`),p.appendChild(g)}o.appendChild(p)}if(this.exportPageSettings(r,o),this._headers.length>0||this._footers.length>0){const p=r.createElement("headerFooter");this._headers.length>0&&p.appendChild(this.exportHeader(r)),this._footers.length>0&&p.appendChild(this.exportFooter(r)),o.appendChild(p)}for(l=0,d=this._drawings.length;l<d;l++){const p=r.createElement("drawing");p.setAttribute("r:id",this.relations.getRelationshipId(this._drawings[l])),o.appendChild(p)}if(this._tables.length>0){const p=r.createElement("tableParts");for(p.setAttribute("count",this._tables.length),l=0,d=this._tables.length;l<d;l++){const g=r.createElement("tablePart");g.setAttribute("r:id",this.relations.getRelationshipId(this._tables[l])),p.appendChild(g)}o.appendChild(p)}return r}exportColumns(e){const t=Q.createElement(e,"cols");for(let i=0,n=this.columns.length;i<n;i++){const a=this.columns[i],r=Q.createElement(e,"col",[["min",a.min||i+1],["max",a.max||i+1]]);a.hidden&&r.setAttribute("hidden",String(1)),a.bestFit&&r.setAttribute("bestFit",String(1)),(a.customWidth||a.width)&&r.setAttribute("customWidth",String(1)),a.width?r.setAttribute("width",a.width):r.setAttribute("width",String(9.140625)),t.appendChild(r)}return t}exportPageSettings(e,t){if(this._margin){let i=.7;const n=this._margin.left?this._margin.left:i,a=this._margin.right?this._margin.right:i,r=this._margin.top?this._margin.top:i,o=this._margin.bottom?this._margin.bottom:i;i=.3;const l=this._margin.header?this._margin.header:i,d=this._margin.footer?this._margin.footer:i;t.appendChild(Q.createElement(e,"pageMargins",[["top",r],["bottom",o],["left",n],["right",a],["header",l],["footer",d]]))}this._orientation&&t.appendChild(Q.createElement(e,"pageSetup",[["orientation",this._orientation]]))}setPageOrientation(e){this._orientation=e}setPageMargin(e){this._margin=e}setColumns(e){this.columns=e}setData(e){this.data=e}mergeCells(e,t){this.mergedCells.push([e,t])}freezePane(e,t,i){this.sheetView.freezePane(e,t,i)}setColumnFormats(e){this.columnFormats=e}},wC=class{constructor(){W(this,"id",Ki("Workbook")),W(this,"styleSheet",new Fu),W(this,"sharedStrings",new fu),W(this,"relations",new Io),W(this,"worksheets",[]),W(this,"tables",[]),W(this,"drawings",[]),W(this,"media",{}),W(this,"printTitles"),this.initialize()}initialize(){this.id=Ki("Workbook"),this.styleSheet=new Fu,this.sharedStrings=new fu,this.relations=new Io,this.relations.addRelation(this.styleSheet,"stylesheet"),this.relations.addRelation(this.sharedStrings,"sharedStrings")}createWorksheet(e){return e=Object.assign({},{name:"Sheet ".concat(String(this.worksheets.length+1))},e),new EC(e)}getStyleSheet(){return this.styleSheet}addTable(e){this.tables.push(e)}addDrawings(e){this.drawings.push(e)}setPrintTitleTop(e,t){this.printTitles==null&&(this.printTitles={}),this.printTitles[e]==null&&(this.printTitles[e]={}),this.printTitles[e].top=t}setPrintTitleLeft(e,t){this.printTitles==null&&(this.printTitles={}),this.printTitles[e]==null&&(this.printTitles[e]={}),this.printTitles[e].left=String.fromCharCode(64+t)}addMedia(e,t,i,n){const a=t.split("."),r=a[a.length-1];if(!n)switch(r.toLowerCase()){case"jpeg":case"jpg":n="image/jpeg";break;case"png":n="image/png";break;case"gif":n="image/gif";break;default:n=null;break}return this.media[t]||(this.media[t]={id:t,data:i,fileName:t,contentType:n,extension:r}),this.media[t]}addWorksheet(e){this.relations.addRelation(e,"worksheet"),e.setSharedStringCollection(this.sharedStrings),this.worksheets.push(e)}createContentTypes(){const e=Q.createXmlDoc(Q.schemas.contentTypes,"Types"),t=e.documentElement;let i,n;t.appendChild(Q.createElement(e,"Default",[["Extension","rels"],["ContentType","application/vnd.openxmlformats-package.relationships+xml"]])),t.appendChild(Q.createElement(e,"Default",[["Extension","xml"],["ContentType","application/xml"]]));const a={};for(const r in this.media)r in this.media&&(a[this.media[r].extension]=this.media[r].contentType);for(const r in a)r in a&&t.appendChild(Q.createElement(e,"Default",[["Extension",r],["ContentType",a[r]]]));for(t.appendChild(Q.createElement(e,"Override",[["PartName","/xl/workbook.xml"],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"]])),t.appendChild(Q.createElement(e,"Override",[["PartName","/xl/sharedStrings.xml"],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"]])),t.appendChild(Q.createElement(e,"Override",[["PartName","/xl/styles.xml"],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"]])),i=0,n=this.worksheets.length;i<n;i++)t.appendChild(Q.createElement(e,"Override",[["PartName",`/xl/worksheets/sheet${i+1}.xml`],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"]]));for(i=0,n=this.tables.length;i<n;i++)t.appendChild(Q.createElement(e,"Override",[["PartName",`/xl/tables/table${i+1}.xml`],["ContentType","application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"]]));for(i=0,n=this.drawings.length;i<n;i++)t.appendChild(Q.createElement(e,"Override",[["PartName",`/xl/drawings/drawing${i+1}.xml`],["ContentType","application/vnd.openxmlformats-officedocument.drawing+xml"]]));return e}toXML(){const e=Q.createXmlDoc(Q.schemas.spreadsheetml,"workbook"),t=e.documentElement;t.setAttribute("xmlns:r",Q.schemas.relationships);const i=31,n=Q.createElement(e,"sheets");for(let o=0,l=this.worksheets.length;o<l;o++){const d=e.createElement("sheet");typeof console<"u"&&this.worksheets[o].name.length>i&&console.log(`Microsoft Excel requires work sheet names to be less than ${i+1} characters long, work sheet name "${this.worksheets[o].name}" is ${this.worksheets[o].name.length} characters long`),d.setAttribute("name",this.worksheets[o].name),d.setAttribute("sheetId",o+1),d.setAttribute("r:id",this.relations.getRelationshipId(this.worksheets[o])),n.appendChild(d)}t.appendChild(n);const a=Q.createElement(e,"definedNames");let r=0;for(const o in this.printTitles)if(o in this.printTitles){const l=this.printTitles[o],d=e.createElement("definedName");d.setAttribute("name","_xlnm.Print_Titles"),d.setAttribute("localSheetId",r++);let u="";l.top&&(u+=`${o}!$1:$${l.top}`,l.left&&(u+=",")),l.left&&(u+=`${o}!$A:$${l.left}`),d.appendChild(e.createTextNode(u)),a.appendChild(d)}return t.appendChild(a),e}createWorkbookRelationship(){const e=Q.createXmlDoc(Q.schemas.relationshipPackage,"Relationships");return e.documentElement.appendChild(Q.createElement(e,"Relationship",[["Id","rId1"],["Type",Q.schemas.officeDocument],["Target","xl/workbook.xml"]])),e}_generateCorePaths(e){let t,i;for(Ii[this.styleSheet.id]="styles.xml",Ii[this.sharedStrings.id]="sharedStrings.xml",Ii[this.id]="/xl/workbook.xml",t=0,i=this.tables.length;t<i;t++)e[`/xl/tables/table${t+1}.xml`]=this.tables[t].toXML(),Ii[this.tables[t].id]=`/xl/tables/table${t+1}.xml`;for(const n in this.media)if(n in this.media){const a=this.media[n];e[`/xl/media/${n}`]=a.data,Ii[n]=`/xl/media/${n}`}for(t=0,i=this.drawings.length;t<i;t++)e[`/xl/drawings/drawing${t+1}.xml`]=this.drawings[t].toXML(),Ii[this.drawings[t].id]=`/xl/drawings/drawing${t+1}.xml`,e[`/xl/drawings/_rels/drawing${t+1}.xml.rels`]=this.drawings[t].relations.toXML()}_prepareFilesForPackaging(e){Object.assign(e,{"/[Content_Types].xml":this.createContentTypes(),"/_rels/.rels":this.createWorkbookRelationship(),"/xl/styles.xml":this.styleSheet.toXML(),"/xl/workbook.xml":this.toXML(),"/xl/sharedStrings.xml":this.sharedStrings.toXML(),"/xl/_rels/workbook.xml.rels":this.relations.toXML()});for(const[t,i]of Object.entries(e))if(t.indexOf(".xml")!==-1||t.indexOf(".rels")!==-1){i instanceof mr?e[t]=i.toString():e[t]=i.xml||new window.XMLSerializer().serializeToString(i);let n=e[t].replace(/xmlns=""/g,"");n=n.replace(/NS[\d]+:/g,""),n=n.replace(/xmlns:NS[\d]+=""/g,""),e[t]=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 ${n}`}}generateFiles(){return new Promise(e=>{const t={};this._generateCorePaths(t);for(let i=0,n=this.worksheets.length;i<n;i++)t[`/xl/worksheets/sheet${i+1}.xml`]=this.worksheets[i].toXML(),Ii[this.worksheets[i].id]=`worksheets/sheet${i+1}.xml`,t[`/xl/worksheets/_rels/sheet${i+1}.xml.rels`]=this.worksheets[i].relations.toXML();return this._prepareFilesForPackaging(t),e(t)})}};function _C(s,e,t){const i={};return new Promise((n,a)=>{s.generateFiles().then(r=>{for(const[o,l]of Object.entries(r))i[o.substr(1)]=Oo(l);return gC(i,(t==null?void 0:t.zipOptions)||{},(o,l)=>{if(o){a(o);return}{const d=(t==null?void 0:t.fileFormat)??"xlsx";let u=t==null?void 0:t.mimeType;u===void 0&&(u=d==="xls"?"application/vnd.ms-excel":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),n(new Blob([l],{type:u}))}})})})}function DC(s,e,t){if((t==null?void 0:t.downloadType)==="node")throw new Error('[Excel-Builder-Vanilla] Please note that `downloadExcelFile()` is currently only supporting the "browser" download type at the moment.');const i=e.match(/.*\.xls$/)?"xls":"xlsx";return _C(s,"Blob",{...t,fileFormat:i}).then(n=>{kC(e,n)})}function kC(s,e){const t=document.createElement("a"),i=URL.createObjectURL(e);t&&document&&(t.textContent="download",t.href=i,t.setAttribute("download",s),t.style.visibility="hidden",document.body.appendChild(t),t.click(),document.body.removeChild(t),URL.revokeObjectURL(i))}const TC=(s,{excelFormatId:e})=>e!==void 0?{value:s,metadata:{style:e}}:s,AC=(s,{columnDef:e,excelFormatId:t,gridOptions:i})=>({value:typeof s=="string"&&/\d/g.test(s)?xC(s,e,i):s,metadata:{style:t}});function xC(s,e,t){let i=s;if(typeof s=="string"&&s){const n=si("decimalSeparator",e,t,M.DEFAULT_NUMBER_DECIMAL_SEPARATOR),a=parseFloat(n===","?s.replace(/[^0-9,-]+/g,"").replace(",","."):s.replace(/[^\d.-]/g,""));i=isNaN(a)?s:a}return i}function RC(s,e,t,i,n=!0){const a=Ea(t);let r,o=TC;return a===S.number&&n&&(r=Dl(s,e,t,i,"cell").excelFormat.id,o=AC),{excelFormatId:r,getDataValueParser:o}}function OC(s,e){var t;return((t=s==null?void 0:s[e.groupType])==null?void 0:t[e.columnDef.field])??0}function MC(s,e,t){var n;let i;if(t==="group")switch(s.groupTotalsFormatter){case ae.avgTotalsCurrency:case ae.avgTotalsDollar:case ae.sumTotalsCurrency:case ae.sumTotalsCurrencyColored:case ae.sumTotalsDollar:case ae.sumTotalsDollarBold:case ae.sumTotalsDollarColored:case ae.sumTotalsDollarColoredBold:i="currency";break;case ae.avgTotalsPercentage:i="percent";break;case ae.avgTotals:case ae.minTotals:case ae.maxTotals:case ae.sumTotals:case ae.sumTotalsColored:case ae.sumTotalsBold:default:i="decimal";break}else if(s.formatter===R.multiple&&Array.isArray((n=s.params)==null?void 0:n.formatters)){i="decimal";for(const a of s.params.formatters)if(i=bu(a),i!=="decimal")break}else i=bu(s.formatter);return je(s,e,i,t)}function bu(s){let e;switch(s){case R.currency:case R.dollar:case R.dollarColored:case R.dollarColoredBold:e="currency";break;case R.percent:case R.percentComplete:case R.percentCompleteBar:case R.percentCompleteBarWithText:case R.percentSymbol:e="percent";break;case R.decimal:default:e="decimal";break}return e}function Dl(s,e,t,i,n){var d,u;let a="",r=((d=t.groupTotalsExcelExportOptions)==null?void 0:d.groupType)||"",o;const l=Ea(t);if(n==="group")switch(t.groupTotalsFormatter){case ae.avgTotals:case ae.avgTotalsCurrency:case ae.avgTotalsDollar:case ae.avgTotalsPercentage:r="avg";break;case ae.minTotals:r="min";break;case ae.maxTotals:r="max";break;case ae.sumTotals:case ae.sumTotalsBold:case ae.sumTotalsColored:case ae.sumTotalsCurrency:case ae.sumTotalsCurrencyColored:case ae.sumTotalsDollar:case ae.sumTotalsDollarColoredBold:case ae.sumTotalsDollarColored:case ae.sumTotalsDollarBold:r="sum";break;default:o=e.numberFormat;break}else switch(l){case S.number:switch(t.formatter){case R.multiple:if(Array.isArray((u=t.params)==null?void 0:u.formatters))for(const c of t.params.formatters){const{excelFormat:h}=Dl(s,e,{...t,formatter:c},i,n);if(h!==e.numberFormat){o=h;break}}o||(o=e.numberFormat);break;case R.currency:case R.decimal:case R.dollar:case R.dollarColored:case R.dollarColoredBold:case R.percent:case R.percentComplete:case R.percentCompleteBar:case R.percentCompleteBarWithText:case R.percentSymbol:a=Cu(t,i,"cell");break;default:o=e.numberFormat;break}break}return!o&&(t.formatter||t.groupTotalsFormatter)&&(a=Cu(t,i,n,r),e.hasOwnProperty(a)||(e[a]=s.createFormat({format:a})),o=e[a]),{excelFormat:o,groupType:r}}function yu(s){const[e,t,i,n,a,r,o,l]=(s==null?void 0:s.match(/^([^\d(-]*)([(]?)([^\d]*)([-]?[\w]]?[\d\s]*[.,\d]*[\d]*[^)\s%]?)([^\d.,)]*)([)]?)([^\d]*)$/i))||[],d=(a||"").replace(/1/g,"0").replace(/[2]/g,"#");return[as(t??""),i??"",as(n??""),d,as(r??""),o??"",as(l??"")].join("").replace(",",",")}function Cu(s,e,t,i=""){let n="",a="",r="";const{minDecimal:o,maxDecimal:l,thousandSeparator:d}=MC(s,e,t),c=parseFloat(`${d?"2220":"0"}.${IC(o,l)}`);return t==="group"&&s.groupTotalsFormatter?(a=Ne(s.groupTotalsFormatter({[i]:{[s.field]:c}},s,e)),r=Ne(s.groupTotalsFormatter({[i]:{[s.field]:-c}},s,e))):s.formatter&&(a=Ne(s.formatter(0,0,c,s,{},e)),r=Ne(s.formatter(0,0,-c,s,{},e))),a&&r&&(n=yu(a)+";"+yu(r)),n}function as(s){return s&&`"${s}"`}function IC(s,e){return vu("1",s)+vu("2",e-s)}function vu(s,e){let t="";for(let i=0;i<e;i++)t+=s;return t}const BC={filename:"export",format:Me.xlsx};class dt{constructor(){this._fileFormat=Me.xlsx,this._columnHeaders=[],this._hasColumnTitlePreHeader=!1,this._hasGroupedItems=!1,this._pubSubService=null,this._regularCellExcelFormats={},this._groupTotalExcelFormats={},this.className="ExcelExportService"}get _datasetIdPropName(){var e;return((e=this._gridOptions)==null?void 0:e.datasetIdPropertyName)??"id"}get _dataView(){var e;return(e=this._grid)==null?void 0:e.getData()}get _gridOptions(){var e;return((e=this._grid)==null?void 0:e.getOptions())||{}}get stylesheet(){return this._stylesheet}get stylesheetFormats(){return this._stylesheetFormats}get groupTotalExcelFormats(){return this._groupTotalExcelFormats}get regularCellExcelFormats(){return this._regularCellExcelFormats}dispose(){var e;(e=this._pubSubService)==null||e.unsubscribeAll()}init(e,t){var i,n;if(this._grid=e,this._pubSubService=t.get("PubSubService"),this._locales=((i=this._gridOptions)==null?void 0:i.locales)??M.locales,this._translaterService=(n=this._gridOptions)==null?void 0:n.translater,this._gridOptions.enableTranslate&&(!this._translaterService||!this._translaterService.translate))throw new Error('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, translater: this.translaterService })')}exportToExcel(e){var t;if(!this._grid||!this._dataView||!this._pubSubService)throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?');return(t=this._pubSubService)==null||t.publish("onBeforeExportToExcel",!0),this._excelExportOptions=ke(!0,{},{...BC,...this._gridOptions.excelExportOptions,...e}),this._fileFormat=this._excelExportOptions.format||Me.xlsx,this._regularCellExcelFormats={},this._groupTotalExcelFormats={},new Promise(i=>{const n={name:this._excelExportOptions.sheetName||"Sheet1"};this._workbook=new wC,this._sheet=this._workbook.createWorksheet(n),this._stylesheet=this._workbook.getStyleSheet();const a=this._stylesheet.createFormat({font:{bold:!0}}),r=this._stylesheet.createFormat({format:"@"}),o=this._stylesheet.createFormat({format:"0"});this._stylesheetFormats={boldFormat:a,numberFormat:o,stringFormat:r},this._sheet.setColumnFormats([a]);const l=this.getDataOutput();window.setTimeout(async()=>{var p,g,f,F;(g=(p=this._gridOptions)==null?void 0:p.excelExportOptions)!=null&&g.customExcelHeader&&this._gridOptions.excelExportOptions.customExcelHeader(this._workbook,this._sheet);const d=((f=this._grid)==null?void 0:f.getColumns())||[];this._sheet.setColumns(this.getColumnStyles(d));const u=this._sheet.data;let c=u;Array.isArray(u)&&Array.isArray(l)&&(c=this._sheet.data.concat(l)),this._sheet.setData(c),this._workbook.addWorksheet(this._sheet);let h=(F=this._excelExportOptions)==null?void 0:F.mimeType;h===void 0&&(h=this._fileFormat===Me.xls?"application/vnd.ms-excel":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");const m=`${this._excelExportOptions.filename}.${this._fileFormat}`;DC(this._workbook,m,{mimeType:h}).then(()=>{var y;(y=this._pubSubService)==null||y.publish("onAfterExportToExcel",{filename:m,mimeType:h}),i(!0)})})})}getExcelColumnNameByIndex(e){const t="ZABCDEFGHIJKLMNOPQRSTUVWXY";let i=Math.floor(e/26);const n=Math.floor(e%26);return n===0&&i--,e>26?this.getExcelColumnNameByIndex(i)+t[n]:t[n]+""}getDataOutput(){var r,o;const e=((r=this._grid)==null?void 0:r.getColumns())||[],t=[],i=(o=this._gridOptions)==null?void 0:o.excelExportOptions,n=i==null?void 0:i.columnHeaderStyle;let a=this._stylesheetFormats.boldFormat.id;if(n&&(a=this._stylesheet.createFormat(n).id),this._gridOptions.createPreHeaderPanel&&this._gridOptions.showPreHeaderPanel&&!this._gridOptions.enableDraggableGrouping){const l=this._stylesheet.createFormat({alignment:{horizontal:"center"},font:{bold:!0}});t.push(this.getColumnGroupedHeaderTitlesData(e,{style:l==null?void 0:l.id})),this._hasColumnTitlePreHeader=!0}return t.push(this.getColumnHeaderData(e,{style:a})),this.pushAllGridRowDataToArray(t,e),t}getColumnStyles(e){var n,a;const t=this._dataView.getGrouping(),i=[];return Array.isArray(t)&&t.length>0&&i.push({bestFit:!0,columnStyles:((a=(n=this._gridOptions)==null?void 0:n.excelExportOptions)==null?void 0:a.customColumnWidth)??10}),e.forEach(r=>{var l,d,u;const o=r.excludeFromExport??!1;(r.width===void 0||r.width>0)&&!o&&i.push({bestFit:!0,width:((l=r.excelExportOptions)==null?void 0:l.width)??((u=(d=this._gridOptions)==null?void 0:d.excelExportOptions)==null?void 0:u.customColumnWidth)??10})}),i}getColumnGroupedHeaderTitlesData(e,t){let i=[];this._groupedColumnHeaders=this.getColumnGroupedHeaderTitles(e)||[],this._groupedColumnHeaders&&Array.isArray(this._groupedColumnHeaders)&&this._groupedColumnHeaders.length>0&&(i=this._groupedColumnHeaders.map(r=>({value:r.title,metadata:t})));let n=0;const a=this._groupedColumnHeaders.length;for(let r=0;r<a;r++)if(r+1===a||r+1<a&&this._groupedColumnHeaders[r].title!==this._groupedColumnHeaders[r+1].title){const o=this.getExcelColumnNameByIndex(n+1),l=this.getExcelColumnNameByIndex(r+1);this._sheet.mergeCells(`${o}1`,`${l}1`),n=r+1}return i}getColumnHeaderData(e,t){let i=[];this._columnHeaders=this.getColumnHeaders(e)||[],this._columnHeaders&&Array.isArray(this._columnHeaders)&&this._columnHeaders.length>0&&(i=this._columnHeaders.map(a=>({value:Ne(a.title),metadata:t})));const n=this.getGroupColumnTitle();return n&&i.unshift({value:n,metadata:t}),i}getGroupColumnTitle(){var i,n;let e=this._excelExportOptions.groupingColumnHeaderTitle;!e&&this._gridOptions.enableTranslate&&((i=this._translaterService)!=null&&i.translate)?e=this._translaterService.translate(`${qt(this._gridOptions)}GROUP_BY`):e||(e=(n=this._locales)==null?void 0:n.TEXT_GROUP_BY);const t=this._dataView.getGrouping();return Array.isArray(t)&&t.length>0?(this._hasGroupedItems=!0,e):(this._hasGroupedItems=!1,null)}getColumnGroupedHeaderTitles(e){const t=[];return Array.isArray(e)&&e.forEach(i=>{var r;let n="";i.columnGroupKey&&this._gridOptions.enableTranslate&&((r=this._translaterService)!=null&&r.translate)?n=this._translaterService.translate(i.columnGroupKey):n=i.columnGroup||"";const a=i.excludeFromExport||!1;(i.width===void 0||i.width>0)&&!a&&t.push({key:i.field||i.id,title:n||""})}),t}getColumnHeaders(e){const t=[];return Array.isArray(e)&&e.forEach(i=>{var r;let n="";(i.nameKey||i.nameKey)&&this._gridOptions.enableTranslate&&((r=this._translaterService)!=null&&r.translate)?n=this._translaterService.translate(i.nameKey||i.nameKey):n=Xe(i.name||"","innerHTML")||It(i.field);const a=i.excludeFromExport||!1;(i.width===void 0||i.width>0)&&!a&&t.push({key:(i.field||i.id)+"",title:n})}),t}pushAllGridRowDataToArray(e,t){const i=this._dataView.getLength();for(let n=0;n<i;n++){const a=this._dataView.getItem(n);a&&!a.hasOwnProperty("getItem")&&(a[this._datasetIdPropName]!==null&&a[this._datasetIdPropName]!==void 0?e.push(this.readRegularRowData(t,n,a,n)):this._hasGroupedItems&&a.__groupTotals===void 0?e.push([this.readGroupedRowTitle(a)]):a.__groupTotals&&e.push(this.readGroupedTotalRows(t,a,n)))}return e}readRegularRowData(e,t,i,n){var c,h,m,p;let a=0;const r=[],o=e.length;let l=1,d=0;const u=this._dataView.getItemMetadata(t);for(let g=0;g<o;g++){const f=e[g];if(f.excludeFromExport)continue;this._hasGroupedItems&&a===0&&r.push("");let F=1,y;if(u!=null&&u.columns){const v=u.columns,C=v[f.id]||v[g];!isNaN(l)&&+l>1||l==="*"&&g>0||(l=(C==null?void 0:C.colspan)??1),l==="*"?F=e.length-g:(F=l,f.id in v&&(y=f.id,d=g))}if(l==="*"&&g>0||!isNaN(l)&&+l>1&&f.id!==y){const v=t+(this._hasColumnTitlePreHeader?3:2);if(typeof l=="number"&&F-1===1){const C=this.getExcelColumnNameByIndex(d+1),_=this.getExcelColumnNameByIndex(g+1);this._sheet.mergeCells(`${C}${v}`,`${_}${v}`),r.push("")}else if(l==="*"&&F===1){const C=this.getExcelColumnNameByIndex(g+1);this._sheet.mergeCells(`A${v}`,`${C}${v}`)}else r.push("");typeof l=="number"&&!isNaN(l)&&+l>1&&(F=l--)}else{let v="";const C=Ea(f),_={...this._excelExportOptions};if(f.exportWithFormatter!==!1&&ki(C)&&(_.exportWithFormatter=!0),v=pl(t,g,f,i,this._grid,_),!this._regularCellExcelFormats.hasOwnProperty(f.id)){const k=((c=f.excelExportOptions)==null?void 0:c.autoDetectCellFormat)??((h=this._excelExportOptions)==null?void 0:h.autoDetectCellFormat),x=RC(this._stylesheet,this._stylesheetFormats,f,this._grid,k);(m=f.excelExportOptions)!=null&&m.style&&(x.excelFormatId=this._stylesheet.createFormat(f.excelExportOptions.style).id),(p=f.excelExportOptions)!=null&&p.valueParserCallback&&(x.getDataValueParser=f.excelExportOptions.valueParserCallback),this._regularCellExcelFormats[f.id]=x}typeof v=="string"&&(f.sanitizeDataExport||this._excelExportOptions.sanitizeDataExport)&&(v=Ne(v));const{excelFormatId:w,getDataValueParser:A}=this._regularCellExcelFormats[f.id];v=A(v,{columnDef:f,excelFormatId:w,stylesheet:this._stylesheet,gridOptions:this._gridOptions,dataRowIdx:n,dataContext:i}),r.push(v),a++}}return r}readGroupedRowTitle(e){var i,n,a;const t=Ne(e.title);if((i=this._excelExportOptions)!=null&&i.addGroupIndentation){const r=((n=this._excelExportOptions)==null?void 0:n.groupCollapsedSymbol)||"⮞",o=((a=this._excelExportOptions)==null?void 0:a.groupExpandedSymbol)||"⮟";return(e.collapsed?r:o)+" "+Ln(5*e.level)+t}return t}readGroupedTotalRows(e,t,i){const a=[this._excelExportOptions.groupingAggregatorRowText||""];return e.forEach(r=>{var c,h,m,p,g,f,F;let o="";const l=Ea(r),d=r.excludeFromExport||!1;if(r.exportCustomGroupTotalsFormatter){const y=r.exportCustomGroupTotalsFormatter(t,r,this._grid);o=y instanceof HTMLElement?y.textContent||"":y}const u=((c=r.excelExportOptions)==null?void 0:c.autoDetectCellFormat)??((h=this._excelExportOptions)==null?void 0:h.autoDetectCellFormat);if(l===S.number&&u!==!1){let y=this._groupTotalExcelFormats[r.id];y!=null&&y.groupType||(y=Dl(this._stylesheet,this._stylesheetFormats,r,this._grid,"group"),(m=r.groupTotalsExcelExportOptions)!=null&&m.style&&(y.excelFormat=this._stylesheet.createFormat(r.groupTotalsExcelExportOptions.style)),this._groupTotalExcelFormats[r.id]=y);const v=((p=r.groupTotalsExcelExportOptions)==null?void 0:p.valueParserCallback)??OC;if(((g=t[y.groupType])==null?void 0:g[r.field])!==void 0){const C=v(t,{columnDef:r,groupType:y.groupType,excelFormatId:(f=y.excelFormat)==null?void 0:f.id,stylesheet:this._stylesheet,dataRowIdx:i});o=typeof C=="object"&&C.hasOwnProperty("metadata")?C:o={value:C,metadata:{style:(F=y.excelFormat)==null?void 0:F.id}}}}else if(r.groupTotalsFormatter){const y=r.groupTotalsFormatter(t,r,this._grid);o=y instanceof HTMLElement?y.textContent||"":y}typeof o=="string"&&(r.sanitizeDataExport||this._excelExportOptions.sanitizeDataExport)&&(o=Ne(o)),(r.width===void 0||r.width>0)&&!d&&a.push(o)}),a}}function ss(s,e,t){return e<=s&&s<=t}function Kh(s){if(s===void 0)return{};if(s===Object(s))return s;throw TypeError("Could not convert argument to dictionary")}function PC(s){for(var e=String(s),t=e.length,i=0,n=[];i<t;){var a=e.charCodeAt(i);if(a<55296||a>57343)n.push(a);else if(56320<=a&&a<=57343)n.push(65533);else if(55296<=a&&a<=56319)if(i===t-1)n.push(65533);else{var r=s.charCodeAt(i+1);if(56320<=r&&r<=57343){var o=a&1023,l=r&1023;n.push(65536+(o<<10)+l),i+=1}else n.push(65533)}i+=1}return n}var jh=-1;function Yh(s){this.tokens=[].slice.call(s)}Yh.prototype={endOfStream:function(){return!this.tokens.length},read:function(){return this.tokens.length?this.tokens.shift():jh},prepend:function(s){if(Array.isArray(s))for(var e=s;e.length;)this.tokens.unshift(e.pop());else this.tokens.unshift(s)},push:function(s){if(Array.isArray(s))for(var e=s;e.length;)this.tokens.push(e.shift());else this.tokens.push(s)}};var Bo=-1,Su="utf-8";function Ks(s,e){if(!(this instanceof Ks))return new Ks(s,e);if(s=s!==void 0?String(s).toLowerCase():Su,s!==Su)throw new Error("Encoding not supported. Only utf-8 is supported");e=Kh(e),this._streaming=!1,this._encoder=null,this._options={fatal:!!e.fatal},Object.defineProperty(this,"encoding",{value:"utf-8"})}Ks.prototype={encode:function(e,t){e=e?String(e):"",t=Kh(t),this._streaming||(this._encoder=new LC(this._options)),this._streaming=!!t.stream;for(var i=[],n=new Yh(PC(e)),a;!n.endOfStream()&&(a=this._encoder.handler(n,n.read()),a!==Bo);)Array.isArray(a)?i.push.apply(i,a):i.push(a);if(!this._streaming){for(;a=this._encoder.handler(n,n.read()),a!==Bo;)Array.isArray(a)?i.push.apply(i,a):i.push(a);this._encoder=null}return new Uint8Array(i)}};function LC(s){s.fatal,this.handler=function(e,t){if(t===jh)return Bo;if(ss(t,0,127))return t;var i,n;ss(t,128,2047)?(i=1,n=192):ss(t,2048,65535)?(i=2,n=224):ss(t,65536,1114111)&&(i=3,n=240);for(var a=[(t>>6*i)+n];i>0;){var r=t>>6*(i-1);a.push(128|r&63),i-=1}return a}}const NC={delimiter:Di.comma,filename:"export",format:Me.csv,useUtf8WithBom:!0};class Kn{constructor(){this._delimiter=",",this._exportQuoteWrapper="",this._fileFormat=Me.csv,this._lineCarriageReturn=`
 `,this._columnHeaders=[],this._hasGroupedItems=!1,this.className="TextExportService"}get _datasetIdPropName(){return this._gridOptions&&this._gridOptions.datasetIdPropertyName||"id"}get _dataView(){var e;return(e=this._grid)==null?void 0:e.getData()}get _gridOptions(){var e;return((e=this._grid)==null?void 0:e.getOptions())??{}}dispose(){var e;(e=this._pubSubService)==null||e.unsubscribeAll()}init(e,t){var i;if(this._grid=e,this._pubSubService=t.get("PubSubService"),this._locales=this._gridOptions&&this._gridOptions.locales||M.locales,this._translaterService=(i=this._gridOptions)==null?void 0:i.translater,this._gridOptions.enableTranslate&&(!this._translaterService||!this._translaterService.translate))throw new Error('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, translater: this.translaterService })')}exportToFile(e){if(!this._grid||!this._dataView||!this._pubSubService)throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?');return new Promise(t=>{var n;(n=this._pubSubService)==null||n.publish("onBeforeExportToTextFile",!0),this._exportOptions=ke(!0,{},{...NC,...this._gridOptions.textExportOptions,...e}),this._delimiter=this._exportOptions.delimiterOverride||this._exportOptions.delimiter||"",this._fileFormat=this._exportOptions.format||Me.csv;const i=this.getDataOutput();window.setTimeout(()=>{var r;const a={filename:`${this._exportOptions.filename}.${this._fileFormat}`,format:this._fileFormat||Me.csv,mimeType:this._exportOptions.mimeType||"text/plain",useUtf8WithBom:this._exportOptions&&this._exportOptions.hasOwnProperty("useUtf8WithBom")?this._exportOptions.useUtf8WithBom:!0};this.startDownloadFile({...a,content:i}),(r=this._pubSubService)==null||r.publish("onAfterExportToTextFile",a),t(!0)},0)})}startDownloadFile(e){const t=ac(e.content);let i;e.format===Me.csv?i=new Ks("utf-8").encode(t):i=t;const n=new Blob([e.useUtf8WithBom?"\uFEFF":"",i],{type:e.mimeType});if(typeof navigator.msSaveOrOpenBlob=="function")navigator.msSaveOrOpenBlob(n,e.filename);else{const a=document.createElement("a"),r=URL.createObjectURL(n);a.textContent="download",a.href=r,a.setAttribute("download",e.filename),a.style.visibility="hidden",document.body.appendChild(a),a.click(),document.body.removeChild(a)}}getDataOutput(){var a,r,o;const e=this._grid.getColumns()||[];let t=this._exportOptions.groupingColumnHeaderTitle;!t&&this._gridOptions.enableTranslate&&((a=this._translaterService)!=null&&a.translate)&&((o=(r=this._translaterService)==null?void 0:r.getCurrentLanguage)!=null&&o.call(r))?t=this._translaterService.translate(`${qt(this._gridOptions)}GROUP_BY`):t||(t=this._locales&&this._locales.TEXT_GROUP_BY),this._exportQuoteWrapper=this._fileFormat===Me.csv?'"':"";let i="";const n=this._dataView.getGrouping();if(n&&Array.isArray(n)&&n.length>0?(this._hasGroupedItems=!0,i+=this._fileFormat===Me.csv?`"${t}"${this._delimiter}`:`${t}${this._delimiter}`):this._hasGroupedItems=!1,this._gridOptions.createPreHeaderPanel&&this._gridOptions.showPreHeaderPanel&&!this._gridOptions.enableDraggableGrouping&&(this._groupedColumnHeaders=this.getColumnGroupedHeaderTitles(e)||[],this._groupedColumnHeaders&&Array.isArray(this._groupedColumnHeaders)&&this._groupedColumnHeaders.length>0)){const l=this._groupedColumnHeaders.map(d=>`${this._exportQuoteWrapper}${d.title}${this._exportQuoteWrapper}`);i+=l.join(this._delimiter)+this._lineCarriageReturn}if(this._columnHeaders=this.getColumnHeaders(e)||[],this._columnHeaders&&Array.isArray(this._columnHeaders)&&this._columnHeaders.length>0){const l=this._columnHeaders.map(d=>Ne(`${this._exportQuoteWrapper}${d.title}${this._exportQuoteWrapper}`));i+=l.join(this._delimiter)+this._lineCarriageReturn}return i+=this.getAllGridRowData(e,this._lineCarriageReturn),i}getAllGridRowData(e,t){const i=[],n=this._dataView.getLength();for(let a=0;a<n;a++){const r=this._dataView.getItem(a);r&&!r.hasOwnProperty("getItem")&&(r[this._datasetIdPropName]!==null&&r[this._datasetIdPropName]!==void 0?i.push(this.readRegularRowData(e,a,r)):this._hasGroupedItems&&r.__groupTotals===void 0?i.push(this.readGroupedTitleRow(r)):r.__groupTotals&&i.push(this.readGroupedTotalRow(e,r)))}return i.join(t)}getColumnGroupedHeaderTitles(e){const t=[];return e&&Array.isArray(e)&&e.forEach(i=>{var r,o,l;let n="";i.columnGroupKey&&this._gridOptions.enableTranslate&&((r=this._translaterService)!=null&&r.translate)&&((l=(o=this._translaterService)==null?void 0:o.getCurrentLanguage)!=null&&l.call(o))?n=this._translaterService.translate(i.columnGroupKey):n=i.columnGroup||"";const a=i.excludeFromExport||!1;(i.width===void 0||i.width>0)&&!a&&t.push({key:i.field||i.id,title:n||""})}),t}getColumnHeaders(e){const t=[];return e&&Array.isArray(e)&&e.forEach(i=>{var r,o,l;let n="";(i.nameKey||i.nameKey)&&this._gridOptions.enableTranslate&&((r=this._translaterService)!=null&&r.translate)&&((l=(o=this._translaterService)==null?void 0:o.getCurrentLanguage)!=null&&l.call(o))?n=this._translaterService.translate(i.nameKey||i.nameKey):n=Xe(i.name||"","innerHTML")||It(i.field);const a=i.excludeFromExport||!1;(i.width===void 0||i.width>0)&&!a&&t.push({key:i.field||i.id,title:n||""})}),t}readRegularRowData(e,t,i){let n=0;const a=[],r=this._exportQuoteWrapper;let o=1;const l=this._dataView.getItemMetadata(t);for(let d=0,u=e.length;d<u;d++){const c=e[d];if(c.excludeFromExport)continue;if(this._hasGroupedItems&&n===0){const m=this._fileFormat===Me.csv?'""':"";a.push(m)}let h;if(l!=null&&l.columns){const m=l==null?void 0:l.columns,p=m[c.id]||m[d];!isNaN(o)&&+o>1||o==="*"&&d>0||(o=(p==null?void 0:p.colspan)??1),o!=="*"&&c.id in m&&(h=c.id)}if(o==="*"&&d>0||!isNaN(o)&&+o>1&&c.id!==h)a.push(""),!isNaN(o)&&+o>1&&o--;else{let m=pl(t,d,c,i,this._grid,this._exportOptions);(c.sanitizeDataExport||this._exportOptions.sanitizeDataExport)&&(m=Ne(m)),this._fileFormat===Me.csv&&m&&(m=m.toString().replace(/"/gi,'""'));const p=c!=null&&c.exportCsvForceToKeepAsString?"=":"";a.push(p+r+m+r)}n++}return a.join(this._delimiter)}readGroupedTitleRow(e){let t=Ne(e.title);const i=this._exportQuoteWrapper;return t=Ln(5*e.level)+t,this._fileFormat===Me.csv&&(t=t.toString().replace(/"/gi,'""')),i+t+i}readGroupedTotalRow(e,t){const i=this._exportOptions.delimiter,n=this._exportOptions.format,a=this._exportOptions.groupingAggregatorRowText||"",r=this._exportQuoteWrapper,o=[`${r}${a}${r}`];return e.forEach(l=>{let d="";const u=l.excludeFromExport||!1;if(l.groupTotalsFormatter){const c=l.groupTotalsFormatter(t,l,this._grid);d=c instanceof HTMLElement?c.textContent||"":c}(l.sanitizeDataExport||this._exportOptions.sanitizeDataExport)&&(d=Ne(d)),n===Me.csv&&(d=d.toString().replace(/"/gi,'""')),(l.width===void 0||l.width>0)&&!u&&o.push(r+d+r)}),o.join(i)}}const HC=500;function Xr(s,e){return Math.floor(Math.random()*(e-s+1)+s)}class GC{constructor(){b(this,"_bindingEventService");b(this,"columnDefinitions");b(this,"gridOptions");b(this,"dataset");b(this,"commandQueue",[]);b(this,"sgb");b(this,"excelExportService");b(this,"loadingClass","");b(this,"sortStart",0);this.excelExportService=new dt,this._bindingEventService=new ie}attached(){this.initializeGrid(),this.dataset=this.loadData(HC);const e=document.querySelector(".grid2");this._bindingEventService.bind(e,"onbeforeexporttoexcel",()=>this.loadingClass="mdi mdi-load mdi-spin-1s mdi-22px"),this._bindingEventService.bind(e,"onafterexporttoexcel",()=>this.loadingClass=""),this._bindingEventService.bind(e,"onbeforesort",()=>{this.sortStart=window.performance.now()}),this._bindingEventService.bind(e,"onsortchanged",()=>{queueMicrotask(()=>{console.log(`sort: ${window.performance.now()-this.sortStart} ms`)})}),this.sgb=new he.GridBundle(e,this.columnDefinitions,{...Fe,...this.gridOptions},this.dataset),document.body.classList.add("material-theme")}dispose(){var e;(e=this.sgb)==null||e.dispose(),this._bindingEventService.unbindAll(),document.body.classList.remove("material-theme")}initializeGrid(){const e=document.createElement("div"),t=document.createElement("button"),i=document.createElement("span");i.className="mdi mdi-help-circle no-padding",t.dataset.test="col1-hello-btn",t.className="button is-small ml-5",t.textContent="Click me",t.title="simple column header test with a button click listener",t.addEventListener("click",()=>alert("Hello World")),t.appendChild(i),e.appendChild(document.createTextNode("Id ")),e.appendChild(t),this.columnDefinitions=[{id:"sel",name:e,field:"num",type:S.number,columnPickerLabel:"Custom Label",width:160,maxWidth:200,excludeFromExport:!0,resizable:!0,filterable:!0,selectable:!1,focusable:!1},{id:"title",name:"Title",field:"title",width:50,minWidth:50,cssClass:"cell-title",filterable:!0,sortable:!0},{id:"duration",name:"Duration",field:"duration",minWidth:50,width:60,filterable:!0,filter:{model:B.slider,operator:">=",filterOptions:{hideSliderNumber:!0,enableSliderTrackColoring:!0,sliderTrackFilledColor:"#9ac49c"}},sortable:!0,type:S.number,groupTotalsFormatter:ae.sumTotals,params:{groupFormatterPrefix:"Total: "}},{id:"percentComplete",name:"% Complete",field:"percentComplete",minWidth:70,width:90,formatter:R.percentCompleteBar,filterable:!0,filter:{model:B.compoundSlider},sortable:!0,type:S.number,groupTotalsFormatter:ae.avgTotalsPercentage,params:{groupFormatterPrefix:"<i>Avg</i>: "}},{id:"start",name:"Start",field:"start",minWidth:60,maxWidth:130,filterable:!0,filter:{model:B.compoundDate},editor:{model:N.date},sortable:!0,type:S.dateUsShort,formatter:R.dateUs,exportWithFormatter:!0},{id:"finish",name:"Finish",field:"finish",minWidth:60,maxWidth:130,filterable:!0,filter:{model:B.compoundDate},editor:{model:N.date},sortable:!0,type:S.dateUsShort,formatter:R.dateUs},{id:"cost",name:"Cost",field:"cost",minWidth:70,width:80,sortable:!0,filterable:!0,filter:{model:B.compoundInputNumber},type:S.number,formatter:R.currency,groupTotalsFormatter:ae.sumTotalsCurrency,params:{displayNegativeNumberWithParentheses:!0,currencyPrefix:"€",groupFormatterCurrencyPrefix:"€",minDecimal:2,maxDecimal:4,groupFormatterPrefix:"<b>Total</b>: "},excelExportOptions:{style:{font:{outline:!0,italic:!0},format:"€0.00##;[Red](€0.00##)"},width:18},groupTotalsExcelExportOptions:{style:{alignment:{horizontal:"center"},font:{bold:!0,color:"FF005289",underline:"single",fontName:"Consolas",size:10},fill:{type:"pattern",patternType:"solid",fgColor:"FFE6F2F6"},border:{top:{color:"FFa500ff",style:"thick"},left:{color:"FFa500ff",style:"medium"},right:{color:"FFa500ff",style:"dotted"},bottom:{color:"FFa500ff",style:"double"}},format:'"Total: "€0.00##;[Red]"Total: "(€0.00##)'}}},{id:"effortDriven",name:"Effort Driven",minWidth:30,width:80,maxWidth:90,cssClass:"cell-effort-driven",field:"effortDriven",formatter:R.checkmarkMaterial,sortable:!0,filterable:!0,filter:{model:B.singleSelect,collection:[{value:"",label:""},{value:!0,label:"True"},{value:!1,label:"False"}]},excelExportOptions:{width:11}}],this.gridOptions={autoResize:{bottomPadding:30,rightPadding:50},autoEdit:!0,editable:!0,enableCellNavigation:!0,enableTextExport:!0,enableFiltering:!0,enableGrouping:!0,columnPicker:{onColumnsChanged:(n,a)=>console.log(n,a)},enableExcelExport:!0,excelExportOptions:{filename:"my-export",sanitizeDataExport:!0,columnHeaderStyle:{font:{color:"FFFFFFFF"},fill:{type:"pattern",patternType:"solid",fgColor:"FF4a6c91"}},customExcelHeader:(n,a)=>{const r=n.getStyleSheet().createFormat({font:{size:18,fontName:"Calibri",bold:!0,color:"FFFFFFFF"},alignment:{wrapText:!0,horizontal:"center"},fill:{type:"pattern",patternType:"solid",fgColor:"FF203764"}});a.setRowInstructions(0,{height:50});const o="Grouping and Aggregator - My header is too long enough, so it will wrap";a.mergeCells("A1","H1"),a.data.push([{value:o,metadata:{style:r.id}}])}},textExportOptions:{filename:"my-export",sanitizeDataExport:!0},externalResources:[this.excelExportService,new Kn],showCustomFooter:!0,customFooterOptions:{leftFooterText:'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a>',hideMetrics:!1,hideTotalItemCount:!1,hideLastUpdateTimestamp:!1},rowTopOffsetRenderType:"transform",preParseDateColumns:"__"}}logItems(){var e;console.log((e=this.sgb.dataView)==null?void 0:e.getItems())}loadData(e){const t=[];for(let i=0;i<e;i++){const n=Xr(10,35),a=Xr(1,12),r=Xr(5,28),o=Math.round(Math.random()*100),l=i%33===0?null:Math.round(Math.random()*1e4)/100;t[i]={id:"id_"+i,num:i,title:"Task "+i,duration:Math.round(Math.random()*100)+"",percentComplete:o,percentCompleteNumber:o,start:`${a}/${r}/${n}`,finish:`${a===12?a:a+1}/${r}/${n}`,cost:i%3?l:l!==null?-l:null,effortDriven:i%5===0}}return this.sgb&&(this.sgb.dataset=t),t}clearGrouping(){var e,t;(t=(e=this.sgb)==null?void 0:e.dataView)==null||t.setGrouping([])}collapseAllGroups(){var e,t;(t=(e=this.sgb)==null?void 0:e.dataView)==null||t.collapseAllGroups()}expandAllGroups(){var e,t;(t=(e=this.sgb)==null?void 0:e.dataView)==null||t.expandAllGroups()}exportToExcel(){this.excelExportService.exportToExcel({filename:"export",format:Me.xlsx})}groupByDuration(){var e,t,i,n,a,r;(t=(e=this.sgb)==null?void 0:e.slickGrid)==null||t.setSortColumns([{columnId:"duration",sortAsc:!0}]),(n=(i=this.sgb)==null?void 0:i.dataView)==null||n.setGrouping({getter:"duration",formatter:o=>`Duration: ${o.value} <span class="text-green">(${o.count} items)</span>`,comparer:(o,l)=>yt.numeric(o.value,l.value,De.asc),aggregators:[new ge.Avg("percentComplete"),new ge.Sum("cost")],aggregateCollapsed:!1,lazyTotalsCalculation:!0}),(r=(a=this.sgb)==null?void 0:a.slickGrid)==null||r.invalidate()}groupByDurationOrderByCount(e){var t,i,n,a,r,o;(i=(t=this.sgb)==null?void 0:t.slickGrid)==null||i.setSortColumns([]),(a=(n=this.sgb)==null?void 0:n.dataView)==null||a.setGrouping({getter:"duration",formatter:l=>`Duration: ${l.value} <span class="text-green">(${l.count} items)</span>`,comparer:(l,d)=>l.count-d.count,aggregators:[new ge.Avg("percentComplete"),new ge.Sum("cost")],aggregateCollapsed:e,lazyTotalsCalculation:!0}),(o=(r=this.sgb)==null?void 0:r.slickGrid)==null||o.invalidate()}groupByDurationEffortDriven(){var t,i,n,a,r,o;const e=[{columnId:"duration",sortAsc:!0},{columnId:"effortDriven",sortAsc:!0}];(i=(t=this.sgb)==null?void 0:t.slickGrid)==null||i.setSortColumns(e),(a=(n=this.sgb)==null?void 0:n.dataView)==null||a.setGrouping([{getter:"duration",formatter:l=>`Duration: ${l.value}  <span class="text-green">(${l.count} items)</span>`,aggregators:[new ge.Sum("duration"),new ge.Sum("cost")],aggregateCollapsed:!0,lazyTotalsCalculation:!0},{getter:"effortDriven",formatter:l=>`Effort-Driven: ${l.value?"True":"False"} <span class="text-green">(${l.count} items)</span>`,aggregators:[new ge.Avg("percentComplete"),new ge.Sum("cost")],collapsed:!0,lazyTotalsCalculation:!0}]),(o=(r=this.sgb)==null?void 0:r.slickGrid)==null||o.invalidate()}groupByDurationEffortDrivenPercent(){var t,i,n,a,r,o;const e=[{columnId:"duration",sortAsc:!0},{columnId:"effortDriven",sortAsc:!0},{columnId:"percentComplete",sortAsc:!0}];(i=(t=this.sgb)==null?void 0:t.slickGrid)==null||i.setSortColumns(e),(a=(n=this.sgb)==null?void 0:n.dataView)==null||a.setGrouping([{getter:"duration",formatter:l=>`Duration: ${l.value}  <span class="text-green">(${l.count} items)</span>`,aggregators:[new ge.Sum("duration"),new ge.Sum("cost")],aggregateCollapsed:!0,lazyTotalsCalculation:!0},{getter:"effortDriven",formatter:l=>`Effort-Driven: ${l.value?"True":"False"}  <span class="text-green">(${l.count} items)</span>`,aggregators:[new ge.Sum("duration"),new ge.Sum("cost")],lazyTotalsCalculation:!0},{getter:"percentComplete",formatter:l=>`% Complete: ${l.value}  <span class="text-green">(${l.count} items)</span>`,aggregators:[new ge.Avg("percentComplete")],aggregateCollapsed:!0,collapsed:!0,lazyTotalsCalculation:!0}]),(o=(r=this.sgb)==null?void 0:r.slickGrid)==null||o.invalidate()}}class WC{constructor(){b(this,"_bindingEventService");b(this,"_darkMode",!1);b(this,"columnDefinitions");b(this,"gridOptions");b(this,"dataset");b(this,"editCommandQueue",[]);b(this,"excelExportService");b(this,"sgb");b(this,"durationOrderByCount",!1);b(this,"draggableGroupingPlugin");b(this,"loadingClass","");b(this,"selectedGroupingFields",["","",""]);this._bindingEventService=new ie,this.excelExportService=new dt}attached(){this.initializeGrid(),this.dataset=this.loadData(500);const e=document.querySelector(".grid3");this._bindingEventService.bind(e,"onclick",this.handleOnClick.bind(this)),this._bindingEventService.bind(e,"oncellchange",this.handleOnCellChange.bind(this)),this._bindingEventService.bind(e,"onvalidationerror",this.handleValidationError.bind(this)),this._bindingEventService.bind(e,"onitemdeleted",this.handleItemDeleted.bind(this)),this._bindingEventService.bind(e,"onbeforeexporttoexcel",()=>this.loadingClass="mdi mdi-load mdi-spin-1s mdi-22px"),this._bindingEventService.bind(e,"onafterexporttoexcel",()=>this.loadingClass=""),this.sgb=new he.GridBundle(e,this.columnDefinitions,{...Fe,...this.gridOptions},this.dataset)}dispose(){var e,t;(e=this.sgb)==null||e.dispose(),this._bindingEventService.unbindAll(),(t=document.querySelector(".demo-container"))==null||t.classList.remove("dark-mode"),document.body.setAttribute("data-theme","light")}initializeGrid(){this.columnDefinitions=[{id:"title",name:"Title",field:"title",columnGroup:"Common Factor",sortable:!0,type:S.string,editor:{model:N.longText,required:!0,alwaysSaveOnEnterKey:!0,minLength:5,maxLength:255},filterable:!0,grouping:{getter:"title",formatter:e=>`Title: ${e.value} <span class="text-color-primary">(${e.count} items)</span>`,aggregators:[new ge.Sum("cost")],aggregateCollapsed:!1,collapsed:!1}},{id:"duration",name:"Duration",field:"duration",columnGroup:"Common Factor",sortable:!0,filterable:!0,editor:{model:N.float,decimal:2,valueStep:1,maxValue:1e4,alwaysSaveOnEnterKey:!0},type:S.number,groupTotalsFormatter:ae.sumTotals,grouping:{getter:"duration",formatter:e=>`Duration: ${e.value} <span class="text-color-primary">(${e.count} items)</span>`,comparer:(e,t)=>this.durationOrderByCount?e.count-t.count:yt.numeric(e.value,t.value,De.asc),aggregators:[new ge.Sum("duration"),new ge.Sum("cost")],aggregateCollapsed:!1,collapsed:!1}},{id:"start",name:"Start",field:"start",sortable:!0,columnGroup:"Period",type:S.date,outputType:S.dateIso,filterable:!0,filter:{model:B.compoundDate},formatter:R.dateIso,editor:{model:N.date},grouping:{getter:"start",formatter:e=>`Start: ${e.value} <span class="text-color-primary">(${e.count} items)</span>`,aggregators:[new ge.Sum("cost")],aggregateCollapsed:!1,collapsed:!1}},{id:"finish",name:"Finish",field:"finish",columnGroup:"Period",sortable:!0,editor:{model:N.date,editorOptions:{range:{min:"today"}}},type:S.date,outputType:S.dateIso,formatter:R.dateIso,filterable:!0,filter:{model:B.dateRange},grouping:{getter:"finish",formatter:e=>`Finish: ${e.value} <span class="text-color-primary">(${e.count} items)</span>`,aggregators:[new ge.Sum("cost")],aggregateCollapsed:!1,collapsed:!1}},{id:"cost",name:"Cost",field:"cost",columnGroup:"Analysis",width:90,sortable:!0,filterable:!0,formatter:R.dollar,exportWithFormatter:!0,groupTotalsFormatter:ae.sumTotalsDollar,type:S.number,grouping:{getter:"cost",formatter:e=>`Cost: ${e.value} <span class="text-color-primary">(${e.count} items)</span>`,aggregators:[new ge.Sum("cost")],aggregateCollapsed:!0,collapsed:!0}},{id:"percentComplete",name:"% Complete",field:"percentComplete",columnGroup:"Analysis",type:S.number,editor:{model:N.slider,minValue:0,maxValue:100},sortable:!0,filterable:!0,filter:{model:B.slider,operator:">="},groupTotalsFormatter:ae.avgTotalsPercentage,grouping:{getter:"percentComplete",formatter:e=>`% Complete:  ${e.value} <span class="text-color-primary">(${e.count} items)</span>`,aggregators:[new ge.Sum("cost")],aggregateCollapsed:!1,collapsed:!1},params:{groupFormatterPrefix:"<i>Avg</i>: "}},{id:"effortDriven",name:"Effort-Driven",field:"effortDriven",columnGroup:"Analysis",width:80,minWidth:20,maxWidth:100,cssClass:"cell-effort-driven",sortable:!0,filterable:!0,filter:{collection:[{value:"",label:""},{value:!0,label:"True"},{value:!1,label:"False"}],model:B.singleSelect},exportWithFormatter:!1,formatter:R.checkmarkMaterial,grouping:{getter:"effortDriven",formatter:e=>`Effort-Driven: ${e.value?"True":"False"} <span class="text-color-primary">(${e.count} items)</span>`,aggregators:[new ge.Sum("duration"),new ge.Sum("cost")],collapsed:!1}},{id:"action",name:"Action",field:"action",width:90,maxWidth:90,excludeFromExport:!0,formatter:()=>'<div class="fake-hyperlink text-color-primary flex justify-center">Action <i class="mdi mdi-chevron-down"></i></div>',cellMenu:{hideCloseButton:!1,commandTitle:"Commands",commandItems:[{command:"command2",title:"Command 2",positionOrder:62,action:(e,t)=>{console.log(t.dataContext,t.column)},itemUsabilityOverride:e=>!e.dataContext.completed},{command:"command1",title:"Command 1",cssClass:"orange",positionOrder:61},{command:"delete-row",title:"Delete Row",positionOrder:64,iconCssClass:"mdi mdi-close",cssClass:"red",textCssClass:"bold",itemVisibilityOverride:e=>!e.dataContext.completed},{divider:!0,command:"",positionOrder:63},{command:"help",title:"Help",iconCssClass:"mdi mdi-help-circle-outline",positionOrder:66},{command:"something",title:"Disabled Command",disabled:!0,positionOrder:67}],optionTitle:"Change Effort-Driven Flag",optionItems:[{option:!0,title:"True",iconCssClass:"mdi mdi-check-box-outline"},{option:!1,title:"False",iconCssClass:"mdi mdi-checkbox-blank-outline"}]}}],this.gridOptions={autoEdit:!0,autoCommitEdit:!0,editable:!0,autoResize:{container:".demo-container"},dataView:{useCSPSafeFilter:!0},headerMenu:{hideFreezeColumnsCommand:!1},gridMenu:{hideClearFrozenColumnsCommand:!1},enableAutoSizeColumns:!0,enableAutoResize:!0,enableCellNavigation:!0,enableTextExport:!0,enableExcelExport:!0,excelExportOptions:{exportWithFormatter:!0},externalResources:[new Kn,this.excelExportService],enableFiltering:!0,rowSelectionOptions:{selectActiveRow:!1},showCustomFooter:!0,createPreHeaderPanel:!0,showPreHeaderPanel:!0,preHeaderPanelHeight:26,createTopHeaderPanel:!0,showTopHeaderPanel:!0,topHeaderPanelHeight:35,rowHeight:33,headerRowHeight:35,enableDraggableGrouping:!0,draggableGrouping:{dropPlaceHolderText:"Drop a column header here to group by the column",deleteIconCssClass:"mdi mdi-close text-color-danger",sortAscIconCssClass:"mdi mdi-arrow-up",sortDescIconCssClass:"mdi mdi-arrow-down",onGroupChanged:(e,t)=>this.onGroupChanged(t),onExtensionRegistered:e=>this.draggableGroupingPlugin=e,initialGroupBy:["duration"]},enableCheckboxSelector:!0,enableRowSelection:!0,checkboxSelector:{hideInFilterHeaderRow:!1,hideInColumnTitleRow:!0},editCommandHandler:(e,t,i)=>{this.editCommandQueue.push(i),i.execute()},enableCellMenu:!0,cellMenu:{onCommand:(e,t)=>this.executeCommand(e,t),onOptionSelected:(e,t)=>{const i=t&&t.dataContext;i&&i.hasOwnProperty("effortDriven")&&(i.effortDriven=t.item.option,this.sgb.gridService.updateItem(i))}}}}loadData(e){const t=[],i=new Date().getFullYear();for(let n=0;n<e;n++){const a=new Date().getFullYear()-3+Math.floor(Math.random()*10),r=Math.floor(Math.random()*11),o=Math.floor(Math.random()*29),l=new Date(a,r+1,o),d=Math.round(Math.random()*1e4)/100;t[n]={id:n,title:"Task "+n,duration:Math.round(Math.random()*100)+"",percentComplete:Math.round(Math.random()*100),start:new Date(i-2,r,o),finish:l<new Date?"":l,cost:n%33===0?-d:d,effortDriven:n%5===0}}return this.sgb&&(this.sgb.dataset=t),t}clearGroupsAndSelects(){this.clearGroupingSelects(),this.clearGrouping()}clearGroupingSelects(){this.selectedGroupingFields.forEach((e,t)=>this.selectedGroupingFields[t]=""),this.selectedGroupingFields=[...this.selectedGroupingFields]}clearGrouping(e=!0){var t,i,n;(t=this.draggableGroupingPlugin)==null||t.clearDroppedGroups(),e&&((n=(i=this.sgb)==null?void 0:i.slickGrid)==null||n.invalidate())}collapseAllGroups(){var e,t;(t=(e=this.sgb)==null?void 0:e.dataView)==null||t.collapseAllGroups()}expandAllGroups(){var e,t;(t=(e=this.sgb)==null?void 0:e.dataView)==null||t.expandAllGroups()}exportToExcel(){this.excelExportService.exportToExcel({filename:"Export",format:Me.xlsx})}groupByDurationOrderByCount(e=!1){var t,i,n,a,r;if(this.durationOrderByCount=e,this.clearGrouping(!1),(t=this.draggableGroupingPlugin)!=null&&t.setDroppedGroups){this.showTopHeader(),this.draggableGroupingPlugin.setDroppedGroups("duration");const o=e?[]:[{columnId:"duration",sortAsc:!0}];(n=(i=this.sgb)==null?void 0:i.slickGrid)==null||n.setSortColumns(o),(r=(a=this.sgb)==null?void 0:a.slickGrid)==null||r.invalidate()}}groupByDurationEffortDriven(){var e,t,i;this.clearGrouping(!1),(e=this.draggableGroupingPlugin)!=null&&e.setDroppedGroups&&(this.showTopHeader(),this.draggableGroupingPlugin.setDroppedGroups(["duration","effortDriven"]),(i=(t=this.sgb)==null?void 0:t.slickGrid)==null||i.invalidate())}setFiltersDynamically(){this.sgb.filterService.updateFilters([{columnId:"percentComplete",operator:">=",searchTerms:["55"]},{columnId:"cost",operator:"<",searchTerms:["80"]}])}showTopHeader(){var e,t;(t=(e=this.sgb)==null?void 0:e.slickGrid)==null||t.setTopHeaderPanelVisibility(!0)}toggleDarkMode(){var e,t,i;this._darkMode=!this._darkMode,this._darkMode?(document.body.setAttribute("data-theme","dark"),(e=document.querySelector(".demo-container"))==null||e.classList.add("dark-mode")):(document.body.setAttribute("data-theme","light"),(t=document.querySelector(".demo-container"))==null||t.classList.remove("dark-mode")),(i=this.sgb.slickGrid)==null||i.setOptions({darkMode:this._darkMode})}toggleDraggableGroupingRow(){var e,t,i,n;this.clearGroupsAndSelects(),(n=(e=this.sgb)==null?void 0:e.slickGrid)==null||n.setTopHeaderPanelVisibility(!((i=(t=this.sgb)==null?void 0:t.slickGrid)!=null&&i.getOptions().showTopHeaderPanel))}onGroupChanged(e){const t=e&&e.caller||[],i=e&&e.groupColumns||[];Array.isArray(this.selectedGroupingFields)&&Array.isArray(i)&&i.length>0?(this.selectedGroupingFields.forEach((n,a)=>this.selectedGroupingFields[a]=i[a]&&i[a].getter||""),this.selectedGroupingFields=[...this.selectedGroupingFields]):i.length===0&&t==="remove-group"&&this.clearGroupingSelects()}handleOnClick(e){console.log("onClick",e.detail)}handleOnCellChange(e){var t;(t=this.sgb.dataView)==null||t.refresh(),console.log("onCellChanged",e.detail)}handleValidationError(e){console.log("handleValidationError",e.detail);const t=e.detail&&e.detail.args;t.validationResults&&alert(t.validationResults.msg)}handleItemDeleted(e){const t=e&&e.detail;console.log("item deleted with id:",t)}executeCommand(e,t){var a;const i=t.command,n=t.dataContext;switch(i){case"command1":alert("Command 1");break;case"command2":alert("Command 2");break;case"help":alert("Please help!");break;case"delete-row":confirm(`Do you really want to delete row (${t.row+1}) with "${n.title}"`)&&((a=this.sgb)==null||a.gridService.deleteItemById(n.id));break}}undo(){var t,i;const e=this.editCommandQueue.pop();e&&Vt.cancelCurrentEdit()&&(e.undo(),(i=(t=this.sgb)==null?void 0:t.slickGrid)==null||i.gotoCell(e.row,e.cell,!1))}}const Eu={timeout:5e3,jsonpCallback:"callback",jsonpCallbackFunction:null},zC=()=>`jsonp_${Date.now()}_${Math.ceil(Math.random()*1e5)}`,rs=s=>delete window[s],Qr=s=>{const e=document.getElementById(s);e&&document.getElementsByTagName("head")[0].removeChild(e)};function wu(s,e={}){let t=s;const i=e.timeout||Eu.timeout,n=e.jsonpCallback||Eu.jsonpCallback;let a;return new Promise((r,o)=>{const l=e.jsonpCallbackFunction||zC(),d=`${n}_${l}`;window[l]=c=>{r({ok:!0,json:()=>Promise.resolve(c)}),a&&clearTimeout(a),Qr(d),rs(l)},t+=t.indexOf("?")===-1?"?":"&";const u=document.createElement("script");u.setAttribute("src",`${t}${n}=${l}`),e.charset&&u.setAttribute("charset",e.charset),e.nonce&&u.setAttribute("nonce",e.nonce),e.referrerPolicy&&u.setAttribute("referrerPolicy",e.referrerPolicy),e.crossorigin&&u.setAttribute("crossorigin","true"),u.id=d,document.getElementsByTagName("head")[0].appendChild(u),a=setTimeout(()=>{o(new Error(`JSONP request to ${s} timed out`)),rs(l),Qr(d),window[l]=()=>{rs(l)}},i),u.onerror=()=>{o(new Error(`JSONP request to ${s} failed`)),rs(l),Qr(d),a&&clearTimeout(a)}})}const VC=s=>s==null||!s.length?{valid:!1,msg:"This is a required field"}:/^Task\s\d+$/.test(s)?{valid:!0,msg:""}:{valid:!1,msg:'Your title is invalid, it must start with "Task" followed by a number'},$C=(s,e,t,i,n)=>n.title;class UC{constructor(){b(this,"_bindingEventService");b(this,"columnDefinitions");b(this,"gridOptions");b(this,"dataset");b(this,"dataViewObj");b(this,"commandQueue",[]);b(this,"frozenColumnCount",2);b(this,"frozenRowCount",3);b(this,"isFrozenBottom",!1);b(this,"sgb");b(this,"checkboxSelectorInstance");b(this,"isSelectAllShownAsColumnTitle",!1);this._bindingEventService=new ie}attached(){const e=this.initializeGrid(),t=document.querySelector(".grid4");this._bindingEventService.bind(t,"onvalidationerror",this.handleOnValidationError.bind(this)),this._bindingEventService.bind(t,"onitemdeleted",this.handleOnItemDeleted.bind(this)),this.sgb=new he.GridBundle(t,this.columnDefinitions,{...Fe,...this.gridOptions},e)}dispose(){var e;(e=this.sgb)==null||e.dispose(),this._bindingEventService.unbindAll()}initializeGrid(){this.columnDefinitions=[{id:"title",name:"Title",field:"title",sortable:!0,type:S.string,editor:{model:N.longText,required:!0,alwaysSaveOnEnterKey:!0,validator:VC},formatter:$C,filterable:!0},{id:"percentComplete",name:"% Complete",field:"percentComplete",sortable:!0,filterable:!0,type:S.number,editor:{enableRenderHtml:!0,collection:Array.from(Array(101).keys()).map(e=>({value:e,label:e,symbol:'<i class="mdi mdi-percent-outline text-color-info"></i>'})),customStructure:{value:"value",label:"label",labelSuffix:"symbol"},collectionSortBy:{property:"label",sortDesc:!0},collectionFilterBy:{property:"value",value:0,operator:O.notEqual},editorOptions:{filter:!0},model:N.singleSelect}},{id:"start",name:"Start",field:"start",minWidth:60,type:S.dateIso,filterable:!0,sortable:!0,filter:{model:B.compoundDate},formatter:R.dateIso},{id:"finish",name:"Finish",field:"finish",minWidth:60,type:S.dateIso,filterable:!0,sortable:!0,filter:{model:B.compoundDate},formatter:R.dateIso},{id:"completed",name:"Completed",field:"completed",sortable:!0,formatter:he.Formatters.checkmarkMaterial,exportWithFormatter:!1,filterable:!0,editor:{model:N.checkbox},filter:{model:B.singleSelect,collection:[{value:"",label:""},{value:!0,label:"True"},{value:!1,label:"False"}]}},{id:"cost",name:"Cost | Duration",field:"cost",formatter:this.costDurationFormatter.bind(this),sortable:!0,filter:{model:B.compoundSlider},editor:{model:N.dualInput,params:{leftInput:{field:"cost",type:"float",decimal:2,minValue:0,maxValue:5e4,placeholder:"< 50K",errorMessage:"Cost must be positive and below $50K."},rightInput:{field:"duration",type:"float",minValue:0,maxValue:100,title:"make sure Duration is withing its range of 0 to 100",errorMessage:"Duration must be between 0 and 100."}}}},{id:"cityOfOrigin",name:"City of Origin",field:"cityOfOrigin",filterable:!0,sortable:!0,minWidth:100,editor:{model:N.autocompleter,placeholder:"🔎︎ search city",editorOptions:{minLength:3,fetch:(e,t)=>{wu(`http://gd.geobytes.com/AutoCompleteCity?q=${e}`).then(i=>i.json()).then(i=>t(i)).catch(i=>console.log("invalid JSONP response",i))}}},filter:{model:B.autocompleter,filterOptions:{minLength:3,fetch:(e,t)=>{wu(`http://gd.geobytes.com/AutoCompleteCity?q=${e}`).then(i=>i.json()).then(i=>t(i)).catch(i=>console.log("invalid JSONP response",i))}}}},{id:"action",name:"Action",field:"action",width:100,maxWidth:100,excludeFromExport:!0,formatter:()=>'<div class="cell-menu-dropdown">Action<i class="mdi mdi-chevron-down"></i></div>',cellMenu:{hideCloseButton:!1,commandTitle:"Commands",commandItems:[{command:"command2",title:"Command 2",positionOrder:62,action:(e,t)=>{console.log(t.dataContext,t.column)},itemUsabilityOverride:e=>!e.dataContext.completed},{command:"command1",title:"Command 1",cssClass:"orange",positionOrder:61},{command:"delete-row",title:"Delete Row",positionOrder:64,iconCssClass:"mdi mdi-close",cssClass:"red",textCssClass:"bold",itemVisibilityOverride:e=>!e.dataContext.completed},{divider:!0,command:"",positionOrder:63},{command:"help",title:"Help",iconCssClass:"mdi mdi-help-circle",positionOrder:66},{command:"something",title:"Disabled Command",disabled:!0,positionOrder:67}],optionTitle:"Change Complete Flag",optionItems:[{option:!0,title:"True",iconCssClass:"mdi mdi-check-box-outline"},{option:!1,title:"False",iconCssClass:"mdi mdi-checkbox-blank-outline"}]}}],this.gridOptions={autoEdit:!0,autoCommitEdit:!0,editable:!0,autoResize:{container:".demo-container"},enableAutoTooltip:!0,autoTooltipOptions:{enableForHeaderCells:!0},enableAutoSizeColumns:!0,enableAutoResize:!0,enableCellNavigation:!0,enableFiltering:!0,enableExcelExport:!0,excelExportOptions:{exportWithFormatter:!0,sanitizeDataExport:!0},externalResources:[new dt],rowSelectionOptions:{selectActiveRow:!1},enableCheckboxSelector:!0,checkboxSelector:{hideInColumnTitleRow:!this.isSelectAllShownAsColumnTitle,hideInFilterHeaderRow:this.isSelectAllShownAsColumnTitle,name:"Sel",onExtensionRegistered:e=>this.checkboxSelectorInstance=e},enableRowSelection:!0,frozenColumn:this.frozenColumnCount,frozenRow:this.frozenRowCount,editCommandHandler:(e,t,i)=>{this.commandQueue.push(i),i.execute()},enableCellMenu:!0,cellMenu:{subItemChevronClass:"mdi mdi-chevron-down mdi-rotate-270",onCommand:(e,t)=>this.executeCommand(e,t),onOptionSelected:(e,t)=>{var n;const i=t==null?void 0:t.dataContext;i&&i.hasOwnProperty("completed")&&(i.completed=t.item.option,(n=this.sgb)==null||n.gridService.updateItem(i))}},gridMenu:{hideClearFrozenColumnsCommand:!1},headerMenu:{hideFreezeColumnsCommand:!1},enableContextMenu:!0,contextMenu:{optionShownOverColumnIds:["percentComplete"],subItemChevronClass:"mdi mdi-chevron-down mdi-rotate-270",hideCloseButton:!0,optionTitle:"Change Percent Complete",onOptionSelected:(e,t)=>{var n;const i=t==null?void 0:t.dataContext;i!=null&&i.hasOwnProperty("percentComplete")&&(i.percentComplete=t.item.option,(n=this.sgb.slickGrid)==null||n.updateRow(t.row||0))},optionItems:[{option:0,iconCssClass:"mdi mdi-checkbox-blank-outline text-color-secondary",title:"Not Started (0%)"},{option:50,iconCssClass:"mdi mdi-flip-vertical",title:"Half Completed (50%)"},{option:100,iconCssClass:"mdi mdi-checkbox-marked text-color-success",title:"Completed (100%)"},"divider",{option:null,title:"Sub-Options (demo)",subMenuTitle:"Set Percent Complete",optionItems:[{option:0,iconCssClass:"mdi mdi-checkbox-blank-outline text-color-secondary",title:"Not Started (0%)"},{option:50,iconCssClass:"mdi mdi-flip-vertical",title:"Half Completed (50%)"},{option:100,iconCssClass:"mdi mdi-checkbox-marked text-color-success",title:"Completed (100%)"}]}],commandItems:[{command:"",divider:!0,positionOrder:98},{command:"export",title:"Exports",iconCssClass:"mdi mdi-download",positionOrder:99,commandItems:[{command:"exports-txt",title:"Text (tab delimited)"},{command:"sub-menu",title:"Excel",cssClass:"green",subMenuTitle:"available formats",subMenuTitleCssClass:"text-italic orange",commandItems:[{command:"exports-csv",title:"Excel (csv)"},{command:"exports-xlsx",title:"Excel (xlsx)"}]}]},{command:"feedback",title:"Feedback",iconCssClass:"mdi mdi-information-outline",positionOrder:100,commandItems:[{command:"request-update",title:"Request update from supplier",iconCssClass:"mdi mdi-star",tooltip:"this will automatically send an alert to the shipping team to contact the user for an update"},"divider",{command:"sub-menu",title:"Contact Us",iconCssClass:"mdi mdi-account",subMenuTitle:"contact us...",subMenuTitleCssClass:"italic",commandItems:[{command:"contact-email",title:"Email us",iconCssClass:"mdi mdi-pencil-outline"},{command:"contact-chat",title:"Chat with us",iconCssClass:"mdi mdi-message-text-outline"},{command:"contact-meeting",title:"Book an appointment",iconCssClass:"mdi mdi-coffee"}]}]}],onCommand:(e,t)=>this.executeCommand(e,t)}},this.dataset=[];for(let e=0;e<500;e++)this.dataset[e]={id:e,title:"Task "+e,duration:e%8?Math.round(Math.random()*100)+"":null,percentComplete:Math.round(Math.random()*100),start:new Date(2009,0,1),finish:new Date(2009,4,5),cost:e%33===0?null:Math.random()*1e4,completed:e%5===0,cityOfOrigin:e%2?"Vancouver, BC, Canada":"Boston, MA, United States"};return this.dataset}costDurationFormatter(e,t,i,n,a){const r=this.isNullUndefinedOrEmpty(a.cost)?"n/a":he.Utilities.formatNumber(a.cost,0,2,!1,"$","",".",",");let o="n/a";return!this.isNullUndefinedOrEmpty(a.duration)&&a.duration>=0&&(o=`${a.duration} ${a.duration>1?"days":"day"}`),`<b>${r}</b> | ${o}`}isNullUndefinedOrEmpty(e){return e===""||e===null||e===void 0}handleOnClick(e){console.log("onClick",e.detail)}handleOnValidationError(e){console.log("handleOnValidationError",e.detail);const t=e.detail&&e.detail.args;if(t.validationResults)return alert(t.validationResults.msg),!1}handleOnItemDeleted(e){const t=e&&e.detail;console.log("item deleted with id:",t)}changeFrozenColumnCount(){var e,t,i;(e=this.sgb)!=null&&e.slickGrid&&((t=this.sgb)!=null&&t.slickGrid.setOptions)&&((i=this.sgb)==null||i.slickGrid.setOptions({frozenColumn:+this.frozenColumnCount}))}changeFrozenRowCount(){var e,t,i;(e=this.sgb)!=null&&e.slickGrid&&((t=this.sgb)!=null&&t.slickGrid.setOptions)&&((i=this.sgb)==null||i.slickGrid.setOptions({frozenRow:+this.frozenRowCount}))}setFrozenColumns(e){var t,i,n,a;(i=(t=this.sgb)==null?void 0:t.slickGrid)==null||i.setOptions({frozenColumn:e,alwaysShowVerticalScroll:!1}),this.gridOptions=((a=(n=this.sgb)==null?void 0:n.slickGrid)==null?void 0:a.getOptions())??{}}toggleFrozenBottomRows(){var e,t,i;(e=this.sgb)!=null&&e.slickGrid&&((t=this.sgb)!=null&&t.slickGrid.setOptions)&&((i=this.sgb)==null||i.slickGrid.setOptions({frozenBottom:!this.isFrozenBottom}),this.isFrozenBottom=!this.isFrozenBottom)}toggleWhichRowToShowSelectAll(){this.isSelectAllShownAsColumnTitle=!this.isSelectAllShownAsColumnTitle,this.checkboxSelectorInstance.setOptions({hideInColumnTitleRow:!this.isSelectAllShownAsColumnTitle,hideInFilterHeaderRow:this.isSelectAllShownAsColumnTitle})}executeCommand(e,t){var a;const i=t.command,n=t.dataContext;switch(i){case"command1":case"command2":alert(t.item.title);break;case"exports-csv":case"exports-txt":case"exports-xlsx":alert(`Exporting as ${t.item.title}`);break;case"help":alert("Please help!");break;case"delete-row":confirm(`Do you really want to delete row (${t.row+1}) with "${n.title}"?`)&&((a=this.sgb)==null||a.gridService.deleteItemById(n.id));break;default:alert("Command: "+t.command);break}}}const KC=500;class jC{constructor(){b(this,"_bindingEventService");b(this,"columnDefinitions");b(this,"gridOptions");b(this,"dataset");b(this,"sgb");b(this,"loadingClass","");b(this,"isLargeDataset",!1);b(this,"hasNoExpandCollapseChanged",!0);b(this,"treeToggleItems",[]);this._bindingEventService=new ie}attached(){this.initializeGrid(),this.dataset=[];const e=document.querySelector(".grid5");this.sgb=new he.GridBundle(e,this.columnDefinitions,{...Fe,...this.gridOptions}),this.dataset=this.loadData(KC),this._bindingEventService.bind(e,"onbeforefilterchange",this.showSpinner.bind(this)),this._bindingEventService.bind(e,"onfilterchanged",this.hideSpinner.bind(this)),this._bindingEventService.bind(e,"onbeforefilterclear",this.showSpinner.bind(this)),this._bindingEventService.bind(e,"onfiltercleared",this.hideSpinner.bind(this)),this._bindingEventService.bind(e,"onbeforesortchange",this.showSpinner.bind(this)),this._bindingEventService.bind(e,"onsortchanged",this.hideSpinner.bind(this)),this._bindingEventService.bind(e,"ontreefulltogglestart",this.showSpinner.bind(this)),this._bindingEventService.bind(e,"ontreefulltoggleend",this.handleOnTreeFullToggleEnd.bind(this)),this._bindingEventService.bind(e,"ontreeitemtoggled",this.handleOnTreeItemToggled.bind(this)),document.body.classList.add("material-theme")}dispose(){var e;(e=this.sgb)==null||e.dispose(),document.body.classList.remove("material-theme")}hideSpinner(){window.setTimeout(()=>this.loadingClass="",200)}showSpinner(){this.isLargeDataset&&(this.loadingClass="mdi mdi-load mdi-spin-1s mdi-24px text-color-alt-success")}getTreeIds(e){let t=[];return e.__hasChildren&&e.treeLevel===0&&(t=this.sgb.dataset.filter(i=>i.parentId===e.id).map(i=>i.id),t.push(e.id)),t}getTreeSelectedCount(e,t){var a;let i=[];const n=(a=this.sgb.dataView)==null?void 0:a.mapRowsToIds(t);return e.__hasChildren&&e.treeLevel===0&&(i=this.sgb.dataset.filter(r=>r.parentId===e.id).filter(r=>n==null?void 0:n.some(o=>o===r.id)).map(r=>r.id)),i.length}handleOnSelectedRowsChanged(e){var i,n,a,r,o,l,d,u,c;const t=e.detail.args;if(t.caller==="click.toggle"){let h=[];const m=[],p=t.changedSelectedRows.concat(t.changedUnselectedRows);let g=p.length>0?p[0]:null;if(g!==null){const f=t.changedUnselectedRows.length&&g===t.changedUnselectedRows[0];let F=(i=this.sgb.dataView)==null?void 0:i.getItem(g);if(F.__hasChildren&&F.treeLevel===0)this.sgb.treeDataService.dynamicallyToggleItemState([{itemId:F.id,isCollapsed:!1}]),h=this.getTreeIds(F);else if(F.__hasChildren&&F.treeLevel===1||!F.__hasChildren&&F.parentId&&!this.getTreeSelectedCount((n=this.sgb.dataView)==null?void 0:n.getItemById(F.parentId),t.previousSelectedRows)){const y=(a=this.sgb.dataView)==null?void 0:a.getItem(g);F=(r=this.sgb.dataView)==null?void 0:r.getItemById(y.parentId),g=(l=(o=this.sgb.dataView)==null?void 0:o.mapIdsToRows([y.parentId]))==null?void 0:l[0],h=this.getTreeIds(F)}if(h.length>0){const y=(d=this.sgb.slickGrid)==null?void 0:d.getSelectedRows();for(const w of h){const A=(u=this.sgb.dataView)==null?void 0:u.mapIdsToRows([w]);Array.isArray(A)&&A.length>0&&m.push({itemId:w,rowIdx:A[0]})}const v=m.map(w=>w.rowIdx),C=Array.from(new Set(y==null?void 0:y.concat(v))),_=f?C.filter(w=>!v.includes(w)):C;(c=this.sgb.slickGrid)==null||c.setSelectedRows(_)}}}}initializeGrid(){this.columnDefinitions=[{id:"title",name:"Title",field:"title",width:220,cssClass:"cell-title",filterable:!0,sortable:!0,exportWithFormatter:!1,queryFieldSorter:"id",type:S.string,formatter:R.tree,exportCustomFormatter:R.treeExport},{id:"duration",name:"Duration",field:"duration",minWidth:90,filterable:!0},{id:"percentComplete",name:"% Complete",field:"percentComplete",minWidth:120,maxWidth:200,exportWithFormatter:!1,sortable:!0,filterable:!0,filter:{model:B.compoundSlider,operator:">="},formatter:R.percentCompleteBarWithText,type:S.number},{id:"start",name:"Start",field:"start",minWidth:60,type:S.dateIso,filterable:!0,sortable:!0,filter:{model:B.compoundDate},formatter:R.dateIso},{id:"finish",name:"Finish",field:"finish",minWidth:60,type:S.dateIso,filterable:!0,sortable:!0,filter:{model:B.compoundDate},formatter:R.dateIso},{id:"effortDriven",name:"Effort Driven",width:80,minWidth:20,maxWidth:120,cssClass:"cell-effort-driven",field:"effortDriven",exportWithFormatter:!1,formatter:R.checkmarkMaterial,cannotTriggerInsert:!0,filterable:!0,filter:{collection:[{value:"",label:""},{value:!0,label:"True"},{value:!1,label:"False"}],model:B.singleSelect}}],this.gridOptions={autoResize:{container:".demo-container"},enableAutoSizeColumns:!0,enableAutoResize:!0,enableExcelExport:!0,textExportOptions:{exportWithFormatter:!0},excelExportOptions:{exportWithFormatter:!0},externalResources:[new dt],enableFiltering:!0,showCustomFooter:!0,customFooterOptions:{leftFooterText:'<div class="flex gap-5px">Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i></div>'},enableTreeData:!0,treeDataOptions:{columnId:"title",parentPropName:"parentId",levelPropName:"treeLevel",indentMarginLeft:15,initiallyCollapsed:!0,titleFormatter:(e,t,i,n,a)=>{let r="";return a.treeLevel>0&&(r='<span class="mdi mdi-subdirectory-arrow-right text-color-se-secondary"></span>'),r+=`<span class="bold">${i}</span>`,a.parentId&&(r+=` <span class="font-11px ml-2">(parentId: ${a.parentId})</span>`),r}},multiColumnSort:!1,presets:{filters:[{columnId:"percentComplete",searchTerms:[25],operator:">="}]},filterTypingDebounce:250}}addNewRow(){var i;const e=this.sgb.dataset.length,t=(i=this.sgb.dataView)==null?void 0:i.getItemById(1);if(t!=null&&t.__hasChildren){const n={id:e,parentId:t.id,title:`Task ${e}`,duration:"1 day",percentComplete:99,start:new Date,finish:new Date,effortDriven:!1};this.sgb.gridService.addItem(n)}}updateFirstRow(){var t;const e=(t=this.sgb.dataView)==null?void 0:t.getItemById(0);this.sgb.gridService.updateItem({...e,duration:"11 days",percentComplete:77,start:new Date,finish:new Date,effortDriven:!1})}collapseAll(){this.sgb.treeDataService.toggleTreeDataCollapse(!0)}collapseAllWithoutEvent(){this.sgb.treeDataService.toggleTreeDataCollapse(!0,!1)}expandAll(){this.sgb.treeDataService.toggleTreeDataCollapse(!1)}dynamicallyChangeFilter(){this.sgb.filterService.updateFilters([{columnId:"percentComplete",operator:"<",searchTerms:[40]}])}logHierarchicalStructure(){console.log("hierarchical array",this.sgb.treeDataService.datasetHierarchical)}logFlatStructure(){console.log("flat array",this.sgb.treeDataService.dataset)}loadData(e){this.isLargeDataset=e>5e3;let t=0;const i=[],n=[];for(let a=0;a<e;a++){const r=2e3+Math.floor(Math.random()*10),o=Math.floor(Math.random()*11),l=Math.floor(Math.random()*29),d=n[a]={};let u;(a===1||a===0)&&(t=0,i.pop()),a===3?t=1:a===2||a===4||Math.random()>.8&&a>0&&t<3&&a-1!==0&&a-1!==2?(t++,i.push(a-1)):Math.random()<.3&&t>0&&(t--,i.pop()),i.length>0?u=i[i.length-1]:u=null,d.id=a,d.parentId=u,d.title=`Task ${a}`,d.duration="5 days",d.percentComplete=Math.round(Math.random()*100),d.start=new Date(r,o,l),d.finish=new Date(r,o+1,l),d.effortDriven=a%5===0}return this.sgb&&(this.sgb.dataset=n),n}handleOnTreeFullToggleEnd(e){const t=e.detail;console.log("Tree Data changes",t),this.hideSpinner()}handleOnTreeItemToggled(e){this.hasNoExpandCollapseChanged=!1;const t=e.detail;this.treeToggleItems=t.toggledItems,console.log("Tree Data changes",t)}handleOnGridStateChanged(e){var i,n,a,r;this.hasNoExpandCollapseChanged=!1;const t=e.detail;((i=t.change)==null?void 0:i.type)===ft.treeData&&(console.log("Tree Data gridStateChange",(n=t.gridState)==null?void 0:n.treeData),this.treeToggleItems=(r=(a=t.gridState)==null?void 0:a.treeData)==null?void 0:r.toggledItems)}logTreeDataToggledItems(){console.log(this.sgb.treeDataService.getToggledItems())}dynamicallyToggledFirstParent(){var r;const e="parentId",t="treeLevel",n=this.sgb.dataset.find(o=>o[t]===1),a=(r=this.sgb.dataView)==null?void 0:r.getItemByIdx(n[e]);n&&a&&this.sgb.treeDataService.dynamicallyToggleItemState([{itemId:a.id,isCollapsed:!a.__collapsed}])}reapplyToggledItems(){this.sgb.treeDataService.applyToggledItemStateChanges(this.treeToggleItems)}}class YC{constructor(){b(this,"columnDefinitions");b(this,"gridOptions");b(this,"datasetFlat");b(this,"datasetHierarchical",[]);b(this,"sgb");b(this,"durationOrderByCount",!1);b(this,"isExcludingChildWhenFiltering",!1);b(this,"isAutoApproveParentItemWhenTreeColumnIsValid",!0);b(this,"isAutoRecalcTotalsOnFilterChange",!1);b(this,"isRemoveLastInsertedPopSongDisabled",!0);b(this,"lastInsertedPopSongId");b(this,"searchString","");b(this,"treeFormatter",(e,t,i,n,a,r)=>{var y,v;const o=r.getOptions(),l=((y=o==null?void 0:o.treeDataOptions)==null?void 0:y.levelPropName)||"__treeLevel";if(i==null||a===void 0)return"";const d=r.getData(),u=d.getItems(),c=d.getIdPropertyName()||"id",h=d.getIdxById(a[c]),m=this.getFileIcon(i),p=a[l],g=".";i=i.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");const f=`<span class="display-inline-block width-${15*p}px"></span>`,F=Ln(5*p);if(((v=u[h+1])==null?void 0:v[l])>u[h][l]||u[h].__hasChildren){const C=`<i class="mdi mdi-22px ${a.__collapsed?"mdi-folder":"mdi-folder-open"}"></i>`;return a.__collapsed?`<span class="hidden">${g}</span>${f}${F} <span class="slick-group-toggle collapsed" level="${p}"></span>${C} ${m} ${i}`:`<span class="hidden">${g}</span>${f}${F} <span class="slick-group-toggle expanded" level="${p}"></span>${C} ${m} ${i}`}else return`<span class="hidden">${g}</span>${f}${F} <span class="slick-group-toggle" level="${p}"></span>${m} ${i}`})}attached(){this.initializeGrid(),this.datasetFlat=[],this.datasetHierarchical=this.mockDataset();const e=document.querySelector(".grid6");this.sgb=new he.GridBundle(e,this.columnDefinitions,{...Fe,...this.gridOptions},void 0,this.datasetHierarchical),document.body.classList.add("salesforce-theme")}dispose(){var e;(e=this.sgb)==null||e.dispose(),document.body.classList.remove("salesforce-theme")}initializeGrid(){this.columnDefinitions=[{id:"file",name:"Files",field:"file",type:S.string,width:150,formatter:this.treeFormatter,filterable:!0,sortable:!0},{id:"dateModified",name:"Date Modified",field:"dateModified",formatter:R.dateIso,type:S.dateUtc,outputType:S.dateIso,minWidth:90,exportWithFormatter:!0,filterable:!0,filter:{model:B.compoundDate}},{id:"description",name:"Description",field:"description",minWidth:90,filterable:!0,sortable:!0},{id:"size",name:"Size",field:"size",minWidth:90,type:S.number,exportWithFormatter:!0,excelExportOptions:{autoDetectCellFormat:!1},filterable:!0,filter:{model:B.compoundInputNumber},formatter:(e,t,i,n,a)=>{var o,l,d,u;const r=n.field;if((a==null?void 0:a.__treeTotals)!==void 0){const c=a[((l=(o=this.gridOptions)==null?void 0:o.treeDataOptions)==null?void 0:l.levelPropName)||"__treeLevel"],h=(d=a==null?void 0:a.__treeTotals)==null?void 0:d.sum[r],m=(u=a==null?void 0:a.__treeTotals)==null?void 0:u.avg[r];if(m!==void 0&&h!==void 0)return isNaN(h)?"":`<span class="text-color-primary bold">sum: ${ti(h,0,2)} MB</span> / <span class="avg-total">avg: ${ti(m,0,2)} MB</span> <span class="total-suffix">(${c===0?"total":"sub-total"})</span>`;if(h!==void 0)return isNaN(h)?"":`<span class="text-color-primary bold">sum: ${ti(h,0,2)} MB</span> <span class="total-suffix">(${c===0?"total":"sub-total"})</span>`}return se(i)?`${i} MB`:""}}],this.gridOptions={autoResize:{container:".demo-container"},enableAutoSizeColumns:!0,enableAutoResize:!0,enableExcelExport:!0,excelExportOptions:{exportWithFormatter:!0,sanitizeDataExport:!0},enableTextExport:!0,textExportOptions:{exportWithFormatter:!0,sanitizeDataExport:!0},gridMenu:{iconCssClass:"mdi mdi-dots-grid"},externalResources:[new dt,new Kn],enableFiltering:!0,enableTreeData:!0,multiColumnSort:!1,rowHeight:35,treeDataOptions:{columnId:"file",childrenPropName:"files",excludeChildrenWhenFilteringTree:this.isExcludingChildWhenFiltering,autoApproveParentItemWhenTreeColumnIsValid:this.isAutoApproveParentItemWhenTreeColumnIsValid,aggregators:[new ge.Avg("size"),new ge.Sum("size")],autoRecalcTotalsOnFilterChange:this.isAutoRecalcTotalsOnFilterChange},showCustomFooter:!0,presets:{treeData:{toggledItems:[{itemId:4,isCollapsed:!0}]}}}}changeAutoApproveParentItem(e){var t;return this.isAutoApproveParentItemWhenTreeColumnIsValid=e,this.gridOptions.treeDataOptions.autoApproveParentItemWhenTreeColumnIsValid=this.isAutoApproveParentItemWhenTreeColumnIsValid,(t=this.sgb.slickGrid)==null||t.setOptions(this.gridOptions),this.sgb.filterService.refreshTreeDataFilters(),!0}changeAutoRecalcTotalsOnFilterChange(e){var t;return this.isAutoRecalcTotalsOnFilterChange=e,this.gridOptions.treeDataOptions.autoRecalcTotalsOnFilterChange=this.isAutoRecalcTotalsOnFilterChange,(t=this.sgb.slickGrid)==null||t.setOptions(this.gridOptions),this.sgb.filterService.clearFilters(),this.sgb.treeDataService.enableAutoRecalcTotalsFeature(),!0}changeExcludeChildWhenFiltering(e){var t;return this.isExcludingChildWhenFiltering=e,this.gridOptions.treeDataOptions.excludeChildrenWhenFilteringTree=this.isExcludingChildWhenFiltering,(t=this.sgb.slickGrid)==null||t.setOptions(this.gridOptions),this.sgb.filterService.refreshTreeDataFilters(),!0}clearSearch(){this.searchFile(new KeyboardEvent("keyup",{code:"",bubbles:!0,cancelable:!0})),document.querySelector("input.search").value=""}executeCommand(e,t){switch(t.command){case"exports-csv":case"exports-txt":case"exports-xlsx":alert(`Exporting as ${t.item.title}`);break;default:alert("Command: "+t.command);break}}searchFile(e){var t;this.searchString=((t=e.target)==null?void 0:t.value)||"",this.updateFilter()}updateFilter(){this.sgb.filterService.updateFilters([{columnId:"file",searchTerms:[this.searchString]}],!0,!1,!0)}getFileIcon(e){let t="";return e.includes(".pdf")?t='<i class="mdi mdi-20px mdi-file-pdf-outline"></i>':e.includes(".txt")?t='<i class="mdi mdi-20px mdi-file-document-outline"></i>':e.includes(".csv")||e.includes(".xls")?t='<i class="mdi mdi-20px mdi-file-excel-outline"></i>':e.includes(".mp3")?t='<i class="mdi mdi-20px mdi-file-music-outline"></i>':e.includes(".")&&(t='<i class="mdi mdi-20px mdi-file-question-outline"></i>'),t}addNewFile(){const e=this.sgb.dataView.getItemCount()+50,t=zi(this.datasetHierarchical,i=>i.file==="pop","files");t&&Array.isArray(t.files)&&(t.files.push({id:e,file:`pop-${e}.mp3`,dateModified:new Date,size:e+3}),this.lastInsertedPopSongId=e,this.isRemoveLastInsertedPopSongDisabled=!1,this.sgb.datasetHierarchical=this.datasetHierarchical,window.setTimeout(()=>{var n,a;const i=(n=this.sgb.dataView)==null?void 0:n.getRowById(e);(a=this.sgb.slickGrid)==null||a.scrollRowIntoView(i+3)},0))}deleteFile(){const e=zi(this.datasetHierarchical,i=>i.file==="pop","files"),t=zi(this.datasetHierarchical,i=>i.id===this.lastInsertedPopSongId,"files");if(e&&t){const i=e.files.findIndex(n=>n.id===t.id);i>=0&&(e.files.splice(i,1),this.lastInsertedPopSongId=void 0,this.isRemoveLastInsertedPopSongDisabled=!0,this.sgb.datasetHierarchical=this.datasetHierarchical)}}clearFilters(){this.sgb.filterService.clearFilters()}collapseAll(){this.sgb.treeDataService.toggleTreeDataCollapse(!0)}expandAll(){this.sgb.treeDataService.toggleTreeDataCollapse(!1)}logHierarchicalStructure(){console.log("hierarchical array",this.sgb.treeDataService.datasetHierarchical)}logFlatStructure(){console.log("flat array",this.sgb.treeDataService.dataset)}mockDataset(){return[{id:24,file:"bucket-list.txt",dateModified:"2012-03-05T12:44:00.123Z",size:.5},{id:18,file:"something.txt",dateModified:"2015-03-03T03:50:00.123Z",size:90},{id:21,file:"documents",files:[{id:2,file:"txt",files:[{id:3,file:"todo.txt",description:"things to do someday maybe",dateModified:"2015-05-12T14:50:00.123Z",size:.7}]},{id:4,file:"pdf",files:[{id:22,file:"map2.pdf",dateModified:"2015-07-21T08:22:00.123Z",size:2.9},{id:5,file:"map.pdf",dateModified:"2015-05-21T10:22:00.123Z",size:3.1},{id:6,file:"internet-bill.pdf",dateModified:"2015-05-12T14:50:00.123Z",size:1.3},{id:23,file:"phone-bill.pdf",dateModified:"2015-05-01T07:50:00.123Z",size:1.5}]},{id:9,file:"misc",files:[{id:10,file:"warranties.txt",dateModified:"2015-02-26T16:50:00.123Z",size:.4}]},{id:7,file:"xls",files:[{id:8,file:"compilation.xls",dateModified:"2014-10-02T14:50:00.123Z",size:2.3}]},{id:55,file:"unclassified.csv",dateModified:"2015-04-08T03:44:12.333Z",size:.25},{id:56,file:"unresolved.csv",dateModified:"2015-04-03T03:21:12.000Z",size:.79},{id:57,file:"zebra.dll",dateModified:"2016-12-08T13:22:12.432",size:1.22}]},{id:11,file:"music",files:[{id:12,file:"mp3",files:[{id:16,file:"rock",files:[{id:17,file:"soft.mp3",dateModified:"2015-05-13T13:50:00Z",size:98}]},{id:14,file:"pop",files:[{id:15,file:"theme.mp3",description:"Movie Theme Song",dateModified:"2015-03-01T17:05:00Z",size:47},{id:25,file:"song.mp3",description:"it is a song...",dateModified:"2016-10-04T06:33:44Z",size:6.3}]},{id:33,file:"other",files:[]}]}]},{id:26,file:"recipes",description:"Cake Recipes",dateModified:"2012-03-05T12:44:00.123Z",files:[{id:29,file:"cheesecake",description:"strawberry cheesecake",dateModified:"2012-04-04T13:52:00.123Z",size:.2},{id:30,file:"chocolate-cake",description:"tasty sweet chocolate cake",dateModified:"2012-05-05T09:22:00.123Z",size:.2},{id:31,file:"coffee-cake",description:"chocolate coffee cake",dateModified:"2012-01-01T08:08:48.123Z",size:.2}]}]}displaySumAggregatorOnly(){this.sgb.slickGrid.setOptions({treeDataOptions:{columnId:"file",childrenPropName:"files",excludeChildrenWhenFilteringTree:this.isExcludingChildWhenFiltering,autoApproveParentItemWhenTreeColumnIsValid:this.isAutoApproveParentItemWhenTreeColumnIsValid,aggregators:[new ge.Sum("size")]}}),this.sgb.datasetHierarchical=this.mockDataset()}}const qC=500;class JC{constructor(){b(this,"_bindingEventService");b(this,"_darkMode",!1);b(this,"columnDefinitions");b(this,"gridOptions");b(this,"dataset");b(this,"sgb");b(this,"duplicateTitleHeaderCount",1);b(this,"filteringEnabledClass","");b(this,"sortingEnabledClass","");b(this,"selectedLanguage","en");b(this,"selectedLanguageFile","en.json");b(this,"translateService");this._bindingEventService=new ie,this.translateService=window.TranslateService,this.translateService.use("en"),this.selectedLanguage="en",this.selectedLanguageFile=`${this.selectedLanguage}.json`,this.isFilteringEnabled=!0,this.isSortingEnabled=!0}set isFilteringEnabled(e){this.filteringEnabledClass=e?"mdi mdi-toggle-switch":"mdi mdi-toggle-switch-off-outline"}set isSortingEnabled(e){this.sortingEnabledClass=e?"mdi mdi-toggle-switch":"mdi mdi-toggle-switch-off-outline"}async attached(){this.initializeGrid(),this.dataset=this.loadData(qC);const e=document.querySelector(".grid7");this._bindingEventService.bind(e,"oncellchange",this.handleOnCellChange.bind(this)),this._bindingEventService.bind(e,"onvalidationerror",this.handleValidationError.bind(this)),this.sgb=new he.GridBundle(e,this.columnDefinitions,{...Fe,...this.gridOptions},this.dataset),document.body.classList.add("material-theme")}dispose(){var e,t;(e=this.sgb)==null||e.dispose(),this._bindingEventService.unbindAll(),document.body.classList.remove("material-theme"),(t=document.querySelector(".demo-container"))==null||t.classList.remove("dark-mode"),document.body.setAttribute("data-theme","light")}initializeGrid(){this.columnDefinitions=[{id:"title",nameKey:"TITLE",field:"title",filterable:!0,editor:{model:N.longText,required:!0,alwaysSaveOnEnterKey:!0}},{id:"action",name:"Action",field:"action",minWidth:55,maxWidth:55,excludeFromExport:!0,excludeFromHeaderMenu:!0,cssClass:"justify-center",formatter:()=>'<div class="button-style action-btn height-80"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>',cellMenu:{hideCloseButton:!1,subItemChevronClass:"mdi mdi-chevron-down mdi-rotate-270",commandTitleKey:"COMMANDS",commandItems:[{command:"command1",titleKey:"DELETE_ROW",iconCssClass:"mdi mdi-close",cssClass:"has-text-danger",textCssClass:"bold",action:(e,t)=>{var i;confirm(`Do you really want to delete row (${t.row+1}) with "${t.dataContext.title}"?`)&&((i=this.sgb)==null||i.gridService.deleteItemById(t.dataContext.id))}},"divider",{command:"help",titleKey:"HELP",iconCssClass:"mdi mdi-help-circle",action:()=>alert("Please help!")},{command:"",divider:!0,positionOrder:98},{command:"export",title:"Exports",iconCssClass:"mdi mdi-download",positionOrder:99,commandItems:[{command:"exports-txt",title:"Text (tab delimited)"},{command:"sub-menu",title:"Excel",cssClass:"green",subMenuTitle:"available formats",subMenuTitleCssClass:"text-italic orange",commandItems:[{command:"exports-csv",title:"Excel (csv)"},{command:"exports-xlsx",title:"Excel (xlsx)"}]}]},{command:"feedback",title:"Feedback",positionOrder:100,commandItems:[{command:"request-update",title:"Request update from supplier",iconCssClass:"mdi mdi-star",tooltip:"this will automatically send an alert to the shipping team to contact the user for an update"},"divider",{command:"sub-menu",title:"Contact Us",iconCssClass:"mdi mdi-account",subMenuTitle:"contact us...",subMenuTitleCssClass:"italic",commandItems:[{command:"contact-email",title:"Email us",iconCssClass:"mdi mdi-pencil-outline"},{command:"contact-chat",title:"Chat with us",iconCssClass:"mdi mdi-message-text-outline"},{command:"contact-meeting",title:"Book an appointment",iconCssClass:"mdi mdi-coffee"}]}]}],onCommand:(e,t)=>{var i;if(!((i=t.item)!=null&&i.action))switch(t.command){case"exports-csv":case"exports-txt":case"exports-xlsx":alert(`Exporting as ${t.item.title}`);break;default:alert("Command: "+t.command);break}},optionTitleKey:"CHANGE_COMPLETED_FLAG",optionItems:[{option:!0,titleKey:"TRUE",iconCssClass:"mdi mdi-check-box-outline"},{option:!1,titleKey:"FALSE",iconCssClass:"mdi mdi-checkbox-blank-outline"},{option:null,title:"Sub-Options (demo)",subMenuTitleKey:"CHANGE_COMPLETED_FLAG",optionItems:[{option:!0,titleKey:"TRUE",iconCssClass:"mdi mdi-check-box-outline"},{option:!1,titleKey:"FALSE",iconCssClass:"mdi mdi-checkbox-blank-outline"}]}],onOptionSelected:(e,t)=>{this.changeCompletedOption(t.dataContext,t.item.option)}}},{id:"duration",nameKey:"DURATION",field:"duration",sortable:!0,filterable:!0,type:"number",editor:{model:N.text,alwaysSaveOnEnterKey:!0},formatter:this.dayDurationTranslateFormatter.bind(this)},{id:"percentComplete",nameKey:"PERCENT_COMPLETE",field:"percentComplete",type:"number",filterable:!0,sortable:!0,editor:{model:N.slider,minValue:0,maxValue:100}},{id:"start",nameKey:"START",field:"start",formatter:R.dateIso,filterable:!0,sortable:!0,filter:{model:B.compoundDate},editor:{model:N.date},type:S.date,saveOutputType:S.dateUtc},{id:"finish",nameKey:"FINISH",field:"finish",formatter:R.dateIso,filterable:!0,sortable:!0,filter:{model:B.compoundDate},editor:{model:N.date},type:S.dateIso,saveOutputType:S.dateUtc},{id:"completed",nameKey:"COMPLETED",field:"completed",formatter:R.checkmarkMaterial,filterable:!0,sortable:!0,filter:{enableRenderHtml:!0,collection:[{value:"",label:""},{value:!0,label:"True",labelSuffix:'<i class="mdi mdi-check mdi-16px"></i> '},{value:!1,label:"False",labelSuffix:'<i class="mdi mdi-close mdi-16px"></i> '}],model:B.singleSelect},editor:{model:N.singleSelect,enableRenderHtml:!0,collectionAsync:new Promise(e=>window.setTimeout(()=>{e([{value:!0,label:"True",labelSuffix:'<i class="mdi mdi-check mdi-16px"></i> '},{value:!1,label:"False",labelSuffix:'<i class="mdi mdi-close mdi-16px"></i> '}])},250))}},{id:"prerequisites",name:"Prerequisites",field:"prerequisites",filterable:!0,formatter:(e,t,i)=>{if(i&&Array.isArray(i)){const n=i.map(a=>`Task ${a}`).join(", ");return`<span title="${n}">${n}</span>`}return""},exportWithFormatter:!0,sanitizeDataExport:!0,minWidth:100,sortable:!0,type:S.string,editor:{collectionAsync:new Promise(e=>{window.setTimeout(()=>{e(Array.from(Array((this.dataset||[]).length).keys()).map(t=>({value:t,label:t,prefix:"Task",suffix:"days"})))},500)}),collectionSortBy:{property:"value",sortDesc:!0,fieldType:S.number},customStructure:{label:"label",value:"value",labelPrefix:"prefix"},collectionOptions:{separatorBetweenTextLabels:" "},model:N.multipleSelect},filter:{collectionAsync:new Promise(e=>{window.setTimeout(()=>{e(Array.from(Array((this.dataset||[]).length).keys()).map(t=>({value:t,label:`Task ${t}`})))})}),collectionSortBy:{property:"value",sortDesc:!0,fieldType:S.number},customStructure:{label:"label",value:"value",labelPrefix:"prefix"},collectionOptions:{separatorBetweenTextLabels:" "},model:B.multipleSelect,operator:O.inContains}}],this.gridOptions={enableAutoResize:!0,autoResize:{container:".demo-container",rightPadding:10},darkMode:this._darkMode,gridMenu:{commandTitleKey:"CUSTOM_COMMANDS"},autoEdit:!0,autoCommitEdit:!0,editable:!0,showCustomFooter:!0,enableExcelExport:!0,excelExportOptions:{sanitizeDataExport:!0},enableCellMenu:!0,enableFiltering:!0,enableTranslate:!0,translater:this.translateService,externalResources:[new dt],enableCellNavigation:!0,enableCheckboxSelector:!0,enableRowSelection:!0,rowSelectionOptions:{selectActiveRow:!1},checkboxSelector:{hideSelectAllCheckbox:!1,columnIndexPosition:1},dataView:{syncGridSelection:!0},enableRowMoveManager:!0,rowMoveManager:{columnIndexPosition:0,singleRowMove:!0,disableRowSelection:!0,cancelEditOnDrag:!0,hideRowMoveShadow:!1,onBeforeMoveRows:this.onBeforeMoveRow.bind(this),onMoveRows:this.onMoveRows.bind(this)},presets:{filters:[{columnId:"prerequisites",searchTerms:[1,3,5,7,9,12,15,18,21,25,28]}],rowSelection:{dataContextIds:[2,3,6,7]}}}}addItem(){const e=this.dataset.length,t=this.loadData(1,e);window.setTimeout(()=>{const i=this.columnDefinitions.find(n=>n.id==="prerequisites");if(i){const n=i.editor.collection,a=i.filter.collection;Array.isArray(n)&&Array.isArray(a)&&(this.sgb.gridService.addItem(t[0],{position:"bottom",highlightRow:!1}),n.push({value:e,label:e,prefix:"Task",suffix:"days"}),a.push({value:e,label:e,prefix:"Task",suffix:"days"}))}},50)}clearFilters(){this.sgb.filterService.clearFilters()}allFilters(){const e=this.sgb,t=`<div id="modal-allFilter" class="modal is-active">
       <div class="modal-background"></div>
@@ -3091,59 +3077,59 @@ Jane,Doe,21,Student`);b(this,"_bindingEventService");b(this,"sgb");this._binding
 
   <div id="navbarBasicExample" class="navbar-menu">
     <div class="navbar-start">
-      <a class="navbar-item" onclick.delegate="loadRoute('example01')"> Home </a>
+      <a class="navbar-item" onclick.trigger="loadRoute('example01')"> Home </a>
 
       <a class="navbar-item has-text-white" href="https://ghiscoding.gitbook.io/slickgrid-universal/" target="_blank"> Documentation </a>
-      <a class="navbar-item" onclick.delegate="loadRoute('icons')"> SlickGrid Icons </a>
+      <a class="navbar-item" onclick.trigger="loadRoute('icons')"> SlickGrid Icons </a>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link"> Examples 1-15 </a>
 
         <div class="navbar-dropdown">
-          <a class="navbar-item" onclick.delegate="loadRoute('example01')">Example01 - Basic Grids</a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example02')">Example02 - Grouping &amp; Aggregators</a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example03')">Example03 - Draggable Grouping</a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example04')">Example04 - Pinned (frozen) Columns/Rows</a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example05')"> Example05 - Tree Data with Parent/Child refs </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example06')"> Example06 - Tree Data from Hierarchical View Dataset </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example07')">Example07 - Row Move &amp; Row Selections</a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example08')"> Example08 - Column Span &amp; Header Grouping </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example09')"> Example09 - Grid with OData Backend Service </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example10')"> Example10 - Grid with GraphQL Backend Service </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example11')"> Example11 - Batch Editing </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example12')"> Example12 - Item Editor Modal </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example13')"> Example13 - Header Button Plugin </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example14')"> Example14 - Columns Resize by Content </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example15')"> Example15 - OData Backend Service with RxJS </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example01')">Example01 - Basic Grids</a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example02')">Example02 - Grouping &amp; Aggregators</a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example03')">Example03 - Draggable Grouping</a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example04')">Example04 - Pinned (frozen) Columns/Rows</a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example05')"> Example05 - Tree Data with Parent/Child refs </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example06')"> Example06 - Tree Data from Hierarchical View Dataset </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example07')">Example07 - Row Move &amp; Row Selections</a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example08')"> Example08 - Column Span &amp; Header Grouping </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example09')"> Example09 - Grid with OData Backend Service </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example10')"> Example10 - Grid with GraphQL Backend Service </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example11')"> Example11 - Batch Editing </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example12')"> Example12 - Item Editor Modal </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example13')"> Example13 - Header Button Plugin </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example14')"> Example14 - Columns Resize by Content </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example15')"> Example15 - OData Backend Service with RxJS </a>
         </div>
       </div>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link"> 16-30 </a>
 
         <div class="navbar-dropdown">
-          <a class="navbar-item" onclick.delegate="loadRoute('example16')"> Example16 - Regular & Custom Tooltips </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example17')"> Example17 - Auto-Scroll for Selector </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example18')"> Example18 - Real-Time Trading Platform </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example19')"> Example19 - ExcelCopyBuffer with Cell Selection </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example20')"> Example20 - Basic grid inside a Shadow DOM </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example21')"> Example21 - Row Detail View </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example22')"> Example22 - Row Based Editing </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example23')"> Example23 - Excel Export Formulas </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example24')"> Example24 - Footer Totals Row </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example25')"> Example25 - Range Filters </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example26')"> Example26 - OData with Infinite Scroll </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example27')"> Example27 - GraphQL with Infinite Scroll </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example28')"> Example28 - Infinite Scroll from JSON data </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example29')"> Example29 - Drag & Drop </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example30')"> Example30 - Custom Pagination </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example16')"> Example16 - Regular & Custom Tooltips </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example17')"> Example17 - Auto-Scroll for Selector </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example18')"> Example18 - Real-Time Trading Platform </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example19')"> Example19 - ExcelCopyBuffer with Cell Selection </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example20')"> Example20 - Basic grid inside a Shadow DOM </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example21')"> Example21 - Row Detail View </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example22')"> Example22 - Row Based Editing </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example23')"> Example23 - Excel Export Formulas </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example24')"> Example24 - Footer Totals Row </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example25')"> Example25 - Range Filters </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example26')"> Example26 - OData with Infinite Scroll </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example27')"> Example27 - GraphQL with Infinite Scroll </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example28')"> Example28 - Infinite Scroll from JSON data </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example29')"> Example29 - Drag & Drop </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example30')"> Example30 - Custom Pagination </a>
         </div>
       </div>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link"> 31-45 </a>
 
         <div class="navbar-dropdown">
-          <a class="navbar-item" onclick.delegate="loadRoute('example31')"> Example31 - Create Grid from CSV </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example32')"> Example32 - Colspan/Rowspan (timesheets) </a>
-          <a class="navbar-item" onclick.delegate="loadRoute('example33')"> Example33 - Colspan/Rowspan (large dataset)</a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example31')"> Example31 - Create Grid from CSV </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example32')"> Example32 - Colspan/Rowspan (timesheets) </a>
+          <a class="navbar-item" onclick.trigger="loadRoute('example33')"> Example33 - Colspan/Rowspan (large dataset)</a>
         </div>
       </div>
     </div>
