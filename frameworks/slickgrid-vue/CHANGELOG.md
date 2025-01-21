@@ -2,14 +2,9 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.0...v1.0.0) (2025-01-21)
+# [1.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.2.0...v1.0.0) (2025-01-21)
 
-## [0.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.0...v0.2.2) (2025-01-21)
-
-# Change Log
-
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+- **vue:** add `rowspan` to Slickgrid-Vue ([#1804](https://github.com/ghiscoding/slickgrid-universal/issues/1804)) ([a7e394d](https://github.com/ghiscoding/slickgrid-universal/commit/a7e394db31b98dbefd6dc7567cf14c031ef92215)) - by @ghiscoding
 
 ## [0.2.1](https://github.com/ghiscoding/slickgrid-universal/slickgrid-vue/compare/v0.2.0...v0.2.1) (2024-12-14)
 
