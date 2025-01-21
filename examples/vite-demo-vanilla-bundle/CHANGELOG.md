@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
+
+### Features
+
+* add `initialGroupBy` to Draggable Grouping ([#1800](https://github.com/ghiscoding/slickgrid-universal/issues/1800)) ([27ec3d1](https://github.com/ghiscoding/slickgrid-universal/commit/27ec3d139961a016d7d809073d7b829cf9534e74)) - by @ghiscoding
+* add final rowspan implementation ([#1798](https://github.com/ghiscoding/slickgrid-universal/issues/1798)) ([5d0f58e](https://github.com/ghiscoding/slickgrid-universal/commit/5d0f58e0b914cc1eee2925c37b347822d9d24ff0)) - by @ghiscoding
+* **vue:** add rowspan to Slickgrid-Vue ([#1804](https://github.com/ghiscoding/slickgrid-universal/issues/1804)) ([e58c0cb](https://github.com/ghiscoding/slickgrid-universal/commit/e58c0cb9904f8c630b0de4116ebcbeecc40658bb)) - by @ghiscoding
+
+### Bug Fixes
+
+* add missing slick-filter class & flex align header filters ([78478ab](https://github.com/ghiscoding/slickgrid-universal/commit/78478ab2a4e05443cd7d5de260e639092a41162f)) - by @ghiscoding
+
 ## [5.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.2...v5.11.0) (2024-12-14)
 
 ### Features

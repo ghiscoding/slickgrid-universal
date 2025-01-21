@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
+
+### Features
+
+* add final rowspan implementation ([#1798](https://github.com/ghiscoding/slickgrid-universal/issues/1798)) ([5d0f58e](https://github.com/ghiscoding/slickgrid-universal/commit/5d0f58e0b914cc1eee2925c37b347822d9d24ff0)) - by @ghiscoding
+
 ## [5.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.2...v5.11.0) (2024-12-14)
 
 ### Features

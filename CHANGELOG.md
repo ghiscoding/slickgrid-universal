@@ -4,6 +4,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
+
+### Features
+
+* add `initialGroupBy` to Draggable Grouping ([#1800](https://github.com/ghiscoding/slickgrid-universal/issues/1800)) ([27ec3d1](https://github.com/ghiscoding/slickgrid-universal/commit/27ec3d139961a016d7d809073d7b829cf9534e74)) - by @ghiscoding
+* add a Default Theme to avoid requiring certain Bootstrap styling ([#1806](https://github.com/ghiscoding/slickgrid-universal/issues/1806)) ([f9b2164](https://github.com/ghiscoding/slickgrid-universal/commit/f9b216443b0a7e611da16b9cf874f9810de4d15c)) - by @ghiscoding
+* add Custom Global Item Data Provider ([#1794](https://github.com/ghiscoding/slickgrid-universal/issues/1794)) ([8b78201](https://github.com/ghiscoding/slickgrid-universal/commit/8b78201b8119eda300d81dbaf5ba6fe5d36c7b5a)) - by @ghiscoding
+* add final rowspan implementation ([#1798](https://github.com/ghiscoding/slickgrid-universal/issues/1798)) ([5d0f58e](https://github.com/ghiscoding/slickgrid-universal/commit/5d0f58e0b914cc1eee2925c37b347822d9d24ff0)) - by @ghiscoding
+* **vue:** add rowspan to Slickgrid-Vue ([#1804](https://github.com/ghiscoding/slickgrid-universal/issues/1804)) ([e58c0cb](https://github.com/ghiscoding/slickgrid-universal/commit/e58c0cb9904f8c630b0de4116ebcbeecc40658bb)) - by @ghiscoding
+
+### Bug Fixes
+
+* add missing slick-filter class & flex align header filters ([78478ab](https://github.com/ghiscoding/slickgrid-universal/commit/78478ab2a4e05443cd7d5de260e639092a41162f)) - by @ghiscoding
+* **core:** add missing key shortcuts for navigation & cell selections ([#1788](https://github.com/ghiscoding/slickgrid-universal/issues/1788)) ([972783e](https://github.com/ghiscoding/slickgrid-universal/commit/972783e11085780264a0d33a5a7f8e7bd7756d65)) - by @ghiscoding
+* **deps:** update vue.js dependencies ([#1781](https://github.com/ghiscoding/slickgrid-universal/issues/1781)) ([eeed5f7](https://github.com/ghiscoding/slickgrid-universal/commit/eeed5f7842b8f14dc75e4b3dd3bf32e9a4e28f31)) - by @renovate-bot
+* **deps:** update vue.js dependencies ([#1801](https://github.com/ghiscoding/slickgrid-universal/issues/1801)) ([5a4c3f7](https://github.com/ghiscoding/slickgrid-universal/commit/5a4c3f7398abaf6a4e3f42d04dc8b48c06a53bf9)) - by @renovate-bot
+* Group Titles should be aligned in center ([b359fa3](https://github.com/ghiscoding/slickgrid-universal/commit/b359fa32daf80edad4dd670d202c9aa3bc385892)) - by @ghiscoding
+* never activate more than 1 cell, clear any previous active CSS class ([#1797](https://github.com/ghiscoding/slickgrid-universal/issues/1797)) ([8b02e06](https://github.com/ghiscoding/slickgrid-universal/commit/8b02e068e00b5bf60c8b52d48ab501f408545895)) - by @ghiscoding
+* opening Header Menu shouldn't add Active Header Cell ([#1807](https://github.com/ghiscoding/slickgrid-universal/issues/1807)) ([a7364bb](https://github.com/ghiscoding/slickgrid-universal/commit/a7364bbbbea10acfc9efbdd29bad8fb3775a9a0c)) - by @ghiscoding
+* remove "active" CSS classes before navigating to another cell ([#1791](https://github.com/ghiscoding/slickgrid-universal/issues/1791)) ([38a7f81](https://github.com/ghiscoding/slickgrid-universal/commit/38a7f81b831626fa40fc970a3ac8b981b8f36816)) - by @ghiscoding
+* shift+mousewheel should scroll horizontally ([#1792](https://github.com/ghiscoding/slickgrid-universal/issues/1792)) ([a04fb21](https://github.com/ghiscoding/slickgrid-universal/commit/a04fb2133577450ad51ed5eb0c713302df373f85)) - by @ghiscoding
+* **vue:** add all missing events to Slickgrid-Vue props def ([cbd9e6c](https://github.com/ghiscoding/slickgrid-universal/commit/cbd9e6c138ca792fcad36ea97d89f1a5e44a7f95)) - by @ghiscoding
+
 ## [5.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.2...v5.11.0) (2024-12-14)
 
 ### Features
