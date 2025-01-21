@@ -2077,7 +2077,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const sortableOptions = {
       animation: 50,
       direction: 'horizontal',
-      chosenClass: 'slick-header-column-active',
       ghostClass: 'slick-sortable-placeholder',
       draggable: '.slick-header-column',
       dragoverBubble: false,
@@ -2088,7 +2087,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       onMove: (event) => {
         return !event.related.classList.contains(this._options.unorderableColumnCssClass as string);
       },
-      onStart: (e: SortableEvent) => {
+      onStart: (e) => {
+        e.item.classList.add('slick-header-column-active');
         canDragScroll = !this.hasFrozenColumns() || getOffset(e.item).left > getOffset(this._viewportScrollContainerX).left;
 
         if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent }).originalEvent.pageX > this._container.clientWidth) {
@@ -2107,6 +2107,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       },
       onEnd: (e) => {
+        e.item.classList.remove('slick-header-column-active');
         window.clearInterval(columnScrollTimer);
 
         if (!this.getEditorLock()?.commitCurrentEdit()) {
