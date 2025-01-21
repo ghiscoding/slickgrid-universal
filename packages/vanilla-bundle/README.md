@@ -26,6 +26,6 @@ Vanilla Bundle implementation (no framework, plain TypeSript implementation). Th
 - [whatwg-fetch](https://github.com/whatwg/fetch) - Fetch Standard
 
 ### Installation
-This Vanilla Bundle is used used by the standalone [vite-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/vite-demo-vanilla-bundle) which serves for demo purposes.
+This Vanilla Bundle is used used by the standalone [demos/vanilla](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vanilla) which serves for demo purposes.
 
 Go to the root of the repo and follow the instructions provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

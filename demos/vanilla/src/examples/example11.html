@@ -1,0 +1,88 @@
+<h3 class="title is-3">
+  Example 11 - Batch Editing
+  <span class="subtitle has-text-grey-dark">(with Salesforce Theme)</span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example11.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="columns is-desktop example11-body">
+  <section class="column field has-addons is-narrow">
+    <div class="row">
+      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+        <span class="mdi mdi-table-edit"></span>
+        <span>Toggle Edit/Readonly Grid</span>
+      </button>
+      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+        <span class="mdi mdi-undo"></span>
+        <span>Undo Last Edit</span>
+      </button>
+      <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
+        <span class="mdi mdi-undo"></span>
+        <span>Undo Last Edit &amp; Open Editor</span>
+      </button>
+      <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
+        <span class="mdi mdi-history"></span>
+        <span>Undo All Edits</span>
+      </button>
+      <button
+        class="button is-small is-info"
+        onclick.delegate="saveAll()"
+        data-test="save-all-btn"
+        title="Check your console log for the result"
+      >
+        <span>Save All</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="column field has-addons is-narrow">
+    <div class="row">
+      <label for="selectedView">Change Views: </label>
+      <select
+        class="select is-small selected-view ml-1"
+        id="selectedView"
+        name="selectedView"
+        onchange.delegate="usePredefinedView(event.target.value)"
+      ></select>
+      <div class="dropdown action ml-1-negative">
+        <div class="dropdown-trigger">
+          <button class="button is-small" aria-haspopup="true" aria-controls="dropdown-menu">
+            <span>Action</span>
+            <span class="icon is-small">
+              <i class="mdi mdi-chevron-down mdi-bold" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="dropdown-menu is-small" id="dropdown-menu" role="menu">
+          <div class="dropdown-content">
+            <span class="dropdown-item" onclick.delegate="createView(event)" data-test="save-view-btn"> Create New View </span>
+            <span class.bind="dropdownDeleteViewClass" onclick.delegate="updateView(event)" data-test="update-view-btn">
+              Update Current View
+            </span>
+            <span class.bind="dropdownUpdateViewClass" onclick.delegate="deleteView(event)" data-test="delete-view-btn">
+              Delete Current View
+            </span>
+          </div>
+        </div>
+      </div>
+      <span class="ml-1">
+        <button class="button is-small" onclick.delegate="clearLocalStorage()" data-test="clear-storage-btn">
+          <span class="mdi mdi-close-circle mdi-14px"></span>
+          <span>Clear LocalStorage</span>
+        </button>
+      </span>
+    </div>
+  </section>
+</div>
+
+<div class="modal-container"></div>
+
+<div class="grid11"></div>

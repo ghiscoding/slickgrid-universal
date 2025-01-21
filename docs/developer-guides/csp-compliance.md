@@ -29,7 +29,7 @@ this.gridOptions = {
 this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
 ```
 
-with this code in place, we can use the following CSP meta tag (which is what we use in the lib demo, ref: [index.html](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/index.html#L8-L14))
+with this code in place, we can use the following CSP meta tag (which is what we use in the lib demo, ref: [index.html](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/index.html#L8-L14))
 
 ```html
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'nonce-random-string'; require-trusted-types-for 'script'; trusted-types dompurify">

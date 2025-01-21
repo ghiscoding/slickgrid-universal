@@ -1,5 +1,5 @@
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example07.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example07.ts)
 
 ### Installation
 Install the `i18next` library with a backend loader, typically `i18next-xhr-backend`

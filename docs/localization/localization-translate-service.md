@@ -1,5 +1,5 @@
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example07.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example07.ts)
 
 ### Installation
 
@@ -29,7 +29,7 @@ export class TranslateService implements TranslaterService {
   use(language: string): Promise<any> | any {}
 }
 ```
-> for a full translater service implementation demo with `whatwg-fetch`, take a look at [translate.service.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/translate.service.ts).
+> for a full translater service implementation demo with `whatwg-fetch`, take a look at [translate.service.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/translate.service.ts).
 
 #### Class sample
 You need to add a translation key via the property `headerKey` to each column definition, for example: `headerKey: 'TITLE'`

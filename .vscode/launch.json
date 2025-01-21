@@ -9,7 +9,7 @@
       "request": "launch",
       "type": "chrome",
       "url": "http://localhost:8888",
-      "webRoot": "${workspaceFolder}/examples/vite-demo-vanilla-bundle",
+      "webRoot": "${workspaceFolder}/demos/vanilla",
       "pathMapping": {
         "/@fs/": ""
       }
@@ -19,7 +19,7 @@
       "request": "launch",
       "name": "Ms Edge Debugger",
       "url": "http://localhost:8888",
-      "webRoot": "${workspaceFolder}/examples/vite-demo-vanilla-bundle",
+      "webRoot": "${workspaceFolder}/demos/vanilla",
       "pathMapping": {
         "/@fs/": ""
       }
@@ -31,7 +31,7 @@
       "autoAttachChildProcesses": true,
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
-      "args": ["run", "${relativeFile}",  "--no-watch", "--config", "./test/vitest.config.mts"],
+      "args": ["run", "${relativeFile}", "--no-watch", "--config", "./test/vitest.config.mts"],
       "smartStep": true,
       "console": "integratedTerminal"
     }

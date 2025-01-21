@@ -16,7 +16,7 @@ Use it when you need to support **Pagination** (that is when your dataset is rat
 To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi` and pass it the `service`. See below for the signature and an example further down below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/vite-demo-vanilla-bundle/src/examples/example09.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vanilla/src/examples/example09.ts)
 
 ### IMPORTANT NOTE
 All the code below assumes that your Backend Server (probably in C#) will return the data into an `items` property. You could return the array directly **but it is strongly discouraged to do that** because that will conflict with the `metrics` that you will see in the code below. The best approach is to return your data into a property, like `items` or any property name you wish to use, on your backend server side. Your result should have this kind of structure
