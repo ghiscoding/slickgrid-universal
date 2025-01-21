@@ -19,6 +19,9 @@ Again the following dependencies are totally **optional**
 ---
 
 ### Install and Start Demo
+
+You can get this working demo by cloning our [Slickgrid-Vue-Demos](https://ghiscoding.github.io/slickgrid-vue-demos/) which is updated on every new release.
+
 ```bash
 git clone https://github.com/ghiscoding/slickgrid-vue-demos
 cd bootstrap5-i18n-demo
