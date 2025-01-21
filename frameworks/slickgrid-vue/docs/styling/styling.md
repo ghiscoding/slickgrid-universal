@@ -49,6 +49,9 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 ```
 
+> **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
+> `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+
 ### Using CSS Variables _(instead of SASS)_
 You could change the SlickGrid styling with your own customization using [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). The variables that you can use (over 800 of them) are all predefined as SASS variables in the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file, you will simply have to rename the `$slick-` prefix with a `--slick-` prefix to the variable name to use them as CSS Variables. To be clear, you don't need SASS but the variables names were all declared as SASS and that is what the lib will use internally but you can optionally use them all as plain CSS Variables.
 

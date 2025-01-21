@@ -50,6 +50,9 @@ import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.cs
 </script>
 ```
 
+> **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
+> `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+
 #### SASS (scss)
 
 You could also compile the SASS files with your own customization, for that simply take any of the [\_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward or use the new modern SASS approach with the `@use with()`. For example, you could modify your `style.scss` with the following changes:
