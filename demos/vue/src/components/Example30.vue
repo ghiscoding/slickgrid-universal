@@ -1158,8 +1158,7 @@ function renderItemCallbackWith4Corners(item: any): string {
     @onCompositeEditorChange="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
     @onItemDeleted="handleItemDeleted($event.detail)"
     @onGridStateChanged="handleOnGridStateChanged($event.detail)"
-    @onFilterChanged="handleReRenderUnsavedStyling()"
-    @onPaginationChanged="handleReRenderUnsavedStyling()"
+    @onRowsOrCountChanged="handleReRenderUnsavedStyling()"
     @onValidationError="handleValidationError($event.detail.eventData, $event.detail.args)"
     @onVueGridCreated="vueGridReady($event.detail)"
   >
