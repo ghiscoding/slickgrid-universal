@@ -66,7 +66,7 @@ You can change the number of pinned columns/rows and even the pinning of columns
       <input type="number"
              value.bind="frozenRowCount">
       <button class="btn btn-default btn-xs"
-              click.delegate="changeFrozenRowCount()">
+              click.trigger="changeFrozenRowCount()">
         Set
       </button>
     </span>
@@ -75,12 +75,12 @@ You can change the number of pinned columns/rows and even the pinning of columns
       <input type="number"
              value.bind="frozenColumnCount">
       <button class="btn btn-default btn-xs"
-              click.delegate="changeFrozenColumnCount()">
+              click.trigger="changeFrozenColumnCount()">
         Set
       </button>
     </span>
     <span style="margin-left: 15px">
-      <button class="btn btn-default btn-sm" click.delegate="toggleFrozenBottomRows()">
+      <button class="btn btn-default btn-sm" click.trigger="toggleFrozenBottomRows()">
          <i class="mdi-flip-vertical"></i> Toggle Pinned Rows
       </button>
       <span style="font-weight: bold;">: ${ isFrozenBottom ? 'Bottom' : 'Top' }</span>

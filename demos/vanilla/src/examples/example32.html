@@ -30,14 +30,14 @@
 
 <section class="mb-2">
   <div class="row mb-1">
-    <button class="button is-small" data-test="goto-up" onclick.delegate="navigateUp()" title="from an active cell, navigate to cell above">
+    <button class="button is-small" data-test="goto-up" onclick.trigger="navigateUp()" title="from an active cell, navigate to cell above">
       <span class="mdi mdi-chevron-down mdi-rotate-180"></span>
       Navigate Up Cell
     </button>
     <button
       class="button is-small"
       data-test="goto-down"
-      onclick.delegate="navigateDown()"
+      onclick.trigger="navigateDown()"
       title="from an active cell, navigate to cell below"
     >
       <span class="mdi mdi-chevron-down"></span>
@@ -46,7 +46,7 @@
     <button
       class="button is-small"
       data-test="goto-prev"
-      onclick.delegate="navigatePrev()"
+      onclick.trigger="navigatePrev()"
       title="from an active cell, navigate to previous left cell"
     >
       <span class="mdi mdi-chevron-down mdi-rotate-90"></span>
@@ -55,13 +55,13 @@
     <button
       class="button is-small"
       data-test="goto-next"
-      onclick.delegate="navigateNext()"
+      onclick.trigger="navigateNext()"
       title="from an active cell, navigate to next right cell"
     >
       <span class="mdi mdi-chevron-down mdi-rotate-270"></span>
       Navigate to Right Cell
     </button>
-    <button class="button is-small mx-1" onclick.delegate="toggleEditing()" data-test="toggle-editing">
+    <button class="button is-small mx-1" onclick.trigger="toggleEditing()" data-test="toggle-editing">
       <span class="mdi mdi-pencil-outline"></span>
       <span>Toggle Editing: <span id="isEditable" class="text-italic" textcontent.bind="isEditable">false</span></span>
     </button>

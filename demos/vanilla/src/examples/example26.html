@@ -40,19 +40,19 @@
     <button
       class="button is-small"
       data-test="clear-filters-sorting"
-      onclick.delegate="clearAllFiltersAndSorts()"
+      onclick.trigger="clearAllFiltersAndSorts()"
       title="Clear all Filters & Sorts"
     >
       <span class="mdi mdi-close"></span>
       <span>Clear all Filter & Sorts</span>
     </button>
-    <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
       Set Filters Dynamically
     </button>
-    <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
+    <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">
       Set Sorting Dynamically
     </button>
-    <button class="button is-small" data-test="group-by-gender" onclick.delegate="groupByGender()">Group by Gender</button>
+    <button class="button is-small" data-test="group-by-gender" onclick.trigger="groupByGender()">Group by Gender</button>
   </div>
 
   <div class="columns">

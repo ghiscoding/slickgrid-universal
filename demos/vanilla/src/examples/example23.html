@@ -24,22 +24,22 @@
 
 <section class="row mb-2">
   <div class="mb-1">
-    <button class="button is-small" onclick.delegate="exportToExcel()" data-test="export-excel-btn">
+    <button class="button is-small" onclick.trigger="exportToExcel()" data-test="export-excel-btn">
       <span class="mdi mdi-file-excel-outline text-color-success"></span>
       <span>Export to Excel</span>
     </button>
     <span>
-      <button class="button is-small" onclick.delegate="groupByTaxable()" data-test="group-by-btn">
+      <button class="button is-small" onclick.trigger="groupByTaxable()" data-test="group-by-btn">
         <span>Group by Taxable</span>
       </button>
-      <button class="button is-small" onclick.delegate="clearGrouping()" data-test="clear-grouping-btn">
+      <button class="button is-small" onclick.trigger="clearGrouping()" data-test="clear-grouping-btn">
         <span>Clear grouping</span>
       </button>
     </span>
     <span class="ml-6 text-bold">
       Tax Rate (%):
       <input type="number" value.bind="taxRate" class="is-narrow input is-small" step="0.25" data-test="taxrate" />
-      <button class="button is-small" onclick.delegate="updateTaxRate()" data-test="update-btn">Update</button>
+      <button class="button is-small" onclick.trigger="updateTaxRate()" data-test="update-btn">Update</button>
     </span>
   </div>
 </section>

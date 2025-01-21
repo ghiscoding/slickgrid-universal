@@ -2,7 +2,7 @@
   Example 18 - Real-Time Trading Platform
   <span class="subtitle">(with Material Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -34,13 +34,13 @@
         </span>
       </div>
       <span>
-        <button class="button is-small" data-test="start-btn" onclick.delegate="startSimulation()">
+        <button class="button is-small" data-test="start-btn" onclick.trigger="startSimulation()">
           <span class="mdi mdi-play-circle-outline"></span>
           <span>Start Simulation</span>
         </button>
       </span>
       <span>
-        <button class="button is-small" data-test="stop-btn" onclick.delegate="stopSimulation()">
+        <button class="button is-small" data-test="stop-btn" onclick.trigger="stopSimulation()">
           <span class="mdi mdi-stop-circle-outline"></span>
           <span>Stop Simulation</span>
         </button>
@@ -70,7 +70,7 @@
         />
       </span>
       <span class="float-right">
-        <button class="button is-small" onclick.delegate="toggleFullScreen()">
+        <button class="button is-small" onclick.trigger="toggleFullScreen()">
           <span class.bind="toggleClassName"></span>
           <span>Toggle Full-Screen</span>
         </button>

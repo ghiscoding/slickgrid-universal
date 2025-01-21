@@ -3,7 +3,7 @@ import { BindingService } from '@slickgrid-universal/binding';
 /**
  * This is a simple View/ViewModel Renderer (it will build the ViewModel and render the associated View)
  * It will also
- * 1- bind any delegate method(s) to their ViewModel method
+ * 1- bind any trigger method(s) to their ViewModel method
  * 2- add observer(s) to any bindable element (must be an element that can trigger an event, e.g. input with value change)
  *    2.1 you can add the "innerhtml.bind" but only if the variable is associated to an element that can trigger a value change on the variable
  */
@@ -58,8 +58,8 @@ export class Renderer {
   parseTemplate(viewTemplate: string) {
     return (
       viewTemplate
-        // .replace(/([a-z]*){1}.(delegate)="(.*?)(\(.*\))"/gi, this.parseMethodBinding.bind(this))
-        .replace(/([a-z]*){1}.(delegate)="?(.*?)(\))"/gi, this.parseMethodBinding.bind(this))
+        // .replace(/([a-z]*){1}.(trigger)="(.*?)(\(.*\))"/gi, this.parseMethodBinding.bind(this))
+        .replace(/([a-z]*){1}.(trigger)="?(.*?)(\))"/gi, this.parseMethodBinding.bind(this))
         .replace(/([a-z]*){1}.(bind)="?([^">\s]*)"?/gi, this.parsePropertyBinding.bind(this))
         .replace(/\${(.*)}/gi, this.parseLogicExecution.bind(this))
     );
@@ -84,7 +84,7 @@ export class Renderer {
     // return _match;
 
     switch (eventType) {
-      case 'delegate':
+      case 'trigger':
         output = `${eventName.toLowerCase()}="window.${this._className.trim()}.${callbackFn.trim()}${lastChar}"`;
         break;
     }

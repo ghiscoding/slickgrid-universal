@@ -20,27 +20,27 @@
   <span>
     <label for="">Pinned Rows: </label>
     <input type="number" class="frozen-row-count is-narrow input is-small" value.bind="frozenRowCount" />
-    <button class="button is-small" onclick.delegate="changeFrozenRowCount()">Set</button>
+    <button class="button is-small" onclick.trigger="changeFrozenRowCount()">Set</button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Columns: </label>
     <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="frozenColumnCount" />
-    <button class="button is-small" onclick.delegate="changeFrozenColumnCount()">Set</button>
+    <button class="button is-small" onclick.trigger="changeFrozenColumnCount()">Set</button>
   </span>
   <span class="ml-3">
-    <button class="button is-small" onclick.delegate="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
+    <button class="button is-small" onclick.trigger="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
       <span class="mdi mdi-close"></span>
       <span>Remove Frozen Columns</span>
     </button>
-    <button class="button is-small" data-test="set-3frozen-columns" onclick.delegate="setFrozenColumns(2)">
+    <button class="button is-small" data-test="set-3frozen-columns" onclick.trigger="setFrozenColumns(2)">
       <span class="mdi mdi-pin-outline"></span>
       <span>Set 3 Frozen Columns</span>
     </button>
-    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.delegate="toggleFrozenBottomRows()">
+    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.trigger="toggleFrozenBottomRows()">
       <span class="mdi mdi-flip-vertical"></span>
       <span>Toggle Pinned Rows (top/bottom)</span>
     </button>
-    <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.delegate="toggleWhichRowToShowSelectAll()">
+    <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.trigger="toggleWhichRowToShowSelectAll()">
       <span class="mdi mdi-swap-horizontal mdi-rotate-90"></span>
       <span>Toggle which row to show "Select All" checkbox</span>
     </button>

@@ -1,7 +1,7 @@
 <h3 class="title is-3">
   Example 10 - Grid with GraphQL Backend Service
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -31,17 +31,15 @@
   <button
     class="button is-small"
     data-test="clear-filters-sorting"
-    onclick.delegate="clearAllFiltersAndSorts()"
+    onclick.trigger="clearAllFiltersAndSorts()"
     title="Clear all Filters & Sorts"
   >
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter &amp; Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
-  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
-  <button class="button is-small" data-test="reset-presets" onclick.delegate="resetToOriginalPresets()">Reset Original Presets</button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
+  <button class="button is-small" data-test="reset-presets" onclick.trigger="resetToOriginalPresets()">Reset Original Presets</button>
 
   <label for="serverdelay" class="ml-4">Server Delay: </label>
   <input
@@ -56,16 +54,16 @@
   <div class="row col-md-12 mt-2">
     <span>
       <label>Programmatically go to first/last page:</label>
-      <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+      <button class="button is-small" data-test="goto-first-page" onclick.trigger="goToFirstPage()">
         <i class="mdi mdi-page-first"></i>
       </button>
-      <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+      <button class="button is-small" data-test="goto-last-page" onclick.trigger="goToLastPage()">
         <i class="mdi mdi-page-last"></i>
       </button>
     </span>
 
     <span class="ml-4">
-      <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+      <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
         <span class="mdi mdi-translate"></span>
         <span>Switch Language</span>
       </button>
@@ -83,12 +81,12 @@
             data-test="offset"
             id="radioOffset"
             checked
-            onclick.delegate="setIsWithCursor(false)"
+            onclick.trigger="setIsWithCursor(false)"
           />
           Offset
         </label>
         <label class="radio-inline control-label" for="radioCursor">
-          <input type="radio" name="inlineRadioOptions" data-test="cursor" id="radioCursor" onclick.delegate="setIsWithCursor(true)" />
+          <input type="radio" name="inlineRadioOptions" data-test="cursor" id="radioCursor" onclick.trigger="setIsWithCursor(true)" />
           Cursor
         </label>
       </span>

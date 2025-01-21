@@ -2,7 +2,7 @@
   Example 21 - Row Detail View
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -22,10 +22,10 @@
 
 <div class="columns">
   <div class="column is-12">
-    <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+    <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
       Toggle Edit/Readonly Grid
     </button>
-    <button class="button is-small" onclick.delegate="closeAllRowDetail()" data-test="collapse-all-btn">Close All Row Details</button>
+    <button class="button is-small" onclick.trigger="closeAllRowDetail()" data-test="collapse-all-btn">Close All Row Details</button>
     &nbsp;&nbsp;
     <label for="">Detail View Rows Shown: </label>
     <input
@@ -34,7 +34,7 @@
       value.bind="detailViewRowCount"
       title="Please note that the change will be applied the next time the row is expanded"
     />
-    <button class="button is-small" onclick.delegate="changeDetailViewRowCount()" data-test="set-count-btn">Set</button>
+    <button class="button is-small" onclick.trigger="changeDetailViewRowCount()" data-test="set-count-btn">Set</button>
 
     <span class="ml-2">
       <label for="server-delay">Simulated Server Delay (ms): </label>

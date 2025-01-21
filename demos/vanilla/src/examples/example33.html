@@ -25,16 +25,16 @@
 </div>
 
 <div class="columns mb-2 gap-5px">
-  <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-  <button class="button is-small" data-test="add-5k-rows-btn" onclick.delegate="loadData(5000)">5k rows</button>
-  <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(50000)">50k rows</button>
-  <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(500000)">500k rows</button>
+  <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+  <button class="button is-small" data-test="add-5k-rows-btn" onclick.trigger="loadData(5000)">5k rows</button>
+  <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(50000)">50k rows</button>
+  <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(500000)">500k rows</button>
   <label>data length: </label><span id="dataLn" textcontent.bind="dataLn"></span>
-  <button id="toggleSpans" class="button is-small mx-1" onclick.delegate="handleToggleSpans()" data-test="toggleSpans">
+  <button id="toggleSpans" class="button is-small mx-1" onclick.trigger="handleToggleSpans()" data-test="toggleSpans">
     <span class="mdi mdi-flip-vertical"></span>
     <span>Toggle blue cell colspan &amp; rowspan</span>
   </button>
-  <button id="scrollTo" class="button is-small" onclick.delegate="handleScrollTo()" data-test="scrollToBtn">
+  <button id="scrollTo" class="button is-small" onclick.trigger="handleScrollTo()" data-test="scrollToBtn">
     <span class="mdi mdi-arrow-down"></span>
     <span>Scroll To Row</span>
   </button>
@@ -46,7 +46,7 @@
             <p class="control is-expanded">
               <input id="nRow" type="text" class="is-narrow input search is-small" data-test="nbrows" value.bind="scrollToRow" />
             </p>
-            <p class="control pointer" onclick.delegate="clearScrollTo()" data-test="clearScrollTo" id="clearScroll">
+            <p class="control pointer" onclick.trigger="clearScrollTo()" data-test="clearScrollTo" id="clearScroll">
               <a class="button is-static is-small">
                 <span class="mdi mdi-close-thick"></span>
               </a>

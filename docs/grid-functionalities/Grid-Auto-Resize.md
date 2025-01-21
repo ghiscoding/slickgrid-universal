@@ -67,7 +67,7 @@ User can pause the resizer at any time and later resume the auto-resize. This mi
 ##### View
 ```html
   <button class="btn btn-default btn-sm"
-    click.delegate="togglePauseResizer()">
+    click.trigger="togglePauseResizer()">
     Pause auto-resize: <b>${resizerPaused}</b>
   </button>
 ```

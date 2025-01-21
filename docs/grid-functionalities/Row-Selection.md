@@ -20,8 +20,8 @@ For row selection, you can simply play with couple of grid options (see below) a
 ## Single Row Selection
 For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
-### 1. with Delegate (preferred way)
-You can also do it through a `delegate` since all SlickGrid events are exposed as `delegate`. For more info see [Wiki - OnEvents - `3. delegate`](Grid-&-DataView-Events.md)
+### 1. with Event Listener (preferred way)
+You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Event. For more info see [Wiki - OnEvents](Grid-&-DataView-Events.md)
 
 #### ViewModel
 ```ts
@@ -57,7 +57,7 @@ export class Example1 {
 ```
 
 ### 2. with SlickGrid object & onEvent
-It's preferable to use the `with delegate`, but if you really wish, you can also use directly the SlickGrid event that you can subscribe to. However, don't forget to unsubscribe to a SlickGrid event.
+It's preferable to use the Custom Events, but if you really wish, you can also use directly the SlickGrid event that you can subscribe to. However, don't forget to unsubscribe to a SlickGrid event.
 #### ViewModel
 ```ts
 this.gridOptions = {
@@ -81,8 +81,8 @@ gridObjChanged(grid) {
 ## Multiple Row Selections
 As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableRowSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
-### 1. with Delegate (preferred way)
-You can also do it through a `delegate` since all SlickGrid events are exposed as `delegate`. For more info see [Wiki - OnEvents - `3. delegate`](Grid-&-DataView-Events.md)
+### 1. with Custom Events (preferred way)
+You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Events. For more info see [Wiki - OnEvents](Grid-&-DataView-Events.md)
 
 #### ViewModel
 ```ts
@@ -121,7 +121,7 @@ export class Example1 {
 ```
 
 ### 2. with SlickGrid object & onEvent
-It's preferable to use the `with delegate`, but if you really wish, you can also use directly the SlickGrid event that you can subscribe to. However, don't forget to unsubscribe to a SlickGrid event.
+It's preferable to use the Custom Event listeners, but if you really wish, you can also use directly the SlickGrid event that you can subscribe to. However, don't forget to unsubscribe to a SlickGrid event.
 #### ViewModel
 ```ts
 export class Example1 {
@@ -155,7 +155,7 @@ export class Example1 {
 If you want to change from Multiple Selections to Single Selection (and vice-versa), you could toggle the grid options `enableCellNavigation` flag (`False` when you want Single Selection), however this is not possible when using Inline Editors since this flag is required. Note that there is currently no other ways of toggling dynamically without re-creating the grid.
 
 ## Mixing Single & Multiple Row Selections
-SlickGrid is so powerful and customizable, you could if you wish mix the multiple row selections (cell column 1) and single row selection (any other cell click). For that though, you will need to use 2 SlickGrid Events (`onClick` and `onSelectedRowsChanged`). For example with a `delegate` we can do it this way:
+SlickGrid is so powerful and customizable, you could if you wish mix the multiple row selections (cell column 1) and single row selection (any other cell click). For that though, you will need to use 2 SlickGrid Events (`onClick` and `onSelectedRowsChanged`). For example with a Custom Event listener we can do it this way:
 
 #### ViewModel
 ```ts
@@ -209,7 +209,7 @@ When having an external button that you want to work only when there's row selec
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <div class="myGrid"
-    onselectedrowschanged.delegate="handleOnSelectedRowsChanged">
+    onselectedrowschanged.trigger="handleOnSelectedRowsChanged">
 </div>
 ```
 ```ts
@@ -224,7 +224,7 @@ handleOnSelectedRowsChanged(event) {
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <div class="myGrid"
-    ongridstatechanged.delegate="handleOngridStateChanged">
+    ongridstatechanged.trigger="handleOngridStateChanged">
 </div>
 ```
 ```ts

@@ -2,7 +2,7 @@
   Example 03 - Draggable Grouping
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -21,40 +21,40 @@
 
 <section>
   <div class="row">
-    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">500 rows</button>
-    <button class="button is-small" data-test="add-500k-rows-btn" onclick.delegate="loadData(500000)">500k rows</button>
-    <button class="button is-small" data-test="clear-grouping-btn" onclick.delegate="clearGrouping()">
+    <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+    <button class="button is-small" data-test="add-500k-rows-btn" onclick.trigger="loadData(500000)">500k rows</button>
+    <button class="button is-small" data-test="clear-grouping-btn" onclick.trigger="clearGrouping()">
       <span class="mdi mdi-playlist-remove"></span>
       <span>Clear Grouping</span>
     </button>
-    <button class="button is-small" data-test="collapse-all-btn" onclick.delegate="collapseAllGroups()">
+    <button class="button is-small" data-test="collapse-all-btn" onclick.trigger="collapseAllGroups()">
       <span class="mdi mdi-arrow-collapse"></span>
       <span>Collapse all Groups</span>
     </button>
-    <button class="button is-small" data-test="expand-all-btn" onclick.delegate="expandAllGroups()">
+    <button class="button is-small" data-test="expand-all-btn" onclick.trigger="expandAllGroups()">
       <span class="mdi mdi-arrow-expand"></span>
       <span>Expand all Groups</span>
     </button>
-    <button class="button is-small" data-test="toggle-draggable-grouping-row" onclick.delegate="toggleDraggableGroupingRow()">
+    <button class="button is-small" data-test="toggle-draggable-grouping-row" onclick.trigger="toggleDraggableGroupingRow()">
       <span>Toggle Dragging Grouping Row</span>
     </button>
-    <button class="button is-small" data-test="export-excel-btn" onclick.delegate="exportToExcel()">
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportToExcel()">
       <span class="mdi mdi-file-excel-outline"></span>
       <span>Export to Excel</span>
     </button>
   </div>
 
   <div class="row mt-1 mb-5">
-    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.delegate="groupByDurationOrderByCount(false)">
+    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDurationOrderByCount(false)">
       Group by duration &amp; sort groups by value
     </button>
-    <button class="button is-small" data-test="group-duration-sort-count-btn" onclick.delegate="groupByDurationOrderByCount(true)">
+    <button class="button is-small" data-test="group-duration-sort-count-btn" onclick.trigger="groupByDurationOrderByCount(true)">
       Group by duration &amp; sort groups by count
     </button>
-    <button class="button is-small" data-test="group-duration-effort-btn" onclick.delegate="groupByDurationEffortDriven()">
+    <button class="button is-small" data-test="group-duration-effort-btn" onclick.trigger="groupByDurationEffortDriven()">
       Group by Duration then Effort-Driven
     </button>
-    <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
       <span class="mdi mdi-filter-outline"></span>
       <span> Set Filters Dynamically </span>
     </button>

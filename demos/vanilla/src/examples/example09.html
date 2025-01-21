@@ -24,18 +24,16 @@
   <button
     class="button is-small"
     data-test="clear-filters-sorting"
-    onclick.delegate="clearAllFiltersAndSorts()"
+    onclick.trigger="clearAllFiltersAndSorts()"
     title="Clear all Filters & Sorts"
   >
     <span class="mdi mdi-close"></span>
     <span>Clear all Filter & Sorts</span>
   </button>
-  <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">Set Filters Dynamically</button>
-  <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
-  <button class="button is-small" data-test="clear-local-storage" onclick.delegate="clearLocalStorage()">Clear Local Storage</button>
-  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.delegate="throwPageChangeError()">
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
+  <button class="button is-small" data-test="clear-local-storage" onclick.trigger="clearLocalStorage()">Clear Local Storage</button>
+  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.trigger="throwPageChangeError()">
     <span>Throw Error Going to Last Page... </span>
     <i class="mdi mdi-page-last"></i>
   </button>
@@ -45,10 +43,10 @@
   <div class="column">
     <span>
       <label>Programmatically go to first/last page:</label>
-      <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+      <button class="button is-small" data-test="goto-first-page" onclick.trigger="goToFirstPage()">
         <i class="mdi mdi-page-first"></i>
       </button>
-      <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+      <button class="button is-small" data-test="goto-last-page" onclick.trigger="goToLastPage()">
         <i class="mdi mdi-page-last"></i>
       </button>
     </span>
@@ -57,11 +55,11 @@
       <label>OData Version: </label>
       <span data-test="radioVersion">
         <label class="radio-inline control-label" for="radio2">
-          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.delegate="setOdataVersion(2)" />
+          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.trigger="setOdataVersion(2)" />
           2
         </label>
         <label class="radio-inline control-label" for="radio4">
-          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" onclick.delegate="setOdataVersion(4)" />
+          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" onclick.trigger="setOdataVersion(4)" />
           4
         </label>
       </span>
@@ -72,7 +70,7 @@
         id="enableCount"
         data-test="enable-count"
         checked.bind="isCountEnabled"
-        onclick.delegate="changeCountEnableFlag(event.target.checked)"
+        onclick.trigger="changeCountEnableFlag(event.target.checked)"
       />
       <span class="text-bold">Enable Count</span> (add to OData query)
     </label>
@@ -82,7 +80,7 @@
         id="enableSelect"
         data-test="enable-select"
         checked.bind="isSelectEnabled"
-        onclick.delegate="changeEnableSelectFlag(event.target.checked)"
+        onclick.trigger="changeEnableSelectFlag(event.target.checked)"
       />
       <span class="text-bold">Enable Select</span> (add to OData query)
     </label>
@@ -92,7 +90,7 @@
         id="enableExpand"
         data-test="enable-expand"
         checked.bind="isExpandEnabled"
-        onclick.delegate="changeEnableExpandFlag(event.target.checked)"
+        onclick.trigger="changeEnableExpandFlag(event.target.checked)"
       />
       <span class="text-bold">Enable Expand</span> (add to OData query)
     </label>

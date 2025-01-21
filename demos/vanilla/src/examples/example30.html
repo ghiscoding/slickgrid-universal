@@ -14,7 +14,7 @@
 </h3>
 
 <div>
-  <button class="button is-small" onclick.delegate="togglePaginationPosition()" data-text="toggle-pagination-btn">
+  <button class="button is-small" onclick.trigger="togglePaginationPosition()" data-text="toggle-pagination-btn">
     <span class="mdi mdi-swap-vertical"></span>
     <span>Toggle Pagination Position</span>
   </button>
@@ -26,7 +26,7 @@
       class="input is-small is-narrow"
       data-test="page-size-input"
       value.bind="pageSize"
-      onkeyup.delegate="setPaginationSize(event.target.value)"
+      onkeyup.trigger="setPaginationSize(event.target.value)"
     />
   </span>
 </div>
