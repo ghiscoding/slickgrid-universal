@@ -1,5 +1,5 @@
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example12.vue)
 
 ### Installation
 

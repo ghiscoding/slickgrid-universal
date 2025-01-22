@@ -5,7 +5,7 @@
 - [Animated Gif Demo](#animated-gif-demo)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example20) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/doc/github-demo/src/examples/slickgrid/example20.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example20) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/doc/github-demo/src/examples/slickgrid/example20.vue)
 
 ### Introduction
 One of the requested features, columns or rows pinning (aka frozen). You can pin 1 or more Columns and/or 1 or more Rows. Columns can only be pinned starting from the left side, while Rows can be pinned starting from the Top (default) or Bottom. You can also change the pinning dynamically with `setOptions()`.

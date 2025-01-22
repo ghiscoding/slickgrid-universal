@@ -3,10 +3,10 @@ Just like Excel you can select multiple cell and copy (`Ctrl+C`) and paste to Ex
 
 ### Demo
 #### with Inline Editor
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example3.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example3.vue)
 
 #### with Localization
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example12.vue)
 
 ### Usage
 All you need to do is enable the Grid Option `enableExcelCopyBuffer: true` and give it a try. From your grid, start selecting multiple cells with the mouse then copy (with `Ctrl+C`) and paste to Excel (with `Ctrl+V`)

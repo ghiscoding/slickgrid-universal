@@ -3,7 +3,7 @@
 - [Update Filters Dynamically](input-filter.md#update-filters-dynamically)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example4) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example4.tsx) / [Custom InputFilter.ts](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/custom-inputFilter.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example4) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example4.vue) / [Custom InputFilter.ts](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/custom-inputFilter.ts)
 
 ### Description
 You can also create your own Custom Filter with any html/css you want to use. Vue template (View) are not supported at this point, if you wish to contribute on that end then I certainly accept PR (Pull Request).

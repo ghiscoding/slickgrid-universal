@@ -8,10 +8,10 @@
 ### Demo
 Look at your developer console before leaving the page
 #### Regular grid
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example4.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example4.vue)
 
 #### with Backend Service
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example6) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example6.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example6) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example6.vue)
 
 ## Descriptions
 #### Grid State

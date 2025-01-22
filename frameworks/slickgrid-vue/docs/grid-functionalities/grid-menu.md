@@ -6,7 +6,7 @@
 - [How to Load Grid with Certain Columns Hidden](#how-to-load-grid-with-certain-columns-preset-example-hide-certain-columns-on-load)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example9.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example9.vue)
 
 ## Customization
 ### Column Picker

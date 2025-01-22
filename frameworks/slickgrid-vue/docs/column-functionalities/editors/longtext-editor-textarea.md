@@ -4,7 +4,7 @@
 - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) | [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example3.tsx) - ("Title" column to be more specific)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example3.vue) - ("Title" column to be more specific)
 
 ### Editor Options
 You can change button texts, textarea size (cols, rows) and also change position of the textarea (auto is the default which will try to automatically find best place to position the textarea).

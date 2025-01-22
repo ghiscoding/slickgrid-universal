@@ -15,7 +15,7 @@ The Row based editing plugin makes it possible to keep the grid readonly except 
 **Note:** This plugin enforces the use of the `autoEdit` option and will turn it on with a console warning if its not already.
 
 ### Demo
-[Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example35) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example35.tsx)
+[Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example35) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example35.vue)
 
 ## The action column
 A new column is rendered that shows an edit/delete button. If the user clicks on edit, a save and cancel button are shown instead and the row toggles into edit mode. By default as the last column but you can override it with the option `columnIndexPosition`. Additionally it's default column id can be overriden using the opiton `columnId`. Furthermore, you can also override the columns label via the `actionsColumnLabel` property.

@@ -6,7 +6,7 @@
 Some users might want to have 1 main single search for filtering the grid data instead of using multiple column filters. You can see a demo of that below
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example21) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example21.tsx#L162)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example21) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example21.tsx#L162)
 
 ### Code Sample
 ##### Component

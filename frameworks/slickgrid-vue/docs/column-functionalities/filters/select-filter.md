@@ -24,10 +24,10 @@
 - [Filter Shortcuts](input-filter.md#filter-shortcuts)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example4.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example4.vue)
 
 ##### Demo with Localization
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example12.vue)
 
 ### Description
 Multiple Select (dropdown) filter is useful when we want to filter the grid 1 or more search term value.

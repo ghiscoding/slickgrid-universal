@@ -11,9 +11,9 @@
 ### Demo
 
 #### Context Menu with Grouping
-[Context Menu Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example24) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example24.tsx)
+[Context Menu Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example24) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example24.vue)
 
-[Grouping Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example13.tsx)
+[Grouping Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example13.vue)
 
 ### Description
 A Context Menu is triggered by a mouse right+click and can show a list of Commands (to execute an action) and/or Options (to change the value of a field). The lib comes with a default list of custom commands (copy cell, export & grouping commands). Also note that the Commands list is following the same structure used in the [Cell Menu](../column-functionalities/Cell-Menu.md), [Header Menu](Header-Menu-&-Header-Buttons.md) & [Grid Menu](Grid-Menu.md). Very similar to the [Cell Menu](../column-functionalities/Cell-Menu.md), they were both created as SlickGrid plugins during the same period, their main difference is that they get triggered differently (mouse right+click vs cell click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).

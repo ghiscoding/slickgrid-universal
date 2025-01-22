@@ -1,10 +1,10 @@
 ### Demo
 
 #### Header Button Plugin
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example7) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example7.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example7) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example7.vue)
 
 #### Header Menu Plugin
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example8) / [Demo Component](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example8.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example8) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example8.vue)
 
 ## Header Menu
 The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default via the grid option "enableHeaderMenu" flag.

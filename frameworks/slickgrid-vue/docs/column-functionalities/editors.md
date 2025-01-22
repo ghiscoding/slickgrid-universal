@@ -30,10 +30,10 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 
 ### Demo
 ##### with plain javascript
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example3.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example3.vue)
 
 ##### with Vue Custom Components
-[Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example26.tsx)
+[Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example26.vue)
 
 
 ### How to use Inline Editors

@@ -5,11 +5,11 @@ In its simplest form, the more the user scrolls down, the more rows will get loa
 
 ### Demo
 
-[JSON Data - Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example38) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example38.tsx)
+[JSON Data - Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example38) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example38.vue)
 
-[OData Backend Service - Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example39) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example39.tsx)
+[OData Backend Service - Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example39) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example39.vue)
 
-[GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example40) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/Example40.tsx)
+[GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example40) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example40.vue)
 
 > ![WARNING]
 > Pagination Grid Preset (`presets.pagination`) is **not** supported with Infinite Scroll
