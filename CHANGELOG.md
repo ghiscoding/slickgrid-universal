@@ -326,7 +326,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **core:** col name from HTML shouldn't disappear in picker, fixes [#1475](https://github.com/ghiscoding/slickgrid-universal/issues/1475) ([#1476](https://github.com/ghiscoding/slickgrid-universal/issues/1476)) ([15a590b](https://github.com/ghiscoding/slickgrid-universal/commit/15a590b2e52f8864aeccc38f9a708c0453b6e4a6)), closes [/github.com/ghiscoding/slickgrid-universal/blob/185b6f9e44400bec2f1d79568905ca79e4b338a5/packages/common/src/core/slickGrid.ts#L1615-L1616](https://github.com/ghiscoding//github.com/ghiscoding/slickgrid-universal/blob/185b6f9e44400bec2f1d79568905ca79e4b338a5/packages/common/src/core/slickGrid.ts/issues/L1615-L1616) - by @ghiscoding
+* **core:** col name from HTML shouldn't disappear in picker, fixes [#1475](https://github.com/ghiscoding/slickgrid-universal/issues/1475) ([#1476](https://github.com/ghiscoding/slickgrid-universal/issues/1476)) ([15a590b](https://github.com/ghiscoding/slickgrid-universal/commit/15a590b2e52f8864aeccc38f9a708c0453b6e4a6)) - by @ghiscoding
 * **styling:** small UI fixes for Salesforce Theme ([f9bfb3d](https://github.com/ghiscoding/slickgrid-universal/commit/f9bfb3dbbf6a217fdf3928abde634c8ff8243ba0)) - by @ghiscoding-SE
 * tweak setupColumnSort() to fix exception when col no longer exists ([#1477](https://github.com/ghiscoding/slickgrid-universal/issues/1477)) ([094d760](https://github.com/ghiscoding/slickgrid-universal/commit/094d7602d7170b2f395985ce5635041bb2b803d2)) - by @ghiscoding
 
@@ -443,7 +443,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * auto-resize not just grid but also headers for Salesforce tabs ([#1395](https://github.com/ghiscoding/slickgrid-universal/issues/1395)) ([6180461](https://github.com/ghiscoding/slickgrid-universal/commit/6180461b543cb7d4cc14d1504cb0db7d35990164)) - by @ghiscoding
-* **common:** switch to `isomorphic-dompurify` for SSR support ([#1413](https://github.com/ghiscoding/slickgrid-universal/issues/1413)) ([b619453](https://github.com/ghiscoding/slickgrid-universal/commit/b619453fd9825500f2d9589e31bdcf5e17ac412d)), closes [/github.com/ghiscoding/Angular-Slickgrid/discussions/838#discussioncomment-8574215](https://github.com//github.com/ghiscoding/Angular-Slickgrid/discussions/838/issues/discussioncomment-8574215) - by @ghiscoding
+* **common:** switch to `isomorphic-dompurify` for SSR support ([#1413](https://github.com/ghiscoding/slickgrid-universal/issues/1413)) ([b619453](https://github.com/ghiscoding/slickgrid-universal/commit/b619453fd9825500f2d9589e31bdcf5e17ac412d)) - by @ghiscoding
 * **core:** add extra checks for some objects to be a bit more strict ([#1404](https://github.com/ghiscoding/slickgrid-universal/issues/1404)) ([8b95c50](https://github.com/ghiscoding/slickgrid-universal/commit/8b95c505ed2409cde7b790f97b4fbc0d666ca459)) - by @ghiscoding
 * **plugin:** the RowMove plugin cell should be selectable ([#1408](https://github.com/ghiscoding/slickgrid-universal/issues/1408)) ([8c01a13](https://github.com/ghiscoding/slickgrid-universal/commit/8c01a1361898fe3f3b6cfdba3239f93f2e8acec9)) - by @ghiscoding
 * **styling:** add full width to grid container ([#1409](https://github.com/ghiscoding/slickgrid-universal/issues/1409)) ([eedc162](https://github.com/ghiscoding/slickgrid-universal/commit/eedc162e243b3c0bbf450bd404b199f5ee511926)) - by @ghiscoding
@@ -923,7 +923,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **filters:** provide flag to disable special chars input filter parsing ([#873](https://github.com/ghiscoding/slickgrid-universal/issues/873)) ([7e35dae](https://github.com/ghiscoding/slickgrid-universal/commit/7e35dae2258c191e76dbdf01ac654f4a54b5b547)), closes [/stackoverflow.com/questions/75155658/in-angular-slickgrid-the-records-with-special-characters-are-not-gett/75160978#75160978](https://github.com//stackoverflow.com/questions/75155658/in-angular-slickgrid-the-records-with-special-characters-are-not-gett/75160978/issues/75160978) - by @ghiscoding
+* **filters:** provide flag to disable special chars input filter parsing ([#873](https://github.com/ghiscoding/slickgrid-universal/issues/873)) ([7e35dae](https://github.com/ghiscoding/slickgrid-universal/commit/7e35dae2258c191e76dbdf01ac654f4a54b5b547)) - by @ghiscoding
 * **styling:** do not remove ul>li bullet on html root, fixes [#868](https://github.com/ghiscoding/slickgrid-universal/issues/868) ([#872](https://github.com/ghiscoding/slickgrid-universal/issues/872)) ([59fa0ba](https://github.com/ghiscoding/slickgrid-universal/commit/59fa0badad181172bf37a31ecf4ef0f44ee47e8d)) - by @ghiscoding
 
 ### Features
