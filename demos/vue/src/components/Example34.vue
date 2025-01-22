@@ -270,7 +270,9 @@ function defineGrid() {
     },
     draggableGrouping: {
       dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
-      deleteIconCssClass: 'mdi mdi-close',
+      deleteIconCssClass: 'mdi mdi-close text-color-danger',
+      sortAscIconCssClass: 'mdi mdi-arrow-up',
+      sortDescIconCssClass: 'mdi mdi-arrow-down',
     },
     enableDraggableGrouping: true,
     createPreHeaderPanel: true,
