@@ -286,7 +286,7 @@ export class InputFilter implements Filter {
       // compound filter
       this._filterInputElm.classList.add('compound-input');
       this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.grid);
-      this._filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
+      this._filterContainerElm = createDomElement('div', { className: `form-group search-filter slick-filter filter-${columnId}` });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group' }, this._filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement(
         'div',
