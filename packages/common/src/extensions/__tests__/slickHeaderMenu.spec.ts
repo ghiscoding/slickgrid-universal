@@ -175,6 +175,7 @@ describe('HeaderMenu Plugin', () => {
     let gridContainerDiv: HTMLDivElement;
     let headerDiv: HTMLDivElement;
     let headersDiv: HTMLDivElement;
+    let parentContainer: HTMLDivElement;
 
     beforeEach(() => {
       sharedService.slickGrid = gridStub;
@@ -190,11 +191,14 @@ describe('HeaderMenu Plugin', () => {
       gridContainerDiv.className = 'slickgrid-container';
       headersDiv = document.createElement('div');
       headersDiv.className = 'slick-header-columns';
-      vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
-      vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
       headersDiv.appendChild(headerDiv);
       gridContainerDiv.appendChild(headersDiv);
-      document.body.appendChild(gridContainerDiv);
+      parentContainer = document.createElement('div');
+      parentContainer.appendChild(gridContainerDiv);
+      document.body.appendChild(parentContainer);
+      sharedService.gridContainerElement = parentContainer;
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
+      vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
     });
 
     afterEach(() => {

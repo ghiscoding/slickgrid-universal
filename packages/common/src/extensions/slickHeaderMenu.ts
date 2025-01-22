@@ -145,7 +145,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const isSubMenu = menuElm.classList.contains('slick-submenu');
     const parentElm = isSubMenu ? ((e.target as HTMLElement).closest('.slick-menu-item') as HTMLDivElement) : (buttonElm as HTMLElement);
 
-    const relativePos = getOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
+    const containerElm: HTMLElement =
+      this.sharedService.gridContainerElement.querySelector('.slickgrid-container') ?? this.sharedService.gridContainerElement;
+    const relativePos = getOffsetRelativeToParent(containerElm, buttonElm);
     const gridPos = this.grid.getGridPosition();
     const menuWidth = menuElm.offsetWidth;
     const parentOffset = getOffset(parentElm);
