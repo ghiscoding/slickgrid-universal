@@ -601,6 +601,10 @@
         align-items: center;
         padding: var(--slick-header-row-filter-padding, v.$slick-header-row-filter-padding);
         background: var(--slick-header-row-background-color, v.$slick-header-row-background-color);
+        > div,
+        .slick-filter {
+          width: 100%;
+        }
       }
       .slick-headerrow-column input,
       .slick-headerrow-column select,
