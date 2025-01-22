@@ -42,7 +42,7 @@ export class CustomVueComponentEditor implements Editor {
     this.init();
   }
 
-  /** Aurelia Util Service (could be inside the Grid Options Params or the Editor Params ) */
+  /** Vue Util Service (could be inside the Grid Options Params or the Editor Params ) */
   get vueUtilService(): any {
     let vueUtilService = this.gridOptions?.params?.vueUtilService;
     if (!vueUtilService || !(vueUtilService instanceof vueUtilService)) {
@@ -127,22 +127,22 @@ export class CustomVueComponentEditor implements Editor {
     }
   }
 
-  /** destroy the Aurelia ViewModel & Subscription */
+  /** destroy the Vue ViewModel & Subscription */
   destroy() {
     this.compApp?.unmount();
   }
 
-  /** optional, implement a hide method on your Aurelia ViewModel */
+  /** optional, implement a hide method on your Vue ViewModel */
   hide() {
     this.compInstance?.hide();
   }
 
-  /** optional, implement a show method on your Aurelia ViewModel */
+  /** optional, implement a show method on your Vue ViewModel */
   show() {
     this.compInstance?.focus();
   }
 
-  /** optional, implement a focus method on your Aurelia ViewModel */
+  /** optional, implement a focus method on your Vue ViewModel */
   focus() {
     this.compInstance?.focus();
   }
