@@ -177,7 +177,7 @@ $slick-frozen-border-right:                                 1px solid #a5a5a5 !d
 $slick-frozen-overflow-right:                               scroll !default;                      // typically we would like to always have the scroll displayed when using hamburger menu (top right)
 
 /* icons */
-$slick-icon-color:                                          #000 !default;
+$slick-icon-color:                                          inherit !default;
 $slick-icon-font-size:                                      18px !default;
 $slick-icon-group-color:                                    $slick-primary-color !default;
 $slick-icon-group-collapsed-svg-path:                       "M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" !default;
