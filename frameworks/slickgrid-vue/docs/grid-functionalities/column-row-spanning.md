@@ -50,7 +50,7 @@ onBeforeMount(() => {
   defineGrid();
 });
 
-function initializeGrid() {
+function defineGrid() {
   columnDefinitions.value = [ /*...*/ ];
 
   gridOptions.value = {
