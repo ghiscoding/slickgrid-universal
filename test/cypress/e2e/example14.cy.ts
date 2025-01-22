@@ -364,7 +364,7 @@ describe('Example 14 - Columns Resize by Content', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
 
       // click on Feedback->ContactUs
-      cy.get('.slick-header-menu.slick-menu-level-1.dropright')
+      cy.get('.slick-header-menu.slick-menu-level-1.dropleft') // left align
         .find('.slick-menu-item.slick-menu-item')
         .contains('Contact Us')
         .should('exist')
