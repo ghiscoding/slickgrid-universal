@@ -82,7 +82,7 @@ function defineGrid() {
           component: FilterSelect,
         },
       },
-      queryFieldFilter: 'assignee.id', // for a complex object it's important to tell the Filter which field to query and our CustomAureliaComponentFilter returns the "id" property
+      queryFieldFilter: 'assignee.id', // for a complex object it's important to tell the Filter which field to query
       queryFieldSorter: 'assignee.name',
       formatter: Formatters.complexObject,
       params: {
@@ -127,7 +127,6 @@ function defineGrid() {
       asyncPostRender: renderVueComponent,
       params: {
         component: CustomTitleFormatter,
-        // templateUrl: PLATFORM.moduleName('examples/slickgrid/custom-title-formatter'), // CustomTitleFormatterCustomElement,
         complexFieldLabel: 'assignee.name', // for the exportCustomFormatter
       },
       exportCustomFormatter: Formatters.complexObject,
@@ -246,9 +245,6 @@ function defineGrid() {
       _commandQueue.push(editCommand);
       editCommand.execute();
     },
-    // params: {
-    //   aureliaUtilService: aureliaUtilService // provide the service to all at once (Editor, Filter, AsyncPostRender)
-    // }
   };
 }
 
