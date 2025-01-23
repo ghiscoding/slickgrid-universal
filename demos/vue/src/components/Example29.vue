@@ -87,7 +87,7 @@ function toggleSubTitle() {
 
   <hr />
 
-  <slickgrid-vue v-model:options="gridOptions" v-model:columns="columnDefinitions as Column[]" v-model:data="dataset" grid-id="grid2">
+  <slickgrid-vue v-model:options="gridOptions" v-model:columns="columnDefinitions" v-model:data="dataset" grid-id="grid2">
     <template #header>
       <div class="custom-header-slot">
         <h3>Grid with header and footer slot</h3>

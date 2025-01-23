@@ -757,7 +757,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions as GridOption"
-    v-model:columns="columnDefinitions as Column[]"
+    v-model:columns="columnDefinitions"
     v-model:data="dataset"
     grid-id="grid3"
     @on-cell-change="onCellChanged($event.detail.eventData, $event.detail.args)"

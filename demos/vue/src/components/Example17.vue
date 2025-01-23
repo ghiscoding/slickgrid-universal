@@ -143,7 +143,7 @@ function toggleSubTitle() {
   <slickgrid-vue
     v-if="gridCreated"
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions as Column[]"
+    v-model:columns="columnDefinitions"
     v-model:data="dataset"
     grid-id="grid17"
   >

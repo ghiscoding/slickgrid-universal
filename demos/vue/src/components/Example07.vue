@@ -277,7 +277,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions1!"
-    v-model:columns="columnDefinitions1 as Column[]"
+    v-model:columns="columnDefinitions1"
     v-model:data="dataset1"
     grid-id="grid7-1"
     @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -290,7 +290,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions2!"
-    v-model:columns="columnDefinitions2 as Column[]"
+    v-model:columns="columnDefinitions2"
     v-model:data="dataset2"
     grid-id="grid7-2"
     @onVueGridCreated="vueGrid2Ready($event.detail)"

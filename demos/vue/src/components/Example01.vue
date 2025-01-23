@@ -18,8 +18,8 @@ let _darkModeGrid1 = false;
 let vueGrid1!: SlickgridVueInstance;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1 = ref<Column[]>();
-const columnDefinitions2 = ref<Column[]>();
+const columnDefinitions1 = ref<Column[]>([]);
+const columnDefinitions2 = ref<Column[]>([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 
@@ -149,7 +149,7 @@ function toggleDarkModeGrid1() {
   <div class="grid-container1">
     <SlickgridVue
       v-model:options="gridOptions1!"
-      v-model:columns="columnDefinitions1 as Column[]"
+      v-model:columns="columnDefinitions1"
       v-model:data="dataset1"
       grid-id="grid1-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -163,7 +163,7 @@ function toggleDarkModeGrid1() {
 
   <slickgrid-vue
     v-model:options="gridOptions2!"
-    v-model:columns="columnDefinitions2 as Column[]"
+    v-model:columns="columnDefinitions2"
     v-model:data="dataset2"
     grid-id="grid1-2"
     @on-pagination-changed="paginationChanged($event.detail)"
