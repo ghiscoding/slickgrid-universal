@@ -12,7 +12,7 @@ import {
   OperatorType,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const COUNTRIES_API = 'https://countries.trevorblades.com/';
 
@@ -31,7 +31,7 @@ export interface Country {
 }
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Metrics>();
 const processing = ref(false);

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { type GridOption, type SlickgridVueInstance, type Column, Formatters, SlickGlobalEditorLock, SlickgridVue } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let dragHelper: HTMLElement | null = null;
 const dragRows = ref<number[]>([]);

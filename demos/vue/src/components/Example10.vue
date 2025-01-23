@@ -9,13 +9,13 @@ import {
   Formatters,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const isGrid2WithPagination = ref(true);
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1 = ref<Column[]>([]);
-const columnDefinitions2 = ref<Column[]>([]);
+const columnDefinitions1: Ref<Column[]> = ref([]);
+const columnDefinitions2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);

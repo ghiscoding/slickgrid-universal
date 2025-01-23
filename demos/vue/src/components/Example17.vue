@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type Column, type GridOption, SlickgridVue, toCamelCase } from 'slickgrid-vue';
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 
 const gridCreated = ref(false);
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const templateUrl = ref(new URL('./data/users.csv', import.meta.url).href);
 const uploadFileRef = ref('');

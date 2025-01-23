@@ -15,7 +15,7 @@ import {
   type SlickgridVueInstance,
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
-import { onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
 
 import { CustomInputFilter } from './custom-inputFilter';
 import URL_SAMPLE_COLLECTION_DATA from './data/collection_500_numbers.json';
@@ -24,7 +24,7 @@ const NB_ITEMS = 10500;
 
 const metrics = ref<Metrics>({} as Metrics);
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;

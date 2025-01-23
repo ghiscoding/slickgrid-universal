@@ -14,14 +14,14 @@ import {
   Formatters,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { onBeforeMount, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 const { i18next } = useTranslation();
 
 const NB_ITEMS = 1000;
 const darkMode = ref(false);
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const selectedLanguage = ref('en');
 const showSubTitle = ref(true);

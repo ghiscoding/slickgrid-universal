@@ -2,13 +2,13 @@
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { useTranslation } from 'i18next-vue';
 import { type GridOption, type SlickgridVueInstance, type Column, Editors, FieldType, Formatters, SlickgridVue } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const { i18next } = useTranslation();
 
 const NB_ITEMS = 20;
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const selectedLanguage = ref('');
 const fetchResult = ref('');

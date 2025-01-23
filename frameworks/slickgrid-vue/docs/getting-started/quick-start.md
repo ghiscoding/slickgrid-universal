@@ -100,10 +100,10 @@ provide('i18next', useTranslation().i18next);
 ```vue
 <script setup lang="ts">
 import { Column, FieldType, Formatter, Formatters, GridOption, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]); // to avoid type mismatch use `Ref<Column[]>` instead of `ref<Column[]>`
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {

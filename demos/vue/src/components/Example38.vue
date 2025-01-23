@@ -14,14 +14,14 @@ import {
   SlickgridVue,
   SortComparers,
 } from 'slickgrid-vue';
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount, ref, type Ref } from 'vue';
 
 import Data from './data/customers_100.json';
 
 const CARET_HTML_ESCAPED = '%5E';
 const PERCENT_HTML_ESCAPED = '%25';
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isPageErrorTest = ref(false);
 const metrics = ref<Partial<Metrics>>({});
