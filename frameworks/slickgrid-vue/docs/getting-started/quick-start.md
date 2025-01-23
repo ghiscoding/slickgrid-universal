@@ -155,7 +155,11 @@ function getData(count: number) {
 </script>
 
 <template>
-  <SlickgridVue grid-id="grid1" v-model:columns="columnDefinitions as Column[]" v-model:options="gridOptions" v-model:data="dataset" />
+  <SlickgridVue
+    grid-id="grid1"
+    v-model:columns="columnDefinitions"
+    v-model:options="gridOptions"
+    v-model:data="dataset" />
 </template>
 ```
 

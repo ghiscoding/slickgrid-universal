@@ -382,7 +382,7 @@ defineExpose({
 
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions as Column[]"
+      v-model:columns="columnDefinitions"
       v-model:data="dataset"
       grid-id="grid19"
       @onVueGridCreated="vueGridReady($event.detail)"

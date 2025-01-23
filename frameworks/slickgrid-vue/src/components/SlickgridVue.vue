@@ -51,7 +51,19 @@ import { SlickPaginationComponent } from '@slickgrid-universal/pagination-compon
 import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { type i18n } from 'i18next';
-import { type ComponentPublicInstance, computed, createApp, inject, nextTick, onBeforeUnmount, onMounted, ref, useAttrs, watch } from 'vue';
+import {
+  type ComponentPublicInstance,
+  computed,
+  createApp,
+  inject,
+  ModelRef,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useAttrs,
+  watch,
+} from 'vue';
 
 import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
@@ -193,8 +205,11 @@ const _paginationOptions = ref<Pagination | undefined>();
 const paginationModel = defineModel<Pagination>('pagination');
 watch(paginationModel, (newPaginationOptions) => paginationOptionsChanged(newPaginationOptions!));
 
-const _columnDefinitions = ref<Column[]>();
-const columnDefinitionsModel = defineModel<Column[]>('columns', { required: true, default: [] as Column[] });
+// for column definitions model, we'll have to type it as `any[]` because it causes mismatching issues in external component
+// not sure if it's caused by Volar or vue-language-server but it's causing annoying issues for Slickgrid-Vue users
+// we'll assume that the users will type their model anyway via: `const columnDefinitions = ref<Column[]>([]);` and `v-model:columns="columnDefinitions"` so that should be enough
+const _columnDefinitions = ref<Column[]>([]);
+const columnDefinitionsModel: ModelRef<Column[]> = defineModel<any[]>('columns', { required: true, default: [] as Column[] });
 watch(columnDefinitionsModel, (columnDefinitions) => columnDefinitionsChanged(columnDefinitions), { immediate: true });
 
 const dataModel = defineModel<any[]>('data', { required: false }); // technically true but user could use datasetHierarchical instead
@@ -345,10 +360,10 @@ function columnDefinitionsChanged(columnDefinitions?: Column[]) {
     _columnDefinitions.value = columnDefinitions;
   }
   if (isGridInitialized) {
-    updateColumnDefinitionsList(_columnDefinitions.value!);
+    updateColumnDefinitionsList(_columnDefinitions.value as Column[]);
   }
   if (_columnDefinitions.value!.length > 0) {
-    copyColumnWidthsReference(_columnDefinitions.value!);
+    copyColumnWidthsReference(_columnDefinitions.value as Column[]);
   }
 }
 
@@ -426,12 +441,12 @@ function initialization() {
 
   // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
   if (_gridOptions.value?.autoAddCustomEditorFormatter) {
-    autoAddEditorFormatterToColumnsWithEditor(_columnDefinitions.value, _gridOptions.value?.autoAddCustomEditorFormatter);
+    autoAddEditorFormatterToColumnsWithEditor(_columnDefinitions.value as Column[], _gridOptions.value?.autoAddCustomEditorFormatter);
   }
 
   // save reference for all columns before they optionally become hidden/visible
-  sharedService.allColumns = _columnDefinitions.value;
-  sharedService.visibleColumns = _columnDefinitions.value;
+  sharedService.allColumns = _columnDefinitions.value as Column[];
+  sharedService.visibleColumns = _columnDefinitions.value as Column[];
 
   // TODO: revisit later, this conflicts with Grid State (Example 15)
   // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -445,7 +460,7 @@ function initialization() {
 
   // after subscribing to potential columns changed, we are ready to create these optional extensions
   // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
-  extensionService.createExtensionsBeforeGridCreation(_columnDefinitions.value, _gridOptions.value as GridOption);
+  extensionService.createExtensionsBeforeGridCreation(_columnDefinitions.value as Column[], _gridOptions.value as GridOption);
 
   // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
   if (_gridOptions.value?.presets?.pinning) {
@@ -456,7 +471,7 @@ function initialization() {
   grid = new SlickGrid<any, Column<any>, GridOption<Column<any>>>(
     `#${props.gridId}`,
     dataview,
-    _columnDefinitions.value,
+    _columnDefinitions.value as Column[],
     _gridOptions.value as GridOption,
     eventPubSubService
   );
@@ -1278,7 +1293,7 @@ function insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<
   if (_columnDefinitions.value) {
     const columnPosition = _columnDefinitions.value.findIndex((c) => c.id === columnId);
     if (columnPosition >= 0) {
-      const dynColumn = _columnDefinitions.value[columnPosition];
+      const dynColumn = _columnDefinitions.value[columnPosition] as Column;
       if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
         columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
       }
@@ -1461,7 +1476,7 @@ function preRegisterResources() {
 
   if (_gridOptions.value.enableRowDetailView && !registeredResources.some((r) => r instanceof SlickRowDetailView)) {
     slickRowDetailView = new SlickRowDetailView(eventPubSubService);
-    slickRowDetailView.create(_columnDefinitions.value!, _gridOptions.value as GridOption);
+    slickRowDetailView.create(_columnDefinitions.value as Column[], _gridOptions.value as GridOption);
     extensionService.addExtensionToList(ExtensionName.rowDetailView, {
       name: ExtensionName.rowDetailView,
       instance: slickRowDetailView,
@@ -1583,7 +1598,7 @@ function sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[
     // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
     sortedDatasetResult = treeDataService.convertFlatParentChildToTreeDatasetAndSort(
       flatDatasetInput,
-      _columnDefinitions.value || [],
+      (_columnDefinitions.value || []) as Column[],
       _gridOptions.value as GridOption
     );
     sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
