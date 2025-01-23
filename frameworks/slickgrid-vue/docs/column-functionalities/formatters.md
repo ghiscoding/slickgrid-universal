@@ -34,7 +34,7 @@ A good example of a `Formatter` could be a column name `isActive` which is a `bo
 * `Formatters.arrayObjectToCsv`: Takes an array of complex objects and converts it to a comma delimited string.
   * you also need to pass the property name(s) for the complex object, i.e.: `formatter: Formatters.arrayObjectToCsv, params: { propertyNames: ['name'], useFormatterOuputToFilter: true }`
 * `Formatters.arrayToCsv` : takes an array of text and returns it as CSV string
-* `Formatters.checkmarkMaterial` will display a checkmark icon when `true` using Material Design icons
+* `Formatters.checkmarkMaterial` will display a checkmark icon when value is truthy using Material Design icons
 * `Formatters.collection`: Looks up values from the columnDefinition.params.collection property and displays the label in CSV or string format
 * `Formatters.complexObject`: takes a complex object (with a `field` that has a `.` notation) and pull correct value, there are multiple ways to use it
   1. `{ id: 'firstName', field: 'user.firstName', formatter: Formatters.complexObject}`, will display the user's first name
