@@ -46,10 +46,10 @@ Note: the new item will be added to the top of the grid by default, if you wish 
 <script setup lang="ts">
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { Column, CompositeEditorModalType, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -122,10 +122,10 @@ Note however that there is a subtle difference compare to the Create Item action
 import { Column, CompositeEditorModalType } from 'slickgrid-vue';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -386,10 +386,10 @@ There are multiple options that you can change to change the UI design a bit, he
 ```vue
 <script setup lang="ts">
 import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -435,10 +435,10 @@ The example below shows code sample for all 3 supported editors AutoComplete, Da
 ```vue
 <script setup lang="ts">
 import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -495,10 +495,10 @@ There are 2 ways to do it
 ```vue
 <script setup lang="ts">
 import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -555,10 +555,10 @@ function handleOnCompositeEditorChange(event) {
 ```vue
 <script setup lang="ts">
 import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {

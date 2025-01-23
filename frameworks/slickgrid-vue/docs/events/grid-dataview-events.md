@@ -10,10 +10,10 @@ Hook yourself to the Changed event of the bindable grid object.
 ```vue
 <script setup lang="ts">
 import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -77,10 +77,10 @@ Once the `Grid` and `DataView` are ready, see all [Available Events](../events/a
 ```vue
 <script setup lang="ts">
 import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {

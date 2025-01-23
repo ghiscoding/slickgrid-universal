@@ -112,10 +112,10 @@ You can update/change the Filters dynamically (on the fly) via the `updateFilter
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 

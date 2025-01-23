@@ -17,10 +17,10 @@ To set a pinning for the entire duration of the grid, simply use the Grid Option
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -56,10 +56,10 @@ This is basically the same thing as previous code sample, except that you will s
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -88,10 +88,10 @@ You can change the number of pinned columns/rows and even the pinning of columns
 <script setup lang="ts">
 import { SlickgridVueInstance } from 'slickgrid-vue';
 import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SlickGrid, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let gridObj: SlickGrid;
 

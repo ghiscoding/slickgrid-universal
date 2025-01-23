@@ -13,10 +13,10 @@ At the end of it, you'll have a Custom Backend Service that will be instantiated
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isDataLoaded = ref(false);
 
@@ -48,8 +48,11 @@ function defineGrid() {
 If you need to reference your Service for other purposes then you better instantiate it in a separate variable and then just pass it to the `service` property of the `backendServiceApi`.
 ```vue
 <script setup lang="ts">
+import { type Column, type GridOption } from 'slickgrid-vue';
+import { type Ref } from 'vue';
+
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 const myCustomService = new YourCustomBackendService();

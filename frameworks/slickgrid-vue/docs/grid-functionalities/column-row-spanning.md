@@ -27,10 +27,10 @@ Well, that is where you the developer will have to add your own logic to update 
 ```vue
 <script setup lang="ts">
 import { Column, GridOption } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 // metadata can be dynamic too, it doesn't have to be preset

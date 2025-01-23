@@ -13,10 +13,10 @@ Some users might want to have 1 main single search for filtering the grid data i
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const selectedColumn = ref<Column>();
 const selectedOperator = ref<string>();

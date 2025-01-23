@@ -67,10 +67,10 @@ As you can see, you mainly need to define which service to use (GridODataService
 <script setup lang="ts">
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { Column, GridOption, Metrics, PaginationOption } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isCountEnabled = ref(false);
 const odataVersion = ref(4);

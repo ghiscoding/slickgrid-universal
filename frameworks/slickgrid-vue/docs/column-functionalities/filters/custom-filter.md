@@ -49,10 +49,10 @@ function defineGrid() {
 ```vue
 <script setup lang="ts">
 import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOption } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const $filterElm = ref();
 const callback: FilterCallback;
@@ -83,10 +83,10 @@ function destroy() {
 ```vue
 <script setup lang="ts">
 import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOption } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {

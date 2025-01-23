@@ -24,10 +24,10 @@ When used with a local JSON dataset, the Infinite Scroll is a feature that must 
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const scrollEndCalled = ref(false);
 let vueGrid: SlickgridVueInstance;
@@ -99,10 +99,10 @@ We'll use the OData Backend Service to demo Infinite Scroll with a Backend Servi
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 

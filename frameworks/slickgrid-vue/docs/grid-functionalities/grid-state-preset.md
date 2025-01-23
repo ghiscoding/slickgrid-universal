@@ -28,10 +28,10 @@ You can get the `Grid State` at any point in time. However if you wish to save t
 ```vue
 <script setup lang="ts">
 import { Column, Filters, Formatters, GridOption, GridState, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 
@@ -118,10 +118,10 @@ For example, we can set `presets` on a grid like so:
 ```vue
 <script setup lang="ts">
 import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {

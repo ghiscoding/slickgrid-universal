@@ -21,10 +21,10 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 ```vue
 <script setup lang="ts">
 import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOption } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -82,10 +82,10 @@ You could also use external 3rd party Web API (can be JSONP query or regular JSO
 ```vue
 <script setup lang="ts">
 import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOption } from 'slickgrid-vue';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
