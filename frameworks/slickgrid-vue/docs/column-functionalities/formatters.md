@@ -28,7 +28,8 @@ For a [UI sample](#ui-sample), scroll down below.
 
 `Slickgrid-Universal` ships with a few `Formatters` by default which helps with common fields, you can see the [entire list here](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37).
 
-> **Note** you might not need a Formatter when a simple CSS style and class might be enough, think about using `cssClass` column property as much as possible since it has much better perf.
+> **Note** you might not need a Formatter when simple CSS styling and class might be enough, think about using `cssClass` column property as much as possible since it has much better perf.
+> For example: `{ cssClass: 'text-right' }` on your column definition (or any other class) to align on the right.
 
 **List of provided `Formatters`**
 
