@@ -42,15 +42,6 @@ export class CustomVueComponentEditor implements Editor {
     this.init();
   }
 
-  /** Vue Util Service (could be inside the Grid Options Params or the Editor Params ) */
-  get vueUtilService(): any {
-    let vueUtilService = this.gridOptions?.params?.vueUtilService;
-    if (!vueUtilService || !(vueUtilService instanceof vueUtilService)) {
-      vueUtilService = this.columnEditor?.params?.vueUtilService;
-    }
-    return vueUtilService;
-  }
-
   /** Get the Collection */
   get collection(): any[] {
     return this.columnDef?.editor?.collection ?? [];

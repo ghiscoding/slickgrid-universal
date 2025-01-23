@@ -7,12 +7,12 @@ import {
   Editors,
   FieldType,
   Filters,
+  type Formatter,
   Formatters,
   type OnEventArgs,
   OperatorType,
   SlickGlobalEditorLock,
   SlickgridVue,
-  type ViewModelBindableInputData,
 } from 'slickgrid-vue';
 import { ComponentPublicInstance, createApp, onBeforeMount, ref, type Ref } from 'vue';
 
@@ -21,8 +21,6 @@ import { CustomVueComponentFilter } from './custom-viewModelFilter';
 import CustomTitleFormatter from './CustomTitleFormatterComponent.vue';
 import EditorSelect from './SelectEditorComponent.vue';
 import FilterSelect from './SelectFilterComponent.vue';
-
-type AppData = Record<string, unknown>;
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
@@ -118,13 +116,7 @@ function defineGrid() {
       queryFieldFilter: 'assignee.id', // for a complex object it's important to tell the Filter which field to query and our CustomVueComponentFilter returns the "id" property
       queryFieldSorter: 'assignee.name',
 
-      // loading formatter, text to display while Post Render gets processed
-      formatter: () => '...',
-
-      // to load a Vue Component, you cannot use a Formatter since Vue needs at least 1 cycle to render everything
-      // you can use a PostRenderer but you will visually see the data appearing,
-      // which is why it's still better to use regular Formatter instead of Vue Component
-      asyncPostRender: renderVueComponent,
+      formatter: vueComponentFormatter,
       params: {
         component: CustomTitleFormatter,
         complexFieldLabel: 'assignee.name', // for the exportCustomFormatter
@@ -239,8 +231,6 @@ function defineGrid() {
     enableColumnPicker: true,
     enableExcelCopyBuffer: true,
     enableFiltering: true,
-    enableAsyncPostRender: true, // for the Vue PostRenderer, don't forget to enable it
-    asyncPostRenderDelay: 0, // also make sure to remove any delay to render it
     editCommandHandler: (_item, _column, editCommand) => {
       _commandQueue.push(editCommand);
       editCommand.execute();
@@ -297,10 +287,6 @@ function onCellClicked(_e: Event, args: any) {
   }
 }
 
-function onCellValidation(_e: Event, args: any) {
-  alert(args.validationResults.msg);
-}
-
 function changeAutoCommit() {
   gridOptions.value!.autoCommitEdit = !gridOptions.value!.autoCommitEdit;
   vueGrid.slickGrid.setOptions({
@@ -309,20 +295,21 @@ function changeAutoCommit() {
   return true;
 }
 
-function renderVueComponent(cellNode: HTMLElement, _row: number, dataContext: any, colDef: Column) {
+const vueComponentFormatter: Formatter = (_row: number, _cell: number, _val: any, colDef: Column, dataContext: any) => {
   const component = colDef.params?.component;
-  if (component && cellNode) {
+  if (component) {
     const bindableData = {
       model: dataContext,
-      grid: vueGrid.slickGrid,
-    } as AppData & ViewModelBindableInputData;
+      // grid: vueGrid.slickGrid,
+    };
 
     const tmpDiv = document.createElement('div');
-    const app = createApp(component, bindableData);
-    const instance = app.mount(tmpDiv) as ComponentPublicInstance;
-    cellNode.replaceChildren(instance.$el);
+    const app = createApp(component, bindableData); // add any necessary use() when needed, i.e. `use(router).use(pinia)`
+    app.mount(tmpDiv) as ComponentPublicInstance;
+    return tmpDiv;
   }
-}
+  return '';
+};
 
 function setAutoEdit(isAutoEdit: boolean) {
   isAutoEdit = isAutoEdit;
@@ -370,8 +357,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    <h3>Filters, Editors, AsyncPostRender with Vue Components</h3>
-    Grid with usage of Vue Components as Editor &amp; AsyncPostRender (similar to Formatter).
+    <h3>Custom Filters, Editors with Vue Components</h3>
     <ul>
       <li>Support of Vue Component as Custom Editor (click on any "Assignee" name cell)</li>
       <ul>
@@ -379,14 +365,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <li>Increased Grid Options "rowHeight" &amp; "headerRowHeight" to 45 so that the Custom Element fits in the cell.</li>
       </ul>
       <li>Support of Vue Component as Custom Filter ("Assignee" columns), which also uses Custom Element</li>
-      <li>The 2nd "Assignee" column (showing in bold text) uses "asyncPostRender" with an Vue Component</li>
+      <li>The 2nd "Assignee" column (showing in bold text) uses a Vue Component</li>
       <ul>
-        <li>Why can't we use Vue Component as Customer Formatter and why do I see a slight delay in loading the data?</li>
-        <li>
-          It's totally normal since SlickGrid Formatters only accept strings (synchronously), so we cannot use that (Vue requires at least 1
-          full cycle to render the element), so we are left with SlickGrid "asyncPostRender" and it works but as the name suggest it's async
-          users might see noticeable delay in loading the data
-        </li>
+        <li>Can we use Vue Component as Customer Formatter? Yes but prefer native as much as possible</li>
       </ul>
     </ul>
   </div>
