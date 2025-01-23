@@ -333,13 +333,13 @@ import { ComponentPublicInstance, createApp, onBeforeMount, ref, type Ref } from
 const vueComponentFormatter: Formatter = (_row: number, _cell: number, _val: any, colDef: Column, dataContext: any) => {
   const component = colDef.params?.component; // our Vue Component
   if (component) {
-    const bindableData = {
+    const props = {
       model: dataContext,
       // grid: vueGrid.slickGrid, // you can pass SlickGrid instance as well
-    } as AppData & ViewModelBindableInputData;
+    };
 
     const tmpDiv = document.createElement('div');
-    const app = createApp(component, bindableData); // add any necessary use() when needed, i.e. `use(router).use(pinia)`
+    const app = createApp(component, props); // add any necessary use() when needed, i.e. `use(router).use(pinia)`
     app.mount(tmpDiv) as ComponentPublicInstance;
     return tmpDiv;
   }
