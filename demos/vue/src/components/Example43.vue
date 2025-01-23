@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type Column, Editors, type GridOption, type ItemMetadata, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const isEditable = ref(false);
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;

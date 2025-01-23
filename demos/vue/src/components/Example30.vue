@@ -24,13 +24,13 @@ import {
   SlickgridVue,
   SortComparers,
 } from 'slickgrid-vue';
-import { onBeforeMount, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 import URL_COUNTRIES_COLLECTION from './data/countries.json';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const editQueue = ref<any[]>([]);
 const editedItems = ref<any>({});

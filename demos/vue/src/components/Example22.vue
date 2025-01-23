@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { type GridOption, type SlickgridVueInstance, type Column, Filters, SlickgridVue } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 import URL_CUSTOMERS_URL from './data/customers_100.json?url';
 
 const NB_ITEMS = 500;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1 = ref<Column[]>([]);
-const columnDefinitions2 = ref<Column[]>([]);
+const columnDefinitions1: Ref<Column[]> = ref([]);
+const columnDefinitions2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);

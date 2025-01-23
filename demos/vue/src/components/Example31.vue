@@ -16,13 +16,13 @@ import {
   OperatorType,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 import Data from './data/customers_100.json';
 
 const defaultPageSize = 20;
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Metrics>({} as Metrics);
 const paginationOptions = ref<Pagination>();

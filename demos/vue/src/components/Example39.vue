@@ -14,7 +14,7 @@ import {
   Filters,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount, ref, type Ref } from 'vue';
 
 import SAMPLE_COLLECTION_DATA_URL from './data/customers_100.json?url';
 
@@ -23,7 +23,7 @@ const { i18next } = useTranslation();
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
 const FAKE_SERVER_DELAY = 250;
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Partial<Metrics>>({});
 const tagDataClass = ref('');

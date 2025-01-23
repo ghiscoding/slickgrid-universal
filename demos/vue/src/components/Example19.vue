@@ -10,7 +10,7 @@ import {
   Formatters,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { computed, onBeforeMount, onUnmounted, ref } from 'vue';
+import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 import Example19Detail from './Example19Detail.vue';
 import Example19Preload from './Example19Preload.vue';
@@ -18,7 +18,7 @@ import Example19Preload from './Example19Preload.vue';
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
 const detailViewRowCount = ref(9);
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isDarkMode = ref(false);
 const showSubTitle = ref(true);

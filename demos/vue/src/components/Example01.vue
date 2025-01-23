@@ -7,7 +7,7 @@ import {
   SlickgridVue,
   type SlickgridVueInstance,
 } from 'slickgrid-vue';
-import { onBeforeMount, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 import { zeroPadding } from './utilities';
 
@@ -18,8 +18,8 @@ let _darkModeGrid1 = false;
 let vueGrid1!: SlickgridVueInstance;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1 = ref<Column[]>([]);
-const columnDefinitions2 = ref<Column[]>([]);
+const columnDefinitions1: Ref<Column[]> = ref([]);
+const columnDefinitions2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 

@@ -8,11 +8,11 @@ import {
   type OperatorString,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 25;
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const operatorList = ref<OperatorString[]>(['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith']);

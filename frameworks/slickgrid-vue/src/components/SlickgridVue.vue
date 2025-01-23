@@ -56,10 +56,10 @@ import {
   computed,
   createApp,
   inject,
-  ModelRef,
   nextTick,
   onBeforeUnmount,
   onMounted,
+  Ref,
   ref,
   useAttrs,
   watch,
@@ -205,11 +205,8 @@ const _paginationOptions = ref<Pagination | undefined>();
 const paginationModel = defineModel<Pagination>('pagination');
 watch(paginationModel, (newPaginationOptions) => paginationOptionsChanged(newPaginationOptions!));
 
-// for column definitions model, we'll have to type it as `any[]` because it causes mismatching issues in external component
-// not sure if it's caused by Volar or vue-language-server but it's causing annoying issues for Slickgrid-Vue users
-// we'll assume that the users will type their model anyway via: `const columnDefinitions = ref<Column[]>([]);` and `v-model:columns="columnDefinitions"` so that should be enough
-const _columnDefinitions = ref<Column[]>([]);
-const columnDefinitionsModel: ModelRef<Column[]> = defineModel<any[]>('columns', { required: true, default: [] as Column[] });
+const _columnDefinitions: Ref<Column[]> = ref([]);
+const columnDefinitionsModel = defineModel<Column[]>('columns', { required: true, default: [] });
 watch(columnDefinitionsModel, (columnDefinitions) => columnDefinitionsChanged(columnDefinitions), { immediate: true });
 
 const dataModel = defineModel<any[]>('data', { required: false }); // technically true but user could use datasetHierarchical instead
@@ -360,10 +357,10 @@ function columnDefinitionsChanged(columnDefinitions?: Column[]) {
     _columnDefinitions.value = columnDefinitions;
   }
   if (isGridInitialized) {
-    updateColumnDefinitionsList(_columnDefinitions.value as Column[]);
+    updateColumnDefinitionsList(_columnDefinitions.value);
   }
   if (_columnDefinitions.value!.length > 0) {
-    copyColumnWidthsReference(_columnDefinitions.value as Column[]);
+    copyColumnWidthsReference(_columnDefinitions.value);
   }
 }
 
@@ -1476,7 +1473,7 @@ function preRegisterResources() {
 
   if (_gridOptions.value.enableRowDetailView && !registeredResources.some((r) => r instanceof SlickRowDetailView)) {
     slickRowDetailView = new SlickRowDetailView(eventPubSubService);
-    slickRowDetailView.create(_columnDefinitions.value as Column[], _gridOptions.value as GridOption);
+    slickRowDetailView.create(_columnDefinitions.value, _gridOptions.value as GridOption);
     extensionService.addExtensionToList(ExtensionName.rowDetailView, {
       name: ExtensionName.rowDetailView,
       instance: slickRowDetailView,

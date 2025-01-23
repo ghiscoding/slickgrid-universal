@@ -15,13 +15,13 @@ import {
   SlickgridVue,
   SlickgridVueInstance,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const { i18next } = useTranslation();
 
 const NB_ITEMS = 1500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const selectedLanguage = ref('en');

@@ -8,7 +8,7 @@ import {
   SlickgridVue,
   type SlickgridVueInstance,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;
 interface DataItem {
@@ -25,7 +25,7 @@ interface DataItem {
 }
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const resizerPaused = ref(false);
 const showSubTitle = ref(true);

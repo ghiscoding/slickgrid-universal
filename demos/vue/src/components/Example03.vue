@@ -17,7 +17,7 @@ import {
   SortComparers,
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 import { CustomInputEditor } from './custom-inputEditor';
 import { CustomInputFilter } from './custom-inputFilter';
@@ -53,7 +53,7 @@ const gridOptions = ref<GridOption>({
   },
   // i18n: i18n,
 });
-const columnDefinitions = ref<Array<Column>>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid!: SlickgridVueInstance;
 

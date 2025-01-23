@@ -16,10 +16,10 @@ import {
   isNumber,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const datasetHierarchical = ref<any[]>([]);
 const isExcludingChildWhenFiltering = ref(false);
 const isAutoApproveParentItemWhenTreeColumnIsValid = ref(true);

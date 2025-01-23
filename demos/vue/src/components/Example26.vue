@@ -14,7 +14,7 @@ import {
   SlickgridVue,
   type ViewModelBindableInputData,
 } from 'slickgrid-vue';
-import { ComponentPublicInstance, createApp, onBeforeMount, ref } from 'vue';
+import { ComponentPublicInstance, createApp, onBeforeMount, ref, type Ref } from 'vue';
 
 import { CustomVueComponentEditor } from './custom-viewModelEditor';
 import { CustomVueComponentFilter } from './custom-viewModelFilter';
@@ -26,7 +26,7 @@ type AppData = Record<string, unknown>;
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;

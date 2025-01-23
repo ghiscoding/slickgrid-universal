@@ -17,12 +17,12 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from 'slickgrid-vue';
-import { onBeforeMount, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;
 const darkMode = ref(false);
 const gridOptions = ref<GridOption>();
-const columnDefinitions = ref<Column[]>([]);
+const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let draggableGroupingPlugin: any;
 let durationOrderByCount = false;
