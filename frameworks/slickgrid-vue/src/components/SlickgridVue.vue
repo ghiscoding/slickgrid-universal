@@ -438,12 +438,12 @@ function initialization() {
 
   // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
   if (_gridOptions.value?.autoAddCustomEditorFormatter) {
-    autoAddEditorFormatterToColumnsWithEditor(_columnDefinitions.value, _gridOptions.value?.autoAddCustomEditorFormatter);
+    autoAddEditorFormatterToColumnsWithEditor(_columnDefinitions.value as Column[], _gridOptions.value?.autoAddCustomEditorFormatter);
   }
 
   // save reference for all columns before they optionally become hidden/visible
-  sharedService.allColumns = _columnDefinitions.value;
-  sharedService.visibleColumns = _columnDefinitions.value;
+  sharedService.allColumns = _columnDefinitions.value as Column[];
+  sharedService.visibleColumns = _columnDefinitions.value as Column[];
 
   // TODO: revisit later, this conflicts with Grid State (Example 15)
   // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -457,7 +457,7 @@ function initialization() {
 
   // after subscribing to potential columns changed, we are ready to create these optional extensions
   // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
-  extensionService.createExtensionsBeforeGridCreation(_columnDefinitions.value, _gridOptions.value as GridOption);
+  extensionService.createExtensionsBeforeGridCreation(_columnDefinitions.value as Column[], _gridOptions.value as GridOption);
 
   // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
   if (_gridOptions.value?.presets?.pinning) {
@@ -468,7 +468,7 @@ function initialization() {
   grid = new SlickGrid<any, Column<any>, GridOption<Column<any>>>(
     `#${props.gridId}`,
     dataview,
-    _columnDefinitions.value,
+    _columnDefinitions.value as Column[],
     _gridOptions.value as GridOption,
     eventPubSubService
   );
