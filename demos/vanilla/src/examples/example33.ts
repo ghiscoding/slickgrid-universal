@@ -1,5 +1,6 @@
-import { type Column, type Formatter, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { type Column, type Formatter, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -9,6 +10,9 @@ const NB_ITEMS = 500;
 
 const rowCellValueFormatter: Formatter = (row, cell, value) => {
   return `<div class="cellValue">${value.toFixed(2)}</div><div class="valueComment">${row}.${cell}</div>`;
+};
+const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => {
+  return value.toFixed(2);
 };
 
 export default class Example33 {
@@ -85,48 +89,198 @@ export default class Example33 {
   initializeGrid() {
     this.columnDefinitions = [
       { id: 'title', name: 'Title', field: 'title', minWidth: 80 },
-      { id: 'revenueGrowth', name: 'Revenue Growth', field: 'revenueGrowth', formatter: rowCellValueFormatter, minWidth: 120 },
+      {
+        id: 'revenueGrowth',
+        name: 'Revenue Growth',
+        field: 'revenueGrowth',
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+        minWidth: 120,
+      },
       {
         id: 'pricingPolicy',
         name: 'Pricing Policy',
         field: 'pricingPolicy',
         minWidth: 110,
         sortable: true,
+        exportCustomFormatter: rowCellValueExportFormatter,
         formatter: rowCellValueFormatter,
+        type: 'number',
       },
-      { id: 'policyIndex', name: 'Policy Index', field: 'policyIndex', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'expenseControl', name: 'Expense Control', field: 'expenseControl', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'excessCash', name: 'Excess Cash', field: 'excessCash', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'netTradeCycle', name: 'Net Trade Cycle', field: 'netTradeCycle', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'costCapital', name: 'Cost of Capital', field: 'costCapital', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'revenueGrowth2', name: 'Revenue Growth', field: 'revenueGrowth2', formatter: rowCellValueFormatter, minWidth: 120 },
+      {
+        id: 'policyIndex',
+        name: 'Policy Index',
+        field: 'policyIndex',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'expenseControl',
+        name: 'Expense Control',
+        field: 'expenseControl',
+        minWidth: 110,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'excessCash',
+        name: 'Excess Cash',
+        field: 'excessCash',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'netTradeCycle',
+        name: 'Net Trade Cycle',
+        field: 'netTradeCycle',
+        minWidth: 110,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'costCapital',
+        name: 'Cost of Capital',
+        field: 'costCapital',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'revenueGrowth2',
+        name: 'Revenue Growth',
+        field: 'revenueGrowth2',
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+        minWidth: 120,
+      },
       {
         id: 'pricingPolicy2',
         name: 'Pricing Policy',
         field: 'pricingPolicy2',
         minWidth: 110,
         sortable: true,
+        exportCustomFormatter: rowCellValueExportFormatter,
         formatter: rowCellValueFormatter,
+        type: 'number',
       },
-      { id: 'policyIndex2', name: 'Policy Index', field: 'policyIndex2', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'expenseControl2', name: 'Expense Control', field: 'expenseControl2', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'excessCash2', name: 'Excess Cash', field: 'excessCash2', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'netTradeCycle2', name: 'Net Trade Cycle', field: 'netTradeCycle2', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'costCapital2', name: 'Cost of Capital', field: 'costCapital2', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'revenueGrowth3', name: 'Revenue Growth', field: 'revenueGrowth3', formatter: rowCellValueFormatter, minWidth: 120 },
+      {
+        id: 'policyIndex2',
+        name: 'Policy Index',
+        field: 'policyIndex2',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'expenseControl2',
+        name: 'Expense Control',
+        field: 'expenseControl2',
+        minWidth: 110,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'excessCash2',
+        name: 'Excess Cash',
+        field: 'excessCash2',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'netTradeCycle2',
+        name: 'Net Trade Cycle',
+        field: 'netTradeCycle2',
+        minWidth: 110,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'costCapital2',
+        name: 'Cost of Capital',
+        field: 'costCapital2',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'revenueGrowth3',
+        name: 'Revenue Growth',
+        field: 'revenueGrowth3',
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+        minWidth: 120,
+      },
       {
         id: 'pricingPolicy3',
         name: 'Pricing Policy',
         field: 'pricingPolicy3',
         minWidth: 110,
         sortable: true,
+        exportCustomFormatter: rowCellValueExportFormatter,
         formatter: rowCellValueFormatter,
+        type: 'number',
       },
-      { id: 'policyIndex3', name: 'Policy Index', field: 'policyIndex3', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'expenseControl3', name: 'Expense Control', field: 'expenseControl3', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'excessCash3', name: 'Excess Cash', field: 'excessCash3', minWidth: 100, formatter: rowCellValueFormatter },
-      { id: 'netTradeCycle3', name: 'Net Trade Cycle', field: 'netTradeCycle3', minWidth: 110, formatter: rowCellValueFormatter },
-      { id: 'costCapital3', name: 'Cost of Capital', field: 'costCapital3', minWidth: 100, formatter: rowCellValueFormatter },
+      {
+        id: 'policyIndex3',
+        name: 'Policy Index',
+        field: 'policyIndex3',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'expenseControl3',
+        name: 'Expense Control',
+        field: 'expenseControl3',
+        minWidth: 110,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'excessCash3',
+        name: 'Excess Cash',
+        field: 'excessCash3',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'netTradeCycle3',
+        name: 'Net Trade Cycle',
+        field: 'netTradeCycle3',
+        minWidth: 110,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
+      {
+        id: 'costCapital3',
+        name: 'Cost of Capital',
+        field: 'costCapital3',
+        minWidth: 100,
+        exportCustomFormatter: rowCellValueExportFormatter,
+        formatter: rowCellValueFormatter,
+        type: 'number',
+      },
     ];
 
     this.gridOptions = {
@@ -141,6 +295,8 @@ export default class Example33 {
           getRowMetadata: this.renderDifferentColspan.bind(this),
         },
       },
+      enableExcelExport: true,
+      externalResources: [new ExcelExportService()],
       rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
     };
   }

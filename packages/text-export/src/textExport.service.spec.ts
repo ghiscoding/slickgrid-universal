@@ -67,6 +67,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
   getGrouping: vi.fn(),
+  getParentRowSpanByCell: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('ExportService', () => {
@@ -128,7 +129,7 @@ describe('ExportService', () => {
       service.init(gridStub, container);
       await service.exportToFile(mockExportCsvOptions);
 
-      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+      expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', expect.anything());
       expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
       expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
     });
@@ -190,7 +191,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', expect.anything());
       });
 
       it('should call "URL.createObjectURL" with a Blob and CSV file when browser is not IE11 (basically any other browser) when exporting as CSV', async () => {
@@ -201,7 +202,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
       });
 
@@ -213,7 +214,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', expect.anything());
         expect(spyMsSave).toHaveBeenCalledWith(mockCsvBlob, 'export.csv');
       });
 
@@ -224,7 +225,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', expect.anything());
         expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
       });
 
@@ -236,7 +237,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', expect.anything());
         expect(spyMsSave).toHaveBeenCalledWith(mockTxtBlob, 'export.txt');
       });
     });
@@ -263,7 +264,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -284,7 +285,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -305,7 +306,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -325,7 +326,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -345,7 +346,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -365,7 +366,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -385,7 +386,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -405,7 +406,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -426,7 +427,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -448,7 +449,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -483,7 +484,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -506,7 +507,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -567,7 +568,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -667,7 +668,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -687,7 +688,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -788,7 +789,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -808,7 +809,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -947,7 +948,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -970,7 +971,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -1029,7 +1030,7 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
@@ -1099,7 +1100,7 @@ describe('ExportService', () => {
           service.init(gridStub, container);
           await service.exportToFile(mockExportCsvOptions);
 
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+          expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
           expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
           expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
         });
@@ -1117,7 +1118,6 @@ describe('ExportService', () => {
         mockGridOptions.textExportOptions = {};
         mockGridOptions.createPreHeaderPanel = false;
         mockGridOptions.showPreHeaderPanel = false;
-        mockGridOptions.colspanCallback = (item: any) => (item.id % 2 === 1 ? evenMetatadata : oddMetatadata);
 
         mockColumns = [
           { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
@@ -1173,7 +1173,114 @@ describe('ExportService', () => {
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
 
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+      });
+    });
+
+    describe('grid with rowspan', () => {
+      let mockCollection;
+      const oddMetatadata = { columns: { userId: { colspan: 2, rowspan: 2 } } } as ItemMetadata;
+      const evenMetatadata = { columns: { 1: { colspan: 1, rowspan: 3 } } } as ItemMetadata;
+
+      beforeEach(() => {
+        mockGridOptions.enableTranslate = true;
+        mockGridOptions.translater = translateService;
+        mockGridOptions.textExportOptions = {};
+        mockGridOptions.createPreHeaderPanel = false;
+        mockGridOptions.showPreHeaderPanel = false;
+        mockGridOptions.enableCellRowSpan = true;
+
+        mockColumns = [
+          { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
+          { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
+          {
+            id: 'lastName',
+            field: 'lastName',
+            nameKey: 'LAST_NAME',
+            width: 100,
+            formatter: myBoldHtmlFormatter,
+            exportCustomFormatter: myUppercaseFormatter,
+            sanitizeDataExport: true,
+            exportWithFormatter: true,
+          },
+          { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
+          { id: 'order', field: 'order', width: 100 },
+        ] as Column[];
+
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      });
+
+      afterEach(() => {
+        vi.clearAllMocks();
+      });
+
+      it(`should export same rowspan in the csv export as defined in the grid`, async () => {
+        mockCollection = [
+          { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 },
+          { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'DEVELOPER', order: 15 },
+          { id: 2, userId: '2ABC', firstName: 'Sponge', lastName: 'Bob', position: 'IT_ADMIN', order: 33 },
+          { id: 3, userId: '3DEF', firstName: 'Mustafa', lastName: 'Smith', position: 'DEVELOPER', order: 35 },
+        ];
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem')
+          .mockReturnValue(null)
+          .mockReturnValueOnce(mockCollection[0])
+          .mockReturnValueOnce(mockCollection[1])
+          .mockReturnValueOnce(mockCollection[2])
+          .mockReturnValueOnce(mockCollection[3]);
+        vi.spyOn(dataViewStub, 'getItemMetadata')
+          .mockReturnValue(oddMetatadata)
+          .mockReturnValueOnce(evenMetatadata)
+          .mockReturnValueOnce(oddMetatadata)
+          .mockReturnValueOnce(evenMetatadata);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = vi.spyOn(URL, 'createObjectURL');
+        const spyDownload = vi.spyOn(service, 'startDownloadFile');
+        vi.spyOn(gridStub, 'getParentRowSpanByCell')
+          // 1st row
+          .mockReturnValueOnce({ start: 0, end: 1, range: '0:1' })
+          .mockReturnValueOnce({ start: 0, end: 1, range: '0:1' })
+          .mockReturnValueOnce({ start: 0, end: 2, range: '0:2' })
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          // 2nd row
+          .mockReturnValueOnce({ start: 0, end: 1, range: '0:1' })
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce({ start: 0, end: 2, range: '0:2' })
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          // 3rd row
+          .mockReturnValueOnce({ start: 0, end: 1, range: '0:1' })
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce({ start: 0, end: 2, range: '0:2' })
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          // 4th row
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          // 5th row
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce(null);
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation = `"User Id","First Name","Last Name","Position","Order"
+          ="1E06","John","Z","Sales Rep.","10"
+          ,"Jane",,"Developer","15"
+          ,"Sponge",,"IT Admin","33"
+          ="3DEF",,"SMITH","Developer","35"`;
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportCsvOptions);
+
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });

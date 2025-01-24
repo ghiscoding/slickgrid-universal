@@ -43,7 +43,7 @@ const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
 };
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
-  protected _fileFormat: FileType = FileType.xlsx;
+  protected _fileFormat: FileType | 'xls' | 'xlsx' = FileType.xlsx;
   protected _grid!: SlickGrid;
   protected _locales!: Locale;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
@@ -482,6 +482,22 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         rowOutputStrings.push('');
       }
 
+      // when using rowspan
+      let rowspan = 1;
+      if (this._gridOptions.enableCellRowSpan) {
+        const prs = this._grid.getParentRowSpanByCell(row, col, false);
+        if (prs) {
+          if (prs.start === row) {
+            rowspan = prs.end - prs.start + 1;
+          } else {
+            // skip any rowspan child cell since it was already merged
+            rowOutputStrings.push('');
+            continue;
+          }
+        }
+      }
+
+      // when using colspan (it could be a number or a "*" when spreading the entire row)
       let colspan = 1;
       let colspanColumnId;
       if (itemMetadata?.columns) {
@@ -494,16 +510,26 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           colspan = columns.length - col;
         } else {
           colspan = prevColspan as number;
-          if (columnDef.id in metadata) {
+          if (columnDef.id in metadata || col in metadata) {
             colspanColumnId = columnDef.id;
             colspanStartIndex = col;
           }
         }
       }
 
+      // when using grid with rowspan without any colspan, we will merge some cells on single column
+      if (rowspan > 1 && !isNaN(prevColspan as number) && +prevColspan === 1 && columnDef.id === colspanColumnId) {
+        // -- Merge Data RowSpan only
+        // Excel row starts at 2 or at 3 when dealing with pre-header grouping
+        const excelRowNumber = row + (this._hasColumnTitlePreHeader ? 3 : 2);
+        const leftExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
+        const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
+        this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
+      }
+
       // when using grid with colspan, we will merge some cells together
       if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)) {
-        // -- Merge Data
+        // -- Merge Data, ColSpan and maybe RowSpan
         // Excel row starts at 2 or at 3 when dealing with pre-header grouping
         const excelRowNumber = row + (this._hasColumnTitlePreHeader ? 3 : 2);
 
@@ -511,12 +537,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           // partial column span
           const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1);
           const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-          this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber}`);
+          this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
           rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
         } else if (prevColspan === '*' && colspan === 1) {
           // full column span (from A1 until the last column)
           const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-          this._sheet.mergeCells(`A${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber}`);
+          this._sheet.mergeCells(`A${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
         } else {
           rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
         }

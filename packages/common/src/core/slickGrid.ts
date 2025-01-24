@@ -3917,7 +3917,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * from a row number, verify if the rowspan is intersecting and return it when found,
+   * from a row number, check if the rowspan is intersecting with any rowspan and return it when found,
    * otherwise return `null` when nothing is found or when the rowspan feature is disabled.
    * @param {Number} row - grid row index
    */
