@@ -21,7 +21,7 @@ export interface ExcelExportOption {
   filename?: string;
 
   /** file type format, .xls/.xlsx (this will provide the extension) */
-  format?: FileType.xls | FileType.xlsx;
+  format?: FileType.xls | FileType.xlsx | 'xls' | 'xlsx';
 
   /**
    * file MIME type could be provided by the user.

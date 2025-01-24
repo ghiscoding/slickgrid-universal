@@ -43,7 +43,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _delimiter = ',';
   protected _exportQuoteWrapper = '';
   protected _exportOptions!: TextExportOption;
-  protected _fileFormat: FileType = FileType.csv;
+  protected _fileFormat: FileType | 'csv' | 'txt' = FileType.csv;
   protected _lineCarriageReturn = '\n';
   protected _grid!: SlickGrid;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
@@ -382,6 +382,17 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         rowOutputStrings.push(emptyValue);
       }
 
+      // when using rowspan
+      if (this._gridOptions.enableCellRowSpan) {
+        const prs = this._grid.getParentRowSpanByCell(row, col, false);
+        if (prs && prs.start !== row) {
+          // skip any rowspan child cell since it was already merged
+          rowOutputStrings.push('');
+          continue;
+        }
+      }
+
+      // when using colspan (it could be a number or a "*" when spreading the entire row)
       let colspanColumnId;
       if (itemMetadata?.columns) {
         const metadata = itemMetadata?.columns;
@@ -390,7 +401,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
           prevColspan = columnData?.colspan ?? 1;
         }
         if (prevColspan !== '*') {
-          if (columnDef.id in metadata) {
+          if (columnDef.id in metadata || col in metadata) {
             colspanColumnId = columnDef.id;
           }
         }

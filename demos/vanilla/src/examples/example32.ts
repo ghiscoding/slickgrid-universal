@@ -12,6 +12,7 @@ export default class Example32 {
   isEditable = false;
   gridOptions: GridOption;
   dataset: any[] = [];
+  excelExportService: ExcelExportService;
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   metadata: ItemMetadata | Record<number, ItemMetadata> = {
@@ -110,6 +111,7 @@ export default class Example32 {
 
   constructor() {
     this._bindingEventService = new BindingEventService();
+    this.excelExportService = new ExcelExportService();
   }
 
   attached() {
@@ -165,7 +167,7 @@ export default class Example32 {
       enableColumnReorder: true,
       enableCellRowSpan: true,
       enableExcelExport: true,
-      externalResources: [new ExcelExportService()],
+      externalResources: [this.excelExportService],
       enableExcelCopyBuffer: true,
       autoEdit: true,
       editable: false,
@@ -182,6 +184,10 @@ export default class Example32 {
       },
       rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
     };
+  }
+
+  exportToExcel() {
+    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
   }
 
   navigateDown() {
