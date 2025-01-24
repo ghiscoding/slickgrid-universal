@@ -15,6 +15,11 @@
       matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
       groupName: 'Vue.JS dependencies',
     },
+    {
+      // pinning pnpm to v9.15.2 because latest seems to have problems in GitHub Actions as per this pnpm issue: https://github.com/pnpm/pnpm/issues/8953
+      packageNames: ['pnpm'],
+      allowedVersions: '9.15.2',
+    },
     // rimraf new major releases dropped support for Node 18, we'll have to wait our next major to upgrade them
     {
       packageNames: ['rimraf'],
