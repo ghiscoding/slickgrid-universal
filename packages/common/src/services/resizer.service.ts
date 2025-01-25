@@ -18,6 +18,8 @@ const DEFAULT_INTERVAL_RETRY_DELAY = 200;
 export class ResizerService {
   protected _autoResizeOptions!: AutoResizeOption;
   protected _bindingEventService: BindingEventService;
+  protected _allHeaderHeight = 0;
+  protected _autoHeightRecalcRow = 0;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
   protected _fixedHeight?: number | string;
@@ -35,6 +37,14 @@ export class ResizerService {
   protected _resizePaused = false;
   protected _resizeObserver!: ResizeObserver;
   protected _subscriptions: EventSubscription[] = [];
+
+  get autoHeightRecalcRow(): number {
+    return this._autoHeightRecalcRow || 100;
+  }
+
+  get isAutoHeightEnabled(): boolean {
+    return !!(this.gridOptions.enableAutoResize && this.gridOptions.autoResize?.autoHeight);
+  }
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -122,6 +132,7 @@ export class ResizerService {
     }
 
     if (this.gridOptions.enableAutoResize) {
+      this._autoHeightRecalcRow = this.gridOptions.autoResize?.autoHeightRecalcRow ?? 100;
       this.bindAutoResizeDataGrid();
     }
 
@@ -199,6 +210,17 @@ export class ResizerService {
   }
 
   /**
+   * cache all header height total which will be used to calculate grid autoHeight with autoResize,
+   * if you toggle any of the headers (column, header row, header menu), you should call this method to recalculate the header height total
+   */
+  cacheHeaderHeightTotal(): void {
+    const topHeaderElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-topheader-panel`);
+    const paneHeaderElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-pane-header`);
+    const headerRowElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-headerrow`);
+    this._allHeaderHeight = (topHeaderElm?.offsetHeight || 0) + (paneHeaderElm?.offsetHeight || 0) + (headerRowElm?.offsetHeight || 0);
+  }
+
+  /**
    * Calculate the datagrid new height/width from the available space, also consider that a % factor might be applied to calculation
    * object gridOptions
    */
@@ -245,6 +267,19 @@ export class ResizerService {
 
     let newHeight = availableHeight;
     let newWidth = autoResizeOptions?.rightPadding ? availableWidth - autoResizeOptions.rightPadding : availableWidth;
+
+    // when `autoResize.autoHeight` is enabled, we'll calculate the available height by the data length + header height
+    if (gridOptions.enableAutoResize && this.isAutoHeightEnabled) {
+      const dataLn = this.dataView.getLength();
+      if (dataLn > 0 && dataLn < this.autoHeightRecalcRow) {
+        this._allHeaderHeight || this.cacheHeaderHeightTotal();
+        const dataHeight = dataLn * gridOptions.rowHeight!;
+        const calcAutoHeight = this._allHeaderHeight + dataHeight;
+        if (calcAutoHeight < newHeight) {
+          newHeight = calcAutoHeight;
+        }
+      }
+    }
 
     // optionally (when defined), make sure that grid height & width are within their thresholds
     if (newHeight < minHeight) {

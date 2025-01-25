@@ -16,9 +16,11 @@ export const GlobalGridOptions: Partial<GridOption> = {
   autoParseInputFilterOperator: true,
   autoResize: {
     applyResizeToContainer: true,
+    autoHeight: true,
+    autoHeightRecalcRow: 100,
     calculateAvailableSizeBy: 'window',
     bottomPadding: 20,
-    minHeight: 180,
+    minHeight: 250,
     minWidth: 300,
     rightPadding: 0,
   },

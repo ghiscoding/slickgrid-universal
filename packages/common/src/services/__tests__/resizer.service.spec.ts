@@ -33,6 +33,7 @@ const mockDataView = {
   getItemMetadata: vi.fn(),
   getItemCount: vi.fn(),
   getItems: vi.fn(),
+  getLength: vi.fn(),
 };
 
 const gridStub = {
@@ -232,6 +233,7 @@ describe('Resizer Service', () => {
       // @ts-ignore
       navigator.__defineGetter__('userAgent', () => 'Netscape');
       mockGridOptions.gridId = 'grid1';
+      vi.spyOn(mockDataView, 'getLength').mockReturnValue(10);
     });
 
     afterEach(() => {
@@ -333,6 +335,23 @@ describe('Resizer Service', () => {
 
       // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
       expect(serviceCalculateSpy).toHaveReturnedWith({ height: newHeight - DATAGRID_BOTTOM_PADDING, width: fixedWidth });
+    });
+
+    it('should calculate new dimensions from dataset length when calculateGridNewDimensions is called and autoResize.autoHeight is enabled', () => {
+      const newHeight = 440;
+      const fixedWidth = 800;
+      mockGridOptions.gridWidth = fixedWidth;
+      mockGridOptions.autoResize!.autoHeight = true;
+      mockGridOptions.rowHeight = 33;
+      service.init(gridStub, divContainer);
+      const serviceCalculateSpy = vi.spyOn(service, 'calculateGridNewDimensions');
+
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
+      window.dispatchEvent(new Event('resize'));
+      service.calculateGridNewDimensions(mockGridOptions);
+
+      // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
+      expect(serviceCalculateSpy).toHaveReturnedWith({ height: mockGridOptions.rowHeight * 10, width: fixedWidth });
     });
 
     it('should calculate new dimensions, minus the custom footer height, when calculateGridNewDimensions is called', () => {

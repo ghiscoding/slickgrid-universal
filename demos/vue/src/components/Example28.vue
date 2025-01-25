@@ -154,6 +154,7 @@ function defineGrid() {
 
   gridOptions.value = {
     autoResize: {
+      autoHeight: false,
       container: '#demo-container',
       rightPadding: 10,
     },
