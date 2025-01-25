@@ -310,7 +310,7 @@ function deleteFile() {
     if (songIdx >= 0) {
       popFolderItem.files.splice(songIdx, 1);
       lastInsertedPopSongId.value = undefined;
-      // isRemoveLastInsertedPopSongDisabled.value = true;
+      isRemoveLastInsertedPopSongDisabled.value = true;
 
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering
       datasetHierarchical.value = tmpDatasetHierarchical;
