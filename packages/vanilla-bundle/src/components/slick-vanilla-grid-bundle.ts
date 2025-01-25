@@ -1310,12 +1310,7 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     // when autoResize.autoHeight is enabled, we'll want to call a resize
-    if (
-      this._gridOptions.enableAutoResize &&
-      this.resizerService.isAutoHeightEnabled &&
-      currentPageRowItemCount > 0 &&
-      currentPageRowItemCount < this.resizerService.autoHeightRecalcRow
-    ) {
+    if (this._gridOptions.enableAutoResize && this.resizerService.isAutoHeightEnabled && currentPageRowItemCount > 0) {
       this.resizerService.resizeGrid();
     }
   }
