@@ -65,6 +65,7 @@ import { UniversalContainerService } from '../services/universalContainer.servic
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 
 export class SlickVanillaGridBundle<TData = any> {
+  protected _autoHeightRecalcRow = 0;
   protected _currentDatasetLength = 0;
   protected _eventPubSubService!: EventPubSubService;
   protected _darkMode = false;
@@ -1306,6 +1307,16 @@ export class SlickVanillaGridBundle<TData = any> {
     // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
     if (this._isLocalGrid && this._gridOptions?.enableEmptyDataWarningMessage) {
       this.displayEmptyDataWarning(currentPageRowItemCount === 0);
+    }
+
+    // when autoResize.autoHeight is enabled, we'll want to call a resize
+    if (
+      this._gridOptions.enableAutoResize &&
+      this.resizerService.isAutoHeightEnabled &&
+      currentPageRowItemCount > 0 &&
+      currentPageRowItemCount < this.resizerService.autoHeightRecalcRow
+    ) {
+      this.resizerService.resizeGrid();
     }
   }
 

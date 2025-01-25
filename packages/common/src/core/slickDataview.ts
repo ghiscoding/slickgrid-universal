@@ -729,7 +729,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return this.items.length;
   }
 
-  /** Get row count (rows displayed in current page) */
+  /** Get row count (rows displayed in current page which also exclude any filtered items) */
   getLength(): number {
     return this.rows.length;
   }
