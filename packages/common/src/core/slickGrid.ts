@@ -3339,7 +3339,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     const originalOptions = extend(true, {}, this._options);
-    this._options = extend(this._options, newOptions);
+    this._options = extend(true, this._options, newOptions);
     this.triggerEvent(this.onSetOptions, { optionsBefore: originalOptions, optionsAfter: this._options });
 
     this.internal_setOptions(suppressRender, suppressColumnSet, suppressSetOverflow);
