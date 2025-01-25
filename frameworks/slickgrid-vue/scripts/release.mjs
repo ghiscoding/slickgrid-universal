@@ -69,10 +69,7 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
       value: bumpType.bump,
     });
   }
-  versionIncrements.push(
-    { key: 'o', name: 'Other, please specify...', value: 'other' },
-    { key: 'q', name: 'QUIT', value: 'quit' }
-  );
+  versionIncrements.push({ key: 'o', name: 'Other, please specify...', value: 'other' }, { key: 'q', name: 'QUIT', value: 'quit' });
 
   const defaultIdx = versionIncrements.length - 1;
   const whichBumpType = await promptConfirmation(
@@ -128,7 +125,7 @@ const pkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
 
     // show git changes to user so he can confirm the changes are ok
     const shouldCommitChanges = await promptConfirmation(
-      `${c.bgMagenta(dryRunPrefix)} Ready to tag version "${newTag}" and push commits to remote? Choose No to cancel.`
+      `${c.bgMagenta(dryRunPrefix)} Ready to release a version "${newTag}" and push commits to remote? Choose No to cancel.`
     );
     if (shouldCommitChanges) {
       // 8. create git tag of new release
