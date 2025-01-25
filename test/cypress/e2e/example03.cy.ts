@@ -295,18 +295,18 @@ describe('Example 03 - Draggable Grouping', () => {
         .should('have.text', 'Drop a column header here to group by the column');
     });
 
-    it('should add 1000 items and expect 1000 of 1000 items displayed', () => {
-      cy.get('[data-test="add-1K-rows-btn"]').click();
+    it('should add 2000 items and expect 2000 of 2000 items displayed', () => {
+      cy.get('[data-test="add-2K-rows-btn"]').click();
 
-      cy.get('.right-footer').contains('1000 of 1000 items');
+      cy.get('.right-footer').contains('2000 of 2000 items');
     });
 
-    it('should click on Select All checkbox in filter header row and expect all 1000 items to be selected and full selection count show in left footer', () => {
+    it('should click on Select All checkbox in filter header row and expect all 2000 items to be selected and full selection count show in left footer', () => {
       cy.get('#filter-checkbox-selectall-container').click();
 
       cy.get('#filter-checkbox-selectall-container').find('input[type=checkbox]').should('be.checked');
 
-      cy.get('.left-footer').contains('1000 items selected');
+      cy.get('.left-footer').contains('2000 items selected');
     });
 
     it('should uncheck 2 first rows and expect the Select All checkbox to become unchecked', () => {
