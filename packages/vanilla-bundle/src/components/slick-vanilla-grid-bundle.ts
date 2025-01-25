@@ -65,7 +65,6 @@ import { UniversalContainerService } from '../services/universalContainer.servic
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 
 export class SlickVanillaGridBundle<TData = any> {
-  protected _autoHeightRecalcRow = 0;
   protected _currentDatasetLength = 0;
   protected _eventPubSubService!: EventPubSubService;
   protected _darkMode = false;

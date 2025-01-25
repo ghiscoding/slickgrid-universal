@@ -1225,6 +1225,11 @@ function handleOnItemCountChanged(currentPageRowItemCount: number, totalItemCoun
   if (isLocalGrid && _gridOptions.value?.enableEmptyDataWarningMessage) {
     displayEmptyDataWarning(currentPageRowItemCount === 0);
   }
+
+  // when autoResize.autoHeight is enabled, we'll want to call a resize
+  if (_gridOptions.value.enableAutoResize && resizerService.isAutoHeightEnabled && currentPageRowItemCount > 0) {
+    resizerService.resizeGrid();
+  }
 }
 
 /** Initialize the Pagination Service once */
