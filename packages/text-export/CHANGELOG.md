@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.0...v5.12.1) (2025-01-25)
+
+### Bug Fixes
+
+* RowSpan should work with Excel Export and merge cells ([#1819](https://github.com/ghiscoding/slickgrid-universal/issues/1819)) ([8b0d4a3](https://github.com/ghiscoding/slickgrid-universal/commit/8b0d4a37a86eab9e91d4ff3d00ede23e6cc1296f)) - by @ghiscoding
+
 ## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
 
 **Note:** Version bump only for package @slickgrid-universal/text-export

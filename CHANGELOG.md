@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.0...v5.12.1) (2025-01-25)
+
+### Bug Fixes
+
+* add missing slick-filter class ([a82535e](https://github.com/ghiscoding/slickgrid-universal/commit/a82535efb4082b40d80b5ec8056374d2a82b0ee9)) - by @ghiscoding
+* **core:** using SlickGrid `setOptions()` was overriding object prop ([#1821](https://github.com/ghiscoding/slickgrid-universal/issues/1821)) ([0c5210f](https://github.com/ghiscoding/slickgrid-universal/commit/0c5210f79c23394c9d623ad899619d129f077407)) - by @ghiscoding
+* Header Menu was offset when header/footer slots provided ([#1812](https://github.com/ghiscoding/slickgrid-universal/issues/1812)) ([320db40](https://github.com/ghiscoding/slickgrid-universal/commit/320db40219a8a0c07b0ea2bd09ce2c547570bd93)) - by @ghiscoding
+* inherit color for icon colors on Default Theme ([a528da3](https://github.com/ghiscoding/slickgrid-universal/commit/a528da310eb56b2e0d6d543b3bac2a98577314b1)) - by @ghiscoding
+* **resizer:** add `autoResize.autoHeight` to resize by dataset length ([#1820](https://github.com/ghiscoding/slickgrid-universal/issues/1820)) ([f278140](https://github.com/ghiscoding/slickgrid-universal/commit/f2781402e5cbb5351beeaf10c22afc663cbc9296)) - by @ghiscoding
+* RowSpan should work with Excel Export and merge cells ([#1819](https://github.com/ghiscoding/slickgrid-universal/issues/1819)) ([8b0d4a3](https://github.com/ghiscoding/slickgrid-universal/commit/8b0d4a37a86eab9e91d4ff3d00ede23e6cc1296f)) - by @ghiscoding
+* **styling:** slick filters should always be full width in flex ([8f4c35d](https://github.com/ghiscoding/slickgrid-universal/commit/8f4c35df805516fc09ef35ba64604d1e93cf3328)) - by @ghiscoding
+* **vue:** prefer `Ref<Column[]>` to avoid template type mismatch ([#1816](https://github.com/ghiscoding/slickgrid-universal/issues/1816)) ([0351a18](https://github.com/ghiscoding/slickgrid-universal/commit/0351a18fbf745a1c7084e308c8adea6c60a4e7f6)) - by @ghiscoding
+* **vue:** remove column definition defineModel type ([#1815](https://github.com/ghiscoding/slickgrid-universal/issues/1815)) ([475baf7](https://github.com/ghiscoding/slickgrid-universal/commit/475baf778170be1a75cdd9a49fb0d735486f8a87)) - by @ghiscoding
+* **vue:** show how to use Vue Component in a  Formatter ([#1817](https://github.com/ghiscoding/slickgrid-universal/issues/1817)) ([5533913](https://github.com/ghiscoding/slickgrid-universal/commit/553391302542677671b337e632f3893aa4009d66)) - by @ghiscoding
+
 ## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
 
 ### Features
