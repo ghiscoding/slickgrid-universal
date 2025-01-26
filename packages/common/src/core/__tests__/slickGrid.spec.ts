@@ -4,7 +4,7 @@ import { createDomElement } from '@slickgrid-universal/utils';
 
 import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors/index.js';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions/index.js';
-import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand } from '../../interfaces/index.js';
+import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand, CustomDataView } from '../../interfaces/index.js';
 import { SlickEventData, SlickGlobalEditorLock } from '../slickCore.js';
 import { SlickDataView } from '../slickDataview.js';
 import { SlickGrid } from '../slickGrid.js';
@@ -341,6 +341,30 @@ describe('SlickGrid core file', () => {
     grid.invalidateRows([0, 1]);
 
     expect(onBeforeSpy).toHaveBeenCalled();
+  });
+
+  it('should be add rowspan metadata, invalidate all rowspan and expect cells/rows intersect', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: InputEditor }] as Column[];
+    const metadata = {
+      0: { columns: { 0: { rowspan: 2 } } },
+    };
+    const customDV = { getItemMetadata: (row) => metadata[row] } as CustomDataView;
+    grid = new SlickGrid<any, Column>('#myGrid', customDV, columns, { ...defaultOptions, editable: true, enableCellRowSpan: true });
+    grid.setActiveCell(0, 0);
+    grid.editActiveCell(InputEditor as any, true);
+
+    expect(grid.getRowSpanIntersect(0)).toBeNull();
+    expect(grid.getRowSpanColumnIntersects(0)).toEqual([]);
+
+    vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1);
+    vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(3).mockReturnValueOnce(3);
+    vi.spyOn(grid, 'getRowSpanColumnIntersects').mockReturnValueOnce([0, 3]);
+    vi.spyOn(grid, 'getParentRowSpanByCell').mockReturnValueOnce({ start: 0, end: 3, range: '0:3' });
+    grid.remapAllColumnsRowSpan();
+    grid.invalidateRows([0, 1]);
+
+    expect(grid.getRowSpanIntersect(0)).toBe(0);
+    expect(grid.getRowSpanColumnIntersects(0)).toEqual([0]);
   });
 
   it('should throw when trying to edit cell when editable grid option is disabled', () => {
@@ -778,16 +802,16 @@ describe('SlickGrid core file', () => {
       expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
     });
 
-    it('should define colspan and expect to cleanup rendered cells when SlickDataView and cell metadata are defined', () => {
+    it('should define colspan and rowspan then expect to cleanup rendered cells when SlickDataView and cell metadata are defined', () => {
       const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 2 },
+        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 2, rowspan: 2 },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
         { id: 'age', field: 'age', name: 'Age' },
         { id: 'gender', field: 'gender', name: 'gender' },
         { id: 'scholarity', field: 'scholarity', name: 'scholarity', colspan: '*' },
         { id: 'bornCity', field: 'bornCity', name: 'bornCity' },
       ] as Column[];
-      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, minRowBuffer: 10 } as GridOption;
+      const gridOptions = { ...defaultOptions, enableCellRowSpan: true, createFooterRow: true, showFooterRow: false, minRowBuffer: 10 } as GridOption;
       const data: any[] = [];
       for (let i = 0; i < 1000; i++) {
         data.push({ id: i, firstName: 'John', lastName: 'Doe', age: 30 });
@@ -795,6 +819,7 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView({});
       dv.setItems(data);
       grid = new SlickGrid<any, Column>(container, dv, columns, gridOptions);
+      vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1); // add a rowspan mandatory row to always render
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       const onBeforeFooterRowCellDestroySpy = vi.spyOn(grid.onBeforeFooterRowCellDestroy, 'notify');
@@ -813,12 +838,15 @@ describe('SlickGrid core file', () => {
 
       grid.setActiveCell(200, 1);
       grid.updateCell(344, 5);
+      vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1); // add a rowspan mandatory row to always render
       grid.setFooterRowVisibility(true);
       grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
 
-      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(data.length);
+      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(data.length + 1); // add 1 more to force a full rowspan cache remap
+      const remapRowspanSpy = vi.spyOn(grid, 'remapAllColumnsRowSpan');
       grid.updateRowCount();
 
+      expect(remapRowspanSpy).toHaveBeenCalled();
       expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalled();
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
@@ -1800,6 +1828,18 @@ describe('SlickGrid core file', () => {
   });
 
   describe('Grid Dimensions', () => {
+    it('should get 2 rows of cell height when rowspan is set to 2 when calling getCellHeight()', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], columns, defaultOptions);
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
+      const cellHeight = grid.getCellHeight(0, 2);
+
+      expect(cellHeight).toBe(50);
+    });
+
     it('should return default column width when column is not wider than grid and fullWidthRows is disabled with mixinDefaults is enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, mixinDefaults: true });
@@ -4347,6 +4387,27 @@ describe('SlickGrid core file', () => {
       expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
       expect(resetCellSpy).toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll when calling to navigateBottom with dataset and rowspan', () => {
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, enableCellRowSpan: true });
+      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+      const setActiveRowSpy = vi.spyOn(grid, 'setActiveRow');
+      grid.setActiveRow(0, 0);
+      grid.navigateBottom();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
+      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
+      expect(resetCellSpy).toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+      expect(setActiveRowSpy).toHaveBeenCalled();
     });
 
     it('should navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
