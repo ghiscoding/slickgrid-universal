@@ -346,15 +346,12 @@ describe('SlickGrid core file', () => {
   it('should be add rowspan metadata, invalidate all rowspan and expect cells/rows intersect', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: InputEditor }] as Column[];
     const metadata = {
-      0: { columns: { 0: { rowspan: 2 } } },
+      0: { columns: { 0: { colspan: 2, rowspan: 2 } } },
     };
-    const customDV = { getItemMetadata: (row) => metadata[row] } as CustomDataView;
+    const customDV = { getItemMetadata: (row) => metadata[row], getLength: () => 2 } as CustomDataView;
     grid = new SlickGrid<any, Column>('#myGrid', customDV, columns, { ...defaultOptions, editable: true, enableCellRowSpan: true });
     grid.setActiveCell(0, 0);
     grid.editActiveCell(InputEditor as any, true);
-
-    expect(grid.getRowSpanIntersect(0)).toBeNull();
-    expect(grid.getRowSpanColumnIntersects(0)).toEqual([]);
 
     vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1);
     vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(3).mockReturnValueOnce(3);
@@ -363,8 +360,16 @@ describe('SlickGrid core file', () => {
     grid.remapAllColumnsRowSpan();
     grid.invalidateRows([0, 1]);
 
-    expect(grid.getRowSpanIntersect(0)).toBe(0);
-    expect(grid.getRowSpanColumnIntersects(0)).toEqual([0]);
+    expect(grid.getRowSpanIntersect(0)).toBe(1);
+    expect(grid.getRowSpanColumnIntersects(0)).toEqual([0, 3]);
+    expect(grid.canCellBeActive(0, 0)).toBe(true);
+    expect(grid.canCellBeActive(1, 0)).toBe(false);
+
+    customDV.getLength = () => 0;
+    const resetActiveCellSpy = vi.spyOn(grid, 'resetActiveCell');
+    grid.invalidateRow(0);
+    grid.updateRowCount();
+    expect(resetActiveCellSpy).toHaveBeenCalled();
   });
 
   it('should throw when trying to edit cell when editable grid option is disabled', () => {
@@ -382,6 +387,19 @@ describe('SlickGrid core file', () => {
       'SlickGrid makeActiveCellEditable : should never get called when grid options.editable is false'
     );
     grid.invalidateRows([0, 1]);
+  });
+
+  it('should return void when calling invalidateRows without valid arguments', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const data = [
+      { id: 0, firstName: 'John' },
+      { id: 1, firstName: 'Jane' },
+    ];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
+    grid.setData(data);
+
+    expect(grid.invalidateRows(false as any)).toBeFalsy();
   });
 
   it('should be able to instantiate SlickGrid with a DataView', () => {
@@ -852,6 +870,27 @@ describe('SlickGrid core file', () => {
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+    });
+
+    it('should define colspan and rowspan but get a warning when enableCellRowSpan is disabled', () => {
+      const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+      const metadata = { 0: { columns: { 0: { colspan: 2, rowspan: 2 } } } };
+      const gridOptions = { ...defaultOptions, enableCellRowSpan: false, minRowBuffer: 10 } as GridOption;
+      const data: any[] = [];
+      for (let i = 0; i < 2; i++) {
+        data.push({ id: i, firstName: 'John', lastName: 'Doe', age: 30 });
+      }
+      const dv = new SlickDataView({});
+      vi.spyOn(dv, 'getItemMetadata').mockReturnValue(metadata[0]);
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, gridOptions);
+      grid.init();
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Cell "rowspan" is an opt-in grid option because of its small perf hit'));
     });
 
     it('should hide/show column headers div when "showFooterRow" is disabled and expect some row cache to be cleaned up', () => {
