@@ -8,7 +8,7 @@
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml)
 
 > [!WARNING]
-> Please note that Slickgrid-Vue is still in active development and usage might change depending on feedback provided by external users like you. However, I don't expect much changes though since all examples are working as expected. Give it a try and ⭐ the project if you like it!
+> Please note that Slickgrid-Vue is still in active development and usage might change depending on feedback provided by external users like you. However, I don't expect much changes since all examples are working as expected. Give it a try and star ⭐ the project if you like it, thanks!
 
 ## Documentation
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) website is powered by GitBook.
@@ -25,15 +25,16 @@ npm install slickgrid-vue
 <script setup lang="ts">
 import { type Column, type GridOption, SlickgridVue } from 'slickgrid-vue';
 
-const columnDefinitions = ref<Column[]>([
-  { id: 'username', name: 'Username', field: 'username'},
+const columnDefinitions: Ref<Column[]> = ref([
+  { id: 'firstName', name: 'First Name', field: 'firstName'},
+  { id: 'lastName', name: 'Last Name', field: 'lastName'},
   { id: 'age', name: 'Age', field: 'age' }
 ]);
 const dataset = ref([
-  { id: 1, username: 'John', age: 20 },
-  { id: 2, username: 'Jane', age: 21 }
+  { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
+  { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 }
 ]);
-const gridOptions = ref<GridOption>({ /*...*/ }); // optional
+const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
 </script>
 
 <slickgrid-vue
@@ -53,23 +54,24 @@ You can also play with the live Stackbliz [Slickgrid-Vite-Demos](https://github.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
 
-Refer to the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository for a local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
+Visit the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository for a local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
 
 ### Styling Themes
 
 Multiple styling themes are available
+- Default (UI agnostic)
 - Bootstrap (see all Slickgrid-Vue [live demos](https://ghiscoding.github.io/slickgrid-vue-demos/))
 - Material (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example07))
 - Salesforce (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example16))
 
-Also note that all of these themes also have **Dark Theme** equivalent and even though Bootstrap is often used as the default, it does work as well with any other UI framework like Bulma, Material, Quasar...
+Also note that all of these themes also have **Dark Theme** equivalent and even though Bootstrap is often used for live demos, it does work as well with any other UI framework like Bulma, Material, Quasar...
 
 ### Live Demo page
 `Slickgrid-Vue` works with all Bootstrap versions, you can see a demo of each one below. It also works well with any other frameworks like Material, Bulma, Quasar... and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
 - [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos)
 
 #### Working Demos
-For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-Vue Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository (instructions are provided in it). The repo provides multiple examples which are updated frequently (basically every time a new version is out) and is also used as the GitHub live demo page.
+For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-Vue Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository (instructions are provided in it). The repo comes with multiple examples and are updated frequently (basically every time a new version is out) and it is also used as the GitHub live demo page.
 
 ## License
 [MIT License](LICENSE)
