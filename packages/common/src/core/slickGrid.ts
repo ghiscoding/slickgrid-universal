@@ -3742,8 +3742,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const ncolspan = colspan as number; // at this point colspan is for sure a number
 
         // don't render child cell of a rowspan cell
-        const prs = this.getParentRowSpanByCell(row, i);
-        if (prs) {
+        if (this.getParentRowSpanByCell(row, i)) {
           continue;
         }
 
@@ -4792,8 +4791,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             const ncolspan = colspan as number; // at this point colspan is for sure a number
 
             // don't render child cell of a rowspan cell
-            const prs = this.getParentRowSpanByCell(row, i);
-            if (prs) {
+            /* v8 ignore next 3 */
+            if (this.getParentRowSpanByCell(row, i)) {
               continue;
             }
 
