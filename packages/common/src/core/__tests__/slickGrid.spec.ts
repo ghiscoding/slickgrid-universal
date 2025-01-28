@@ -374,6 +374,11 @@ describe('SlickGrid core file', () => {
     grid.invalidateRows([0, 1, 2]);
     grid.render();
     expect(grid.getParentRowSpanByCell(1, 1)).toEqual({ end: 1, range: '0:1', start: 0 });
+
+    const pr = grid.findSpanStartingCell(0, 2);
+    grid.setActiveCell(0, 0);
+    grid.navigateRowStart();
+    expect(pr).toEqual({ cell: 2, row: 0 });
   });
 
   it('should throw when trying to edit cell when editable grid option is disabled', () => {
@@ -4504,8 +4509,8 @@ describe('SlickGrid core file', () => {
 
     it('should navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
       const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
       const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
@@ -4522,6 +4527,34 @@ describe('SlickGrid core file', () => {
       expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
       expect(resetCellSpy).not.toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should add rowspan, then navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      const metadata = {
+        0: { columns: { 0: { colspan: 2, rowspan: 2 } } },
+        3: { columns: { 1: { colspan: 2, rowspan: 3 } } },
+      };
+      const customDV = { getItemMetadata: (row) => metadata[row], getLength: () => 2, getItem: (i) => data[i], getItems: () => data } as CustomDataView;
+      grid = new SlickGrid<any, Column>('#myGrid', customDV, columns, { ...defaultOptions, editable: true, enableCellRowSpan: true });
+      grid.setActiveCell(0, 1);
+      grid.navigateBottomEnd();
+      grid.navigatePrev();
+
+      grid.setActiveCell(0, 3);
+      grid.navigateUp();
+      grid.navigateBottomEnd();
+      let canNav = grid.navigateNext();
+      expect(canNav).toBe(true);
+      canNav = grid.navigatePrev();
+      expect(canNav).toBe(true);
+      canNav = grid.navigatePrev();
+      expect(canNav).toBe(true);
+      canNav = grid.navigateRowStart();
+      expect(canNav).toBe(true);
     });
 
     it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {

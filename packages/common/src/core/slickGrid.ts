@@ -6009,8 +6009,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       const cell = this.getCellFromPoint(activeCellOffset.left, Math.ceil(activeCellOffset.top) - rowOffset);
-      this.activeRow = cell.row;
-      this.activePosY = cell.row;
+      this.activeRow = this.activePosY = cell.row;
       this.activeCell = this.activePosX = this.getCellFromNode(this.activeCellNode);
 
       if (!isDefined(opt_editMode) && this._options.autoEditNewRow) {
@@ -6654,7 +6653,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     const ff = this.findFirstFocusableCell(row);
-    if (ff.cell === null || ff.cell >= cell) {
+    if (ff.cell >= cell) {
       return null;
     }
 
@@ -6764,15 +6763,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       let ff;
       while (!pos && ++posY < this.getDataLength() + (this._options.enableAddRow ? 1 : 0)) {
         ff = this.findFirstFocusableCell(posY);
-        if (ff.cell !== null) {
-          row = this.getParentRowSpanByCell(posY, ff.cell)?.start ?? posY;
-          pos = {
-            row,
-            cell: ff.cell,
-            posX: ff.cell,
-            posY,
-          };
-        }
+        row = this.getParentRowSpanByCell(posY, ff.cell)?.start ?? posY;
+        pos = {
+          row,
+          cell: ff.cell,
+          posX: ff.cell,
+          posY,
+        };
       }
     }
     return pos;
@@ -6823,10 +6820,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     _posX: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
     const ff = this.findFirstFocusableCell(row);
-    if (ff.cell === null) {
-      return null;
-    }
-
     return {
       row: ff.row,
       cell: ff.cell,
