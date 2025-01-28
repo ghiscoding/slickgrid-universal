@@ -5163,7 +5163,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (vScrollDist < this.viewportH) {
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        const oldOffset = this.offset;
         if (this.h === this.viewportH) {
           this.page = 0;
         } else {
@@ -5173,9 +5172,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           );
         }
         this.offset = Math.round(this.page * this.cj);
-        if (oldOffset !== this.offset) {
-          this.invalidateAllRows();
-        }
       }
     }
 
