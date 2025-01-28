@@ -20,6 +20,8 @@ Click on the `zip` link and then the `Download` button on the top right to downl
 
 ### Step 2. load Slickgrid
 
+> Please note that the project has TypeScript enums which Salesforce doesn't support by default, so to make them work, we moved into a separate namespace `Slicker.Enums` or simply `Enums` if you follow 2nd approach below. Also please note that field `type` can be simply entered as string like `type: 'number'`
+
 #### 2.1 First Approach
 Create all the Static Resources that are required by Slickgrid-Universal as shown below (they could have different names in your org).
 
