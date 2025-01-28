@@ -3742,8 +3742,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const ncolspan = colspan as number; // at this point colspan is for sure a number
 
         // don't render child cell of a rowspan cell
-        const prs = this.getParentRowSpanByCell(row, i);
-        if (prs) {
+        if (this.getParentRowSpanByCell(row, i)) {
           continue;
         }
 
@@ -3978,7 +3977,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *  1- if 2nd row of the 1st column has a metadata.rowspan of 3 then the cache will be: `{ 0: '1:4' }`
    *  2- if 2nd row if the 1st column has a metadata.rowspan of 3 AND a colspan of 2 then the cache will be: `{ 0: '1:4', 1: '1:4' }`
    */
-  protected remapAllColumnsRowSpan(): void {
+  remapAllColumnsRowSpan(): void {
     const ln = this.getDataLength();
     if (ln > 0) {
       this._colsWithRowSpanCache = {};
@@ -4792,8 +4791,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             const ncolspan = colspan as number; // at this point colspan is for sure a number
 
             // don't render child cell of a rowspan cell
-            const prs = this.getParentRowSpanByCell(row, i);
-            if (prs) {
+            if (this.getParentRowSpanByCell(row, i)) {
               continue;
             }
 
@@ -5165,7 +5163,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (vScrollDist < this.viewportH) {
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        const oldOffset = this.offset;
         if (this.h === this.viewportH) {
           this.page = 0;
         } else {
@@ -5175,9 +5172,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           );
         }
         this.offset = Math.round(this.page * this.cj);
-        if (oldOffset !== this.offset) {
-          this.invalidateAllRows();
-        }
       }
     }
 
@@ -6010,8 +6004,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       const cell = this.getCellFromPoint(activeCellOffset.left, Math.ceil(activeCellOffset.top) - rowOffset);
-      this.activeRow = cell.row;
-      this.activePosY = cell.row;
+      this.activeRow = this.activePosY = cell.row;
       this.activeCell = this.activePosX = this.getCellFromNode(this.activeCellNode);
 
       if (!isDefined(opt_editMode) && this._options.autoEditNewRow) {
@@ -6617,29 +6610,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     posY: number,
     _posX?: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
-    if (cell >= this.columns.length) {
-      return null;
-    }
-    let fc = cell + 1;
-    let fr = posY;
+    if (cell < this.columns.length) {
+      let fc = cell + 1;
+      let fr = posY;
 
-    do {
-      const sc = this.findSpanStartingCell(posY, fc);
-      fr = sc.row;
-      fc = sc.cell;
-      if (this.canCellBeActive(fr, fc) && fc > cell) {
-        break;
+      do {
+        const sc = this.findSpanStartingCell(posY, fc);
+        fr = sc.row;
+        fc = sc.cell;
+        if (this.canCellBeActive(fr, fc) && fc > cell) {
+          break;
+        }
+        fc += this.getColspan(fr, sc.cell);
+      } while (fc < this.columns.length);
+
+      if (fc < this.columns.length) {
+        return {
+          row: fr,
+          cell: fc,
+          posX: fc,
+          posY,
+        };
       }
-      fc += this.getColspan(fr, sc.cell);
-    } while (fc < this.columns.length);
-
-    if (fc < this.columns.length) {
-      return {
-        row: fr,
-        cell: fc,
-        posX: fc,
-        posY,
-      };
     }
     return null;
   }
@@ -6650,12 +6642,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     posY: number,
     _posX?: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
-    if (cell <= 0) {
-      return null;
-    }
-
     const ff = this.findFirstFocusableCell(row);
-    if (ff.cell === null || ff.cell >= cell) {
+    if (cell <= 0 || ff.cell >= cell) {
       return null;
     }
 
@@ -6719,25 +6707,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     posX: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
     let prevCell;
-    if (row <= 0) {
-      return null;
-    }
-    do {
-      row = this.findFocusableRow(row - 1, posX, 'up');
-      prevCell = cell = 0;
-      while (cell <= posX) {
-        prevCell = cell;
-        cell += this.getColspan(row, cell);
-      }
-    } while (row >= 0 && !this.canCellBeActive(row, prevCell));
+    if (row > 0) {
+      do {
+        row = this.findFocusableRow(row - 1, posX, 'up');
+        prevCell = cell = 0;
+        while (cell <= posX) {
+          prevCell = cell;
+          cell += this.getColspan(row, cell);
+        }
+      } while (row >= 0 && !this.canCellBeActive(row, prevCell));
 
-    if (cell <= this.columns.length) {
-      return {
-        row,
-        cell: prevCell,
-        posX,
-        posY: row,
-      };
+      if (cell <= this.columns.length) {
+        return {
+          row,
+          cell: prevCell,
+          posX,
+          posY: row,
+        };
+      }
     }
     return null;
   }
@@ -6765,15 +6752,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       let ff;
       while (!pos && ++posY < this.getDataLength() + (this._options.enableAddRow ? 1 : 0)) {
         ff = this.findFirstFocusableCell(posY);
-        if (ff.cell !== null) {
-          row = this.getParentRowSpanByCell(posY, ff.cell)?.start ?? posY;
-          pos = {
-            row,
-            cell: ff.cell,
-            posX: ff.cell,
-            posY,
-          };
-        }
+        row = this.getParentRowSpanByCell(posY, ff.cell)?.start ?? posY;
+        pos = {
+          row,
+          cell: ff.cell,
+          posX: ff.cell,
+          posY,
+        };
       }
     }
     return pos;
@@ -6824,10 +6809,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     _posX: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
     const ff = this.findFirstFocusableCell(row);
-    if (ff.cell === null) {
-      return null;
-    }
-
     return {
       row: ff.row,
       cell: ff.cell,
