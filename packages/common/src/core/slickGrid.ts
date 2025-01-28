@@ -4791,7 +4791,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             const ncolspan = colspan as number; // at this point colspan is for sure a number
 
             // don't render child cell of a rowspan cell
-            /* v8 ignore next 3 */
             if (this.getParentRowSpanByCell(row, i)) {
               continue;
             }
@@ -6712,25 +6711,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     posX: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
     let prevCell;
-    if (row <= 0) {
-      return null;
-    }
-    do {
-      row = this.findFocusableRow(row - 1, posX, 'up');
-      prevCell = cell = 0;
-      while (cell <= posX) {
-        prevCell = cell;
-        cell += this.getColspan(row, cell);
-      }
-    } while (row >= 0 && !this.canCellBeActive(row, prevCell));
+    if (row > 0) {
+      do {
+        row = this.findFocusableRow(row - 1, posX, 'up');
+        prevCell = cell = 0;
+        while (cell <= posX) {
+          prevCell = cell;
+          cell += this.getColspan(row, cell);
+        }
+      } while (row >= 0 && !this.canCellBeActive(row, prevCell));
 
-    if (cell <= this.columns.length) {
-      return {
-        row,
-        cell: prevCell,
-        posX,
-        posY: row,
-      };
+      if (cell <= this.columns.length) {
+        return {
+          row,
+          cell: prevCell,
+          posX,
+          posY: row,
+        };
+      }
     }
     return null;
   }

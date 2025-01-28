@@ -866,6 +866,7 @@ describe('SlickGrid core file', () => {
       grid.setActiveCell(200, 1);
       grid.updateCell(344, 5);
       vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1); // add a rowspan mandatory row to always render
+      vi.spyOn(grid, 'getParentRowSpanByCell').mockReturnValue(null).mockReturnValueOnce({ start: 0, end: 1, range: '0:1' }); // add a rowspan mandatory row to always render
       grid.setFooterRowVisibility(true);
       grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
 
