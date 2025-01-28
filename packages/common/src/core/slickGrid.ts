@@ -6615,29 +6615,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     posY: number,
     _posX?: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
-    if (cell >= this.columns.length) {
-      return null;
-    }
-    let fc = cell + 1;
-    let fr = posY;
+    if (cell < this.columns.length) {
+      let fc = cell + 1;
+      let fr = posY;
 
-    do {
-      const sc = this.findSpanStartingCell(posY, fc);
-      fr = sc.row;
-      fc = sc.cell;
-      if (this.canCellBeActive(fr, fc) && fc > cell) {
-        break;
+      do {
+        const sc = this.findSpanStartingCell(posY, fc);
+        fr = sc.row;
+        fc = sc.cell;
+        if (this.canCellBeActive(fr, fc) && fc > cell) {
+          break;
+        }
+        fc += this.getColspan(fr, sc.cell);
+      } while (fc < this.columns.length);
+
+      if (fc < this.columns.length) {
+        return {
+          row: fr,
+          cell: fc,
+          posX: fc,
+          posY,
+        };
       }
-      fc += this.getColspan(fr, sc.cell);
-    } while (fc < this.columns.length);
-
-    if (fc < this.columns.length) {
-      return {
-        row: fr,
-        cell: fc,
-        posX: fc,
-        posY,
-      };
     }
     return null;
   }
@@ -6648,12 +6647,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     posY: number,
     _posX?: number
   ): { row: number; cell: number; posX: number; posY: number } | null {
-    if (cell <= 0) {
-      return null;
-    }
-
     const ff = this.findFirstFocusableCell(row);
-    if (ff.cell >= cell) {
+    if (cell <= 0 || ff.cell >= cell) {
       return null;
     }
 

@@ -4529,7 +4529,7 @@ describe('SlickGrid core file', () => {
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
 
-    it('should add rowspan, then navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
+    it('should add rowspan, then navigate to all possible sides', () => {
       const data = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
@@ -4547,14 +4547,14 @@ describe('SlickGrid core file', () => {
       grid.setActiveCell(0, 3);
       grid.navigateUp();
       grid.navigateBottomEnd();
-      let canNav = grid.navigateNext();
-      expect(canNav).toBe(true);
-      canNav = grid.navigatePrev();
-      expect(canNav).toBe(true);
-      canNav = grid.navigatePrev();
-      expect(canNav).toBe(true);
-      canNav = grid.navigateRowStart();
-      expect(canNav).toBe(true);
+      expect(grid.navigateNext()).toBe(true);
+      expect(grid.navigatePrev()).toBe(true);
+      expect(grid.navigatePrev()).toBe(true);
+      expect(grid.navigateRowStart()).toBe(true);
+      expect(grid.navigateRowEnd()).toBe(true);
+      expect(grid.navigateNext()).toBe(true);
+      expect(grid.navigateNext()).toBe(true);
+      expect(grid.navigateDown()).toBe(true);
     });
 
     it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {
