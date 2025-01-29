@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Chrome Debugger",
+      "name": "Vanilla - Chrome Debugger",
       "request": "launch",
       "type": "chrome",
       "url": "http://localhost:8888",
@@ -17,8 +17,18 @@
     {
       "type": "msedge",
       "request": "launch",
-      "name": "Ms Edge Debugger",
+      "name": "Vanilla - Edge Debugger",
       "url": "http://localhost:8888",
+      "webRoot": "${workspaceFolder}/demos/vanilla",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Vue - Edge Debugger",
+      "url": "http://localhost:7000",
       "webRoot": "${workspaceFolder}/demos/vanilla",
       "pathMapping": {
         "/@fs/": ""
