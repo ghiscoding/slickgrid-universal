@@ -20,15 +20,15 @@
       "problemMatcher": []
     },
     {
-      "label": "Start Library Development",
+      "label": "Start Vanilla Development",
       "type": "shell",
       "command": "pnpm dev",
       "problemMatcher": []
     },
     {
-      "label": "Prepare New Release",
+      "label": "Start Vue Development",
       "type": "shell",
-      "command": "pnpm new-version",
+      "command": "pnpm dev:vue",
       "problemMatcher": []
     }
   ]
