@@ -59,7 +59,7 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "@formkit/tempo": "^0.1.2",
+    "@formkit/tempo": "catalog:",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/custom-footer-component": "workspace:*",
     "@slickgrid-universal/empty-warning-component": "workspace:*",
@@ -67,8 +67,8 @@
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "^2.0.3",
-    "sortablejs": "^1.15.6"
+    "dequal": "catalog:",
+    "sortablejs": "catalog:"
   },
   "peerDependencies": {
     "vue": ">=3.4.0"
@@ -76,16 +76,16 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "conventional-changelog": "^6.0.0",
-    "cross-env": "^7.0.3",
+    "cross-env": "catalog:",
     "i18next": "^24.2.2",
     "i18next-vue": "^5.0.0",
-    "sass": "^1.83.4",
+    "sass": "catalog:",
     "semver": "^7.6.3",
     "strong-log-transformer": "^2.1.0",
     "tinyexec": "^0.3.2",
     "tinyrainbow": "^2.0.0",
-    "typescript": "^5.7.3",
-    "vite": "^6.0.11",
+    "typescript": "catalog:",
+    "vite": "catalog:",
     "vite-plugin-dts": "^4.5.0",
     "vue": "^3.5.13",
     "vue-tsc": "^2.2.0",

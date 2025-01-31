@@ -13,9 +13,9 @@
     "vue:cypress": "cypress open --config-file test/cypress.config.mjs"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.4.0",
-    "@fnando/sparkline": "^0.3.10",
-    "@formkit/tempo": "^0.1.2",
+    "@faker-js/faker": "catalog:",
+    "@fnando/sparkline": "catalog:",
+    "@formkit/tempo": "catalog:",
     "@popperjs/core": "^2.11.8",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/composite-editor-component": "workspace:*",
@@ -28,23 +28,23 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "bootstrap": "^5.3.3",
-    "dompurify": "^3.2.3",
+    "dompurify": "catalog:",
     "i18next": "^24.2.2",
     "i18next-http-backend": "^3.0.2",
     "i18next-vue": "^5.0.0",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@4tw/cypress-drag-drop": "^2.2.5",
-    "@types/fnando__sparkline": "^0.3.7",
+    "@4tw/cypress-drag-drop": "catalog:",
+    "@types/fnando__sparkline": "catalog:",
     "@vitejs/plugin-vue": "^5.2.1",
-    "cypress": "^14.0.0",
-    "cypress-real-events": "^1.14.0",
-    "sass": "^1.83.4",
-    "typescript": "^5.7.3",
-    "vite": "^6.0.11"
+    "cypress": "catalog:",
+    "cypress-real-events": "catalog:",
+    "sass": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   }
 }
