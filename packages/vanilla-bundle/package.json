@@ -58,13 +58,13 @@
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/pagination-component": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "dequal": "^2.0.3",
-    "sortablejs": "^1.15.6",
-    "whatwg-fetch": "^3.6.20"
+    "dequal": "catalog:",
+    "sortablejs": "catalog:",
+    "whatwg-fetch": "catalog:"
   },
   "devDependencies": {
     "@slickgrid-universal/graphql": "workspace:~",
-    "@types/sortablejs": "^1.15.8"
+    "@types/sortablejs": "catalog:"
   },
   "funding": {
     "type": "ko_fi",

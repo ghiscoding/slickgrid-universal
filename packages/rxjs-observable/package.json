@@ -50,6 +50,6 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "workspace:~",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   }
 }
