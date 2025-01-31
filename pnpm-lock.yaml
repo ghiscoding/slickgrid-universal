@@ -161,9 +161,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.1
-      servor:
-        specifier: ^4.0.2
-        version: 4.0.2
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.6
@@ -4386,10 +4383,6 @@ packages:
   semver@7.7.0:
     resolution: {integrity: sha512-DrfFnPzblFmNrIZzg5RzHegbiRWg7KMR7btwi2yjHwx06zsUbO5g613sVwEV7FTwmzJu+Io0lJe2GJ3LxqpvBQ==}
     engines: {node: '>=10'}
-    hasBin: true
-
-  servor@4.0.2:
-    resolution: {integrity: sha512-MlmQ5Ntv4jDYUN060x/KEmN7emvIqKMZ9OkM+nY8Bf2+KkyLmGsTqWLyAN2cZr5oESAcH00UanUyyrlS1LRjFw==}
     hasBin: true
 
   set-blocking@2.0.0:
@@ -9111,8 +9104,6 @@ snapshots:
   semver@7.6.3: {}
 
   semver@7.7.0: {}
-
-  servor@4.0.2: {}
 
   set-blocking@2.0.0: {}
 

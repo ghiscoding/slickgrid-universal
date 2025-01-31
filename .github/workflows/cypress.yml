@@ -9,8 +9,8 @@ on:
     branches:
       - '**'
     paths-ignore:
-      - "**.md"
-      - "!.github/workflows/ci.yml"
+      - '**.md'
+      - '!.github/workflows/ci.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -70,14 +70,14 @@ jobs:
         run: pnpm build:dev
 
       - name: Start HTTP Server
-        run: pnpm serve:demo &
+        run: pnpm vanilla:serve:demo &
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           install: false
           # working-directory: packages/dnd
-          start: pnpm serve:demo
+          # start: pnpm vanilla:serve:demo
           # start: pnpm serve:vite
           wait-on: 'http://localhost:8888'
           config-file: test/cypress.config.ts
@@ -99,7 +99,7 @@ jobs:
       # deploy (re-publish) GitHub demo page with a Prod build but only when merging to "master" branch
       # and the commit message contains the text "chore(release)"
       - name: Website Prod Build (GitHub demo site)
-        run: pnpm build:demo
+        run: pnpm vanilla:build:demo
         if: |
           github.ref == 'refs/heads/master' &&
           (contains(github.event.head_commit.message, 'chore(release)') || contains(github.event.head_commit.message, '[refresh gh-pages]'))
