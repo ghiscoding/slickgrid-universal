@@ -4,15 +4,12 @@ on:
     types: ['opened', 'edited', 'reopened', 'synchronize']
 
 jobs:
-  lint:
+  commitlint:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: npm install --force @commitlint/config-conventional@v17
-
       - name: PR Linter
-        uses: JulienKode/pull-request-name-linter-action@v0.5.0
+        uses: wagoid/commitlint-github-action@v6
