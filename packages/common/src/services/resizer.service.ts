@@ -271,7 +271,7 @@ export class ResizerService {
     // when `autoResize.autoHeight` is enabled, we'll calculate the available height by the data length + header height
     if (gridOptions.enableAutoResize && this.isAutoHeightEnabled) {
       const dataLn = this.dataView.getLength();
-      if (dataLn > 0 && dataLn < this.autoHeightRecalcRow) {
+      if (dataLn < this.autoHeightRecalcRow) {
         this._allHeaderHeight || this.cacheHeaderHeightTotal();
         const dataHeight = dataLn * gridOptions.rowHeight!;
         const calcAutoHeight = this._allHeaderHeight + dataHeight;
