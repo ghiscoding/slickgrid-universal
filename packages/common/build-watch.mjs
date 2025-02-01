@@ -1,4 +1,4 @@
-import copyfiles from 'copyfiles';
+import { copyfiles } from 'native-copyfiles';
 import { exec } from 'node:child_process';
 import { basename } from 'node:path';
 
@@ -16,11 +16,11 @@ async function run() {
   // using .env var will avoid passing the changes to all packages npm scripts and avoid `tsc` complaining about unknown argument `--files`
   const changedFiles = process.env.LERNA_FILE_CHANGES.split(',');
 
-  if (changedFiles.some(f => f.includes('.ts'))) {
+  if (changedFiles.some((f) => f.includes('.ts'))) {
     console.log('TypeScript file changes detected... start tsc incremental build');
     exec('npm run build:incremental', () => console.log('tsc incremental completed'));
   }
-  if (changedFiles.some(f => f.includes('.scss'))) {
+  if (changedFiles.some((f) => f.includes('.scss'))) {
     console.log('SASS file changes detected... recompile to CSS');
 
     // for CSS we need to recompile all Slickgrid-Universal themes (except the bare/lite versions)
@@ -30,12 +30,10 @@ async function run() {
     // copy only the SASS file that changed
     for (const changedFile of changedFiles) {
       const fileWithExtension = basename(changedFile);
-      const relativeFile = `src/styles/${fileWithExtension}`;
-      copyfiles(
-        [relativeFile, 'dist/styles/sass'],
-        { up: true },
-        (err) => { err ? console.error(err) : console.log(`Copied "${fileWithExtension}" to "dist/styles/sass"`); }
-      );
+      const relativeFile = `./src/styles/${fileWithExtension}`;
+      copyfiles([relativeFile, 'dist/styles/sass'], { flat: true }, (err) => {
+        err ? console.error(err) : console.log(`Copied "${fileWithExtension}" to "dist/styles/sass"`);
+      });
     }
   }
 }
