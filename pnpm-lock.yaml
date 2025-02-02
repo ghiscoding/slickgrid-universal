@@ -489,8 +489,8 @@ importers:
         specifier: ^7.0.6
         version: 7.0.6(postcss@8.5.1)
       native-copyfiles:
-        specifier: ^0.1.8
-        version: 0.1.8
+        specifier: ^0.2.1
+        version: 0.2.1
       npm-run-all2:
         specifier: 'catalog:'
         version: 7.0.2
@@ -3622,8 +3622,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  native-copyfiles@0.1.8:
-    resolution: {integrity: sha512-ERsNimEHNMkO48bLTh+wKJ1VD875Rtfn0exSt5AM8SL58DlmO51tAlfX47DZ3sLb4jrtFmu+tL8Aw2iX20zPYg==}
+  native-copyfiles@0.2.1:
+    resolution: {integrity: sha512-oXt+z5p21y6dsdkIjGra4qtIDYkOdR1tdng9/2xG4KnT1CRMUSv3TDIVkZ3FNhzwjjDH58/rIUmjiOG4T3BCTg==}
     hasBin: true
 
   natural-compare@1.4.0:
@@ -8267,7 +8267,7 @@ snapshots:
 
   nanoid@3.3.8: {}
 
-  native-copyfiles@0.1.8:
+  native-copyfiles@0.2.1:
     dependencies:
       tinyglobby: 0.2.10
       yargs: 17.7.2
