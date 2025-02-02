@@ -55,7 +55,7 @@
     "sass-build-task:scss-compile:salesforce-lite": "sass src/styles/slickgrid-theme-salesforce.lite.scss dist/styles/css/slickgrid-theme-salesforce.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass:build": "run-p sass-build-task:scss-compile:*",
     "postsass:build": "postcss --no-map --use cssnano --use autoprefixer --dir dist/styles/css dist/styles/css --style=compressed --quiet-deps --no-source-map",
-    "sass:copy": "copyfiles -f \"./src/styles/*.scss\" dist/styles/sass",
+    "sass:copy": "copyfiles \"./src/styles/*.scss\" dist/styles/sass --flat --stat",
     "sass:watch:default": "npm run sass-build-task:scss-compile:default -- --watch",
     "sass:watch:bootstrap": "npm run sass-build-task:scss-compile:bootstrap -- --watch",
     "sass:watch:material": "npm run sass-build-task:scss-compile:material -- --watch",
@@ -85,8 +85,8 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
-    "copyfiles": "^2.4.1",
     "cssnano": "^7.0.6",
+    "native-copyfiles": "^0.1.8",
     "npm-run-all2": "catalog:",
     "postcss": "^8.5.1",
     "postcss-cli": "^11.0.0",
