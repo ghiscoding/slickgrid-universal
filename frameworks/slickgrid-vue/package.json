@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "@formkit/tempo": "catalog:",
-    "@gc-utils/release": "^0.1.4",
+    "@gc-utils/release": "^0.1.5",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/custom-footer-component": "workspace:*",
     "@slickgrid-universal/empty-warning-component": "workspace:*",
