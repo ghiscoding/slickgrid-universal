@@ -59,7 +59,6 @@
   },
   "dependencies": {
     "@formkit/tempo": "catalog:",
-    "@gc-utils/release": "^0.1.5",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/custom-footer-component": "workspace:*",
     "@slickgrid-universal/empty-warning-component": "workspace:*",
@@ -74,6 +73,7 @@
     "vue": ">=3.4.0"
   },
   "devDependencies": {
+    "@gc-utils/release": "^0.1.5",
     "@vitejs/plugin-vue": "^5.2.1",
     "cross-env": "catalog:",
     "i18next": "^24.2.2",
