@@ -52,8 +52,7 @@
     "clean": "rimraf dist",
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
-    "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
-    "clone:dts": "node clone-dts.mjs",
+    "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",
     "preview:release": "release --dry-run --skip-checks --build-script vue:build",
     "release": "release --build-script vue:build",
     "type-check": "vue-tsc --build --force"
