@@ -71,9 +71,9 @@
   "dependencies": {
     "@excel-builder-vanilla/types": "^3.0.14",
     "@formkit/tempo": "catalog:",
-    "@slickgrid-universal/binding": "workspace:~",
-    "@slickgrid-universal/event-pub-sub": "workspace:~",
-    "@slickgrid-universal/utils": "workspace:~",
+    "@slickgrid-universal/binding": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
     "@types/sortablejs": "catalog:",
     "@types/trusted-types": "^2.0.7",
     "autocompleter": "^9.3.2",

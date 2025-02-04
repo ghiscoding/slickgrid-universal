@@ -49,7 +49,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "workspace:~",
+    "@slickgrid-universal/common": "workspace:*",
     "rxjs": "catalog:"
   }
 }

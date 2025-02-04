@@ -189,40 +189,40 @@ importers:
         specifier: 'catalog:'
         version: 0.1.2
       '@slickgrid-universal/binding':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/binding
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/common
       '@slickgrid-universal/composite-editor-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/composite-editor-component
       '@slickgrid-universal/custom-tooltip-plugin':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/custom-tooltip-plugin
       '@slickgrid-universal/excel-export':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/excel-export
       '@slickgrid-universal/graphql':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/graphql
       '@slickgrid-universal/odata':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/odata
       '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/rxjs-observable':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/rxjs-observable
       '@slickgrid-universal/text-export':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/text-export
       '@slickgrid-universal/vanilla-bundle':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/vanilla-bundle
       '@slickgrid-universal/vanilla-force-bundle':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../../packages/vanilla-force-bundle
       bulma:
         specifier: ^1.0.3
@@ -434,13 +434,13 @@ importers:
         specifier: 'catalog:'
         version: 0.1.2
       '@slickgrid-universal/binding':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../binding
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
       '@types/sortablejs':
         specifier: 'catalog:'
@@ -492,13 +492,13 @@ importers:
   packages/composite-editor-component:
     dependencies:
       '@slickgrid-universal/binding':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../binding
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
 
   packages/custom-footer-component:
@@ -507,101 +507,101 @@ importers:
         specifier: 'catalog:'
         version: 0.1.2
       '@slickgrid-universal/binding':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../binding
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
 
   packages/custom-tooltip-plugin:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
 
   packages/empty-warning-component:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
 
   packages/event-pub-sub:
     dependencies:
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
 
   packages/excel-export:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
       excel-builder-vanilla:
         specifier: ^3.0.14
         version: 3.0.14
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
 
   packages/graphql:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
 
   packages/odata:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
 
   packages/pagination-component:
     dependencies:
       '@slickgrid-universal/binding':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../binding
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
 
   packages/row-detail-view-plugin:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
 
   packages/rxjs-observable:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       rxjs:
         specifier: 'catalog:'
@@ -610,17 +610,17 @@ importers:
   packages/text-export:
     dependencies:
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
       text-encoding-utf-8:
         specifier: ^1.0.2
         version: 1.0.2
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
       '@types/text-encoding-utf-8':
         specifier: ^1.0.5
@@ -631,25 +631,25 @@ importers:
   packages/vanilla-bundle:
     dependencies:
       '@slickgrid-universal/binding':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../binding
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/custom-footer-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../custom-footer-component
       '@slickgrid-universal/empty-warning-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../empty-warning-component
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
       '@slickgrid-universal/pagination-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../pagination-component
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
       dequal:
         specifier: 'catalog:'
@@ -662,7 +662,7 @@ importers:
         version: 3.6.20
     devDependencies:
       '@slickgrid-universal/graphql':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../graphql
       '@types/sortablejs':
         specifier: 'catalog:'
@@ -671,40 +671,40 @@ importers:
   packages/vanilla-force-bundle:
     dependencies:
       '@slickgrid-universal/binding':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../binding
       '@slickgrid-universal/common':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../common
       '@slickgrid-universal/composite-editor-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../composite-editor-component
       '@slickgrid-universal/custom-footer-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../custom-footer-component
       '@slickgrid-universal/custom-tooltip-plugin':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../custom-tooltip-plugin
       '@slickgrid-universal/empty-warning-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../empty-warning-component
       '@slickgrid-universal/event-pub-sub':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../event-pub-sub
       '@slickgrid-universal/excel-export':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../excel-export
       '@slickgrid-universal/pagination-component':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../pagination-component
       '@slickgrid-universal/text-export':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../text-export
       '@slickgrid-universal/utils':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../utils
       '@slickgrid-universal/vanilla-bundle':
-        specifier: workspace:~
+        specifier: workspace:*
         version: link:../vanilla-bundle
       whatwg-fetch:
         specifier: 'catalog:'

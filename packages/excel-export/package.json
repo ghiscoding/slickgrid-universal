@@ -49,12 +49,12 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "workspace:~",
-    "@slickgrid-universal/utils": "workspace:~",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
     "excel-builder-vanilla": "^3.0.14"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:~"
+    "@slickgrid-universal/event-pub-sub": "workspace:*"
   },
   "funding": {
     "type": "ko_fi",
