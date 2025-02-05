@@ -20,6 +20,10 @@
       packageNames: ['rimraf'],
       allowedVersions: '<6.0.0',
     },
+    {
+      packageNames: ['pnpm'],
+      allowedVersions: '9.10.0',
+    },
   ],
   ignoreDeps: [
     'node',
