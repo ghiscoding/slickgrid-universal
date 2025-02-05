@@ -52,10 +52,9 @@
     "clean": "rimraf dist",
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
-    "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap && pnpm clone:dts",
-    "clone:dts": "node clone-dts.mjs",
-    "preview:release": "node ./scripts/release.mjs --dry-run --skip-checks",
-    "release": "node ./scripts/release.mjs",
+    "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",
+    "preview:release": "release --dry-run --skip-checks --npm-client pnpm --build-script vue:build",
+    "release": "release --npm-client pnpm --build-script vue:build",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
@@ -74,21 +73,16 @@
     "vue": ">=3.4.0"
   },
   "devDependencies": {
+    "@gc-utils/release": "^0.1.5",
     "@vitejs/plugin-vue": "^5.2.1",
-    "conventional-changelog": "^6.0.0",
     "cross-env": "catalog:",
     "i18next": "^24.2.2",
     "i18next-vue": "^5.0.0",
     "sass": "catalog:",
-    "semver": "^7.6.3",
-    "strong-log-transformer": "^2.1.0",
-    "tinyexec": "^0.3.2",
-    "tinyrainbow": "^2.0.0",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "^4.5.0",
     "vue": "^3.5.13",
-    "vue-tsc": "^2.2.0",
-    "yargs": "^17.7.2"
+    "vue-tsc": "^2.2.0"
   }
 }

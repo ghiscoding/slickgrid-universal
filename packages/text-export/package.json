@@ -49,12 +49,12 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "workspace:~",
-    "@slickgrid-universal/utils": "workspace:~",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
     "text-encoding-utf-8": "^1.0.2"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:~",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@types/text-encoding-utf-8": "^1.0.5"
   },
   "funding": {

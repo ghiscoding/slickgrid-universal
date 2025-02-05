@@ -51,19 +51,19 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/binding": "workspace:~",
-    "@slickgrid-universal/common": "workspace:~",
-    "@slickgrid-universal/custom-footer-component": "workspace:~",
-    "@slickgrid-universal/empty-warning-component": "workspace:~",
-    "@slickgrid-universal/event-pub-sub": "workspace:~",
-    "@slickgrid-universal/pagination-component": "workspace:~",
-    "@slickgrid-universal/utils": "workspace:~",
+    "@slickgrid-universal/binding": "workspace:*",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/custom-footer-component": "workspace:*",
+    "@slickgrid-universal/empty-warning-component": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/pagination-component": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
     "dequal": "catalog:",
     "sortablejs": "catalog:",
     "whatwg-fetch": "catalog:"
   },
   "devDependencies": {
-    "@slickgrid-universal/graphql": "workspace:~",
+    "@slickgrid-universal/graphql": "workspace:*",
     "@types/sortablejs": "catalog:"
   },
   "funding": {

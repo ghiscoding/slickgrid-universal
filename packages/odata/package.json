@@ -49,8 +49,8 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "workspace:~",
-    "@slickgrid-universal/utils": "workspace:~"
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*"
   },
   "funding": {
     "type": "ko_fi",

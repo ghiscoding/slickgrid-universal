@@ -49,10 +49,10 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "workspace:~",
-    "@slickgrid-universal/utils": "workspace:~"
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:~"
+    "@slickgrid-universal/event-pub-sub": "workspace:*"
   }
 }

@@ -11,7 +11,7 @@
 > Please note that Slickgrid-Vue is still in active development and usage might change depending on feedback provided by external users like you. However, I don't expect much changes since all examples are working as expected. Give it a try and star ⭐ the project if you like it, thanks!
 
 ## Description 
-SlickGrid-Vue is a custom component created specifically for [VueJS](https://vuejs.org/) framework, it is a wrapper on top of Slickgrid-Universal library which contains the core functionalities. Slickgrid-Universal is written in browser native code, it is framework agnostic and is a monorepo that includes all Editors, Filters, Extensions and Services related to SlickGrid usage with also a few optional packages (like GraphQL, OData, Export to Excel, ...).
+SlickGrid-Vue is a custom component created specifically for [VueJS](https://vuejs.org/) framework, it is a wrapper on top of Slickgrid-Universal library which contains the core functionalities. Slickgrid-Universal is written with TypeScript in browser native code, it is framework agnostic and is a monorepo that includes all Editors, Filters, Extensions and Services related to SlickGrid usage with also a few optional packages (like GraphQL, OData, Export to Excel, ...).
 
 ## Documentation
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) website is powered by GitBook.
@@ -29,9 +29,9 @@ npm install slickgrid-vue
 import { type Column, type GridOption, SlickgridVue } from 'slickgrid-vue';
 
 const columnDefinitions: Ref<Column[]> = ref([
-  { id: 'firstName', name: 'First Name', field: 'firstName'},
-  { id: 'lastName', name: 'Last Name', field: 'lastName'},
-  { id: 'age', name: 'Age', field: 'age' }
+  { id: 'firstName', name: 'First Name', field: 'firstName', sortable: true },
+  { id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true },
+  { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true }
 ]);
 const dataset = ref([
   { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
@@ -67,7 +67,7 @@ Multiple styling themes are available
 - Material (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example07))
 - Salesforce (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example16))
 
-Also note that all of these themes also have **Dark Theme** equivalent and even though Bootstrap is often used for live demos, it does work as well with any other UI framework like Bulma, Material, Quasar...
+Also note that all of these themes also have a **Dark Theme** equivalent and even though Bootstrap is often used for live demos, it does work well with any other UI framework like Bulma, Material, Quasar...
 
 ### Live Demo page
 `Slickgrid-Vue` works with all Bootstrap versions, you can see a demo of each one below. It also works well with any other frameworks like Material, Bulma, Quasar... and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
