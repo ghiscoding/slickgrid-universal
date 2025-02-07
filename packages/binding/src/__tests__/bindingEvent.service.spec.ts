@@ -32,6 +32,21 @@ describe('BindingEvent Service', () => {
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, undefined);
   });
 
+  it('should not use forEach if the element is a single HTMLElement but with a monkey patched forEach', () => {
+    const elm = document.createElement('input');
+    div.appendChild(elm);
+    const forEachSpy = vi.fn();
+    (elm as any).forEach = forEachSpy;
+    const mockCallback = vi.fn();
+    const addEventSpy = vi.spyOn(elm, 'addEventListener');
+
+    service.bind(elm, 'click', mockCallback);
+
+    expect(service.boundedEvents.length).toBe(1);
+    expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, undefined);
+    expect(forEachSpy).not.toHaveBeenCalled();
+  });
+
   it('should be able to bind and unbindByEventName an event', () => {
     const mockElm = { addEventListener: vi.fn() } as unknown as HTMLElement;
     const mockCallback = vi.fn();

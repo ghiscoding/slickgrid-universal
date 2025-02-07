@@ -28,7 +28,10 @@ export class BindingEventService {
     // convert to array for looping in next task
     const eventNames = Array.isArray(eventNameOrNames) ? eventNameOrNames : [eventNameOrNames];
 
-    if ((elementOrElements as NodeListOf<HTMLElement>)?.forEach) {
+    if (
+      !(elementOrElements instanceof HTMLElement || elementOrElements instanceof DocumentFragment) &&
+      (elementOrElements as NodeListOf<HTMLElement>)?.forEach
+    ) {
       // multiple elements to bind to
       (elementOrElements as NodeListOf<HTMLElement>).forEach((element) => {
         for (const eventName of eventNames) {
