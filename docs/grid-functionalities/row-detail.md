@@ -223,7 +223,7 @@ The best is to see the Example 21 code.
 
 ###### Grid Definition
 ```ts
-export Example {
+export class Example {
   defineGrid() {
     this.gridOptions = {
       enableRowDetailView: true,
