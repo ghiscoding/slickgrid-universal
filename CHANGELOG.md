@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v5.12.2) (2025-02-08)
+
+### Bug Fixes
+
+* add an explicit check to bound element to work around monkey patching issues ([#1839](https://github.com/ghiscoding/slickgrid-universal/issues/1839)) ([7ccede6](https://github.com/ghiscoding/slickgrid-universal/commit/7ccede67bf92e0f168fd48eab248020426e12798)), closes [#1835](https://github.com/ghiscoding/slickgrid-universal/issues/1835) - by @zewa666
+* resize grid height even dataset is empty ([#1832](https://github.com/ghiscoding/slickgrid-universal/issues/1832)) ([0ba1160](https://github.com/ghiscoding/slickgrid-universal/commit/0ba11601e06e868b266d422ccbbccf05d1d057a7)) - by @ghiscoding
+* **vue:** Row Detail were not unmounted correctly before recreating them ([#1840](https://github.com/ghiscoding/slickgrid-universal/issues/1840)) ([080e815](https://github.com/ghiscoding/slickgrid-universal/commit/080e815b3b83f99d07bbd8e1c8e70ff75e90057f)) - by @ghiscoding
+
 ## [5.12.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.0...v5.12.1) (2025-01-25)
 
 ### Bug Fixes

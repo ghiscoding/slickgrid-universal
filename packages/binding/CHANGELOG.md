@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v5.12.2) (2025-02-08)
+
+### Bug Fixes
+
+* add an explicit check to bound element to work around monkey patching issues ([#1839](https://github.com/ghiscoding/slickgrid-universal/issues/1839)) ([7ccede6](https://github.com/ghiscoding/slickgrid-universal/commit/7ccede67bf92e0f168fd48eab248020426e12798)), closes [#1835](https://github.com/ghiscoding/slickgrid-universal/issues/1835) - by @zewa666
+
 ## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
 
 **Note:** Version bump only for package @slickgrid-universal/binding

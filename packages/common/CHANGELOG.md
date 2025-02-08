@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.12.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v5.12.2) (2025-02-08)
+
+### Bug Fixes
+
+* resize grid height even dataset is empty ([#1832](https://github.com/ghiscoding/slickgrid-universal/issues/1832)) ([0ba1160](https://github.com/ghiscoding/slickgrid-universal/commit/0ba11601e06e868b266d422ccbbccf05d1d057a7)) - by @ghiscoding
+
 ## [5.12.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.0...v5.12.1) (2025-01-25)
 
 ### Bug Fixes
