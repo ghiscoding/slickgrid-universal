@@ -277,7 +277,6 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       `${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
     );
     if (this._component && containerElements?.length) {
-      const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
       const bindableData = {
         model: item,
         addon: this,
@@ -288,20 +287,20 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parent,
       } as AppData & ViewModelBindableInputData;
 
-      // load our Row Detail Vue Component dynamically, typically we would want to use `root.render()` after the preload component (last argument below)
-      // BUT the root render doesn't seem to work and shows a blank element, so we'll use `createRoot()` every time even though it shows a console log in Dev
-      // that is the only way I got it working so let's use it anyway and console warnings are removed in production anyway
-      if (viewObj?.app) {
-        viewObj.app.unmount();
+      // remove any previous mounted views, if found then unmount them and delete them from our references array
+      const viewIdx = this._views.findIndex((obj) => obj.id === item[this.datasetIdPropName]);
+      if (this._views[viewIdx]?.app) {
+        this._views[viewIdx].app.unmount();
+        this._views.splice(viewIdx, 1);
       }
+
+      // load our Row Detail Vue Component dynamically
       const tmpDiv = document.createElement('div');
       const app = createApp(this._component, bindableData);
       const instance = app.mount(tmpDiv) as ComponentPublicInstance;
       bindableData.parent = app.component;
       (containerElements[containerElements.length - 1] as HTMLElement).appendChild(instance.$el);
-      if (!viewObj) {
-        this.addViewInfoToViewsRef(item, app, instance);
-      }
+      this.addViewInfoToViewsRef(item, app, instance);
     }
   }
 
