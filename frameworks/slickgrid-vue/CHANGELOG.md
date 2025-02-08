@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## <small>1.0.2 (2025-02-08)</small>
+
 ## [1.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v1.0.1) (2025-01-25)
 
 # [1.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.2.0...v1.0.0) (2025-01-21)
