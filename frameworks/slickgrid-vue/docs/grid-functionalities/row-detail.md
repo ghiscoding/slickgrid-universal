@@ -12,13 +12,15 @@
 [Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example19) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example19.ts)
 
 ### Description
-A Row Detail allows you to open a detail panel which can contain extra and/or more detailed information about a row. For example, we have a user list but we want to display detailed information about this user (his full address, account info, last purchasers, ...) but we don't want to display this in the user grid (for performance and real estate reasons), so a Row Detail is perfect for
+A Row Detail allows you to open a detail panel which can contain extra and/or more detailed information about a row. For example, we have a user list but we want to display detailed information about this user (his full address, account info, last purchasers, ...) but these are extra details that we don't want to display this in the user grid (for performance and real estate reasons)... so a Row Detail is perfect for that use case.
 
 > **NOTE** Please note that because of the complexity behind Row Detail, the following features cannot be mixed with Row Detail because they will cause UI problems
 > - Grouping
 > - Pagination
 > - Tree Data
 > - RowSpan
+
+> **NOTE 2** Also please note that whenever you scroll back and forth, the Row Detail will be rendered and re-rendered multiple times when you scroll or open/collapse other Row Details. For that reason, you should avoid adding too many dynamic elements (like form with inputs) because whenever a re-render kicks in, it will most often reset these elements. So it is totally fine to use it to show extra details (hence where its name comes from "Row Detail" to show more detailed info) and even though it works with dynamic elements, you have to know its limitation.
 
 ## Usage
 
