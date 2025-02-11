@@ -119,12 +119,12 @@ export class EventPubSubService implements BasePubSubService {
       return new Promise((resolve) => {
         window.clearTimeout(this._timer);
         this._timer = window.setTimeout(
-          () => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true, externalizeEventCallback)),
+          () => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, false, true, externalizeEventCallback)),
           delay
         );
       });
     } else {
-      return this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true, externalizeEventCallback);
+      return this.dispatchCustomEvent<T>(eventNameByConvention, data, false, true, externalizeEventCallback);
     }
   }
 
