@@ -696,6 +696,7 @@ describe('Resizer Service', () => {
       it('should recalculate header totals when onAutosizeColumns is trigged', () => {
         const cacheSpy = vi.spyOn(service, 'cacheHeaderHeightTotal');
 
+        service.init(gridStub, divContainer);
         gridStub.onAutosizeColumns.notify({ columns: [], grid: gridStub });
 
         expect(cacheSpy).toHaveBeenCalled();
