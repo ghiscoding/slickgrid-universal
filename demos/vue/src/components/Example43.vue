@@ -138,7 +138,6 @@ function defineGrid() {
     autoResize: {
       container: '#demo-container',
       bottomPadding: 30,
-      rightPadding: 50,
     },
     enableCellNavigation: true,
     enableColumnReorder: true,
