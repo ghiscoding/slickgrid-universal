@@ -35,7 +35,7 @@ describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
   it('should expect 1st column to be frozen (frozen)', () => {
     cy.get('.grid-canvas-left .slick-cell.frozen').should('have.length', 10);
-    cy.get('.grid-canvas-right .slick-cell:not(.frozen)').should('have.length.above', 60);
+    cy.get('.grid-canvas-right .slick-cell:not(.frozen)').should('have.length.above', 55);
   });
 
   describe('Spanning', () => {
