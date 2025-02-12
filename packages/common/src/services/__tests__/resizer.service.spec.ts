@@ -56,6 +56,7 @@ const gridStub = {
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
   updateColumns: vi.fn(),
+  onAutosizeColumns: new SlickEvent(),
   onColumnsResizeDblClick: new SlickEvent(),
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -690,6 +691,14 @@ describe('Resizer Service', () => {
 
         expect(reRenderSpy).toHaveBeenCalledWith(false);
         expect(mockColDefs[7].width).toBeLessThan(30);
+      });
+
+      it('should recalculate header totals when onAutosizeColumns is trigged', () => {
+        const cacheSpy = vi.spyOn(service, 'cacheHeaderHeightTotal');
+
+        gridStub.onAutosizeColumns.notify({ columns: [], grid: gridStub });
+
+        expect(cacheSpy).toHaveBeenCalled();
       });
 
       it('should call the resize and expect to call "autosizeColumns" when total column widths is smaller than the grid viewport', () => {
