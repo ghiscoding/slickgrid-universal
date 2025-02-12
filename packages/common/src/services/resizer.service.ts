@@ -142,6 +142,11 @@ export class ResizerService {
       this._subscriptions.push(this.pubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true)));
     }
 
+    // whenever the autosizeColumns() is called, we'll recalculate our header height total cache
+    this._eventHandler.subscribe(this._grid.onAutosizeColumns, () => {
+      this.cacheHeaderHeightTotal();
+    });
+
     // on double-click resize, should we resize the cell by its cell content?
     // the same action can be called from a double-click and/or from column header menu
     if (this.gridOptions.enableColumnResizeOnDoubleClick) {

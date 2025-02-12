@@ -29,7 +29,7 @@
       "request": "launch",
       "name": "Vue - Edge Debugger",
       "url": "http://localhost:7000",
-      "webRoot": "${workspaceFolder}/demos/vanilla",
+      "webRoot": "${workspaceFolder}/demos/vue",
       "pathMapping": {
         "/@fs/": ""
       }
