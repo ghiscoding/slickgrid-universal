@@ -67,7 +67,7 @@ export default class Example21 {
   }
 
   attached() {
-    this.defineGrids();
+    this.defineGrid();
 
     // mock some data (different in each dataset)
     this.dataset = this.mockData(NB_ITEMS);
@@ -99,7 +99,7 @@ export default class Example21 {
   }
 
   /* Define grid Options and Columns */
-  defineGrids() {
+  defineGrid() {
     this.columnDefinitions = [
       {
         id: 'title',
