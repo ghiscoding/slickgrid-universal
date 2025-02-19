@@ -3,6 +3,7 @@
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['dependencies'],
   dependencyDashboard: false,
+  lockFileMaintenance: { enabled: true },
   pin: false,
   rangeStrategy: 'bump',
   packageRules: [
