@@ -29,6 +29,7 @@ export interface CreatedView {
 export class SlickRowDetailView extends UniversalSlickRowDetailView {
   protected _component?: any;
   protected _preloadComponent?: any;
+  protected _preloadApp?: App<Element>;
   protected _views: CreatedView[] = [];
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcessFn?: (item: any) => Promise<any>;
@@ -141,6 +142,9 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
           if (this.onAsyncEndUpdate) {
             this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
+              // unmount preload if exists
+              this._preloadApp?.unmount();
+
               // triggers after backend called "onAsyncResponse.notify()"
               await this.renderViewModel(args?.item);
 
@@ -227,18 +231,24 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Redraw (re-render) all the expanded row detail View Components */
   async redrawAllViewComponents() {
-    await Promise.all(this._views.map(async (x) => this.redrawViewComponent(x)));
+    const promises: Promise<void>[] = [];
+    this._views.forEach((x) => promises.push(this.redrawViewComponent(x)));
+    await Promise.all(promises);
   }
 
   /** Render all the expanded row detail View Components */
   async renderAllViewModels() {
-    await Promise.all(this._views.filter((x) => x?.dataContext).map(async (x) => this.renderViewModel(x.dataContext)));
+    const promises: Promise<void>[] = [];
+    Array.from(this._views)
+      .filter((x) => x?.dataContext)
+      .forEach((x) => promises.push(this.renderViewModel(x.dataContext)));
+    await Promise.all(promises);
   }
 
   /** Redraw the necessary View Component */
   async redrawViewComponent(view: CreatedView) {
-    const containerElement = this.gridContainerElement.getElementsByClassName(`${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
-    if (containerElement?.length >= 0) {
+    const containerElm = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
+    if (containerElm) {
       await this.renderViewModel(view.dataContext);
     }
   }
@@ -259,13 +269,13 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       } as AppData & ViewModelBindableInputData;
 
       const tmpDiv = document.createElement('div');
-      const app = createApp(this._preloadComponent, bindableData);
-      const instance = app.mount(tmpDiv) as ComponentPublicInstance;
+      this._preloadApp = createApp(this._preloadComponent, bindableData);
+      const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
       bindableData.parent = instance;
       containerElements[containerElements.length - 1]!.appendChild(instance.$el);
 
       if (viewObj) {
-        viewObj.app = app;
+        viewObj.app = this._preloadApp;
         viewObj.instance = instance;
       }
     }
