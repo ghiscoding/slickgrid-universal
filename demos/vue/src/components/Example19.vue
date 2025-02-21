@@ -157,14 +157,14 @@ function defineGrid() {
       // for example, display the expand icon only on every 2nd row
       // expandableOverride: (row: number, dataContext: any) => (dataContext.rowId % 2 === 1),
 
+      // optionally expose the functions that you want to use from within the row detail Child Component
+      parent: { showFlashMessage },
+
       // Preload View Template
       preloadComponent: Example19Preload,
 
       // ViewModel Template to load when row detail data is ready
       viewComponent: Example19Detail as any,
-
-      // optionally expose the functions that you want to use from within the row detail Child Component
-      parent: { showFlashMessage },
 
       onBeforeRowDetailToggle: (_e, args) => {
         // you coud cancel opening certain rows
