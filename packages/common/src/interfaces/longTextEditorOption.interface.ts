@@ -25,7 +25,8 @@ export interface LongTextEditorOption {
    * we might need to tweak the right margin and add an extra margin (in pixel) depending on some CSS styling.
    */
   marginRight?: number;
-
+  // should the save button be rendered right (default) or left of the cancel button
+  saveButtonPosition?: 'right' | 'left';
   /** Configurable Button Texts */
   buttonTexts?: {
     /** Cancel button text, defaults to "Cancel" */
