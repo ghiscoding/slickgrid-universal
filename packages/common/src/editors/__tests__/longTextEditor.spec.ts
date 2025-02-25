@@ -177,6 +177,14 @@ describe('LongTextEditor', () => {
       expect(editor.editorDomElement.rows).toBe(8);
     });
 
+    it('should initialize the editor with cols & rows define in user editor options', () => {
+      mockColumn.editor!.editorOptions = { cols: 9, rows: 8 } as LongTextEditorOption;
+      editor = new LongTextEditor(editorArguments);
+
+      expect(editor.editorDomElement.cols).toBe(9);
+      expect(editor.editorDomElement.rows).toBe(8);
+    });
+
     it('should initialize the editor with cols & rows define in global default user editor options', () => {
       gridOptionMock.defaultEditorOptions = {
         longText: { cols: 7, rows: 6 },
@@ -195,6 +203,15 @@ describe('LongTextEditor', () => {
       const editorElm = document.body.querySelector('.slick-large-editor-text.editor-title textarea') as HTMLTextAreaElement;
 
       expect(editorElm.placeholder).toBe(testValue);
+    });
+
+    it('should allow overriding the save button position', () => {
+      mockColumn.editor!.editorOptions = { saveButtonPosition: 'left' } as LongTextEditorOption;
+      editor = new LongTextEditor(editorArguments);
+      const cancelButtonElm = document.body.querySelector('.slick-large-editor-text.editor-title .btn-cancel') as HTMLButtonElement;
+      const saveButtonElm = document.body.querySelector('.slick-large-editor-text.editor-title .btn-save') as HTMLButtonElement;
+
+      expect(saveButtonElm.nextSibling).toBe(cancelButtonElm);
     });
 
     it('should have a title (tooltip) when defined in its column definition', () => {
