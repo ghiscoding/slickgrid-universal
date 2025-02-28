@@ -3,7 +3,7 @@
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['dependencies'],
   dependencyDashboard: false,
-  lockFileMaintenance: { 
+  lockFileMaintenance: {
     enabled: false,
   },
   pin: false,
@@ -18,14 +18,18 @@
       matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
       groupName: 'Vue.JS dependencies',
     },
-    {
-      packageNames: ['vitest'],
-      allowedVersions: '3.0.6', // latest version seems to be causing regression in tests, maybe because of https://github.com/vitest-dev/vitest/pull/7499
-    },
     // rimraf new major releases dropped support for Node 18, we'll have to wait our next major to upgrade them
     {
       packageNames: ['rimraf'],
       allowedVersions: '<6.0.0',
+    },
+    {
+      packageNames: ['vite-plugin-dts'],
+      allowedVersions: '4.5.0',
+    },
+    {
+      packageNames: ['vitest'],
+      allowedVersions: '3.0.6', // latest version seems to be causing regression in tests, maybe because of https://github.com/vitest-dev/vitest/pull/7499
     },
   ],
   ignoreDeps: ['node', 'pnpm'],
