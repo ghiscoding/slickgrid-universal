@@ -878,8 +878,13 @@ export class SlickVanillaGridBundle<TData = any> {
       }
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      this._eventHandler.subscribe(dataView.onRowCountChanged, () => {
-        grid.invalidate();
+      this._eventHandler.subscribe(dataView.onRowCountChanged, (_e, args) => {
+        if (!this._gridOptions.enableRowDetailView || !Array.isArray(args.changedRows) || args.changedRows.length === args.itemCount) {
+          grid.invalidate();
+        } else {
+          grid.invalidateRows(args.changedRows);
+          grid.render();
+        }
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, this.dataView?.getItemCount() ?? 0);
       });
       this._eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {

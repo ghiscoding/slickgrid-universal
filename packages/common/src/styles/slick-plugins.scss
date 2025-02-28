@@ -81,7 +81,8 @@ li.hidden {
     margin-bottom: var(--slick-column-picker-title-margin-bottom, v.$slick-column-picker-title-margin-bottom);
   }
 }
-.slick-column-picker, .slick-grid-menu {
+.slick-column-picker,
+.slick-grid-menu {
   scrollbar-color: var(--slick-scrollbar-color, v.$slick-scrollbar-color);
   .slick-menu-title {
     color: var(--slick-menu-title-color, v.$slick-menu-title-color);
@@ -92,7 +93,8 @@ li.hidden {
   }
 }
 
-.slick-column-picker-list, .slick-grid-menu-list {
+.slick-column-picker-list,
+.slick-grid-menu-list {
   white-space: nowrap;
   @-moz-document url-prefix() {
     /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
@@ -101,8 +103,8 @@ li.hidden {
 
   li {
     display: flex;
-		align-items: center;
-		width: 100%;
+    align-items: center;
+    width: 100%;
     color: var(--slick-menu-color, v.$slick-menu-color);
     border: var(--slick-column-picker-item-border, v.$slick-column-picker-item-border);
     border-radius: var(--slick-column-picker-item-border-radius, v.$slick-column-picker-item-border-radius);
@@ -119,7 +121,7 @@ li.hidden {
     label {
       cursor: pointer;
       height: 100%;
-			width: 100%;
+      width: 100%;
       margin-bottom: 0px;
     }
   }
@@ -145,7 +147,7 @@ li.hidden {
   &.disabled {
     cursor: default;
   }
-  input[type=checkbox] {
+  input[type='checkbox'] {
     // hide original input checkbox since we use an SVG on top of it
     opacity: 0;
     width: 0;
@@ -260,22 +262,27 @@ li.hidden {
 // Menu Plugins
 // ----------------------------------------------
 
-.slick-cell-menu, .slick-context-menu, .slick-grid-menu, .slick-header-menu {
+.slick-cell-menu,
+.slick-context-menu,
+.slick-grid-menu,
+.slick-header-menu {
   box-shadow: var(--slick-menu-box-shadow, v.$slick-menu-box-shadow);
   &.slick-submenu {
     box-shadow: var(--slick-submenu-box-shadow, v.$slick-submenu-box-shadow);
     min-width: var(--slick-submenu-min-width, v.$slick-submenu-min-width);
-}
+  }
 
   .slick-menu-option-list,
   .slick-menu-command-list {
-    .slick-command-header, .slick-option-header {
+    .slick-command-header,
+    .slick-option-header {
       display: var(--slick-menu-title-container-display, v.$slick-menu-title-container-display);
       align-items: var(--slick-menu-title-container-align-items, v.$slick-menu-title-container-align-items);
       justify-content: var(--slick-menu-title-container-justify-content, v.$slick-menu-title-container-justify-content);
     }
 
-    .slick-command-header.with-title, .slick-option-header.with-title {
+    .slick-command-header.with-title,
+    .slick-option-header.with-title {
       border-bottom: var(--slick-menu-title-border-bottom, v.$slick-menu-title-border-bottom);
       margin-bottom: var(--slick-menu-title-margin-bottom, v.$slick-menu-title-margin-bottom);
       .slick-menu-title {
@@ -380,7 +387,8 @@ li.hidden {
       background: inherit !important;
       color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
       cursor: inherit;
-      .slick-menu-icon, .slick-menu-content {
+      .slick-menu-icon,
+      .slick-menu-content {
         color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
       }
     }
@@ -449,7 +457,7 @@ li.hidden {
   }
 
   &.tooltip-arrow::after {
-    content: "";
+    content: '';
     left: 0px;
     position: absolute;
     border: transparent;
@@ -490,7 +498,7 @@ li.hidden {
 }
 
 .slick-header-button {
- /**
+  /**
   * This makes all "float:right" elements after it that spill over to the next line
   * display way below the lower boundary of the column thus hiding them.
   */
@@ -595,7 +603,7 @@ li.hidden {
   &.disabled {
     cursor: default;
   }
-  input[type=checkbox] {
+  input[type='checkbox'] {
     // hide original input checkbox since we use an SVG on top of it
     opacity: 0;
     width: 0;
@@ -839,7 +847,9 @@ li.hidden {
           background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
         }
         .form-group.search-filter {
-          input, button, select {
+          input,
+          button,
+          select {
             background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
           }
         }
@@ -859,7 +869,7 @@ li.hidden {
   // ----------------------------------------------
 
   .search-filter.form-group {
-    .input-group.date-picker  input.form-control {
+    .input-group.date-picker input.form-control {
       border-bottom-left-radius: 0px;
       border-top-left-radius: 0px;
     }
@@ -918,14 +928,14 @@ li.hidden {
   }
 }
 
-
 // ----------------------------------------------
 // Draggable Grouping Plugin
 // ----------------------------------------------
 
 .slick-preheader-panel,
 .slick-topheader-panel {
-  .slick-dropzone, .slick-dropzone-hover {
+  .slick-dropzone,
+  .slick-dropzone-hover {
     display: flex;
     align-items: center;
     padding: var(--slick-draggable-group-drop-padding, v.$slick-draggable-group-drop-padding);
@@ -965,10 +975,16 @@ li.hidden {
         color: var(--slick-draggable-group-toggle-all-icon-color, v.$slick-draggable-group-toggle-all-icon-color);
         font-size: var(--slick-draggable-group-toggle-all-icon-font-size, v.$slick-draggable-group-toggle-all-icon-font-size);
         &.expanded {
-          @include svg.generateSvgStyle('slick-draggable-group-toggle-expanded-icon-svg', v.$slick-draggable-group-toggle-expanded-icon-svg-path);
+          @include svg.generateSvgStyle(
+            'slick-draggable-group-toggle-expanded-icon-svg',
+            v.$slick-draggable-group-toggle-expanded-icon-svg-path
+          );
         }
         &.collapsed {
-          @include svg.generateSvgStyle('slick-draggable-group-toggle-collapsed-icon-svg', v.$slick-draggable-group-toggle-collapsed-icon-svg-path);
+          @include svg.generateSvgStyle(
+            'slick-draggable-group-toggle-collapsed-icon-svg',
+            v.$slick-draggable-group-toggle-collapsed-icon-svg-path
+          );
         }
       }
 
@@ -1053,7 +1069,7 @@ li.hidden {
   height: 100%;
   flex: 1;
 
-  input[type=range] {
+  input[type='range'] {
     /*removes default webkit styles*/
     appearance: none;
     flex: 1;
@@ -1105,7 +1121,7 @@ li.hidden {
     }
 
     /*hide the outline behind the border*/
-    &:-moz-focusring{
+    &:-moz-focusring {
       outline: 1px solid #fff;
       outline-offset: -1px;
     }
@@ -1158,7 +1174,8 @@ li.hidden {
     }
   }
 }
-.search-filter, .slider-editor {
+.search-filter,
+.slider-editor {
   height: var(--slick-header-input-height, v.$slick-header-input-height);
 
   &::placeholder {
@@ -1172,17 +1189,18 @@ li.hidden {
     font-size: var(--slick-slider-filter-number-font-size, v.$slick-slider-filter-number-font-size);
   }
 
-  .slider-value, .slider-values {
+  .slider-value,
+  .slider-values {
     padding: 0;
     height: 100%;
   }
-  input.slider-filter-input[type=range] {
+  input.slider-filter-input[type='range'] {
     padding: var(--slick-slider-filter-runnable-track-padding, v.$slick-slider-filter-runnable-track-padding);
     height: var(--slick-slider-filter-height, v.$slick-slider-filter-height);
   }
 
   /* Slider Editor */
-  input.slider-editor-input[type=range] {
+  input.slider-editor-input[type='range'] {
     padding: var(--slick-slider-editor-runnable-track-padding, v.$slick-slider-editor-runnable-track-padding);
     height: var(--slick-slider-editor-height, v.$slick-slider-editor-height);
   }
@@ -1200,7 +1218,8 @@ li.hidden {
     border-left: 0;
   }
   &:not(.input-group) {
-    .slider-editor, .slider-filter,
+    .slider-editor,
+    .slider-filter,
     .slider-input-container .slider-editor-input,
     .slider-input-container .slider-filter-input {
       border-radius: var(--slick-slider-filter-border-radius, v.$slick-slider-filter-border-radius);
@@ -1256,7 +1275,7 @@ li.hidden {
     width: calc(100% - 16px);
   }
 
-  input[type=range] {
+  input[type='range'] {
     position: absolute;
     background-color: transparent;
     pointer-events: none;
@@ -1268,13 +1287,13 @@ li.hidden {
     }
   }
 
-  input[type="range"]::-webkit-slider-thumb {
+  input[type='range']::-webkit-slider-thumb {
     pointer-events: auto;
   }
-  input[type="range"]::-moz-range-thumb {
+  input[type='range']::-moz-range-thumb {
     pointer-events: auto;
   }
-  input[type="range"]::-ms-thumb {
+  input[type='range']::-ms-thumb {
     pointer-events: auto;
   }
 }
@@ -1310,18 +1329,13 @@ li.hidden {
   }
 
   .dynamic-cell-detail {
-    position:           absolute;
-    width:              100%;
-    overflow:           auto;
-    left:               var(--slick-detail-view-container-left, v.$slick-detail-view-container-left);
-    border:             var(--slick-detail-view-container-border, v.$slick-detail-view-container-border);
-    background-color:   var(--slick-detail-view-container-bgcolor, v.$slick-detail-view-container-bgcolor);
-    padding:            var(--slick-detail-view-container-padding, v.$slick-detail-view-container-padding);
-    z-index:            var(--slick-detail-view-container-z-index, v.$slick-detail-view-container-z-index);
-
-    :first-child {
-      vertical-align:     middle;
-      line-height:        13px;
-    }
+    position: absolute;
+    width: 100%;
+    overflow: auto;
+    left: var(--slick-detail-view-container-left, v.$slick-detail-view-container-left);
+    border: var(--slick-detail-view-container-border, v.$slick-detail-view-container-border);
+    background-color: var(--slick-detail-view-container-bgcolor, v.$slick-detail-view-container-bgcolor);
+    padding: var(--slick-detail-view-container-padding, v.$slick-detail-view-container-padding);
+    z-index: var(--slick-detail-view-container-z-index, v.$slick-detail-view-container-z-index);
   }
 }

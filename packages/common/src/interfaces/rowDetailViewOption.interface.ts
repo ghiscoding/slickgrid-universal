@@ -1,13 +1,13 @@
 import type { SlickDataView, SlickGrid, SlickRowDetailView, UsabilityOverrideFn } from '../index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
 
-export interface RowDetailViewProps<T = any> {
+export interface RowDetailViewProps<T = any, C = any> {
   model: T;
   addon: SlickRowDetailView;
   expandedRows?: (string | number)[];
   grid: SlickGrid;
   dataView: SlickDataView;
-  parent: any;
+  parent: C;
   rowId?: string | number;
   rowIndex?: number;
   rowIdsOutOfViewport?: (string | number)[];
@@ -71,8 +71,8 @@ export interface RowDetailViewOption {
   useRowClick?: boolean;
 
   /**
-   * Defaults to false, which will use a simpler way of calculating when rows become out (or back) of viewport range.
-   * It is recommended to enable this flag since it seems to work correctly with Slickgrid-Universal while the inverse is misbehaving
+   * @deprecated this flag is actually no longer used internally since we now have a single way of calculating the out/in viewport range.
+   * However, we will keep the flag to avoid introducing a breaking change but again it's not needed anymore and it will be removed in the next major version.
    */
   useSimpleViewportCalc?: boolean;
 

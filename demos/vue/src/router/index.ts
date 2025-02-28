@@ -45,6 +45,7 @@ import Example41 from '../components/Example41.vue';
 import Example42 from '../components/Example42.vue';
 import Example43 from '../components/Example43.vue';
 import Example44 from '../components/Example44.vue';
+import Example45 from '../components/Example45.vue';
 import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -94,6 +95,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example42', name: '42- Custom Pagination', component: Example42 },
   { path: '/example43', name: '43- Colspan/Rowspan (timesheets)', component: Example43 },
   { path: '/example44', name: '44- Colspan/Rowspan (large data)', component: Example44 },
+  { path: '/example45', name: '45- Row Detail with inner Grid', component: Example45 },
 ];
 
 export const router = createRouter({

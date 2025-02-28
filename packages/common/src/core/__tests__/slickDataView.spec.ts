@@ -1830,7 +1830,11 @@ describe('SlickDatView core file', () => {
       // change filter without changing pagination & expect pageNum to be recalculated
       dv.setFilter((item) => item.id >= 10);
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
-      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith(
+        { dataView: dv, previous: 2, current: 1, itemCount: 5, changedRows: [0, 1], callingOnRowsChanged: true },
+        null,
+        dv
+      );
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
 
       // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
@@ -1840,7 +1844,11 @@ describe('SlickDatView core file', () => {
         return item.id >= 0;
       });
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
-      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith(
+        { dataView: dv, previous: 1, current: 2, changedRows: [1], itemCount: 5, callingOnRowsChanged: true },
+        null,
+        dv
+      );
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
     });
 
@@ -1886,7 +1894,11 @@ describe('SlickDatView core file', () => {
         return item.id >= 10;
       });
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
-      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith(
+        { dataView: dv, previous: 2, current: 1, itemCount: 5, changedRows: [0, 1], callingOnRowsChanged: true },
+        null,
+        dv
+      );
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
 
       // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
@@ -1894,7 +1906,11 @@ describe('SlickDatView core file', () => {
       items[0].id = 8;
       dv.setFilter((item) => item.id >= 0 || item.name.includes('a'));
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
-      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith(
+        { dataView: dv, previous: 1, current: 2, changedRows: [1], itemCount: 5, callingOnRowsChanged: true },
+        null,
+        dv
+      );
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
     });
   });

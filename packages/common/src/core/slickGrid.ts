@@ -142,6 +142,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onBeforeFooterRowCellDestroy: SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>;
   onBeforeHeaderCellDestroy: SlickEvent<OnBeforeHeaderCellDestroyEventArgs>;
   onBeforeHeaderRowCellDestroy: SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>;
+  onBeforeRemoveCachedRow: SlickEvent<{ row: number; grid: SlickGrid }>;
   onBeforeSetColumns: SlickEvent<OnBeforeSetColumnsEventArgs>;
   onBeforeSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onBeforeUpdateColumns: SlickEvent<OnBeforeUpdateColumnsEventArgs>;
@@ -529,6 +530,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onBeforeHeaderCellDestroy = new SlickEvent<OnBeforeHeaderCellDestroyEventArgs>('onBeforeHeaderCellDestroy', externalPubSub);
     // prettier-ignore
     this.onBeforeHeaderRowCellDestroy = new SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>('onBeforeHeaderRowCellDestroy', externalPubSub);
+    this.onBeforeRemoveCachedRow = new SlickEvent<{ row: number; grid: SlickGrid }>('onRowRemovedFromCache', externalPubSub);
     this.onBeforeSetColumns = new SlickEvent<OnBeforeSetColumnsEventArgs>('onBeforeSetColumns', externalPubSub);
     this.onBeforeSort = new SlickEvent<SingleColumnSort | MultiColumnSort>('onBeforeSort', externalPubSub);
     this.onBeforeUpdateColumns = new SlickEvent<OnBeforeUpdateColumnsEventArgs>('onBeforeUpdateColumns', externalPubSub);
@@ -4171,6 +4173,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected removeRowFromCache(row: number): void {
     const cacheEntry = this.rowsCache[row];
     if (cacheEntry?.rowNode) {
+      this.triggerEvent(this.onBeforeRemoveCachedRow, { row });
       if (this._options.enableAsyncPostRenderCleanup && this.postProcessedRows[row]) {
         this.queuePostProcessedRowForCleanup(cacheEntry, this.postProcessedRows[row], row);
       } else {
@@ -4616,6 +4619,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.getVisibleRange(viewportTop, viewportLeft);
   }
 
+  /** Get the visible range (excluding the row buffer) */
   getVisibleRange(viewportTop?: number, viewportLeft?: number): CellViewportRange {
     viewportTop ??= this.scrollTop;
     viewportLeft ??= this.scrollLeft;
@@ -4628,7 +4632,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
   }
 
-  /** Get rendered range */
+  /** Get rendered range including the extra row buffer */
   getRenderedRange(viewportTop?: number, viewportLeft?: number): CellViewportRange {
     const range = this.getVisibleRange(viewportTop, viewportLeft);
     const buffer = Math.round(this.viewportH / this._options.rowHeight!);
@@ -6983,6 +6987,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
     return null;
+  }
+
+  getRowCache(): Record<number, RowCaching> {
+    return this.rowsCache;
   }
 
   /**

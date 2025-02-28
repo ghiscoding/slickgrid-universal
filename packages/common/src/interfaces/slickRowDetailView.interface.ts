@@ -29,7 +29,7 @@ export interface SlickRowDetailView {
   /** Collapse all of the open items */
   collapseAll(): void;
 
-  /** Colapse an Item so it is not longer seen */
+  /** Collapse an Item so it is not longer seen */
   collapseDetailView(item: any, isMultipleCollapsing: boolean): void;
 
   /** Expand a row given the dataview item that is to be expanded */
@@ -45,7 +45,7 @@ export interface SlickRowDetailView {
   getExpandableOverride(): UsabilityOverrideFn | null;
 
   /** return the currently expanded rows */
-  getExpandedRows(): Array<number | string>;
+  getExpandedRowIds(): Array<number | string>;
 
   /** Takes in the item we are filtering and if it is an expanded row returns it's parents row to filter on */
   getFilterItem(item: any): any;
@@ -79,6 +79,9 @@ export interface SlickRowDetailView {
 
   /** Fired before the row detail gets toggled */
   onBeforeRowDetailToggle?: SlickEvent<OnBeforeRowDetailToggleArgs>;
+
+  /** Fired just before a row becomes out of viewport range (you can use this event to save inner Grid State before it gets destroyed) */
+  onBeforeRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
 
   /** Fired after the row detail gets toggled */
   onRowBackToViewportRange?: SlickEvent<OnRowBackToViewportRangeArgs>;
