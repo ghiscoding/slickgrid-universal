@@ -343,6 +343,23 @@ describe('SlickRowDetailView plugin', () => {
       expect.anything(),
       plugin
     );
+
+    // triggering onRenderRows should end up invalidating an empty set of rows
+    const invalidateSpy = vi.spyOn(gridStub, 'invalidateRows');
+    vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
+      121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+    });
+    vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1);
+    dataviewStub.onRowsChanged.notify(
+      { rows: [122, 123, 124], itemCount: 4, calledOnRowCountChanged: true, dataView: dataviewStub },
+      new SlickEventData(),
+      gridStub
+    );
+    expect(invalidateSpy).toHaveBeenCalled();
   });
 
   it('should trigger "onAsyncResponse" with Row Detail from post template with HTML Element when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
@@ -677,6 +694,10 @@ describe('SlickRowDetailView plugin', () => {
       cellDetailViewElm.appendChild(detailViewContainerElm);
     });
 
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
     it('should call "resizeDetailView" and expect it to return without calling "saveDetailView" when item provided is null', () => {
       const saveDetailSpy = vi.spyOn(plugin, 'saveDetailView');
 
@@ -866,7 +887,7 @@ describe('SlickRowDetailView plugin', () => {
         _detailContent: '<span>loading...</span>',
       };
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
-      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(123).mockReturnValueOnce(123);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1).mockReturnValueOnce(1);
       const loadingTemplate = () => '<span>loading...</span>';
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(50);
@@ -907,7 +928,7 @@ describe('SlickRowDetailView plugin', () => {
       });
     });
 
-    it('should call "onScroll" and expect "onRowBackToViewportRange" be triggered when row is found out of range and direction is UP', () => {
+    it('should call "onScroll" and expect "onRowBackToViewportRange" and "onRowOutOfViewportRange" to be triggered when row is found out and back to viewport range', () => {
       const mockProcess = vi.fn();
       const itemMock = {
         id: 123,
@@ -922,14 +943,15 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
-      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(50);
-      vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
-        0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-        1: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-        2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-        3: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(100).mockReturnValueOnce(123);
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
+        121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
       });
-      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 46, bottom: 44, left: 33, right: 18 } as any);
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 120, bottom: 150, left: 33, right: 18 } as any);
       divContainer.appendChild(cellDetailViewElm);
       Object.defineProperty(detailViewContainerElm, 'scrollHeight', { writable: true, configurable: true, value: 4 });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({
@@ -947,12 +969,14 @@ describe('SlickRowDetailView plugin', () => {
       plugin.init(gridStub);
       plugin.resizeDetailView(itemMock);
       plugin.expandDetailView(itemMock.id);
-      plugin.rowIdsOutOfViewport = [123];
+      plugin.rowIdsOutOfViewport = [0, 2];
 
-      // const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
+      const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
       vi.advanceTimersByTime(102);
@@ -967,10 +991,31 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _sizePadding: 6,
       });
-      // expect(onRowBackToViewportSpy).toHaveBeenCalled();
+      expect(onRowBackToViewportSpy).toHaveBeenCalled();
+
+      // -- out of range
+      const onRowOutOfViewportSpy = vi.spyOn(plugin.onRowOutOfViewportRange, 'notify');
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(124).mockReturnValueOnce(123);
+      vi.advanceTimersByTime(102);
+      plugin.collapseDetailView(1);
+
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
+        121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      });
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 120, bottom: 150, left: 33, right: 18 } as any);
+
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 53, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
+
+      expect(onRowOutOfViewportSpy).toHaveBeenCalled();
     });
 
-    it.skip('should call "onScroll" and expect "onRowBackToViewportRange" be triggered when row is found out of range and direction is DOWN', () => {
+    it('should call "onScroll" and expect "onRowBackToViewportRange" be triggered when row is found out of range and direction is DOWN', () => {
+      const mockProcess = vi.fn();
       const itemMock = {
         id: 123,
         firstName: 'John',
@@ -981,11 +1026,18 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _detailContent: '<span>loading...</span>',
       };
-      const mockProcess = vi.fn();
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
-      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(50);
-      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 33, bottom: 44, left: 33, right: 18 } as any);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(122);
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
+        121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      });
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 120, bottom: 126, left: 33, right: 18 } as any);
       divContainer.appendChild(cellDetailViewElm);
       Object.defineProperty(detailViewContainerElm, 'scrollHeight', { writable: true, configurable: true, value: 4 });
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({
@@ -1026,7 +1078,8 @@ describe('SlickRowDetailView plugin', () => {
       expect(onRowBackToViewportSpy).toHaveBeenCalled();
     });
 
-    it.skip('should use "useSimpleViewportCalc" and call "resizeDetailView" and then calculate out of range detail views when calling on scroll and call "notifyOutOfViewport" when row is out of visibility', () => {
+    it('should call "resizeDetailView" and then calculate out of range detail views when calling on scroll and call "notifyOutOfViewport" when row is out of visibility', () => {
+      const mockProcess = vi.fn();
       const itemMock = {
         id: 123,
         firstName: 'John',
@@ -1037,10 +1090,16 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _detailContent: '<span>loading...</span>',
       };
-      const mockProcess = vi.fn();
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(2);
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
+        0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        1: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        3: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      });
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 20, bottom: 50, left: 33, right: 18 } as any);
       divContainer.appendChild(cellDetailViewElm);
       Object.defineProperty(detailViewContainerElm, 'scrollHeight', { writable: true, configurable: true, value: 4 });
@@ -1063,7 +1122,6 @@ describe('SlickRowDetailView plugin', () => {
       plugin.rowIdsOutOfViewport = [123];
       gridStub.onRendered.notify({ endRow: 15, startRow: 5, grid: gridStub }, new SlickEventData(), gridStub);
 
-      const onRowOutOfViewportRangeSpy = vi.spyOn(plugin.onRowOutOfViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
@@ -1087,10 +1145,10 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _sizePadding: 6,
       });
-      expect(onRowOutOfViewportRangeSpy).toHaveBeenCalled();
     });
 
-    it.skip('should use "useSimpleViewportCalc" and call "notifyBackToViewportWhenDomExist" when row is out of visibility', () => {
+    it.skip('should call "notifyBackToViewportWhenDomExist" when row is out of visibility', () => {
+      const mockProcess = vi.fn();
       const itemMock = {
         id: 123,
         firstName: 'John',
@@ -1101,7 +1159,7 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _detailContent: '<span>loading...</span>',
       };
-      const mockProcess = vi.fn();
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(2);
@@ -1127,7 +1185,6 @@ describe('SlickRowDetailView plugin', () => {
       plugin.rowIdsOutOfViewport = [123];
       gridStub.onRendered.notify({ endRow: 77, startRow: 5, grid: gridStub }, new SlickEventData(), gridStub);
 
-      const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
@@ -1154,7 +1211,6 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _sizePadding: 6,
       });
-      expect(onRowBackToViewportSpy).toHaveBeenCalled();
     });
   });
 
