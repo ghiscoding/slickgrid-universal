@@ -142,79 +142,65 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
             this.rowDetailViewOptions.onExtensionRegistered(this);
           }
 
-          if (this.onAsyncResponse) {
-            this._eventHandler.subscribe(this.onAsyncResponse, (event, args) => {
-              if (typeof this.rowDetailViewOptions?.onAsyncResponse === 'function') {
-                this.rowDetailViewOptions.onAsyncResponse(event, args);
-              }
-            });
-          }
+          this._eventHandler.subscribe(this.onAsyncResponse, (event, args) => {
+            if (typeof this.rowDetailViewOptions?.onAsyncResponse === 'function') {
+              this.rowDetailViewOptions.onAsyncResponse(event, args);
+            }
+          });
 
-          if (this.onAsyncEndUpdate) {
-            this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-              // unmount preload if exists
-              this._preloadApp?.unmount();
+          this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
+            // unmount preload if exists
+            this._preloadApp?.unmount();
 
-              // triggers after backend called "onAsyncResponse.notify()"
-              await this.renderViewModel(args?.item);
+            // triggers after backend called "onAsyncResponse.notify()"
+            await this.renderViewModel(args?.item);
 
-              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-              }
-            });
-          }
+            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
+            }
+          });
 
-          if (this.onAfterRowDetailToggle) {
-            this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
-              // display preload template & re-render all the other Detail Views after toggling
-              // the preload View will eventually go away once the data gets loaded after the "onAsyncEndUpdate" event
-              await this.renderPreloadView(args.item);
+          this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
+            // display preload template & re-render all the other Detail Views after toggling
+            // the preload View will eventually go away once the data gets loaded after the "onAsyncEndUpdate" event
+            await this.renderPreloadView(args.item);
 
-              if (typeof this.rowDetailViewOptions?.onAfterRowDetailToggle === 'function') {
-                this.rowDetailViewOptions.onAfterRowDetailToggle(event, args);
-              }
-            });
-          }
+            if (typeof this.rowDetailViewOptions?.onAfterRowDetailToggle === 'function') {
+              this.rowDetailViewOptions.onAfterRowDetailToggle(event, args);
+            }
+          });
 
-          if (this.onBeforeRowDetailToggle) {
-            this._eventHandler.subscribe(this.onBeforeRowDetailToggle, (event, args) => {
-              // before toggling row detail, we need to create View Component if it doesn't exist
-              this.handleOnBeforeRowDetailToggle(event, args);
+          this._eventHandler.subscribe(this.onBeforeRowDetailToggle, (event, args) => {
+            // before toggling row detail, we need to create View Component if it doesn't exist
+            this.handleOnBeforeRowDetailToggle(event, args);
 
-              if (typeof this.rowDetailViewOptions?.onBeforeRowDetailToggle === 'function') {
-                return this.rowDetailViewOptions.onBeforeRowDetailToggle(event, args);
-              }
-              return true;
-            });
-          }
+            if (typeof this.rowDetailViewOptions?.onBeforeRowDetailToggle === 'function') {
+              return this.rowDetailViewOptions.onBeforeRowDetailToggle(event, args);
+            }
+            return true;
+          });
 
-          if (this.onRowBackToViewportRange) {
-            this._eventHandler.subscribe(this.onRowBackToViewportRange, async (event, args) => {
-              // when row is back to viewport range, we will re-render the View Component(s)
-              await this.handleOnRowBackToViewportRange(event, args);
+          this._eventHandler.subscribe(this.onRowBackToViewportRange, async (event, args) => {
+            // when row is back to viewport range, we will re-render the View Component(s)
+            await this.handleOnRowBackToViewportRange(event, args);
 
-              if (typeof this.rowDetailViewOptions?.onRowBackToViewportRange === 'function') {
-                this.rowDetailViewOptions.onRowBackToViewportRange(event, args);
-              }
-            });
-          }
+            if (typeof this.rowDetailViewOptions?.onRowBackToViewportRange === 'function') {
+              this.rowDetailViewOptions.onRowBackToViewportRange(event, args);
+            }
+          });
 
-          if (this.onBeforeRowOutOfViewportRange) {
-            this._eventHandler.subscribe(this.onBeforeRowOutOfViewportRange, (event, args) => {
-              if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
-                this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
-              }
-              this.disposeView(args.item);
-            });
-          }
+          this._eventHandler.subscribe(this.onBeforeRowOutOfViewportRange, (event, args) => {
+            if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
+              this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
+            }
+            this.disposeView(args.item);
+          });
 
-          if (this.onRowOutOfViewportRange) {
-            this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
-              if (typeof this.rowDetailViewOptions?.onRowOutOfViewportRange === 'function') {
-                this.rowDetailViewOptions.onRowOutOfViewportRange(event, args);
-              }
-            });
-          }
+          this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
+            if (typeof this.rowDetailViewOptions?.onRowOutOfViewportRange === 'function') {
+              this.rowDetailViewOptions.onRowOutOfViewportRange(event, args);
+            }
+          });
 
           // --
           // hook some events needed by the Plugin itself
