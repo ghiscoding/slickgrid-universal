@@ -1035,6 +1035,7 @@ describe('SlickRowDetailView plugin', () => {
       expect(onRowBackToViewportSpy).toHaveBeenCalled();
 
       // -- out of range
+      const onRowBackViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const onRowOutOfViewportSpy = vi.spyOn(plugin.onRowOutOfViewportRange, 'notify');
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(124).mockReturnValueOnce(123);
       vi.advanceTimersByTime(102);
@@ -1066,6 +1067,7 @@ describe('SlickRowDetailView plugin', () => {
       vi.advanceTimersByTime(1);
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValueOnce({ top: 114, bottom: 116, left: 33, right: 18 } as any);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(98);
+      expect(onRowBackViewportSpy).toHaveBeenCalled();
       gridStub.onBeforeRemoveCachedRow.notify({ row: 99, grid: gridStub }, eventData as any, gridStub);
       vi.advanceTimersByTime(1);
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 125, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
@@ -1075,6 +1077,7 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValueOnce({ top: 114, bottom: 116, left: 33, right: 18 } as any);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(99);
       gridStub.onBeforeRemoveCachedRow.notify({ row: 99, grid: gridStub }, eventData as any, gridStub);
+      expect(onRowBackViewportSpy).toHaveBeenCalled();
       vi.advanceTimersByTime(1);
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 125, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       vi.advanceTimersByTime(1);
