@@ -4,6 +4,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.2...v5.13.0) (2025-03-01)
+
+### Features
+
+* allow overriding the position of the textarea savebutton ([#1849](https://github.com/ghiscoding/slickgrid-universal/issues/1849)) ([d9f1c0a](https://github.com/ghiscoding/slickgrid-universal/commit/d9f1c0aaa771878e04ef897afab78d3132f10b70)) - by @zewa666
+* Row Detail with inner grids ([#1853](https://github.com/ghiscoding/slickgrid-universal/issues/1853)) ([3c9d544](https://github.com/ghiscoding/slickgrid-universal/commit/3c9d54493ce670611a25a6cf4944fed9c2bfe280)) - by @ghiscoding
+
+### Bug Fixes
+
+* auto-resize with autoHeight should use all grid section heights ([#1842](https://github.com/ghiscoding/slickgrid-universal/issues/1842)) ([3feef30](https://github.com/ghiscoding/slickgrid-universal/commit/3feef30cb94cf6920fcc01afcace8f353ad19dbb)) - by @ghiscoding
+* **deps:** update vue.js dependencies ([#1852](https://github.com/ghiscoding/slickgrid-universal/issues/1852)) ([82343bc](https://github.com/ghiscoding/slickgrid-universal/commit/82343bc34d60e516c8ac36c4f91cdb636e783bfb)) - by @renovate-bot
+* frozen lines overflowing outside the grid ([#1858](https://github.com/ghiscoding/slickgrid-universal/issues/1858)) ([db22b41](https://github.com/ghiscoding/slickgrid-universal/commit/db22b418598b9b81798ca484a92c8362274d4c33)) - by @ghiscoding
+* Header Menu should reposition correct even with row detail grids ([#1859](https://github.com/ghiscoding/slickgrid-universal/issues/1859)) ([13c5599](https://github.com/ghiscoding/slickgrid-universal/commit/13c5599ddab0f43fe5db46d6aecf63c314d069ef)) - by @ghiscoding
+* internal PubSub Service shouldn't need event bubbling ([#1841](https://github.com/ghiscoding/slickgrid-universal/issues/1841)) ([b93114b](https://github.com/ghiscoding/slickgrid-universal/commit/b93114bff4922996ad43030fa652bc53ccbc8960)) - by @ghiscoding
+* Row Detail could end up unmounting wrong panel index ([#1846](https://github.com/ghiscoding/slickgrid-universal/issues/1846)) ([5f25dac](https://github.com/ghiscoding/slickgrid-universal/commit/5f25dacf0d0e4a008178bb61d46357d90688c30a)) - by @ghiscoding
+* Row Detail preload comp should call unmount lifecycle ([#1845](https://github.com/ghiscoding/slickgrid-universal/issues/1845)) ([1980438](https://github.com/ghiscoding/slickgrid-universal/commit/198043829fd25ac20de7d59ed7c59225f5453c18)) - by @ghiscoding
+
 ## [5.12.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v5.12.2) (2025-02-08)
 
 ### Bug Fixes

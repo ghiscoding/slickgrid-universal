@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.2...v5.13.0) (2025-03-01)
+
+### Features
+
+* Row Detail with inner grids ([#1853](https://github.com/ghiscoding/slickgrid-universal/issues/1853)) ([3c9d544](https://github.com/ghiscoding/slickgrid-universal/commit/3c9d54493ce670611a25a6cf4944fed9c2bfe280)) - by @ghiscoding
+
 ## [5.12.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v5.12.2) (2025-02-08)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

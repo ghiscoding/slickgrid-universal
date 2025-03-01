@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.2...v5.13.0) (2025-03-01)
+
+### Bug Fixes
+
+* internal PubSub Service shouldn't need event bubbling ([#1841](https://github.com/ghiscoding/slickgrid-universal/issues/1841)) ([b93114b](https://github.com/ghiscoding/slickgrid-universal/commit/b93114bff4922996ad43030fa652bc53ccbc8960)) - by @ghiscoding
+
 ## [5.12.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v5.12.2) (2025-02-08)
 
 **Note:** Version bump only for package @slickgrid-universal/event-pub-sub
