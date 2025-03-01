@@ -573,7 +573,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           this._disposedRows.delete(rowIdx);
           this.notifyViewportChange(item, 'add');
         } else if (
-          /* v8 ignore next 5 */
           (this._disposedRows.has(rowIdx) && !cachedRows.includes(rowIdx)) ||
           (!cachedRows.includes(rowIdx) &&
             this._renderedViewportRowIds.has(itemId) &&
