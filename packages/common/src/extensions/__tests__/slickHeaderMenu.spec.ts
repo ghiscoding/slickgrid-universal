@@ -833,6 +833,7 @@ describe('HeaderMenu Plugin', () => {
         Object.defineProperty(divEvent, 'target', { writable: true, configurable: true, value: subMenuElm });
         menuItem.appendChild(subMenuElm);
 
+        parentContainer.classList.add('slickgrid-container');
         plugin.repositionMenu(divEvent as any, headerMenu2Elm);
         const headerMenu2Elm2 = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
 
