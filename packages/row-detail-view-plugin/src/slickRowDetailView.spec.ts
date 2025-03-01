@@ -217,6 +217,46 @@ describe('SlickRowDetailView plugin', () => {
     expect(renderSpy).toHaveBeenCalled();
   });
 
+  it('should trigger "onAsyncResponse" when calling "expandDetailView()" when template is already cached from loadOnce', () => {
+    const mockItem = { _detailViewLoaded: true, _detailContent: 'loading...', id: 1, firstName: 'John', lastName: 'Doe' };
+    const mockProcess = vi.fn();
+    vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
+      0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      1: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      3: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+    });
+    const invalidateRowsSpy = vi.spyOn(gridStub, 'invalidateRows');
+    const renderSpy = vi.spyOn(gridStub, 'render');
+    vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
+    vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1).mockReturnValueOnce(1).mockReturnValueOnce(1);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionsMock,
+      rowDetailView: { process: mockProcess, columnIndexPosition: 0, useRowClick: true, maxRows: 2, panelRows: 2 } as any,
+    });
+    const onAsyncResponseSpy = vi.spyOn(plugin.onAsyncResponse, 'notify');
+
+    plugin.init(gridStub);
+    plugin.addonOptions.loadOnce = true;
+    plugin.expandDetailView(1);
+    dataviewStub.onRowsChanged.notify(
+      { rows: [0, 1, 2, 3], itemCount: 4, calledOnRowCountChanged: true, dataView: dataviewStub },
+      new SlickEventData(),
+      gridStub
+    );
+
+    expect(onAsyncResponseSpy).toHaveBeenCalledWith({
+      item: mockItem,
+      itemDetail: mockItem,
+      detailView: 'loading...',
+      grid: gridStub,
+    });
+    expect(plugin.eventHandler).toBeTruthy();
+    expect(renderSpy).toHaveBeenCalled();
+    // don't invalidate row detail that were already rendered and visible
+    expect(invalidateRowsSpy).toHaveBeenCalledWith([]);
+  });
+
   it('should use dataview Id when defined in grid options and "onSetItemsCalled" event is triggered from dataview', () => {
     vi.spyOn(dataviewStub, 'getIdPropertyName').mockReturnValue('rowId');
 
@@ -1155,72 +1195,6 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _sizePadding: 6,
       });
-      expect(mockProcess).toHaveBeenCalledWith({
-        firstName: 'John',
-        id: 123,
-        lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
-      });
-    });
-
-    it.skip('should call "notifyBackToViewportWhenDomExist" when row is out of visibility', () => {
-      const mockProcess = vi.fn();
-      const itemMock = {
-        id: 123,
-        firstName: 'John',
-        lastName: 'Doe',
-        _collapsed: true,
-        _detailViewLoaded: true,
-        _sizePadding: 1,
-        _height: 150,
-        _detailContent: '<span>loading...</span>',
-      };
-      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
-      const loadingTemplate = () => '<span>loading...</span>';
-      vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
-      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(2);
-      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 20, bottom: 50, left: 33, right: 18 } as any);
-      divContainer.appendChild(cellDetailViewElm);
-      Object.defineProperty(detailViewContainerElm, 'scrollHeight', { writable: true, configurable: true, value: 4 });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
-        ...gridOptionsMock,
-        rowDetailView: {
-          process: mockProcess,
-          preTemplate: loadingTemplate,
-          panelRows: 5,
-          useSimpleViewportCalc: true,
-          useRowClick: true,
-          saveDetailViewOnScroll: true,
-          singleRowExpand: true,
-          loadOnce: true,
-        } as any,
-      });
-      plugin.init(gridStub);
-      plugin.resizeDetailView(itemMock);
-      plugin.expandDetailView(itemMock.id);
-      plugin.rowIdsOutOfViewport = [123];
-      gridStub.onRendered.notify({ endRow: 77, startRow: 5, grid: gridStub }, new SlickEventData(), gridStub);
-
-      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
-
-      expect(mockProcess).toHaveBeenCalledWith({
-        firstName: 'John',
-        id: 123,
-        lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
-      });
-
-      vi.advanceTimersByTime(101);
-
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John',
         id: 123,
