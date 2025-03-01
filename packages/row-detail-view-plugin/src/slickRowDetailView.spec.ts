@@ -25,6 +25,7 @@ const dataviewStub = {
   getIdPropertyName: vi.fn(),
   getItem: vi.fn(),
   getItemById: vi.fn(),
+  getItemByIdx: vi.fn(),
   getIdxById: vi.fn(),
   getRowById: vi.fn(),
   insertItem: vi.fn(),
@@ -979,7 +980,7 @@ describe('SlickRowDetailView plugin', () => {
       vi.advanceTimersByTime(1);
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
 
-      vi.advanceTimersByTime(102);
+      vi.advanceTimersByTime(2);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John',
@@ -1000,9 +1001,9 @@ describe('SlickRowDetailView plugin', () => {
       plugin.collapseDetailView(1);
 
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
+        // 99: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-        123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
       });
@@ -1012,6 +1013,25 @@ describe('SlickRowDetailView plugin', () => {
       vi.advanceTimersByTime(1);
 
       expect(onRowOutOfViewportSpy).toHaveBeenCalled();
+
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 125, bottom: 150, left: 33, right: 18 } as any);
+      plugin.expandDetailView(123);
+      plugin.addonOptions.singleRowExpand = false;
+      vi.spyOn(dataviewStub, 'getItemByIdx').mockReturnValue(itemMock);
+      gridStub.onBeforeRemoveCachedRow.notify({ row: 123, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
+      plugin.expandDetailView(123);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValueOnce({ top: 121, bottom: 116, left: 33, right: 18 } as any);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(99);
+      gridStub.onBeforeRemoveCachedRow.notify({ row: 99, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 125, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
+      expect(onRowOutOfViewportSpy).toHaveBeenCalled();
+      plugin.resetRenderedRows();
     });
 
     it('should call "onScroll" and expect "onRowBackToViewportRange" be triggered when row is found out of range and direction is DOWN', () => {
