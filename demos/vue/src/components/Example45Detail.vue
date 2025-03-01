@@ -49,7 +49,7 @@ function handleBeforeGridDestroy() {
 }
 
 function defineGrid() {
-  // when found, reapply inner Grid State if it was previously saved in Session Storage
+  // when Grid State found in Session Storage, reapply inner Grid State then reapply it as preset
   let gridState: GridState | undefined;
   if (props.model.isUsingInnerGridStatePresets) {
     const gridStateStr = sessionStorage.getItem(`gridstate_${innerGridClass.value}`);
