@@ -180,7 +180,7 @@ export class InputEditor implements Editor {
     if (rtn === undefined) {
       rtn = DEFAULT_DECIMAL_PLACES;
     }
-    return !rtn && rtn !== 0 ? null : rtn;
+    return !rtn && rtn !== 0 ? 0 : rtn;
   }
 
   /** when editor is a float input editor, we'll want to know how many decimals to show */

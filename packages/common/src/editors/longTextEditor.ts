@@ -154,16 +154,17 @@ export class LongTextEditor implements Editor {
     editorFooterElm.appendChild(countContainerElm);
 
     if (!compositeEditorOptions) {
-      const cancelBtnElm = createDomElement(
-        'button',
-        { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText },
-        editorFooterElm
-      );
-      const saveBtnElm = createDomElement(
-        'button',
-        { className: 'btn btn-save btn-primary btn-xs', textContent: saveText },
-        editorFooterElm
-      );
+      const cancelBtnElm = createDomElement('button', { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText });
+      const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText });
+
+      if (this.editorOptions.saveButtonPosition === 'left') {
+        editorFooterElm.appendChild(saveBtnElm);
+        editorFooterElm.appendChild(cancelBtnElm);
+      } else {
+        editorFooterElm.appendChild(cancelBtnElm);
+        editorFooterElm.appendChild(saveBtnElm);
+      }
+
       this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);
       this._bindEventService.bind(saveBtnElm, 'click', this.save.bind(this) as EventListener);
       this.position(this.args?.position as ElementPosition);
