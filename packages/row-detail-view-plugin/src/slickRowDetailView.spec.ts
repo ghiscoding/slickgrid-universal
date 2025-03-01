@@ -949,7 +949,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandDetailView(itemMock.id);
       plugin.rowIdsOutOfViewport = [123];
 
-      const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
+      // const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
