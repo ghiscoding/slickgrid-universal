@@ -20,6 +20,9 @@ export interface RowDetailView extends RowDetailViewOption {
   /** Fired before the row detail gets toggled */
   onBeforeRowDetailToggle?: (e: SlickEventData, args: OnBeforeRowDetailToggleArgs) => void;
 
+  /** Fired just before a row becomes out of viewport range (you can use this event to save inner Grid State before it gets destroyed) */
+  onBeforeRowOutOfViewportRange?: (e: SlickEventData, args: OnRowOutOfViewportRangeArgs) => void;
+
   /** Fired after the row detail gets toggled */
   onRowBackToViewportRange?: (e: SlickEventData, args: OnRowBackToViewportRangeArgs) => void;
 
@@ -40,6 +43,9 @@ export interface OnRowDetailAsyncResponseArgs {
 
   /** SlickGrid instance */
   grid?: SlickGrid;
+
+  /** provide any generic params */
+  params?: any;
 }
 
 /** Fired when the async response finished */
@@ -47,11 +53,14 @@ export interface OnRowDetailAsyncEndUpdateArgs {
   /** Item data context object */
   item: any;
 
-  /** @alias `item` */
+  /** @deprecated @alias `item` */
   itemDetail: any;
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;
+
+  /** provide any generic params */
+  params?: any;
 }
 
 /** Fired after the row detail gets toggled */
@@ -64,6 +73,9 @@ export interface OnAfterRowDetailToggleArgs {
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;
+
+  /** provide any generic params */
+  params?: any;
 }
 
 /** Fired before the row detail gets toggled */
@@ -73,6 +85,9 @@ export interface OnBeforeRowDetailToggleArgs {
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;
+
+  /** provide any generic params */
+  params?: any;
 }
 
 /** Fired after the row detail gets toggled */
@@ -94,9 +109,15 @@ export interface OnRowBackToViewportRangeArgs {
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;
+
+  /** provide any generic params */
+  params?: any;
 }
 
-/** Fired after a row becomes out of viewport range (user can't see the row anymore) */
+/**
+ * @deprecated We should eventually merge out/back to viewport into a single interface.
+ * Fired after a row becomes out of viewport range (user can't see the row anymore)
+ */
 export interface OnRowOutOfViewportRangeArgs {
   /** Item data context object */
   item: any;
@@ -115,4 +136,7 @@ export interface OnRowOutOfViewportRangeArgs {
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;
+
+  /** provide any generic params */
+  params?: any;
 }

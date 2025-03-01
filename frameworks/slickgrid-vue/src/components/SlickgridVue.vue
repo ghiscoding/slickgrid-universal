@@ -305,7 +305,7 @@ onMounted(() => {
           subscriptions.push(
             eventPubSubService.subscribe(singlePrefixEventName, (data: unknown) => {
               const gridEventName = eventPubSubService.getEventNameByNamingConvention(singlePrefixEventName, '');
-              typeof eventCallback === 'function' && eventCallback.call(null, new CustomEvent(gridEventName, { detail: data }));
+              eventCallback.call(null, new CustomEvent(gridEventName, { detail: data }));
             })
           );
         }
@@ -807,8 +807,13 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
       loadFilterPresetsWhenDatasetInitialized();
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      eventHandler.subscribe(dataView.onRowCountChanged, () => {
-        grid.invalidate();
+      eventHandler.subscribe(dataView.onRowCountChanged, (_e, args) => {
+        if (!gridOptions.enableRowDetailView || !Array.isArray(args.changedRows) || args.changedRows.length === args.itemCount) {
+          grid.invalidate();
+        } else {
+          grid.invalidateRows(args.changedRows);
+          grid.render();
+        }
         handleOnItemCountChanged(dataView.getFilteredItemCount() || 0, dataView.getItemCount() || 0);
       });
       eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {

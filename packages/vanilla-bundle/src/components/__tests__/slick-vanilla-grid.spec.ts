@@ -240,7 +240,6 @@ const mockGrid = {
   autosizeColumns: vi.fn(),
   destroy: vi.fn(),
   init: vi.fn(),
-  invalidate: vi.fn(),
   getActiveCellNode: vi.fn(),
   getColumns: vi.fn(),
   getCellEditor: vi.fn(),
@@ -253,6 +252,8 @@ const mockGrid = {
   getRenderedRange: vi.fn(),
   getSelectionModel: vi.fn(),
   getScrollbarDimensions: vi.fn(),
+  invalidate: vi.fn(),
+  invalidateRows: vi.fn(),
   updateRow: vi.fn(),
   render: vi.fn(),
   registerPlugin: vi.fn(),
@@ -1933,6 +1934,27 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.eventHandler).toEqual(slickEventHandler);
         expect(renderSpy).toHaveBeenCalled();
         expect(updateRowSpy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should call invalidateRows individually when Row Detail is enabled and changed rows is different than the rows count', () => {
+        const renderSpy = vi.spyOn(mockGrid, 'render');
+        const invalidateRowSpy = vi.spyOn(mockGrid, 'invalidateRows');
+        vi.spyOn(mockGrid, 'getRenderedRange').mockReturnValue({ bottom: 10, top: 0, leftPx: 0, rightPx: 890 });
+
+        component.gridOptions.enableRowDetailView = true;
+        component.initialization(divContainer, slickEventHandler);
+        mockDataView.onRowCountChanged.notify({
+          current: 2,
+          previous: 0,
+          dataView: mockDataView,
+          changedRows: [1, 2],
+          itemCount: 5,
+          callingOnRowsChanged: false,
+        });
+
+        expect(component.eventHandler).toEqual(slickEventHandler);
+        expect(invalidateRowSpy).toHaveBeenCalled();
+        expect(renderSpy).toHaveBeenCalled();
       });
     });
 

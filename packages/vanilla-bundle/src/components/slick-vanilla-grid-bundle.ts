@@ -878,8 +878,13 @@ export class SlickVanillaGridBundle<TData = any> {
       }
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      this._eventHandler.subscribe(dataView.onRowCountChanged, () => {
-        grid.invalidate();
+      this._eventHandler.subscribe(dataView.onRowCountChanged, (_e, args) => {
+        if (!gridOptions.enableRowDetailView || !Array.isArray(args.changedRows) || args.changedRows.length === args.itemCount) {
+          grid.invalidate();
+        } else {
+          grid.invalidateRows(args.changedRows);
+          grid.render();
+        }
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, this.dataView?.getItemCount() ?? 0);
       });
       this._eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {
@@ -889,9 +894,9 @@ export class SlickVanillaGridBundle<TData = any> {
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
         if (
           args.itemCount > 0 &&
-          (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)
+          (gridOptions.autosizeColumnsByCellContentOnFirstLoad || gridOptions.enableAutoResizeColumnsByCellContent)
         ) {
-          this.resizerService.resizeColumnsByCellContent(!this.gridOptions?.resizeByContentOnlyOnFirstLoad);
+          this.resizerService.resizeColumnsByCellContent(!gridOptions?.resizeByContentOnlyOnFirstLoad);
         }
       });
 
@@ -926,7 +931,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.loadFilterPresetsWhenDatasetInitialized();
     }
 
-    // @deprecated @user `dataview.globalItemMetadataProvider.getRowMetadata`
+    // @deprecated @use `dataview.globalItemMetadataProvider.getRowMetadata`
     // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
     if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
       dataView.getItemMetadata = (rowNumber: number) => {

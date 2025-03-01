@@ -1,5 +1,5 @@
 <h3 class="title is-3">
-  Example 21 - Row Detail View
+  Example 21 - Row Detail with inner Grid
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
     <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
@@ -22,15 +22,13 @@
 
 <div class="columns">
   <div class="column is-12">
-    <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
-      Toggle Edit/Readonly Grid
-    </button>
     <button class="button is-small" onclick.trigger="closeAllRowDetail()" data-test="collapse-all-btn">Close All Row Details</button>
     &nbsp;&nbsp;
     <label for="">Detail View Rows Shown: </label>
     <input
       type="number"
       class="is-narrow input is-small"
+      data-test="detail-view-row-count"
       value.bind="detailViewRowCount"
       title="Please note that the change will be applied the next time the row is expanded"
     />
@@ -41,16 +39,20 @@
       <input type="number" id="server-delay" class="is-narrow input is-small" data-test="server-delay" value.bind="serverApiDelay" />
     </span>
 
-    <span class="ml-2">
-      <label>Selected Rows:</label>
-      <span textcontent.bind="selectedRowString" data-test="row-selections"></span>
-    </span>
-  </div>
-
-  <div class="column is-narrow">
-    <div class.bind="statusClass" data-test="status">
-      <span textcontent.bind="status"></span>
-    </div>
+    <label class="checkbox-inline control-label ml-3" for="useInnerGridStatePresets">
+      <input
+        type="checkbox"
+        id="useInnerGridStatePresets"
+        data-test="use-inner-grid-state-presets"
+        checked.bind="isUsingInnerGridStatePresets"
+        onclick.trigger="changeUsingInnerGridStatePresets(event.target.checked)"
+      />
+      <span
+        title="should we use Grid State/Presets to keep the inner grid state whenever Row Details are out and back to viewport and re-rendered"
+      >
+        Use Inner Grid State/Presets
+      </span>
+    </label>
   </div>
 </div>
 

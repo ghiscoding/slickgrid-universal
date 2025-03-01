@@ -662,7 +662,7 @@ export interface GridOption<C extends Column = Column> {
   /** Max supported CSS height */
   maxSupportedCssHeight?: number;
 
-  /** What is the minimum row buffer to use? */
+  /** Defaults to 3, what is the minimum row buffer to use? */
   minRowBuffer?: number;
 
   /** What is the maximum row buffer to use? */

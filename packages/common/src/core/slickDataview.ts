@@ -1366,6 +1366,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
           current: this.rows.length,
           itemCount: this.items.length,
           dataView: this,
+          changedRows: diff,
           callingOnRowsChanged: diff.length > 0,
         },
         null,

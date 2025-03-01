@@ -44,6 +44,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Fired before the row detail gets toggled */
   onBeforeRowDetailToggle: SlickEvent<OnBeforeRowDetailToggleArgs>;
 
+  /** Fired just before a row becomes out of viewport range (you can use this event to save inner Grid State before it gets destroyed) */
+  onBeforeRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
+
   /** Fired after the row detail gets toggled */
   onRowBackToViewportRange: SlickEvent<OnRowBackToViewportRangeArgs>;
 
@@ -56,15 +59,17 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _dataViewIdProperty = 'id';
   protected _eventHandler: SlickEventHandler;
   protected _expandableOverride: UsabilityOverrideFn | null = null;
-  protected _expandedRows: Set<any> = new Set();
+  protected _expandedRowIds: Set<number | string> = new Set();
   protected _grid!: SlickGrid;
   protected _gridRowBuffer = 0;
   protected _gridUid = '';
   protected _keyPrefix = '';
-  protected _lastRange: { bottom: number; top: number } | null = null;
-  protected _outsideRange = 5;
+  protected _disposedRows: Set<number> = new Set();
   protected _rowIdsOutOfViewport: Set<number | string> = new Set();
-  protected _visibleRenderedCellCount = 0;
+  protected _renderedViewportRowIds: Set<number | string> = new Set();
+  protected _renderedIds: Set<number | string> = new Set();
+  protected _visibleRenderedCell?: { startRow: number; endRow: number };
+  protected _backViewportTimer: any;
   protected _defaults = {
     alwaysRenderColumn: true,
     columnId: '_detail_selector',
@@ -79,7 +84,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     reorderable: false,
     saveDetailViewOnScroll: true,
     singleRowExpand: false,
-    useSimpleViewportCalc: false,
     toolTip: '',
     width: 30,
   } as unknown as RowDetailView;
@@ -91,6 +95,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this.onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>('onAsyncResponse');
     this.onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>('onAfterRowDetailToggle');
     this.onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>('onBeforeRowDetailToggle');
+    this.onBeforeRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onBeforeRowOutOfViewportRange');
     this.onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>('onRowBackToViewportRange');
     this.onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onRowOutOfViewportRange');
   }
@@ -121,16 +126,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._gridUid || this._grid?.getUID() || '';
   }
 
-  set lastRange(range: { bottom: number; top: number }) {
-    this._lastRange = range;
-  }
-
   set rowIdsOutOfViewport(rowIds: Array<string | number>) {
     this._rowIdsOutOfViewport = new Set(rowIds);
-  }
-
-  get visibleRenderedCellCount(): number {
-    return this._visibleRenderedCellCount;
   }
 
   /**
@@ -138,7 +135,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * @param _grid
    */
   init(grid: SlickGrid): void {
-    this._grid = grid;
     if (!grid) {
       throw new Error(
         '[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.'
@@ -161,14 +157,13 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._eventHandler
       .subscribe(this._grid.onClick, this.handleClick.bind(this))
       .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
-      .subscribe(this._grid.onScroll, this.handleScroll.bind(this));
+      .subscribe(this._grid.onScroll, this.handleScroll.bind(this))
+      .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row));
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
     if (this._addonOptions.collapseAllOnSort) {
       // sort event can be triggered by column header click or from header menu
       this.pubSubService.subscribe('onSortChanged', () => this.collapseAll());
-      this._expandedRows.clear();
-      this._rowIdsOutOfViewport.clear();
     }
 
     this._eventHandler.subscribe(this.dataView.onRowCountChanged, () => {
@@ -177,7 +172,31 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     });
 
     this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e, args) => {
-      this._grid.invalidateRows(args.rows);
+      const cachedRows = Object.keys(this._grid.getRowCache()).map(Number);
+      const toInvalidateRows: number[] = [];
+      const intersectedRows = args.rows.filter((nb) => cachedRows.includes(nb));
+
+      // only consider rows to invalidate as rows that exists in the viewport (cached rows)
+      this._expandedRowIds.forEach((itemId) => {
+        const idx = this.dataView.getRowById(itemId);
+        if (idx !== undefined && intersectedRows.includes(idx)) {
+          toInvalidateRows.push(idx);
+        }
+      });
+
+      // don't invalidate row detail that were already rendered and visible
+      // for example, if we open row 3 and then row 1, row 3 will be pushed down but it was already rendered so no need to re-render it
+      this._renderedIds.forEach((rowId) => {
+        const dataRowIdx = this.dataView.getRowById(rowId);
+        if (dataRowIdx !== undefined) {
+          const invRowIdx = toInvalidateRows.findIndex((r) => r === dataRowIdx);
+          if (invRowIdx >= 0) {
+            toInvalidateRows.splice(invRowIdx, 1);
+          }
+        }
+      });
+
+      this._grid.invalidateRows(toInvalidateRows);
       this._grid.render();
     });
 
@@ -188,24 +207,15 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._eventHandler.subscribe(this.dataView.onSetItemsCalled, () => {
       this._dataViewIdProperty = this.dataView?.getIdPropertyName() || 'id';
     });
-
-    // if we use the alternative & simpler calculation of the out of viewport range
-    // we will need to know how many rows are rendered on the screen and we need to wait for grid to be rendered
-    // unfortunately there is no triggered event for knowing when grid is finished, so we use 250ms delay and it's typically more than enough
-    if (this._addonOptions.useSimpleViewportCalc) {
-      this._eventHandler.subscribe(this._grid.onRendered, (_e, args) => {
-        if (args?.endRow) {
-          this._visibleRenderedCellCount = args.endRow - args.startRow;
-        }
-      });
-    }
   }
 
   /** Dispose of the Slick Row Detail View */
   dispose(): void {
     this._eventHandler?.unsubscribeAll();
-    this._expandedRows.clear();
+    this._expandedRowIds.clear();
     this._rowIdsOutOfViewport.clear();
+    this._renderedViewportRowIds.clear();
+    clearTimeout(this._backViewportTimer);
   }
 
   create(columnDefinitions: Column[], gridOptions: GridOption): UniversalRowDetailView | null {
@@ -263,17 +273,18 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Collapse all of the open items */
   collapseAll(): void {
     this.dataView.beginUpdate();
-    this._expandedRows.forEach((expandedRow) => {
-      this.collapseDetailView(expandedRow, true);
+    this._expandedRowIds.forEach((itemId) => {
+      this.collapseDetailView(itemId, true);
     });
     this.dataView.endUpdate();
   }
 
-  /** Colapse an Item so it is not longer seen */
-  collapseDetailView(item: any, isMultipleCollapsing = false): void {
+  /** Collapse an Item so it is not longer seen */
+  collapseDetailView(itemId: number | string, isMultipleCollapsing = false): void {
     if (!isMultipleCollapsing) {
       this.dataView.beginUpdate();
     }
+    const item = this.dataView.getItemById(itemId);
     // Save the details on the collapse assuming onetime loading
     if (this._addonOptions.loadOnce) {
       this.saveDetailView(item);
@@ -286,10 +297,12 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     item[`${this._keyPrefix}sizePadding`] = 0;
     this.dataView.updateItem(item[this._dataViewIdProperty], item);
 
-    // Remove the item from the expandedRows
-    this._expandedRows = new Set(
-      Array.from(this._expandedRows).filter((expRow) => expRow[this._dataViewIdProperty] !== item[this._dataViewIdProperty])
-    );
+    // Remove the item from the expandedRows & renderedIds
+    this._expandedRowIds = new Set(Array.from(this._expandedRowIds).filter((expItemId) => expItemId !== item[this._dataViewIdProperty]));
+    this._renderedIds.delete(item[this._dataViewIdProperty]);
+
+    // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
+    this.reevaluateRenderedRowIds(item);
 
     if (!isMultipleCollapsing) {
       this.dataView.endUpdate();
@@ -297,15 +310,19 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Expand a row given the dataview item that is to be expanded */
-  expandDetailView(item: any): void {
+  expandDetailView(itemId: number | string): void {
     if (this._addonOptions?.singleRowExpand) {
       this.collapseAll();
     }
+    const item = this.dataView.getItemById(itemId);
+
+    // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
+    this.reevaluateRenderedRowIds(item);
 
     item[`${this._keyPrefix}collapsed`] = false;
-    this._expandedRows.add(item);
+    this._expandedRowIds.add(itemId);
 
-    // In the case something went wrong loading it the first time such a scroll of screen before loaded
+    // in the case something went wrong loading it the first time such a scroll of screen before loaded
     if (!item[`${this._keyPrefix}detailContent`]) {
       item[`${this._keyPrefix}detailViewLoaded`] = false;
     }
@@ -332,13 +349,21 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._addonOptions.process(item);
   }
 
+  /** reset all Set rows/ids cache and start empty (but keep expanded rows ref) */
+  resetRenderedRows(): void {
+    this._renderedViewportRowIds.clear();
+    this._disposedRows.clear();
+  }
+
   /** Saves the current state of the detail view */
   saveDetailView(item: any): void {
-    const view = document.querySelector(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
-    if (view) {
-      const html = view.innerHTML;
-      if (html !== undefined) {
-        item[`${this._keyPrefix}detailContent`] = html;
+    if (this._addonOptions.loadOnce) {
+      const view = document.querySelector(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
+      if (view) {
+        const html = view.innerHTML;
+        if (html !== undefined) {
+          item[`${this._keyPrefix}detailContent`] = html;
+        }
       }
     }
   }
@@ -353,15 +378,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       return;
     }
 
-    // we accept item/itemDetail, just get the one which has data
+    // @deprecated `args.itemDetail` we accept item/itemDetail, just get the one which has data
     const itemDetail = args.item || args.itemDetail;
 
-    // If we just want to load in a view directly we can use detailView property to do so
+    // if we just want to load in a view directly we can use detailView property to do so
     itemDetail[`${this._keyPrefix}detailContent`] = args.detailView ?? this._addonOptions?.postTemplate?.(itemDetail);
     itemDetail[`${this._keyPrefix}detailViewLoaded`] = true;
     this.dataView.updateItem(itemDetail[this._dataViewIdProperty], itemDetail);
 
     // trigger an event once the post template is finished loading
+    this._renderedIds.add(itemDetail[this.dataViewIdProperty]);
     this.onAsyncEndUpdate.notify(
       {
         grid: this._grid,
@@ -374,7 +400,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /**
-   * TODO interface only has a GETTER not a SETTER..why?
    * Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable)
    * Method that user can pass to override the default behavior or making every row an expandable row.
    * In order word, user can choose which rows to be an available row detail (or not) by providing his own logic.
@@ -413,8 +438,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** return the currently expanded rows */
-  getExpandedRows(): Array<number | string> {
-    return Array.from(this._expandedRows);
+  getExpandedRowIds(): Array<number | string> {
+    return Array.from(this._expandedRowIds);
   }
 
   /** return the rows that are out of the viewport */
@@ -512,87 +537,64 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected calculateOutOfRangeViews(): void {
-    if (this._grid) {
-      let scrollDir: 'UP' | 'DOWN';
-      const renderedRange = this._grid.getRenderedRange();
-      // Only check if we have expanded rows
-      if (this._expandedRows.size) {
-        // Assume scroll direction is down by default.
-        scrollDir = 'DOWN';
-        if (this._lastRange) {
-          // Some scrolling isn't anything as the range is the same
-          if (this._lastRange.top === renderedRange.top && this._lastRange.bottom === renderedRange.bottom) {
-            return;
-          }
+  // TODO: after removing @deprecated flag, we should rename this method to `handleRowOutOfViewportRange`
+  protected calculateOutOfRangeViewsSimplerVersion(): void {
+    clearTimeout(this._backViewportTimer);
 
-          // If our new top is smaller we are scrolling up
-          if (
-            this._lastRange.top > renderedRange.top ||
-            // Or we are at very top but our bottom is increasing
-            (this._lastRange.top === 0 && renderedRange.top === 0 && this._lastRange.bottom > renderedRange.bottom)
-          ) {
-            scrollDir = 'UP';
+    this._backViewportTimer = setTimeout(() => {
+      this._expandedRowIds.forEach((itemId) => {
+        const item = this.dataView.getItemById(itemId);
+        const rowIdx = this.dataView.getRowById(itemId) as number;
+        const cachedRows = Object.keys(this._grid.getRowCache()).map(Number);
+
+        const visible = this._grid.getRenderedRange();
+        const rowDetailCount = this.gridOptions.rowDetailView?.panelRows ?? 0;
+        this._visibleRenderedCell = { startRow: visible.top, endRow: visible.bottom };
+        let { startRow, endRow } = this._visibleRenderedCell;
+        if (rowIdx >= startRow && rowIdx <= endRow) {
+          const rowSum = rowIdx + (this.gridOptions.rowDetailView?.panelRows ?? 0);
+          if (rowSum > endRow) {
+            endRow = rowSum;
           }
         }
-      }
+        const rdEndRow = rowIdx + rowDetailCount;
+        if (startRow > rowIdx && rowIdx < rdEndRow && rdEndRow > this._visibleRenderedCell!.startRow + 1) {
+          startRow = rowIdx;
+        }
+        this._visibleRenderedCell = { startRow, endRow };
 
-      this._expandedRows.forEach((row) => {
-        const rowIndex = this.dataView.getRowById(row[this._dataViewIdProperty]) as number;
-        const rowPadding = row[`${this._keyPrefix}sizePadding`];
-        const isRowOutOfRange = this._rowIdsOutOfViewport.has(row[this._dataViewIdProperty]);
-
-        if (scrollDir === 'UP') {
-          // save the view when asked
-          if (this._addonOptions.saveDetailViewOnScroll) {
-            // If the bottom item within buffer range is an expanded row save it.
-            if (rowIndex >= renderedRange.bottom - this._gridRowBuffer) {
-              this.saveDetailView(row);
-            }
-          }
-
-          // If the row expanded area is within the buffer notify that it is back in range
-          if (isRowOutOfRange && rowIndex - this._outsideRange < renderedRange.top && rowIndex >= renderedRange.top) {
-            this.notifyBackToViewportWhenDomExist(row, row[this._dataViewIdProperty]);
-          } else if (!isRowOutOfRange && rowIndex + rowPadding > renderedRange.bottom) {
-            // if our first expanded row is about to go off the bottom
-            this.notifyOutOfViewport(row, row[this._dataViewIdProperty]);
-          }
-        } else if (scrollDir === 'DOWN') {
-          // save the view when asked
-          if (this._addonOptions.saveDetailViewOnScroll) {
-            // If the top item within buffer range is an expanded row save it.
-            if (rowIndex <= renderedRange.top + this._gridRowBuffer) {
-              this.saveDetailView(row);
-            }
-          }
-
-          // If row index is i higher than bottom with some added value (To ignore top rows off view) and is with view and was our of range
-          if (isRowOutOfRange && rowIndex + rowPadding + this._outsideRange > renderedRange.bottom && rowIndex < rowIndex + rowPadding) {
-            this.notifyBackToViewportWhenDomExist(row, row[this._dataViewIdProperty]);
-          } else if (!isRowOutOfRange && rowIndex < renderedRange.top) {
-            // if our row is outside top of and the buffering zone but not in the array of outOfVisable range notify it
-            this.notifyOutOfViewport(row, row[this._dataViewIdProperty]);
-          }
+        if (
+          !this._renderedViewportRowIds.has(itemId) &&
+          this._visibleRenderedCell &&
+          rowIdx >= this._visibleRenderedCell.startRow &&
+          rowIdx <= this._visibleRenderedCell.endRow &&
+          cachedRows.includes(rowIdx)
+        ) {
+          this._disposedRows.delete(rowIdx);
+          this.notifyViewportChange(item, 'add');
+        } else if (
+          (this._disposedRows.has(rowIdx) && !cachedRows.includes(rowIdx)) ||
+          (!cachedRows.includes(rowIdx) &&
+            this._renderedViewportRowIds.has(itemId) &&
+            this._visibleRenderedCell &&
+            (rowIdx < this._visibleRenderedCell.startRow || rowIdx > this._visibleRenderedCell.endRow))
+        ) {
+          this.notifyViewportChange(item, 'remove');
         }
       });
-      this._lastRange = renderedRange;
-    }
+    }, 0);
   }
 
-  protected calculateOutOfRangeViewsSimplerVersion(): void {
-    if (this._grid) {
-      const renderedRange = this._grid.getRenderedRange();
-
-      this._expandedRows.forEach((row) => {
-        const rowIndex = this.dataView.getRowById(row[this._dataViewIdProperty]) as number;
-        const isOutOfVisibility = this.checkIsRowOutOfViewportRange(rowIndex, renderedRange);
-        if (!isOutOfVisibility && this._rowIdsOutOfViewport.has(row[this._dataViewIdProperty])) {
-          this.notifyBackToViewportWhenDomExist(row, row[this._dataViewIdProperty]);
-        } else if (isOutOfVisibility) {
-          this.notifyOutOfViewport(row, row[this._dataViewIdProperty]);
-        }
-      });
+  protected notifyViewportChange(item: any, action: 'add' | 'remove'): void {
+    if (item) {
+      const itemId = item[this._dataViewIdProperty];
+      if (action === 'add') {
+        this._renderedViewportRowIds.add(itemId);
+        this.notifyBackToViewportWhenDomExist(item);
+      } else if (action === 'remove') {
+        this._renderedViewportRowIds.delete(itemId);
+        this.notifyOutOfViewport(item);
+      }
     }
   }
 
@@ -601,10 +603,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       return this._expandableOverride(row, dataContext, grid);
     }
     return true;
-  }
-
-  protected checkIsRowOutOfViewportRange(rowIndex: number, renderedRange: any): boolean {
-    return Math.abs(renderedRange.bottom - this._gridRowBuffer - rowIndex) > this._visibleRenderedCellCount * 2;
   }
 
   /** Get the Row Detail padding (which are the rows dedicated to the detail panel) */
@@ -705,10 +703,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** When row is getting toggled, we will handle the action of collapsing/expanding */
   protected handleAccordionShowHide(item: any): void {
     if (item) {
+      const itemId = item[this._dataViewIdProperty];
       if (!item[`${this._keyPrefix}collapsed`]) {
-        this.collapseDetailView(item);
+        this.collapseDetailView(itemId);
       } else {
-        this.expandDetailView(item);
+        this.expandDetailView(itemId);
       }
     }
   }
@@ -747,7 +746,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           {
             grid: this._grid,
             item: dataContext,
-            expandedRows: Array.from(this._expandedRows),
+            expandedRows: Array.from(this._expandedRowIds).map((id) => this.dataView.getItemById(id)),
           },
           e,
           this
@@ -759,24 +758,43 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected handleScroll(): void {
-    if (this._addonOptions.useSimpleViewportCalc) {
-      this.calculateOutOfRangeViewsSimplerVersion();
-    } else {
-      this.calculateOutOfRangeViews();
+  protected handleRemoveRow(rowIndex: number): void {
+    const item = this.dataView.getItemByIdx(rowIndex);
+    const rowId = item[this.dataViewIdProperty];
+
+    if (this._expandedRowIds.has(rowId)) {
+      this.onBeforeRowOutOfViewportRange.notify(
+        {
+          grid: this._grid,
+          item,
+          rowId,
+          rowIndex,
+          expandedRows: Array.from(this._expandedRowIds).map((id) => this.dataView.getItemById(id)),
+          rowIdsOutOfViewport: Array.from(this.syncOutOfViewportArray(rowId, true)),
+        },
+        null,
+        this
+      );
+      this._disposedRows.add(rowIndex);
     }
   }
 
-  protected notifyOutOfViewport(item: any, rowId: number | string): void {
-    const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
+  protected handleScroll(): void {
+    this.calculateOutOfRangeViewsSimplerVersion();
+  }
 
+  protected notifyOutOfViewport(item: any): void {
+    const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
+    const rowId = item[this.dataViewIdProperty];
+
+    this._renderedIds.delete(rowId);
     this.onRowOutOfViewportRange.notify(
       {
         grid: this._grid,
         item,
         rowId,
         rowIndex,
-        expandedRows: Array.from(this._expandedRows),
+        expandedRows: Array.from(this._expandedRowIds).map((id) => this.dataView.getItemById(id)),
         rowIdsOutOfViewport: Array.from(this.syncOutOfViewportArray(rowId, true)),
       },
       null,
@@ -784,26 +802,40 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     );
   }
 
-  protected notifyBackToViewportWhenDomExist(item: any, rowId: number | string): void {
+  protected notifyBackToViewportWhenDomExist(item: any): void {
     const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
+    const rowId = item[this.dataViewIdProperty];
 
-    window.setTimeout(() => {
-      // make sure View Row DOM Element really exist before notifying that it's a row that is visible again
-      if (document.querySelector(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`)) {
-        this.onRowBackToViewportRange.notify(
-          {
-            grid: this._grid,
-            item,
-            rowId,
-            rowIndex,
-            expandedRows: Array.from(this._expandedRows),
-            rowIdsOutOfViewport: Array.from(this.syncOutOfViewportArray(rowId, false)),
-          },
-          null,
-          this
-        );
+    // make sure View Row DOM Element really exist before notifying that it's a row that is visible again
+    if (document.querySelector(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`)) {
+      this.onRowBackToViewportRange.notify(
+        {
+          grid: this._grid,
+          item,
+          rowId,
+          rowIndex,
+          expandedRows: Array.from(this._expandedRowIds).map((id) => this.dataView.getItemById(id)),
+          rowIdsOutOfViewport: Array.from(this.syncOutOfViewportArray(rowId, false)),
+        },
+        null,
+        this
+      );
+    }
+  }
+
+  /**
+   * keep any row detail that are shown on top of the row that we're opening
+   * but invalidate any rows that are after the row that we're opening
+   */
+  protected reevaluateRenderedRowIds(item: any): void {
+    // get current item row index
+    const rowIdx = this.dataView.getRowById(item[this._dataViewIdProperty]) as number;
+    this._renderedViewportRowIds.forEach((rid) => {
+      const invRowIdx = this.dataView.getRowById(rid);
+      if (invRowIdx !== undefined && invRowIdx > rowIdx) {
+        this.notifyViewportChange(this.dataView.getItemById(rid), 'remove');
       }
-    }, 100);
+    });
   }
 
   protected syncOutOfViewportArray(rowId: number | string, isAdding: boolean): Set<string | number> {

@@ -245,7 +245,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
     panelRows: 1,
     keyPrefix: '__',
     useRowClick: false,
-    useSimpleViewportCalc: true,
     saveDetailViewOnScroll: false,
   } as RowDetailView,
   headerRowHeight: 35,

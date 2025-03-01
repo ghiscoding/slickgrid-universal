@@ -917,6 +917,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       const onBeforeFooterRowCellDestroySpy = vi.spyOn(grid.onBeforeFooterRowCellDestroy, 'notify');
+      const onBeforeRemoveCachedRowSpy = vi.spyOn(grid.onBeforeRemoveCachedRow, 'notify');
       vi.spyOn(grid, 'getRenderedRange').mockReturnValue({
         bottom: 1,
         leftPx: 0,
@@ -936,6 +937,8 @@ describe('SlickGrid core file', () => {
       vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(-1);
       grid.updateRowCount();
 
+      expect(grid.getRowCache()).toEqual({});
+      expect(onBeforeRemoveCachedRowSpy).toHaveBeenCalledTimes(4);
       expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');

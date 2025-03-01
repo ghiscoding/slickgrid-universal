@@ -1,64 +1,38 @@
+import { faker } from '@faker-js/faker';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import {
-  type Column,
-  createDomElement,
-  FieldType,
-  Filters,
-  Formatters,
-  type GridOption,
-  SlickEventHandler,
-  Editors,
-  ExtensionName,
-} from '@slickgrid-universal/common';
+import { type Column, createDomElement, type GridOption, SlickEventHandler, ExtensionName } from '@slickgrid-universal/common';
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
+import { InnerGridExample, type Distributor, type OrderData } from './example21-detail.js';
 import './example21.scss';
 
 const NB_ITEMS = 995;
 
-interface Item {
+export interface CreatedView {
   id: number;
-  title: string;
-  duration: number;
-  percentComplete: number;
-  start: Date;
-  finish: Date;
-  effortDriven: boolean;
-}
-interface ItemDetail extends Item {
-  assignee: string;
-  reporter: string;
+  dataContext: Distributor;
+  instance: InnerGridExample | null;
+  rendered: boolean;
 }
 
 export default class Example21 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
   private _eventHandler: SlickEventHandler;
-  isGridEditable = false;
-  detailViewRowCount = 7;
+  private _views: CreatedView[] = [];
+  detailViewRowCount = 11;
   gridOptions!: GridOption;
-  columnDefinitions!: Column<Item>[];
-  dataset!: Item[];
+  columnDefinitions!: Column<Distributor>[];
+  dataset!: Distributor[];
+  isUsingInnerGridStatePresets = false;
   sgb!: SlickVanillaGridBundle;
   selectedRowString = '';
   serverApiDelay = 400;
   status = '';
   statusClass = '';
   gridContainerElm: HTMLDivElement;
-  fakeNames = [
-    'John Doe',
-    'Jane Doe',
-    'Chuck Norris',
-    'Bumblebee',
-    'Jackie Chan',
-    'Elvis Presley',
-    'Bob Marley',
-    'Mohammed Ali',
-    'Bruce Lee',
-    'Rocky Balboa',
-  ];
   rowDetail!: SlickRowDetailView;
 
   constructor() {
@@ -82,17 +56,13 @@ export default class Example21 {
 
     // add all row detail event listeners
     this.addRowDetailEventHandlers();
-    this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowschanged', () => {
-      this.selectedRowString = this.sgb.slickGrid?.getSelectedRows().join(',') || '';
-      if (this.selectedRowString.length > 50) {
-        this.selectedRowString = this.selectedRowString.substring(0, 50) + '...';
-      }
-    });
+    this._bindingEventService.bind(this.gridContainerElm, 'onfilterchanged', this.redrawAllViewComponents.bind(this));
   }
 
   dispose() {
     this._eventHandler.unsubscribeAll();
     this._bindingEventService.unbindAll();
+    this.disposeAllViewComponents();
     this.sgb?.dispose();
     document.querySelector('.demo-container')?.classList.remove('dark-mode');
     document.body.setAttribute('data-theme', 'light');
@@ -102,70 +72,51 @@ export default class Example21 {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'title',
-        name: 'Title',
-        field: 'title',
-        width: 110,
-        minWidth: 110,
-        cssClass: 'cell-title',
+        id: 'companyId',
+        name: 'ID',
+        field: 'companyId',
+        cssClass: 'text-right',
+        minWidth: 50,
+        maxWidth: 50,
         filterable: true,
         sortable: true,
-        editor: { model: Editors.text },
+        type: 'number',
       },
       {
-        id: 'duration',
-        name: 'Duration',
-        field: 'duration',
+        id: 'companyName',
+        name: 'Company Name',
+        field: 'companyName',
         width: 90,
-        maxWidth: 200,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
       },
       {
-        id: '%',
-        name: '% Complete',
-        field: 'percentComplete',
-        minWidth: 100,
-        width: 250,
-        resizable: false,
+        id: 'streetAddress',
+        name: 'Street Address',
+        field: 'streetAddress',
+        minWidth: 120,
         filterable: true,
-        sortable: true,
-        editor: { model: Editors.slider },
-        type: FieldType.number,
-        formatter: Formatters.percentCompleteBar,
       },
       {
-        id: 'start',
-        name: 'Start',
-        field: 'start',
-        minWidth: 60,
-        maxWidth: 130,
+        id: 'city',
+        name: 'City',
+        field: 'city',
+        minWidth: 120,
         filterable: true,
-        filter: { model: Filters.compoundDate },
-        type: FieldType.dateIso,
-        formatter: Formatters.dateIso,
       },
       {
-        id: 'finish',
-        name: 'Finish',
-        field: 'finish',
-        minWidth: 60,
-        maxWidth: 130,
+        id: 'zipCode',
+        name: 'Zip Code',
+        field: 'zipCode',
+        minWidth: 120,
         filterable: true,
-        filter: { model: Filters.compoundDate },
-        type: FieldType.dateIso,
-        formatter: Formatters.dateIso,
       },
       {
-        id: 'effort-driven',
-        name: 'Effort Driven',
-        field: 'effortDriven',
-        width: 90,
-        minWidth: 20,
-        maxWidth: 120,
+        id: 'country',
+        name: 'Country',
+        field: 'country',
+        minWidth: 120,
         filterable: true,
-        formatter: Formatters.checkmarkMaterial,
       },
     ];
 
@@ -183,66 +134,98 @@ export default class Example21 {
       },
       rowHeight: 33,
       rowDetailView: {
-        columnIndexPosition: 1,
         cssClass: 'detail-view-toggle',
+        loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
         preTemplate: this.loadingTemplate.bind(this),
-        postTemplate: this.loadView.bind(this),
+        postTemplate: (itemDetail) => `<div class="container_${itemDetail.id}"></div>`,
         process: this.simulateServerAsyncCall.bind(this),
         useRowClick: false,
-
         // how many grid rows do we want to use for the detail panel
-        // also note that the detail view adds an extra 1 row for padding purposes
-        // example, if you choosed 6 panelRows, the display will in fact use 5 rows
         panelRows: this.detailViewRowCount,
-
-        // make only every 2nd row an expandable row,
-        // by using the override function to provide custom logic of which row is expandable
-        // you can override it here in the options or externally by calling the method on the plugin instance
-        expandableOverride: (_row, dataContext) => dataContext.id % 2 === 1,
-      },
-      rowSelectionOptions: {
-        // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false,
-      },
-
-      // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
-      enableCheckboxSelector: true,
-      enableRowSelection: true,
-      checkboxSelector: {
-        hideInFilterHeaderRow: false,
-        hideSelectAllCheckbox: true,
       },
     };
   }
 
-  changeEditableGrid() {
-    this.rowDetail.collapseAll();
-    this.rowDetail.addonOptions.useRowClick = false;
-    this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
-    this.sgb.slickGrid?.setOptions({
-      editable: true,
-      autoEdit: true,
-      enableCellNavigation: true,
+  addRowDetailEventHandlers() {
+    this.rowDetail.onBeforeRowDetailToggle.subscribe((_e, args) => {
+      // expanding
+      if (args?.item?.__collapsed) {
+        // probably need to render preload if exists?
+      } else {
+        // collapsing, so we need to dispose of the View
+        this.disposeView(args.item.id);
+      }
     });
-    return true;
+
+    this._eventHandler.subscribe(this.rowDetail.onAsyncEndUpdate, (_e, args) => {
+      this.renderView(args.item);
+    });
+
+    this._eventHandler.subscribe(this.rowDetail.onBeforeRowOutOfViewportRange, (_e, args) => {
+      this.disposeView(args.item.id);
+    });
+
+    this._eventHandler.subscribe(this.rowDetail.onRowBackToViewportRange, (_e, args) => {
+      this.renderView(args.item);
+    });
   }
 
-  toggleGridEditReadonly() {
-    // then change a single grid options to make the grid non-editable (readonly)
-    this.isGridEditable = !this.isGridEditable;
-    if (this.isGridEditable) {
-      this.rowDetail.collapseAll();
-      this.rowDetail.addonOptions.useRowClick = false;
-      this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
-      this.sgb.slickGrid?.setOptions({
-        editable: true,
-        autoEdit: true,
-        enableCellNavigation: true,
-      });
-    } else {
-      this.rowDetail.addonOptions.useRowClick = true;
-      this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
-      this.gridOptions = this.sgb.gridOptions;
+  redrawAllViewComponents() {
+    // const itemIds = this.rowDetail.getExpandedRowIds();
+    this.rowDetail.resetRenderedRows();
+    // this.disposeAllViewComponents();
+    // itemIds.forEach((id) => {
+    //   console.log('redraw', id);
+    //   const item = this.sgb.dataView?.getItemById(id);
+    //   if (item) {
+    //     this.renderView(item);
+    //   }
+    // });
+  }
+
+  /** Dispose of all the opened Row Detail Panels Components */
+  disposeAllViewComponents() {
+    if (Array.isArray(this._views)) {
+      do {
+        const view = this._views.pop();
+        if (view) {
+          view.rendered = false;
+          this.disposeView(view.id);
+        }
+      } while (this._views.length > 0);
+    }
+  }
+
+  disposeView(itemId: number) {
+    const viewIdx = this._views.findIndex((obj) => obj.id === itemId);
+    const viewObj = this._views[viewIdx];
+    if (viewObj?.instance) {
+      viewObj.instance.dispose();
+      viewObj.instance = null;
+      viewObj.dataContext = null as any;
+      viewObj.id = undefined as any;
+      viewObj.rendered = false;
+      this._views.splice(viewIdx, 1);
+    }
+  }
+
+  renderView(item: Distributor) {
+    if (this._views.findIndex((obj) => obj.id === item.id) >= 0) {
+      this.disposeView(item.id);
+    }
+    const gridContainerElm = this.sgb.slickGrid?.getContainerNode();
+    const containerElm = gridContainerElm?.querySelector<HTMLDivElement>(`.container_${item.id}`);
+    if (containerElm) {
+      containerElm.textContent = '';
+      const instance = new InnerGridExample(containerElm, item);
+      const view: CreatedView = {
+        id: item.id,
+        dataContext: item,
+        instance,
+        rendered: true,
+      };
+      instance.mount(containerElm);
+      this._views.push(view);
     }
   }
 
@@ -258,39 +241,10 @@ export default class Example21 {
     }
   }
 
-  addRowDetailEventHandlers() {
-    this.rowDetail.onBeforeRowDetailToggle.subscribe((_e, args) => {
-      // you coud cancel opening certain rows
-      // if (args.item.id === 1) {
-      //   e.preventDefault();
-      //   return false;
-      // }
-      console.log('before toggling row detail', args.item);
-    });
-
-    this._eventHandler.subscribe(this.rowDetail.onAfterRowDetailToggle, (_e, args) => {
-      console.log('after toggling row detail', args.item);
-      if (args.item._collapsed) {
-        this.disposeRowDetailElementListeners(args.item.id);
-      }
-    });
-
-    this._eventHandler.subscribe(this.rowDetail.onAsyncEndUpdate, (_e, args) => {
-      console.log('finished updating the post async template', args);
-      this.addDeleteRowOnClickListener(args.item.id);
-      this.addAssigneeOnClickListener(args.item.id);
-    });
-
-    // the following subscribers can be useful to Save/Re-Render a View
-    // when it goes out of viewport or back to viewport range
-    this._eventHandler.subscribe(this.rowDetail.onRowOutOfViewportRange, (_e, args) => {
-      this.disposeRowDetailElementListeners(args.item.id);
-    });
-
-    this._eventHandler.subscribe(this.rowDetail.onRowBackToViewportRange, (_e, args) => {
-      this.addDeleteRowOnClickListener(args.item.id);
-      this.addAssigneeOnClickListener(args.item.id);
-    });
+  changeUsingInnerGridStatePresets(checked: boolean) {
+    this.isUsingInnerGridStatePresets = checked;
+    this.closeAllRowDetail();
+    return true;
   }
 
   /** Loading template, can be an HTML string or an HTML Element */
@@ -302,63 +256,44 @@ export default class Example21 {
     return headerElm;
   }
 
-  /** Row Detail View, can be an HTML string or an HTML Element (we'll use HTML string for simplicity of the demo) */
-  loadView(itemDetail: ItemDetail) {
-    return `
-      <div>
-        <h4 class="title is-4">${itemDetail.title}</h4>
-        <div class="container">
-          <div class="columns">
-            <div class="column is-half">
-            <div class="detail"><label>Assignee:</label> <input class="input is-small is-8 column mt-1" id="assignee_${itemDetail.id}" type="text" value="${itemDetail.assignee}"/></div>
-              <div class="detail"><label>Reporter:</label> <span>${itemDetail.reporter}</span></div>
-              <div class="detail"><label>Duration:</label> <span>${itemDetail.duration}</span></div>
-              <div class="detail"><label>% Complete:</label> <span>${itemDetail.percentComplete}</span></div>
-              <div class="detail"><label>Start:</label> <span>${itemDetail.start.toDateString()}</span></div>
-              <div class="detail"><label>Finish:</label> <span>${itemDetail.finish.toDateString()}</span></div>
-              <div class="detail"><label>Effort Driven:</label> <span>${itemDetail.effortDriven}</span></div>
-            </div>
-            <div class="column is-half">
-              <div class="detail">
-                <span class="is-flex is-align-items-center">
-                  <label>Find out who is the Assignee</label>
-                  <button class="button is-small" id="who-is-assignee_${itemDetail.id}" data-test="assignee-btn">Click Me</button>
-                </span>
-                <button class="button is-small is-danger ml-5" id="delete_row_${itemDetail.id}" data-test="delete-btn">
-                  Delete Row
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
   /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
-  simulateServerAsyncCall(item: ItemDetail) {
-    // random set of names to use for more item detail
-    const randomNames = [
-      'John Doe',
-      'Jane Doe',
-      'Chuck Norris',
-      'Bumblebee',
-      'Jackie Chan',
-      'Elvis Presley',
-      'Bob Marley',
-      'Mohammed Ali',
-      'Bruce Lee',
-      'Rocky Balboa',
-    ];
+  simulateServerAsyncCall(item: Distributor) {
+    let orderData: OrderData[] = [];
+    // let's mock some data but make it predictable for easier Cypress E2E testing
+    if (item.id % 3) {
+      orderData = [
+        { orderId: '10261', shipCity: 'Rio de Janeiro', freight: 3.05, shipName: 'Que Delícia' },
+        { orderId: '10267', shipCity: 'München', freight: 208.58, shipName: 'Frankenversand' },
+        { orderId: '10281', shipCity: 'Madrid', freight: 2.94, shipName: 'Romero y tomillo' },
+      ];
+    } else if (item.id % 4) {
+      orderData = [
+        { orderId: '10251', shipCity: 'Lyon', freight: 41.34, shipName: 'Victuailles en stock' },
+        { orderId: '10253', shipCity: 'Rio de Janeiro', freight: 58.17, shipName: 'Hanari Carnes' },
+        { orderId: '10256', shipCity: 'Resende', freight: 13.97, shipName: 'Wellington Importadora' },
+      ];
+    } else if (item.id % 5) {
+      orderData = [
+        { orderId: '10265', shipCity: 'Strasbourg', freight: 55.28, shipName: 'Blondel père et fils' },
+        { orderId: '10277', shipCity: 'Leipzig', freight: 125.77, shipName: 'Morgenstern Gesundkost' },
+        { orderId: '10280', shipCity: 'Luleå', freight: 8.98, shipName: 'Berglunds snabbköp' },
+        { orderId: '10295', shipCity: 'Reims', freight: 1.15, shipName: 'Vins et alcools Chevalier' },
+      ];
+    } else if (item.id % 2) {
+      orderData = [
+        { orderId: '10258', shipCity: 'Graz', freight: 140.51, shipName: 'Ernst Handel' },
+        { orderId: '10270', shipCity: 'Oulu', freight: 136.54, shipName: 'Wartian Herkku' },
+      ];
+    } else {
+      orderData = [{ orderId: '10255', shipCity: 'Genève', freight: 148.33, shipName: 'Richter Supermarkt' }];
+    }
 
     // fill the template on async delay
     return new Promise((resolve) => {
       window.setTimeout(() => {
         const itemDetail = item;
-
-        // let's add some extra properties to our item for a better async simulation
-        itemDetail.assignee = randomNames[this.randomNumber(0, 9)] || '';
-        itemDetail.reporter = randomNames[this.randomNumber(0, 9)] || '';
+        itemDetail.orderData = orderData;
+        itemDetail.isUsingInnerGridStatePresets = this.isUsingInnerGridStatePresets;
 
         this.notifyTemplate(itemDetail);
 
@@ -370,91 +305,36 @@ export default class Example21 {
 
   // notify the onAsyncResponse with the "args.item" (required property)
   // the plugin will then use itemDetail to populate the detail panel with "postTemplate"
-  notifyTemplate(itemDetail: ItemDetail) {
+  notifyTemplate(itemDetail: Distributor) {
     this.rowDetail.onAsyncResponse.notify(
       {
         item: itemDetail,
         itemDetail,
+        params: { isUsingInnerGridStatePresets: this.isUsingInnerGridStatePresets },
       },
       undefined,
       this
     );
   }
 
-  addDeleteRowOnClickListener(itemId: string) {
-    const deleteBtnElm = document.querySelector('#delete_row_' + itemId);
-    if (deleteBtnElm) {
-      this._bindingEventService.bind(deleteBtnElm, 'click', this.handleDeleteRow.bind(this, itemId), undefined, `event-detail-${itemId}`);
-    }
-  }
-
-  addAssigneeOnClickListener(itemId: string) {
-    const assigneeBtnElm = document.querySelector('#who-is-assignee_' + itemId);
-    if (assigneeBtnElm) {
-      this._bindingEventService.bind(
-        assigneeBtnElm,
-        'click',
-        this.handleAssigneeClicked.bind(this, itemId),
-        undefined,
-        `event-detail-${itemId}`
-      );
-    }
-  }
-
-  handleAssigneeClicked(itemId: string) {
-    alert('Assignee is ' + document.querySelector<HTMLInputElement>('#assignee_' + itemId)!.value);
-  }
-
-  handleDeleteRow(itemId: string) {
-    if (confirm(`Are you sure that you want to delete "Task ${itemId}"?`)) {
-      // you first need to collapse all rows (via the 3rd party addon instance)
-      this.rowDetail.collapseAll();
-
-      // then you can delete the item from the dataView
-      this.sgb.dataView?.deleteItem(+itemId);
-
-      this.status = `Deleted row with Task ${itemId}`;
-      this.statusClass = 'notification is-light is-danger is-narrow';
-
-      // remove message after 2sec.
-      window.setTimeout(() => {
-        this.status = '';
-        this.statusClass = '';
-      }, 2000);
-    }
-  }
-
-  /** dispose/remove event listener when closing the row detail(s) to avoid event leaks */
-  disposeRowDetailElementListeners(itemId: string) {
-    // remove all button event listeners attached to a specific row event detail
-    this._bindingEventService.unbindAll(`event-detail-${itemId}`);
-  }
-
   mockData(count: number) {
     // mock a dataset
-    const mockDataset: Item[] = [];
+    const mockDataset: Distributor[] = [];
     for (let i = 0; i < count; i++) {
-      const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor(Math.random() * 29);
-      const randomPercent = Math.round(Math.random() * 100);
-
       mockDataset[i] = {
         id: i,
-        title: 'Task ' + i,
-        duration: Math.round(Math.random() * 100),
-        percentComplete: randomPercent,
-        start: new Date(randomYear, randomMonth + 1, randomDay),
-        finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
-        effortDriven: i % 5 === 0,
+        companyId: i,
+        companyName: faker.company.name(),
+        city: faker.location.city(),
+        streetAddress: faker.location.streetAddress(),
+        zipCode: faker.location.zipCode('######'),
+        country: faker.location.country(),
+        orderData: [],
+        isUsingInnerGridStatePresets: false,
       };
     }
 
     return mockDataset;
-  }
-
-  randomNumber(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   toggleDarkMode() {

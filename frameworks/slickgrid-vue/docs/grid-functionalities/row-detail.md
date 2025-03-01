@@ -424,3 +424,141 @@ addNewColumn() {
   }
 }
 ```
+
+## Row Detail with Inner Grid
+
+You can also add an inner grid inside a Row Detail, however there are a few things to know off and remember. Any time a Row Detail is falling outside the main grid viewport, it will be unmounted and until it comes back into the viewport which is then remounted. The process of unmounting and remounting means that Row Detail previous states aren't preserved, however you could use Grid State & Presets to overcome this problem.
+
+##### Component
+
+Main Grid Component
+
+```vue
+<script setup lang="ts">
+import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { onBeforeMount, type Ref } from 'vue';
+
+const gridOptions = ref<GridOption>();
+const columnDefinitions: Ref<Column[]> = ref([]);
+const dataset = ref<any[]>([]);
+
+onBeforeMount(() => {
+  defineGrid();
+});
+
+function defineGrid() {
+  const columnDefinitions = [/*...*/];
+  gridOptions.value = {
+    enableRowDetailView: true,
+    rowSelectionOptions: {
+      selectActiveRow: true
+    },
+    preRegisterExternalExtensions: (pubSubService) => {
+      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
+      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
+      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
+      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+    },
+    rowDetailView: {
+      process: (item: any) => simulateServerAsyncCall(item),
+      loadOnce: false, // IMPORTANT, you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
+      panelRows: 10,
+      preloadComponent: PreloadComponent,
+      viewComponent:  InnerGridComponent,
+    },
+  };
+}
+</script>
+
+<template>
+  <SlickgridVue
+    grid-id="grid40"
+    v-model:columns="columnDefinitions"
+    v-model:options="gridOptions"
+    v-model:data="dataset" />
+</template>
+```
+
+Now, let's define our Inner Grid Component
+
+```vue
+<script setup lang="ts">
+import { type Column, type GridOption, GridState, type RowDetailViewProps, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { onBeforeMount, onMounted, ref, type Ref } from 'vue';
+
+import MainGrid from './MainGrid.vue';
+
+export interface Distributor { /* ... */ }
+export interface OrderData { /* ... */ }
+
+const props = defineProps<RowDetailViewProps<Distributor, typeof MainGrid>>();
+
+const innerGridOptions = ref<GridOption>();
+const innerColDefs: Ref<Column[]> = ref([]);
+const innerDataset = ref<any[]>([]);
+const innerGridClass = ref(`row-detail-${props.model.id}`);
+let vueGrid!: SlickgridVueInstance;
+
+onBeforeMount(() => {
+  defineGrid();
+});
+
+onMounted(() => {
+  innerDataset.value = [...props.model.orderData];
+  showGrid.value = true;
+});
+
+// OPTIONALLY save Grid State before unmounting the compoment
+function handleBeforeGridDestroy() {
+  const gridState = vueGrid.gridStateService.getCurrentGridState();
+  sessionStorage.setItem(`gridstate_${innerGridClass.value}`, JSON.stringify(gridState));
+}
+
+function defineGrid() {
+  // OPTIONALLY reapply Grid State as Presets before unmounting the compoment
+  const gridStateStr = sessionStorage.getItem(`gridstate_${innerGridClass.value}`);
+  let gridState: GridState | undefined;
+  if (gridStateStr) {
+    gridState = JSON.parse(gridStateStr);
+  }
+
+  innerColDefs.value = [
+    { id: 'orderId', field: 'orderId', name: 'Order ID', filterable: true, sortable: true },
+    { id: 'shipCity', field: 'shipCity', name: 'Ship City', filterable: true, sortable: true },
+    { id: 'freight', field: 'freight', name: 'Freight', filterable: true, sortable: true, type: 'number' },
+    { id: 'shipName', field: 'shipName', name: 'Ship Name', filterable: true, sortable: true },
+  ];
+
+  innerGridOptions.value = {
+    autoResize: {
+      container: `.${innerGridClass.value}`,
+    },
+    enableFiltering: true,
+    enableSorting: true,
+    datasetIdPropertyName: 'orderId',
+    presets: gridState, // reapply grid state presets
+  };
+}
+
+function vueGridReady(grid: SlickgridVueInstance) {
+  vueGrid = grid;
+}
+</script>
+<template>
+  <div :class="innerGridClass">
+    <h4>Order Details (id: {{ model.id }})</h4>
+    <div class="container-fluid">
+      <slickgrid-vue
+        v-if="showGrid"
+        v-model:options="innerGridOptions"
+        v-model:columns="innerColDefs"
+        v-model:data="innerDataset"
+        :grid-id="`innergrid-${model.id}`"
+        @onBeforeGridDestroy="handleBeforeGridDestroy"
+        @onVueGridCreated="vueGridReady($event.detail)"
+      >
+      </slickgrid-vue>
+    </div>
+  </div>
+</template>
+```

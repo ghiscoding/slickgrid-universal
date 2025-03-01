@@ -13,6 +13,7 @@ export interface OnRowCountChangedEventArgs {
   current: number;
   itemCount: number;
   dataView: SlickDataView;
+  changedRows?: number[];
   callingOnRowsChanged: boolean;
 }
 export interface OnRowsChangedEventArgs {
