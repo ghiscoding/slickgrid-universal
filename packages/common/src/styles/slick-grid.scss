@@ -56,6 +56,7 @@
   outline: 0;
   position: relative;
   box-sizing: content-box;
+  overflow: hidden;
   width: 100%;
   border-top: var(--slick-container-border-top, v.$slick-container-border-top);
   border-bottom: var(--slick-container-border-bottom, v.$slick-container-border-bottom);
