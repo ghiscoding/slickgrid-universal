@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/ghiscoding/slickgrid-universal/slickgrid-vue/compare/v1.0.2...v1.1.0) (2025-03-01)
+
+* Row Detail with inner grids ([#1853](https://github.com/ghiscoding/slickgrid-universal/issues/1853)) ([3c9d544](https://github.com/ghiscoding/slickgrid-universal/commit/3c9d54493ce670611a25a6cf4944fed9c2bfe280)) - by @ghiscoding
+
 ## [1.0.2](https://github.com/ghiscoding/slickgrid-universal/slickgrid-vue/compare/v1.0.1...v1.0.2) (2025-02-08)
 
 * **vue:** Row Detail were not unmounted correctly before recreating them ([#1840](https://github.com/ghiscoding/slickgrid-universal/issues/1840)) ([080e815](https://github.com/ghiscoding/slickgrid-universal/commit/080e815b3b83f99d07bbd8e1c8e70ff75e90057f)) - by @ghiscoding
