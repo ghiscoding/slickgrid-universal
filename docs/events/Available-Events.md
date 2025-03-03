@@ -146,6 +146,7 @@ handleOnHeaderMenuCommand(e) {
   - `onBeforeFooterRowCellDestroy`
   - `onBeforeHeaderCellDestroy`
   - `onBeforeHeaderRowCellDestroy`
+  - `onBeforeRemoveCachedRow`
   - `onBeforeSetColumns`
   - `onBeforeSort`
   - `onBeforeUpdateColumns`
