@@ -26,7 +26,7 @@ export default defineConfig({
     },
     environment: 'happy-dom',
     fakeTimers: {
-      toFake: ['setTimeout', 'setInterval', 'queueMicrotask'],
+      toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask'],
     },
     pool: 'threads',
     globalSetup: './test/vitest-global-setup.ts',
