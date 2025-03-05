@@ -7,9 +7,6 @@
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/slickgrid-vue?color=success&label=gzip)](https://bundlephobia.com/result?p=slickgrid-vue)
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml)
 
-> [!WARNING]
-> Please note that Slickgrid-Vue is still in active development and usage might change depending on feedback provided by external users like you. However, I don't expect much changes since all examples are working as expected. Give it a try and star ⭐ the project if you like it, thanks!
-
 ## Description 
 SlickGrid-Vue is a custom component created specifically for [VueJS](https://vuejs.org/) framework, it is a wrapper on top of Slickgrid-Universal library which contains the core functionalities. Slickgrid-Universal is written with TypeScript in browser native code, it is framework agnostic and is a monorepo that includes all Editors, Filters, Extensions and Services related to SlickGrid usage with also a few optional packages (like GraphQL, OData, Export to Excel, ...).
 
