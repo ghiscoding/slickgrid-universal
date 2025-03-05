@@ -931,7 +931,7 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1).mockReturnValueOnce(1);
       const loadingTemplate = () => '<span>loading...</span>';
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
-      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(50);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(50);
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 20, bottom: 44, left: 33, right: 18 } as any);
       divContainer.appendChild(cellDetailViewElm);
       Object.defineProperty(detailViewContainerElm, 'scrollHeight', { writable: true, configurable: true, value: 4 });
@@ -984,7 +984,12 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
-      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(100).mockReturnValueOnce(123);
+      vi.spyOn(dataviewStub, 'getRowById')
+        .mockReturnValueOnce(123)
+        .mockReturnValueOnce(123)
+        .mockReturnValueOnce(123)
+        .mockReturnValueOnce(123)
+        .mockReturnValueOnce(123);
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
         121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
