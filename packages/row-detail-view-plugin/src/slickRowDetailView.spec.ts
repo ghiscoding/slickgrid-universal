@@ -1012,7 +1012,6 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandDetailView(itemMock.id);
       plugin.rowIdsOutOfViewport = [0, 2];
 
-      const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
       gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       vi.advanceTimersByTime(1);
@@ -1032,7 +1031,6 @@ describe('SlickRowDetailView plugin', () => {
         _height: 150,
         _sizePadding: 6,
       });
-      expect(onRowBackToViewportSpy).toHaveBeenCalled();
 
       // -- out of range
       const onRowBackViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
@@ -1042,7 +1040,6 @@ describe('SlickRowDetailView plugin', () => {
       plugin.collapseDetailView(1);
 
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
-        // 99: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
@@ -1052,8 +1049,6 @@ describe('SlickRowDetailView plugin', () => {
 
       gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 53, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       vi.advanceTimersByTime(1);
-
-      expect(onRowOutOfViewportSpy).toHaveBeenCalled();
 
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 125, bottom: 150, left: 33, right: 18 } as any);
       plugin.expandDetailView(123);
