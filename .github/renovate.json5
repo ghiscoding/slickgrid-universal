@@ -27,10 +27,6 @@
       packageNames: ['vite-plugin-dts'],
       allowedVersions: '4.5.0',
     },
-    {
-      packageNames: ['vitest', '@vitest/ui', '@vitest/coverage-v8'],
-      allowedVersions: '3.0.5', // latest version seems to be causing regression in tests, maybe because of https://github.com/vitest-dev/vitest/pull/7499
-    },
   ],
   ignoreDeps: ['node', 'pnpm'],
   schedule: ['every 4 weeks on friday'],
