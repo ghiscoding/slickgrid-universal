@@ -4619,7 +4619,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.getVisibleRange(viewportTop, viewportLeft);
   }
 
-  /** Get the visible range (excluding the row buffer) */
+  /**
+   * Returns an object with the top and bottom row indices that are visible in the viewport, as well
+   * as the left and right pixel boundaries.
+   * It uses the current (or provided) scroll positions and viewport dimensions.
+   *
+   * @param {number} [viewportTop] - The top scroll position.
+   * @param {number} [viewportLeft] - The left scroll position.
+   * @returns {{ top: number; bottom: number; leftPx: number; rightPx: number }} The visible range.
+   */
   getVisibleRange(viewportTop?: number, viewportLeft?: number): CellViewportRange {
     viewportTop ??= this.scrollTop;
     viewportLeft ??= this.scrollLeft;
@@ -4632,7 +4640,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
   }
 
-  /** Get rendered range including the extra row buffer */
+  /**
+   * Computes the range of rows (and horizontal pixel boundaries) that should be rendered,
+   * including an additional buffer (based on row height and a minimum buffer) determined by
+   * the current vertical scroll direction.
+   * This range is used to decide which rows and cells to render.
+   *
+   * @param {number} [viewportTop] - The top scroll position.
+   * @param {number} [viewportLeft] - The left scroll position.
+   * @returns {{ top: number; bottom: number; leftPx: number; rightPx: number }} The rendered range.
+   */
   getRenderedRange(viewportTop?: number, viewportLeft?: number): CellViewportRange {
     const range = this.getVisibleRange(viewportTop, viewportLeft);
     const buffer = Math.round(this.viewportH / this._options.rowHeight!);
@@ -4659,6 +4676,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     range.rightPx = Math.min(this.canvasWidth, range.rightPx);
 
     return range;
+  }
+
+  /**
+   * Returns the rows cache that are currently rendered in the DOM,
+   * the cache includes certain properties like the row div element, cell rendered queue and the row colspan when defined.
+   */
+  getRowCache(): Record<number, RowCaching> {
+    return this.rowsCache;
   }
 
   protected ensureCellNodesInRowsCache(row: number): void {
@@ -6987,10 +7012,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
     return null;
-  }
-
-  getRowCache(): Record<number, RowCaching> {
-    return this.rowsCache;
   }
 
   /**
