@@ -1047,7 +1047,6 @@ describe('SlickRowDetailView plugin', () => {
       plugin.collapseDetailView(1);
 
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
-        // 99: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
         124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
