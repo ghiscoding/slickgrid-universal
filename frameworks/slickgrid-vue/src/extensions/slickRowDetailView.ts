@@ -4,7 +4,6 @@ import {
   type OnBeforeRowDetailToggleArgs,
   type OnRowBackToViewportRangeArgs,
   SlickEventData,
-  type SlickEventHandler,
   type SlickGrid,
   SlickRowSelectionModel,
   unsubscribeAll,
@@ -45,13 +44,6 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   protected get datasetIdPropName(): string {
     return this.gridOptions.datasetIdPropertyName || 'id';
-  }
-
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-  set eventHandler(eventHandler: SlickEventHandler) {
-    this._eventHandler = eventHandler;
   }
 
   get gridOptions(): GridOption {
