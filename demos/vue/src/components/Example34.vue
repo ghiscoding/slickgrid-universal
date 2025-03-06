@@ -261,6 +261,7 @@ function defineGrid() {
   gridOptions.value = {
     autoResize: {
       container: '.trading-platform',
+      autoHeight: false,
       rightPadding: 0,
       bottomPadding: 10,
     },
