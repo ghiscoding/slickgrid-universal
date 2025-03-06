@@ -275,6 +275,7 @@ export default class Example18 {
     this.gridOptions = {
       autoResize: {
         container: '.trading-platform',
+        autoHeight: false,
         rightPadding: 0,
         bottomPadding: 20,
       },
