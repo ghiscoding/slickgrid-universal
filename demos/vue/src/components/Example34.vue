@@ -458,16 +458,16 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    Simulate a stock trading platform with lot of price changes
+    subTitle = `Simulate a stock trading platform with lot of price changes, it is strongly suggested to disable the
+    <code>autoResize.autoHeight</code> grid option for this type of grid.
     <ul>
-      <li>you can start/stop the simulation</li>
+      <li>
+        you can start/stop the simulation, you can see SlickGrid huge perf by setting: (1) lower Changes Rate, (2) increase both Changes per
+        Cycle, and (3) lower Highlight Duration
+      </li>
       <li>optionally change random numbers, between 0 and 10 symbols, per cycle (higher numbers means more changes)</li>
       <li>optionally change the simulation changes refresh rate in ms (lower number means more changes).</li>
       <li>you can Group by 1 of these columns: Currency, Market or Type</li>
-      <li>
-        to show SlickGrid HUGE PERF., do the following: (1) lower Changes Rate (2) increase both Changes per Cycle and (3) lower Highlight
-        Duration
-      </li>
     </ul>
   </div>
 
