@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Column, type GridOption, GridState, type RowDetailViewProps, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
-import { onBeforeMount, onMounted, ref, type Ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
 
 import Example45 from './Example45.vue';
 
@@ -34,6 +34,10 @@ let vueGrid!: SlickgridVueInstance;
 
 onBeforeMount(() => {
   defineGrid();
+});
+
+onBeforeUnmount(() => {
+  // console.log('unmounting row detail');
 });
 
 onMounted(() => {
