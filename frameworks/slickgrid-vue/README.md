@@ -50,7 +50,7 @@ const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
   
 ### Stackblitz
 
-You can also play with the live Stackbliz [Slickgrid-Vite-Demos](https://github.com/ghiscoding/slickgrid-vue-demos). It is also the recommended way to provide a repro when opening a new bug/feature request.
+You can also play with the live Stackbliz [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos). It is also the recommended way to provide a repro when opening a new bug/feature request.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
 
