@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker';
-import { type GridOption, type SlickgridVueInstance, type Column, ExtensionName, SlickgridVue } from 'slickgrid-vue';
+import { type Column, ExtensionName, type GridOption, SlickRowDetailView, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 import Example45Detail, { OrderData, type Distributor } from './Example45Detail.vue';
@@ -18,7 +18,9 @@ const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView));
+const rowDetailInstance = computed(
+  () => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as SlickRowDetailView
+);
 
 onBeforeMount(() => {
   defineGrid();
@@ -147,6 +149,10 @@ function closeAllRowDetail() {
   rowDetailInstance.value.collapseAll();
 }
 
+function redrawAllRowDetail() {
+  rowDetailInstance.value.redrawAllViewComponents();
+}
+
 /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
 function simulateServerAsyncCall(item: Distributor) {
   let orderData: OrderData[] = [];
@@ -262,7 +268,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="collapse-all-btn" @click="closeAllRowDetail()">
           Close all Row Details
         </button>
-        &nbsp;&nbsp;
+
+        <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="redraw-all-btn" @click="redrawAllRowDetail()">
+          Force redraw all Row Details
+        </button>
 
         <span class="d-inline-flex gap-4px">
           <label for="detailViewRowCount">Detail View Rows Shown: </label>

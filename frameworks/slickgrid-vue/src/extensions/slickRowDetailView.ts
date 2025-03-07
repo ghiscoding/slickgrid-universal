@@ -401,8 +401,6 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         awaitedItemDetail = response; // from Promise
       } else if (response instanceof Response && typeof response['json'] === 'function') {
         awaitedItemDetail = await response['json'](); // from Fetch
-      } else if (response && response['content']) {
-        awaitedItemDetail = response['content']; // from http-client
       }
 
       if (!awaitedItemDetail || !(this.datasetIdPropName in awaitedItemDetail)) {
