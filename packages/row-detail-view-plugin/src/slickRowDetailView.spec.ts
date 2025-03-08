@@ -218,7 +218,7 @@ describe('SlickRowDetailView plugin', () => {
   });
 
   it('should trigger "onAsyncResponse" when calling "expandDetailView()" when template is already cached from loadOnce', () => {
-    const mockItem = { _detailViewLoaded: true, _detailContent: 'loading...', id: 1, firstName: 'John', lastName: 'Doe' };
+    const mockItem = { __detailViewLoaded: true, __detailContent: 'loading...', id: 1, firstName: 'John', lastName: 'Doe' };
     const mockProcess = vi.fn();
     vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
       0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
@@ -340,7 +340,7 @@ describe('SlickRowDetailView plugin', () => {
   it('should expect the item parent to be returned when calling "getFilterItem" and the grid row is a Row Detail and has padding', () => {
     const parentItemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
     plugin.init(gridStub);
-    const output = plugin.getFilterItem({ _isPadding: true, _parent: parentItemMock });
+    const output = plugin.getFilterItem({ __isPadding: true, __parent: parentItemMock });
 
     expect(output).toEqual(parentItemMock);
   });
@@ -369,8 +369,8 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
-      _detailContent: '<span>Post 123</span>',
-      _detailViewLoaded: true,
+      __detailContent: '<span>Post 123</span>',
+      __detailViewLoaded: true,
       id: 123,
       firstName: 'John',
       lastName: 'Doe',
@@ -379,7 +379,7 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
+        itemDetail: { __detailContent: '<span>Post 123</span>', __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -414,8 +414,8 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
-      _detailContent: createDomElement('span', { textContent: 'Post 123' }),
-      _detailViewLoaded: true,
+      __detailContent: createDomElement('span', { textContent: 'Post 123' }),
+      __detailViewLoaded: true,
       id: 123,
       firstName: 'John',
       lastName: 'Doe',
@@ -425,8 +425,8 @@ describe('SlickRowDetailView plugin', () => {
         grid: gridStub,
         item: itemMock,
         itemDetail: {
-          _detailContent: createDomElement('span', { textContent: 'Post 123' }),
-          _detailViewLoaded: true,
+          __detailContent: createDomElement('span', { textContent: 'Post 123' }),
+          __detailViewLoaded: true,
           id: 123,
           firstName: 'John',
           lastName: 'Doe',
@@ -447,8 +447,8 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
-      _detailContent: `<span>loading...</span>`,
-      _detailViewLoaded: true,
+      __detailContent: `<span>loading...</span>`,
+      __detailViewLoaded: true,
       id: 123,
       firstName: 'John',
       lastName: 'Doe',
@@ -457,7 +457,7 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
+        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -483,8 +483,8 @@ describe('SlickRowDetailView plugin', () => {
     gridStub.onClick.notify({ row: 0, cell: 1, grid: gridStub }, clickEvent);
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
-      _detailContent: `<span>loading...</span>`,
-      _detailViewLoaded: true,
+      __detailContent: `<span>loading...</span>`,
+      __detailViewLoaded: true,
       id: 123,
       firstName: 'John',
       lastName: 'Doe',
@@ -493,7 +493,7 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
+        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -509,7 +509,7 @@ describe('SlickRowDetailView plugin', () => {
     vi.spyOn(onBeforeSlickEventData, 'getReturnValue').mockReturnValue(false);
     const beforeRowDetailToggleSpy = vi.spyOn(plugin.onBeforeRowDetailToggle, 'notify').mockReturnValueOnce(onBeforeSlickEventData);
     const afterRowDetailToggleSpy = vi.spyOn(plugin.onAfterRowDetailToggle, 'notify');
-    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: true };
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
     const detailView = `<span>loading...</span>`;
     vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
@@ -543,7 +543,7 @@ describe('SlickRowDetailView plugin', () => {
     const expandDetailViewSpy = vi.spyOn(plugin, 'expandDetailView');
     const beforeRowDetailToggleSpy = vi.spyOn(plugin.onBeforeRowDetailToggle, 'notify');
     const afterRowDetailToggleSpy = vi.spyOn(plugin.onAfterRowDetailToggle, 'notify');
-    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: true };
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
     const detailView = `<span>loading...</span>`;
     vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
@@ -585,8 +585,8 @@ describe('SlickRowDetailView plugin', () => {
     const filteredItem = plugin.getFilterItem(itemMock);
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
-      _detailContent: `<span>loading...</span>`,
-      _detailViewLoaded: true,
+      __detailContent: `<span>loading...</span>`,
+      __detailViewLoaded: true,
       id: 123,
       firstName: 'John',
       lastName: 'Doe',
@@ -595,7 +595,7 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
+        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -645,8 +645,8 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
-      _detailContent: `<span>loading...</span>`,
-      _detailViewLoaded: true,
+      __detailContent: `<span>loading...</span>`,
+      __detailViewLoaded: true,
       id: 123,
       firstName: 'John',
       lastName: 'Doe',
@@ -655,7 +655,7 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
+        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -677,8 +677,8 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: {
-          _detailViewLoaded: true,
-          _detailContent: '<span>loading...</span>',
+          __detailViewLoaded: true,
+          __detailContent: '<span>loading...</span>',
           id: 123,
           firstName: 'John',
           lastName: 'Doe',
@@ -692,19 +692,19 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: {
-          _detailViewLoaded: true,
-          _detailContent: '<span>loading...</span>',
+          __detailViewLoaded: true,
+          __detailContent: '<span>loading...</span>',
           id: 123,
           firstName: 'John',
           lastName: 'Doe',
         },
         expandedRows: [
           {
-            _collapsed: true,
-            _detailContent: '<span>loading...</span>',
-            _detailViewLoaded: false,
-            _height: 150,
-            _sizePadding: 0,
+            __collapsed: true,
+            __detailContent: '<span>loading...</span>',
+            __detailViewLoaded: false,
+            __height: 150,
+            __sizePadding: 0,
             firstName: 'John',
             id: 1,
             lastName: 'Doe',
@@ -764,11 +764,11 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: true,
-        _detailViewLoaded: true,
-        _sizePadding: 9,
-        _height: 150,
-        _detailContent: '<span>loading...</span>',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 9,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
       };
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(123).mockReturnValueOnce(123);
@@ -799,25 +799,25 @@ describe('SlickRowDetailView plugin', () => {
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
-        _collapsed: true,
-        _detailContent: '',
-        _detailViewLoaded: true,
-        _height: 180,
-        _sizePadding: 7,
+        __collapsed: true,
+        __detailContent: '',
+        __detailViewLoaded: true,
+        __height: 180,
+        __sizePadding: 7,
       });
       expect(insertItemSpy).toHaveBeenCalledWith(
         4,
         expect.objectContaining({
           id: '123.1',
-          _collapsed: true,
-          _isPadding: true,
-          _offset: 1,
-          _parent: {
-            _collapsed: true,
-            _detailContent: '',
-            _detailViewLoaded: true,
-            _height: 180,
-            _sizePadding: 7,
+          __collapsed: true,
+          __isPadding: true,
+          __offset: 1,
+          __parent: {
+            __collapsed: true,
+            __detailContent: '',
+            __detailViewLoaded: true,
+            __height: 180,
+            __sizePadding: 7,
             firstName: 'John',
             id: 123,
             lastName: 'Doe',
@@ -828,15 +828,15 @@ describe('SlickRowDetailView plugin', () => {
         5,
         expect.objectContaining({
           id: '123.2',
-          _collapsed: true,
-          _isPadding: true,
-          _offset: 2,
-          _parent: {
-            _collapsed: true,
-            _detailContent: '',
-            _detailViewLoaded: true,
-            _height: 180,
-            _sizePadding: 7,
+          __collapsed: true,
+          __isPadding: true,
+          __offset: 2,
+          __parent: {
+            __collapsed: true,
+            __detailContent: '',
+            __detailViewLoaded: true,
+            __height: 180,
+            __sizePadding: 7,
             firstName: 'John',
             id: 123,
             lastName: 'Doe',
@@ -852,11 +852,11 @@ describe('SlickRowDetailView plugin', () => {
 
       expect(collapseDetailSpy).toHaveBeenCalled();
       expect(mockProcess).toHaveBeenCalledWith({
-        _collapsed: true,
-        _detailContent: '',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 0,
+        __collapsed: true,
+        __detailContent: '',
+        __detailViewLoaded: false,
+        __height: 150,
+        __sizePadding: 0,
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
@@ -869,11 +869,11 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: true,
-        _detailViewLoaded: true,
-        _sizePadding: 1,
-        _height: 150,
-        _detailContent: '<span>loading...</span>',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 1,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
       };
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(123).mockReturnValueOnce(123);
@@ -907,11 +907,11 @@ describe('SlickRowDetailView plugin', () => {
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
+        __collapsed: false,
+        __detailContent: '<span>loading...</span>',
+        __detailViewLoaded: false,
+        __height: 150,
+        __sizePadding: 6,
       });
     });
 
@@ -921,11 +921,11 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: true,
-        _detailViewLoaded: true,
-        _sizePadding: 1,
-        _height: 150,
-        _detailContent: '<span>loading...</span>',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 1,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
       };
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1).mockReturnValueOnce(1);
@@ -961,11 +961,11 @@ describe('SlickRowDetailView plugin', () => {
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
+        __collapsed: false,
+        __detailContent: '<span>loading...</span>',
+        __detailViewLoaded: false,
+        __height: 150,
+        __sizePadding: 6,
       });
     });
 
@@ -975,11 +975,11 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: true,
-        _detailViewLoaded: true,
-        _sizePadding: 1,
-        _height: 150,
-        _detailContent: '<span>loading...</span>',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 1,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
       };
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
@@ -1031,11 +1031,11 @@ describe('SlickRowDetailView plugin', () => {
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
+        __collapsed: false,
+        __detailContent: '<span>loading...</span>',
+        __detailViewLoaded: false,
+        __height: 150,
+        __sizePadding: 6,
       });
       expect(onRowBackToViewportSpy).toHaveBeenCalled();
 
@@ -1096,11 +1096,11 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: true,
-        _detailViewLoaded: true,
-        _sizePadding: 1,
-        _height: 150,
-        _detailContent: '<span>loading...</span>',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 1,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
       };
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
@@ -1145,11 +1145,11 @@ describe('SlickRowDetailView plugin', () => {
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
+        __collapsed: false,
+        __detailContent: '<span>loading...</span>',
+        __detailViewLoaded: false,
+        __height: 150,
+        __sizePadding: 6,
       });
       expect(onRowBackToViewportSpy).toHaveBeenCalled();
     });
@@ -1160,11 +1160,11 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: true,
-        _detailViewLoaded: true,
-        _sizePadding: 1,
-        _height: 150,
-        _detailContent: '<span>loading...</span>',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 1,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
       };
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
       const loadingTemplate = () => '<span>loading...</span>';
@@ -1205,21 +1205,21 @@ describe('SlickRowDetailView plugin', () => {
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
+        __collapsed: false,
+        __detailContent: '<span>loading...</span>',
+        __detailViewLoaded: false,
+        __height: 150,
+        __sizePadding: 6,
       });
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John',
         id: 123,
         lastName: 'Doe',
-        _collapsed: false,
-        _detailContent: '<span>loading...</span>',
-        _detailViewLoaded: false,
-        _height: 150,
-        _sizePadding: 6,
+        __collapsed: false,
+        __detailContent: '<span>loading...</span>',
+        __detailViewLoaded: false,
+        __height: 150,
+        __sizePadding: 6,
       });
     });
   });
@@ -1243,7 +1243,7 @@ describe('SlickRowDetailView plugin', () => {
     });
 
     it('should execute formatter and expect it to return empty string and render nothing when isPadding is True', () => {
-      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: true, _isPadding: true };
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true, __isPadding: true };
       plugin.init(gridStub);
       plugin.setOptions({ collapsedClass: 'some-collapsed' });
       plugin.expandableOverride(() => true);
@@ -1256,10 +1256,10 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: false,
-        _isPadding: false,
-        _sizePadding: 5,
-        _detailContent: `<div>Loading...</div>`,
+        __collapsed: false,
+        __isPadding: false,
+        __sizePadding: 5,
+        __detailContent: `<div>Loading...</div>`,
       };
       plugin.init(gridStub);
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
@@ -1276,10 +1276,10 @@ describe('SlickRowDetailView plugin', () => {
         id: 123,
         firstName: 'John',
         lastName: 'Doe',
-        _collapsed: false,
-        _isPadding: false,
-        _sizePadding: 5,
-        _detailContent: createDomElement('div', { textContent: 'Loading...' }),
+        __collapsed: false,
+        __isPadding: false,
+        __sizePadding: 5,
+        __detailContent: createDomElement('div', { textContent: 'Loading...' }),
       };
       plugin.init(gridStub);
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });

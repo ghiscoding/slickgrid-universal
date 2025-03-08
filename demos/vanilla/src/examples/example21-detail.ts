@@ -82,6 +82,7 @@ export class InnerGridExample {
 
   mount(containerElm: HTMLElement) {
     const { fragment, innerGrid } = this.render();
+    containerElm.textContent = '';
     containerElm.appendChild(fragment);
     this.innerSgb = new Slicker.GridBundle(innerGrid, this.innerColDefs, this.innerGridOptions, [...this.itemDetail.orderData]);
   }
