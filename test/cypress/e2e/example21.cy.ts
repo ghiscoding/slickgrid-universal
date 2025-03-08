@@ -363,4 +363,56 @@ describe('Example 21 - Row Detail with inner Grid', () => {
     cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
     cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
   });
+
+  it('should change Row Detail panel height back to 8, open 2nd and 3rd and filter Company ID with "1..2" and expect only these 2 rows to be rendered in the grid', () => {
+    ROW_DETAIL_PANEL_COUNT = 8;
+    cy.get('[data-test="collapse-all-btn"]').click();
+    cy.get('[data-test="detail-view-row-count"]').clear().type('8');
+    cy.get('[data-test="set-count-btn"]').click();
+
+    cy.get('.slick-cell.detail-view-toggle:nth(1)').click().wait(40);
+
+    // 2nd row detail
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+
+    // open 3rd row detail
+    cy.get(`.slick-row[data-row="9"] .slick-cell:nth(0)`).click().wait(40);
+
+    // 3rd row detail
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+
+    cy.get('.search-filter.filter-companyId').type('1..2');
+    cy.get('.grid21 .slick-row:not(.innergrid-1 .slick-row,.innergrid-2 .slick-row)').should('have.length', ROW_DETAIL_PANEL_COUNT * 2);
+    cy.get('.search-filter.filter-companyId').type('{backspace}2');
+    cy.get('.grid21 .slick-row:not(.innergrid-1 .slick-row,.innergrid-2 .slick-row)').should('have.length', ROW_DETAIL_PANEL_COUNT * 2);
+  });
+
+  it('should clear Company ID filter and have all rows back in grid and rendered', () => {
+    cy.get('.grid21').find('button.slick-grid-menu-button').first().click({ force: true });
+
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
+
+    cy.get('.grid21 .slick-row:not(.innergrid-1 .slick-row,.innergrid-2 .slick-row)').should(
+      'have.length.greaterThan',
+      ROW_DETAIL_PANEL_COUNT * 2
+    );
+
+    // 2nd row detail
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
+    cy.get(`.innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+
+    // 3rd row detail
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
+    cy.get(`.innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+  });
 });

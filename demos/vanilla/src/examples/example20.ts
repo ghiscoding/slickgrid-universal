@@ -184,7 +184,6 @@ export default class Example20 {
       rowHeight: 33,
       rowDetailView: {
         columnIndexPosition: 1,
-        cssClass: 'detail-view-toggle',
         preTemplate: this.loadingTemplate.bind(this),
         postTemplate: this.loadView.bind(this),
         process: this.simulateServerAsyncCall.bind(this),

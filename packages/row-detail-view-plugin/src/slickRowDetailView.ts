@@ -78,7 +78,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     collapseAllOnSort: true,
     collapsedClass: undefined,
     expandedClass: undefined,
-    keyPrefix: '_',
+    keyPrefix: '__',
     loadOnce: false,
     maxRows: undefined,
     reorderable: false,
@@ -145,7 +145,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     if (!this._addonOptions) {
       this._addonOptions = extend(true, {}, this._defaults, this.gridOptions.rowDetailView) as RowDetailView;
     }
-    this._keyPrefix = this._addonOptions?.keyPrefix || '_';
+    this._keyPrefix = this._addonOptions?.keyPrefix || '__';
 
     // add PubSub instance to all SlickEvent
     SlickUtils.addSlickEventPubSubWhenDefined(this.pubSubService, this);
@@ -461,7 +461,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       return;
     }
 
-    // Grad each of the DOM elements
+    // Grab each of the DOM elements
     const mainContainer = document.querySelector<HTMLDivElement>(`.${this.gridUid} .detailViewContainer_${item[this._dataViewIdProperty]}`);
     const cellItem = document.querySelector<HTMLDivElement>(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`);
     const inner = document.querySelector<HTMLDivElement>(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
