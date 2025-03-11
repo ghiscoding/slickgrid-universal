@@ -89,9 +89,9 @@ function defineGrid() {
   gridOptions.value = {
     autoResize: {
       container: '#demo-container',
+      autoHeight: false, // works with/without autoHeight
       bottomPadding: 20,
     },
-    autoHeight: false,
     enableFiltering: true,
     enableRowDetailView: true,
     rowHeight: 33,
@@ -133,7 +133,7 @@ function getData(count: number) {
 
 function changeDetailViewRowCount() {
   const options = rowDetailInstance.value.getOptions();
-  if (options && options.panelRows) {
+  if (options?.panelRows) {
     options.panelRows = detailViewRowCount.value; // change number of rows dynamically
     rowDetailInstance.value.setOptions(options);
   }
@@ -217,8 +217,6 @@ function toggleBodyBackground() {
 
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
-  const action = showSubTitle.value ? 'remove' : 'add';
-  document.querySelector('.subtitle')?.classList[action]('hidden');
   queueMicrotask(() => vueGrid.resizerService.resizeGrid());
 }
 
@@ -252,7 +250,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </button>
     </h2>
 
-    <div class="subtitle">
+    <div class="subtitle" v-show="showSubTitle">
       Add functionality to show extra information with a Row Detail View, (<a
         href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/row-detail"
         target="_blank"

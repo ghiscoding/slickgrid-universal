@@ -1,5 +1,6 @@
 import {
   addToArrayWhenNotExists,
+  createDomElement,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
   type OnRowBackToViewportRangeArgs,
@@ -22,6 +23,7 @@ export interface CreatedView {
   id: string | number;
   dataContext: any;
   app: App | null;
+  rendered?: boolean;
   instance: ComponentPublicInstance | null;
 }
 
@@ -66,14 +68,15 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
     do {
       const view = this._views.pop();
       if (view) {
-        this.disposeView(view);
+        this.disposeViewByItem(view);
       }
     } while (this._views.length > 0);
   }
 
-  disposeView(item: any, removeFromArray = false): void {
+  disposeViewByItem(item: any, removeFromArray = false): void {
     const foundViewIdx = this._views.findIndex((view: CreatedView) => view.id === item[this.datasetIdPropName]);
-    if (foundViewIdx >= 0 && this.disposeViewComponent(this._views[foundViewIdx])) {
+    if (foundViewIdx >= 0) {
+      this.disposeViewComponent(this._views[foundViewIdx]);
       if (removeFromArray) {
         this._views.splice(foundViewIdx, 1);
       }
@@ -111,14 +114,12 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       // when those are Vue Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadComponent = this.gridOptions?.rowDetailView?.preloadComponent;
-        this.addonOptions.preTemplate = () => this._grid.sanitizeHtmlString(`<div class="${PRELOAD_CONTAINER_PREFIX}"></div>`) as string;
+        this.addonOptions.preTemplate = () => createDomElement('div', { className: `${PRELOAD_CONTAINER_PREFIX}` });
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._component = this.gridOptions?.rowDetailView?.viewComponent;
         this.addonOptions.postTemplate = (itemDetail: any) =>
-          this._grid.sanitizeHtmlString(
-            `<div class="${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}"></div>`
-          ) as string;
+          createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}` });
       }
 
       if (this._grid && this.gridOptions) {
@@ -174,7 +175,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
           this._eventHandler.subscribe(this.onRowBackToViewportRange, async (event, args) => {
             // when row is back to viewport range, we will re-render the View Component(s)
-            await this.handleOnRowBackToViewportRange(event, args);
+            this.handleOnRowBackToViewportRange(event, args);
 
             if (typeof this.rowDetailViewOptions?.onRowBackToViewportRange === 'function') {
               this.rowDetailViewOptions.onRowBackToViewportRange(event, args);
@@ -185,7 +186,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
             if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
               this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
             }
-            this.disposeView(args.item);
+            this.disposeViewByItem(args.item);
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
@@ -198,11 +199,11 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
           // hook some events needed by the Plugin itself
 
           // we need to redraw the open detail views if we change column position (column reorder)
-          this.eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewComponents.bind(this));
+          this.eventHandler.subscribe(this._grid.onColumnsReordered, () => this.redrawAllViewComponents(false));
 
           // on row selection changed, we also need to redraw
           if (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector) {
-            this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, this.redrawAllViewComponents.bind(this));
+            this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, () => this.redrawAllViewComponents(false));
           }
 
           // on column sort/reorder, all row detail are collapsed so we can dispose of all the Views as well
@@ -211,11 +212,14 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
           // on filter changed, we need to re-render all Views
           this._subscriptions.push(
             this.eventPubSubService?.subscribe(
-              ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
-              this.redrawAllViewComponents.bind(this)
-            ),
-            this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () =>
-              window.setTimeout(() => this.redrawAllViewComponents())
+              [
+                'onFilterChanged',
+                'onGridMenuColumnsChanged',
+                'onColumnPickerColumnsChanged',
+                'onGridMenuClearAllFilters',
+                'onGridMenuClearAllSorting',
+              ],
+              () => this.redrawAllViewComponents(true)
             )
           );
         }
@@ -226,34 +230,37 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** Redraw (re-render) all the expanded row detail View Components */
-  async redrawAllViewComponents() {
-    this.resetRenderedRows();
-    const promises: Promise<void>[] = [];
-    this._views.forEach((x) => promises.push(this.redrawViewComponent(x)));
-    await Promise.all(promises);
+  redrawAllViewComponents(forceRedraw = false) {
+    setTimeout(() => {
+      this.resetRenderedRows();
+      this._views.forEach((view) => {
+        if (!view.rendered || forceRedraw) {
+          forceRedraw && view.app?.unmount();
+          this.redrawViewComponent(view);
+        }
+      });
+    });
   }
 
   /** Render all the expanded row detail View Components */
-  async renderAllViewModels() {
-    const promises: Promise<void>[] = [];
+  renderAllViewModels() {
     Array.from(this._views)
       .filter((x) => x?.dataContext)
-      .forEach((x) => promises.push(this.renderViewModel(x.dataContext)));
-    await Promise.all(promises);
+      .forEach((x) => this.renderViewModel(x.dataContext));
   }
 
   /** Redraw the necessary View Component */
-  async redrawViewComponent(view: CreatedView) {
-    const containerElements = this.gridContainerElement.getElementsByClassName(`${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
-    if (containerElements?.length >= 0) {
-      await this.renderViewModel(view.dataContext);
+  redrawViewComponent(view: CreatedView) {
+    const containerElement = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
+    if (containerElement) {
+      this.renderViewModel(view.dataContext);
     }
   }
 
   /** Render (or re-render) the View Component (Row Detail) */
-  async renderPreloadView(item: any) {
-    const containerElements = this.gridContainerElement.getElementsByClassName(`${PRELOAD_CONTAINER_PREFIX}`);
-    if (this._preloadComponent && containerElements?.length) {
+  renderPreloadView(item: any) {
+    const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
+    if (this._preloadComponent && containerElement) {
       const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
       const bindableData = {
         model: item,
@@ -269,7 +276,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       this._preloadApp = createApp(this._preloadComponent, bindableData);
       const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
       bindableData.parent = instance;
-      containerElements[containerElements.length - 1]!.appendChild(instance.$el);
+      containerElement.appendChild(instance.$el);
 
       if (viewObj) {
         viewObj.app = this._preloadApp;
@@ -279,11 +286,9 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** Render (or re-render) the View Component (Row Detail) */
-  async renderViewModel(item: any) {
-    const containerElements = this.gridContainerElement.getElementsByClassName(
-      `${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
-    );
-    if (this._component && containerElements?.length) {
+  renderViewModel(item: any) {
+    const containerElement = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
+    if (this._component && containerElement) {
       const bindableData = {
         model: item,
         addon: this,
@@ -299,7 +304,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       const viewObj = this._views[viewIdx];
       if (viewObj?.app) {
         viewObj.app.unmount();
-        this._views.splice(viewIdx, 1);
+        viewObj.app = null;
       }
 
       // load our Row Detail Vue Component dynamically
@@ -307,8 +312,9 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       const app = createApp(this._component, bindableData);
       const instance = app.mount(tmpDiv) as ComponentPublicInstance;
       bindableData.parent = app.component;
-      (containerElements[containerElements.length - 1] as HTMLElement).appendChild(instance.$el);
-      this.addViewInfoToViewsRef(item, app, instance);
+      containerElement.appendChild(instance.$el);
+      viewObj.rendered = true;
+      this.addViewInfoToViewsRef(item, { app, instance, rendered: true });
     }
   }
 
@@ -316,22 +322,24 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   // protected functions
   // ------------------
 
-  protected addViewInfoToViewsRef(item: any, app: App | null, instance: ComponentPublicInstance | null) {
+  protected addViewInfoToViewsRef(item: any, options: { app: App | null; instance: ComponentPublicInstance | null; rendered: boolean }) {
     const viewInfo: CreatedView = {
       id: item[this.datasetIdPropName],
       dataContext: item,
-      app,
-      instance,
+      app: options.app,
+      instance: options.instance,
+      rendered: options.rendered,
     };
     addToArrayWhenNotExists(this._views, viewInfo, this.datasetIdPropName);
   }
 
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
     if (expandedView?.instance) {
-      const container = this.gridContainerElement.getElementsByClassName(`${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
-      if (container?.length) {
+      expandedView.rendered = false;
+      const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
+      if (container) {
         expandedView.app?.unmount();
-        container[0].textContent = '';
+        container.textContent = '';
         return expandedView;
       }
     }
@@ -347,15 +355,15 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
     // expanding
     if (args?.item?.__collapsed) {
       // expanding row detail
-      this.addViewInfoToViewsRef(args.item, null, null);
+      this.addViewInfoToViewsRef(args.item, { app: null, instance: null, rendered: false });
     } else {
       // collapsing, so dispose of the View
-      this.disposeView(args.item, true);
+      this.disposeViewByItem(args.item, true);
     }
   }
 
   /** When Row comes back to Viewport Range, we need to redraw the View */
-  protected async handleOnRowBackToViewportRange(
+  protected handleOnRowBackToViewportRange(
     _e: SlickEventData<OnRowBackToViewportRangeArgs>,
     args: {
       item: any;
@@ -366,11 +374,9 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       grid: SlickGrid;
     }
   ) {
-    if (args?.item) {
-      const viewModel = Array.from(this._views).find((x) => x.id === args.rowId);
-      if (viewModel) {
-        this.redrawViewComponent(viewModel);
-      }
+    const viewModel = this._views.find((x) => x.id === args.rowId);
+    if (viewModel && !viewModel.rendered) {
+      this.redrawViewComponent(viewModel);
     }
   }
 
@@ -380,9 +386,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
    * @param item
    */
   protected notifyTemplate(item: any) {
-    if (this.onAsyncResponse) {
-      this.onAsyncResponse.notify({ item, itemDetail: item }, new SlickEventData(), this);
-    }
+    this.onAsyncResponse.notify({ item, itemDetail: item }, new SlickEventData(), this);
   }
 
   /**
@@ -406,7 +410,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       if (!awaitedItemDetail || !(this.datasetIdPropName in awaitedItemDetail)) {
         throw new Error(
           '[Slickgrid-Vue] could not process the Row Detail, please make sure that your "process" callback ' +
-            '(a Promise or an HttpClient call returning an Observable) returns an item object that has an "${this.datasetIdPropName}" property'
+            `returns an item object that has an "${this.datasetIdPropName}" property`
         );
       }
 

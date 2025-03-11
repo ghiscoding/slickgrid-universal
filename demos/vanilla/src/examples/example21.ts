@@ -6,7 +6,6 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 
 import { ExampleGridOptions } from './example-grid-options.js';
 import { InnerGridExample, type Distributor, type OrderData } from './example21-detail.js';
-import './example21.scss';
 
 const NB_ITEMS = 995;
 
@@ -133,7 +132,7 @@ export default class Example21 {
     this.gridOptions = {
       autoResize: {
         container: '.demo-container',
-        // autoHeight: false,
+        autoHeight: false, // works with/without autoHeight
       },
       enableFiltering: true,
       enableRowDetailView: true,
@@ -241,6 +240,14 @@ export default class Example21 {
 
   closeAllRowDetail() {
     this.rowDetail.collapseAll();
+  }
+
+  redrawAllRowDetails() {
+    // you can call do it via these 2 approaches
+    this.rowDetail.recalculateOutOfRangeViews();
+
+    // 2. or your own redraw
+    // this.redrawAllRowDetails();
   }
 
   changeDetailViewRowCount() {
