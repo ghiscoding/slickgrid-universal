@@ -13,7 +13,7 @@
 
 ### 📢 VueJS Support
 > [!NOTE]
-> VueJS is now supported via a new [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) Component 🚀. One major difference compare to the other existing framework ports is that this new one is included directly in here under the [`/frameworks`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder, eventually all other framework ports will also be moved in here as well (scheduled for our next major version).
+> VueJS is now supported via a new [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) Component 🚀. One major difference compare to the other existing framework wrappers is that this new one is included directly in here under the [`/frameworks`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder, eventually all other framework wrappers will also be moved in here as well (scheduled for our next major version).
 
 ### Documentation
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
@@ -33,16 +33,16 @@ This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) 
 ### What's the difference with the original SlickGrid (now [`6pac/slickgrid`](https://github.com/6pac/SlickGrid)) project?
 If you have used the original SlickGrid in the past, you might be wondering, should I use the [`6pac/slickgrid`](https://github.com/6pac/SlickGrid) or Slickgrid-Universal (and its variances), what are the differences? The main difference is that the original SlickGrid/`6pac/slickgrid` are like an unassembled IKEA product where it's very bare bone and unassembled, on the other hand Slickgrid-Universal is an all assembled product. What we mean is that Slickgrid-Universal comes with many built-in things like Formatters, Editors, Filters, Tree Data, ... which are not available in the original SlickGrid. So in the end SlickGrid (`6pac/slickgrid`) project is much smaller in size because it's very bare bone but you will have to implement many things by yourself (Sorting/Filtering/Editing/...), and if you're looking at creating very basic grids with the smallest footprint size, then SlickGrid might work for you, otherwise Slickgrid-Universal has a more complete set of built-ins with a bit larger download size.
 
-Side note, I am (`@ghiscoding`) actually a maintainer in both projects Slickgrid-Universal as well as the `6pac/slickgrid` (in fact Slickgrid-Universal was originally requiring the `6pac/slickgrid` dependency but we eventually dropped it to become standalone). The main reason to support both is to keep core files in sync as much as possible (SlickGrid, SlickDataView and all plugins). Both projects together have a large userbase and this mean more users testing the project and stability of SlickGrid, and we also often sync new features in both projects as well... and that's it, I hope it's clear what the differences are, if you need more clarity then feel free to open a new Discussion for more details.
+Side note, I am (`@ghiscoding`) actually a maintainer in both projects Slickgrid-Universal as well as the `6pac/slickgrid` (in fact Slickgrid-Universal was originally requiring the `6pac/slickgrid` dependency but we eventually dropped it to become standalone). The main reason to sup both is to keep core files in sync as much as possible (SlickGrid, SlickDataView and all plugins). Both projects together have a large userbase and this mean more users testing the project and stability of SlickGrid, and we also often sync new features in both projects as well... and that's it, I hope it's clear what the differences are, if you need more clarity then feel free to open a new Discussion for more details.
 
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it is a monorepo project:
-1. originally created to remove duplicated code from these 2 ports
+1. originally created to remove duplicated code from these 2 wrappers
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
    - prior to this monorepo, these 2 projects had ~90% duplicated code in common which was not very DRY.
    - being a common source makes it a lot easier to maintain by pushing fixes in this common project here.
 2. it also decoupled a few Services which are not required in every project (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
-3. and finally it is framework agnostic, it could be implemented in many different frameworks (if you are interested in adding a different framework port, which is not listed in the [table](#available-framework-ports) below (maybe Svelte), then please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
+3. and finally it is framework agnostic, it could be implemented in many different frameworks (if you are interested in adding a different framework wrapper, which is not listed in the [table](#available-framework-wrappers) below (maybe Svelte), then please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
    - you can use it in plain JavaScript (ES6) or TypeScript, i.e. we use plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
 ## Latest News & Releases
@@ -53,10 +53,10 @@ You could ⭐ the lib and perhaps support me with caffeine via the button below.
 
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-## Live Demos & Available Framework Ports
+## Live Demos & Available Framework Wrappers
 The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) above shows 2 different UI themes (Material Design / Salesforce), but you could also choose the Bootstrap theme which is demoed in other frameworks from links available in the table below. Also note that even though the demos are built with either [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could in theory use any other UI libraries. The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to customize however you want.
 
-### Available Framework Ports
+### Available Framework Wrappers
 
 | Project Repo | Live Demo | Stackblitz | Framework | Docs | Downloads | Changes |
 | -------------| --------- | ---------- | --------- | ---- | --------- | ------- |
@@ -129,7 +129,7 @@ pnpm vue:install
 
 There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework
 and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia.
-It could be used as a guideline to implement it for other framework ports.
+It could be used as a guideline to implement it for other framework wrappers.
 
 ```bash
 pnpm run dev
