@@ -67,8 +67,7 @@
     "devDependencies": "The dev deps 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Vitest unit tests."
   },
   "engines": {
-    "node": "^18.0.0 || >=20.0.0",
-    "pnpm": "9.x"
+    "node": "^18.0.0 || >=20.0.0"
   },
   "packageManager": "pnpm@9.10.0",
   "devDependencies": {
