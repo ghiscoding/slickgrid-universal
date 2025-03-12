@@ -13,6 +13,7 @@ const detailViewRowCount = ref(9);
 const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<Distributor[]>([]);
 const isDarkMode = ref(false);
+const isUsingAutoHeight = ref(false);
 const isUsingInnerGridStatePresets = ref(false);
 const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
@@ -89,9 +90,9 @@ function defineGrid() {
   gridOptions.value = {
     autoResize: {
       container: '#demo-container',
+      autoHeight: isUsingAutoHeight.value, // works with/without autoHeight
       bottomPadding: 20,
     },
-    autoHeight: false,
     enableFiltering: true,
     enableRowDetailView: true,
     rowHeight: 33,
@@ -133,10 +134,17 @@ function getData(count: number) {
 
 function changeDetailViewRowCount() {
   const options = rowDetailInstance.value.getOptions();
-  if (options && options.panelRows) {
+  if (options?.panelRows) {
     options.panelRows = detailViewRowCount.value; // change number of rows dynamically
     rowDetailInstance.value.setOptions(options);
   }
+}
+
+function changeUsingResizerAutoHeight() {
+  isUsingAutoHeight.value = !isUsingAutoHeight.value;
+  vueGrid.slickGrid?.setOptions({ autoResize: { ...this.gridOptions.autoResize, autoHeight: isUsingAutoHeight.value } });
+  vueGrid.resizerService.resizeGrid();
+  return true;
 }
 
 function changeUsingInnerGridStatePresets() {
@@ -217,8 +225,6 @@ function toggleBodyBackground() {
 
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
-  const action = showSubTitle.value ? 'remove' : 'add';
-  document.querySelector('.subtitle')?.classList[action]('hidden');
   queueMicrotask(() => vueGrid.resizerService.resizeGrid());
 }
 
@@ -252,7 +258,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </button>
     </h2>
 
-    <div class="subtitle">
+    <div class="subtitle" v-show="showSubTitle">
       Add functionality to show extra information with a Row Detail View, (<a
         href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/row-detail"
         target="_blank"
@@ -312,6 +318,17 @@ function vueGridReady(grid: SlickgridVueInstance) {
             >
               Use Inner Grid State/Presets
             </span>
+          </label>
+
+          <label class="checkbox-inline control-label ms-2" for="useResizeAutoHeight">
+            <input
+              type="checkbox"
+              id="useResizeAutoHeight"
+              data-test="use-auto-height"
+              :checked="isUsingAutoHeight"
+              @click="changeUsingResizerAutoHeight()"
+            />
+            Use <code>autoResize.autoHeight</code>
           </label>
         </span>
       </div>

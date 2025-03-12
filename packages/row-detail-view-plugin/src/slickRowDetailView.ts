@@ -157,7 +157,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._eventHandler
       .subscribe(this._grid.onClick, this.handleClick.bind(this))
       .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
-      .subscribe(this._grid.onScroll, this.handleScroll.bind(this))
+      .subscribe(this._grid.onScroll, () => this.recalculateOutOfRangeViews(true, 0))
       .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row));
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
@@ -515,33 +515,15 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this.saveDetailView(item);
   }
 
-  // --
-  // protected functions
-  // ------------------
-
   /**
-   * create the detail ctr node. this belongs to the dev & can be custom-styled as per
+   * (re)calculate/sync row detail views that are out of range of the viewport and trigger events (when enabled)
+   * @param {Boolean} [triggerEvent] - should trigger notify event which will re-render the detail view
+   * @param {Number} [delay] - optional delay to execute the calculation of out of range views
    */
-  protected applyTemplateNewLineHeight(item: any): void {
-    // the height is calculated by the template row count (how many line of items does the template view have)
-    const rowCount = this._addonOptions.panelRows;
-
-    // calculate padding requirements based on detail-content..
-    // ie. worst-case: create an invisible dom node now & find it's height.
-    const lineHeight = 13; // we know cuz we wrote the custom css init ;)
-    item[`${this._keyPrefix}sizePadding`] = Math.ceil((rowCount * 2 * lineHeight) / this.gridOptions.rowHeight!);
-    item[`${this._keyPrefix}height`] = item[`${this._keyPrefix}sizePadding`] * this.gridOptions.rowHeight!;
-    const idxParent = this.dataView.getIdxById(item[this._dataViewIdProperty]);
-    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
-      this.dataView.insertItem((idxParent || 0) + idx, this.getPaddingItem(item, idx));
-    }
-  }
-
-  // TODO: after removing @deprecated flag, we should rename this method to `handleRowOutOfViewportRange`
-  protected calculateOutOfRangeViewsSimplerVersion(): void {
+  recalculateOutOfRangeViews(triggerEvent = true, delay?: number): void {
     clearTimeout(this._backViewportTimer);
 
-    this._backViewportTimer = setTimeout(() => {
+    const calculateFn = () =>
       this._expandedRowIds.forEach((itemId) => {
         const item = this.dataView.getItemById(itemId);
         const rowIdx = this.dataView.getRowById(itemId) as number;
@@ -571,7 +553,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           cachedRows.includes(rowIdx)
         ) {
           this._disposedRows.delete(rowIdx);
-          this.notifyViewportChange(item, 'add');
+          this.notifyViewportChange(item, 'add', triggerEvent);
         } else if (
           (this._disposedRows.has(rowIdx) && !cachedRows.includes(rowIdx)) ||
           (!cachedRows.includes(rowIdx) &&
@@ -579,21 +561,49 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
             this._visibleRenderedCell &&
             (rowIdx < this._visibleRenderedCell.startRow || rowIdx > this._visibleRenderedCell.endRow))
         ) {
-          this.notifyViewportChange(item, 'remove');
+          this.notifyViewportChange(item, 'remove', triggerEvent);
         }
       });
-    }, 0);
+
+    if (delay !== undefined) {
+      this._backViewportTimer = setTimeout(calculateFn, delay);
+    } else {
+      calculateFn();
+    }
   }
 
-  protected notifyViewportChange(item: any, action: 'add' | 'remove'): void {
+  // --
+  // protected functions
+  // ------------------
+
+  /**
+   * create the row detail ctr node. this belongs to the dev & can be custom-styled as per
+   * @param {Object} item
+   */
+  protected applyTemplateNewLineHeight(item: any): void {
+    // the height is calculated by the template row count (how many line of items does the template view have)
+    const rowCount = this._addonOptions.panelRows;
+
+    // calculate padding requirements based on detail-content..
+    // ie. worst-case: create an invisible dom node now & find it's height.
+    const lineHeight = 13; // we know cuz we wrote the custom css init ;)
+    item[`${this._keyPrefix}sizePadding`] = Math.ceil((rowCount * 2 * lineHeight) / this.gridOptions.rowHeight!);
+    item[`${this._keyPrefix}height`] = item[`${this._keyPrefix}sizePadding`] * this.gridOptions.rowHeight!;
+    const idxParent = this.dataView.getIdxById(item[this._dataViewIdProperty]);
+    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
+      this.dataView.insertItem((idxParent || 0) + idx, this.getPaddingItem(item, idx));
+    }
+  }
+
+  protected notifyViewportChange(item: any, action: 'add' | 'remove', triggerEvent = true): void {
     if (item) {
       const itemId = item[this._dataViewIdProperty];
       if (action === 'add') {
         this._renderedViewportRowIds.add(itemId);
-        this.notifyBackToViewportWhenDomExist(item);
+        triggerEvent && this.notifyBackToViewportWhenDomExist(item);
       } else if (action === 'remove') {
         this._renderedViewportRowIds.delete(itemId);
-        this.notifyOutOfViewport(item);
+        triggerEvent && this.notifyOutOfViewport(item);
       }
     }
   }
@@ -739,6 +749,20 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           return;
         }
 
+        // tag any row details that will need to be re-rendered after the row detail is toggled.
+        // for example if row(2) is open and we open row(1) then row(2) needs to be re-rendered,
+        // if however row(1) is open and we open row(2) then there is nothing to re-render
+        const toReRenderItems: any[] = [];
+        const visible = this._grid.getRenderedRange();
+        this._expandedRowIds.forEach((itemId) => {
+          const row = this.dataView.getRowById(itemId);
+          if (row !== undefined && row > args.row && row >= visible.top && row <= visible.bottom) {
+            const item = this.dataView.getItemById(itemId);
+            toReRenderItems.push(item);
+            this.notifyOutOfViewport(item);
+          }
+        });
+
         this.toggleRowSelection(args.row, dataContext);
 
         // trigger an event after toggling
@@ -751,6 +775,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           e,
           this
         );
+
+        // re-render the row details that were tagged as
+        toReRenderItems.forEach(item => this.notifyViewportChange(item, 'add', true));
 
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -777,10 +804,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       );
       this._disposedRows.add(rowIndex);
     }
-  }
-
-  protected handleScroll(): void {
-    this.calculateOutOfRangeViewsSimplerVersion();
   }
 
   protected notifyOutOfViewport(item: any): void {

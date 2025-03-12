@@ -669,6 +669,7 @@ describe('SlickRowDetailView plugin', () => {
     Object.defineProperty(clickEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
     const stopPropagationSpy = vi.spyOn(clickEvent, 'stopPropagation');
     const stopImmediateSpy = vi.spyOn(clickEvent, 'stopImmediatePropagation');
+    vi.spyOn(gridStub, 'getRenderedRange').mockReturnValueOnce({ top: 0, bottom: 20, left: 33, right: 18 } as any);
     gridStub.onClick.notify({ row: 0, cell: 1, grid: gridStub }, clickEvent);
 
     expect(stopPropagationSpy).toHaveBeenCalled();
@@ -956,6 +957,7 @@ describe('SlickRowDetailView plugin', () => {
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       // plugin.lastRange = { bottom: 18, top: 30 };
       gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      plugin.recalculateOutOfRangeViews();
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John',

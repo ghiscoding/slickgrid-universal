@@ -6,7 +6,6 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 
 import { ExampleGridOptions } from './example-grid-options.js';
 import { InnerGridExample, type Distributor, type OrderData } from './example21-detail.js';
-import './example21.scss';
 
 const NB_ITEMS = 995;
 
@@ -27,6 +26,7 @@ export default class Example21 {
   columnDefinitions!: Column<Distributor>[];
   dataset!: Distributor[];
   isUsingInnerGridStatePresets = false;
+  isUsingAutoHeight = false;
   sgb!: SlickVanillaGridBundle;
   selectedRowString = '';
   serverApiDelay = 400;
@@ -133,7 +133,7 @@ export default class Example21 {
     this.gridOptions = {
       autoResize: {
         container: '.demo-container',
-        // autoHeight: false,
+        autoHeight: this.isUsingAutoHeight, // works with/without autoHeight
       },
       enableFiltering: true,
       enableRowDetailView: true,
@@ -243,12 +243,27 @@ export default class Example21 {
     this.rowDetail.collapseAll();
   }
 
+  redrawAllRowDetails() {
+    // you can call do it via these 2 approaches
+    this.rowDetail.recalculateOutOfRangeViews();
+
+    // 2. or your own redraw
+    // this.redrawAllRowDetails();
+  }
+
   changeDetailViewRowCount() {
     const options = this.rowDetail.getOptions();
     if (options?.panelRows) {
       options.panelRows = this.detailViewRowCount; // change number of rows dynamically
       this.rowDetail.setOptions(options);
     }
+  }
+
+  changeUsingResizerAutoHeight(checked: boolean) {
+    this.isUsingAutoHeight = checked;
+    this.sgb.slickGrid?.setOptions({ autoResize: { ...this.gridOptions.autoResize, autoHeight: checked } });
+    this.sgb.resizerService.resizeGrid();
+    return true;
   }
 
   changeUsingInnerGridStatePresets(checked: boolean) {
