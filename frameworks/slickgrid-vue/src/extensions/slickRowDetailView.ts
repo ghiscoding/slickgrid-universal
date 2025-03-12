@@ -1,5 +1,4 @@
 import {
-  addToArrayWhenNotExists,
   createDomElement,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
@@ -299,13 +298,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parent,
       } as AppData & ViewModelBindableInputData;
 
-      // remove any previous mounted views, if found then unmount them and delete them from our references array
-      const viewIdx = this._views.findIndex((obj) => obj.id === item[this.datasetIdPropName]);
-      const viewObj = this._views[viewIdx];
-      if (viewObj?.app) {
-        viewObj.app.unmount();
-        viewObj.app = null;
-      }
+      this.unmountViewWhenExists(item[this.datasetIdPropName]);
 
       // load our Row Detail Vue Component dynamically
       const tmpDiv = document.createElement('div');
@@ -313,8 +306,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       const instance = app.mount(tmpDiv) as ComponentPublicInstance;
       bindableData.parent = app.component;
       containerElement.appendChild(instance.$el);
-      viewObj.rendered = true;
-      this.addViewInfoToViewsRef(item, { app, instance, rendered: true });
+      this.upsertViewRefs(item, { app, instance, rendered: true });
     }
   }
 
@@ -322,7 +314,18 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   // protected functions
   // ------------------
 
-  protected addViewInfoToViewsRef(item: any, options: { app: App | null; instance: ComponentPublicInstance | null; rendered: boolean }) {
+  /** remove any previous mounted views, if found then unmount them and delete them from our references array */
+  protected unmountViewWhenExists(itemId: string | number) {
+    const viewIdx = this._views.findIndex((obj) => obj.id === itemId);
+    if (viewIdx >= 0) {
+      const viewObj = this._views[viewIdx];
+      viewObj.app?.unmount();
+      viewObj.rendered = false;
+    }
+  }
+
+  protected upsertViewRefs(item: any, options: { app: App | null; instance: ComponentPublicInstance | null; rendered: boolean }) {
+    const viewIdx = this._views.findIndex((obj) => obj.id === item[this.datasetIdPropName]);
     const viewInfo: CreatedView = {
       id: item[this.datasetIdPropName],
       dataContext: item,
@@ -330,7 +333,11 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       instance: options.instance,
       rendered: options.rendered,
     };
-    addToArrayWhenNotExists(this._views, viewInfo, this.datasetIdPropName);
+    if (viewIdx >= 0) {
+      this._views[viewIdx] = viewInfo;
+    } else {
+      this._views.push(viewInfo);
+    }
   }
 
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
@@ -355,7 +362,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
     // expanding
     if (args?.item?.__collapsed) {
       // expanding row detail
-      this.addViewInfoToViewsRef(args.item, { app: null, instance: null, rendered: false });
+      this.upsertViewRefs(args.item, { app: null, instance: null, rendered: false });
     } else {
       // collapsing, so dispose of the View
       this.disposeViewByItem(args.item, true);

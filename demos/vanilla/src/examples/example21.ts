@@ -26,6 +26,7 @@ export default class Example21 {
   columnDefinitions!: Column<Distributor>[];
   dataset!: Distributor[];
   isUsingInnerGridStatePresets = false;
+  isUsingAutoHeight = false;
   sgb!: SlickVanillaGridBundle;
   selectedRowString = '';
   serverApiDelay = 400;
@@ -132,7 +133,7 @@ export default class Example21 {
     this.gridOptions = {
       autoResize: {
         container: '.demo-container',
-        autoHeight: false, // works with/without autoHeight
+        autoHeight: this.isUsingAutoHeight, // works with/without autoHeight
       },
       enableFiltering: true,
       enableRowDetailView: true,
@@ -256,6 +257,13 @@ export default class Example21 {
       options.panelRows = this.detailViewRowCount; // change number of rows dynamically
       this.rowDetail.setOptions(options);
     }
+  }
+
+  changeUsingResizerAutoHeight(checked: boolean) {
+    this.isUsingAutoHeight = checked;
+    this.sgb.slickGrid?.setOptions({ autoResize: { ...this.gridOptions.autoResize, autoHeight: checked } });
+    this.sgb.resizerService.resizeGrid();
+    return true;
   }
 
   changeUsingInnerGridStatePresets(checked: boolean) {

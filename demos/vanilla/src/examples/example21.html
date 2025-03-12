@@ -54,6 +54,17 @@
         Use Inner Grid State/Presets
       </span>
     </label>
+
+    <label class="checkbox-inline control-label ml-3" for="useResizeAutoHeight">
+      <input
+        type="checkbox"
+        id="useResizeAutoHeight"
+        data-test="use-auto-height"
+        checked.bind="isUsingAutoHeight"
+        onclick.trigger="changeUsingResizerAutoHeight(event.target.checked)"
+      />
+      Use <code>autoResize.autoHeight</code>
+    </label>
   </div>
 </div>
 
