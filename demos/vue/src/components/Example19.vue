@@ -15,6 +15,7 @@ import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example19Detail from './Example19Detail.vue';
 import Example19Preload from './Example19Preload.vue';
 
+const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
 const detailViewRowCount = ref(9);
@@ -24,6 +25,7 @@ const isDarkMode = ref(false);
 const showSubTitle = ref(true);
 const flashAlertType = ref('alert-info');
 const message = ref('');
+const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
 const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView));
@@ -273,7 +275,7 @@ function simulateServerAsyncCall(item: any) {
 
       // resolve the data after delay specified
       resolve(itemDetail);
-    }, 1000);
+    }, serverWaitDelay.value);
   });
 }
 
@@ -373,6 +375,16 @@ defineExpose({
           >
             Set
           </button>
+
+          <label for="serverdelay" class="ms-2">Server Delay: </label>
+          <input
+            id="serverdelay"
+            v-model="serverWaitDelay"
+            type="number"
+            data-test="server-delay"
+            style="height: 26px; width: 55px"
+            title="input a fake timer delay to simulate slow server response"
+          />
         </span>
       </div>
       <div v-if="message" class="alert col-sm-6" :class="{ [flashAlertType]: true }" data-test="flash-msg">{{ message }}</div>
