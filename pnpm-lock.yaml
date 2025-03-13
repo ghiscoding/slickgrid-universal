@@ -150,7 +150,7 @@ importers:
         specifier: 'catalog:'
         version: 7.0.2
       pnpm:
-        specifier: ^9.10.0
+        specifier: ^9.15.0
         version: 9.15.6
       prettier:
         specifier: ^3.5.2
