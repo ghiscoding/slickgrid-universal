@@ -34,7 +34,6 @@
   "devDependencies": {
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
-    "@types/whatwg-fetch": "^0.0.33",
     "sass": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
