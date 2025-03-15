@@ -1,15 +1,16 @@
 import type { TranslaterService as UniversalTranslateService } from '@slickgrid-universal/common';
-import { type i18n } from 'i18next';
+
+import type { I18Next } from '../models/i18next.interface.js';
 
 /**
  * This is a Translate Service Wrapper for Slickgrid-Universal monorepo lib to work properly,
  * it must implement Slickgrid-Universal TranslaterService interface to work properly
  */
 export class TranslaterI18NextService implements UniversalTranslateService {
-  public i18n?: i18n;
+  public i18n?: I18Next;
 
   /** I18Next instance setter */
-  set i18nInstance(i18n: i18n) {
+  set i18nInstance(i18n: I18Next) {
     this.i18n = i18n;
   }
 
