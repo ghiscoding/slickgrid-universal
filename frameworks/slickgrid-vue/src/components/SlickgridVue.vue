@@ -50,7 +50,6 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { type i18n } from 'i18next';
 import {
   type ComponentPublicInstance,
   computed,
@@ -67,7 +66,7 @@ import {
 
 import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
-import type { GridOption, SlickgridVueInstance } from '../models/index.js';
+import type { GridOption, I18Next, SlickgridVueInstance } from '../models/index.js';
 import { ContainerService, disposeAllSubscriptions } from '../services/index.js';
 import { TranslaterI18NextService } from '../services/translaterI18Next.service.js';
 import type { SlickgridVueProps } from './slickgridVueProps.interface.js';
@@ -98,7 +97,7 @@ let grid: SlickGrid;
 let collectionObservers: Array<null | { disconnect: () => void }> = [];
 let groupItemMetadataProvider: SlickGroupItemMetadataProvider | undefined;
 let hideHeaderRowAfterPageLoad = false;
-let i18next: i18n | null;
+let i18next: I18Next | null;
 let isAutosizeColsCalled = false;
 let isGridInitialized = false;
 let isDatasetInitialized = false;
@@ -397,7 +396,7 @@ function initialization() {
 
   // inject the I18Next instance when translation is enabled
   if (_gridOptions.value?.enableTranslate || _gridOptions.value?.i18n) {
-    i18next = inject<i18n | null>('i18next', null);
+    i18next = inject<I18Next | null>('i18next', null);
     if (i18next) {
       translaterService.i18nInstance = i18next;
     } else {
