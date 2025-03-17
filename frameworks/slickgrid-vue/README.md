@@ -28,21 +28,23 @@ import { type Column, type GridOption, SlickgridVue } from 'slickgrid-vue';
 const columnDefinitions: Ref<Column[]> = ref([
   { id: 'firstName', name: 'First Name', field: 'firstName', sortable: true },
   { id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true },
-  { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true }
+  { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true },
 ]);
 const dataset = ref([
   { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
-  { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 }
+  { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 },
 ]);
 const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
 </script>
 
-<slickgrid-vue
+<template>
+  <slickgrid-vue
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:data="dataset"
     v-model:options="gridOptions"    
-></slickgrid-vue>
+  ></slickgrid-vue>
+</template>
 ```
 
 #### Requirements 
@@ -50,11 +52,12 @@ const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
   
 ### Stackblitz
 
-You can also play with the live Stackbliz [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos). It is also the recommended way to provide a repro when opening a new bug/feature request.
+You can also play with the live Stackbliz [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos). 
+Stackblitz is also the recommended way to provide a repro when opening a new bug or feature request.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
 
-Visit the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository for a local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
+Visit the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository for a fully working local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
 
 ### Styling Themes
 
@@ -64,14 +67,14 @@ Multiple styling themes are available
 - Material (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example07))
 - Salesforce (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example16))
 
-Also note that all of these themes also have a **Dark Theme** equivalent and even though Bootstrap is often used for live demos, it does work well with any other UI framework like Bulma, Material, Quasar...
+Also note that all of these themes also include a **Dark Theme** equivalent and even though Bootstrap is often used in the live demos, it also works well with any other UI framework like Bulma, Material, Quasar...
 
 ### Live Demo page
-`Slickgrid-Vue` works with all Bootstrap versions, you can see a demo of each one below. It also works well with any other frameworks like Material, Bulma, Quasar... and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
+`Slickgrid-Vue` works with Bootstrap or any other UI frameworks like Material, Bulma, Quasar... and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
 - [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos)
 
 #### Working Demos
-For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-Vue Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository (instructions are provided in it). The repo comes with multiple examples and are updated frequently (basically every time a new version is out) and it is also used as the GitHub live demo page.
+For a complete set of working demos (45+ examples), we strongly suggest you to clone the [Slickgrid-Vue Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository (instructions are provided in it). The repo comes with multiple examples and are updated frequently (basically every time a new version is out) and it is also used as the GitHub [live demo]([https://github.com/ghiscoding/slickgrid-vue-demos](https://ghiscoding.github.io/slickgrid-vue-demos/) page.
 
 ## License
 [MIT License](LICENSE)
@@ -80,9 +83,9 @@ For a complete set of working demos (40+ examples), we strongly suggest you to c
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
 
 ### Tested with [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Examples are tested with [Cypress](https://www.cypress.io/) for E2E testing and they run anytime a new PR is created.
+Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-Vue Examples are tested with [Cypress](https://www.cypress.io/) for E2E testing and they are running on every new PR.
 
 ### Like it? ⭐ it
-You like **Slickgrid-Vue**? Be sure to upvote ⭐, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) or sponsor me on GitHub and feel free to contribute at any time. Thanks
+You like **Slickgrid-Vue**? Be sure to upvote ⭐ the project, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) or sponsor me on GitHub. Any contributions are also very welcome. Thanks
 
 <a href='https://ko-fi.com/N4N679OT' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
