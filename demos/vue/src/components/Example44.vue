@@ -262,6 +262,7 @@ function defineGrid() {
   gridOptions.value = {
     enableCellNavigation: true,
     enableColumnReorder: true,
+    enableHeaderMenu: false,
     enableCellRowSpan: true,
     gridHeight: 600,
     gridWidth: 900,

@@ -142,6 +142,7 @@ function defineGrid() {
     },
     enableCellNavigation: true,
     enableColumnReorder: true,
+    enableHeaderMenu: false,
     enableCellRowSpan: true,
     enableExcelExport: true,
     externalResources: [excelExportService],
