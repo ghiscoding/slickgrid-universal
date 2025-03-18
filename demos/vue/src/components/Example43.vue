@@ -9,8 +9,9 @@ const gridOptions = ref<GridOption>();
 const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
+const showEmployeeId = ref(true);
 let vueGrid!: SlickgridVueInstance;
-const metadata: ItemMetadata | Record<number, ItemMetadata> = {
+let metadata: ItemMetadata | Record<number, ItemMetadata> = {
   // 10001: Davolio
   0: {
     columns: {
@@ -141,6 +142,7 @@ function defineGrid() {
     },
     enableCellNavigation: true,
     enableColumnReorder: true,
+    enableHeaderMenu: false,
     enableCellRowSpan: true,
     enableExcelExport: true,
     externalResources: [excelExportService],
@@ -402,6 +404,38 @@ function loadData() {
   ];
 }
 
+// when a side effect happens (e.g. show/hide EmployeeID),
+// you have to recalculate the metadata by yourself
+// if column index(es) aren't changing then "invalidateRows()" or "invalidate()" might be sufficient
+// however, when column index(es) changed then you will have to call "remapAllColumnsRowSpan()" to clear & reevaluate the rowspan cache
+function toggleEmployeeIdVisibility() {
+  const newMetadata: any = {};
+  showEmployeeId.value = !showEmployeeId.value;
+
+  // direction to calculate new column indexes (-1 or +1 on the column index)
+  // e.g. metadata = `{0:{columns:{1:{rowspan: 2}}}}` if we hide then new result is `{0:{columns:{0:{rowspan: 2}}}}`
+  const dir = showEmployeeId.value ? 1 : -1;
+  for (let row of Object.keys(metadata)) {
+    newMetadata[row] = { columns: {} };
+    for (let col of Object.keys((metadata as any)[row].columns)) {
+      newMetadata[row].columns[Number(col) + dir] = (metadata as any)[row].columns[col];
+    }
+  }
+
+  // update column definitions
+  if (showEmployeeId.value) {
+    columnDefinitions.value.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
+  } else {
+    columnDefinitions.value.splice(0, 1);
+  }
+  vueGrid.slickGrid.setColumns(columnDefinitions.value);
+
+  // update & remap rowspans
+  metadata = newMetadata;
+  vueGrid.slickGrid.remapAllColumnsRowSpan();
+  vueGrid.slickGrid.invalidate();
+}
+
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
@@ -479,6 +513,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
   >
     <span class="mdi mdi-chevron-down mdi-rotate-270"></span>
     Navigate to Right Cell
+  </button>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-employee-id" @click="toggleEmployeeIdVisibility()">
+    Show/Hide EmployeeID
   </button>
   <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon mx-1" @click="toggleEditing()" data-test="toggle-editing">
     <span class="mdi mdi-pencil-outline"></span>

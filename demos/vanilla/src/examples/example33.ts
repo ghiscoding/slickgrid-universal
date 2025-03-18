@@ -286,6 +286,7 @@ export default class Example33 {
     this.gridOptions = {
       enableCellNavigation: true,
       enableColumnReorder: true,
+      enableHeaderMenu: false,
       enableCellRowSpan: true,
       gridHeight: 600,
       gridWidth: 900,
