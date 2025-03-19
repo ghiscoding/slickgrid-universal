@@ -320,10 +320,6 @@ defineExpose({
   <div ref="compRef">
     <h2>
       Example 19: Row Detail View
-      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="toggle-dark-mode" @click="toggleDarkMode()">
-        <span class="mdi mdi-theme-light-dark"></span>
-        <span>Toggle Dark Mode</span>
-      </button>
       <span class="float-end">
         <a
           style="font-size: 18px"
@@ -335,6 +331,10 @@ defineExpose({
       </span>
       <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
         <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="toggle-dark-mode" @click="toggleDarkMode()">
+        <span class="mdi mdi-theme-light-dark"></span>
+        <span>Toggle Dark Mode</span>
       </button>
     </h2>
 
