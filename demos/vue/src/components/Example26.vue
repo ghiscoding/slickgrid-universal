@@ -357,7 +357,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    <h3>Custom Filters, Editors with Vue Components</h3>
+    <h5>Custom Filters, Editors with Vue Components</h5>
     <ul>
       <li>Support of Vue Component as Custom Editor (click on any "Assignee" name cell)</li>
       <ul>
