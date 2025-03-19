@@ -4,7 +4,7 @@
   labels: ['dependencies'],
   dependencyDashboard: true,
   lockFileMaintenance: {
-    enabled: false,
+    enabled: true,
   },
   pin: false,
   rangeStrategy: 'bump',
