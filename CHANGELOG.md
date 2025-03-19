@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.0...v5.13.1) (2025-03-19)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1870](https://github.com/ghiscoding/slickgrid-universal/issues/1870)) ([a48c98c](https://github.com/ghiscoding/slickgrid-universal/commit/a48c98c31a547b884efd8203d8a4a97cbf11021f)) - by @renovate-bot
+* **deps:** update vuejs dependencies ([#1874](https://github.com/ghiscoding/slickgrid-universal/issues/1874)) ([66e4814](https://github.com/ghiscoding/slickgrid-universal/commit/66e4814c274189b7914a5c98deb544ec0b220583)) - by @renovate-bot
+* **deps:** update vuejs dependencies ([#1875](https://github.com/ghiscoding/slickgrid-universal/issues/1875)) ([81f4803](https://github.com/ghiscoding/slickgrid-universal/commit/81f480354993fee8e882f85dbb2c1823a406139c)) - by @renovate-bot
+* **deps:** update vuejs dependencies ([#1876](https://github.com/ghiscoding/slickgrid-universal/issues/1876)) ([927a708](https://github.com/ghiscoding/slickgrid-universal/commit/927a7087e20af5d7d1e1335147382ca98d3c2389)) - by @renovate-bot
+* Row Detail and filtering should work with vanilla grid ([#1867](https://github.com/ghiscoding/slickgrid-universal/issues/1867)) ([7f37965](https://github.com/ghiscoding/slickgrid-universal/commit/7f379657719db8b5800b016614a2f5544643510e)) - by @ghiscoding
+* Row Detail should also work with fixed grid height or w/o autoHeight ([#1868](https://github.com/ghiscoding/slickgrid-universal/issues/1868)) ([1ccb36f](https://github.com/ghiscoding/slickgrid-universal/commit/1ccb36ff6bd12b75ef351bf5ec234fc66e004ac6)) - by @ghiscoding
+* **vue:** don't rely on `i18next` interface since dep is optional ([#1872](https://github.com/ghiscoding/slickgrid-universal/issues/1872)) ([1527de0](https://github.com/ghiscoding/slickgrid-universal/commit/1527de03c6bccecac2a63f6b1244175c815b3206)) - by @ghiscoding
+* **vue:** Row Detail redraw all should work as expected ([#1865](https://github.com/ghiscoding/slickgrid-universal/issues/1865)) ([b4254ca](https://github.com/ghiscoding/slickgrid-universal/commit/b4254caceca430f3ec48ec9339a4b8390b5acbd1)) - by @ghiscoding
+
 ## [5.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.2...v5.13.0) (2025-03-01)
 
 ### Features

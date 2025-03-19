@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.0...v5.13.1) (2025-03-19)
+
+### Bug Fixes
+
+* Row Detail and filtering should work with vanilla grid ([#1867](https://github.com/ghiscoding/slickgrid-universal/issues/1867)) ([7f37965](https://github.com/ghiscoding/slickgrid-universal/commit/7f379657719db8b5800b016614a2f5544643510e)) - by @ghiscoding
+* Row Detail should also work with fixed grid height or w/o autoHeight ([#1868](https://github.com/ghiscoding/slickgrid-universal/issues/1868)) ([1ccb36f](https://github.com/ghiscoding/slickgrid-universal/commit/1ccb36ff6bd12b75ef351bf5ec234fc66e004ac6)) - by @ghiscoding
+
 ## [5.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.2...v5.13.0) (2025-03-01)
 
 ### Features
