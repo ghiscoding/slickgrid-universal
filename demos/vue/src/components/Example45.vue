@@ -249,7 +249,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
         <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
       </button>
-      <button class="btn btn-outline-secondary btn-sm btn-icon" @click="toggleDarkMode()" data-test="toggle-dark-mode">
+      <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" @click="toggleDarkMode()" data-test="toggle-dark-mode">
         <span class="mdi mdi-theme-light-dark"></span>
         <span>Toggle Dark Mode</span>
       </button>
