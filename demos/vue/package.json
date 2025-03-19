@@ -29,7 +29,7 @@
     "@slickgrid-universal/text-export": "workspace:*",
     "bootstrap": "^5.3.3",
     "dompurify": "catalog:",
-    "i18next": "^24.2.2",
+    "i18next": "^24.2.3",
     "i18next-http-backend": "^3.0.2",
     "i18next-vue": "^5.2.0",
     "rxjs": "catalog:",
@@ -40,7 +40,7 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@types/fnando__sparkline": "catalog:",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue": "^5.2.3",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "sass": "catalog:",
