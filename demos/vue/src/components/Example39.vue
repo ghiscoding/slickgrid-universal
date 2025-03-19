@@ -384,7 +384,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </button>
     </h2>
 
-    <h6 class="title is-6 italic content">
+    <div class="subtitle">
       <ul>
         <li>
           Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its
@@ -407,7 +407,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
           </li>
         </ol>
       </ul>
-    </h6>
+    </div>
 
     <div class="row">
       <div class="col-sm-5">
