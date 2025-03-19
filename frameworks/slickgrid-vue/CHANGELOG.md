@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## <small>1.1.1 (2025-03-19)</small>
+
 ## 1.1.0 (2025-03-01)
 
 * chore(deps): update all non-major dependencies (#1851) ([832a66c](https://github.com/ghiscoding/slickgrid-universal/commit/832a66c)), closes [#1851](https://github.com/ghiscoding/slickgrid-universal/issues/1851)
