@@ -142,7 +142,7 @@ function changeDetailViewRowCount() {
 
 function changeUsingResizerAutoHeight() {
   isUsingAutoHeight.value = !isUsingAutoHeight.value;
-  vueGrid.slickGrid?.setOptions({ autoResize: { ...this.gridOptions.autoResize, autoHeight: isUsingAutoHeight.value } });
+  vueGrid.slickGrid?.setOptions({ autoResize: { ...gridOptions.value!.autoResize, autoHeight: isUsingAutoHeight.value } });
   vueGrid.resizerService.resizeGrid();
   return true;
 }
