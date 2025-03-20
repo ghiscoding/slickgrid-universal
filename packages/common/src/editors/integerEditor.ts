@@ -11,16 +11,14 @@ export class IntegerEditor extends InputEditor {
   loadValue(item: any): void {
     const fieldName = this.columnDef?.field;
 
-    if (fieldName !== undefined) {
-      if (item && fieldName !== undefined && this._input) {
-        // is the field a complex object, "address.streetNumber"
-        const isComplexObject = fieldName?.indexOf('.') > 0;
+    if (item && fieldName !== undefined && this._input) {
+      // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName?.indexOf('.') > 0;
 
-        const value = isComplexObject ? getDescendantProperty(item, fieldName) : item[fieldName];
-        this._originalValue = isNaN(value) || value === null || value === undefined ? value : `${value}`;
-        this._input.value = `${this._originalValue}`;
-        this._input.select();
-      }
+      const value = isComplexObject ? getDescendantProperty(item, fieldName) : item[fieldName];
+      this._originalValue = isNaN(value) || value === null || value === undefined ? value : `${value}`;
+      this._input.value = `${this._originalValue}`;
+      this._input.select();
     }
   }
 
