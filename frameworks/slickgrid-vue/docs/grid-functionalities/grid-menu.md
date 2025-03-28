@@ -1,9 +1,8 @@
-#### index
-- [Description](#descriptions)
-- [Grid State](#grid-state-1)
-- [Grid Presets](#grid-presets)
-- [Grid State Event](#grid-state-event)
-- [How to Load Grid with Certain Columns Hidden](#how-to-load-grid-with-certain-columns-preset-example-hide-certain-columns-on-load)
+The `Grid Menu` (also known as the `Hamburger Menu`) is now part of `Angular-Slickgrid` and is enabled by default). 
+
+## How to use it? 
+#### It's Enabled by default
+Technically, it's enable by default and so you don't have anything to do to enjoy it. However if you want to customize the content of the Grid Menu, then continue reading.
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example9.vue)
