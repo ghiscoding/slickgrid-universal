@@ -6,10 +6,7 @@
   "command": {
     "publish": {
       "cleanupTempFiles": true,
-      "removePackageFields": [
-        "devDependencies",
-        "scripts"
-      ]
+      "removePackageFields": ["devDependencies", "scripts"]
     },
     "version": {
       "conventionalCommits": true,
@@ -20,9 +17,6 @@
       "syncWorkspaceLock": true
     }
   },
-  "changelogPreset": "conventional-changelog-conventionalcommits",
-  "packages": [
-    "examples/*",
-    "packages/*"
-  ]
+  "changelogPreset": "conventionalcommits",
+  "packages": ["examples/*", "packages/*"]
 }
