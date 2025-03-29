@@ -10,10 +10,10 @@ catalog:
   '@fnando/sparkline': '^0.3.10'
   '@formkit/tempo': ^0.1.2
   '@types/fnando__sparkline': ^0.3.7
-  '@types/node': ^22.13.10
+  '@types/node': ^22.13.14
   '@types/sortablejs': ^1.15.8
   cross-env: ^7.0.3
-  cypress: ^14.2.0
+  cypress: ^14.2.1
   cypress-real-events: ^1.14.0
   dequal: ^2.0.3
   dompurify: ^3.2.4
@@ -23,5 +23,5 @@ catalog:
   sass: ^1.86.0
   sortablejs: ^1.15.6
   typescript: ^5.8.2
-  vite: ^6.2.2
+  vite: ^6.2.3
   whatwg-fetch: ^3.6.20
