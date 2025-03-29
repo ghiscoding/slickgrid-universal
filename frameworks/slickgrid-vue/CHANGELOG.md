@@ -4,6 +4,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.2...v1.1.2) (2025-03-29)
 
+### Bug Fixes
+
+* shift + a should not select all cells upwards ([#1880](https://github.com/ghiscoding/slickgrid-universal/issues/1880)) ([9e77821](https://github.com/ghiscoding/slickgrid-universal/commit/9e77821befb6fed4a05d9d3db1202b3cf3edcf73)) - by @zewa666
+
 ## <small>1.1.1 (2025-03-19)</small>
 
 ## 1.1.1 (2025-03-18)
