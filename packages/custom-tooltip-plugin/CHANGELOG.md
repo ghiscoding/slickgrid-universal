@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.1...v5.13.2) (2025-03-29)
+
+**Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin
+
 ## [5.13.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.0...v5.13.1) (2025-03-19)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin
