@@ -268,7 +268,7 @@ function defineGrid() {
       exportCustomFormatter: Formatters.dateUs,
       editor: {
         model: Editors.date,
-        editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
+        editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
         validator: (value, args) => {
           const dataContext = args && args.item;
           if (dataContext && dataContext.completed && !value) {

@@ -397,19 +397,19 @@ describe('Example 10 - GraphQL Grid', () => {
   it('should open Date picker and expect date range between 01-Jan to 15-Feb', () => {
     cy.get('.search-filter.filter-finish.filled input').click({ force: true });
 
-    cy.get('.vanilla-calendar:visible');
+    cy.get('.vc:visible');
 
-    cy.get('.vanilla-calendar-column:nth(0) .vanilla-calendar-month').should('have.text', 'January');
+    cy.get('[data-vc="column"]:nth(0) [data-vc="month"]').should('have.text', 'January');
 
-    cy.get('.vanilla-calendar-column:nth(1) .vanilla-calendar-month').should('have.text', 'February');
+    cy.get('[data-vc="column"]:nth(1) [data-vc="month"]').should('have.text', 'February');
 
-    cy.get('.vanilla-calendar-year:nth(0)').should('have.text', currentYear);
+    cy.get('[data-vc="year"]:nth(0)').should('have.text', currentYear);
 
-    cy.get('.vanilla-calendar:visible').find('.vanilla-calendar-day__btn_selected').should('have.length', 46);
+    cy.get('.vc:visible [data-vc-date-selected] button').should('have.length', 46);
 
-    cy.get('.vanilla-calendar:visible').find('.vanilla-calendar-day__btn_selected').first().should('have.text', '1');
+    cy.get('.vc:visible').find('[data-vc-date-selected]').first().should('have.text', '1');
 
-    cy.get('.vanilla-calendar:visible').find('.vanilla-calendar-day__btn_selected').last().should('have.text', '15');
+    cy.get('.vc:visible').find('[data-vc-date-selected]').last().should('have.text', '15');
   });
 
   describe('Set Dynamic Sorting', () => {
@@ -461,9 +461,9 @@ describe('Example 10 - GraphQL Grid', () => {
     it('should open Date picker and no longer expect date range selection in the picker', () => {
       cy.get('.search-filter.filter-finish').should('not.have.class', 'filled').click();
 
-      cy.get('.vanilla-calendar-year:nth(0)').should('have.text', currentYear);
+      cy.get('[data-vc="year"]:nth(0)').should('have.text', currentYear);
 
-      cy.get('.vanilla-calendar:visible').find('.vanilla-calendar-day__btn_selected').should('not.exist');
+      cy.get('.vc:visible').find('[data-vc-date-selected]').should('not.exist');
     });
   });
 
@@ -885,7 +885,7 @@ describe('Example 10 - GraphQL Grid', () => {
 
       cy.get('.search-filter.filter-finish').click();
 
-      cy.get('.vanilla-calendar:visible').find('.vanilla-calendar-day__btn_selected').should('not.exist');
+      cy.get('.vc:visible').find('[data-vc-date-selected]').should('not.exist');
 
       cy.get('h3').click();
     });

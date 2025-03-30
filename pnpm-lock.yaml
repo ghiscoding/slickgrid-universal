@@ -461,8 +461,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12
       vanilla-calendar-pro:
-        specifier: ^2.9.10
-        version: 2.9.10
+        specifier: ^3.0.3
+        version: 3.0.3
     devDependencies:
       autoprefixer:
         specifier: ^10.4.21
@@ -4724,8 +4724,8 @@ packages:
     resolution: {integrity: sha512-d7KLgL1LD3U3fgnvWEY1cQXoO/q6EQ1BSz48Sa149V/5zVTAbgmZIpyI8TRi6U9/JNyeYLlTKsEMPtLC27RFUg==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  vanilla-calendar-pro@2.9.10:
-    resolution: {integrity: sha512-0yqWqlvitfQSRqjyVVr613whIgp62qC1JHgXyLalcJkNkMRZXRqEr+QQQvRdQavB2PBgB4HW+GM6VU4KU0K3Ng==}
+  vanilla-calendar-pro@3.0.3:
+    resolution: {integrity: sha512-bfmeGFaDeakk/OrwgM+22qDiRvIx1Zu+GG3+E/sCPjaKwbJR7AsDyRBfJQzVHRw3eeavU8jQQTRSFt8EPIPOGw==}
 
   verror@1.10.0:
     resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}
@@ -9277,7 +9277,7 @@ snapshots:
 
   validate-npm-package-name@6.0.0: {}
 
-  vanilla-calendar-pro@2.9.10: {}
+  vanilla-calendar-pro@3.0.3: {}
 
   verror@1.10.0:
     dependencies:

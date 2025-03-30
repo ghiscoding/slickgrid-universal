@@ -359,21 +359,21 @@ describe('Example 11 - Batch Editing', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`)
         .should('contain', '')
         .click(); // this date should also always be initially empty
-      cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+      cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`)
         .should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(6)`).click();
-      cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+      cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(6)`)
         .should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`).click();
-      cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+      cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`)
         .should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
         .should('have.css', 'background-color')
@@ -387,7 +387,7 @@ describe('Example 11 - Batch Editing', () => {
     it('should undo last edit and expect the date editor to be opened as well when clicking the associated last undo with editor button', () => {
       cy.get('[data-test=undo-open-editor-btn]').click();
 
-      cy.get('.vanilla-calendar').should('exist');
+      cy.get('.vc').should('exist');
 
       cy.get('.unsaved-editable-field').should('have.length', 12);
 
@@ -400,10 +400,9 @@ describe('Example 11 - Batch Editing', () => {
     it('should undo last edit and expect the date editor to NOT be opened when clicking undo last edit button', () => {
       cy.get('[data-test=undo-last-edit-btn]').click();
 
-      cy.get('.vanilla-calendar').should('not.be.visible');
+      cy.get('.vc').should('not.exist');
 
       cy.get('.unsaved-editable-field').should('have.length', 11);
-
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`)
         .should('contain', '')
         .should('have.css', 'background-color')
@@ -576,11 +575,11 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.search-filter.filter-finish.filled input').click({ force: true });
 
-      cy.get('.vanilla-calendar:visible');
+      cy.get('.vc:visible');
 
-      cy.get('.vanilla-calendar-day__btn_selected').should('have.length', 1);
+      cy.get('[data-vc-date-selected]').should('have.length', 1);
 
-      cy.get('.vanilla-calendar-day__btn_selected').should('have.text', '1');
+      cy.get('[data-vc-date-selected]').should('have.text', '1');
 
       cy.get('.slick-column-name').contains('Finish').find('~ .slick-sort-indicator.slick-sort-indicator-asc').should('have.length', 1);
 
@@ -700,7 +699,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.search-filter.filter-finish').should('not.have.class', 'filled').click();
 
-      cy.get('.vanilla-calendar-day__btn_selected').should('have.length', 0);
+      cy.get('[data-vc-date-selected]').should('have.length', 0);
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
 

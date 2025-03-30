@@ -129,11 +129,11 @@ describe('Example 25 - Range Filters', () => {
   it('should change the "Finish" date in the picker and expect all rows to be within new dates range', () => {
     cy.get('.date-picker.search-filter.filter-finish').click();
 
-    cy.get('.vanilla-calendar-day_selected-first').should('exist');
+    cy.get('[data-vc-date-selected="first"]').should('exist');
 
-    cy.get('.vanilla-calendar-day_selected-intermediate').should('have.length.gte', 2);
+    cy.get('[data-vc-date-selected="middle"]').should('have.length.gte', 2);
 
-    cy.get('.vanilla-calendar-day_selected-last').should('exist');
+    cy.get('[data-vc-date-selected="last"]').should('exist');
   });
 
   it('should change the "Duration" input filter and expect all rows to be within new range', () => {

@@ -191,8 +191,8 @@ describe('Example 14 - Columns Resize by Content', () => {
       const yesterdayDate = format(addDay(new Date(), -1), 'YYYY-MM-DD');
       const todayDate = format(new Date(), 'YYYY-MM-DD');
 
-      cy.get(`[data-calendar-day=${yesterdayDate}]`).should('have.class', 'vanilla-calendar-day__btn_disabled');
-      cy.get(`[data-calendar-day=${todayDate}]`).should('not.have.class', 'vanilla-calendar-day__btn_disabled');
+      cy.get(`[data-vc-date=${yesterdayDate}]`).should('have.attr', 'data-vc-date-disabled');
+      cy.get(`[data-vc-date=${todayDate}]`).should('not.have.attr', 'data-vc-date-disabled');
 
       // make grid readonly again
       cy.get('[data-test="toggle-readonly-btn"]').click();
