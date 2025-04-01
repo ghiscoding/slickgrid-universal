@@ -280,7 +280,7 @@ export class DateEditor implements Editor {
     this.columnEditor.editorOptions[optionName] = newValue;
     this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { [optionName]: newValue });
     if (this.calendarInstance) {
-      (this.calendarInstance as any)[optionName as T] = newValue as K;
+      this.calendarInstance.set(this._pickerMergedOptions, { dates: true, locale: true, month: true, time: true, year: true });
     }
   }
 

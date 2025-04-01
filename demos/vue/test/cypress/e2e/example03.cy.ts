@@ -76,7 +76,7 @@ describe('Example 3 - Grid with Editors', () => {
 
     // change Finish date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`).click();
-    cy.get('.vc:visible').click();
+    cy.get('.vc-month:visible').click();
     cy.get('.vc-months__month').contains('Jan').click();
     cy.get('[data-vc="year"]').click();
     cy.get('.vc-years__year').contains('2009').click();
@@ -160,7 +160,7 @@ describe('Example 3 - Grid with Editors', () => {
 
     // change Finish date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).click();
-    cy.get('.vc:visible').click();
+    cy.get('.vc-month:visible').click();
     cy.get('.vc-months__month').contains('Jan').click();
     cy.get('[data-vc="year"]').click();
     cy.get('.vc-years__year').contains('2009').click();

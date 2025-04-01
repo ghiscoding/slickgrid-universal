@@ -275,6 +275,10 @@ describe('DateEditor', () => {
 
     it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options', () => {
       editor = new DateEditor(editorArguments);
+
+      vi.runAllTimers();
+
+      const setSpy = vi.spyOn(editor.calendarInstance!, 'set');
       const calendarElm = document.body.querySelector<HTMLDivElement>('.vc');
       editor.changeEditorOption('disableDatesPast', true);
       editor.changeEditorOption('selectedDates', ['2001-02-04']);
@@ -292,6 +296,14 @@ describe('DateEditor', () => {
       expect(editor.pickerOptions.enableEdgeDatesOnly).toEqual(true);
       expect(editor.pickerOptions.selectedDates).toEqual(['2020-03-10', 'today']);
       expect(editor.pickerOptions.selectedMonth).toEqual(2);
+
+      expect(setSpy).toHaveBeenCalledWith(expect.objectContaining({ selectedDates: ['2020-03-10', 'today'] }), {
+        dates: true,
+        locale: true,
+        month: true,
+        time: true,
+        year: true,
+      });
     });
 
     describe('isValueChanged method', () => {

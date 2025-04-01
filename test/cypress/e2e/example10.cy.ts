@@ -407,9 +407,9 @@ describe('Example 10 - GraphQL Grid', () => {
 
     cy.get('.vc:visible [data-vc-date-selected] button').should('have.length', 46);
 
-    cy.get('.vc:visible').find('[data-vc-date-selected]').first().should('have.text', '1');
+    cy.get('.vc:visible [data-vc-date-selected]').first().should('have.text', '1');
 
-    cy.get('.vc:visible').find('[data-vc-date-selected]').last().should('have.text', '15');
+    cy.get('.vc:visible [data-vc-date-selected]').last().should('have.text', '15');
   });
 
   describe('Set Dynamic Sorting', () => {
