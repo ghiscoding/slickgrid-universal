@@ -1,4 +1,4 @@
-## SlickGrid is now jQuery free 🌊
+## SlickGrid is now jQuery free (2023-05-29) 🌊
 
 In our previous v2.0 release (see [Migration to v2.0](Migration-to-2.x.md)), we dropped jQueryUI and now in v3.0 we are going even further and are now dropping [jQuery](https://jquery.com/) entirely. You can still use jQuery but it's no longer a dependency. There are multiple benefits in dropping jQuery and go the vanilla route, the biggest advantages are:
 
@@ -13,7 +13,7 @@ In our previous v2.0 release (see [Migration to v2.0](Migration-to-2.x.md)), we 
 
 ---
 
-**NOTE:** if you come from an earlier version other than 1.x, please make sure to follow each migration in their respected order
+**NOTE:** if you come from an earlier version other than 2.x, then please make sure to follow each migration in their respected order
 
 ## Changes
 ### Replaced `multiple-select` with [`multiple-select-vanilla`](https://github.com/ghiscoding/multiple-select-vanilla)
