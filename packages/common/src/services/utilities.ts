@@ -274,7 +274,7 @@ export function findItemInTreeStructure<T extends object = any>(
     const childElements: T[] = [];
     for (const item of elementsWithChildren) {
       if (childrenPropertyName in item) {
-        childElements.push(...(item as any)[childrenPropertyName]);
+        (item as any)[childrenPropertyName].forEach((el: any) => childElements.push(el));
       }
     }
     return findItemInTreeStructure<T>(childElements, predicate, childrenPropertyName);

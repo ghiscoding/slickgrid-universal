@@ -457,6 +457,11 @@ describe('Service/Utilies', () => {
           ],
         },
       ];
+
+      // add large set of data for testing
+      for (let i = 20; i < 300_200; i++) {
+        mockColumns[1].files.push({ id: i, file: `file-${i}.txt`, dateModified: '2020-02-01', size: 123 });
+      }
     });
 
     it('should throw an error when the children property name argument is missing', () => {
@@ -473,6 +478,16 @@ describe('Service/Utilies', () => {
     it('should return undefined when item is not found', () => {
       const item = findItemInTreeStructure(mockColumns, (x) => x.file === 'pop2', 'files');
       expect(item).toEqual(undefined as any);
+    });
+
+    it('should return item found in large dataset', () => {
+      const item = findItemInTreeStructure(mockColumns, (x) => x.file === 'file-125000.txt', 'files');
+      expect(item).toEqual({
+        dateModified: '2020-02-01',
+        file: 'file-125000.txt',
+        id: 125000,
+        size: 123,
+      });
     });
   });
 
