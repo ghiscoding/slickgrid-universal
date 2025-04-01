@@ -1,4 +1,4 @@
-## Merging SlickGrid into Slickgrid-Universal (dropping `6pac/slickgrid` dep)
+## Merging SlickGrid into Slickgrid-Universal (dropping `6pac/slickgrid` dep) (2023-12-15)
 ### The aim of this release is to be standalone, improve best practices & move towards CSP compliance while also making the project leaner.
 
 There are a few changes, but it's for good reasons 😉
@@ -24,7 +24,7 @@ With this new major version release, we can now say that the journey to moderniz
 
 ---
 
-**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respected order (see Wiki index)
+**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respected order
 
 ## Changes
 ### Distribution folder
