@@ -1,7 +1,7 @@
 # Migration Guide to 2.x
 
-### Bye Bye jQueryUI... 👋🏻 welcome [SortableJS](https://sortablejs.github.io/Sortable/) 🚀
-
+### Bye Bye jQueryUI... 👋🏻 welcome [SortableJS](https://sortablejs.github.io/Sortable/) 🚀 (2022-10-17)
+ 
 This new release is rather small for the developer, but a lot have changed internally and SortableJS will improve performance and usability since it also works great with touch. The main change for the developer would be if you use the `Editors.autoComplete` which has changed to `Editors.autocompleter` (same for Filters), and that's about it since the rest of the changes are mostly removal of deprecated things. If you want to know more about the reason behind the removal of jQueryUI (internally), then read the "Why replace jQueryUI with SortableJS?" section below.
 
 **Major Changes - Quick Summary**
