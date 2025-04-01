@@ -458,7 +458,8 @@ describe('Service/Utilies', () => {
         },
       ];
 
-      for (let i = 20; i < 300_000; i++) {
+      // add large set of data for testing
+      for (let i = 20; i < 300_200; i++) {
         mockColumns[1].files.push({ id: i, file: `file-${i}.txt`, dateModified: '2020-02-01', size: 123 });
       }
     });
@@ -479,7 +480,7 @@ describe('Service/Utilies', () => {
       expect(item).toEqual(undefined as any);
     });
 
-    it('should return item found', () => {
+    it('should return item found in large dataset', () => {
       const item = findItemInTreeStructure(mockColumns, (x) => x.file === 'file-125000.txt', 'files');
       expect(item).toEqual({
         dateModified: '2020-02-01',
