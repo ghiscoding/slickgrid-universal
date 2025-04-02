@@ -801,7 +801,7 @@ li.hidden {
 
     select {
       font-family: var(--slick-compound-filter-operator-select-font-family, v.$slick-compound-filter-operator-select-font-family);
-      font-size: var(--slick-compound-filter-operator-select-font-size, v.$slick-compound-filter-operator-select-font-size);
+      font-size: var(--slick-compound-filter-operator-select-font-size, v.$slick-compound-filter-operator-select-font-size) !important;
       border: var(--slick-compound-filter-operator-select-border, v.$slick-compound-filter-operator-select-border);
       width: var(--slick-compound-filter-operator-select-width, v.$slick-compound-filter-operator-select-width);
 
