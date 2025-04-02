@@ -60,9 +60,9 @@ catalogs:
     typescript:
       specifier: ^5.8.2
       version: 5.8.2
-    whatwg-fetch:
-      specifier: ^3.6.20
-      version: 3.6.20
+    vite:
+      specifier: ^6.2.3
+      version: 6.2.4
 
 importers:
 
@@ -170,9 +170,6 @@ importers:
       vitest:
         specifier: ^3.0.9
         version: 3.0.9(@types/node@22.13.14)(@vitest/ui@3.0.9)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@26.0.0)(sass@1.86.0)(yaml@2.7.0)
-      whatwg-fetch:
-        specifier: 'catalog:'
-        version: 3.6.20
 
   demos/vanilla:
     dependencies:
@@ -233,9 +230,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-      whatwg-fetch:
-        specifier: 'catalog:'
-        version: 3.6.20
     devDependencies:
       '@types/fnando__sparkline':
         specifier: 'catalog:'
@@ -651,9 +645,6 @@ importers:
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.6
-      whatwg-fetch:
-        specifier: 'catalog:'
-        version: 3.6.20
     devDependencies:
       '@slickgrid-universal/graphql':
         specifier: workspace:*
@@ -700,9 +691,6 @@ importers:
       '@slickgrid-universal/vanilla-bundle':
         specifier: workspace:*
         version: link:../vanilla-bundle
-      whatwg-fetch:
-        specifier: 'catalog:'
-        version: 3.6.20
     devDependencies:
       fflate:
         specifier: ^0.8.2
@@ -4853,9 +4841,6 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
-
-  whatwg-fetch@3.6.20:
-    resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}
 
   whatwg-mimetype@3.0.0:
     resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
@@ -9415,8 +9400,6 @@ snapshots:
   whatwg-encoding@3.1.1:
     dependencies:
       iconv-lite: 0.6.3
-
-  whatwg-fetch@3.6.20: {}
 
   whatwg-mimetype@3.0.0: {}
 

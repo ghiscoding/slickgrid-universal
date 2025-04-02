@@ -4,7 +4,6 @@ import {
   type TranslaterService,
   type TranslateServiceEventName,
 } from '@slickgrid-universal/common';
-import { fetch } from 'whatwg-fetch/fetch';
 
 interface Locales {
   [locale: string]: string;

@@ -64,7 +64,7 @@
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
-    "devDependencies": "The dev deps 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Vitest unit tests."
+    "devDependencies": "The dev deps 'slickgrid' and 'sortablejs' are simply installed for Vitest unit tests."
   },
   "engines": {
     "node": "^20.17.0 || >=22.9.0",
@@ -105,8 +105,7 @@
     "sortablejs": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "^8.28.0",
-    "vitest": "^3.0.9",
-    "whatwg-fetch": "catalog:"
+    "vitest": "^3.0.9"
   },
   "funding": {
     "type": "ko_fi",

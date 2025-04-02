@@ -59,8 +59,7 @@
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "catalog:",
-    "sortablejs": "catalog:",
-    "whatwg-fetch": "catalog:"
+    "sortablejs": "catalog:"
   },
   "devDependencies": {
     "@slickgrid-universal/graphql": "workspace:*",

@@ -22,9 +22,6 @@ Vanilla Bundle implementation (no framework, plain TypeSript implementation). Th
 - [@slickgrid-universal/empty-warning-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/empty-warning-component)
 - [@slickgrid-universal/pagination-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/pagination-component)
 
-### External Dependencies
-- [whatwg-fetch](https://github.com/whatwg/fetch) - Fetch Standard
-
 ### Installation
 This Vanilla Bundle is used used by the standalone [demos/vanilla](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vanilla) which serves for demo purposes.
 

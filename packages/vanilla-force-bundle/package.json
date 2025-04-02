@@ -66,8 +66,7 @@
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "@slickgrid-universal/vanilla-bundle": "workspace:*",
-    "whatwg-fetch": "catalog:"
+    "@slickgrid-universal/vanilla-bundle": "workspace:*"
   },
   "devDependencies": {
     "fflate": "^0.8.2",

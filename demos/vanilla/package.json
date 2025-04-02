@@ -28,8 +28,7 @@
     "bulma": "^1.0.3",
     "dompurify": "catalog:",
     "multiple-select-vanilla": "catalog:",
-    "rxjs": "catalog:",
-    "whatwg-fetch": "catalog:"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/fnando__sparkline": "catalog:",
