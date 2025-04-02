@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.2...v5.13.3) (2025-04-02)
+
+### Bug Fixes
+
+* **tree:** findItemInTreeStructure() shouldn't throw w/large dataset, fix [#1885](https://github.com/ghiscoding/slickgrid-universal/issues/1885) ([#1887](https://github.com/ghiscoding/slickgrid-universal/issues/1887)) ([2276574](https://github.com/ghiscoding/slickgrid-universal/commit/22765745867d1273f43a2a27d400a3756368d3ac)) - by @ghiscoding
+
 ## [5.13.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.1...v5.13.2) (2025-03-29)
 
 ### Bug Fixes
