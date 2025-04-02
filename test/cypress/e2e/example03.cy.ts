@@ -80,31 +80,31 @@ describe('Example 03 - Draggable Grouping', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`)
       .should('contain', '')
       .click();
-    cy.get('.vanilla-calendar-year').should('have.text', firstRowStartYear);
-    cy.get('.vanilla-calendar-month').should(($button) => {
+    cy.get('[data-vc="year"]').should('have.text', firstRowStartYear);
+    cy.get('[data-vc="month"]').should(($button) => {
       pickerMonth = $button.text();
       expect(pickerMonth).not.to.eq('');
     });
-    cy.get('.vanilla-calendar-day__btn_selected').should(($button) => {
+    cy.get('[data-vc-date-selected]').should(($button) => {
       selectedDate = $button.text();
       expect(pickerMonth).not.to.eq('');
     });
-    cy.get('.vanilla-calendar-day__btn_selected').click(); // reselect it to close the picker
+    cy.get('[data-vc-date-selected]').click(); // reselect it to close the picker
 
     // reopen date picker should have same date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`)
       .should('contain', '')
       .click();
-    cy.get('.vanilla-calendar-year').should('have.text', firstRowStartYear);
+    cy.get('[data-vc="year"]').should('have.text', firstRowStartYear);
 
-    cy.get('.vanilla-calendar-month').should(($button) => {
+    cy.get('[data-vc="month"]').should(($button) => {
       expect($button.text()).to.eq(pickerMonth);
     });
-    cy.get('.vanilla-calendar-day__btn_selected').should(($button) => {
+    cy.get('[data-vc-date-selected]').should(($button) => {
       expect($button.text()).to.eq(selectedDate);
     });
 
-    cy.get('.vanilla-calendar-day__btn_selected').click(); // reselect it to close the picker
+    cy.get('[data-vc-date-selected]').click(); // reselect it to close the picker
   });
 
   describe('Grouping tests', () => {

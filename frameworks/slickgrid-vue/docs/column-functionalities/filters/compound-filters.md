@@ -133,7 +133,7 @@ All the available options that can be provided as `filterOptions` to your column
 filter: {
   model: Filters.compoundDate,
   filterOptions: {
-    range: { min: 'today' }
+    displayDateMin: 'today'
   } as VanillaCalendarOption
 }
 ```
@@ -145,7 +145,7 @@ You could also define certain options as a global level (for the entire grid or 
 gridOptions.value = {
   defaultFilterOptions: {
     // Note: that `date`, `select` and `slider` are combining both compound & range filters together
-    date: { range: { min: 'today' } },  // typed as VanillaCalendarOption
+    date: { displayDateMin: 'today' },  // typed as VanillaCalendarOption
     select: { minHeight: 350 },         // typed as MultipleSelectOption
     slider: { sliderStartValue: 10 }
   }

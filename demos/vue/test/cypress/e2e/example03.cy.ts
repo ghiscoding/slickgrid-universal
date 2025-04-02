@@ -76,11 +76,11 @@ describe('Example 3 - Grid with Editors', () => {
 
     // change Finish date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`).click();
-    cy.get('.vanilla-calendar-month:visible').click();
-    cy.get('.vanilla-calendar-months__month').contains('Jan').click();
-    cy.get('.vanilla-calendar-year').click();
-    cy.get('.vanilla-calendar-years__year').contains('2009').click();
-    cy.get('.vanilla-calendar-day__btn').contains('22').click();
+    cy.get('.vc-month:visible').click();
+    cy.get('.vc-months__month').contains('Jan').click();
+    cy.get('[data-vc="year"]').click();
+    cy.get('.vc-years__year').contains('2009').click();
+    cy.get('[data-vc-date-btn]').contains('22').click();
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`).should('contain', '2009-01-22');
 
     // change City of Origin
@@ -160,11 +160,11 @@ describe('Example 3 - Grid with Editors', () => {
 
     // change Finish date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).click();
-    cy.get('.vanilla-calendar-month:visible').click();
-    cy.get('.vanilla-calendar-months__month').contains('Jan').click();
-    cy.get('.vanilla-calendar-year').click();
-    cy.get('.vanilla-calendar-years__year').contains('2009').click();
-    cy.get('.vanilla-calendar-day__btn').contains('22').click();
+    cy.get('.vc-month:visible').click();
+    cy.get('.vc-months__month').contains('Jan').click();
+    cy.get('[data-vc="year"]').click();
+    cy.get('.vc-years__year').contains('2009').click();
+    cy.get('[data-vc-date-btn]').contains('22').click();
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).should('contain', '2009-01-22');
 
     // change Effort Driven
@@ -230,7 +230,7 @@ describe('Example 3 - Grid with Editors', () => {
 
     // change Finish date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).click();
-    cy.get('.vanilla-calendar-day__btn').contains('21').click();
+    cy.get('[data-vc-date-btn]').contains('21').click();
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).should('contain', '2009-01-21');
 
     // // change Effort Driven

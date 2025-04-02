@@ -204,7 +204,7 @@ this.columnDefinitions = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
-    editorOptions: { range: { min: 'today' } } as VanillaCalendarOption
+    editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption
   }
 }];
 ```
@@ -216,7 +216,7 @@ You could also define certain options as a global level (for the entire grid or 
 this.gridOptions = {
   defaultEditorOptions: {
     autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
-    date: { range: { min: 'today' } },
+    date: { displayDateMin: 'today' },
     longText: { cols: 50, rows: 5 }
   }
 }
@@ -406,7 +406,7 @@ Using the [Row Based Editing Plugin](../grid-functionalities/Row-based-edit.md) 
 
 ## Dynamically change Column Editor
 
-You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below. 
+You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below.
 
 With the code sample shown below, we are using an input checkbox to toggle the Editor between `Editors.longText` to `Editors.text` and vice/versa
 

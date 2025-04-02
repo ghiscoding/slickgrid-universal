@@ -916,16 +916,9 @@ li.hidden {
 // Date Picker Filter
 // ----------------------------------------------
 
-.vanilla-calendar {
+.vc {
   padding: 0.9rem;
   z-index: 9999;
-
-  // when setting filters dynamically, the calendar picker is appended to the body
-  // making the body taller and unnecessary scrollable
-  &.vanilla-calendar_hidden {
-    left: 0;
-    top: 0;
-  }
 }
 
 // ----------------------------------------------

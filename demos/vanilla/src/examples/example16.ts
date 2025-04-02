@@ -243,7 +243,7 @@ export default class Example16 {
         name: 'Finish',
         field: 'finish',
         sortable: true,
-        editor: { model: Editors.date, editorOptions: { range: { min: 'today' } } as VanillaCalendarOption },
+        editor: { model: Editors.date, editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption },
         // formatter: Formatters.dateIso,
         type: FieldType.date,
         outputType: FieldType.dateIso,

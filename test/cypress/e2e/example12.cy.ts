@@ -150,12 +150,12 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`)
       .should('contain', '')
       .click({ force: true }); // this date should also always be initially empty
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).should('not.exist');
+    cy.get('[data-vc-date-today]:visible button').should('not.exist');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`)
       .should('contain', '')
       .click({ force: true }); // this date should also always be initially empty
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).should('not.exist');
+    cy.get('[data-vc-date-today]:visible button').should('not.exist');
   });
 
   it('should be able to change "Completed" values of row indexes 2-4', () => {
@@ -200,9 +200,9 @@ describe('Example 12 - Composite Editor Modal', () => {
       .should('contain', '')
       .click(); // this date should also always be initially empty
     // any dates lower than today should be disabled
-    cy.get(`[data-calendar-day=${yesterdayDate}]`).should('have.class', 'vanilla-calendar-day__btn_disabled');
-    cy.get(`[data-calendar-day=${todayDate}]`).should('not.have.class', 'vanilla-calendar-day__btn_disabled');
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+    cy.get(`[data-vc-date=${yesterdayDate}]`).should('have.attr', 'data-vc-date-disabled');
+    cy.get(`[data-vc-date=${todayDate}]`).should('not.have.attr', 'data-vc-date-disabled');
+    cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`)
       .should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
@@ -210,7 +210,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).click();
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+    cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`)
       .should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
@@ -218,7 +218,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`).click();
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+    cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`)
       .should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
@@ -231,7 +231,7 @@ describe('Example 12 - Composite Editor Modal', () => {
   it('should undo last edit and expect the date editor to be opened as well when clicking the associated last undo with editor button', () => {
     cy.get('[data-test=undo-open-editor-btn]').click();
 
-    cy.get('.vanilla-calendar').should('exist');
+    cy.get('.vc').should('exist');
 
     cy.get('.unsaved-editable-field').should('have.length', 12);
 
@@ -245,7 +245,7 @@ describe('Example 12 - Composite Editor Modal', () => {
   it('should undo last edit and expect the date editor to NOT be opened when clicking undo last edit button', () => {
     cy.get('[data-test=undo-last-edit-btn]').click();
 
-    cy.get('.vanilla-calendar:visible').should('not.exist');
+    cy.get('.vc:visible').should('not.exist');
 
     cy.get('.unsaved-editable-field').should('have.length', 11);
 
@@ -399,7 +399,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       '* You must provide a "Finish" date when "Completed" is checked.'
     );
     cy.get('.item-details-container.editor-finish input.date-picker').click({ force: true });
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+    cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-origin .autocomplete').type('c');
@@ -509,7 +509,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       '* You must provide a "Finish" date when "Completed" is checked.'
     );
     cy.get('.item-details-container.editor-finish .date-picker').click().click();
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).click();
+    cy.get('[data-vc-date-today]:visible button').click();
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-origin .autocomplete').type('bel');
@@ -587,7 +587,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       '* You must provide a "Finish" date when "Completed" is checked.'
     );
     cy.get('.item-details-container.editor-finish .date-picker').click().click();
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).click();
+    cy.get('[data-vc-date-today]:visible button').click();
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-origin .autocomplete').type('bel');
@@ -644,7 +644,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       '* You must provide a "Finish" date when "Completed" is checked.'
     );
     cy.get('.item-details-container.editor-finish input.date-picker').click({ force: true });
-    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
+    cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-origin .autocomplete').type('ze');
@@ -877,7 +877,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     const today = new Date();
     cy.get('.editor-start .vanilla-picker input').click();
 
-    cy.get('.vanilla-calendar:visible .vanilla-calendar-year').should('not.contain', today.getFullYear());
+    cy.get('.vc:visible .vc-year').should('have.attr', 'data-vc-year').should('not.contain', today.getFullYear());
 
     // clear start date
     cy.get('.editor-start .vanilla-picker .btn-clear').click();
@@ -885,7 +885,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     // reopen start date and expect today's year
     cy.get('.editor-start .vanilla-picker input').click();
 
-    cy.get('.vanilla-calendar:visible .vanilla-calendar-year').should('contain', today.getFullYear());
+    cy.get('.vc:visible .vc-year').should('have.attr', 'data-vc-year').should('contain', today.getFullYear());
 
     cy.get('.slick-editor-modal-footer .btn-cancel').click();
   });

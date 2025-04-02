@@ -248,7 +248,7 @@ describe('Example 4 - Client Side Sort/Filter Grid', () => {
 
       cy.get('.search-filter.filter-start').click();
 
-      cy.get('.vanilla-calendar:visible').find('.vanilla-calendar-day__btn_selected').should('not.exist');
+      cy.get('.vc:visible').find('[data-vc-date-selected]').should('not.exist');
 
       cy.get('h2').click();
     });
