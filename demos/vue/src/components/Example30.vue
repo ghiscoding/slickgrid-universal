@@ -26,7 +26,7 @@ import {
 } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
-import URL_COUNTRIES_COLLECTION from './data/countries.json';
+import COUNTRIES_COLLECTION from './data/countries.json';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
@@ -353,7 +353,7 @@ function defineGrid() {
         model: Editors.autocompleter,
         massUpdate: true,
         customStructure: { label: 'name', value: 'code' },
-        collectionAsync: Promise.resolve(URL_COUNTRIES_COLLECTION),
+        collectionAsync: Promise.resolve(COUNTRIES_COLLECTION),
         editorOptions: { minLength: 0 },
       },
       filter: {

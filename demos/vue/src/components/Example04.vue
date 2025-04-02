@@ -18,7 +18,7 @@ import {
 import { onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
 
 import { CustomInputFilter } from './custom-inputFilter';
-import URL_SAMPLE_COLLECTION_DATA from './data/collection_500_numbers.json';
+import SAMPLE_COLLECTION_DATA from './data/collection_500_numbers.json';
 
 const NB_ITEMS = 10500;
 
@@ -84,10 +84,10 @@ function defineGrid() {
         // 3 ways are supported (fetch, Promise or RxJS when available)
 
         // 1- use `fetch`
-        // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
+        // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
 
         // OR 2- use a Promise
-        collectionAsync: Promise.resolve(URL_SAMPLE_COLLECTION_DATA),
+        collectionAsync: Promise.resolve(SAMPLE_COLLECTION_DATA),
 
         // collectionFilterBy & collectionSortBy accept a single or multiple options
         // we can exclude certains values 365 & 360 from the dropdown filter

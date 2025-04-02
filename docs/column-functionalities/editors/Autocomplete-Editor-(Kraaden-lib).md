@@ -15,9 +15,9 @@
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example11) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example11.ts)
 
 ### Introduction
-AutoComplete is a functionality that let the user start typing characters and the autocomplete will try to give suggestions according to the characters entered. The collection can be a fixed JSON files (collection of strings or objects) or can also be an external remote resource to an external API. For a demo of what that could look like, take a look at the [animated gif demo](#animated-gif-demo) below. 
+AutoComplete is a functionality that let the user start typing characters and the autocomplete will try to give suggestions according to the characters entered. The collection can be a fixed JSON files (collection of strings or objects) or can also be an external remote resource to an external API. For a demo of what that could look like, take a look at the [animated gif demo](#animated-gif-demo) below.
 
-We use an external lib named [Autocomplete](https://github.com/kraaden/autocomplete) (aka `autocompleter` on npm) by Kraaden. 
+We use an external lib named [Autocomplete](https://github.com/kraaden/autocomplete) (aka `autocompleter` on npm) by Kraaden.
 
 ## Using `collection` or `collectionAsync`
 If you want to pass the entire list to the AutoComplete (like a JSON file or a Web API call), you can do so using the `collection` or the `collectionAsync` (the latter will load it asynchronously). You can also see that the Editor and Filter have almost the exact same configuration (apart from the `model` that is obviously different).
@@ -83,7 +83,7 @@ this.columnDefinitions = [
         showOnFocus: true, // display the list on focus of the autocomplete (without the need to type anything)
       } as AutocompleterOption,
       enableRenderHtml: true, // this flag only works with a fixed Collection
-      // collectionAsync: this.http.get(URL_COUNTRIES_COLLECTION),
+      // collectionAsync: this.http.get(COUNTRIES_COLLECTION_URL),
       collection: [
         { value: '', label: '' },
         { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-plus"></i> ` },
@@ -111,7 +111,7 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 this.gridOptions = {
-  defaultEditorOptions: { 
+  defaultEditorOptions: {
     autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
   }
 }

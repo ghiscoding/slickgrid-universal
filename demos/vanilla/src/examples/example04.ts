@@ -21,9 +21,6 @@ import { ExampleGridOptions } from './example-grid-options.js';
 import fetchJsonp from './jsonp.js';
 import './example04.scss';
 
-// const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';
-// const URL_COUNTRY_NAMES_COLLECTION = 'assets/data/country_names.json';
-
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value) => {
   if (value === null || value === undefined || !value.length) {
@@ -266,10 +263,10 @@ export default class Example04 {
         // formatter: (_, __, val) => typeof val === 'string' ? val : val.name,
         // editor: {
         //   model: Editors.autocompleter,
-        //   // collectionAsync: fetch(URL_COUNTRY_NAMES_COLLECTION),
+        //   // collectionAsync: fetch(COUNTRY_NAMES_COLLECTION_URL),
         //   placeholder: '🔎︎ search country',
         //   customStructure: { label: 'name', value: 'code' },
-        //   // collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
+        //   // collectionAsync: fetch(COUNTRIES_COLLECTION_URL),
 
         //   enableRenderHtml: true,
         //   collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
@@ -293,10 +290,10 @@ export default class Example04 {
         },
         // filter: {
         //   model: Filters.autocompleter,
-        //   // collectionAsync: fetch(URL_COUNTRY_NAMES_COLLECTION),
+        //   // collectionAsync: fetch(COUNTRY_NAMES_COLLECTION_URL),
         //   placeholder: '🔎︎ search country',
         //   customStructure: { label: 'name', value: 'code' },
-        //   collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
+        //   collectionAsync: fetch(COUNTRIES_COLLECTION_URL),
 
         //   // enableRenderHtml: true,
         //   // collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
@@ -308,7 +305,7 @@ export default class Example04 {
           // customStructure: { label: 'name', value: 'code' },
 
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
-          // collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
+          // collectionAsync: fetch(COUNTRIES_COLLECTION_URL),
 
           // OR use your own autocomplete options, instead of fetchJsonp, use HttpClient or FetchClient
           // here we use fetchJsonp just because I'm not sure how to configure HttpClient with JSONP and CORS
