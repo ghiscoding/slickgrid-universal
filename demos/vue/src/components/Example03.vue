@@ -302,7 +302,7 @@ function defineGrid() {
         // placeholder: '🔎︎ search city',
 
         // We can use the autocomplete through 3 ways 'collection', 'collectionAsync' or with your own autocomplete options
-        // collectionAsync: this.httpFetch.fetch(URL_COUNTRIES_COLLECTION),
+        // collectionAsync: this.httpFetch.fetch(COUNTRIES_COLLECTION_URL),
 
         // OR use your own autocomplete options, instead of fetch-jsonp, use Fetch
         // here we use fetch-jsonp just because I'm not sure how to configure fetch with JSONP and CORS
@@ -393,7 +393,7 @@ function defineGrid() {
         // 3 ways are supported (fetch, Promise or RxJS when available)
 
         // 1- use `fetch`
-        // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
+        // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
 
         // OR 2- use a Promise
         collectionAsync: Promise.resolve(SAMPLE_COLLECTION_DATA),

@@ -2,7 +2,7 @@
 import { type GridOption, type SlickgridVueInstance, type Column, Filters, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
-import URL_CUSTOMERS_URL from './data/customers_100.json?url';
+import CUSTOMERS_URL from './data/customers_100.json?url';
 
 const NB_ITEMS = 500;
 const gridOptions1 = ref<GridOption>();
@@ -24,7 +24,7 @@ onBeforeMount(async () => {
   dataset1.value = loadData(NB_ITEMS);
 
   // load data with Fetch-Client
-  const response2 = await fetch(URL_CUSTOMERS_URL);
+  const response2 = await fetch(CUSTOMERS_URL);
   dataset2.value = await response2['json']();
 });
 
