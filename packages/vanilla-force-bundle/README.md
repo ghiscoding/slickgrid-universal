@@ -31,9 +31,6 @@ This package does what other framework would do, that is to make all the feature
 - [@slickgrid-universal/text-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/text-export)
 - [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle)
 
-### External Dependencies
-- [whatwg-fetch](https://github.com/whatwg/fetch) - Fetch Standard
-
 ### Installation
 This Vanilla Bundle is used in our SalesForce implementation (since it requires plain ES6) and is also used by the standalone [demos/vanilla](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vanilla) which serves for demo purposes.
 

@@ -3,15 +3,7 @@
 
 ### Installation
 
-You can create your own Translate Service, for example installing the `whatwg-fetch` library (or anything similar) to load JSON files for translations.
-
-##### Install NPM package
-
-You can install `whatwg-fetch` or any other library that you wish to use to load your JSON translation files.
-
-```ts
-npm install whatwg-fetch
-```
+You can create your own Translate Service, for example using Fetch to load JSON files for translations.
 
 ##### Main.ts
 
@@ -29,7 +21,7 @@ export class TranslateService implements TranslaterService {
   use(language: string): Promise<any> | any {}
 }
 ```
-> for a full translater service implementation demo with `whatwg-fetch`, take a look at [translate.service.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/translate.service.ts).
+> for a full translater service implementation demo with Fetch, take a look at [translate.service.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/translate.service.ts).
 
 #### Class sample
 You need to add a translation key via the property `headerKey` to each column definition, for example: `headerKey: 'TITLE'`

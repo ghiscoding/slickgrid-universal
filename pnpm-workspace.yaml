@@ -24,4 +24,3 @@ catalog:
   sortablejs: ^1.15.6
   typescript: ^5.8.2
   vite: ^6.2.3
-  whatwg-fetch: ^3.6.20
