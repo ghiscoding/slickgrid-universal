@@ -789,7 +789,7 @@ li.hidden {
     .form-control {
       border-radius: var(--slick-compound-filter-operator-border-radius, v.$slick-compound-filter-operator-border-radius);
       // border-right: none;
-      padding: var(--slick-compound-filter-text-padding, v.$slick-compound-filter-text-padding) !important;
+      padding: var(--slick-compound-filter-text-padding, v.$slick-compound-filter-text-padding);
       font-size: var(--slick-compound-filter-text-font-size, v.$slick-compound-filter-text-font-size);
       color: var(--slick-compound-filter-text-color, v.$slick-compound-filter-text-color);
       font-weight: var(--slick-compound-filter-text-weight, v.$slick-compound-filter-text-weight);
