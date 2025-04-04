@@ -335,6 +335,9 @@ importers:
       typescript-eslint:
         specifier: ^8.29.0
         version: 8.29.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)
+      vite:
+        specifier: 'catalog:'
+        version: 6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(sass-embedded@1.86.2)(sass@1.86.0)(stylus@0.64.0)(terser@5.39.0)(yaml@2.7.0)
 
   demos/vanilla:
     dependencies:
