@@ -357,11 +357,7 @@ describe('Example 9 - Grid Menu', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
 
       // click different sub-menu
-      cy.get('.slick-grid-menu.slick-menu-level-0')
-        .find('.slick-menu-item')
-        .contains('Feedback')
-        .should('exist')
-        .trigger('mouseover'); // mouseover or click should work
+      cy.get('.slick-grid-menu.slick-menu-level-0').find('.slick-menu-item').contains('Feedback').should('exist').trigger('mouseover'); // mouseover or click should work
 
       cy.get('.slick-submenu').should('have.length', 1);
       cy.get('.slick-grid-menu.slick-menu-level-1')

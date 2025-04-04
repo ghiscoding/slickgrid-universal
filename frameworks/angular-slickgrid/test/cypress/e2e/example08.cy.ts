@@ -62,12 +62,7 @@ describe('Example 8 - Header Menu Plugin', () => {
   });
 
   it('should hover over "Duration" and execute "Sort Ascending" command and expect a sort icon', () => {
-    cy.get('#grid8')
-      .find('.slick-header-column:nth(1)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('#grid8').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-menu-item .slick-menu-content').contains('Sort Ascending').click();
 
@@ -153,11 +148,7 @@ describe('Example 8 - Header Menu Plugin', () => {
         .invoke('show')
         .click({ force: true });
 
-      cy.get('.slick-header-menu.slick-menu-level-0')
-        .find('.slick-menu-item.slick-menu-item')
-        .contains('Hello')
-        .should('exist')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-0').find('.slick-menu-item.slick-menu-item').contains('Hello').should('exist').click();
 
       cy.get('.slick-submenu').should('have.length', 1);
       cy.get('.slick-header-menu.slick-menu-level-1.dropright') // right align
@@ -166,11 +157,7 @@ describe('Example 8 - Header Menu Plugin', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
 
       // click different sub-menu
-      cy.get('.slick-header-menu.slick-menu-level-0')
-        .find('.slick-menu-item.slick-menu-item')
-        .contains('Feedback')
-        .should('exist')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-0').find('.slick-menu-item.slick-menu-item').contains('Feedback').should('exist').click();
 
       cy.get('.slick-submenu').should('have.length', 1);
       cy.get('.slick-header-menu.slick-menu-level-1')
