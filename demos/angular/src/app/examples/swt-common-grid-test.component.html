@@ -1,0 +1,30 @@
+<div class="container-fluid" style="margin-top: 10px">
+  <h2>
+    <span [innerHTML]="title"></span>
+    <span class="float-end">
+      <a style="font-size: 18px"
+         target="_blank"
+         href="https://github.com/ghiscoding/Angular-Slickgrid/blob/master/src/app/examples/swt-common-grid-test.component.ts">
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle" [innerHTML]="subTitle"></div>
+
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="alert alert-info">
+        <strong>Custom Pagination URL:</strong>
+        <div [innerHTML]="currentUrl" data-test="query-string"></div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <swt-common-grid-pagination #commonGridPag1></swt-common-grid-pagination>
+    </div>
+  </div>
+  <swt-common-grid #commonGrid1
+                   (onFilterChanged)="filterChanged($event.detail)"
+                   (onPaginationChanged)="paginationChanged($event.detail)"
+                   (onSortChanged)="sortChanged($event.detail)">
+  </swt-common-grid>
+</div>

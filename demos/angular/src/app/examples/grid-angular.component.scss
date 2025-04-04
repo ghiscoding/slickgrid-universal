@@ -1,0 +1,42 @@
+h3 {
+  font-style: normal;
+  color: #3d3d3d;
+}
+
+#slickGridContainer-grid22 {
+  /* you can change all filters heights via CSS variable */
+  --slick-header-input-height: 34px;
+
+  .slickgrid-container {
+    .slick-headerrow-column {
+      .ng-input {
+        input {
+          height: 100%;
+        }
+      }
+    }
+  }
+}
+
+.ng-select-focused {
+  box-shadow: 0 0 0 0.25rem #0d6efd40;
+}
+
+.cell-menu-dropdown {
+  border: 1px solid #a3a3a3;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: max-content;
+  padding: 0 14px;
+  cursor: pointer;
+  &:hover {
+    background-color: #a3a3a3;
+    color: #ffffff;
+  }
+
+  .mdi-chevron-down {
+    margin-left: 5px;
+  }
+}

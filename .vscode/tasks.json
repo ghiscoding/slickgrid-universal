@@ -8,27 +8,45 @@
       "problemMatcher": []
     },
     {
-      "label": "Run Vitest Unit Tests (watch)",
+      "label": "Run Angular Unit Tests (watch)",
+      "type": "shell",
+      "command": "pnpm test:angular:watch",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Angular Test Coverage",
+      "type": "shell",
+      "command": "pnpm test:angular:coverage",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Vanilla Unit Tests (watch)",
       "type": "shell",
       "command": "pnpm test:watch",
       "problemMatcher": []
     },
     {
-      "label": "Run Vitest Test Coverage",
+      "label": "Run Vanilla Test Coverage",
       "type": "shell",
       "command": "pnpm test:coverage",
       "problemMatcher": []
     },
     {
-      "label": "Start Vanilla Development",
+      "label": "Start Angular Development",
       "type": "shell",
-      "command": "pnpm dev",
+      "command": "pnpm dev:angular",
       "problemMatcher": []
     },
     {
       "label": "Start Vue Development",
       "type": "shell",
       "command": "pnpm dev:vue",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Vanilla Development",
+      "type": "shell",
+      "command": "pnpm dev",
       "problemMatcher": []
     }
   ]

@@ -1,0 +1,197 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand ms-2" href="https://github.com/ghiscoding/Angular-Slickgrid">
+    <i class="mdi mdi-github"></i>
+    <span>Angular-SlickGrid</span>
+  </a>
+  <img src="assets/angular-logo.png" class="logo" height="35" alt="image" />
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-bs-toggle="collapse"
+    data-target="#navbarContent"
+    aria-controls="navbarContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="github-button-container">
+    <a href="https://github.com/ghiscoding/angular-slickgrid">
+      <img src="https://img.shields.io/github/stars/ghiscoding/angular-slickgrid?style=social" alt="github stars" />
+    </a>
+  </div>
+
+  <div class="navbar-collapse collapse justify-content-end me-2" id="navbarContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/home']"> Home </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://ghiscoding.gitbook.io/angular-slickgrid/" target="_blank"> Documentation </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div>
+  <div class="panel-wm">
+    <section id="panel-left" class="panel-wm-left">
+      <ul class="well nav nav-pills nav-stacked">
+        <li class="nav-item fw-bold nav-docs">
+          <a class="nav-link" href="https://ghiscoding.gitbook.io/angular-slickgrid/" target="_blank"> 📘 Documentation </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/basic']">1- Basic Grid / 2 Grids</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/formatter']">2- Formatters</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/editor']">3- Editors</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/clientside']">4- Client Side Sort/Filter</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/odata']">5- Backend Server with OData</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/gridgraphql']">6- Backend Server with GraphQL</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/headerbutton']">7- Header Button Plugin</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/headermenu']">8- Header Menu Plugin</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/gridmenu']">9- Grid Menu (hamburger menu)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/selection']">10- Row Selection / 2 Grids</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/additem']">11- Add/Update/Highlight Datagrid Item</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/localization']">12- Localization (i18n)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/swt']">13- Backend Server Custom Paging</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/grouping']">14- Grouping &amp; Aggregator</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/colspan']">15- Column Span</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/gridstate']">16- Grid State &amp; Local Storage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/rowmove']">17- Row Move</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/csv-grid']">18- Create Grid from CSV </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/draggrouping']">19- Draggable Grouping</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/frozen']">20- Frozen Columns/Rows</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/rowdetail']">21- Row Detail View</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/angular-components']">22- Use of Angular Components</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/autoheight']">23- Grid AutoHeight (full height)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/gridtabs']">24- within Bootstrap Tabs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/range']">25- Filter by Range of Values</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/context']">26- Cell & Context Menu</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/graphql-nopage']"> 27- GraphQL without Pagination </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/tree-data-parent-child']">
+            28- Tree Data (Parent/Child)
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/tree-data-hierarchical']">
+            29- Tree Data (Hierarchical)
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/composite-editor']"> 30- Composite Editor Modal </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/resize-by-content']"> 31- Resize by Cell Content </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/custom-tooltip']"> 32- Regular & Custom Tooltip </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/trading']"> 33- Real-Time Trading Platform </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/header-footer']">
+            34- Custom header &amp; footer templates
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/base-row-editing']"> 35- Row Based Editing </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/excel-formula']"> 36- Excel Export Formulas </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/footer-totals']"> 37- Footer Totals Row </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/infinite-odata']"> 38- Infinite Scroll with OData </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/infinite-graphql']">
+            39- Infinite Scroll with GraphQL
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/infinite-json']"> 40- Infinite Scroll from JSON data </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/drag-recycle']"> 41- Drag & Drop </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/custom-pagination']">42- Custom Pagination </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/rowspan-timesheets']"
+            >43- Colspan/Rowspan (timesheets)</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/rowspan-large']">44- Colspan/Rowspan (large data)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/rowdetail-innergrid']">45- Row Detail with inner Grid</a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="panel-wm-content">
+      <div id="demo-container">
+        <router-outlet></router-outlet>
+      </div>
+    </section>
+  </div>
+</div>

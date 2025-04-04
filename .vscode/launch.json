@@ -25,6 +25,16 @@
       }
     },
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Angular - Edge Debugger",
+      "url": "http://localhost:4300",
+      "webRoot": "${workspaceFolder}/demos/angular",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
       "type": "msedge",
       "request": "launch",
       "name": "Vue - Edge Debugger",

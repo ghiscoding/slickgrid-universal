@@ -7,6 +7,7 @@ export default defineConfig({
       include: ['packages/**/*.ts'],
       exclude: [
         ...configDefaults.exclude,
+        '**/frameworks/**',
         '**/__tests__/**',
         '**/enums/**',
         '**/interfaces/**',

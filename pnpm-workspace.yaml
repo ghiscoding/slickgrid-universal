@@ -2,16 +2,17 @@ packages:
   - demos/**
   - frameworks/**
   - packages/**
-  - examples/**
 
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.0
   '@faker-js/faker': ^9.5.1
   '@fnando/sparkline': '^0.3.10'
   '@formkit/tempo': ^0.1.2
+  '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
   '@types/node': ^22.13.14
   '@types/sortablejs': ^1.15.8
+  bootstrap: ^5.3.3
   cross-env: ^7.0.3
   cypress: ^14.2.1
   cypress-real-events: ^1.14.0

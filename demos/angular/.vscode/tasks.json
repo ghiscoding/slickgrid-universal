@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Demo",
+            "type": "shell",
+            "command": "npm run build",
+            "problemMatcher": []
+        },
+        {
+          "label": "Build & Copy Demo",
+          "type": "shell",
+          "command": "npm run build-demo",
+          "problemMatcher": []
+        },
+        {
+            "label": "Run Demo Sample",
+            "type": "shell",
+            "command": "npm start",
+            "problemMatcher": []
+        },
+      ]
+}
