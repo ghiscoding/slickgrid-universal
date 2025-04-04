@@ -38,7 +38,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "pack-lib": "npm pack ./dist",
-    "prepublish": "pnpm packagr",
     "test": "ng test",
     "test:watch": "ng test --watch",
     "test:coverage": "vitest --no-watch --coverage"
