@@ -19,6 +19,7 @@
 *.sublime-workspace
 
 # IDE - VSCode
+.angular
 .chrome
 
 # misc

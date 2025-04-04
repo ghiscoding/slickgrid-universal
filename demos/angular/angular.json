@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "test-slickgrid": {
+    "angular-slickgrid": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -12,53 +12,44 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": {
-              "base": "dist"
+              "base": "website",
+              "browser": ""
             },
             "index": "src/index.html",
-            "tsConfig": "src/tsconfig.app.json",
-            "polyfills": [
-              "zone.js"
-            ],
-            "allowedCommonJsDependencies": [
-              "@fnando/sparkline",
-              "stream"
-            ],
+            "browser": "src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "allowedCommonJsDependencies": ["@fnando/sparkline", "stream"],
             "assets": [
               "src/assets",
               "src/favicon.ico",
               {
                 "glob": "**/*",
-                "input": "node_modules/angular-slickgrid/i18n",
+                "input": "src/assets/i18n",
                 "output": "/assets/i18n"
               },
               {
                 "glob": "*",
-                "input": "node_modules/angular-slickgrid/i18n",
+                "input": "src/assets/i18n",
                 "output": "/assets/i18n"
               },
               {
                 "glob": "*/",
-                "input": "node_modules/angular-slickgrid/i18n",
+                "input": "src/assets/i18n",
                 "output": "/assets/i18n"
               },
               {
                 "glob": "**/*",
-                "input": "node_modules/angular-slickgrid/i18n",
+                "input": "src/assets/i18n",
                 "output": "/assets/i18n"
               }
             ],
-            "styles": [
-              "node_modules/@ng-select/ng-select/themes/default.theme.css",
-              "src/styles.scss"
-            ],
-            "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.js"
-            ],
+            "styles": ["node_modules/@ng-select/ng-select/themes/default.theme.css", "src/styles.scss"],
+            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"],
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true,
-            "browser": "src/main.ts"
+            "namedChunks": true
           },
           "configurations": {
             "development": {
@@ -86,6 +77,8 @@
               ],
               "optimization": true,
               "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
               "fileReplacements": [
@@ -95,48 +88,27 @@
                 }
               ]
             }
-          },
-          "defaultConfiguration": ""
+          }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "test-slickgrid:build"
+            "buildTarget": "angular-slickgrid:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "test-slickgrid:build:production"
+              "buildTarget": "angular-slickgrid:build:production"
             }
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "test-slickgrid:build"
-          }
-        }
-      }
-    },
-    "test-slickgrid-e2e": {
-      "root": "e2e",
-      "sourceRoot": "e2e",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "test-slickgrid:serve"
-          }
+        "test": {
+          "builder": "@analogjs/vitest-angular:test"
         }
       }
     }

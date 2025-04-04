@@ -3,20 +3,28 @@
   "compilerOptions": {
     "importHelpers": true,
     "outDir": "./dist/out-tsc",
-    "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
+    "allowUnreachableCode": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "target": "ES2022",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["ES2022", "dom"],
-    "module": "es2020",
+    "lib": ["es2022", "dom"],
+    "module": "es2022",
     "baseUrl": "./",
-    "useDefineForClassFields": false
+    "paths": {
+      "stream": ["./node_modules/stream-browserify"]
+    },
+    "strict": true
   },
   "angularCompilerOptions": {
-    "enableResourceInlining": false,
-    "preserveWhitespaces": true
+    "compilationMode": "partial",
+    "preserveWhitespaces": true,
+    "strictMetadataEmit": true
   }
 }
