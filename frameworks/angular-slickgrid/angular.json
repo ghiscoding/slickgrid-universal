@@ -19,7 +19,7 @@
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "allowedCommonJsDependencies": ["stream"],
+            "allowedCommonJsDependencies": ["@fnando/sparkline", "stream"],
             "assets": [
               "src/assets",
               "src/favicon.ico",
@@ -44,7 +44,7 @@
                 "output": "/assets/i18n"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["node_modules/@ng-select/ng-select/themes/default.theme.css", "src/styles.scss"],
             "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"],
             "extractLicenses": false,
             "sourceMap": true,
@@ -56,7 +56,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "150kb"
+                  "maximumWarning": "500kb"
                 }
               ],
               "outputHashing": "all",
@@ -72,7 +72,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "50kb"
+                  "maximumWarning": "500kb"
                 }
               ],
               "optimization": true,
@@ -125,6 +125,9 @@
   "cli": {
     "packageManager": "pnpm",
     "schematicCollections": ["@angular-eslint/schematics"],
-    "analytics": false
+    "analytics": false,
+    "cache": {
+      "enabled": false
+    }
   }
 }

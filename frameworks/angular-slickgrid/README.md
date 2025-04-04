@@ -36,7 +36,7 @@ npm install angular-slickgrid
 #### Basic Grid
 
 ```ts
-import { type Column, type GridOption } from 'angular-slickgrid';
+import { type Column, type GridOption } from './../library/angular-slickgrid';
 
 export class GridComponent implements OnInit {
   columnDefinitions: Column[] = [];

@@ -10,5 +10,6 @@
     "preserveWhitespaces": true,
     "strictMetadataEmit": true
   },
-  "include": ["src/**/*", "src/**/*.d.ts"]
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts"]
 }

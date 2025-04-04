@@ -86,7 +86,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false
-          working-directory: demos/angular
+          working-directory: frameworks/angular
           # start: pnpm angular:serve
           wait-on: 'http://localhost:4300'
           config-file: test/cypress.config.ts
