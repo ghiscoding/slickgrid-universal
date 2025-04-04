@@ -7,7 +7,7 @@
     "ng": "ng",
     "build": "ng build --configuration=production",
     "angular:dev": "npm-delay 5000 && ng serve --port 4300",
-    "angular:cypress": "cypress open --config-file test/cypress.config.mjs",
+    "angular:cypress": "cypress open --config-file test/cypress.config.ts",
     "angular:preview": "vite preview --outDir=website --port=4300",
     "test": "ng test",
     "test:watch": "ng test --watch",
