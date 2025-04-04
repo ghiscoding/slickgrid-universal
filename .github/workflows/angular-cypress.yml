@@ -89,7 +89,7 @@ jobs:
           working-directory: demos/angular
           # start: pnpm angular:serve
           wait-on: 'http://localhost:4300'
-          config-file: test/cypress.config.mjs
+          config-file: test/cypress.config.ts
           browser: chrome
           record: false
         env:
