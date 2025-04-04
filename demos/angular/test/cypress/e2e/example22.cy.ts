@@ -54,11 +54,7 @@ describe('Example 22 - Use of Angular Components', () => {
 
     cy.get('#grid22').find('.slick-row:nth(1) .slick-cell:nth(7)').contains('Action').click({ force: true });
 
-    cy.get('.slick-cell-menu .slick-menu-command-list')
-      .find('.slick-menu-item.red')
-      .should('exist')
-      .contains('Delete Row')
-      .click();
+    cy.get('.slick-cell-menu .slick-menu-command-list').find('.slick-menu-item.red').should('exist').contains('Delete Row').click();
 
     // after deleting the row
     cy.get('#grid22')

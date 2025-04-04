@@ -18,9 +18,7 @@ describe('Example 6 - GraphQL Grid', { retries: 0 }, () => {
   it('should have a grid of size 900 by 200px', () => {
     cy.get('#slickGridContainer-grid6').should('have.css', 'width', '900px');
 
-    cy.get('#slickGridContainer-grid6 > .slickgrid-container').should(($el) =>
-      expect(parseInt(`${$el.height()}`, 10)).to.eq(200)
-    );
+    cy.get('#slickGridContainer-grid6 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(200));
   });
 
   it('should have English Text inside some of the Filters', () => {
@@ -833,10 +831,7 @@ describe('Example 6 - GraphQL Grid', { retries: 0 }, () => {
 
       cy.get('[data-command=filter-shortcuts-root-menu]').trigger('mouseover');
 
-      cy.get('.slick-header-menu.slick-menu-level-1')
-        .find('[data-command=next-20-days]')
-        .should('contain', 'Next 20 days')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-1').find('[data-command=next-20-days]').should('contain', 'Next 20 days').click();
 
       cy.get('.search-filter.filter-finish input.date-picker').invoke('val').should('equal', `${today} — ${next20Day}`);
 
@@ -872,10 +867,7 @@ describe('Example 6 - GraphQL Grid', { retries: 0 }, () => {
 
       cy.get('[data-command=filter-shortcuts-root-menu]').should('contain', 'Raccourcis de filtre').trigger('mouseover');
 
-      cy.get('.slick-header-menu.slick-menu-level-1')
-        .find('[data-command=next-20-days]')
-        .should('contain', '20 prochain jours')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-1').find('[data-command=next-20-days]').should('contain', '20 prochain jours').click();
 
       cy.get('.search-filter.filter-finish input.date-picker').invoke('val').should('equal', `${today} — ${next20Day}`);
 

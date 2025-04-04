@@ -70,9 +70,7 @@ describe('Example 21 - Row Detail View', () => {
 
     cy.get('@detailContainer').find('[data-test=parent-btn]').click();
 
-    cy.get('.alert-info[data-test=flash-msg]').contains(
-      'We just called Parent Method from the Row Detail Child Component on Task 2'
-    );
+    cy.get('.alert-info[data-test=flash-msg]').contains('We just called Parent Method from the Row Detail Child Component on Task 2');
   });
 
   it('should click on the "Delete Row" button and expect the Task 2 to be deleted from the grid', () => {

@@ -139,8 +139,7 @@ describe('Example 4 - Client Side Sort/Filter Grid', () => {
           cy.wrap($row)
             .children('.slick-cell:nth(4)')
             .each(($cell) => {
-              const isDateValid =
-                isEqual(parse($cell.text()), dynamicStartDate) || isAfter(parse($cell.text()), dynamicStartDate);
+              const isDateValid = isEqual(parse($cell.text()), dynamicStartDate) || isAfter(parse($cell.text()), dynamicStartDate);
               expect(isDateValid).to.eq(true);
             });
         });
@@ -208,8 +207,7 @@ describe('Example 4 - Client Side Sort/Filter Grid', () => {
           cy.wrap($row)
             .children('.slick-cell:nth(4)')
             .each(($cell) => {
-              const isDateValid =
-                isEqual(parse($cell.text()), dynamicStartDate) || isAfter(parse($cell.text()), dynamicStartDate);
+              const isDateValid = isEqual(parse($cell.text()), dynamicStartDate) || isAfter(parse($cell.text()), dynamicStartDate);
               expect(isDateValid).to.eq(true);
             });
         });

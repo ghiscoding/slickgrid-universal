@@ -71,10 +71,7 @@ describe('Example 7 - Header Button Plugin', () => {
       cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(4)').should('contain', 'Column E');
 
       // column E should not have the icon
-      cy.get('#grid7-1 .slick-header-columns')
-        .children('.slick-header-column:nth(4)')
-        .find('.slick-header-button')
-        .should('not.exist');
+      cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(4)').find('.slick-header-button').should('not.exist');
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
@@ -219,10 +216,7 @@ describe('Example 7 - Header Button Plugin', () => {
       cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(4)').should('contain', 'Column E');
 
       // column E should not have the icon
-      cy.get('#grid7-2 .slick-header-columns')
-        .children('.slick-header-column:nth(4)')
-        .find('.slick-header-button')
-        .should('not.exist');
+      cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(4)').find('.slick-header-button').should('not.exist');
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {

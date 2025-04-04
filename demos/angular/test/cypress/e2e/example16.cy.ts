@@ -173,12 +173,7 @@ describe('Example 16: Grid State & Presets using Local Storage', () => {
   });
 
   it('should select row (Task 105)', () => {
-    cy.get('#grid16')
-      .contains('Task 105')
-      .parent()
-      .children('.slick-cell-checkboxsel')
-      .find('input[type=checkbox]')
-      .click({ force: true });
+    cy.get('#grid16').contains('Task 105').parent().children('.slick-cell-checkboxsel').find('input[type=checkbox]').click({ force: true });
   });
 
   it('should change Page Size and Page Number then expect the Pagination to have correct values', () => {
@@ -217,12 +212,7 @@ describe('Example 16: Grid State & Presets using Local Storage', () => {
   });
 
   it('should select row (Task 144)', () => {
-    cy.get('#grid16')
-      .contains('Task 144')
-      .parent()
-      .children('.slick-cell-checkboxsel')
-      .find('input[type=checkbox]')
-      .click({ force: true });
+    cy.get('#grid16').contains('Task 144').parent().children('.slick-cell-checkboxsel').find('input[type=checkbox]').click({ force: true });
   });
 
   it('should reload the page', () => {
@@ -474,10 +464,7 @@ describe('Example 16: Grid State & Presets using Local Storage', () => {
   it('should swap "Duration" and "% Complete" columns', () => {
     const expectedTitles = ['', 'Title', 'Description', '% Complete', 'Duration', 'Start', 'Completed'];
 
-    cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(3)')
-      .contains('Duration')
-      .drag('.slick-header-column:nth(4)');
+    cy.get('.slick-header-columns').children('.slick-header-column:nth(3)').contains('Duration').drag('.slick-header-column:nth(4)');
 
     cy.get('#grid16')
       .find('.slick-header-columns')
@@ -570,10 +557,7 @@ describe('Example 16: Grid State & Presets using Local Storage', () => {
 
       cy.get('[data-command=filter-shortcuts-root-menu]').should('contain', 'Raccourcis de filtre').trigger('mouseover');
 
-      cy.get('.slick-header-menu.slick-menu-level-1')
-        .find('[data-command=blank-values]')
-        .should('contain', 'Valeurs nulles')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-1').find('[data-command=blank-values]').should('contain', 'Valeurs nulles').click();
 
       cy.get('.search-filter.filter-description').invoke('val').should('equal', '< A');
 
@@ -598,10 +582,7 @@ describe('Example 16: Grid State & Presets using Local Storage', () => {
 
       cy.get('[data-command=filter-shortcuts-root-menu]').should('contain', 'Filter Shortcuts').trigger('mouseover');
 
-      cy.get('.slick-header-menu.slick-menu-level-1')
-        .find('[data-command=non-blank-values]')
-        .should('contain', 'Non-Blank Values')
-        .click();
+      cy.get('.slick-header-menu.slick-menu-level-1').find('[data-command=non-blank-values]').should('contain', 'Non-Blank Values').click();
 
       cy.get('.search-filter.filter-description').invoke('val').should('equal', '> A');
 

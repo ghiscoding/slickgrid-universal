@@ -130,12 +130,7 @@ describe('Example 12: Localization (i18n)', () => {
     it('should reset filters before filtering duration', () => {
       cy.get('#grid12').find('button.slick-grid-menu-button').click();
 
-      cy.get(`.slick-grid-menu:visible`)
-        .find('.slick-menu-item')
-        .first()
-        .find('span')
-        .contains('Supprimer tous les filtres')
-        .click();
+      cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Supprimer tous les filtres').click();
     });
 
     it('should filter duration with slider filter', () => {
@@ -226,12 +221,7 @@ describe('Example 12: Localization (i18n)', () => {
 
       cy.get('@grid12').find('.slick-viewport-top.slick-viewport-left').scrollTo('bottom').wait(10);
 
-      cy.get('#grid12')
-        .contains('Task 4')
-        .parent()
-        .children('.slick-cell-checkboxsel')
-        .find('input[type=checkbox]')
-        .click({ force: true });
+      cy.get('#grid12').contains('Task 4').parent().children('.slick-cell-checkboxsel').find('input[type=checkbox]').click({ force: true });
 
       cy.window().then((win) => {
         expect(win.console.log).to.have.callCount(2);

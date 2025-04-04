@@ -186,12 +186,7 @@ describe('Example 3 - Grid with Editors', () => {
   });
 
   it('should hover over the last "Title" column and click on "Clear Filter" and expect grid to have all rows shown', () => {
-    cy.get('.slick-header-column:nth-child(14)')
-      .first()
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
+    cy.get('.slick-header-column:nth-child(14)').first().trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
@@ -241,9 +236,7 @@ describe('Example 3 - Grid with Editors', () => {
 
     // // change Effort Driven
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(11)`).click();
-    cy.get(
-      `[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(11) > input.editor-checkbox.editor-effort-driven`
-    ).uncheck();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(11) > input.editor-checkbox.editor-effort-driven`).uncheck();
   });
 
   it('should open the "Prerequisites" Filter then choose "Task 3", "Task 4" and "Task 8" from the list and expect to see 2 rows of data in the grid', () => {

@@ -1,19 +1,7 @@
 describe('Example 27 - GraphQL Basic API without Pagination', () => {
   const GRID_ROW_HEIGHT = 35;
   const fullPreTitles = ['Country', 'Language', 'Continent'];
-  const fullTitles = [
-    'Code',
-    'Name',
-    'Native',
-    'Phone Area Code',
-    'Currency',
-    'Emoji',
-    'Names',
-    'Native',
-    'Codes',
-    'Name',
-    'Code',
-  ];
+  const fullTitles = ['Code', 'Name', 'Native', 'Phone Area Code', 'Currency', 'Emoji', 'Names', 'Native', 'Codes', 'Name', 'Code'];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/graphql-nopage`);
@@ -110,10 +98,7 @@ describe('Example 27 - GraphQL Basic API without Pagination', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should('contain', '352');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should('contain', 'EUR');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(6)`).should('contain', 'French, German, Luxembourgish');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).should(
-      'contain',
-      'Français, Deutsch, Lëtzebuergesch'
-    );
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).should('contain', 'Français, Deutsch, Lëtzebuergesch');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).should('contain', 'fr, de, lb');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(9)`).should('contain', 'Europe');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).should('contain', 'EU');
