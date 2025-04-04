@@ -11,7 +11,7 @@ import {
   type Metrics,
   type OnRowCountChangedEventArgs,
   SortComparers,
-  SortDirectionNumber
+  SortDirectionNumber,
 } from 'angular-slickgrid';
 
 const FETCH_SIZE = 50;
@@ -45,17 +45,57 @@ export class GridInfiniteJsonComponent implements OnInit {
   defineGrid() {
     this.columnDefinitions = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
-      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true, type: FieldType.number },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate } },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate } },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true, formatter: Formatters.checkmarkMaterial }
+      {
+        id: 'duration',
+        name: 'Duration (days)',
+        field: 'duration',
+        sortable: true,
+        minWidth: 100,
+        filterable: true,
+        type: FieldType.number,
+      },
+      {
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        sortable: true,
+        minWidth: 100,
+        filterable: true,
+        type: FieldType.number,
+      },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
+      },
+      {
+        id: 'effort-driven',
+        name: 'Effort Driven',
+        field: 'effortDriven',
+        sortable: true,
+        minWidth: 100,
+        filterable: true,
+        formatter: Formatters.checkmarkMaterial,
+      },
     ];
 
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       enableAutoResize: true,
       enableFiltering: true,
@@ -70,10 +110,10 @@ export class GridInfiniteJsonComponent implements OnInit {
   handleOnScroll(args: any) {
     const viewportElm = args.grid.getViewportNode();
     if (
-      ['mousewheel', 'scroll'].includes(args.triggeredBy || '')
-      && !this.scrollEndCalled
-      && viewportElm.scrollTop > 0
-      && Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
+      ['mousewheel', 'scroll'].includes(args.triggeredBy || '') &&
+      !this.scrollEndCalled &&
+      viewportElm.scrollTop > 0 &&
+      Math.ceil(viewportElm.offsetHeight + args.scrollTop) >= args.scrollHeight
     ) {
       console.log('onScroll end reached, add more items');
       const startIdx = this.angularGrid.dataView?.getItemCount() || 0;
@@ -99,12 +139,9 @@ export class GridInfiniteJsonComponent implements OnInit {
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
-      aggregators: [
-        new Aggregators.Avg('percentComplete'),
-        new Aggregators.Sum('cost')
-      ],
+      aggregators: [new Aggregators.Avg('percentComplete'), new Aggregators.Sum('cost')],
       aggregateCollapsed: false,
-      lazyTotalsCalculation: true
+      lazyTotalsCalculation: true,
     } as Grouping);
 
     // you need to manually add the sort icon(s) in UI
@@ -124,7 +161,7 @@ export class GridInfiniteJsonComponent implements OnInit {
   newItem(idx: number) {
     const randomYear = 2000 + Math.floor(Math.random() * 10);
     const randomMonth = Math.floor(Math.random() * 11);
-    const randomDay = Math.floor((Math.random() * 29));
+    const randomDay = Math.floor(Math.random() * 29);
     const randomPercent = Math.round(Math.random() * 100);
 
     return {
@@ -134,7 +171,7 @@ export class GridInfiniteJsonComponent implements OnInit {
       percentComplete: randomPercent,
       start: new Date(randomYear, randomMonth + 1, randomDay),
       finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
-      effortDriven: (idx % 5 === 0)
+      effortDriven: idx % 5 === 0,
     };
   }
 
@@ -150,9 +187,7 @@ export class GridInfiniteJsonComponent implements OnInit {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.angularGrid?.filterService.updateFilters([
-      { columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' },
-    ]);
+    this.angularGrid?.filterService.updateFilters([{ columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' }]);
   }
 
   refreshMetrics(args: OnRowCountChangedEventArgs) {
@@ -163,8 +198,6 @@ export class GridInfiniteJsonComponent implements OnInit {
   }
 
   setSortingDynamically() {
-    this.angularGrid?.sortService.updateSorting([
-      { columnId: 'title', direction: 'DESC' },
-    ]);
+    this.angularGrid?.sortService.updateSorting([{ columnId: 'title', direction: 'DESC' }]);
   }
 }

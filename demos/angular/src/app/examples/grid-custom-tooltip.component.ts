@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
@@ -57,7 +57,11 @@ export class GridCustomTooltipComponent implements OnInit {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        sortable: true,
+        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -76,9 +80,10 @@ export class GridCustomTooltipComponent implements OnInit {
           // when using async, the `formatter` will contain the loading spinner
           // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
-          asyncProcess: () => new Promise(resolve => {
-            setTimeout(() => resolve({ ratio: Math.random() * 10 / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
-          }),
+          asyncProcess: () =>
+            new Promise((resolve) => {
+              setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
+            }),
           asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
 
           // optional conditional usability callback
@@ -86,7 +91,11 @@ export class GridCustomTooltipComponent implements OnInit {
         },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        id: 'duration',
+        name: 'Duration',
+        field: 'duration',
+        sortable: true,
+        filterable: true,
         editor: {
           model: Editors.float,
           // required: true,
@@ -95,11 +104,15 @@ export class GridCustomTooltipComponent implements OnInit {
           maxValue: 10000,
           alwaysSaveOnEnterKey: true,
         },
-        formatter: (row, cell, value) => value > 1 ? `${value} days` : `${value} day`,
+        formatter: (row, cell, value) => (value > 1 ? `${value} days` : `${value} day`),
         type: FieldType.number,
       },
       {
-        id: 'desc', name: `<span title='custom title tooltip text'>Description</span>`, field: 'description', width: 100, filterable: true,
+        id: 'desc',
+        name: `<span title='custom title tooltip text'>Description</span>`,
+        field: 'description',
+        width: 100,
+        filterable: true,
         editor: {
           model: Editors.longText,
           required: true,
@@ -107,7 +120,8 @@ export class GridCustomTooltipComponent implements OnInit {
           minLength: 5,
           maxLength: 255,
         },
-        formatter: (row: number, cell: number, value: any, column: Column, dataContext) => `<span title="regular tooltip (from title attribute)\r${dataContext.title} cell value:\r${value || ''}">${value || ''}</span>`,
+        formatter: (row: number, cell: number, value: any, column: Column, dataContext) =>
+          `<span title="regular tooltip (from title attribute)\r${dataContext.title} cell value:\r${value || ''}">${value || ''}</span>`,
         // define tooltip options here OR for the entire grid via the grid options (cell tooltip options will have precedence over grid options)
         customTooltip: {
           useRegularTooltip: true, // note regular tooltip will try to find a "title" attribute in the cell formatter (it won't work without a cell formatter)
@@ -115,7 +129,11 @@ export class GridCustomTooltipComponent implements OnInit {
         },
       },
       {
-        id: 'desc2', name: `<span title='custom title tooltip text'>Description 2</span>`, field: 'description', width: 100, filterable: true,
+        id: 'desc2',
+        name: `<span title='custom title tooltip text'>Description 2</span>`,
+        field: 'description',
+        width: 100,
+        filterable: true,
         editor: {
           model: Editors.longText,
           required: true,
@@ -123,7 +141,8 @@ export class GridCustomTooltipComponent implements OnInit {
           minLength: 5,
           maxLength: 255,
         },
-        formatter: (row: number, cell: number, value: any, column: Column, dataContext) => `<span title="regular tooltip (from title attribute)\r${dataContext.title} cell value:\r\r${value || ''}">${value || ''}</span>`,
+        formatter: (row: number, cell: number, value: any, column: Column, dataContext) =>
+          `<span title="regular tooltip (from title attribute)\r${dataContext.title} cell value:\r\r${value || ''}">${value || ''}</span>`,
         // define tooltip options here OR for the entire grid via the grid options (cell tooltip options will have precedence over grid options)
         customTooltip: {
           useRegularTooltip: true, // note regular tooltip will try to find a "title" attribute in the cell formatter (it won't work without a cell formatter)
@@ -134,7 +153,9 @@ export class GridCustomTooltipComponent implements OnInit {
         },
       },
       {
-        id: 'cost', name: '<span title="custom cost title tooltip text">Cost</span>', field: 'cost',
+        id: 'cost',
+        name: '<span title="custom cost title tooltip text">Cost</span>',
+        field: 'cost',
         width: 90,
         sortable: true,
         filterable: true,
@@ -142,7 +163,13 @@ export class GridCustomTooltipComponent implements OnInit {
         // formatter: Formatters.dollar,
         formatter: Formatters.multiple,
         // params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip, cost: ${value}">${value || ''}</span>`] },
-        params: { formatters: [Formatters.dollar, (_row: number, _cell: number, value: any) => `<span title="regular tooltip (from title attribute) -\rcell value:\n\n${value || ''}">${value || ''}</span>`] as Formatter[] },
+        params: {
+          formatters: [
+            Formatters.dollar,
+            (_row: number, _cell: number, value: any) =>
+              `<span title="regular tooltip (from title attribute) -\rcell value:\n\n${value || ''}">${value || ''}</span>`,
+          ] as Formatter[],
+        },
         customTooltip: {
           useRegularTooltip: true,
           useRegularTooltipFromFormatterOnly: true,
@@ -150,7 +177,10 @@ export class GridCustomTooltipComponent implements OnInit {
         type: FieldType.number,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        type: FieldType.number,
         editor: {
           model: Editors.slider,
           minValue: 0,
@@ -158,20 +188,26 @@ export class GridCustomTooltipComponent implements OnInit {
           // editorOptions: { hideSliderNumber: true },
         },
         formatter: Formatters.percentCompleteBar,
-        sortable: true, filterable: true,
+        sortable: true,
+        filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
         customTooltip: {
           position: 'center',
-          formatter: (_row, _cell, value) => typeof value === 'string' && value.includes('%') ? value : `${value}%`,
+          formatter: (_row, _cell, value) => (typeof value === 'string' && value.includes('%') ? value : `${value}%`),
           headerFormatter: undefined,
-          headerRowFormatter: undefined
+          headerRowFormatter: undefined,
         },
       },
       {
-        id: 'start', name: 'Start', field: 'start', sortable: true,
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        sortable: true,
         // formatter: Formatters.dateIso,
-        type: FieldType.date, outputType: FieldType.dateIso,
-        filterable: true, filter: { model: Filters.compoundDate },
+        type: FieldType.date,
+        outputType: FieldType.dateIso,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
         editor: { model: Editors.date },
         // we can delay a tooltip via the async process
@@ -180,19 +216,25 @@ export class GridCustomTooltipComponent implements OnInit {
           formatter: () => ``, // return empty so it won't show any pre-tooltip
 
           // 2- delay the opening by a simple Promise and `setTimeout`
-          asyncProcess: () => new Promise(resolve => {
-            setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
-          }),
+          asyncProcess: () =>
+            new Promise((resolve) => {
+              setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
+            }),
           asyncPostFormatter: this.tooltipFormatter.bind(this) as Formatter,
         },
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: { model: Editors.date, editorOptions: { range: { min: 'today' } }, },
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        sortable: true,
+        editor: { model: Editors.date, editorOptions: { range: { min: 'today' } } },
         // formatter: Formatters.dateIso,
-        type: FieldType.date, outputType: FieldType.dateIso,
+        type: FieldType.date,
+        outputType: FieldType.dateIso,
         formatter: Formatters.dateIso,
-        filterable: true, filter: { model: Filters.dateRange },
+        filterable: true,
+        filter: { model: Filters.dateRange },
         // you could disable the custom/regular tooltip via either of the following 2 options
         disableTooltip: true,
         // customTooltip: {
@@ -200,20 +242,31 @@ export class GridCustomTooltipComponent implements OnInit {
         // },
       },
       {
-        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
-        width: 80, minWidth: 20, maxWidth: 100,
+        id: 'effortDriven',
+        name: 'Effort Driven',
+        field: 'effortDriven',
+        width: 80,
+        minWidth: 20,
+        maxWidth: 100,
         cssClass: 'cell-effort-driven',
         sortable: true,
         filterable: true,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+          model: Filters.singleSelect,
         },
         exportWithFormatter: false,
         formatter: Formatters.checkmarkMaterial,
       },
       {
-        id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites', filterable: true,
+        id: 'prerequisites',
+        name: 'Prerequisites',
+        field: 'prerequisites',
+        filterable: true,
         formatter: (_row, _cell, value) => {
           if (value && Array.isArray(value)) {
             const values = value.map((val) => `Task ${val}`).join(', ');
@@ -237,7 +290,7 @@ export class GridCustomTooltipComponent implements OnInit {
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
             setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
+              resolve(Array.from(Array(this.dataset.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
           customStructure: {
@@ -246,7 +299,7 @@ export class GridCustomTooltipComponent implements OnInit {
             labelPrefix: 'prefix',
           },
           collectionOptions: {
-            separatorBetweenTextLabels: ' '
+            separatorBetweenTextLabels: ' ',
           },
           model: Editors.multipleSelect,
         },
@@ -254,7 +307,7 @@ export class GridCustomTooltipComponent implements OnInit {
           // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
           collectionAsync: new Promise((resolve) => {
             setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
+              resolve(Array.from(Array(this.dataset.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
             });
           }),
           customStructure: {
@@ -263,15 +316,21 @@ export class GridCustomTooltipComponent implements OnInit {
             labelPrefix: 'prefix',
           },
           collectionOptions: {
-            separatorBetweenTextLabels: ' '
+            separatorBetweenTextLabels: ' ',
           },
           model: Filters.multipleSelect,
           operator: OperatorType.inContains,
         },
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
-        formatter: () => `<div class="button-style margin-auto" style="width: 35px;"><span class="mdi mdi-dots-vertical text-primary"></span></div>`,
+        id: 'action',
+        name: 'Action',
+        field: 'action',
+        width: 70,
+        minWidth: 70,
+        maxWidth: 70,
+        formatter: () =>
+          `<div class="button-style margin-auto" style="width: 35px;"><span class="mdi mdi-dots-vertical text-primary"></span></div>`,
         excludeFromExport: true,
         cellMenu: {
           hideCloseButton: false,
@@ -279,7 +338,9 @@ export class GridCustomTooltipComponent implements OnInit {
           commandItems: [
             // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
             {
-              command: 'command2', title: 'Command 2', positionOrder: 62,
+              command: 'command2',
+              title: 'Command 2',
+              positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
               action: (_e, args) => {
                 console.log(args.dataContext, args.column);
@@ -288,16 +349,20 @@ export class GridCustomTooltipComponent implements OnInit {
               // only enable command when the task is not completed
               itemUsabilityOverride: (args) => {
                 return !args.dataContext.completed;
-              }
+              },
             },
             { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
             {
-              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+              command: 'delete-row',
+              title: 'Delete Row',
+              positionOrder: 64,
+              iconCssClass: 'mdi mdi-close',
+              cssClass: 'red',
+              textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
-              }
+              },
             },
             // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
             // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
@@ -309,9 +374,9 @@ export class GridCustomTooltipComponent implements OnInit {
               iconCssClass: 'mdi mdi-help-circle-outline',
               positionOrder: 66,
             },
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
+            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67 },
           ],
-        }
+        },
       },
     ];
 
@@ -327,7 +392,7 @@ export class GridCustomTooltipComponent implements OnInit {
       enableCellNavigation: true,
       enableExcelExport: true,
       excelExportOptions: {
-        exportWithFormatter: true
+        exportWithFormatter: true,
       },
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
       externalResources: [new SlickCustomTooltip(), new ExcelExportService()],
@@ -335,7 +400,7 @@ export class GridCustomTooltipComponent implements OnInit {
         formatter: this.tooltipFormatter.bind(this) as Formatter,
         headerFormatter: this.headerFormatter,
         headerRowFormatter: this.headerRowFormatter,
-        usabilityOverride: (args) => (args.cell !== 0 && args?.column?.id !== 'action'), // don't show on first/last columns
+        usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
         // hideArrow: true, // defaults to False
       },
       presets: {
@@ -345,7 +410,7 @@ export class GridCustomTooltipComponent implements OnInit {
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+        selectActiveRow: false,
       },
       showCustomFooter: true,
       enableCheckboxSelector: true,
@@ -382,10 +447,10 @@ export class GridCustomTooltipComponent implements OnInit {
     const tmpArray = [];
     for (let i = 0; i < itemCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomFinishYear = (new Date().getFullYear() - 3) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
+      const randomFinishYear = new Date().getFullYear() - 3 + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
-      const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay);
+      const randomDay = Math.floor(Math.random() * 29);
+      const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay);
 
       tmpArray[i] = {
         id: i,
@@ -395,9 +460,9 @@ export class GridCustomTooltipComponent implements OnInit {
         percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        effortDriven: (i % 5 === 0),
-        prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
+        cost: i % 33 === 0 ? null : Math.round(Math.random() * 10000) / 100,
+        effortDriven: i % 5 === 0,
+        prerequisites: i % 2 === 0 && i !== 0 && i < 50 ? [i, i - 1] : [],
       };
     }
 
@@ -456,7 +521,14 @@ export class GridCustomTooltipComponent implements OnInit {
 
     // use a 2nd Formatter to get the percent completion
     // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
-    const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid) as HTMLElement;
+    const completionBar = Formatters.percentCompleteBarWithText(
+      row,
+      cell,
+      dataContext.percentComplete,
+      column,
+      dataContext,
+      grid
+    ) as HTMLElement;
     const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>
       <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>

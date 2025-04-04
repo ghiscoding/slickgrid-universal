@@ -1,5 +1,5 @@
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation, } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   Aggregators,
@@ -39,7 +39,10 @@ export class GridInfiniteOdataComponent implements OnInit {
   errorStatusClass = 'hidden';
   status = { text: 'processing...', class: 'alert alert-danger' };
 
-  constructor(private readonly cd: ChangeDetectorRef, private http: HttpClient) {
+  constructor(
+    private readonly cd: ChangeDetectorRef,
+    private http: HttpClient
+  ) {
     this.backendService = new GridOdataService();
   }
 
@@ -54,35 +57,50 @@ export class GridInfiniteOdataComponent implements OnInit {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', name: 'Name', field: 'name', sortable: true,
+        id: 'name',
+        name: 'Name',
+        field: 'name',
+        sortable: true,
         type: FieldType.string,
         filterable: true,
-        filter: { model: Filters.compoundInput }
+        filter: { model: Filters.compoundInput },
       },
       {
-        id: 'gender', name: 'Gender', field: 'gender', filterable: true, sortable: true,
+        id: 'gender',
+        name: 'Gender',
+        field: 'gender',
+        filterable: true,
+        sortable: true,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', label: 'male' },
+            { value: 'female', label: 'female' },
+          ],
+        },
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
       {
-        id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true,
-        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || ''
-      }
+        id: 'category_name',
+        name: 'Category',
+        field: 'category/name',
+        filterable: true,
+        sortable: true,
+        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || '',
+      },
     ];
 
     this.gridOptions = {
       enableAutoResize: true,
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       checkboxSelector: {
         // you can toggle these 2 properties to show the "select all" checkbox in different location
         hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true
+        hideInColumnTitleRow: true,
       },
       enableCellNavigation: true,
       enableFiltering: true,
@@ -102,7 +120,7 @@ export class GridInfiniteOdataComponent implements OnInit {
           // enable infinite via Boolean OR via { fetchSize: number }
           infiniteScroll: { fetchSize: 30 }, // or use true, in that case it would use default size of 25
           enableCount: true,
-          version: 4
+          version: 4,
         },
         onError: (error: Error) => {
           this.errorStatus = error.message;
@@ -133,14 +151,12 @@ export class GridInfiniteOdataComponent implements OnInit {
     if (isError) {
       this.status = { text: 'ERROR!!!', class: 'alert alert-danger' };
     } else {
-      this.status = (isProcessing)
-        ? { text: 'loading', class: 'alert alert-warning' }
-        : { text: 'finished', class: 'alert alert-success' };
+      this.status = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
     }
     this.cd.detectChanges();
   }
 
-  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[]; }) {
+  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[] }) {
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
@@ -197,13 +213,13 @@ export class GridInfiniteOdataComponent implements OnInit {
 
       for (const param of queryParams) {
         if (param.includes('$top=')) {
-          top = +(param.substring('$top='.length));
+          top = +param.substring('$top='.length);
           if (top === 50000) {
             throw new Error('Server timed out retrieving 50,000 rows');
           }
         }
         if (param.includes('$skip=')) {
-          skip = +(param.substring('$skip='.length));
+          skip = +param.substring('$skip='.length);
         }
         if (param.includes('$orderby=')) {
           orderBy = param.substring('$orderby='.length);
@@ -263,7 +279,7 @@ export class GridInfiniteOdataComponent implements OnInit {
         throw new Error('Server could not sort using the field "Company"');
       }
 
-      this.http.get(`${sampleDataRoot}/customers_100.json`).subscribe(response => {
+      this.http.get(`${sampleDataRoot}/customers_100.json`).subscribe((response) => {
         let data = response as any[];
         // Sort the data
         if (orderBy?.length > 0) {
@@ -298,7 +314,7 @@ export class GridInfiniteOdataComponent implements OnInit {
         if (columnFilters) {
           for (const columnId in columnFilters) {
             if (columnId in columnFilters) {
-              filteredData = filteredData.filter(column => {
+              filteredData = filteredData.filter((column) => {
                 const filterType = columnFilters[columnId].type;
                 const searchTerm = columnFilters[columnId].term;
                 let colId = columnId;
@@ -318,17 +334,28 @@ export class GridInfiniteOdataComponent implements OnInit {
                   const [term1, term2] = Array.isArray(searchTerm) ? searchTerm : [searchTerm];
 
                   switch (filterType) {
-                    case 'eq': return filterTerm.toLowerCase() === term1;
-                    case 'ne': return filterTerm.toLowerCase() !== term1;
-                    case 'le': return filterTerm.toLowerCase() <= term1;
-                    case 'lt': return filterTerm.toLowerCase() < term1;
-                    case 'gt': return filterTerm.toLowerCase() > term1;
-                    case 'ge': return filterTerm.toLowerCase() >= term1;
-                    case 'ends': return filterTerm.toLowerCase().endsWith(term1);
-                    case 'starts': return filterTerm.toLowerCase().startsWith(term1);
-                    case 'starts+ends': return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
-                    case 'substring': return filterTerm.toLowerCase().includes(term1);
-                    case 'matchespattern': return new RegExp((term1 as string).replaceAll(PERCENT_HTML_ESCAPED, '.*'), 'i').test(filterTerm);
+                    case 'eq':
+                      return filterTerm.toLowerCase() === term1;
+                    case 'ne':
+                      return filterTerm.toLowerCase() !== term1;
+                    case 'le':
+                      return filterTerm.toLowerCase() <= term1;
+                    case 'lt':
+                      return filterTerm.toLowerCase() < term1;
+                    case 'gt':
+                      return filterTerm.toLowerCase() > term1;
+                    case 'ge':
+                      return filterTerm.toLowerCase() >= term1;
+                    case 'ends':
+                      return filterTerm.toLowerCase().endsWith(term1);
+                    case 'starts':
+                      return filterTerm.toLowerCase().startsWith(term1);
+                    case 'starts+ends':
+                      return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
+                    case 'substring':
+                      return filterTerm.toLowerCase().includes(term1);
+                    case 'matchespattern':
+                      return new RegExp((term1 as string).replaceAll(PERCENT_HTML_ESCAPED, '.*'), 'i').test(filterTerm);
                   }
                 }
               });
@@ -361,11 +388,9 @@ export class GridInfiniteOdataComponent implements OnInit {
       getter: 'gender',
       formatter: (g) => `Gender: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.string(a.value, b.value),
-      aggregators: [
-        new Aggregators.Sum('gemder')
-      ],
+      aggregators: [new Aggregators.Sum('gemder')],
       aggregateCollapsed: false,
-      lazyTotalsCalculation: true
+      lazyTotalsCalculation: true,
     } as Grouping);
 
     // you need to manually add the sort icon(s) in UI
@@ -381,23 +406,17 @@ export class GridInfiniteOdataComponent implements OnInit {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.angularGrid?.filterService.updateFilters([
-      { columnId: 'gender', searchTerms: ['female'] },
-    ]);
+    this.angularGrid?.filterService.updateFilters([{ columnId: 'gender', searchTerms: ['female'] }]);
   }
 
   refreshMetrics(args: OnRowCountChangedEventArgs) {
     if (args?.current >= 0) {
       this.metrics.itemCount = this.angularGrid.dataView?.getFilteredItemCount() || 0;
-      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount
-        ? 'fully-loaded'
-        : 'partial-load';
+      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount ? 'fully-loaded' : 'partial-load';
     }
   }
 
   setSortingDynamically() {
-    this.angularGrid?.sortService.updateSorting([
-      { columnId: 'name', direction: 'DESC' },
-    ]);
+    this.angularGrid?.sortService.updateSorting([{ columnId: 'name', direction: 'DESC' }]);
   }
 }

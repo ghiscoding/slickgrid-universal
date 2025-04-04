@@ -23,7 +23,8 @@ const NB_ITEMS = 500;
   standalone: false,
 })
 export class GridTreeDataParentChildComponent implements OnInit {
-  title = 'Example 28: Tree Data <small> <span class="mdi mdi-file-tree mdi-27px"></span> (from a flat dataset with <code>parentId</code> references - <a href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small>';
+  title =
+    'Example 28: Tree Data <small> <span class="mdi mdi-file-tree mdi-27px"></span> (from a flat dataset with <code>parentId</code> references - <a href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small>';
   subTitle = `<ul>
     <li>It is assumed that your dataset will have Parent/Child references AND also Tree Level (indent) property.</li>
     <ul>
@@ -43,7 +44,7 @@ export class GridTreeDataParentChildComponent implements OnInit {
   hasNoExpandCollapseChanged = true;
   treeToggleItems: TreeToggledItem[] = [];
 
-  constructor(private cdref: ChangeDetectorRef) { }
+  constructor(private cdref: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     // define the grid options & columns and then create the grid itself
@@ -56,47 +57,82 @@ export class GridTreeDataParentChildComponent implements OnInit {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
-        filterable: true, sortable: true, exportWithFormatter: false,
-        queryFieldSorter: 'id', type: FieldType.string,
-        formatter: Formatters.tree, exportCustomFormatter: Formatters.treeExport
-
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        width: 220,
+        cssClass: 'cell-title',
+        filterable: true,
+        sortable: true,
+        exportWithFormatter: false,
+        queryFieldSorter: 'id',
+        type: FieldType.string,
+        formatter: Formatters.tree,
+        exportCustomFormatter: Formatters.treeExport,
       },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
-        minWidth: 120, maxWidth: 200, exportWithFormatter: false,
-        sortable: true, filterable: true, filter: { model: Filters.compoundSlider, operator: '>=' },
-        formatter: Formatters.percentCompleteBarWithText, type: FieldType.number,
-      },
-      {
-        id: 'start', name: 'Start', field: 'start', minWidth: 60,
-        type: FieldType.dateIso, filterable: true, sortable: true,
-        filter: { model: Filters.compoundDate },
-        formatter: Formatters.dateIso,
-      },
-      {
-        id: 'finish', name: 'Finish', field: 'finish', minWidth: 60,
-        type: FieldType.dateIso, filterable: true, sortable: true,
-        filter: { model: Filters.compoundDate },
-        formatter: Formatters.dateIso,
-      },
-      {
-        id: 'effortDriven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
+        minWidth: 120,
+        maxWidth: 200,
         exportWithFormatter: false,
-        formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
+        sortable: true,
+        filterable: true,
+        filter: { model: Filters.compoundSlider, operator: '>=' },
+        formatter: Formatters.percentCompleteBarWithText,
+        type: FieldType.number,
+      },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        minWidth: 60,
+        type: FieldType.dateIso,
+        filterable: true,
+        sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        minWidth: 60,
+        type: FieldType.dateIso,
+        filterable: true,
+        sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'effortDriven',
+        name: 'Effort Driven',
+        width: 80,
+        minWidth: 20,
+        maxWidth: 80,
+        cssClass: 'cell-effort-driven',
+        field: 'effortDriven',
+        exportWithFormatter: false,
+        formatter: Formatters.checkmarkMaterial,
+        cannotTriggerInsert: true,
         filterable: true,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
-        }
-      }
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+          model: Filters.singleSelect,
+        },
+      },
     ];
 
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
@@ -118,7 +154,7 @@ export class GridTreeDataParentChildComponent implements OnInit {
         // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
         initialSort: {
           columnId: 'title',
-          direction: 'ASC'
+          direction: 'ASC',
         },
         // we can also add a custom Formatter just for the title text portion
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
@@ -167,7 +203,7 @@ export class GridTreeDataParentChildComponent implements OnInit {
         percentComplete: 99,
         start: new Date(),
         finish: new Date(),
-        effortDriven: false
+        effortDriven: false,
       };
 
       // use the Grid Service to insert the item,
@@ -196,7 +232,14 @@ export class GridTreeDataParentChildComponent implements OnInit {
 
     // optiona 2 - alternative
     // we could also simply use the spread operator directly
-    this.angularGrid.gridService.updateItem({ ...item, duration: `11 days`, percentComplete: 77, start: new Date(), finish: new Date(), effortDriven: false });
+    this.angularGrid.gridService.updateItem({
+      ...item,
+      duration: `11 days`,
+      percentComplete: 77,
+      start: new Date(),
+      finish: new Date(),
+      effortDriven: false,
+    });
   }
 
   collapseAll() {
@@ -217,7 +260,7 @@ export class GridTreeDataParentChildComponent implements OnInit {
   }
 
   hideSpinner() {
-    setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit to avoid show/hide too quickly
+    setTimeout(() => (this.loadingClass = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
   }
 
   showSpinner() {
@@ -243,7 +286,7 @@ export class GridTreeDataParentChildComponent implements OnInit {
     for (let i = 0; i < rowCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const item: any = (data[i] = {});
       let parentId;
 
@@ -260,12 +303,14 @@ export class GridTreeDataParentChildComponent implements OnInit {
       if (i === 1 || i === 0) {
         indent = 0;
         parents.pop();
-      } if (i === 3) {
+      }
+      if (i === 3) {
         indent = 1;
-      } else if (i === 2 || i === 4 || (Math.random() > 0.8 && i > 0 && indent < 3 && i - 1 !== 0 && i - 1 !== 2)) { // also make sure Task 0, 2 remains empty
+      } else if (i === 2 || i === 4 || (Math.random() > 0.8 && i > 0 && indent < 3 && i - 1 !== 0 && i - 1 !== 2)) {
+        // also make sure Task 0, 2 remains empty
         indent++;
         parents.push(i - 1);
-      } else if ((Math.random() < 0.3 && indent > 0)) {
+      } else if (Math.random() < 0.3 && indent > 0) {
         indent--;
         parents.pop();
       }
@@ -281,8 +326,8 @@ export class GridTreeDataParentChildComponent implements OnInit {
       item['duration'] = '5 days';
       item['percentComplete'] = Math.round(Math.random() * 100);
       item['start'] = new Date(randomYear, randomMonth, randomDay);
-      item['finish'] = new Date(randomYear, (randomMonth + 1), randomDay);
-      item['effortDriven'] = (i % 5 === 0);
+      item['finish'] = new Date(randomYear, randomMonth + 1, randomDay);
+      item['effortDriven'] = i % 5 === 0;
     }
     this.dataset = data;
     return data;
@@ -325,12 +370,13 @@ export class GridTreeDataParentChildComponent implements OnInit {
     const parentItemFound = this.angularGrid.dataView.getItemByIdx(childItemFound[parentPropName]);
 
     if (childItemFound && parentItemFound) {
-      this.angularGrid.treeDataService.dynamicallyToggleItemState([{ itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed }]);
+      this.angularGrid.treeDataService.dynamicallyToggleItemState([
+        { itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed },
+      ]);
     }
   }
 
   reapplyToggledItems() {
     this.angularGrid.treeDataService.applyToggledItemStateChanges(this.treeToggleItems);
   }
-
 }

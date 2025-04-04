@@ -110,9 +110,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       this._userProcessFn = this.gridOptions.rowDetailView.process as (item: any) => Promise<any>; // keep user's process method
       this.addonOptions.process = (item) => this.onProcessing(item); // replace process method & run our internal one
     } else {
-      throw new Error(
-        '[Angular-Slickgrid] You need to provide a "process" function for the Row Detail Extension to work properly'
-      );
+      throw new Error('[Angular-Slickgrid] You need to provide a "process" function for the Row Detail Extension to work properly');
     }
 
     if (this._grid && this.gridOptions?.rowDetailView) {
@@ -267,9 +265,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Render (or re-render) the View Component (Row Detail) */
   renderViewModel(item: any): CreatedView | undefined {
-    const containerElement = this.gridContainerElement.querySelector(
-      `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
-    );
+    const containerElement = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
     if (this._viewComponent && containerElement) {
       // render row detail
       const componentOutput = this.angularUtilService.createAngularComponentAppendToDom(

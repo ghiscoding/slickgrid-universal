@@ -70,7 +70,10 @@ export class GridAngularComponent implements OnInit {
     { id: '3', name: 'Paul' },
   ];
 
-  constructor(private angularUtilService: AngularUtilService, private translate: TranslateService) { }
+  constructor(
+    private angularUtilService: AngularUtilService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -99,8 +102,9 @@ export class GridAngularComponent implements OnInit {
         onCellChange: (e: Event, args: OnEventArgs) => {
           console.log(args);
           this.alertWarning = `Updated Title: ${args.dataContext.title}`;
-        }
-      }, {
+        },
+      },
+      {
         id: 'title2',
         name: 'Title with Angular Component',
         field: 'title',
@@ -116,7 +120,8 @@ export class GridAngularComponent implements OnInit {
           component: CustomButtonFormatterComponent,
           angularUtilService: this.angularUtilService,
         },
-      }, {
+      },
+      {
         id: 'assignee',
         name: 'Assignee',
         field: 'assignee',
@@ -128,7 +133,7 @@ export class GridAngularComponent implements OnInit {
           collection: this.assignees,
           params: {
             component: FilterNgSelectComponent,
-          }
+          },
         },
         queryFieldFilter: 'assignee.id', // for a complex object it's important to tell the Filter which field to query and our CustomAngularComponentFilter returns the "id" property
         queryFieldSorter: 'assignee.name',
@@ -142,13 +147,14 @@ export class GridAngularComponent implements OnInit {
           collection: this.assignees,
           params: {
             component: EditorNgSelectComponent,
-          }
+          },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
           console.log(args);
           this.alertWarning = `Updated Title: ${args.dataContext.title}`;
-        }
-      }, {
+        },
+      },
+      {
         id: 'assignee2',
         name: 'Assignee with Angular Component',
         field: 'assignee',
@@ -160,7 +166,7 @@ export class GridAngularComponent implements OnInit {
           collection: this.assignees,
           params: {
             component: FilterNgSelectComponent,
-          }
+          },
         },
         queryFieldFilter: 'assignee.id', // for a complex object it's important to tell the Filter which field to query and our CustomAngularComponentFilter returns the "id" property
         queryFieldSorter: 'assignee.name',
@@ -175,10 +181,11 @@ export class GridAngularComponent implements OnInit {
         params: {
           component: CustomTitleFormatterComponent,
           angularUtilService: this.angularUtilService,
-          complexFieldLabel: 'assignee.name' // for the exportCustomFormatter
+          complexFieldLabel: 'assignee.name', // for the exportCustomFormatter
         },
         exportCustomFormatter: Formatters.complexObject,
-      }, {
+      },
+      {
         id: 'complete',
         name: '% Complete',
         field: 'percentComplete',
@@ -191,25 +198,30 @@ export class GridAngularComponent implements OnInit {
 
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
-          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="mdi mdi-percent-outline" style="color:cadetblue"></i>' })),
+          collection: Array.from(Array(101).keys()).map((k) => ({
+            value: k,
+            label: k,
+            symbol: '<i class="mdi mdi-percent-outline" style="color:cadetblue"></i>',
+          })),
           customStructure: {
             value: 'value',
             label: 'label',
-            labelSuffix: 'symbol'
+            labelSuffix: 'symbol',
           },
           editorOptions: {
-            maxHeight: 400
-          }
+            maxHeight: 400,
+          },
         },
         filter: {
           model: Filters.slider,
           operator: '>=',
-          filterOptions: { hideSliderNumber: false }
+          filterOptions: { hideSliderNumber: false },
         },
         params: {
           formatters: [Formatters.collectionEditor, Formatters.percentCompleteBar],
-        }
-      }, {
+        },
+      },
+      {
         id: 'start',
         name: 'Start',
         field: 'start',
@@ -221,9 +233,10 @@ export class GridAngularComponent implements OnInit {
         sortable: true,
         type: FieldType.date,
         editor: {
-          model: Editors.date
+          model: Editors.date,
         },
-      }, {
+      },
+      {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
@@ -235,7 +248,7 @@ export class GridAngularComponent implements OnInit {
         exportWithFormatter: true,
         type: FieldType.date,
         editor: {
-          model: Editors.date
+          model: Editors.date,
         },
       },
       {
@@ -255,13 +268,17 @@ export class GridAngularComponent implements OnInit {
               action: () => alert('Please Help!'),
             },
             {
-              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
-              action: (_event, args) => this.angularGrid.gridService.deleteItemById(args.dataContext.id)
+              command: 'delete-row',
+              title: 'Delete Row',
+              positionOrder: 64,
+              iconCssClass: 'mdi mdi-close color-danger',
+              cssClass: 'red',
+              textCssClass: 'text-italic color-danger-light',
+              action: (_event, args) => this.angularGrid.gridService.deleteItemById(args.dataContext.id),
             },
-          ]
-        }
-      }
+          ],
+        },
+      },
     ];
 
     this.gridOptions = {
@@ -270,7 +287,7 @@ export class GridAngularComponent implements OnInit {
       autoCommitEdit: false,
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       headerRowHeight: 45,
       rowHeight: 45, // increase row height so that the ng-select fits in the cell
@@ -281,15 +298,15 @@ export class GridAngularComponent implements OnInit {
       enableExcelCopyBuffer: true,
       enableFiltering: true,
       enableAsyncPostRender: true, // for the Angular PostRenderer, don't forget to enable it
-      asyncPostRenderDelay: 0,    // also make sure to remove any delay to render it
+      asyncPostRenderDelay: 0, // also make sure to remove any delay to render it
       editCommandHandler: (item, column, editCommand) => {
         this._commandQueue.push(editCommand);
         editCommand.execute();
       },
       i18n: this.translate,
       params: {
-        angularUtilService: this.angularUtilService // provide the service to all at once (Editor, Filter, AsyncPostRender)
-      }
+        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
+      },
     };
 
     this.dataset = this.mockData(NB_ITEMS);
@@ -298,10 +315,10 @@ export class GridAngularComponent implements OnInit {
   mockData(itemCount: number, startingIndex = 0) {
     // mock a dataset
     const tempDataset = [];
-    for (let i = startingIndex; i < (startingIndex + itemCount); i++) {
+    for (let i = startingIndex; i < startingIndex + itemCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
 
       tempDataset.push({
@@ -312,8 +329,8 @@ export class GridAngularComponent implements OnInit {
         percentComplete: randomPercent,
         percentCompleteNumber: randomPercent,
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: new Date(randomYear, (randomMonth + 1), randomDay),
-        effortDriven: (i % 5 === 0),
+        finish: new Date(randomYear, randomMonth + 1, randomDay),
+        effortDriven: i % 5 === 0,
       });
     }
     return tempDataset;
@@ -349,7 +366,7 @@ export class GridAngularComponent implements OnInit {
   changeAutoCommit() {
     this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
     this.gridObj.setOptions({
-      autoCommitEdit: this.gridOptions.autoCommitEdit
+      autoCommitEdit: this.gridOptions.autoCommitEdit,
     });
     return true;
   }

@@ -3,10 +3,7 @@ import { SlickDataView, SlickGrid } from 'angular-slickgrid';
 import { GridRowDetailComponent } from './grid-rowdetail.component';
 
 @Component({
-  styles: [
-    '.detail-label { display: inline-flex; align-items: center; gap: 4px; padding: 4px; }',
-    'label { font-weight: 600; }'
-  ],
+  styles: ['.detail-label { display: inline-flex; align-items: center; gap: 4px; padding: 4px; }', 'label { font-weight: 600; }'],
   templateUrl: './rowdetail-view.component.html',
   standalone: false,
 })

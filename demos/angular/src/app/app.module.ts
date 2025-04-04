@@ -193,4 +193,4 @@ export function appInitializerFactory(translate: TranslateService, injector: Inj
     provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-export class AppModule { }
+export class AppModule {}

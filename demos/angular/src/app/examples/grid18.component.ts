@@ -19,7 +19,7 @@ export class Grid18Component {
   uploadFileRef = '';
   templateUrl = `${sampleDataRoot}/users.csv`;
 
-  constructor(private readonly cd: ChangeDetectorRef) { }
+  constructor(private readonly cd: ChangeDetectorRef) {}
 
   handleFileImport(event: any) {
     const file = event.target.files[0];

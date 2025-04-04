@@ -84,9 +84,7 @@ export class AngularUtilService {
       // when user provides the DOM element target, we will read the new Component html and use it to replace the target html
       if (targetElement && domElem) {
         targetElement.innerHTML =
-          typeof createCompOptions?.sanitizer === 'function'
-            ? createCompOptions.sanitizer(domElem.innerHTML || '')
-            : domElem.innerHTML;
+          typeof createCompOptions?.sanitizer === 'function' ? createCompOptions.sanitizer(domElem.innerHTML || '') : domElem.innerHTML;
       }
     }
 

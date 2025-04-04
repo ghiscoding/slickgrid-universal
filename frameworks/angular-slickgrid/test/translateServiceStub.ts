@@ -75,10 +75,7 @@ export class TranslateServiceStub {
         output = this.currentLang === 'en' ? 'Export to Excel' : 'Exporter vers Excel';
         break;
       case 'EXPORT_TO_TAB_DELIMITED':
-        output =
-          this.currentLang === 'en'
-            ? 'Export in Text format (Tab delimited)'
-            : 'Exporter en format texte (délimité par tabulation)';
+        output = this.currentLang === 'en' ? 'Export in Text format (Tab delimited)' : 'Exporter en format texte (délimité par tabulation)';
         break;
       case 'EXPORT_TO_TEXT_FORMAT':
         output = this.currentLang === 'en' ? 'Export in Text format' : 'Exporter en format texte';

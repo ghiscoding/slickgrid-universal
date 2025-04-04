@@ -3,14 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Subscription } from 'rxjs';
 
-import {
-  AngularGridInstance,
-  Column,
-  Editors,
-  FieldType,
-  Formatters,
-  GridOption,
-} from 'angular-slickgrid';
+import { AngularGridInstance, Column, Editors, FieldType, Formatters, GridOption } from 'angular-slickgrid';
 
 const NB_ITEMS = 20;
 
@@ -146,12 +139,13 @@ export class GridBaseRowEditingComponent implements OnInit {
             method: 'POST',
             body: JSON.stringify({ effortDriven, percentComplete, finish, start, duration, title }),
             headers: {
-              'Content-type': 'application/json; charset=UTF-8'
-            }
-          }).catch(err => {
-            console.error(err);
-            return false;
+              'Content-type': 'application/json; charset=UTF-8',
+            },
           })
+            .catch((err) => {
+              console.error(err);
+              return false;
+            })
             .then((response: any) => {
               if (response === false) {
                 this.statusClass = 'alert alert-danger';
@@ -161,14 +155,15 @@ export class GridBaseRowEditingComponent implements OnInit {
                 return response!.json();
               }
             })
-            .then(json => {
+            .then((json) => {
               this.statusStyle = 'display: block';
               this.statusClass = 'alert alert-success';
               this.fetchResult = json.message;
               return true;
             });
         },
-        actionColumnConfig: { // override the defaults of the action column
+        actionColumnConfig: {
+          // override the defaults of the action column
           width: 100,
           minWidth: 100,
           maxWidth: 100,
@@ -247,7 +242,7 @@ export class GridBaseRowEditingComponent implements OnInit {
   }
 
   switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
         this.selectedLanguage = nextLanguage;
@@ -258,9 +253,12 @@ export class GridBaseRowEditingComponent implements OnInit {
 
 function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefined): Promise<Response> {
   return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
-      // reduces the delay for automated Cypress tests
-    }, (window as any).Cypress ? 10 : 500);
+    setTimeout(
+      () => {
+        resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
+        // reduces the delay for automated Cypress tests
+      },
+      (window as any).Cypress ? 10 : 500
+    );
   });
 }
