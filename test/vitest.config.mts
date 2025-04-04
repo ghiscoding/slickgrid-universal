@@ -25,6 +25,7 @@ export default defineConfig({
       reportsDirectory: 'test/vitest-coverage',
       reportOnFailure: true,
     },
+    exclude: [...configDefaults.exclude, 'frameworks/*'],
     environment: 'happy-dom',
     fakeTimers: {
       toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask'],
