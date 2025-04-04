@@ -48,17 +48,6 @@
     "directory": "dist"
   },
   "main": "src/app/angular-slickgrid/index",
-  "module": "dist/fesm2022/angular-slickgrid.mjs",
-  "typings": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/fesm2022/angular-slickgrid.mjs"
-    },
-    "./package.json": {
-      "default": "./package.json"
-    }
-  },
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
