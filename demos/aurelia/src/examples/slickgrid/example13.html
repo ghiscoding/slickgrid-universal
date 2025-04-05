@@ -1,0 +1,87 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example13.ts">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" click.trigger="loadData(500)">
+      500 rows
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-50k-rows-btn" click.trigger="loadData(50000)">
+      50k rows
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" click.trigger="clearGrouping()">
+      <i class="mdi mdi-close"></i> Clear grouping
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="collapse-all-btn"
+            click.trigger="collapseAllGroups()">
+      <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" click.trigger="expandAllGroups()">
+      <i class="mdi mdi-arrow-expand"></i> Expand all groups
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="export-excel-btn" click.trigger="exportToExcel()">
+      <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+    </button>
+  </div>
+</div>
+
+<hr />
+
+<div class="row">
+  <div class="col-sm-12">
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-value-btn"
+            click.trigger="groupByDuration()">
+      Group by Duration &amp; sort groups by value
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-count-btn"
+            click.trigger="groupByDurationOrderByCount(false)">
+      Group by Duration &amp; sort groups by count
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-count-collapse-btn"
+              click.trigger="groupByDurationOrderByCount(true)">
+        Group by Duration &amp; sort groups by count, aggregate collapsed
+      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-effort-btn"
+              click.trigger="groupByDurationEffortDriven()">
+        Group by Duration then Effort-Driven
+      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-effort-percent-btn"
+              click.trigger="groupByDurationEffortDrivenPercent()">
+        Group by Duration then Effort-Driven then Percent.
+      </button>
+      <span hidden.bind="!processing">
+        <i class="mdi mdi-sync mdi-spin"></i>
+      </span>
+    </div>
+  </div>
+</div>
+
+<aurelia-slickgrid grid-id="grid13"
+                    column-definitions.bind="columnDefinitions"
+                    grid-options.bind="gridOptions"
+                    dataset.bind="dataset"
+                    on-before-export-to-excel.trigger="processing = true"
+                    on-after-export-to-excel.trigger="processing = false"
+                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
+</aurelia-slickgrid>

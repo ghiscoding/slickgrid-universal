@@ -1,0 +1,38 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example7.ts">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="hideSubTitle = !hideSubTitle"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
+
+<h5>Grid 1</h5>
+<aurelia-slickgrid
+                    grid-id="grid7-1"
+                    column-definitions.bind="columnDefinitions1"
+                    grid-options.bind="gridOptions1"
+                    dataset.bind="dataset1"
+                    on-aurelia-grid-created.trigger="aureliaGrid1Ready($event.detail)">
+</aurelia-slickgrid>
+<br />
+<h5>Grid 2 - <span class="subtitle">with both Header Buttons & Menus</span></h5>
+<aurelia-slickgrid
+                    grid-id="grid7-2"
+                    column-definitions.bind="columnDefinitions2"
+                    grid-options.bind="gridOptions2"
+                    dataset.bind="dataset2"
+                    on-aurelia-grid-created.trigger="aureliaGrid2Ready($event.detail)">
+</aurelia-slickgrid>

@@ -1,0 +1,82 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example23.ts">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<br />
+
+<span if.bind="metrics">
+  <b>Metrics:</b>
+  ${metrics.endTime | dateFormat: 'DD MMM, h:mm:ss a'} | ${metrics.itemCount} of ${metrics.totalItemCount} items
+</span>
+
+<div class="row row-cols-lg-auto g-1 align-items-center">
+  <div class="col">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters"
+            click.trigger="aureliaGrid.filterService.clearFilters()">
+      Clear Filters
+    </button>
+  </div>
+  <div class="col">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting"
+            click.trigger="aureliaGrid.sortService.clearSorting()">
+      Clear Sorting
+    </button>
+  </div>
+  <div class="col">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter"
+            click.trigger="setFiltersDynamically()">
+      Set Filters Dynamically
+    </button>
+  </div>
+  <div class="col">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting"
+            click.trigger="setSortingDynamically()">
+      Set Sorting Dynamically
+    </button>
+  </div>
+  <div class="col">
+    <label for="selectedFilter" style="margin-left: 10px">Predefined Filters</label>
+  </div>
+  <div class="col">
+    <select name="selectedFilter" class="form-select" data-test="select-dynamic-filter"
+            value.bind="selectedPredefinedFilter" change.trigger="predefinedFilterChanged(selectedPredefinedFilter)">
+      <option model.bind="filter.value" repeat.for="filter of filterList">${filter.label}</option>
+    </select>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <div class="col">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="language" click.trigger="switchLanguage()">
+      <i class="mdi mdi-translate"></i>
+      Switch Language
+    </button>
+    <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">${selectedLanguage + '.json'}</span>
+  </div>
+</div>
+
+<aurelia-slickgrid grid-id="grid23"
+                    column-definitions.bind="columnDefinitions"
+                    grid-options.bind="gridOptions"
+                    dataset.bind="dataset"
+                    instances.bind="aureliaGrid"
+                    on-grid-state-changed.trigger="gridStateChanged($event.detail)"
+                    on-row-count-changed.trigger="refreshMetrics($event.detail.eventData, $event.detail.args)">
+</aurelia-slickgrid>

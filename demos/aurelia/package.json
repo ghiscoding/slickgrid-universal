@@ -1,0 +1,77 @@
+{
+  "name": "aurelia-slickgrid-demo",
+  "private": true,
+  "description": "Slickgrid components made available in Aurelia",
+  "keywords": [
+    "aurelia",
+    "datagrid",
+    "datatable",
+    "plugin",
+    "slickgrid"
+  ],
+  "homepage": "https://github.com/ghiscoding/aurelia-slickgrid",
+  "bugs": {
+    "url": "https://github.com/ghiscoding/aurelia-slickgrid/issues"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ghiscoding/aurelia-slickgrid.git"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "scripts": {
+    "aurelia:dev": "vite",
+    "aurelia:preview": "vite preview",
+    "aurelia:cypress": "cypress open --config-file test/cypress.config.ts",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@aurelia/fetch-client": "^2.0.0-beta.23",
+    "@aurelia/i18n": "^2.0.0-beta.23",
+    "@aurelia/kernel": "^2.0.0-beta.23",
+    "@aurelia/metadata": "^2.0.0-beta.23",
+    "@aurelia/router": "^2.0.0-beta.23",
+    "@aurelia/router-lite": "^2.0.0-beta.23",
+    "@aurelia/runtime": "^2.0.0-beta.23",
+    "@aurelia/runtime-html": "^2.0.0-beta.23",
+    "@faker-js/faker": "catalog:",
+    "@fnando/sparkline": "catalog:",
+    "@formkit/tempo": "catalog:",
+    "@popperjs/core": "catalog:",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/composite-editor-component": "workspace:*",
+    "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",
+    "@slickgrid-universal/excel-export": "workspace:*",
+    "@slickgrid-universal/graphql": "workspace:*",
+    "@slickgrid-universal/odata": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/rxjs-observable": "workspace:*",
+    "@slickgrid-universal/text-export": "workspace:*",
+    "aurelia": "^2.0.0-beta.23",
+    "aurelia-slickgrid": "workspace:*",
+    "bootstrap": "catalog:",
+    "i18next": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@aurelia/vite-plugin": "2.0.0-beta.23",
+    "@types/fnando__sparkline": "catalog:",
+    "@types/node": "catalog:",
+    "@types/sortablejs": "catalog:",
+    "aurelia-polyfills": "^1.3.4",
+    "autoprefixer": "^10.4.21",
+    "dompurify": "catalog:",
+    "npm-run-all2": "catalog:",
+    "sass": "catalog:",
+    "ts-node": "^10.9.2",
+    "tslib": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-sass-dts": "^1.3.31"
+  }
+}

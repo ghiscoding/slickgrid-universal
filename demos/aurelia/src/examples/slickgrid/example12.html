@@ -1,0 +1,64 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example12.ts">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<hr />
+
+<div class="row">
+  <div class="col-sm-12">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="language-button" click.trigger="switchLanguage()">
+      <i class="mdi mdi-translate"></i>
+      Switch Language
+    </button>
+    <label>Locale:</label>
+    <span style="font-style: italic; width: 70px;" data-test="selected-locale">
+      ${selectedLanguage + '.json'}
+    </span>
+
+    <span style="margin-left: 20px">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="exportToFile('csv')">
+        <i class="mdi mdi-download"></i>
+        Download to CSV
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="exportToFile('txt')">
+        <i class="mdi mdi-download"></i>
+        Download to Text
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="exportToExcel()">
+        <i class="mdi mdi-file-excel-outline text-success"></i>
+        Download to Excel
+      </button>
+    </span>
+    <span style="margin-left: 10px">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="dynamicallyAddTitleHeader()">
+        <i class="mdi mdi-shape-square-plus"></i>
+        Dynamically Duplicate Title Column
+      </button>
+    </span>
+  </div>
+</div>
+
+<aurelia-slickgrid grid-id="grid12"
+                    column-definitions.bind="columnDefinitions"
+                    grid-options.bind="gridOptions"
+                    dataset.bind="dataset"
+                    on-grid-state-changed.trigger="gridStateChanged($event.detail)"
+                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
+</aurelia-slickgrid>

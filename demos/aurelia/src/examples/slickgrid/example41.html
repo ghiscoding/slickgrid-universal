@@ -1,0 +1,50 @@
+<div class="container-fluid">
+  <h2>
+    Example 41: Drag & Drop
+    <span class="float-end">
+      <a style="font-size: 18px" target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example41.ts">
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    <ul>
+      <li>Click to select, Ctrl-click to toggle selection(s).</li>
+      <li>Drag one or more rows by the handle icon (1st column) to reorder.</li>
+      <li>Drag one or more rows by selection (2nd or 3rd column) and drag to the recycle bin to delete.</li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <aurelia-slickgrid grid-id="grid41"
+                    column-definitions.bind="columnDefinitions"
+                    grid-options.bind="gridOptions"
+                    dataset.bind="dataset"
+                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+                    on-drag-init.trigger="handleOnDragInit($event.detail.eventData)"
+                    on-drag-start.trigger="handleOnDragStart($event.detail.eventData)"
+                    on-drag.trigger="handleOnDrag($event.detail.eventData, $event.detail.args)"
+                    on-drag-end.trigger="handleOnDragEnd($event.detail.eventData, $event.detail.args)">
+        <div au-slot="slickgrid-header" class="grid-header">
+          <label>Santa's TODO list:</label>
+        </div>
+      </aurelia-slickgrid>
+    </div>
+    <div class="col">
+      <div id="dropzone" class="recycle-bin mt-4">
+        Recycle Bin
+      </div>
+    </div>
+  </div>
+</div>

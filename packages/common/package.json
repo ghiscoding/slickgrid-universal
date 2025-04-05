@@ -86,7 +86,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "cssnano": "^7.0.6",
-    "native-copyfiles": "^0.3.2",
+    "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
     "postcss": "^8.5.3",
     "postcss-cli": "^11.0.1",

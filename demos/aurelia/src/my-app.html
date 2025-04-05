@@ -1,0 +1,54 @@
+<div>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand ms-2" href="https://github.com/ghiscoding/aurelia-slickgrid">
+      <i class="mdi mdi-github"></i>
+      <span>Aurelia-Slickgrid</span>
+    </a>
+    <img src.bind="aureliaLogo" class="logo" height="35" alt="image">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="github-button-container">
+      <a href="https://github.com/ghiscoding/aurelia-slickgrid">
+        <img src="https://img.shields.io/github/stars/ghiscoding/aurelia-slickgrid?style=social">
+      </a>
+    </div>
+
+    <div class="navbar-collapse collapse justify-content-end me-2" id="navbarContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#/home">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://ghiscoding.gitbook.io/aurelia-slickgrid/" target="_blank">
+            Documentation
+          </a>
+        </li>
+        <li class="loader" if.bind="router.isNavigating">
+          <i class="mdi mdi-sync mdi-spin mdi-20px"></i>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="panel-wm">
+    <section id="panel-left" class="panel-wm-left au-animate">
+      <ul class="well nav nav-pills nav-stacked">
+        <li class="nav-item fw-bold nav-docs">
+          <a class="nav-link" href="https://ghiscoding.gitbook.io/aurelia-slickgrid/" target="_blank">
+            📘 Documentation
+          </a>
+        </li>
+        <li repeat.for="r of routes" class="nav-item">
+          <a if.bind="r.path !== 'home'" load.bind="r.path" class="nav-link ${r.isActive ? 'active' : ''}">${r.title}</a>
+        </li>
+      </ul>
+    </section>
+    <section class="panel-wm-content">
+      <div id="demo-container">
+        <au-viewport></au-viewport>
+      </div>
+    </section>
+  </div>
+</div>

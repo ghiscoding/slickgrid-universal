@@ -1,0 +1,58 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example11.ts">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<div class="col-sm-12">
+  <span>
+    <label>Scroll: </label>
+    <div class="btn-group" role="group" aria-label="...">
+      <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="scroll-top-btn" click.trigger="scrollGridTop()">
+        <i class="mdi mdi-arrow-down mdi-rotate-180 icon"></i>
+      </button>
+      <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="scroll-bottom-btn"
+              click.trigger="scrollGridBottom()">
+        <i class="mdi mdi-arrow-down icon"></i>
+      </button>
+    </div>
+    <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="add-new-item-top-btn"
+            click.trigger="addNewItem()">Add New Mocked Item (top)</button>
+    <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="add-new-item-bottom-btn"
+            click.trigger="addNewItem('bottom')">Add New Mocked Item
+      (bottom)</button>
+    <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="update-second-item-btn"
+            click.trigger="updateSecondItem()">
+      Update 2nd Row Item with Random Duration
+    </button>
+    <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="highlight-row5-btn"
+            click.trigger="highlighFifthRow()">Highlight 5th Row</button>
+    <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="highlight-duration40-btn"
+            click.trigger="changeDurationBackgroundColor()">
+      Highlight Rows with Duration over 50
+    </button>
+  </span>
+  <hr />
+</div>
+
+<aurelia-slickgrid grid-id="grid11"
+                    column-definitions.bind="columnDefinitions"
+                    grid-options.bind="gridOptions"
+                    dataset.bind="dataset"
+                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
+</aurelia-slickgrid>

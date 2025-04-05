@@ -1,0 +1,16 @@
+<div class.bind="innerGridClass">
+  <h4>${ model.companyName } - Order Details (id: ${ model.id })</h4>
+  <div class="container-fluid">
+    <aurelia-slickgrid
+      if.bind="showGrid"
+      class="innergrid"
+      grid-id.bind="gridId"
+      column-definitions.bind="innerColDefs"
+      grid-options.bind="innerGridOptions"
+      dataset.bind="innerDataset"
+      instances.bind="aureliaGrid"
+      on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+      on-before-grid-destroy.trigger="handleBeforeGridDestroy()">
+    </aurelia-slickgrid>
+  </div>
+</div>

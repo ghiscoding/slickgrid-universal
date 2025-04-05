@@ -1,0 +1,34 @@
+<require from="./custom-footer"></require>
+<h2>
+  ${title}
+  <span class="float-end">
+    <a style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example29.ts">
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="hideSubTitle = !hideSubTitle"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
+
+
+<aurelia-slickgrid grid-id="grid"
+                    column-definitions.bind="columnDefinitions"
+                    grid-options.bind="gridOptions"
+                    dataset.bind="dataset">
+  <div au-slot="slickgrid-header" class="custom-header-slot">
+    <h3>Grid with header and footer slot</h3>
+  </div>
+  <custom-footer class="custom-footer-slot"
+                  au-slot="slickgrid-footer">
+  </custom-footer>
+</aurelia-slickgrid>

@@ -18,10 +18,15 @@ catalog:
   cypress-real-events: ^1.14.0
   dequal: ^2.0.3
   dompurify: ^3.2.4
+  i18next: ^23.16.8
+  jsdom: ^26.0.0
   multiple-select-vanilla: ^3.5.0
+  native-copyfiles: ^0.3.2
   npm-run-all2: ^7.0.2
+  rimraf: ^6.0.1
   rxjs: ^7.8.2
   sass: ^1.86.0
   sortablejs: ^1.15.6
+  tslib: ^2.8.1
   typescript: ^5.8.2
   vite: ^6.2.3
