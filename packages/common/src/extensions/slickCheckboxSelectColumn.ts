@@ -97,17 +97,14 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._eventHandler
       .subscribe(grid.onSelectedRowsChanged, this.handleSelectedRowsChanged.bind(this))
       .subscribe(grid.onClick, this.handleClick.bind(this))
-      .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this));
+      .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this))
+      // whenever columns changed, we need to rerender Select All checkbox
+      .subscribe(this._grid.onAfterSetColumns, () => this.renderSelectAllCheckbox(this._isSelectAllChecked));
 
-    if (this._isUsingDataView && this._dataView) {
-      // whenever columns changed, we need to rerender Select All, we can call handler to simulate that
-      this._eventHandler.subscribe(grid.onAfterSetColumns, this.handleDataViewSelectedIdsChanged.bind(this));
-
-      if (this._addonOptions.applySelectOnAllPages) {
-        this._eventHandler
-          .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this))
-          .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this));
-      }
+    if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
+      this._eventHandler
+        .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this))
+        .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this));
     }
 
     if (!this._addonOptions.hideInFilterHeaderRow) {
