@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "outDir": "../out-tsc/app",
+    "baseUrl": "./"
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "full",
+    "preserveWhitespaces": true,
+    "strictMetadataEmit": true
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts"]
+}

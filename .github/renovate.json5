@@ -14,6 +14,18 @@
       enabled: false,
     },
     {
+      description: 'Group all Angular dependencies',
+      matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**'],
+      groupName: 'Angular dependencies',
+      rules: [
+        {
+          matchUpdateTypes: ['minor', 'patch'],
+          matchPackagePatterns: ['^typescript$'],
+          ignoreVersion: true,
+        },
+      ],
+    },
+    {
       description: 'Group all VueJS dependencies',
       matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
       groupName: 'VueJS dependencies',

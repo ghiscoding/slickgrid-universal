@@ -1,0 +1,112 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    {{ title }}
+    <button class="btn btn-outline-secondary btn-sm ms-3" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
+    </button>
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/Angular-Slickgrid/blob/master/src/app/examples/grid-draggrouping.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle" [innerHTML]="subTitle"></div>
+
+  <form class="form-inline">
+    <div class="row">
+      <div class="col-sm-12">
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" (click)="loadData(500)">500 rows</button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-50k-rows-btn" (click)="loadData(50000)">50k rows</button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" (click)="clearGroupsAndSelects()">
+          <i class="mdi mdi-close"></i> Clear grouping
+        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="collapse-all-btn" (click)="collapseAllGroups()">
+          <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
+        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" (click)="expandAllGroups()">
+          <i class="mdi mdi-arrow-expand"></i> Expand all groups
+        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" (click)="toggleDraggableGroupingRow()">
+          Toggle Draggable Grouping Row
+        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" (click)="exportToExcel()">
+          <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="group-duration-sort-value-btn"
+          (click)="groupByDurationOrderByCount(false)"
+        >
+          Group by duration &amp; sort groups by value
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="group-duration-sort-count-btn"
+          (click)="groupByDurationOrderByCount(true)"
+        >
+          Group by duration &amp; sort groups by count
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="group-duration-effort-btn"
+          (click)="groupByDurationEffortDriven()"
+        >
+          Group by Duration &amp; then Effort-Driven
+        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
+          <span class="mdi mdi-filter-outline"></span>
+          <span> Set Filters Dynamically </span>
+        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
+          <span class="mdi mdi-sort-ascending"></span>
+          <span> Set Sorting Dynamically </span>
+        </button>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-sm-12">
+        <div class="form-row">
+          <div class="row form-group">
+            <label for="field1" class="col-sm-3 mb-2">Group by field(s)</label>
+            <div
+              class="form-group col-md-3 grouping-selects"
+              *ngFor="let groupField of selectedGroupingFields; let i = index; trackBy: selectTrackByFn"
+            >
+              <select
+                class="form-select"
+                name="group-field-{{ i }}"
+                [(ngModel)]="selectedGroupingFields[i]"
+                (ngModelChange)="groupByFieldName($event, i)"
+              >
+                <option value=""></option>
+                <option [ngValue]="field.id" *ngFor="let field of columnDefinitions">{{ field.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="row mt-1 mb-1">
+    <hr />
+  </div>
+
+  <angular-slickgrid
+    gridId="grid19"
+    [dataset]="dataset"
+    [columnDefinitions]="columnDefinitions"
+    [gridOptions]="gridOptions"
+    (onCellChange)="onCellChanged()"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+</div>

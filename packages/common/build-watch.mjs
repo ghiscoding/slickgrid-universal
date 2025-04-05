@@ -14,7 +14,7 @@ await run();
 async function run() {
   // get the file changed from Lerna watch from the environment variable since we are interested in these changes only in this script,
   // using .env var will avoid passing the changes to all packages npm scripts and avoid `tsc` complaining about unknown argument `--files`
-  const changedFiles = process.env.LERNA_FILE_CHANGES.split(',');
+  const changedFiles = process.env.LERNA_FILE_CHANGES.split(' ');
 
   if (changedFiles.some((f) => f.includes('.ts'))) {
     console.log('TypeScript file changes detected... start tsc incremental build');

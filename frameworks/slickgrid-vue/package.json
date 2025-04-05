@@ -52,9 +52,9 @@
     "clean": "rimraf dist",
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
-    "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",
-    "preview:release": "release --dry-run --skip-checks --npm-client pnpm --build-script vue:build",
-    "release": "release --npm-client pnpm --build-script vue:build",
+    "build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",
+    "preview:release": "release --dry-run --skip-checks --npm-client pnpm --build-script build",
+    "release": "release --npm-client pnpm --build-script build",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {

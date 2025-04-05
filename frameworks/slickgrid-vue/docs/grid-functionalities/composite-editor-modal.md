@@ -460,7 +460,7 @@ function handleOnCompositeEditorChange(event) {
   if (columnDef.id === 'completed') {
     compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
     compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
-    compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' });
+    compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today');
   }
 }
 </script>

@@ -219,7 +219,7 @@ export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
 > **Note** you could also use our helper `createDomElement` which allows to create a DOM element and pass properties like `className` in 1 liner (and it also works with intellisense). For example `createDomElement('span', { className: 'bold title', textContent: 'Hello World', title: 'some tooltip description' })` would equal to 4 lines of code.
 
 ### More Complex Example
-If you need to add more complex logic to a `Formatter`, you can take a look at the [percentCompleteBar](https://github.com/ghiscoding/slickgrid-vue/blob/master/slickgrid-vue/src/slickgrid-vue/formatters/percentCompleteBarFormatter.ts) `Formatter` for more inspiration.
+If you need to add more complex logic to a `Formatter`, you can take a look at the [percentCompleteBar](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/percentCompleteBarFormatter.ts) `Formatter` for more inspiration.
 
 ### Common Formatter Options
 You can set some defined common Formatter Options in your Grid Options through the `formatterOptions` in the Grid Options (locally or globally) as seen below, and/or independently through the column definition `params` (the option names are the same in both locations)

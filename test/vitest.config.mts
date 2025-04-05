@@ -7,6 +7,7 @@ export default defineConfig({
       include: ['packages/**/*.ts'],
       exclude: [
         ...configDefaults.exclude,
+        '**/frameworks/**',
         '**/__tests__/**',
         '**/enums/**',
         '**/interfaces/**',
@@ -24,6 +25,7 @@ export default defineConfig({
       reportsDirectory: 'test/vitest-coverage',
       reportOnFailure: true,
     },
+    exclude: [...configDefaults.exclude, 'frameworks/*'],
     environment: 'happy-dom',
     fakeTimers: {
       toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask'],

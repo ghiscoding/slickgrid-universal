@@ -1,0 +1,106 @@
+name: Angular Cypress (E2E)
+
+on:
+  push:
+    branches:
+      - master
+      - next
+  pull_request:
+    branches:
+      - '**'
+    paths-ignore:
+      - '**.md'
+      - '!.github/workflows/ci.yml'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20]
+        platform:
+          - ubuntu-latest
+
+    name: '${{matrix.platform}} / Node ${{ matrix.node }}'
+    runs-on: ${{matrix.platform}}
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs:') }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: true
+
+      - run: pnpm --version
+
+      - name: Prettier
+        run: pnpm prettier:check
+
+      - name: TSC Build (esm)
+        run: pnpm predev
+
+      - name: Run Vitest unit tests
+        if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
+        run: pnpm test:angular:coverage
+
+      - name: Angular-Slickgrid Framework Build
+        run: pnpm angular:build:framework
+
+      - name: Website Dev Build (served for Cypress)
+        run: pnpm angular:build:demo
+
+      - name: Start HTTP Server
+        run: pnpm angular:serve &
+
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          working-directory: frameworks/angular-slickgrid
+          # start: pnpm angular:serve
+          wait-on: 'http://localhost:4300'
+          config-file: test/cypress.config.ts
+          browser: chrome
+          record: false
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          Cypress_extended: true
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: test/cypress/screenshots

@@ -25,6 +25,16 @@
       }
     },
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Angular - Chrome Debugger",
+      "url": "http://localhost:4300",
+      "webRoot": "${workspaceFolder}/frameworks/angular-slickgrid",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
       "type": "msedge",
       "request": "launch",
       "name": "Vue - Edge Debugger",

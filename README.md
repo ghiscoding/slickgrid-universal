@@ -11,10 +11,6 @@
 [![Vitest](https://img.shields.io/badge/tested%20with-vitest-fcc72b.svg?logo=vitest)](https://vitest.dev/)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-### 📢 VueJS Support
-> [!NOTE]
-> VueJS is now supported via a new [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) Component 🚀. One major difference compare to the other existing framework wrappers is that Slickgrid-Vue is included directly in here under the [`/frameworks`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder, eventually all other framework wrappers will soon also be moved in here as well (which is scheduled for our next major version).
-
 ### Documentation
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
 
@@ -60,7 +56,7 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) above s
 
 | Project Repo | Live Demo | Stackblitz | Framework | Docs | Downloads | Changes |
 | -------------| --------- | ---------- | --------- | ---- | --------- | ------- |
-| [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)  | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-translate) | [Angular](https://angular.io/) | [docs](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) | [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid) | [changelog](https://github.com/ghiscoding/Angular-Slickgrid/blob/master/CHANGELOG.md) |
+| [Angular-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid)  | [demo](https://ghiscoding.github.io/angular-slickgrid-demos/) |[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos) | [Angular](https://angular.io/) | [docs](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) | [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid) | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/CHANGELOG.md) |
 | [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/aurelia-slickgrid-demos/tree/master/webpack-bs5-demo) | [Aurelia](https://aurelia.io/) | [docs](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start) | [![NPM downloads](https://img.shields.io/npm/dy/aurelia-slickgrid)](https://npmjs.org/package/aurelia-slickgrid)| [changelog](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/CHANGELOG.md) |
 | [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react/) | [demo](https://ghiscoding.github.io/slickgrid-react/) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos/tree/main/bootstrap5-i18n-demo) | [React](https://react.dev/) | [docs](https://ghiscoding.gitbook.io/slickgrid-react/getting-started/quick-start) | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-react)](https://npmjs.org/package/slickgrid-react) | [changelog](https://github.com/ghiscoding/slickgrid-react/blob/master/CHANGELOG.md) |
 | [Slickgrid-Vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) | [demo](https://ghiscoding.github.io/slickgrid-vue-demos/) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos) | [Vue](https://vuejs.org/) - **new** 🚀 | [docs](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start) | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-vue)](https://npmjs.org/package/slickgrid-vue) | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-vue/CHANGELOG.md) |
@@ -94,7 +90,6 @@ Slickgrid-Universal has close to **100%** Unit Test Coverage, ~5,000 Vitest unit
 | [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/utils.svg)](https://www.npmjs.com/package/@slickgrid-universal/utils) | [![NPM downloads](https://img.shields.io/npm/dy/@slickgrid-universal/utils.svg)](https://www.npmjs.com/package/@slickgrid-universal/utils) | [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/utils?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/utils) | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/utils/CHANGELOG.md)
 | [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-bundle.svg)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle) | [![NPM downloads](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-bundle.svg)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle) | [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/vanilla-bundle?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/vanilla-bundle) | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-bundle/CHANGELOG.md) |
 | [@slickgrid-universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-force-bundle.svg)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle) | [![NPM downloads](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-force-bundle.svg)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle) | [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/vanilla-force-bundle?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/vanilla-force-bundle) | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/CHANGELOG.md) |
-| [slickgrid-vue](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-vue) | [![npm](https://img.shields.io/npm/v/slickgrid-vue.svg)](https://www.npmjs.com/package/slickgrid-vue) | [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-vue.svg)](https://www.npmjs.com/package/slickgrid-vue) | [![npm bundle size](https://img.shields.io/bundlephobia/minzip/slickgrid-vue?color=success&label=gzip)](https://bundlephobia.com/result?p=slickgrid-vue) | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/slickgrid-vue/CHANGELOG.md) |
 
 ## Installation
 **NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if however you just want to download a quick Slickgrid-Universal demo, then I would suggest you to take a look at the following repos [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo).
@@ -120,6 +115,12 @@ For a more targeted install, you could optionally install a specific framework (
 Taking Vue for example
 
 ```sh
+# install all framework wrappers
+pnpm install
+
+# or install only a single framework wrapper
+# choose the command from list below depending on the framework
+pnpm angular:install
 pnpm vue:install
 ```
 
@@ -132,7 +133,14 @@ and is written in plain TypeScript without being bound to any framework. The imp
 It could be used as a guideline to implement it for other framework wrappers.
 
 ```bash
+# dev vanilla (default)
 pnpm run dev
+
+# dev for Angular, Aurelia, React or Vue
+pnpm run dev:angular
+pnpm run dev:aurelia
+pnpm run dev:react
+pnpm run dev:vue
 ```
 
 
