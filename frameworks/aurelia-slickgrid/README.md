@@ -1,5 +1,8 @@
 # Aurelia-Slickgrid
 
+### Brief introduction
+Aurelia-SlickGrid is a custom component created specifically for [Aurelia](https://aurelia.io/) framework, it is a wrapper on top of Slickgrid-Universal library which contains the core functionalities. Slickgrid-Universal is written with TypeScript in browser native code, it is framework agnostic and is a monorepo that includes all Editors, Filters, Extensions and Services related to SlickGrid usage with also a few optional packages (like GraphQL, OData, Export to Excel, ...).
+
 ## Documentation
 📕 [Documentation](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start) website powered by GitBook.
 
