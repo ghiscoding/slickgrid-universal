@@ -20,10 +20,6 @@
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
-  "files": [
-    "dist",
-    "src"
-  ],
   "scripts": {
     "angular:dev": "ng serve --port 4300",
     "angular:cypress": "cypress open --config-file test/cypress.config.ts",
@@ -37,6 +33,7 @@
     "build:demo": "ng build --configuration=production --base-href=\"\"",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "pack-tarball": "npm pack",
     "pack-lib": "npm pack ./dist",
     "test": "ng test",
     "test:watch": "ng test --watch",
