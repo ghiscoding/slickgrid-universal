@@ -1,20 +1,18 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px" target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example34.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example34.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-    </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
     <span class="mdi mdi-theme-light-dark"></span>
     <span>Toggle Dark Mode</span>
   </button>
@@ -27,40 +25,48 @@
     <div class="col-sm-12 d-flex align-items-center">
       <div class="range">
         <label for="refreshRateRange" class="form-label me-1">Changes Rate(ms)</label>
-        <input type="range" class="form-range" id="refreshRateRange" min="0" max="250" value.bind="refreshRate">
+        <input type="range" class="form-range" id="refreshRateRange" min="0" max="250" value.bind="refreshRate" />
         <span class="refresh-rate">
-          <input type="number" value.bind="refreshRate">
+          <input type="number" value.bind="refreshRate" />
         </span>
       </div>
       <span class="ms-3 me-1">
         <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="start-btn" click.trigger="startSimulation()">
-          <li class="mdi mdi-play-circle-outline"></li> Start Simulation
+          <li class="mdi mdi-play-circle-outline"></li>
+          Start Simulation
         </button>
       </span>
       <span class="me-3">
         <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="stop-btn" click.trigger="stopSimulation()">
-          <li class="mdi mdi-stop-circle-outline"></li> Stop Simulation
+          <li class="mdi mdi-stop-circle-outline"></li>
+          Stop Simulation
         </button>
       </span>
       <span class="mx-1">
         <label for="change-per-cycle-input">Changes p/Cycle</label>
-        <input type="number" id="change-per-cycle-input" value.bind="minChangePerCycle" max.bind="maxChangePerCycle">
+        <input type="number" id="change-per-cycle-input" value.bind="minChangePerCycle" max.bind="maxChangePerCycle" />
         to
-        <input type="number" value.bind="maxChangePerCycle" min.bind="minChangePerCycle">
+        <input type="number" value.bind="maxChangePerCycle" min.bind="minChangePerCycle" />
       </span>
       <span class="ms-2">
         <label for="highlight-input">Highlight Duration(ms)</label>
-        <input type="number" id="highlight-input" data-test="highlight-input" value.bind="highlightDuration">
+        <input type="number" id="highlight-input" data-test="highlight-input" value.bind="highlightDuration" />
       </span>
       <div class="ms-auto">
         <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleFullScreen()">
-          <li class.bind="isFullScreen ? 'mdi mdi-arrow-collapse' : 'mdi mdi-arrow-expand'"></li> Toggle Full-Screen
+          <li class.bind="isFullScreen ? 'mdi mdi-arrow-collapse' : 'mdi mdi-arrow-expand'"></li>
+          Toggle Full-Screen
         </button>
       </div>
     </div>
   </div>
 
-  <aurelia-slickgrid grid-id="grid34" column-definitions.bind="columnDefinitions" grid-options.bind="gridOptions"
-                      dataset.bind="dataset" instances.bind="aureliaGrid">
+  <aurelia-slickgrid
+    grid-id="grid34"
+    column-definitions.bind="columnDefinitions"
+    grid-options.bind="gridOptions"
+    dataset.bind="dataset"
+    instances.bind="aureliaGrid"
+  >
   </aurelia-slickgrid>
 </div>

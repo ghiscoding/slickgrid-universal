@@ -412,23 +412,33 @@ describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
       it('should expect EmployeeID to follow columns at index 0 column index', () => {
         cy.get(`[data-row=0] > .slick-cell.l0.r0.rowspan`).should('contain', 'Davolio');
-        cy.get(`[data-row=0] > .slick-cell.l0.r0.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2));
+        cy.get(`[data-row=0] > .slick-cell.l0.r0.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+        );
 
         cy.get(`[data-row=2] > .slick-cell.l1.r3.rowspan`).should('contain', 'Check Mail');
-        cy.get(`[data-row=2] > .slick-cell.l1.r3.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2));
+        cy.get(`[data-row=2] > .slick-cell.l1.r3.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+        );
 
         cy.get(`[data-row=8] > .slick-cell.l6.r8.rowspan`).should('contain', 'Development');
-        cy.get(`[data-row=8] > .slick-cell.l6.r8.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2));
+        cy.get(`[data-row=8] > .slick-cell.l6.r8.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+        );
       });
 
       it('should expect "Lunch Break" to be moved to the left by 1 index less', () => {
         cy.get(`[data-row=0] > .slick-cell.l9.r11.rowspan`).should('contain', 'Lunch Break');
-        cy.get(`[data-row=0] > .slick-cell.l9.r11.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 10));
+        cy.get(`[data-row=0] > .slick-cell.l9.r11.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 10)
+        );
       });
 
       it('should expect "Development" to be moved to the left by 1 index less', () => {
         cy.get(`[data-row=1] > .slick-cell.l12.r13.rowspan`).should('contain', 'Development');
-        cy.get(`[data-row=1] > .slick-cell.l12.r13.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5));
+        cy.get(`[data-row=1] > .slick-cell.l12.r13.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+        );
       });
     });
 
@@ -439,23 +449,33 @@ describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
       it('should expect EmployeeID to follow columns at index 1 column index', () => {
         cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should('contain', 'Davolio');
-        cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2));
+        cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+        );
 
         cy.get(`[data-row=2] > .slick-cell.l2.r4.rowspan`).should('contain', 'Check Mail');
-        cy.get(`[data-row=2] > .slick-cell.l2.r4.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2));
+        cy.get(`[data-row=2] > .slick-cell.l2.r4.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+        );
 
         cy.get(`[data-row=8] > .slick-cell.l7.r9.rowspan`).should('contain', 'Development');
-        cy.get(`[data-row=8] > .slick-cell.l7.r9.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2));
+        cy.get(`[data-row=8] > .slick-cell.l7.r9.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 2)
+        );
       });
 
       it('should expect "Lunch Break" to be moved to the right by 1 index less', () => {
         cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan`).should('contain', 'Lunch Break');
-        cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 10));
+        cy.get(`[data-row=0] > .slick-cell.l10.r12.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 10)
+        );
       });
 
       it('should expect "Development" to be moved to the right by 1 index less and a large "Development" section that spans over multiple columns & rows in the afternoon', () => {
         cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).should('contain', 'Development');
-        cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5));
+        cy.get(`[data-row=1] > .slick-cell.l13.r14.rowspan`).should(($el) =>
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+        );
       });
     });
   });

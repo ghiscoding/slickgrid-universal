@@ -1,5 +1,3 @@
-
-
 describe('Example 25 - GraphQL Basic API without Pagination', () => {
   const GRID_ROW_HEIGHT = 35;
   const fullPreTitles = ['Country', 'Language', 'Continent'];
@@ -28,8 +26,7 @@ describe('Example 25 - GraphQL Basic API without Pagination', () => {
   });
 
   it('should expect first 3 rows to be an exact match of data provided by the external GraphQL API', () => {
-    cy.get('.right-footer.metrics')
-      .contains('250 of 250 items');
+    cy.get('.right-footer.metrics').contains('250 of 250 items');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'AD');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Andorra');
@@ -80,11 +77,9 @@ describe('Example 25 - GraphQL Basic API without Pagination', () => {
   });
 
   it('should filter by Language Codes "fr, de" and expect 2 rows of data in the grid', () => {
-    cy.get('.search-filter.filter-languageCode')
-      .type('fr, de');
+    cy.get('.search-filter.filter-languageCode').type('fr, de');
 
-    cy.get('.right-footer.metrics')
-      .contains('2 of 250 items');
+    cy.get('.right-footer.metrics').contains('2 of 250 items');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'BE');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
@@ -110,37 +105,23 @@ describe('Example 25 - GraphQL Basic API without Pagination', () => {
   });
 
   it('should Clear all Filters and expect all rows to be back', () => {
-    cy.get('#grid25')
-      .find('button.slick-grid-menu-button')
-      .click();
+    cy.get('#grid25').find('button.slick-grid-menu-button').click();
 
-    cy.get(`.slick-grid-menu:visible`)
-      .find('.slick-menu-item')
-      .first()
-      .find('span')
-      .contains('Clear all Filters')
-      .click();
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
 
-    cy.get('.right-footer.metrics')
-      .contains('250 of 250 items');
+    cy.get('.right-footer.metrics').contains('250 of 250 items');
   });
 
   it('should filter Language Native with "Aymar" and expect only 1 row in the grid', () => {
-    cy.get('div.ms-filter.filter-languageNative')
-      .trigger('click');
+    cy.get('div.ms-filter.filter-languageNative').trigger('click');
 
-    cy.get('.ms-search:visible')
-      .type('Aymar');
+    cy.get('.ms-search:visible').type('Aymar');
 
-    cy.get('.ms-drop:visible')
-      .contains('Aymar')
-      .click();
+    cy.get('.ms-drop:visible').contains('Aymar').click();
 
-    cy.get('.ms-ok-button:visible')
-      .click();
+    cy.get('.ms-ok-button:visible').click();
 
-    cy.get('.right-footer.metrics')
-      .contains('1 of 250 items');
+    cy.get('.right-footer.metrics').contains('1 of 250 items');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'BO');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Bolivia');
@@ -155,37 +136,23 @@ describe('Example 25 - GraphQL Basic API without Pagination', () => {
   });
 
   it('should Clear all Filters and expect all rows to be back', () => {
-    cy.get('#grid25')
-      .find('button.slick-grid-menu-button')
-      .click();
+    cy.get('#grid25').find('button.slick-grid-menu-button').click();
 
-    cy.get(`.slick-grid-menu:visible`)
-      .find('.slick-menu-item')
-      .first()
-      .find('span')
-      .contains('Clear all Filters')
-      .click();
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
 
-    cy.get('.right-footer.metrics')
-      .contains('250 of 250 items');
+    cy.get('.right-footer.metrics').contains('250 of 250 items');
   });
 
   it('should filter Language Native with "French" language and expect only 40 rows in the grid', () => {
-    cy.get('div.ms-filter.filter-languageName')
-      .trigger('click');
+    cy.get('div.ms-filter.filter-languageName').trigger('click');
 
-    cy.get('.ms-search:visible')
-      .type('French');
+    cy.get('.ms-search:visible').type('French');
 
-    cy.get('.ms-drop:visible')
-      .contains('French')
-      .click();
+    cy.get('.ms-drop:visible').contains('French').click();
 
-    cy.get('.ms-ok-button:visible')
-      .click();
+    cy.get('.ms-ok-button:visible').click();
 
-    cy.get('.right-footer.metrics')
-      .contains('44 of 250 items');
+    cy.get('.right-footer.metrics').contains('44 of 250 items');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).should('contain', 'Dutch, French, German');

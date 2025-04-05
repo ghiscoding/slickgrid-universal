@@ -2,8 +2,11 @@
   <h2>
     Example 42: Custom Pagination
     <span class="float-end">
-      <a style="font-size: 18px" target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example42.ts">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example42.ts"
+      >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -18,8 +21,9 @@
   </h2>
 
   <div class="subtitle">
-    You can create a Custom Pagination by passing an Aurelia Custom Element and it must <code>implements BasePaginationComponent</code>.
-    Any of the pagination controls could be moved anywhere on the page (for example we purposely moved the page size away from the rest of the pagination elements).
+    You can create a Custom Pagination by passing an Aurelia Custom Element and it must <code>implements BasePaginationComponent</code>. Any
+    of the pagination controls could be moved anywhere on the page (for example we purposely moved the page size away from the rest of the
+    pagination elements).
   </div>
 
   <div>
@@ -30,7 +34,7 @@
 
     <span class="margin-15px">
       Page Size
-      <input type="text" class="input is-small is-narrow" data-test="page-size-input" value.bind="pageSize" style="width: 55px">
+      <input type="text" class="input is-small is-narrow" data-test="page-size-input" value.bind="pageSize" style="width: 55px" />
     </span>
   </div>
 
@@ -40,6 +44,7 @@
     grid-options.bind="gridOptions"
     dataset.bind="dataset"
     instances.bind="aureliaGrid"
-    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
+    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  >
   </aurelia-slickgrid>
 </div>

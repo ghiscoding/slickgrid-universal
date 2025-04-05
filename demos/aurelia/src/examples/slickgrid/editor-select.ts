@@ -10,7 +10,7 @@ export class EditorSelect {
 
   itemMatcher = (a: any, b: any) => a && b && a.id === b.id;
 
-  constructor(private elm: HTMLElement = resolve(HTMLElement)) { }
+  constructor(private elm: HTMLElement = resolve(HTMLElement)) {}
 
   focus() {
     this.elm.querySelector('select')?.focus();
@@ -26,5 +26,5 @@ export class EditorSelect {
 
   // we need to define the method, it can be empty so that we can override it
   // inside the `custom-aureliaViewModelEditor()` method
-  selectedItemChanged() { }
+  selectedItemChanged() {}
 }

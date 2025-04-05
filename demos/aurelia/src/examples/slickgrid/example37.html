@@ -5,22 +5,20 @@
     <span>Toggle Dark Mode</span>
   </button>
   <span class="float-end">
-    <a style="font-size: 18px" target="_blank"
-      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example37.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example37.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-    </button>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
-<div class="subtitle"  hidden.bind="hideSubTitle"></div>
+<div class="subtitle" hidden.bind="hideSubTitle"></div>
 
 <aurelia-slickgrid
   grid-id="grid37"
@@ -29,5 +27,6 @@
   dataset.bind="dataset"
   instances.bind="aureliaGrid"
   on-cell-change.trigger="handleOnCellChange($event.detail.eventData, $event.detail.args)"
-  on-columns-reordered.trigger="handleOnColumnsReordered()">
+  on-columns-reordered.trigger="handleOnColumnsReordered()"
+>
 </aurelia-slickgrid>

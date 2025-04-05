@@ -1,18 +1,15 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px"
-        target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example26.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example26.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-  >
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
     <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
 </h2>
@@ -27,13 +24,18 @@
       <div class="row">
         <div class="col">
           <label class="radio-inline control-label" for="radioTrue">
-            <input type="radio" name="inlineRadioOptions" id="radioTrue" checked value.bind="isAutoEdit"
-                    click.trigger="setAutoEdit(true)"> ON
-            (single-click)
+            <input
+              type="radio"
+              name="inlineRadioOptions"
+              id="radioTrue"
+              checked
+              value.bind="isAutoEdit"
+              click.trigger="setAutoEdit(true)"
+            />
+            ON (single-click)
           </label>
           <label class="radio-inline control-label" for="radioFalse">
-            <input type="radio" name="inlineRadioOptions" id="radioFalse" value.bind="isAutoEdit"
-                    click.trigger="setAutoEdit(false)"> OFF
+            <input type="radio" name="inlineRadioOptions" id="radioFalse" value.bind="isAutoEdit" click.trigger="setAutoEdit(false)" /> OFF
             (double-click)
           </label>
         </div>
@@ -45,8 +47,13 @@
             Undo last edit(s)
           </button>
           <label class="checkbox-inline control-label" for="autoCommitEdit">
-            <input type="checkbox" id="autoCommitEdit" data-test="auto-edit-checkbox" value.bind="gridOptions.autoCommitEdit"
-                    click.trigger="changeAutoCommit()">
+            <input
+              type="checkbox"
+              id="autoCommitEdit"
+              data-test="auto-edit-checkbox"
+              value.bind="gridOptions.autoCommitEdit"
+              click.trigger="changeAutoCommit()"
+            />
             Auto Commit Edit
           </label>
         </div>
@@ -54,31 +61,39 @@
     </span>
     <div class="row" style="margin-top: 5px">
       <div class="col">
-        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" click.trigger="aureliaGrid.filterService.clearFilters()">Clear
-          Filters</button>
-        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting" click.trigger="aureliaGrid.sortService.clearSorting()">Clear
-          Sorting</button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon"
+          data-test="clear-filters"
+          click.trigger="aureliaGrid.filterService.clearFilters()"
+        >
+          Clear Filters
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon"
+          data-test="clear-sorting"
+          click.trigger="aureliaGrid.sortService.clearSorting()"
+        >
+          Clear Sorting
+        </button>
       </div>
     </div>
   </div>
 
   <div class="col-sm-6">
-    <div class="alert alert-info" show.bind="updatedObject">
-      <strong>Updated Item:</strong> ${updatedObject | stringify}
-    </div>
-    <div class="alert alert-warning" show.bind="alertWarning">
-      ${alertWarning}
-    </div>
+    <div class="alert alert-info" show.bind="updatedObject"><strong>Updated Item:</strong> ${updatedObject | stringify}</div>
+    <div class="alert alert-warning" show.bind="alertWarning">${alertWarning}</div>
   </div>
 </div>
 
 <div id="grid-container" class="col-sm-12">
-  <aurelia-slickgrid grid-id="grid26"
-                      column-definitions.bind="columnDefinitions"
-                      grid-options.bind="gridOptions"
-                      dataset.bind="dataset"
-                      instances.bind="aureliaGrid"
-                      on-cell-change.trigger="onCellChanged($event.detail.eventData, $event.detail.args)"
-                      on-click.trigger="onCellClicked($event.detail.eventData, $event.detail.args)">
+  <aurelia-slickgrid
+    grid-id="grid26"
+    column-definitions.bind="columnDefinitions"
+    grid-options.bind="gridOptions"
+    dataset.bind="dataset"
+    instances.bind="aureliaGrid"
+    on-cell-change.trigger="onCellChanged($event.detail.eventData, $event.detail.args)"
+    on-click.trigger="onCellClicked($event.detail.eventData, $event.detail.args)"
+  >
   </aurelia-slickgrid>
 </div>

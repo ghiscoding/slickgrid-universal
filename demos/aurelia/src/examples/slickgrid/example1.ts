@@ -1,6 +1,6 @@
 import { type AureliaGridInstance, type Column, type GridOption, Formatters } from 'aurelia-slickgrid';
 
-import { zeroPadding } from './utilities';
+import { zeroPadding } from './utilities.js';
 
 const NB_ITEMS = 995;
 
@@ -51,7 +51,7 @@ export class Example1 {
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100 }
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100 },
     ];
     this._darkModeGrid1 = this.isBrowserDarkModeEnabled();
     this.gridOptions1 = {
@@ -59,7 +59,7 @@ export class Example1 {
       gridHeight: 225,
       gridWidth: 800,
       enableAutoResize: false,
-      enableSorting: true
+      enableSorting: true,
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid
@@ -72,9 +72,9 @@ export class Example1 {
         enablePagination: true,
         pagination: {
           pageSizes: [5, 10, 20, 25, 50],
-          pageSize: 5
+          pageSize: 5,
         },
-      }
+      },
     };
   }
 
@@ -84,7 +84,7 @@ export class Example1 {
     for (let i = 0; i < count; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
 
       mockDataset[i] = {
@@ -94,7 +94,7 @@ export class Example1 {
         percentComplete: randomPercent,
         start: `${zeroPadding(randomYear)}-${zeroPadding(randomMonth + 1)}-${zeroPadding(randomDay)}`,
         finish: `${zeroPadding(randomYear + 1)}-${zeroPadding(randomMonth + 1)}-${zeroPadding(randomDay)}`,
-        effortDriven: (i % 5 === 0)
+        effortDriven: i % 5 === 0,
       };
     }
 

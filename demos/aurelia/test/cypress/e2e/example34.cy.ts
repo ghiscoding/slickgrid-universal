@@ -1,5 +1,17 @@
 describe('Example 34 - Real-Time Trading Platform', () => {
-  const titles = ['Currency', 'Symbol', 'Market', 'Company', 'Type', 'Change', 'Price', 'Quantity', 'Amount', 'Price History', 'Execution Timestamp'];
+  const titles = [
+    'Currency',
+    'Symbol',
+    'Market',
+    'Company',
+    'Type',
+    'Change',
+    'Price',
+    'Quantity',
+    'Amount',
+    'Price History',
+    'Execution Timestamp',
+  ];
   const GRID_ROW_HEIGHT = 35;
 
   it('should display Example title', () => {
@@ -45,12 +57,9 @@ describe('Example 34 - Real-Time Trading Platform', () => {
   });
 
   it('should Group by 1st column "Currency" and expect 2 groups with Totals when collapsed', () => {
-    cy.get('.slick-header-column:nth(0)')
-      .contains('Currency')
-      .drag('.slick-dropzone', { force: true });
+    cy.get('.slick-header-column:nth(0)').contains('Currency').drag('.slick-dropzone', { force: true });
 
-    cy.get('.slick-group-toggle-all')
-      .click();
+    cy.get('.slick-group-toggle-all').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Currency: CAD');

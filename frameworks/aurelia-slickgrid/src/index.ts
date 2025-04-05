@@ -1,7 +1,7 @@
 export * from '@slickgrid-universal/common';
 import type { IContainer } from 'aurelia';
-import { AureliaSlickgridCustomElement } from './custom-elements/aurelia-slickgrid';
-import { SlickgridConfig } from './slickgrid-config';
+import { AureliaSlickgridCustomElement } from './custom-elements/aurelia-slickgrid.js';
+import { SlickgridConfig } from './slickgrid-config.js';
 
 export const AureliaSlickGridConfiguration = {
   register(container: IContainer): IContainer {
@@ -16,18 +16,18 @@ export const AureliaSlickGridConfiguration = {
         return AureliaSlickGridConfiguration.register(container);
       },
     };
-  }
+  },
 };
 
-export { AureliaSlickgridCustomElement } from './custom-elements/aurelia-slickgrid';
+export { AureliaSlickgridCustomElement } from './custom-elements/aurelia-slickgrid.js';
 import type {
   AureliaGridInstance,
   AureliaViewOutput,
   GridOption,
   RowDetailView,
   ViewModelBindableData,
-  ViewModelBindableInputData
-} from './models/index';
+  ViewModelBindableInputData,
+} from './models/index.js';
 
 // re-export only the Aurelia interfaces (models), some of which were overriden from Slickgrid-Universal
 export {
@@ -37,13 +37,9 @@ export {
   type RowDetailView,
   type ViewModelBindableData,
   type ViewModelBindableInputData,
-  SlickgridConfig
+  SlickgridConfig,
 };
 
 // expose all public classes
-export {
-  AureliaUtilService,
-  TranslaterService,
-  disposeAllSubscriptions
-} from './services/index';
-export { SlickRowDetailView } from './extensions/slickRowDetailView'
+export { AureliaUtilService, TranslaterService, disposeAllSubscriptions } from './services/index.js';
+export { SlickRowDetailView } from './extensions/slickRowDetailView.js';

@@ -1,10 +1,4 @@
-import {
-  type AureliaGridInstance,
-  type Column,
-  Formatters,
-  type GridOption,
-  SlickGlobalEditorLock,
-} from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, Formatters, type GridOption, SlickGlobalEditorLock } from 'aurelia-slickgrid';
 
 import './example41.scss';
 
@@ -47,7 +41,7 @@ export class Example41 {
         field: 'complete',
         cannotTriggerInsert: true,
         formatter: Formatters.checkmarkMaterial,
-      }
+      },
     ];
 
     this.gridOptions = {
@@ -60,7 +54,7 @@ export class Example41 {
       enableRowMoveManager: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+        selectActiveRow: false,
       },
       rowMoveManager: {
         columnIndexPosition: 0,
@@ -81,11 +75,11 @@ export class Example41 {
       { id: 0, name: 'Make a list', complete: true },
       { id: 1, name: 'Check it twice', complete: false },
       { id: 2, name: `Find out who's naughty`, complete: false },
-      { id: 3, name: `Find out who's nice`, complete: false }
+      { id: 3, name: `Find out who's nice`, complete: false },
     ];
   }
 
-  onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number; }) {
+  onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
     for (const dataRow of data.rows) {
       // no point in moving before or after itself
       if (dataRow === data.insertBefore || dataRow === data.insertBefore - 1) {
@@ -96,7 +90,7 @@ export class Example41 {
     return true;
   }
 
-  onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number; }) {
+  onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number }) {
     const extractedRows: any[] = [];
     const rows = args.rows;
     const insertBefore = args.insertBefore;
@@ -157,7 +151,7 @@ export class Example41 {
 
     let selectedRows: number[] = this.aureliaGrid.slickGrid?.getSelectedRows() || [];
 
-    if (!selectedRows.length || selectedRows.findIndex(row => row === row) === -1) {
+    if (!selectedRows.length || selectedRows.findIndex((row) => row === row) === -1) {
       selectedRows = [row];
       this.aureliaGrid.slickGrid?.setSelectedRows(selectedRows);
     }

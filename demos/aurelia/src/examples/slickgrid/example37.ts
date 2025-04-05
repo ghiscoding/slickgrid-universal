@@ -1,11 +1,4 @@
-import {
-  type AureliaGridInstance,
-  type Column,
-  FieldType,
-  type GridOption,
-  Editors,
-  type OnCellChangeEventArgs,
-} from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, FieldType, type GridOption, Editors, type OnCellChangeEventArgs } from 'aurelia-slickgrid';
 
 const NB_ITEMS = 100;
 
@@ -48,7 +41,7 @@ export class Example37 {
         field: String(i),
         type: FieldType.number,
         width: 58,
-        editor: { model: Editors.integer }
+        editor: { model: Editors.integer },
       });
     }
     this.columnDefinitions = columnDefs;
@@ -120,7 +113,7 @@ export class Example37 {
     let total = 0;
     let i = this.dataset.length;
     while (i--) {
-      total += (parseInt(this.dataset[i][columnId], 10) || 0);
+      total += parseInt(this.dataset[i][columnId], 10) || 0;
     }
     const columnElement = this.aureliaGrid.slickGrid?.getFooterRowColumn(columnId);
     if (columnElement) {

@@ -48,35 +48,50 @@ export class Example38 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', name: 'Name', field: 'name', sortable: true,
+        id: 'name',
+        name: 'Name',
+        field: 'name',
+        sortable: true,
         type: FieldType.string,
         filterable: true,
-        filter: { model: Filters.compoundInput }
+        filter: { model: Filters.compoundInput },
       },
       {
-        id: 'gender', name: 'Gender', field: 'gender', filterable: true, sortable: true,
+        id: 'gender',
+        name: 'Gender',
+        field: 'gender',
+        filterable: true,
+        sortable: true,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', label: 'male' },
+            { value: 'female', label: 'female' },
+          ],
+        },
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
       {
-        id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true,
-        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || ''
-      }
+        id: 'category_name',
+        name: 'Category',
+        field: 'category/name',
+        filterable: true,
+        sortable: true,
+        formatter: (_row, _cell, _val, _colDef, dataContext) => dataContext['category']?.['name'] || '',
+      },
     ];
 
     this.gridOptions = {
       enableAutoResize: true,
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       checkboxSelector: {
         // you can toggle these 2 properties to show the "select all" checkbox in different location
         hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true
+        hideInColumnTitleRow: true,
       },
       enableCellNavigation: true,
       enableFiltering: true,
@@ -96,7 +111,7 @@ export class Example38 {
           // enable infinite via Boolean OR via { fetchSize: number }
           infiniteScroll: { fetchSize: 30 }, // or use true, in that case it would use default size of 25
           enableCount: true,
-          version: 4
+          version: 4,
         },
         onError: (error: Error) => {
           this.errorStatus = error.message;
@@ -126,13 +141,11 @@ export class Example38 {
     if (isError) {
       this.status = { text: 'ERROR!!!', class: 'alert alert-danger' };
     } else {
-      this.status = (isProcessing)
-        ? { text: 'loading', class: 'alert alert-warning' }
-        : { text: 'finished', class: 'alert alert-success' };
+      this.status = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
     }
   }
 
-  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[]; }) {
+  getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[] }) {
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
@@ -189,13 +202,13 @@ export class Example38 {
 
       for (const param of queryParams) {
         if (param.includes('$top=')) {
-          top = +(param.substring('$top='.length));
+          top = +param.substring('$top='.length);
           if (top === 50000) {
             throw new Error('Server timed out retrieving 50,000 rows');
           }
         }
         if (param.includes('$skip=')) {
-          skip = +(param.substring('$skip='.length));
+          skip = +param.substring('$skip='.length);
         }
         if (param.includes('$orderby=')) {
           orderBy = param.substring('$orderby='.length);
@@ -255,8 +268,9 @@ export class Example38 {
         throw new Error('Server could not sort using the field "Company"');
       }
 
-      this.http.fetch(SAMPLE_DATA_URL)
-        .then(e => e.json())
+      this.http
+        .fetch(SAMPLE_DATA_URL)
+        .then((e) => e.json())
         .then((data: any) => {
           // Sort the data
           if (orderBy?.length > 0) {
@@ -291,7 +305,7 @@ export class Example38 {
           if (columnFilters) {
             for (const columnId in columnFilters) {
               if (columnFilters.hasOwnProperty(columnId)) {
-                filteredData = filteredData.filter(column => {
+                filteredData = filteredData.filter((column) => {
                   const filterType = columnFilters[columnId].type;
                   const searchTerm = columnFilters[columnId].term;
                   let colId = columnId;
@@ -311,17 +325,28 @@ export class Example38 {
                     const [term1, term2] = Array.isArray(searchTerm) ? searchTerm : [searchTerm];
 
                     switch (filterType) {
-                      case 'eq': return filterTerm.toLowerCase() === term1;
-                      case 'ne': return filterTerm.toLowerCase() !== term1;
-                      case 'le': return filterTerm.toLowerCase() <= term1;
-                      case 'lt': return filterTerm.toLowerCase() < term1;
-                      case 'gt': return filterTerm.toLowerCase() > term1;
-                      case 'ge': return filterTerm.toLowerCase() >= term1;
-                      case 'ends': return filterTerm.toLowerCase().endsWith(term1);
-                      case 'starts': return filterTerm.toLowerCase().startsWith(term1);
-                      case 'starts+ends': return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
-                      case 'substring': return filterTerm.toLowerCase().includes(term1);
-                      case 'matchespattern': return new RegExp((term1 as string).replaceAll(PERCENT_HTML_ESCAPED, '.*'), 'i').test(filterTerm);
+                      case 'eq':
+                        return filterTerm.toLowerCase() === term1;
+                      case 'ne':
+                        return filterTerm.toLowerCase() !== term1;
+                      case 'le':
+                        return filterTerm.toLowerCase() <= term1;
+                      case 'lt':
+                        return filterTerm.toLowerCase() < term1;
+                      case 'gt':
+                        return filterTerm.toLowerCase() > term1;
+                      case 'ge':
+                        return filterTerm.toLowerCase() >= term1;
+                      case 'ends':
+                        return filterTerm.toLowerCase().endsWith(term1);
+                      case 'starts':
+                        return filterTerm.toLowerCase().startsWith(term1);
+                      case 'starts+ends':
+                        return filterTerm.toLowerCase().startsWith(term1) && filterTerm.toLowerCase().endsWith(term2);
+                      case 'substring':
+                        return filterTerm.toLowerCase().includes(term1);
+                      case 'matchespattern':
+                        return new RegExp((term1 as string).replaceAll(PERCENT_HTML_ESCAPED, '.*'), 'i').test(filterTerm);
                     }
                   }
                 });
@@ -354,11 +379,9 @@ export class Example38 {
       getter: 'gender',
       formatter: (g) => `Gender: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.string(a.value, b.value),
-      aggregators: [
-        new Aggregators.Sum('gemder')
-      ],
+      aggregators: [new Aggregators.Sum('gemder')],
       aggregateCollapsed: false,
-      lazyTotalsCalculation: true
+      lazyTotalsCalculation: true,
     } as Grouping);
 
     // you need to manually add the sort icon(s) in UI
@@ -374,24 +397,18 @@ export class Example38 {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.aureliaGrid?.filterService.updateFilters([
-      { columnId: 'gender', searchTerms: ['female'] },
-    ]);
+    this.aureliaGrid?.filterService.updateFilters([{ columnId: 'gender', searchTerms: ['female'] }]);
   }
 
   refreshMetrics(args: OnRowCountChangedEventArgs) {
     if (args?.current >= 0) {
       this.metrics.itemCount = this.aureliaGrid.dataView?.getFilteredItemCount() || 0;
-      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount
-        ? 'fully-loaded'
-        : 'partial-load';
+      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount ? 'fully-loaded' : 'partial-load';
     }
   }
 
   setSortingDynamically() {
-    this.aureliaGrid?.sortService.updateSorting([
-      { columnId: 'name', direction: 'DESC' },
-    ]);
+    this.aureliaGrid?.sortService.updateSorting([{ columnId: 'name', direction: 'DESC' }]);
   }
 
   toggleSubTitle() {

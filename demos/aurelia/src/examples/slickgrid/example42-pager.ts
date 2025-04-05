@@ -1,5 +1,12 @@
 import { bindable, customElement, resolve } from 'aurelia';
-import type { BasePaginationComponent, PaginationMetadata, PaginationService, PubSubService, SlickGrid, Subscription } from '@slickgrid-universal/common';
+import type {
+  BasePaginationComponent,
+  PaginationMetadata,
+  PaginationService,
+  PubSubService,
+  SlickGrid,
+  Subscription,
+} from '@slickgrid-universal/common';
 import './example42-pager.scss';
 
 /** Custom Pagination Componnet, please note that you MUST `implements BasePaginationComponent` with required functions */
@@ -51,7 +58,7 @@ import './example42-pager.scss';
   </ul>
 </nav>
 </div>
-</div>`
+</div>`,
 })
 export class CustomPagerComponent implements BasePaginationComponent {
   protected _paginationElement!: HTMLDivElement;
@@ -61,7 +68,7 @@ export class CustomPagerComponent implements BasePaginationComponent {
   protected _pubSubService!: PubSubService;
   @bindable() currentPagination = {} as PaginationMetadata;
 
-  constructor(protected readonly elm: HTMLElement = resolve(HTMLElement)) { }
+  constructor(protected readonly elm: HTMLElement = resolve(HTMLElement)) {}
 
   get isLeftPaginationDisabled(): boolean {
     return this.currentPagination.pageNumber === 1 || this.currentPagination.totalItems === 0;
@@ -80,7 +87,7 @@ export class CustomPagerComponent implements BasePaginationComponent {
     // Anytime the pagination is initialized or has changes,
     // we'll copy the data into a local object so that we can add binding to this local object
     this._subscriptions.push(
-      this._pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', paginationChanges => {
+      this._pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', (paginationChanges) => {
         this.currentPagination.dataFrom = paginationChanges.dataFrom;
         this.currentPagination.dataTo = paginationChanges.dataTo;
         this.currentPagination.pageCount = paginationChanges.pageCount;

@@ -1,5 +1,14 @@
-import { type Column, DelimiterType, EventNamingStyle, FileType, Filters, OperatorType, type TreeDataOption } from '@slickgrid-universal/common';
-import type { GridOption, RowDetailView } from './models/index';
+import {
+  type Column,
+  DelimiterType,
+  EventNamingStyle,
+  FileType,
+  Filters,
+  OperatorType,
+  type TreeDataOption,
+} from '@slickgrid-universal/common';
+
+import type { GridOption, RowDetailView } from './models/index.js';
 
 /**
  * Default Options that can be passed to the Aurelia-Slickgrid
@@ -17,12 +26,12 @@ export const GlobalGridOptions: Partial<GridOption> = {
     bottomPadding: 20,
     minHeight: 250,
     minWidth: 300,
-    rightPadding: 0
+    rightPadding: 0,
   },
   cellHighlightCssClass: 'slick-cell-modified',
   checkboxSelector: {
     cssClass: 'slick-cell-checkboxsel',
-    width: 40
+    width: 40,
   },
   cellMenu: {
     autoAdjustDrop: true,
@@ -35,7 +44,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   columnPicker: {
     hideForceFitButton: false,
     hideSyncResizeButton: true,
-    headerColumnValueExtractor: pickerHeaderColumnValueExtractor
+    headerColumnValueExtractor: pickerHeaderColumnValueExtractor,
   },
   compositeEditorOptions: {
     labels: {
@@ -89,14 +98,14 @@ export const GlobalGridOptions: Partial<GridOption> = {
       of: 'of',
       ofKey: 'OF',
       itemsSelected: 'items selected',
-      itemsSelectedKey: 'ITEMS_SELECTED'
-    }
+      itemsSelectedKey: 'ITEMS_SELECTED',
+    },
   },
   dataView: {
     // when enabled, this will preserve the row selection even after filtering/sorting/grouping
     syncGridSelection: {
       preserveHidden: false,
-      preserveHiddenOnSelectionChange: true
+      preserveHiddenOnSelectionChange: true,
     },
     syncGridSelectionWithBackendService: false, // but disable it when using backend services
   },
@@ -157,7 +166,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     groupingColumnHeaderTitle: 'Group By',
     groupingAggregatorRowText: '',
     sanitizeDataExport: false,
-    useUtf8WithBom: true
+    useUtf8WithBom: true,
   },
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
@@ -200,7 +209,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
     menuWidth: 16,
     resizeOnShowHeaderRow: true,
-    headerColumnValueExtractor: pickerHeaderColumnValueExtractor
+    headerColumnValueExtractor: pickerHeaderColumnValueExtractor,
   },
   headerMenu: {
     autoAlign: true,
@@ -218,7 +227,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     hideClearFilterCommand: false,
     hideClearSortCommand: false,
     hideFreezeColumnsCommand: true, // opt-in command
-    hideSortCommands: false
+    hideSortCommands: false,
   },
   multiColumnSort: true,
   numberedMultiColumnSort: true,
@@ -228,7 +237,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   pagination: {
     pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
     pageSize: 25,
-    totalItems: 0
+    totalItems: 0,
   },
   rowDetailView: {
     collapseAllOnSort: true,
@@ -258,7 +267,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   treeDataOptions: {
     exportIndentMarginLeft: 5,
     exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',
-  } as unknown as TreeDataOption
+  } as unknown as TreeDataOption,
 };
 
 /**

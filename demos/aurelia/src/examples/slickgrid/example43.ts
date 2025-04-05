@@ -1,11 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import {
-  type AureliaGridInstance,
-  type Column,
-  Editors,
-  type GridOption,
-  type ItemMetadata,
-} from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, Editors, type GridOption, type ItemMetadata } from 'aurelia-slickgrid';
 
 import './example43.scss';
 
@@ -415,7 +409,6 @@ export class Example43 {
       },
     ];
   }
-
 
   // when a side effect happens (e.g. show/hide EmployeeID),
   // you have to recalculate the metadata by yourself

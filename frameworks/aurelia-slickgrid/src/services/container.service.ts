@@ -3,7 +3,7 @@ import { IContainer, Registration, resolve, transient } from 'aurelia';
 
 @transient()
 export class ContainerService implements UniversalContainerService {
-  constructor(private readonly container: IContainer = resolve(IContainer)) { }
+  constructor(private readonly container: IContainer = resolve(IContainer)) {}
 
   get<T = any>(key: string): T | null {
     try {

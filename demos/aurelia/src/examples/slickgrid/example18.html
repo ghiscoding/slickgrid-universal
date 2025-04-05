@@ -1,19 +1,16 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px"
-        target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example18.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example18.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
   <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
     <span class="mdi mdi-theme-light-dark"></span>
@@ -26,24 +23,24 @@
 <div class="form-inline">
   <div class="row">
     <div class="col-sm-12">
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" click.trigger="loadData(500)">
-        500 rows
-      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" click.trigger="loadData(500)">500 rows</button>
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-50k-rows-btn" click.trigger="loadData(50000)">
         50k rows
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn"
-              click.trigger="clearGroupsAndSelects()">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" click.trigger="clearGroupsAndSelects()">
         <i class="mdi mdi-close"></i> Clear grouping
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="collapse-all-btn"
-              click.trigger="collapseAllGroups()">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="collapse-all-btn" click.trigger="collapseAllGroups()">
         <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
       </button>
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" click.trigger="expandAllGroups()">
         <i class="mdi mdi-arrow-expand"></i> Expand all groups
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="toggle-draggable-grouping-row" click.trigger="toggleDraggableGroupingRow()">
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        data-test="toggle-draggable-grouping-row"
+        click.trigger="toggleDraggableGroupingRow()"
+      >
         Toggle Draggable Grouping Row
       </button>
       <button class="btn btn-outline-secondary btn-xs btn-icon" click.trigger="exportToExcel()">
@@ -54,31 +51,34 @@
 
   <div class="row">
     <div class="col-sm-12">
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-value-btn"
-              click.trigger="groupByDurationOrderByCount(false)">
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        data-test="group-duration-sort-value-btn"
+        click.trigger="groupByDurationOrderByCount(false)"
+      >
         Group by duration &amp; sort groups by value
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-count-btn"
-              click.trigger="groupByDurationOrderByCount(true)">
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        data-test="group-duration-sort-count-btn"
+        click.trigger="groupByDurationOrderByCount(true)"
+      >
         Group by duration &amp; sort groups by count
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-effort-btn"
-              click.trigger="groupByDurationEffortDriven()">
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        data-test="group-duration-effort-btn"
+        click.trigger="groupByDurationEffortDriven()"
+      >
         Group by Duration then Effort-Driven
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="set-dynamic-filter"
-              click.trigger="setFiltersDynamically()">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="set-dynamic-filter" click.trigger="setFiltersDynamically()">
         <span class="mdi mdi-filter-outline"></span>
-        <span>
-          Set Filters Dynamically
-        </span>
+        <span> Set Filters Dynamically </span>
       </button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="set-dynamic-sorting"
-              click.trigger="setSortingDynamically()">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="set-dynamic-sorting" click.trigger="setSortingDynamically()">
         <span class="mdi mdi-sort-ascending"></span>
-        <span>
-          Set Sorting Dynamically
-        </span>
+        <span> Set Sorting Dynamically </span>
       </button>
     </div>
   </div>
@@ -89,8 +89,7 @@
         <div class="row form-group">
           <label for="field1" class="col-sm-3 mb-2">Group by field(s)</label>
           <div class="form-group col-md-3 grouping-selects" repeat.for="groupField of selectedGroupingFields">
-            <select class="form-select" change.trigger="groupByFieldName()"
-                    value.bind="groupField">
+            <select class="form-select" change.trigger="groupByFieldName()" value.bind="groupField">
               <option model.bind="''">...</option>
               <option model.bind="column.id" repeat.for="column of columnDefinitions">${column.name}</option>
             </select>
@@ -105,9 +104,11 @@
   <hr />
 </div>
 
-<aurelia-slickgrid grid-id="grid18"
-                    column-definitions.bind="columnDefinitions"
-                    grid-options.bind="gridOptions"
-                    dataset.bind="dataset"
-                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
+<aurelia-slickgrid
+  grid-id="grid18"
+  column-definitions.bind="columnDefinitions"
+  grid-options.bind="gridOptions"
+  dataset.bind="dataset"
+  on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+>
 </aurelia-slickgrid>

@@ -1,18 +1,16 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px" target="_blank"
-      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example19.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example19.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
   <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
     <span class="mdi mdi-theme-light-dark"></span>
@@ -34,29 +32,37 @@
 
     <span class="d-inline-flex gap-4px">
       <label for="detailViewRowCount">Detail View Rows Shown: </label>
-      <input id="detailViewRowCount" type="number" value.bind="detailViewRowCount" style="height: 26px; width: 40px">
-      <button class="btn btn-outline-secondary btn-xs btn-icon" style="height: 26px;" click.trigger="changeDetailViewRowCount()"
-        data-test="set-count-btn">
+      <input id="detailViewRowCount" type="number" value.bind="detailViewRowCount" style="height: 26px; width: 40px" />
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        style="height: 26px"
+        click.trigger="changeDetailViewRowCount()"
+        data-test="set-count-btn"
+      >
         Set
       </button>
       <label for="serverdelay" class="ms-2">Server Delay: </label>
-        <input
-          id="serverdelay"
-          value.bind="serverWaitDelay"
-          type="number"
-          data-test="server-delay"
-          style="height: 26px; width: 55px"
-          title="input a fake timer delay to simulate slow server response"
-        />
+      <input
+        id="serverdelay"
+        value.bind="serverWaitDelay"
+        type="number"
+        data-test="server-delay"
+        style="height: 26px; width: 55px"
+        title="input a fake timer delay to simulate slow server response"
+      />
     </span>
   </div>
-  <div class="alert alert-${flashAlertType} col-sm-6" if.bind="message" data-test="flash-msg">
-    ${message}
-  </div>
+  <div class="alert alert-${flashAlertType} col-sm-6" if.bind="message" data-test="flash-msg">${message}</div>
 </div>
 
 <hr />
 
-<aurelia-slickgrid grid-id="grid19" column-definitions.bind="columnDefinitions" grid-options.bind="gridOptions"
-  dataset.bind="dataset" extensions.bind="extensions" instances.bind="aureliaGrid">
+<aurelia-slickgrid
+  grid-id="grid19"
+  column-definitions.bind="columnDefinitions"
+  grid-options.bind="gridOptions"
+  dataset.bind="dataset"
+  extensions.bind="extensions"
+  instances.bind="aureliaGrid"
+>
 </aurelia-slickgrid>

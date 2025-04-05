@@ -26,9 +26,7 @@ export default defineConfig({
     experimentalRunAllSpecs: true,
     supportFile: 'test/cypress/support/index.ts',
     specPattern: 'test/cypress/e2e/**/*.cy.ts',
-    excludeSpecPattern: process.env.CI
-      ? ['**/node_modules/**', '**/000-*.cy.ts']
-      : ['**/node_modules/**'],
+    excludeSpecPattern: process.env.CI ? ['**/node_modules/**', '**/000-*.cy.ts'] : ['**/node_modules/**'],
     testIsolation: false,
   },
 });

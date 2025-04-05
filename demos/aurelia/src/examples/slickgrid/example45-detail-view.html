@@ -10,7 +10,8 @@
       dataset.bind="innerDataset"
       instances.bind="aureliaGrid"
       on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
-      on-before-grid-destroy.trigger="handleBeforeGridDestroy()">
+      on-before-grid-destroy.trigger="handleBeforeGridDestroy()"
+    >
     </aurelia-slickgrid>
   </div>
 </div>

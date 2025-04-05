@@ -1,20 +1,17 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px"
-        target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example21.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example21.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-    </button>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 <div class="subtitle" innerhtml.bind="subTitle"></div>
 
@@ -23,34 +20,24 @@
     <label for="columnSelect">Single Search:</label>
   </div>
   <div class="col">
-    <select class="form-select" data-test="search-column-list" name="selectedColumn"
-            value.bind="selectedColumn" id="columnSelect">
-      <option repeat.for="column of columnDefinitions"
-              model.bind="column">
-        ${column.name}
-      </option>
+    <select class="form-select" data-test="search-column-list" name="selectedColumn" value.bind="selectedColumn" id="columnSelect">
+      <option repeat.for="column of columnDefinitions" model.bind="column">${column.name}</option>
     </select>
   </div>
   <div class="col">
-    <select value.bind="selectedOperator"
-            class="form-select"
-            data-test="search-operator-list">
-      <option repeat.for="operator of operatorList"
-              model.bind="operator">
-        ${operator}
-      </option>
+    <select value.bind="selectedOperator" class="form-select" data-test="search-operator-list">
+      <option repeat.for="operator of operatorList" model.bind="operator">${operator}</option>
     </select>
   </div>
 
   <div class="col">
     <div class="input-group">
-      <input type="text"
-              class="form-control"
-              placeholder="search value"
-              data-test="search-value-input"
-              value.bind="searchValue" />
-      <button class="btn btn-outline-secondary d-flex align-items-center pl-2 pr-2" data-test="clear-search-value"
-              click.trigger="clearGridSearchInput()">
+      <input type="text" class="form-control" placeholder="search value" data-test="search-value-input" value.bind="searchValue" />
+      <button
+        class="btn btn-outline-secondary d-flex align-items-center pl-2 pr-2"
+        data-test="clear-search-value"
+        click.trigger="clearGridSearchInput()"
+      >
         <span class="mdi mdi-close"></span>
       </button>
     </div>
@@ -59,9 +46,11 @@
 
 <hr />
 
-<aurelia-slickgrid grid-id="grid21"
-                    column-definitions.bind="columnDefinitions"
-                    grid-options.bind="gridOptions"
-                    dataset.bind="dataset"
-                    instances.bind="aureliaGrid">
+<aurelia-slickgrid
+  grid-id="grid21"
+  column-definitions.bind="columnDefinitions"
+  grid-options.bind="gridOptions"
+  dataset.bind="dataset"
+  instances.bind="aureliaGrid"
+>
 </aurelia-slickgrid>

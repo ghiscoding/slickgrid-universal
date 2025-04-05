@@ -19,12 +19,12 @@ import {
   type VanillaCalendarOption,
 } from 'aurelia-slickgrid';
 
-import { CustomInputEditor } from './custom-inputEditor';
-import { CustomInputFilter } from './custom-inputFilter';
+import { CustomInputEditor } from './custom-inputEditor.js';
+import { CustomInputFilter } from './custom-inputFilter.js';
 import SAMPLE_COLLECTION_DATA_URL from './data/collection_100_numbers.json?url';
 import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
 import COUNTRY_NAMES_URL from './data/country_names.json?url';
-import fetchJsonp from './jsonp';
+import fetchJsonp from './jsonp.js';
 
 const NB_ITEMS = 100;
 
@@ -81,7 +81,10 @@ export class Example3 {
   alertWarning: any;
   duplicateTitleHeaderCount = 1;
 
-  constructor(readonly http: IHttpClient = resolve(newInstanceOf(IHttpClient)), private readonly i18n: I18N = resolve(I18N)) {
+  constructor(
+    readonly http: IHttpClient = resolve(newInstanceOf(IHttpClient)),
+    private readonly i18n: I18N = resolve(I18N)
+  ) {
     // define the grid options & columns and then create the grid itself
     this.defineGrid();
   }
@@ -110,8 +113,9 @@ export class Example3 {
           this.alertWarning = `Editing: ${args.dataContext.title}`;
           this.aureliaGrid.gridService.highlightRow(args.row, 1500);
           this.aureliaGrid.gridService.setSelectedRow(args.row);
-        }
-      }, {
+        },
+      },
+      {
         id: 'delete',
         field: 'id',
         excludeFromColumnPicker: true,
@@ -128,7 +132,8 @@ export class Example3 {
           this.alertWarning = `Deleting: ${args.dataContext.title}`;
         }
         */
-      }, {
+      },
+      {
         id: 'title',
         name: 'Title',
         field: 'title',
@@ -145,8 +150,9 @@ export class Example3 {
         onCellChange: (_e: Event, args: OnEventArgs) => {
           console.log(args);
           this.alertWarning = `Updated Title: ${args.dataContext.title}`;
-        }
-      }, {
+        },
+      },
+      {
         id: 'title2',
         name: 'Title, Custom Editor',
         field: 'title',
@@ -162,8 +168,9 @@ export class Example3 {
           model: CustomInputFilter,
           placeholder: '🔎︎ custom',
         },
-        minWidth: 70
-      }, {
+        minWidth: 70,
+      },
+      {
         id: 'duration',
         name: 'Duration (days)',
         field: 'duration',
@@ -173,7 +180,7 @@ export class Example3 {
         type: FieldType.number,
         filter: {
           model: Filters.slider,
-          filterOptions: { hideSliderNumber: false }
+          filterOptions: { hideSliderNumber: false },
         },
         editor: {
           model: Editors.slider,
@@ -193,7 +200,8 @@ export class Example3 {
           params: { decimalPlaces: 2 },
         },
         */
-      }, {
+      },
+      {
         id: 'complete',
         name: '% Complete',
         field: 'percentComplete',
@@ -203,20 +211,24 @@ export class Example3 {
         editor: {
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
-          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="mdi mdi-percent-outline" style="color:cadetblue"></i>' })),
+          collection: Array.from(Array(101).keys()).map((k) => ({
+            value: k,
+            label: k,
+            symbol: '<i class="mdi mdi-percent-outline" style="color:cadetblue"></i>',
+          })),
           customStructure: {
             value: 'value',
             label: 'label',
-            labelSuffix: 'symbol'
+            labelSuffix: 'symbol',
           },
           collectionSortBy: {
             property: 'label',
-            sortDesc: true
+            sortDesc: true,
           },
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual
+            operator: OperatorType.notEqual,
           },
           model: Editors.singleSelect,
           // validator: (value, args) => {
@@ -229,8 +241,9 @@ export class Example3 {
         minWidth: 100,
         params: {
           formatters: [Formatters.collectionEditor, Formatters.percentCompleteBar],
-        }
-      }, {
+        },
+      },
+      {
         id: 'start',
         name: 'Start',
         field: 'start',
@@ -241,9 +254,10 @@ export class Example3 {
         minWidth: 100,
         type: FieldType.date,
         editor: {
-          model: Editors.date
+          model: Editors.date,
         },
-      }, {
+      },
+      {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
@@ -252,16 +266,19 @@ export class Example3 {
         formatter: Formatters.dateIso,
         sortable: true,
         minWidth: 100,
-        type: FieldType.date,              // dataset cell input format
+        type: FieldType.date, // dataset cell input format
         // outputType: FieldType.dateUs,   // date picker format
         saveOutputType: FieldType.dateUtc, // save output date format
         editor: {
           model: Editors.date,
           // override any of the calendar options through "filterOptions"
-          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption
+          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
         },
-      }, {
-        id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin',
+      },
+      {
+        id: 'cityOfOrigin',
+        name: 'City of Origin',
+        field: 'cityOfOrigin',
         filterable: true,
         sortable: true,
         minWidth: 100,
@@ -305,9 +322,12 @@ export class Example3 {
                 .catch((ex: any) => console.log('invalid JSONP response', ex));
             },
           } as AutocompleterOption,
-        }
-      }, {
-        id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
+        },
+      },
+      {
+        id: 'countryOfOrigin',
+        name: 'Country of Origin',
+        field: 'countryOfOrigin',
         formatter: Formatters.complexObject,
         dataKey: 'code',
         labelKey: 'name',
@@ -325,9 +345,12 @@ export class Example3 {
           model: Filters.autocompleter,
           customStructure: { label: 'name', value: 'code' },
           collectionAsync: this.http.fetch(COUNTRIES_COLLECTION_URL),
-        }
-      }, {
-        id: 'countryOfOriginName', name: 'Country of Origin Name', field: 'countryOfOriginName',
+        },
+      },
+      {
+        id: 'countryOfOriginName',
+        name: 'Country of Origin Name',
+        field: 'countryOfOriginName',
         filterable: true,
         sortable: true,
         minWidth: 100,
@@ -338,8 +361,9 @@ export class Example3 {
         filter: {
           model: Filters.autocompleter,
           collectionAsync: this.http.fetch(COUNTRY_NAMES_URL),
-        }
-      }, {
+        },
+      },
+      {
         id: 'effort-driven',
         name: 'Effort Driven',
         field: 'effortDriven',
@@ -347,14 +371,19 @@ export class Example3 {
         type: FieldType.boolean,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }]
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
         },
         formatter: Formatters.checkmarkMaterial,
         editor: {
           model: Editors.checkbox,
         },
-        minWidth: 70
-      }, {
+        minWidth: 70,
+      },
+      {
         id: 'prerequisites',
         name: 'Prerequisites',
         field: 'prerequisites',
@@ -387,7 +416,7 @@ export class Example3 {
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
-            fieldType: FieldType.number
+            fieldType: FieldType.number,
           },
           customStructure: {
             label: 'label',
@@ -395,7 +424,7 @@ export class Example3 {
             labelPrefix: 'prefix',
           },
           collectionOptions: {
-            separatorBetweenTextLabels: ' '
+            separatorBetweenTextLabels: ' ',
           },
           model: Editors.multipleSelect,
         },
@@ -412,7 +441,7 @@ export class Example3 {
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
-            fieldType: FieldType.number
+            fieldType: FieldType.number,
           },
           customStructure: {
             label: 'label',
@@ -420,12 +449,12 @@ export class Example3 {
             labelPrefix: 'prefix',
           },
           collectionOptions: {
-            separatorBetweenTextLabels: ' '
+            separatorBetweenTextLabels: ' ',
           },
           model: Filters.multipleSelect,
           operator: OperatorType.inContains,
         },
-      }
+      },
     ];
 
     this.gridOptions = {
@@ -433,7 +462,7 @@ export class Example3 {
       autoCommitEdit: false,
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       editable: true,
       enableCellNavigation: true,
@@ -501,13 +530,13 @@ export class Example3 {
   mockData(itemCount: number, startingIndex = 0) {
     // mock a dataset
     const tempDataset: any[] = [];
-    for (let i = startingIndex; i < (startingIndex + itemCount); i++) {
+    for (let i = startingIndex; i < startingIndex + itemCount; i++) {
       const randomYear = 2000 + this.randomBetween(4, 15);
-      const randomFinishYear = (new Date().getFullYear() - 3) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
+      const randomFinishYear = new Date().getFullYear() - 3 + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
-      const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay);
+      const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay);
 
       tempDataset.push({
         id: i,
@@ -517,11 +546,11 @@ export class Example3 {
         percentCompleteNumber: randomPercent,
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
-        effortDriven: (i % 5 === 0),
-        prerequisites: (i % 2 === 0) && i !== 0 && i < 12 ? [i, i - 1] : [],
-        countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
-        countryOfOriginName: (i % 2) ? 'Canada' : 'United States',
-        cityOfOrigin: (i % 2) ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
+        effortDriven: i % 5 === 0,
+        prerequisites: i % 2 === 0 && i !== 0 && i < 12 ? [i, i - 1] : [],
+        countryOfOrigin: i % 2 ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
+        countryOfOriginName: i % 2 ? 'Canada' : 'United States',
+        cityOfOrigin: i % 2 ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
       });
     }
     return tempDataset;
@@ -565,7 +594,7 @@ export class Example3 {
   changeAutoCommit() {
     this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
     this.aureliaGrid.slickGrid.setOptions({
-      autoCommitEdit: this.gridOptions.autoCommitEdit
+      autoCommitEdit: this.gridOptions.autoCommitEdit,
     });
     return true;
   }
@@ -580,7 +609,9 @@ export class Example3 {
         required: true,
         validator: myCustomTitleValidator, // use a custom validator
       },
-      sortable: true, minWidth: 100, filterable: true,
+      sortable: true,
+      minWidth: 100,
+      filterable: true,
     };
 
     // you can dynamically add your column to your column definitions
@@ -610,7 +641,7 @@ export class Example3 {
   setAutoEdit(isAutoEdit: boolean) {
     this.isAutoEdit = isAutoEdit;
     this.aureliaGrid.slickGrid.setOptions({
-      autoEdit: isAutoEdit
+      autoEdit: isAutoEdit,
     });
     return true;
   }

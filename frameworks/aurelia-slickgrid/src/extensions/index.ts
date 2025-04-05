@@ -1,1 +1,1 @@
-export * from './slickRowDetailView';
+export * from './slickRowDetailView.js';

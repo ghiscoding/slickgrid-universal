@@ -23,9 +23,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
   });
 
   it('should have a draggable dropzone on top of the grid in the top-header section', () => {
-    cy.get('#grid18')
-      .find('.slick-topheader-panel .slick-dropzone:visible')
-      .contains('Drop a column header here to group by the column');
+    cy.get('#grid18').find('.slick-topheader-panel .slick-dropzone:visible').contains('Drop a column header here to group by the column');
   });
 
   describe('Grouping Tests', () => {
@@ -68,8 +66,14 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     it('should "Group by Duration then Effort-Driven" and expect 1st row to be expanded, 2nd row to be expanded and 3rd row to be a regular row', () => {
       cy.get('[data-test="group-duration-effort-btn"]').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+        'have.length',
+        1
+      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should(
+        'contain',
+        'Duration: 0'
+      );
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.expanded`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-title`).should('contain', 'Effort-Driven: False');
@@ -87,9 +91,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should be able to drag and swap grouped column titles inside the pre-header', () => {
-      cy.get('.slick-dropped-grouping:nth(0) div')
-        .contains('Duration')
-        .drag('.slick-dropped-grouping:nth(1) div');
+      cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration').drag('.slick-dropped-grouping:nth(1) div');
 
       cy.get('.slick-dropped-grouping:nth(0) div').contains('Effort-Driven');
       cy.get('.slick-dropped-grouping:nth(1) div').contains('Duration');
@@ -99,8 +101,14 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should expect the grouping to be swapped as well in the grid', () => {
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+        'have.length',
+        1
+      );
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should(
+        'contain',
+        'Effort-Driven: False'
+      );
 
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-toggle.expanded`).should('have.length', 1);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"].slick-group-level-1 .slick-group-title`).should('contain', 'Duration: 0');
@@ -110,9 +118,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should expand all rows with "Expand All" from context menu and expect all the Groups to be expanded and the Toogle All icon to be collapsed', () => {
-      cy.get('#grid18')
-        .find('.slick-row .slick-cell:nth(1)')
-        .rightclick({ force: true });
+      cy.get('#grid18').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
 
       cy.get('.slick-context-menu .slick-menu-command-list')
         .find('.slick-menu-item')
@@ -120,22 +126,17 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .contains('Expand all Groups')
         .click();
 
-      cy.get('#grid18')
-        .find('.slick-group-toggle.collapsed')
-        .should('have.length', 0);
+      cy.get('#grid18').find('.slick-group-toggle.collapsed').should('have.length', 0);
 
       cy.get('#grid18')
         .find('.slick-group-toggle.expanded')
         .should(($rows) => expect($rows).to.have.length.greaterThan(0));
 
-      cy.get('.slick-group-toggle-all-icon.expanded')
-        .should('exist');
+      cy.get('.slick-group-toggle-all-icon.expanded').should('exist');
     });
 
     it('should collapse all rows with "Collapse All" from context menu and expect all the Groups to be collapsed and the Toogle All icon to be collapsed', () => {
-      cy.get('#grid18')
-        .find('.slick-row .slick-cell:nth(1)')
-        .rightclick({ force: true });
+      cy.get('#grid18').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
 
       cy.get('.slick-context-menu .slick-menu-command-list')
         .find('.slick-menu-item')
@@ -143,16 +144,13 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .contains('Collapse all Groups')
         .click();
 
-      cy.get('#grid18')
-        .find('.slick-group-toggle.expanded')
-        .should('have.length', 0);
+      cy.get('#grid18').find('.slick-group-toggle.expanded').should('have.length', 0);
 
       cy.get('#grid18')
         .find('.slick-group-toggle.collapsed')
         .should(($rows) => expect($rows).to.have.length.greaterThan(0));
 
-      cy.get('.slick-group-toggle-all-icon.collapsed')
-        .should('exist');
+      cy.get('.slick-group-toggle-all-icon.collapsed').should('exist');
     });
 
     it('should use the topheader Toggle All button and expect all groups to now be expanded', () => {
@@ -162,9 +160,11 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
-        .should('have.css', 'marginLeft').and('eq', `0px`);
+        .should('have.css', 'marginLeft')
+        .and('eq', `0px`);
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
-        .should('have.css', 'marginLeft').and('eq', `15px`);
+        .should('have.css', 'marginLeft')
+        .and('eq', `15px`);
     });
 
     it('should use the topheader Toggle All button again and expect all groups to now be collapsed', () => {
@@ -176,9 +176,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should clear all groups with "Clear all Grouping" from context menu and expect all the Groups to be collapsed and the Toogle All icon to be collapsed', () => {
-      cy.get('#grid18')
-        .find('.slick-row .slick-cell:nth(1)')
-        .rightclick({ force: true });
+      cy.get('#grid18').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
 
       cy.get('.slick-context-menu .slick-menu-command-list')
         .find('.slick-menu-item')
@@ -186,9 +184,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .contains('Clear all Grouping')
         .click();
 
-      cy.get('#grid18')
-        .find('.slick-group-toggle-all')
-        .should('be.hidden');
+      cy.get('#grid18').find('.slick-group-toggle-all').should('be.hidden');
 
       cy.get('#grid18')
         .find('.slick-draggable-dropzone-placeholder')
@@ -197,11 +193,9 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should add 500 items and expect 500 of 500 items displayed', () => {
-      cy.get('[data-test="add-500-rows-btn"]')
-        .click();
+      cy.get('[data-test="add-500-rows-btn"]').click();
 
-      cy.get('.right-footer')
-        .contains('500 of 500 items');
+      cy.get('.right-footer').contains('500 of 500 items');
     });
 
     it('should clear all grouping and expect all select dropdown to be cleared too', () => {
@@ -212,30 +206,31 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should be able to toggle draggable grouping row (top-header panel)', () => {
-      cy.get('.slick-topheader-panel')
-        .should('be.visible');
+      cy.get('.slick-topheader-panel').should('be.visible');
 
       cy.get('[data-test="toggle-draggable-grouping-row"]').click();
 
-      cy.get('.slick-topheader-panel')
-        .should('be.hidden');
+      cy.get('.slick-topheader-panel').should('be.hidden');
 
       cy.get('[data-test="toggle-draggable-grouping-row"]').click();
 
-      cy.get('.slick-topheader-panel')
-        .should('be.visible');
+      cy.get('.slick-topheader-panel').should('be.visible');
     });
   });
 
   describe('Column Picker tests', () => {
     it('should open Column Picker from 2nd header column and hide Title & Duration which will hide Common Factor Group as well', () => {
-      const fullTitlesWithGroupNames = ['Common Factor - Title', 'Common Factor - Duration', 'Period - Start', 'Period - Finish', 'Analysis - Cost', 'Analysis - % Complete', 'Analysis - Effort-Driven'];
+      const fullTitlesWithGroupNames = [
+        'Common Factor - Title',
+        'Common Factor - Duration',
+        'Period - Start',
+        'Period - Finish',
+        'Analysis - Cost',
+        'Analysis - % Complete',
+        'Analysis - Effort-Driven',
+      ];
 
-      cy.get('#grid18')
-        .find('.slick-header-column:nth(1)')
-        .trigger('mouseover')
-        .trigger('contextmenu')
-        .invoke('show');
+      cy.get('#grid18').find('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -253,18 +248,21 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .should('contain', 'Title')
         .click();
 
-      cy.get('.slick-column-picker .close')
-        .click();
+      cy.get('.slick-column-picker .close').click();
     });
 
     it('should open Column Picker from 2nd header column name and hide Duration which will hide Common Factor Group as well', () => {
-      const fullTitlesWithGroupNames = ['Common Factor - Title', 'Common Factor - Duration', 'Period - Start', 'Period - Finish', 'Analysis - Cost', 'Analysis - % Complete', 'Analysis - Effort-Driven'];
+      const fullTitlesWithGroupNames = [
+        'Common Factor - Title',
+        'Common Factor - Duration',
+        'Period - Start',
+        'Period - Finish',
+        'Analysis - Cost',
+        'Analysis - % Complete',
+        'Analysis - Effort-Driven',
+      ];
 
-      cy.get('#grid18')
-        .find('.slick-header-column:nth(1) .slick-column-name')
-        .trigger('mouseover')
-        .trigger('contextmenu')
-        .invoke('show');
+      cy.get('#grid18').find('.slick-header-column:nth(1) .slick-column-name').trigger('mouseover').trigger('contextmenu').invoke('show');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -282,8 +280,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .should('contain', 'Duration')
         .click();
 
-      cy.get('.slick-column-picker .close')
-        .click();
+      cy.get('.slick-column-picker .close').click();
     });
 
     it('should expect headers to be without Title/Duration and pre-headers without Common Factor Group header titles', () => {
@@ -304,7 +301,15 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should open Column Picker from Pre-Header column and show again Title column', () => {
-      const fullTitlesWithGroupNames = ['Common Factor - Title', 'Common Factor - Duration', 'Period - Start', 'Period - Finish', 'Analysis - Cost', 'Analysis - % Complete', 'Analysis - Effort-Driven'];
+      const fullTitlesWithGroupNames = [
+        'Common Factor - Title',
+        'Common Factor - Duration',
+        'Period - Start',
+        'Period - Finish',
+        'Analysis - Cost',
+        'Analysis - % Complete',
+        'Analysis - Effort-Driven',
+      ];
 
       cy.get('#grid18')
         .find('.slick-preheader-panel .slick-header-column:nth(1)')
@@ -329,12 +334,19 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .click();
 
       // close picker & reopen from a pre-header column name instead
-      cy.get('.slick-column-picker .close')
-        .click();
+      cy.get('.slick-column-picker .close').click();
     });
 
     it('should open Column Picker from Pre-Header column name and show again Duration column', () => {
-      const fullTitlesWithGroupNames = ['Common Factor - Title', 'Common Factor - Duration', 'Period - Start', 'Period - Finish', 'Analysis - Cost', 'Analysis - % Complete', 'Analysis - Effort-Driven'];
+      const fullTitlesWithGroupNames = [
+        'Common Factor - Title',
+        'Common Factor - Duration',
+        'Period - Start',
+        'Period - Finish',
+        'Analysis - Cost',
+        'Analysis - % Complete',
+        'Analysis - Effort-Driven',
+      ];
 
       cy.get('#grid18')
         .find('.slick-preheader-panel .slick-header-column:nth(1)')
@@ -358,8 +370,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .should('contain', 'Duration')
         .click();
 
-      cy.get('.slick-column-picker .close')
-        .click();
+      cy.get('.slick-column-picker .close').click();
     });
 
     it('should expect header titles to show again Title/Duration and pre-headers with Common Factor Group header titles', () => {

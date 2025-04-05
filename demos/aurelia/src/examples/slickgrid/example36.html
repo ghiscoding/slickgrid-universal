@@ -2,9 +2,11 @@
   <h2>
     Example 36: Excel Export Formulas
     <span class="float-end">
-      <a style="font-size: 18px"
-         target="_blank"
-         href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example36.ts">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example36.ts"
+      >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -18,11 +20,15 @@
     </button>
   </h2>
 
-  <div class="subtitle" >
-    Grid with Excel Formulas (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/export-to-excel#cell-value-parser" target="_blank">Wiki docs</a>).
-    Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via <code>excelExportOptions.valueParserCallback</code>
-    When Grouped we will also calculate the Group Totals in the UI via Group Formatter and we again use Excel Formula to calculate the Group Totals (sum) dynamically.
-    For Grouping we need to use <code>groupTotalsExcelExportOptions.valueParserCallback</code> instead.
+  <div class="subtitle">
+    Grid with Excel Formulas (<a
+      href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/export-to-excel#cell-value-parser"
+      target="_blank"
+      >Wiki docs</a
+    >). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via
+    <code>excelExportOptions.valueParserCallback</code> When Grouped we will also calculate the Group Totals in the UI via Group Formatter
+    and we again use Excel Formula to calculate the Group Totals (sum) dynamically. For Grouping we need to use
+    <code>groupTotalsExcelExportOptions.valueParserCallback</code> instead.
   </div>
 
   <section class="row mb-2">
@@ -42,18 +48,18 @@
       <span class="ms-4 text-bold d-inline-flex align-items-center gap-4px">
         Tax Rate (%):
         <input type="number" value.bind="taxRate" class="narrow input" step="0.25" data-test="taxrate" />
-        <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="updateTaxRate()" data-test="update-btn">
-          Update
-        </button>
+        <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="updateTaxRate()" data-test="update-btn">Update</button>
       </span>
     </div>
   </section>
 
-  <aurelia-slickgrid grid-id="grid36"
+  <aurelia-slickgrid
+    grid-id="grid36"
     column-definitions.bind="columnDefinitions"
     grid-options.bind="gridOptions"
     dataset.bind="dataset"
     instances.bind="aureliaGrid"
-    on-cell-change.trigger="invalidateAll()">
+    on-cell-change.trigger="invalidateAll()"
+  >
   </aurelia-slickgrid>
 </div>

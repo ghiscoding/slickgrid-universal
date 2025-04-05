@@ -1,29 +1,24 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px"
-        target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example4.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example4.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-    </button>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
 <div class="subtitle" innerhtml.bind="subTitle"></div>
 
 <br />
 <span if.bind="metrics">
-  <b>Metrics:</b> ${metrics.endTime | dateFormat: 'DD MMM, h:mm:ss a'} | ${metrics.itemCount} of
-  ${metrics.totalItemCount}
-  items
+  <b>Metrics:</b> ${metrics.endTime | dateFormat: 'DD MMM, h:mm:ss a'} | ${metrics.itemCount} of ${metrics.totalItemCount} items
 </span>
 
 <div class="btn-group" role="group" aria-label="...">
@@ -35,31 +30,33 @@
   </button>
 </div>
 
-<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters"
-        click.trigger="aureliaGrid.filterService.clearFilters()">
+<button
+  class="btn btn-outline-secondary btn-sm btn-icon"
+  data-test="clear-filters"
+  click.trigger="aureliaGrid.filterService.clearFilters()"
+>
   Clear Filters
 </button>
-<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting"
-        click.trigger="aureliaGrid.sortService.clearSorting()">
+<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting" click.trigger="aureliaGrid.sortService.clearSorting()">
   Clear Sorting
 </button>
-<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter"
-        click.trigger="setFiltersDynamically()">
+<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" click.trigger="setFiltersDynamically()">
   Set Filters Dynamically
 </button>
-<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting"
-        click.trigger="setSortingDynamically()">
+<button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" click.trigger="setSortingDynamically()">
   Set Sorting Dynamically
 </button>
 <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="logItems()">
   <span title="console.log all dataset items">Log Items</span>
 </button>
 
-<aurelia-slickgrid grid-id="grid4"
-                    column-definitions.bind="columnDefinitions"
-                    grid-options.bind="gridOptions"
-                    dataset.bind="dataset"
-                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
-                    on-grid-state-changed.trigger="gridStateChanged($event.detail)"
-                    on-row-count-changed.trigger="refreshMetrics($event.detail.eventData, $event.detail.args)">
+<aurelia-slickgrid
+  grid-id="grid4"
+  column-definitions.bind="columnDefinitions"
+  grid-options.bind="gridOptions"
+  dataset.bind="dataset"
+  on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  on-grid-state-changed.trigger="gridStateChanged($event.detail)"
+  on-row-count-changed.trigger="refreshMetrics($event.detail.eventData, $event.detail.args)"
+>
 </aurelia-slickgrid>

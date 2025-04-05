@@ -9,8 +9,8 @@ import {
   Formatters,
   type GridOption,
 } from 'aurelia-slickgrid';
-import { Example19Preload } from './example19-preload';
-import { Example19DetailView } from './example19-detail-view';
+import { Example19Preload } from './example19-preload.js';
+import { Example19DetailView } from './example19-detail-view.js';
 
 const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 1000;
@@ -67,30 +67,87 @@ export class Example19 {
   /* Define grid Options and Columns */
   defineGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, width: 70, filterable: true, editor: { model: Editors.text } },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', formatter: Formatters.decimal, params: { minDecimal: 1, maxDecimal: 2 }, sortable: true, type: FieldType.number, minWidth: 90, filterable: true },
       {
-        id: 'percent2', name: '% Complete', field: 'percentComplete2', editor: { model: Editors.slider },
-        formatter: Formatters.progressBar, type: FieldType.number, sortable: true, minWidth: 100, filterable: true, filter: { model: Filters.slider, operator: '>' }
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        sortable: true,
+        type: FieldType.string,
+        width: 70,
+        filterable: true,
+        editor: { model: Editors.text },
       },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, sortable: true, type: FieldType.date, minWidth: 90, exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate } },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, sortable: true, type: FieldType.date, minWidth: 90, exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate } },
       {
-        id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
+        id: 'duration',
+        name: 'Duration (days)',
+        field: 'duration',
+        formatter: Formatters.decimal,
+        params: { minDecimal: 1, maxDecimal: 2 },
+        sortable: true,
+        type: FieldType.number,
+        minWidth: 90,
+        filterable: true,
+      },
+      {
+        id: 'percent2',
+        name: '% Complete',
+        field: 'percentComplete2',
+        editor: { model: Editors.slider },
+        formatter: Formatters.progressBar,
+        type: FieldType.number,
+        sortable: true,
         minWidth: 100,
-        formatter: Formatters.checkmarkMaterial, type: FieldType.boolean,
-        filterable: true, sortable: true,
+        filterable: true,
+        filter: { model: Filters.slider, operator: '>' },
+      },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        sortable: true,
+        type: FieldType.date,
+        minWidth: 90,
+        exportWithFormatter: true,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        sortable: true,
+        type: FieldType.date,
+        minWidth: 90,
+        exportWithFormatter: true,
+        filterable: true,
+        filter: { model: Filters.compoundDate },
+      },
+      {
+        id: 'effort-driven',
+        name: 'Effort Driven',
+        field: 'effortDriven',
+        minWidth: 100,
+        formatter: Formatters.checkmarkMaterial,
+        type: FieldType.boolean,
+        filterable: true,
+        sortable: true,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
-        }
-      }
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+          model: Filters.singleSelect,
+        },
+      },
     ];
 
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       enableFiltering: true,
       enableRowDetailView: true,
@@ -145,7 +202,7 @@ export class Example19 {
       },
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true
+        selectActiveRow: true,
       },
 
       // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
@@ -164,19 +221,19 @@ export class Example19 {
     for (let i = 0; i < NB_ITEMS; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
 
       dataset[i] = {
         rowId: i,
         title: 'Task ' + i,
-        duration: (i % 33 === 0) ? null : Math.random() * 100 + '',
+        duration: i % 33 === 0 ? null : Math.random() * 100 + '',
         percentComplete: randomPercent,
         percentComplete2: randomPercent,
         percentCompleteNumber: randomPercent,
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: new Date(randomYear, (randomMonth + 1), randomDay),
-        effortDriven: (i % 5 === 0)
+        finish: new Date(randomYear, randomMonth + 1, randomDay),
+        effortDriven: i % 5 === 0,
       };
     }
 
@@ -216,7 +273,18 @@ export class Example19 {
   /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
   simulateServerAsyncCall(item: any) {
     // random set of names to use for more item detail
-    const randomNames = ['John Doe', 'Jane Doe', 'Chuck Norris', 'Bumblebee', 'Jackie Chan', 'Elvis Presley', 'Bob Marley', 'Mohammed Ali', 'Bruce Lee', 'Rocky Balboa'];
+    const randomNames = [
+      'John Doe',
+      'Jane Doe',
+      'Chuck Norris',
+      'Bumblebee',
+      'Jackie Chan',
+      'Elvis Presley',
+      'Bob Marley',
+      'Mohammed Ali',
+      'Bruce Lee',
+      'Rocky Balboa',
+    ];
 
     // fill the template on async delay
     return new Promise((resolve) => {

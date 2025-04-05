@@ -1,4 +1,3 @@
-
 import {
   type AureliaGridInstance,
   type Column,
@@ -74,44 +73,65 @@ export class Example20 {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'sel', name: '#', field: 'id',
-        minWidth: 40, width: 40, maxWidth: 40,
+        id: 'sel',
+        name: '#',
+        field: 'id',
+        minWidth: 40,
+        width: 40,
+        maxWidth: 40,
         cannotTriggerInsert: true,
         resizable: false,
         unselectable: true,
       },
       {
-        id: 'title', name: 'Title', field: 'title',
-        minWidth: 100, width: 120,
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        minWidth: 100,
+        width: 120,
         filterable: true,
-        sortable: true
+        sortable: true,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
+        id: 'percentComplete',
+        name: '% Complete',
+        field: 'percentComplete',
         resizable: false,
-        minWidth: 130, width: 140,
+        minWidth: 130,
+        width: 140,
         formatter: Formatters.percentCompleteBar,
         type: FieldType.number,
         filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
-        sortable: true
+        sortable: true,
       },
       {
-        id: 'start', name: 'Start', field: 'start',
-        minWidth: 100, width: 120,
-        filterable: true, sortable: true,
-        formatter: Formatters.dateIso
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        minWidth: 100,
+        width: 120,
+        filterable: true,
+        sortable: true,
+        formatter: Formatters.dateIso,
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish',
-        minWidth: 100, width: 120,
-        filterable: true, sortable: true,
-        formatter: Formatters.dateIso
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        minWidth: 100,
+        width: 120,
+        filterable: true,
+        sortable: true,
+        formatter: Formatters.dateIso,
       },
       {
-        id: 'cost', name: 'Cost | Duration', field: 'cost',
+        id: 'cost',
+        name: 'Cost | Duration',
+        field: 'cost',
         formatter: this.costDurationFormatter.bind(this),
-        minWidth: 150, width: 170,
+        minWidth: 150,
+        width: 170,
         sortable: true,
         // filterable: true,
         filter: {
@@ -178,49 +198,68 @@ export class Example20 {
             return { valid: isValid, msg: errorMsg };
           }
           */
-        }
+        },
       },
       {
-        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
-        minWidth: 100, width: 120,
+        id: 'effortDriven',
+        name: 'Effort Driven',
+        field: 'effortDriven',
+        minWidth: 100,
+        width: 120,
         formatter: Formatters.checkmarkMaterial,
         filterable: true,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+          model: Filters.singleSelect,
         },
-        sortable: true
+        sortable: true,
       },
       {
-        id: 'title1', name: 'Title 1', field: 'title1',
-        minWidth: 100, width: 120,
+        id: 'title1',
+        name: 'Title 1',
+        field: 'title1',
+        minWidth: 100,
+        width: 120,
         filterable: true,
-        sortable: true
+        sortable: true,
       },
       {
-        id: 'title2', name: 'Title 2', field: 'title2',
-        minWidth: 100, width: 120,
+        id: 'title2',
+        name: 'Title 2',
+        field: 'title2',
+        minWidth: 100,
+        width: 120,
         filterable: true,
-        sortable: true
+        sortable: true,
       },
       {
-        id: 'title3', name: 'Title 3', field: 'title3',
-        minWidth: 100, width: 120,
+        id: 'title3',
+        name: 'Title 3',
+        field: 'title3',
+        minWidth: 100,
+        width: 120,
         filterable: true,
-        sortable: true
+        sortable: true,
       },
       {
-        id: 'title4', name: 'Title 4', field: 'title4',
-        minWidth: 100, width: 120,
+        id: 'title4',
+        name: 'Title 4',
+        field: 'title4',
+        minWidth: 100,
+        width: 120,
         filterable: true,
-        sortable: true
-      }
+        sortable: true,
+      },
     ];
 
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       gridWidth: 920,
       enableCellNavigation: true,
@@ -233,7 +272,7 @@ export class Example20 {
 
       // show both Frozen Columns in HeaderMenu & GridMenu, these are opt-in commands so they're disabled by default
       gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false }
+      headerMenu: { hideFreezeColumnsCommand: false },
     };
   }
 
@@ -244,12 +283,12 @@ export class Example20 {
       mockDataset[i] = {
         id: i,
         title: 'Task ' + i,
-        cost: (i % 33 === 0) ? null : Math.random() * 10000,
-        duration: i % 8 ? (Math.round(Math.random() * 100) + '') : null,
+        cost: i % 33 === 0 ? null : Math.random() * 10000,
+        duration: i % 8 ? Math.round(Math.random() * 100) + '' : null,
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 4, 5),
-        effortDriven: (i % 5 === 0),
+        effortDriven: i % 5 === 0,
         title1: `Some Text ${Math.round(Math.random() * 25)}`,
         title2: `Some Text ${Math.round(Math.random() * 25)}`,
         title3: `Some Text ${Math.round(Math.random() * 25)}`,
@@ -263,7 +302,7 @@ export class Example20 {
   changeFrozenColumnCount() {
     if (this.gridObj && this.gridObj.setOptions) {
       this.gridObj.setOptions({
-        frozenColumn: this.frozenColumnCount
+        frozenColumn: this.frozenColumnCount,
       });
     }
   }
@@ -272,7 +311,7 @@ export class Example20 {
   changeFrozenRowCount() {
     if (this.gridObj && this.gridObj.setOptions) {
       this.gridObj.setOptions({
-        frozenRow: this.frozenRowCount
+        frozenRow: this.frozenRowCount,
       });
     }
   }
@@ -287,7 +326,7 @@ export class Example20 {
   }
 
   isNullUndefinedOrEmpty(data: any) {
-    return (data === '' || data === null || data === undefined);
+    return data === '' || data === null || data === undefined;
   }
 
   onCellValidationError(_e: Event, args: any) {
@@ -303,7 +342,7 @@ export class Example20 {
   toggleFrozenBottomRows() {
     if (this.gridObj && this.gridObj.setOptions) {
       this.gridObj.setOptions({
-        frozenBottom: !this.isFrozenBottom
+        frozenBottom: !this.isFrozenBottom,
       });
       this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
     }

@@ -154,12 +154,12 @@ export class CustomAureliaViewModelEditor implements Editor {
         this.elmBindingContext.selectedItem = itemObject;
 
         // whenever the selected item changed (from the @bindable() selectedItem), we'll save the new value
-        this.elmBindingContext.selectedItemChanged = ((newItem: any) => {
+        this.elmBindingContext.selectedItemChanged = (newItem: any) => {
           this.selectedItem = newItem;
           if (newItem !== itemObject) {
             this.save();
           }
-        });
+        };
       }
     }, 0);
   }
@@ -169,7 +169,9 @@ export class CustomAureliaViewModelEditor implements Editor {
   }
 
   isValueChanged() {
-    return (!(this.selectedItem.id === '' && (this.defaultId === null || this.defaultId === undefined))) && (this.selectedItem.id !== this.defaultId);
+    return (
+      !(this.selectedItem.id === '' && (this.defaultId === null || this.defaultId === undefined)) && this.selectedItem.id !== this.defaultId
+    );
   }
 
   validate(): EditorValidationResult {
@@ -182,7 +184,7 @@ export class CustomAureliaViewModelEditor implements Editor {
     // if user want it to be required, he would have to provide his own validator
     return {
       valid: true,
-      msg: null
+      msg: null,
     };
   }
 }

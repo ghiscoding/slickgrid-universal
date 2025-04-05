@@ -1,30 +1,31 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px"
-        target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example10.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example10.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
   <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="hideSubTitle = !hideSubTitle"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-    </button>
+    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+    type="button"
+    data-test="toggle-subtitle"
+    click.trigger="hideSubTitle = !hideSubTitle"
+  >
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
 <div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
 
 <div class="row">
-  <div class="col-sm-4" style="max-width: 205px;">
+  <div class="col-sm-4" style="max-width: 205px">
     Pagination
     <div class="btn-group" role="group">
-      <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page"
-              click.trigger="goToGrid1FirstPage()">
+      <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page" click.trigger="goToGrid1FirstPage()">
         <i class="mdi mdi-page-first"></i>
       </button>
       <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page" click.trigger="goToGrid1LastPage()">
@@ -35,41 +36,38 @@
   <div class="col-sm-8">
     <div class="alert alert-success">
       <strong>(single select) Selected Row:</strong>
-      <span innerhtml.bind="selectedTitle"
-            data-test="grid1-selections"></span>
+      <span innerhtml.bind="selectedTitle" data-test="grid1-selections"></span>
     </div>
   </div>
 </div>
 
 <div class="overflow-hidden">
-  <aurelia-slickgrid grid-id="grid1"
-                      column-definitions.bind="columnDefinitions1"
-                      grid-options.bind="gridOptions1"
-                      dataset.bind="dataset1"
-                      on-aurelia-grid-created.trigger="aureliaGrid1Ready($event.detail)"
-                      on-grid-state-changed.trigger="grid1StateChanged($event.detail)"
-                      on-selected-rows-changed.trigger="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)">
+  <aurelia-slickgrid
+    grid-id="grid1"
+    column-definitions.bind="columnDefinitions1"
+    grid-options.bind="gridOptions1"
+    dataset.bind="dataset1"
+    on-aurelia-grid-created.trigger="aureliaGrid1Ready($event.detail)"
+    on-grid-state-changed.trigger="grid1StateChanged($event.detail)"
+    on-selected-rows-changed.trigger="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+  >
   </aurelia-slickgrid>
 </div>
 
-<hr class="col-md-6 offset-md-1">
+<hr class="col-md-6 offset-md-1" />
 
 <div class="row">
-  <div class="col-sm-4 col-md-3" style="max-width: 215px;">
+  <div class="col-sm-4 col-md-3" style="max-width: 215px">
     <label for="enableGrid2Pagination">
       Pagination:
-      <input type="checkbox" id="enableGrid2Pagination"
-              checked.bind="isGrid2WithPagination"
-              data-test="toggle-pagination-grid2" />
+      <input type="checkbox" id="enableGrid2Pagination" checked.bind="isGrid2WithPagination" data-test="toggle-pagination-grid2" />
     </label>
     <span style="margin-left: 5px" if.bind="isGrid2WithPagination">
       <div class="btn-group" role="group">
-        <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page"
-                click.trigger="goToGrid2FirstPage()">
+        <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page" click.trigger="goToGrid2FirstPage()">
           <i class="mdi mdi-page-first"></i>
         </button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page"
-                click.trigger="goToGrid2LastPage()">
+        <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page" click.trigger="goToGrid2LastPage()">
           <i class="mdi mdi-page-last icon"></i>
         </button>
       </div>
@@ -78,18 +76,19 @@
   <div class="col-sm-8">
     <div class="alert alert-success">
       <strong>(multi-select) Selected Row(s):</strong>
-      <span innerhtml.bind="selectedTitles"
-            data-test="grid2-selections"></span>
+      <span innerhtml.bind="selectedTitles" data-test="grid2-selections"></span>
     </div>
   </div>
 </div>
 
 <div class="overflow-hidden">
-  <aurelia-slickgrid grid-id="grid2"
-                      column-definitions.bind="columnDefinitions2"
-                      grid-options.bind="gridOptions2"
-                      dataset.bind="dataset2"
-                      on-aurelia-grid-created.trigger="aureliaGrid2Ready($event.detail)"
-                      on-grid-state-changed.trigger="grid2StateChanged($event.detail)">
+  <aurelia-slickgrid
+    grid-id="grid2"
+    column-definitions.bind="columnDefinitions2"
+    grid-options.bind="gridOptions2"
+    dataset.bind="dataset2"
+    on-aurelia-grid-created.trigger="aureliaGrid2Ready($event.detail)"
+    on-grid-state-changed.trigger="grid2StateChanged($event.detail)"
+  >
   </aurelia-slickgrid>
 </div>

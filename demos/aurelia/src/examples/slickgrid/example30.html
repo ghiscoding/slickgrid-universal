@@ -1,21 +1,18 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px"
-        target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example30.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example30.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-    </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
     <i class="mdi mdi-theme-light-dark"></i>
     <span>Toggle Dark Mode</span>
   </button>
@@ -25,65 +22,92 @@
 
 <div class="mb-2">
   <div class="btn-group btn-group-sm" role="group" aria-label="Basic Editing Commands">
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="toggle-readonly-btn"
-            click.trigger="toggleGridEditReadonly()">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-icon"
+      data-test="toggle-readonly-btn"
+      click.trigger="toggleGridEditReadonly()"
+    >
       <i class="mdi mdi-table-edit"></i> Toggle Edit/Readonly Grid
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn"
-            click.trigger="undoLastEdit()">
+    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn" click.trigger="undoLastEdit()">
       <i class="mdi mdi-undo"></i> Undo Last Edit
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-open-editor-btn"
-            click.trigger="undoLastEdit(true)">
+    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-open-editor-btn" click.trigger="undoLastEdit(true)">
       <i class="mdi mdi-undo"></i> Undo Last Edit &amp; Open Editor
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-all-edits-btn"
-            click.trigger="undoAllEdits()">
+    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-all-edits-btn" click.trigger="undoAllEdits()">
       <i class="mdi mdi-history"></i> Undo All Edits
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="save-all-btn"
-            click.trigger="saveAll()">
-        <span>Save All</span>
+    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="save-all-btn" click.trigger="saveAll()">
+      <span>Save All</span>
     </button>
   </div>
 </div>
 
 <div class="mb-3">
   <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="open-modal-create-btn"
-            click.trigger="openCompositeModal('create')" disabled.bind="isCompositeDisabled">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-icon"
+      data-test="open-modal-create-btn"
+      click.trigger="openCompositeModal('create')"
+      disabled.bind="isCompositeDisabled"
+    >
       <i class="mdi mdi-shape-square-plus"></i> Item Create
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="open-modal-clone-btn"
-            click.trigger="openCompositeModal('clone')" disabled.bind="isCompositeDisabled">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-icon"
+      data-test="open-modal-clone-btn"
+      click.trigger="openCompositeModal('clone')"
+      disabled.bind="isCompositeDisabled"
+    >
       <i class="mdi mdi-content-copy"></i> Item Clone
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="open-modal-edit-btn"
-            click.trigger="openCompositeModal('edit')" disabled.bind="isCompositeDisabled">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-icon"
+      data-test="open-modal-edit-btn"
+      click.trigger="openCompositeModal('edit')"
+      disabled.bind="isCompositeDisabled"
+    >
       <i class="mdi mdi-pencil"></i> Item Edit
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="open-modal-mass-update-btn"
-            click.trigger="openCompositeModal('mass-update')" disabled.bind="isCompositeDisabled">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-icon"
+      data-test="open-modal-mass-update-btn"
+      click.trigger="openCompositeModal('mass-update')"
+      disabled.bind="isCompositeDisabled"
+    >
       <i class="mdi mdi-pencil-box-multiple-outline"></i> Mass Update
     </button>
-    <button type="button" class="btn btn-outline-secondary btn-icon" data-test="open-modal-mass-selection-btn"
-            click.trigger="openCompositeModal('mass-selection')" disabled.bind="isMassSelectionDisabled">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-icon"
+      data-test="open-modal-mass-selection-btn"
+      click.trigger="openCompositeModal('mass-selection')"
+      disabled.bind="isMassSelectionDisabled"
+    >
       <i class="mdi mdi-check-box-outline"></i> Update Selected
     </button>
   </div>
 </div>
 
-<aurelia-slickgrid grid-id="grid30"
-                    column-definitions.bind="columnDefinitions"
-                    grid-options.bind="gridOptions"
-                    dataset.bind="dataset"
-                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
-                    on-before-edit-cell.trigger="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"
-                    on-cell-change.trigger="handleOnCellChange($event.detail.eventData, $event.detail.args)"
-                    on-click.trigger="handleOnCellClicked($event.detail.eventData, $event.detail.args)"
-                    on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
-                    on-item-deleted.trigger="handleItemDeleted($event.detail)"
-                    on-grid-state-changed.trigger="handleOnGridStateChanged($event.detail)"
-                    on-rows-or-count-changed.trigger="handleReRenderUnsavedStyling()"
-                    on-validation-error.trigger="handleValidationError($event.detail.eventData, $event.detail.args)">
+<aurelia-slickgrid
+  grid-id="grid30"
+  column-definitions.bind="columnDefinitions"
+  grid-options.bind="gridOptions"
+  dataset.bind="dataset"
+  on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  on-before-edit-cell.trigger="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"
+  on-cell-change.trigger="handleOnCellChange($event.detail.eventData, $event.detail.args)"
+  on-click.trigger="handleOnCellClicked($event.detail.eventData, $event.detail.args)"
+  on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
+  on-item-deleted.trigger="handleItemDeleted($event.detail)"
+  on-grid-state-changed.trigger="handleOnGridStateChanged($event.detail)"
+  on-rows-or-count-changed.trigger="handleReRenderUnsavedStyling()"
+  on-validation-error.trigger="handleValidationError($event.detail.eventData, $event.detail.args)"
+>
 </aurelia-slickgrid>

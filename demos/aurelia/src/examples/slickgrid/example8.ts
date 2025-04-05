@@ -54,7 +54,7 @@ export class Example8 {
       { id: 'percentComplete', name: '% Complete', field: 'percentComplete', nameKey: 'PERCENT_COMPLETE', sortable: true },
       { id: 'start', name: 'Start', field: 'start', nameKey: 'START' },
       { id: 'finish', name: 'Finish', field: 'finish', nameKey: 'FINISH' },
-      { id: 'completed', name: 'Completed', field: 'completed', nameKey: 'COMPLETED', formatter: Formatters.checkmarkMaterial }
+      { id: 'completed', name: 'Completed', field: 'completed', nameKey: 'COMPLETED', formatter: Formatters.checkmarkMaterial },
     ];
 
     this.columnDefinitions.forEach((columnDef) => {
@@ -75,8 +75,8 @@ export class Example8 {
               titleKey: 'HELP', // use "title" as plain string OR "titleKey" when using a translation key
               command: 'help',
               tooltip: 'Need assistance?',
-              cssClass: 'bold',     // container css class
-              textCssClass: (columnDef.id === 'title' || columnDef.id === 'completed') ? '' : 'blue', // just the text css class
+              cssClass: 'bold', // container css class
+              textCssClass: columnDef.id === 'title' || columnDef.id === 'completed' ? '' : 'blue', // just the text css class
               positionOrder: 99,
               itemUsabilityOverride: (args) => {
                 // for example if we want to disable the "Help" command over the "Title" and "Completed" column
@@ -84,12 +84,12 @@ export class Example8 {
               },
               itemVisibilityOverride: (args) => {
                 // for example don't show Help on column "% Complete"
-                return (args.column.id !== 'percentComplete');
+                return args.column.id !== 'percentComplete';
               },
               action: (_e, args) => {
                 // you can use the "action" callback and/or subscribe to the "onCallback" event, they both have the same arguments
                 console.log('execute an action on Help', args);
-              }
+              },
             },
             // you can also add divider between commands (command is a required property but you can set it to empty string)
             { divider: true, command: '', positionOrder: 98 },
@@ -99,38 +99,55 @@ export class Example8 {
             // 'divider',
             {
               // we can also have multiple nested sub-menus
-              command: 'custom-actions', title: 'Hello', positionOrder: 99,
+              command: 'custom-actions',
+              title: 'Hello',
+              positionOrder: 99,
               commandItems: [
                 { command: 'hello-world', title: 'Hello World' },
                 { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
                 {
-                  command: 'sub-menu', title: `Let's play`, cssClass: 'green', subMenuTitle: 'choose your game', subMenuTitleCssClass: 'text-italic salmon',
+                  command: 'sub-menu',
+                  title: `Let's play`,
+                  cssClass: 'green',
+                  subMenuTitle: 'choose your game',
+                  subMenuTitleCssClass: 'text-italic salmon',
                   commandItems: [
                     { command: 'sport-badminton', title: 'Badminton' },
                     { command: 'sport-tennis', title: 'Tennis' },
                     { command: 'sport-racquetball', title: 'Racquetball' },
                     { command: 'sport-squash', title: 'Squash' },
-                  ]
-                }
-              ]
+                  ],
+                },
+              ],
             },
             {
-              command: 'feedback', title: 'Feedback', positionOrder: 100,
+              command: 'feedback',
+              title: 'Feedback',
+              positionOrder: 100,
               commandItems: [
-                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                {
+                  command: 'request-update',
+                  title: 'Request update from supplier',
+                  iconCssClass: 'mdi mdi-star',
+                  tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update',
+                },
                 'divider',
                 {
-                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  command: 'sub-menu',
+                  title: 'Contact Us',
+                  iconCssClass: 'mdi mdi-account',
+                  subMenuTitle: 'contact us...',
+                  subMenuTitleCssClass: 'italic',
                   commandItems: [
                     { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
                     { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
                     { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
-                  ]
-                }
-              ]
-            }
-          ]
-        }
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       };
     });
 
@@ -139,7 +156,7 @@ export class Example8 {
       enableHeaderMenu: true,
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       enableFiltering: false,
       enableCellNavigation: true,
@@ -163,7 +180,7 @@ export class Example8 {
         },
       },
       enableTranslate: true,
-      i18n: this.i18n
+      i18n: this.i18n,
     };
   }
 
@@ -178,14 +195,14 @@ export class Example8 {
         percentComplete: Math.round(Math.random() * 100),
         start: '01/01/2009',
         finish: '01/05/2009',
-        completed: (i % 5 === 0)
+        completed: i % 5 === 0,
       };
     }
     this.dataset = mockDataset;
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.i18n.setLocale(nextLanguage);
     this.selectedLanguage = nextLanguage;
   }

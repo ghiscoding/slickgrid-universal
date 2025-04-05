@@ -1,15 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { bindable } from 'aurelia';
-import {
-  type AureliaGridInstance,
-  type Column,
-  ExtensionName,
-  type GridOption,
-  type SlickRowDetailView,
-} from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView } from 'aurelia-slickgrid';
 
-import { Example45Preload } from './example45-preload';
-import { type Distributor, Example45DetailView, type OrderData } from './example45-detail-view';
+import { Example45Preload } from './example45-preload.js';
+import { type Distributor, Example45DetailView, type OrderData } from './example45-detail-view.js';
 
 const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 995;

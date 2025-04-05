@@ -68,10 +68,7 @@ describe('Example 44 - Column & Row Span', { retries: 0 }, () => {
     cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l1.r1.rowspan`).should(($el) =>
       expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
     );
-    cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(0)')
-      .contains('Revenue Growth')
-      .drag('.slick-header-column:nth(1)');
+    cy.get('.slick-header-columns').children('.slick-header-column:nth(0)').contains('Revenue Growth').drag('.slick-header-column:nth(1)');
     cy.get('.slick-header-column:nth(0)').contains('Title');
     cy.get('.slick-header-column:nth(1)').contains('Revenue Growth');
 
@@ -312,9 +309,7 @@ describe('Example 44 - Column & Row Span', { retries: 0 }, () => {
       cy.get('[data-row=499] > .slick-cell.l21.r21.active').should('have.length', 1);
       cy.get('[data-row=499] > .slick-cell.l21.r21.active').type('{ctrl}{home}', { release: false });
       cy.get('[data-row=0] .slick-cell.l0.r0.active').should('have.length', 1);
-      cy.get('[data-row=0] .slick-cell.l1.r1').should(($el) =>
-        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
-      );
+      cy.get('[data-row=0] .slick-cell.l1.r1').should(($el) => expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3));
     });
 
     it('should start at first row on PolicyIndex column, then type "Ctrl+DownArrow" keys and expect active cell to become yellowish section', () => {

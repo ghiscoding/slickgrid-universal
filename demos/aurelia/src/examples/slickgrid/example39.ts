@@ -1,7 +1,7 @@
 import { I18N } from '@aurelia/i18n';
 import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
-import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import {
   type AureliaGridInstance,
   type Column,
@@ -38,7 +38,10 @@ export class Example39 {
   status = { text: 'processing...', class: 'alert alert-danger' };
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
-  constructor(readonly http: IHttpClient = resolve(newInstanceOf(IHttpClient)), private readonly i18n: I18N = resolve(I18N)) {
+  constructor(
+    readonly http: IHttpClient = resolve(newInstanceOf(IHttpClient)),
+    private readonly i18n: I18N = resolve(I18N)
+  ) {
     this.backendService = new GraphqlService();
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
@@ -54,40 +57,55 @@ export class Example39 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', field: 'name', nameKey: 'NAME', width: 60,
+        id: 'name',
+        field: 'name',
+        nameKey: 'NAME',
+        width: 60,
         type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
           model: Filters.compoundInput,
-        }
+        },
       },
       {
-        id: 'gender', field: 'gender', nameKey: 'GENDER', filterable: true, sortable: true, width: 60,
+        id: 'gender',
+        field: 'gender',
+        nameKey: 'GENDER',
+        filterable: true,
+        sortable: true,
+        width: 60,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', labelKey: 'MALE', }, { value: 'female', labelKey: 'FEMALE', }]
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', labelKey: 'MALE' },
+            { value: 'female', labelKey: 'FEMALE' },
+          ],
+        },
       },
       {
-        id: 'company', field: 'company', nameKey: 'COMPANY', width: 60,
+        id: 'company',
+        field: 'company',
+        nameKey: 'COMPANY',
+        width: 60,
         sortable: true,
         filterable: true,
         filter: {
           model: Filters.multipleSelect,
           customStructure: {
             label: 'company',
-            value: 'company'
+            value: 'company',
           },
           collectionSortBy: {
             property: 'company',
-            sortDesc: false
+            sortDesc: false,
           },
-          collectionAsync: this.http.fetch(SAMPLE_DATA_URL).then(e => e.json()),
+          collectionAsync: this.http.fetch(SAMPLE_DATA_URL).then((e) => e.json()),
           filterOptions: {
-            filter: true // adds a filter on top of the multi-select dropdown
-          } as MultipleSelectOption
-        }
+            filter: true, // adds a filter on top of the multi-select dropdown
+          } as MultipleSelectOption,
+        },
       },
     ];
 
@@ -95,11 +113,11 @@ export class Example39 {
       enableAutoResize: true,
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       enableAutoTooltip: true,
       autoTooltipOptions: {
-        enableForHeaderCells: true
+        enableForHeaderCells: true,
       },
       enableTranslate: true,
       i18n: this.i18n,
@@ -115,11 +133,14 @@ export class Example39 {
         service: this.backendService,
         options: {
           datasetName: GRAPHQL_QUERY_DATASET_NAME, // the only REQUIRED property
-          addLocaleIntoQuery: true,   // optionally add current locale into the query
-          extraQueryArguments: [{     // optionally add some extra query arguments as input query arguments
-            field: 'userId',
-            value: 123
-          }],
+          addLocaleIntoQuery: true, // optionally add current locale into the query
+          extraQueryArguments: [
+            {
+              // optionally add some extra query arguments as input query arguments
+              field: 'userId',
+              value: 123,
+            },
+          ],
           // enable infinite via Boolean OR via { fetchSize: number }
           infiniteScroll: { fetchSize: 30 }, // or use true, in that case it would use default size of 25
         },
@@ -131,11 +152,11 @@ export class Example39 {
           this.metrics = {
             endTime: new Date(),
             totalItemCount: result.data[GRAPHQL_QUERY_DATASET_NAME].totalCount || 0,
-          }
+          };
           this.displaySpinner(false);
           this.getCustomerCallback(result);
-        }
-      } as GraphqlServiceApi
+        },
+      } as GraphqlServiceApi,
     };
   }
 
@@ -147,7 +168,7 @@ export class Example39 {
 
   displaySpinner(isProcessing: boolean) {
     this.processing = isProcessing;
-    this.status = (isProcessing)
+    this.status = isProcessing
       ? { text: 'processing...', class: 'alert alert-danger' }
       : { text: 'finished', class: 'alert alert-success' };
   }
@@ -191,16 +212,18 @@ export class Example39 {
   }
 
   getCustomerDataApiMock(query: string): Promise<any> {
-    return new Promise<GraphqlPaginatedResult>(resolve => {
+    return new Promise<GraphqlPaginatedResult>((resolve) => {
       let firstCount = 0;
       let offset = 0;
       let orderByField = '';
       let orderByDir = '';
 
-      this.http.fetch(SAMPLE_DATA_URL)
-        .then(e => e.json())
+      this.http
+        .fetch(SAMPLE_DATA_URL)
+        .then((e) => e.json())
         .then((data: any) => {
-          let filteredData: Array<{ id: number; name: string; gender: string; company: string; category: { id: number; name: string; }; }> = data;
+          let filteredData: Array<{ id: number; name: string; gender: string; company: string; category: { id: number; name: string } }> =
+            data;
           if (query.includes('first:')) {
             const topMatch = query.match(/first:([0-9]+),/) || [];
             firstCount = +topMatch[1];
@@ -239,17 +262,28 @@ export class Example39 {
                   term2 = unescapeAndLowerCase(term2 || '');
 
                   switch (operator) {
-                    case 'EQ': return dcVal.toLowerCase() === term1;
-                    case 'NE': return dcVal.toLowerCase() !== term1;
-                    case 'LE': return dcVal.toLowerCase() <= term1;
-                    case 'LT': return dcVal.toLowerCase() < term1;
-                    case 'GT': return dcVal.toLowerCase() > term1;
-                    case 'GE': return dcVal.toLowerCase() >= term1;
-                    case 'EndsWith': return dcVal.toLowerCase().endsWith(term1);
-                    case 'StartsWith': return dcVal.toLowerCase().startsWith(term1);
-                    case 'Starts+Ends': return dcVal.toLowerCase().startsWith(term1) && dcVal.toLowerCase().endsWith(term2);
-                    case 'Contains': return dcVal.toLowerCase().includes(term1);
-                    case 'Not_Contains': return !dcVal.toLowerCase().includes(term1);
+                    case 'EQ':
+                      return dcVal.toLowerCase() === term1;
+                    case 'NE':
+                      return dcVal.toLowerCase() !== term1;
+                    case 'LE':
+                      return dcVal.toLowerCase() <= term1;
+                    case 'LT':
+                      return dcVal.toLowerCase() < term1;
+                    case 'GT':
+                      return dcVal.toLowerCase() > term1;
+                    case 'GE':
+                      return dcVal.toLowerCase() >= term1;
+                    case 'EndsWith':
+                      return dcVal.toLowerCase().endsWith(term1);
+                    case 'StartsWith':
+                      return dcVal.toLowerCase().startsWith(term1);
+                    case 'Starts+Ends':
+                      return dcVal.toLowerCase().startsWith(term1) && dcVal.toLowerCase().endsWith(term2);
+                    case 'Contains':
+                      return dcVal.toLowerCase().includes(term1);
+                    case 'Not_Contains':
+                      return !dcVal.toLowerCase().includes(term1);
                     case 'IN':
                       const terms = value.toLocaleLowerCase().split(',');
                       for (const term of terms) {
@@ -272,7 +306,7 @@ export class Example39 {
           }
 
           // sorting when defined
-          const selector = (obj: any) => orderByField ? obj[orderByField] : obj;
+          const selector = (obj: any) => (orderByField ? obj[orderByField] : obj);
           switch (orderByDir.toUpperCase()) {
             case 'ASC':
               filteredData = filteredData.sort((a, b) => selector(a).localeCompare(selector(b)));
@@ -309,14 +343,12 @@ export class Example39 {
   refreshMetrics(args: OnRowCountChangedEventArgs) {
     if (args?.current >= 0) {
       this.metrics.itemCount = this.aureliaGrid.dataView?.getFilteredItemCount() || 0;
-      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount
-        ? 'fully-loaded'
-        : 'partial-load';
+      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount ? 'fully-loaded' : 'partial-load';
     }
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.i18n.setLocale(nextLanguage);
     this.selectedLanguage = nextLanguage;
   }

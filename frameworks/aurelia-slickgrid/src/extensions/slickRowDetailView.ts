@@ -14,8 +14,8 @@ import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-un
 import type { ICustomElementController } from '@aurelia/runtime-html';
 import { type Constructable, resolve, transient } from 'aurelia';
 
-import type { AureliaViewOutput, GridOption, RowDetailView, ViewModelBindableInputData } from '../models/index';
-import { AureliaUtilService } from '../services/aureliaUtil.service';
+import type { AureliaViewOutput, GridOption, RowDetailView, ViewModelBindableInputData } from '../models/index.js';
+import { AureliaUtilService } from '../services/aureliaUtil.service.js';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
 const PRELOAD_CONTAINER_PREFIX = 'container_loading';
@@ -94,8 +94,8 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
     if (typeof this.gridOptions.rowDetailView?.process === 'function') {
       // we need to keep the user "process" method and replace it with our own execution method
       // we do this because when we get the item detail, we need to call "onAsyncResponse.notify" for the plugin to work
-      this._userProcessFn = this.gridOptions.rowDetailView.process as (item: any) => Promise<any>;                // keep user's process method
-      this.addonOptions.process = (item) => this.onProcessing(item);  // replace process method & run our internal one
+      this._userProcessFn = this.gridOptions.rowDetailView.process as (item: any) => Promise<any>; // keep user's process method
+      this.addonOptions.process = (item) => this.onProcessing(item); // replace process method & run our internal one
     } else {
       throw new Error('[Aurelia-Slickgrid] You need to provide a "process" function for the Row Detail Extension to work properly');
     }
@@ -202,8 +202,13 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
           // redraw all Views whenever certain events are triggered
           this._subscriptions.push(
-            this.eventPubSubService?.subscribe(['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'], this.redrawAllViewSlots.bind(this, false)),
-            this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () => window.setTimeout(() => this.redrawAllViewSlots())),
+            this.eventPubSubService?.subscribe(
+              ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
+              this.redrawAllViewSlots.bind(this, false)
+            ),
+            this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () =>
+              window.setTimeout(() => this.redrawAllViewSlots())
+            )
           );
         }
       }
@@ -218,7 +223,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
     const promises: Promise<void>[] = [];
     this._slots.forEach((x) => {
       forceRedraw && x.controller?.deactivate(x.controller, null);
-      promises.push(this.redrawViewSlot(x))
+      promises.push(this.redrawViewSlot(x));
     });
     await Promise.all(promises);
   }
@@ -226,9 +231,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   /** Render all the expanded row detail View Slots */
   async renderAllViewModels() {
     const promises: Promise<void>[] = [];
-    this._slots
-      .filter((x) => x?.dataContext)
-      .forEach((x) => promises.push(this.renderViewModel(x.dataContext)));
+    this._slots.filter((x) => x?.dataContext).forEach((x) => promises.push(this.renderViewModel(x.dataContext)));
     await Promise.all(promises);
   }
 
@@ -244,14 +247,20 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   async renderPreloadView() {
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${PRELOAD_CONTAINER_PREFIX}`);
     if (this._preloadViewModel && containerElement) {
-      const preloadComp = await this.aureliaUtilService.createAureliaViewModelAddToSlot(this._preloadViewModel, undefined, containerElement);
+      const preloadComp = await this.aureliaUtilService.createAureliaViewModelAddToSlot(
+        this._preloadViewModel,
+        undefined,
+        containerElement
+      );
       this._preloadController = preloadComp?.controller;
     }
   }
 
   /** Render (or re-render) the View Slot (Row Detail) */
   async renderViewModel(item: any) {
-    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
+    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(
+      `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
+    );
     if (this._viewModel && containerElement) {
       // render row detail
       const bindableData = {
@@ -262,7 +271,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         parent: this.rowDetailViewOptions?.parent,
       } as ViewModelBindableInputData;
       const aureliaComp = await this.aureliaUtilService.createAureliaViewModelAddToSlot(this._viewModel, bindableData, containerElement);
-      const slotObj = this._slots.find(obj => obj.id === item[this.datasetIdPropName]);
+      const slotObj = this._slots.find((obj) => obj.id === item[this.datasetIdPropName]);
 
       if (slotObj && aureliaComp) {
         slotObj.controller = aureliaComp.controller;
@@ -300,7 +309,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
    * if it's expanding we will add it to our View Slots reference array if we don't already have it
    * or if it's collapsing we will remove it from our View Slots reference array
    */
-  protected handleOnBeforeRowDetailToggle(_e: SlickEventData<OnBeforeRowDetailToggleArgs>, args: { grid: SlickGrid; item: any; }) {
+  protected handleOnBeforeRowDetailToggle(_e: SlickEventData<OnBeforeRowDetailToggleArgs>, args: { grid: SlickGrid; item: any }) {
     // expanding
     if (args?.item?.__collapsed) {
       // expanding row detail
@@ -316,14 +325,17 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** When Row comes back to Viewport Range, we need to redraw the View */
-  protected async handleOnRowBackToViewportRange(_e: SlickEventData<OnRowBackToViewportRangeArgs>, args: {
-    item: any;
-    rowId: string | number;
-    rowIndex: number;
-    expandedRows: (string | number)[];
-    rowIdsOutOfViewport: (string | number)[];
-    grid: SlickGrid;
-  }) {
+  protected async handleOnRowBackToViewportRange(
+    _e: SlickEventData<OnRowBackToViewportRangeArgs>,
+    args: {
+      item: any;
+      rowId: string | number;
+      rowIndex: number;
+      expandedRows: (string | number)[];
+      rowIdsOutOfViewport: (string | number)[];
+      grid: SlickGrid;
+    }
+  ) {
     const slot = this._slots.find((x) => x.id === args.rowId);
     if (slot) {
       this.redrawViewSlot(slot);
@@ -362,7 +374,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       if (!awaitedItemDetail || !awaitedItemDetail.hasOwnProperty(this.datasetIdPropName)) {
         throw new Error(
           '[Aurelia-Slickgrid] could not process the Row Detail, please make sure that your "process" callback ' +
-          `returns an item object that has an "${this.datasetIdPropName}" property`
+            `returns an item object that has an "${this.datasetIdPropName}" property`
         );
       }
 

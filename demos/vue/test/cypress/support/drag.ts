@@ -28,9 +28,9 @@ Cypress.Commands.add('dragStart', { prevSubject: true }, (subject: HTMLElement, 
 });
 
 // use a different command name than 'drag' so that it doesn't conflict with the '@4tw/cypress-drag-drop' lib
-// @ts-ignore
 Cypress.Commands.add(
   'dragCell',
+  // @ts-ignore
   { prevSubject: true },
   (subject: HTMLElement, addRow: number, addCell: number, { cellWidth = 90, cellHeight = 35 } = {}) => {
     return cy.wrap(subject).trigger('mousemove', cellWidth * (addCell + 0.5), cellHeight * (addRow + 0.5), { force: true });

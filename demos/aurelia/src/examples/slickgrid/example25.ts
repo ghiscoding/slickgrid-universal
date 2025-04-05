@@ -1,6 +1,6 @@
 import { IHttpClient, json } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
-import { GraphqlService, type GraphqlResult, type GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import {
   type AureliaGridInstance,
   type Column,
@@ -66,12 +66,32 @@ export class Example25 {
       { id: 'countryCode', field: 'code', name: 'Code', maxWidth: 90, sortable: true, filterable: true, columnGroup: 'Country' },
       { id: 'countryName', field: 'name', name: 'Name', width: 60, sortable: true, filterable: true, columnGroup: 'Country' },
       { id: 'countryNative', field: 'native', name: 'Native', width: 60, sortable: true, filterable: true, columnGroup: 'Country' },
-      { id: 'countryPhone', field: 'phone', name: 'Phone Area Code', maxWidth: 110, sortable: true, filterable: true, columnGroup: 'Country' },
-      { id: 'countryCurrency', field: 'currency', name: 'Currency', maxWidth: 90, sortable: true, filterable: true, columnGroup: 'Country' },
+      {
+        id: 'countryPhone',
+        field: 'phone',
+        name: 'Phone Area Code',
+        maxWidth: 110,
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Country',
+      },
+      {
+        id: 'countryCurrency',
+        field: 'currency',
+        name: 'Currency',
+        maxWidth: 90,
+        sortable: true,
+        filterable: true,
+        columnGroup: 'Country',
+      },
       { id: 'countryEmoji', field: 'emoji', name: 'Emoji', maxWidth: 90, sortable: true, columnGroup: 'Country' },
       {
-        id: 'languageName', field: 'languages.name', name: 'Names', width: 60,
-        formatter: Formatters.arrayObjectToCsv, columnGroup: 'Language',
+        id: 'languageName',
+        field: 'languages.name',
+        name: 'Names',
+        width: 60,
+        formatter: Formatters.arrayObjectToCsv,
+        columnGroup: 'Language',
         params: { propertyNames: ['name'], useFormatterOuputToFilter: true },
         filterable: true,
         // this Filter is a bit more tricky than others since the values are an array of objects
@@ -84,7 +104,7 @@ export class Example25 {
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
-            collectionInsideObjectProperty: 'data.languages'
+            collectionInsideObjectProperty: 'data.languages',
           },
           collectionFilterBy: [
             // filter out any empty values
@@ -92,20 +112,25 @@ export class Example25 {
             { property: 'name', value: null, operator: 'NE' },
           ],
           collectionSortBy: {
-            property: 'name'
+            property: 'name',
           },
           customStructure: {
             value: 'name',
             label: 'name',
           },
           filterOptions: {
-            filter: true
-          } as MultipleSelectOption
+            filter: true,
+          } as MultipleSelectOption,
         },
       },
       {
-        id: 'languageNative', field: 'languages.native', name: 'Native', width: 60,
-        formatter: Formatters.arrayObjectToCsv, params: { propertyNames: ['native'], useFormatterOuputToFilter: true }, columnGroup: 'Language',
+        id: 'languageNative',
+        field: 'languages.native',
+        name: 'Native',
+        width: 60,
+        formatter: Formatters.arrayObjectToCsv,
+        params: { propertyNames: ['native'], useFormatterOuputToFilter: true },
+        columnGroup: 'Language',
         filterable: true,
         filter: {
           model: Filters.multipleSelect,
@@ -114,7 +139,7 @@ export class Example25 {
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
-            collectionInsideObjectProperty: 'data.languages'
+            collectionInsideObjectProperty: 'data.languages',
           },
           collectionFilterBy: [
             // filter out any empty values
@@ -122,28 +147,42 @@ export class Example25 {
             { property: 'native', value: null, operator: 'NE' },
           ],
           collectionSortBy: {
-            property: 'native'
+            property: 'native',
           },
           customStructure: {
             value: 'native',
             label: 'native',
           },
           filterOptions: {
-            filter: true
-          } as MultipleSelectOption
+            filter: true,
+          } as MultipleSelectOption,
         },
       },
       {
-        id: 'languageCode', field: 'languages.code', name: 'Codes', maxWidth: 100,
-        formatter: Formatters.arrayObjectToCsv, params: { propertyNames: ['code'], useFormatterOuputToFilter: true }, columnGroup: 'Language',
+        id: 'languageCode',
+        field: 'languages.code',
+        name: 'Codes',
+        maxWidth: 100,
+        formatter: Formatters.arrayObjectToCsv,
+        params: { propertyNames: ['code'], useFormatterOuputToFilter: true },
+        columnGroup: 'Language',
         filterable: true,
       },
       {
-        id: 'continentName', field: 'continent.name', name: 'Name', width: 60, sortable: true,
-        filterable: true, formatter: Formatters.complexObject, columnGroup: 'Continent'
+        id: 'continentName',
+        field: 'continent.name',
+        name: 'Name',
+        width: 60,
+        sortable: true,
+        filterable: true,
+        formatter: Formatters.complexObject,
+        columnGroup: 'Continent',
       },
       {
-        id: 'continentCode', field: 'continent.code', name: 'Code', maxWidth: 90,
+        id: 'continentCode',
+        field: 'continent.code',
+        name: 'Code',
+        maxWidth: 90,
         sortable: true,
         filterable: true,
         filter: {
@@ -159,16 +198,17 @@ export class Example25 {
             value: 'code',
             label: 'code',
             labelSuffix: 'name',
-          }
+          },
         },
-        formatter: Formatters.complexObject, columnGroup: 'Continent',
+        formatter: Formatters.complexObject,
+        columnGroup: 'Continent',
       },
     ];
 
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
       enableFiltering: true,
       enableCellNavigation: true,
@@ -195,14 +235,14 @@ export class Example25 {
         postProcess: (result: GraphqlResult<Country>) => {
           this.metrics = result.metrics as Metrics;
           this.displaySpinner(false);
-        }
-      } as GraphqlServiceApi
+        },
+      } as GraphqlServiceApi,
     };
   }
 
   displaySpinner(isProcessing: boolean) {
     this.processing = isProcessing;
-    this.status = (isProcessing)
+    this.status = isProcessing
       ? { text: 'processing...', class: 'alert alert-danger' }
       : { text: 'finished', class: 'alert alert-success' };
   }
@@ -215,10 +255,10 @@ export class Example25 {
 
   /** Calling the GraphQL backend API to get the Countries with the Query created by the "process" method of GraphqlService  */
   getCountries(query: string): Promise<GraphqlResult<Country>> {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const response = await this.http.fetch(COUNTRIES_API, {
         method: 'post',
-        body: json({ query })
+        body: json({ query }),
       });
       resolve(response.json());
     });
@@ -229,12 +269,12 @@ export class Example25 {
    * So we will have to write, by hand, the query to get the continents code & name
    * We also need to resolve the data in a flat array (singleSelect/multipleSelect Filters only accept data at the root of the array)
    */
-  getContinents(): Promise<GraphqlResult<{ code: string; name: string; }>> {
+  getContinents(): Promise<GraphqlResult<{ code: string; name: string }>> {
     const continentQuery = `query { continents { code, name  }}`;
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const response = await this.http.fetch(COUNTRIES_API, {
         method: 'post',
-        body: json({ query: continentQuery })
+        body: json({ query: continentQuery }),
       });
       resolve(response.json());
     });
@@ -245,12 +285,12 @@ export class Example25 {
    * So we will have to write, by hand, the query to get the languages code & name
    * We also need to resolve the data in a flat array (singleSelect/multipleSelect Filters only accept data at the root of the array)
    */
-  getLanguages(): Promise<GraphqlResult<{ code: string; name: string; native: string; }>> {
+  getLanguages(): Promise<GraphqlResult<{ code: string; name: string; native: string }>> {
     const languageQuery = `query { languages { code, name, native  }}`;
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const response = await this.http.fetch(COUNTRIES_API, {
         method: 'post',
-        body: json({ query: languageQuery })
+        body: json({ query: languageQuery }),
       });
       resolve(response.json());
     });
@@ -258,9 +298,7 @@ export class Example25 {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.aureliaGrid.filterService.updateFilters([
-      { columnId: 'countryName', searchTerms: ['G'], operator: OperatorType.startsWith },
-    ]);
+    this.aureliaGrid.filterService.updateFilters([{ columnId: 'countryName', searchTerms: ['G'], operator: OperatorType.startsWith }]);
   }
 
   setSortingDynamically() {

@@ -29,7 +29,7 @@ export class Example29 {
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100 }
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100 },
     ];
     this.gridOptions = {
       enableAutoResize: false,
@@ -45,7 +45,7 @@ export class Example29 {
     for (let i = 0; i < count; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
 
       mockDataset[i] = {
@@ -55,7 +55,7 @@ export class Example29 {
         percentComplete: randomPercent,
         start: new Date(randomYear, randomMonth + 1, randomDay),
         finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
-        effortDriven: (i % 5 === 0)
+        effortDriven: i % 5 === 0,
       };
     }
 

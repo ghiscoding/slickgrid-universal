@@ -88,11 +88,16 @@ export class CustomAureliaViewModelFilter implements Filter {
 
       // override the FilterSelect selectedItemChanged method (from the @bindable() selectedItem), we'll trigger the filter callback
       if (this.elmBindingContext) {
-        this.elmBindingContext.selectedItemChanged = ((item: any) => {
-          this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: [item.id], shouldTriggerQuery: this._shouldTriggerQuery });
+        this.elmBindingContext.selectedItemChanged = (item: any) => {
+          this.callback(undefined, {
+            columnDef: this.columnDef,
+            operator: this.operator,
+            searchTerms: [item.id],
+            shouldTriggerQuery: this._shouldTriggerQuery,
+          });
           // reset flag for next use
           this._shouldTriggerQuery = true;
-        });
+        };
       }
     }
   }

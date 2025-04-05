@@ -1,12 +1,5 @@
 import { bindable } from 'aurelia';
-import {
-  type AureliaGridInstance,
-  type Column,
-  FieldType,
-  Formatters,
-  type GridOption,
-  type OperatorString,
-} from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, FieldType, Formatters, type GridOption, type OperatorString } from 'aurelia-slickgrid';
 import './example21.scss';
 
 export class Example21 {
@@ -44,40 +37,58 @@ export class Example21 {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title',
-        width: 100, sortable: true,
-        type: FieldType.string
+        id: 'title',
+        name: 'Title',
+        field: 'title',
+        width: 100,
+        sortable: true,
+        type: FieldType.string,
       },
       {
-        id: 'duration', name: 'Duration (days)', field: 'duration',
-        width: 100, sortable: true,
-        type: FieldType.number
+        id: 'duration',
+        name: 'Duration (days)',
+        field: 'duration',
+        width: 100,
+        sortable: true,
+        type: FieldType.number,
       },
       {
-        id: 'complete', name: '% Complete', field: 'percentComplete',
-        width: 100, sortable: true,
+        id: 'complete',
+        name: '% Complete',
+        field: 'percentComplete',
+        width: 100,
+        sortable: true,
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number
+        type: FieldType.number,
       },
       {
-        id: 'start', name: 'Start', field: 'start',
-        width: 100, sortable: true,
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        width: 100,
+        sortable: true,
         formatter: Formatters.dateIso,
 
-        type: FieldType.date
+        type: FieldType.date,
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish',
-        width: 100, sortable: true,
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        width: 100,
+        sortable: true,
         formatter: Formatters.dateIso,
-        type: FieldType.date
+        type: FieldType.date,
       },
       {
-        id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
-        width: 100, sortable: true,
+        id: 'effort-driven',
+        name: 'Effort Driven',
+        field: 'effortDriven',
+        width: 100,
+        sortable: true,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.number
-      }
+        type: FieldType.number,
+      },
     ];
 
     this.gridOptions = {
@@ -89,7 +100,7 @@ export class Example21 {
       autoHeight: true,
       autoResize: {
         container: '#demo-container',
-        rightPadding: 10
+        rightPadding: 10,
       },
 
       // enable the filtering but hide the user filter row since we use our own single filter
@@ -99,7 +110,7 @@ export class Example21 {
       alwaysShowVerticalScroll: false,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true
+      enableRowSelection: true,
     };
   }
 
@@ -109,7 +120,7 @@ export class Example21 {
     for (let i = 0; i < 25; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
+      const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
 
       mockedDataset[i] = {
@@ -119,8 +130,8 @@ export class Example21 {
         percentComplete: randomPercent,
         percentCompleteNumber: randomPercent,
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: new Date(randomYear, (randomMonth + 1), randomDay),
-        effortDriven: (i % 5 === 0)
+        finish: new Date(randomYear, randomMonth + 1, randomDay),
+        effortDriven: i % 5 === 0,
       };
     }
     this.dataset = mockedDataset;
@@ -151,7 +162,7 @@ export class Example21 {
     this.aureliaGrid?.filterService.updateSingleFilter({
       columnId: `${this.selectedColumn.id || ''}`,
       operator: this.selectedOperator as OperatorString,
-      searchTerms: [this.searchValue || '']
+      searchTerms: [this.searchValue || ''],
     });
   }
 

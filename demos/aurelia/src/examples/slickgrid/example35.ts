@@ -1,11 +1,4 @@
-import {
-  type AureliaGridInstance,
-  type Column,
-  Editors,
-  FieldType,
-  Formatters,
-  type GridOption,
-} from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, Editors, FieldType, Formatters, type GridOption } from 'aurelia-slickgrid';
 import { I18N } from '@aurelia/i18n';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 // import { TOptions as I18NOptions } from 'i18next';
@@ -140,12 +133,13 @@ export class Example35 {
             method: 'POST',
             body: JSON.stringify({ effortDriven, percentComplete, finish, start, duration, title }),
             headers: {
-              'Content-type': 'application/json; charset=UTF-8'
-            }
-          }).catch(err => {
-            console.error(err);
-            return false;
+              'Content-type': 'application/json; charset=UTF-8',
+            },
           })
+            .catch((err) => {
+              console.error(err);
+              return false;
+            })
             .then((response: any) => {
               if (response === false) {
                 this.statusClass = 'alert alert-danger';
@@ -155,14 +149,15 @@ export class Example35 {
                 return response!.json();
               }
             })
-            .then(json => {
+            .then((json) => {
               this.statusStyle = 'display: block';
               this.statusClass = 'alert alert-success';
               this.fetchResult = json.message;
               return true;
             });
         },
-        actionColumnConfig: { // override the defaults of the action column
+        actionColumnConfig: {
+          // override the defaults of the action column
           width: 100,
           minWidth: 100,
           maxWidth: 100,
@@ -241,7 +236,7 @@ export class Example35 {
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.i18n.setLocale(nextLanguage);
     this.selectedLanguage = nextLanguage;
   }
@@ -256,9 +251,12 @@ export class Example35 {
 
 function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefined): Promise<Response> {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
-      resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
-      // reduces the delay for automated Cypress tests
-    }, (window as any).Cypress ? 10 : 500);
+    window.setTimeout(
+      () => {
+        resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
+        // reduces the delay for automated Cypress tests
+      },
+      (window as any).Cypress ? 10 : 500
+    );
   });
 }

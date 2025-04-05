@@ -273,9 +273,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should close and reopen the 3rd row and expect same filtered and sorted rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px;"] .slick-cell:nth(0)`).as(
-          '3rdRow'
-        );
+        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px;"] .slick-cell:nth(0)`).as('3rdRow');
         cy.get('@3rdRow').click();
         cy.get('@3rdRow').click();
 
@@ -419,15 +417,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         cy.get('.search-filter.filter-companyId').type('1..2');
-        cy.get('#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)').should(
-          'have.length',
-          ROW_DETAIL_PANEL_COUNT * 2
-        );
+        cy.get('#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)').should('have.length', ROW_DETAIL_PANEL_COUNT * 2);
         cy.get('.search-filter.filter-companyId').type('{backspace}2');
-        cy.get('#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)').should(
-          'have.length',
-          ROW_DETAIL_PANEL_COUNT * 2
-        );
+        cy.get('#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)').should('have.length', ROW_DETAIL_PANEL_COUNT * 2);
       });
 
       it('should clear Company ID filter and have all rows back in grid and rendered', () => {

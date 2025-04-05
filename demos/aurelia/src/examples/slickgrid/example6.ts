@@ -1,6 +1,11 @@
 import { I18N } from '@aurelia/i18n';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
-import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, type GraphqlServiceOption } from '@slickgrid-universal/graphql';
+import {
+  GraphqlService,
+  type GraphqlPaginatedResult,
+  type GraphqlServiceApi,
+  type GraphqlServiceOption,
+} from '@slickgrid-universal/graphql';
 import {
   type AureliaGridInstance,
   type Column,
@@ -76,7 +81,11 @@ export class Example6 {
   defineGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', field: 'name', nameKey: 'NAME', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'name',
+        field: 'name',
+        nameKey: 'NAME',
+        width: 60,
+        columnGroupKey: 'CUSTOMER_INFORMATION',
         type: FieldType.string,
         sortable: true,
         filterable: true,
@@ -90,43 +99,78 @@ export class Example6 {
             { operator: 'a*', desc: 'Starts With' },
             { operator: 'Custom', desc: 'SQL Like' },
           ],
-        }
+        },
       },
       {
-        id: 'gender', field: 'gender', nameKey: 'GENDER', filterable: true, sortable: true, width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'gender',
+        field: 'gender',
+        nameKey: 'GENDER',
+        filterable: true,
+        sortable: true,
+        width: 60,
+        columnGroupKey: 'CUSTOMER_INFORMATION',
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', label: 'male', labelKey: 'MALE' }, { value: 'female', label: 'female', labelKey: 'FEMALE' }]
-        }
+          collection: [
+            { value: '', label: '' },
+            { value: 'male', label: 'male', labelKey: 'MALE' },
+            { value: 'female', label: 'female', labelKey: 'FEMALE' },
+          ],
+        },
       },
       {
-        id: 'company', field: 'company', nameKey: 'COMPANY', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
+        id: 'company',
+        field: 'company',
+        nameKey: 'COMPANY',
+        width: 60,
+        columnGroupKey: 'CUSTOMER_INFORMATION',
         sortable: true,
         filterable: true,
         filter: {
           model: Filters.multipleSelect,
-          collection: [{ value: 'acme', label: 'Acme' }, { value: 'abc', label: 'Company ABC' }, { value: 'xyz', label: 'Company XYZ' }],
+          collection: [
+            { value: 'acme', label: 'Acme' },
+            { value: 'abc', label: 'Company ABC' },
+            { value: 'xyz', label: 'Company XYZ' },
+          ],
           filterOptions: {
-            filter: true // adds a filter on top of the multi-select dropdown
-          } as MultipleSelectOption
-        }
+            filter: true, // adds a filter on top of the multi-select dropdown
+          } as MultipleSelectOption,
+        },
       },
       {
-        id: 'billingAddressStreet', field: 'billing.address.street', nameKey: 'BILLING.ADDRESS.STREET',
-        width: 60, filterable: true, sortable: true, columnGroupKey: 'BILLING.INFORMATION',
+        id: 'billingAddressStreet',
+        field: 'billing.address.street',
+        nameKey: 'BILLING.ADDRESS.STREET',
+        width: 60,
+        filterable: true,
+        sortable: true,
+        columnGroupKey: 'BILLING.INFORMATION',
       },
       {
-        id: 'billingAddressZip', field: 'billing.address.zip', nameKey: 'BILLING.ADDRESS.ZIP', width: 60,
+        id: 'billingAddressZip',
+        field: 'billing.address.zip',
+        nameKey: 'BILLING.ADDRESS.ZIP',
+        width: 60,
         type: FieldType.number,
         columnGroupKey: 'BILLING.INFORMATION',
-        filterable: true, sortable: true,
+        filterable: true,
+        sortable: true,
         filter: {
-          model: Filters.compoundInput
+          model: Filters.compoundInput,
         },
-        formatter: Formatters.multiple, params: { formatters: [Formatters.complexObject, Formatters.translate] }
+        formatter: Formatters.multiple,
+        params: { formatters: [Formatters.complexObject, Formatters.translate] },
       },
       {
-        id: 'finish', field: 'finish', name: 'Date', formatter: Formatters.dateIso, sortable: true, minWidth: 90, width: 120, exportWithFormatter: true,
+        id: 'finish',
+        field: 'finish',
+        name: 'Date',
+        formatter: Formatters.dateIso,
+        sortable: true,
+        minWidth: 90,
+        width: 120,
+        exportWithFormatter: true,
         columnGroupKey: 'BILLING.INFORMATION',
         type: FieldType.date,
         filterable: true,
@@ -138,8 +182,8 @@ export class Example6 {
               iconCssClass: 'mdi mdi-calendar',
               searchTerms: [tempoFormat(new Date(), 'YYYY-MM-DD'), tempoFormat(addDay(new Date(), 20), 'YYYY-MM-DD')],
             },
-          ]
-        }
+          ],
+        },
       },
     ];
 
@@ -159,7 +203,7 @@ export class Example6 {
       gridWidth: 900,
       compoundOperatorAltTexts: {
         // where '=' is any of the `OperatorString` type shown above
-        text: { 'Custom': { operatorAlt: '%%', descAlt: 'SQL Like' } },
+        text: { Custom: { operatorAlt: '%%', descAlt: 'SQL Like' } },
       },
       gridMenu: {
         resizeOnShowHeaderRow: true,
@@ -168,7 +212,7 @@ export class Example6 {
       pagination: {
         pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
         pageSize: defaultPageSize,
-        totalItems: 0
+        totalItems: 0,
       },
       presets: {
         columns: [
@@ -192,19 +236,22 @@ export class Example6 {
         sorters: [
           // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC }
+          { columnId: 'company', direction: SortDirection.DESC },
         ],
-        pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 } // if cursor based, start at page 1
+        pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 }, // if cursor based, start at page 1
       },
       backendServiceApi: {
         service: this.graphqlService,
         options: {
           datasetName: GRAPHQL_QUERY_DATASET_NAME, // the only REQUIRED property
-          addLocaleIntoQuery: true,   // optionally add current locale into the query
-          extraQueryArguments: [{     // optionally add some extra query arguments as input query arguments
-            field: 'userId',
-            value: 123
-          }],
+          addLocaleIntoQuery: true, // optionally add current locale into the query
+          extraQueryArguments: [
+            {
+              // optionally add some extra query arguments as input query arguments
+              field: 'userId',
+              value: 123,
+            },
+          ],
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
             if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
               // technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
@@ -218,7 +265,7 @@ export class Example6 {
           useCursor: this.isWithCursor, // sets pagination strategy, if true requires a call to setPageInfo() when graphql call returns
           // when dealing with complex objects, we want to keep our field name with double quotes
           // example with gender: query { users (orderBy:[{field:"gender",direction:ASC}]) {}
-          keepArgumentFieldDoubleQuotes: true
+          keepArgumentFieldDoubleQuotes: true,
         },
         // you can define the onInit callback OR enable the "executeProcessCommandOnInit" flag in the service init
         // onInit: (query) => this.getCustomerApiCall(query)
@@ -227,8 +274,8 @@ export class Example6 {
         postProcess: (result: GraphqlPaginatedResult) => {
           this.metrics = result.metrics as Metrics;
           this.displaySpinner(false);
-        }
-      } as GraphqlServiceApi
+        },
+      } as GraphqlServiceApi,
     };
   }
 
@@ -240,7 +287,7 @@ export class Example6 {
 
   displaySpinner(isProcessing: boolean) {
     this.processing = isProcessing;
-    this.status = (isProcessing)
+    this.status = isProcessing
       ? { text: 'processing...', class: 'alert alert-danger' }
       : { text: 'finished', class: 'alert alert-success' };
   }
@@ -269,14 +316,14 @@ export class Example6 {
         hasPreviousPage: paginationService.dataFrom === 0,
         hasNextPage: paginationService.dataTo === 100,
         startCursor,
-        endCursor
+        endCursor,
       };
     } else {
       pageInfo = {
         hasPreviousPage: false,
         hasNextPage: true,
         startCursor: 'A',
-        endCursor: 'B'
+        endCursor: 'B',
       };
     }
 
@@ -289,12 +336,12 @@ export class Example6 {
         [GRAPHQL_QUERY_DATASET_NAME]: {
           nodes: [],
           totalCount: 100,
-          pageInfo
-        }
-      }
+          pageInfo,
+        },
+      },
     };
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       window.setTimeout(() => {
         this.graphqlQuery = this.graphqlService.buildQuery();
         // this.graphqlQuery = this.gridOptions.backendServiceApi!.service.buildQuery();
@@ -367,7 +414,7 @@ export class Example6 {
     this.aureliaGrid.sortService.updateSorting([
       // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC }
+      { columnId: 'company', direction: SortDirection.DESC },
     ]);
     window.setTimeout(() => {
       this.aureliaGrid.paginationService?.changeItemPerPage(20);
@@ -382,7 +429,7 @@ export class Example6 {
   }
 
   async switchLanguage() {
-    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.i18n.setLocale(nextLanguage);
     this.selectedLanguage = nextLanguage;
   }

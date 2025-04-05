@@ -7,7 +7,7 @@ import { optional, resolve } from 'aurelia';
  * it must implement Slickgrid-Universal TranslaterService interface to work properly
  */
 export class TranslaterService implements UniversalTranslateService {
-  constructor(private readonly i18n: I18N | undefined = resolve(optional(I18N))) { }
+  constructor(private readonly i18n: I18N | undefined = resolve(optional(I18N))) {}
 
   /**
    * Method to return the current language used by the App

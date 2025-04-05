@@ -1,20 +1,17 @@
 <h2>
   ${title}
   <span class="float-end">
-    <a style="font-size: 18px"
-        target="_blank"
-        href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example5.ts">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example5.ts"
+    >
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      click.trigger="toggleSubTitle()"
-    >
-      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-    </button>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
 </h2>
 
 <div class="row">
@@ -46,19 +43,15 @@
 
 <div class="row">
   <div class="col-sm-4">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter"
-            click.trigger="setFiltersDynamically()">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" click.trigger="setFiltersDynamically()">
       Set Filters Dynamically
     </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting"
-            click.trigger="setSortingDynamically()">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" click.trigger="setSortingDynamically()">
       Set Sorting Dynamically
     </button>
-    <br>
+    <br />
     <span if.bind="metrics">
-      <b>Metrics:</b> ${metrics.endTime | dateFormat: 'DD MMM, h:mm:ss a'} | ${metrics.executionTime}ms |
-      ${metrics.totalItemCount}
-      items
+      <b>Metrics:</b> ${metrics.endTime | dateFormat: 'DD MMM, h:mm:ss a'} | ${metrics.executionTime}ms | ${metrics.totalItemCount} items
     </span>
   </div>
 
@@ -66,35 +59,57 @@
     <label>OData Version: </label>
     <span data-test="radioVersion">
       <label class="radio-inline control-label" for="radio2">
-        <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked value.bind="2"
-                click.trigger="setOdataVersion(2)"> 2
+        <input
+          type="radio"
+          name="inlineRadioOptions"
+          data-test="version2"
+          id="radio2"
+          checked
+          value.bind="2"
+          click.trigger="setOdataVersion(2)"
+        />
+        2
       </label>
       <label class="radio-inline control-label" for="radio4">
-        <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" value.bind="4"
-                click.trigger="setOdataVersion(4)"> 4
+        <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" value.bind="4" click.trigger="setOdataVersion(4)" />
+        4
       </label>
     </span>
     <label class="checkbox-inline control-label" for="enableCount" style="margin-left: 20px">
-      <input type="checkbox" id="enableCount" data-test="enable-count" checked.bind="isCountEnabled"
-              click.trigger="changeCountEnableFlag()">
+      <input
+        type="checkbox"
+        id="enableCount"
+        data-test="enable-count"
+        checked.bind="isCountEnabled"
+        click.trigger="changeCountEnableFlag()"
+      />
       <span style="font-weight: bold">Enable Count</span> (add to OData query)
     </label>
     <label class="checkbox-inline control-label" for="enableSelect" style="margin-left: 20px">
-      <input type="checkbox" id="enableSelect" data-test="enable-select" checked.bind="isSelectEnabled"
-              click.trigger="changeEnableSelectFlag()">
+      <input
+        type="checkbox"
+        id="enableSelect"
+        data-test="enable-select"
+        checked.bind="isSelectEnabled"
+        click.trigger="changeEnableSelectFlag()"
+      />
       <span style="font-weight: bold">Enable Select</span> (add to OData query)
     </label>
     <label class="checkbox-inline control-label" for="enableExpand" style="margin-left: 20px">
-      <input type="checkbox" id="enableExpand" data-test="enable-expand" checked.bind="isExpandEnabled"
-              click.trigger="changeEnableExpandFlag()">
+      <input
+        type="checkbox"
+        id="enableExpand"
+        data-test="enable-expand"
+        checked.bind="isExpandEnabled"
+        click.trigger="changeEnableExpandFlag()"
+      />
       <span style="font-weight: bold">Enable Expand</span> (add to OData query)
     </label>
   </div>
 </div>
 <div class="row mt-2 mb-1">
   <div class="col-md-12">
-    <button class="btn btn-outline-danger btn-sm btn-icon" data-test="throw-page-error-btn"
-            click.trigger="throwPageChangeError()">
+    <button class="btn btn-outline-danger btn-sm btn-icon" data-test="throw-page-error-btn" click.trigger="throwPageChangeError()">
       <span>Throw Error Going to Last Page... </span>
       <i class="mdi mdi-page-last"></i>
     </button>
@@ -113,14 +128,16 @@
   </div>
 </div>
 
-<aurelia-slickgrid grid-id="grid5"
-                    column-definitions.bind="columnDefinitions"
-                    grid-options.bind="gridOptions"
-                    dataset.bind="dataset"
-                    pagination-options.bind="paginationOptions"
-                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
-                    on-grid-state-changed.trigger="gridStateChanged($event.detail)"
-                    on-before-sort.trigger="handleOnBeforeSort($event)"
-                    on-before-search-change.trigger="handleOnBeforeSearchChange($event)"
-                    on-before-pagination-change.trigger="handleOnBeforePaginationChange($event)">
+<aurelia-slickgrid
+  grid-id="grid5"
+  column-definitions.bind="columnDefinitions"
+  grid-options.bind="gridOptions"
+  dataset.bind="dataset"
+  pagination-options.bind="paginationOptions"
+  on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  on-grid-state-changed.trigger="gridStateChanged($event.detail)"
+  on-before-sort.trigger="handleOnBeforeSort($event)"
+  on-before-search-change.trigger="handleOnBeforeSearchChange($event)"
+  on-before-pagination-change.trigger="handleOnBeforePaginationChange($event)"
+>
 </aurelia-slickgrid>
