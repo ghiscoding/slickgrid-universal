@@ -133,7 +133,14 @@ and is written in plain TypeScript without being bound to any framework. The imp
 It could be used as a guideline to implement it for other framework wrappers.
 
 ```bash
+# dev vanilla (default)
 pnpm run dev
+
+# dev for Angular, Aurelia, React or Vue
+pnpm run dev:angular
+pnpm run dev:aurelia
+pnpm run dev:react
+pnpm run dev:vue
 ```
 
 
