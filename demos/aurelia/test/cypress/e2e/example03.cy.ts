@@ -254,7 +254,7 @@ describe('Example 3 - Grid with Editors', () => {
   });
 
   it('should open the "Prerequisites" Filter and expect to have Task 500 & 101 in the Filter', () => {
-    cy.get('div.ms-filter.filter-prerequisites').trigger('click');
+    cy.get('div.ms-filter.filter-prerequisites').trigger('click', { force: true });
 
     cy.get('.ms-drop').find('span:nth(1)').contains('Task 101');
 
@@ -266,7 +266,7 @@ describe('Example 3 - Grid with Editors', () => {
   it('should open the "Prerequisites" Editor and expect to have Task 100 & 101 in the Editor', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(12)`)
       .should('contain', '')
-      .click();
+      .click({ force: true });
 
     cy.get('.ms-drop').find('span:nth(1)').contains('Task 101');
 
