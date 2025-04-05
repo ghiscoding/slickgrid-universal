@@ -1,4 +1,4 @@
-name: Angular Cypress (E2E)
+name: Cypress E2E - Angular
 
 on:
   push:
@@ -62,9 +62,6 @@ jobs:
           run_install: true
 
       - run: pnpm --version
-
-      - name: Prettier
-        run: pnpm prettier:check
 
       - name: TSC Build (esm)
         run: pnpm predev

@@ -1,0 +1,112 @@
+<h2>
+  <span innerhtml.bind="title"></span>
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example27.ts"
+    >
+      <span class="mdi mdi-link mdi-v-align-sub"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<div class="row" style="margin-bottom: 4px">
+  <div class="col-md-12">
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" click.trigger="loadData(500)">500 rows</button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-50k-rows-btn" click.trigger="loadData(25000)">25k rows</button>
+    <button
+      click.trigger="dynamicallyChangeFilter()"
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      data-test="change-filter-dynamically"
+    >
+      <span class="mdi mdi-filter-outline"></span>
+      <span>Dynamically Change Filter (% complete &lt; 40)</span>
+    </button>
+    <button
+      click.trigger="collapseAllWithoutEvent()"
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      data-test="collapse-all-noevent-btn"
+    >
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse All (without triggering event)</span>
+    </button>
+    <button
+      click.trigger="dynamicallyToggledFirstParent()"
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      data-test="dynamically-toggle-first-parent-btn"
+    >
+      <span>Dynamically Toggle First Parent</span>
+    </button>
+    <button
+      click.trigger="reapplyToggledItems()"
+      data-test="reapply-toggled-items-btn"
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      disabled.bind="hasNoExpandCollapseChanged"
+    >
+      <span class="mdi mdi-history"></span>
+      <span>Reapply Previous Toggled Items</span>
+    </button>
+    <div class.bind="loadingClass"></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <button click.trigger="addNewRow()" data-test="add-item-btn" class="btn btn-primary btn-xs btn-icon">
+      <span class="mdi mdi-plus color-white"></span>
+      <span>Add New Item to "Task 1" group</span>
+    </button>
+    <button click.trigger="updateFirstRow()" data-test="update-item-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+      <span class="icon mdi mdi-pencil"></span>
+      <span>Update 1st Row Item</span>
+    </button>
+    <button click.trigger="collapseAll()" data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button click.trigger="expandAll()" data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+      <span class="mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <button click.trigger="logFlatStructure()" class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset">
+      <span>Log Flat Structure</span>
+    </button>
+    <button
+      click.trigger="logHierarchicalStructure()"
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      title="console.log of the Hierarchical Tree dataset"
+    >
+      <span>Log Hierarchical Structure</span>
+    </button>
+  </div>
+</div>
+
+<br />
+
+<div id="grid-container" class="col-sm-12">
+  <aurelia-slickgrid
+    grid-id="grid27"
+    column-definitions.bind="columnDefinitions"
+    grid-options.bind="gridOptions"
+    dataset.bind="dataset"
+    instances.bind="aureliaGrid"
+    on-before-filter-change.trigger="showSpinner()"
+    on-filter-changed.trigger="hideSpinner()"
+    on-before-filter-clear.trigger="showSpinner()"
+    on-filter-cleared.trigger="hideSpinner()"
+    on-before-sort-change.trigger="showSpinner()"
+    on-sort-changed.trigger="hideSpinner()"
+    on-before-toggle-tree-collapse.trigger="showSpinner()"
+    on-toggle-tree-collapsed.trigger="hideSpinner()"
+    on-tree-full-toggle-start.trigger="showSpinner()"
+    on-tree-full-toggle-end.trigger="handleOnTreeFullToggleEnd($event.detail)"
+    on-tree-item-toggled.trigger="handleOnTreeItemToggled($event.detail)"
+  >
+  </aurelia-slickgrid>
+</div>

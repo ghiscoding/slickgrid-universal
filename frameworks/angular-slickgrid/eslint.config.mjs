@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['.angular/*', 'coverage/', 'test/jest-coverage/'],
+    ignores: ['.angular/*', 'coverage/'],
   },
   {
     extends: [

@@ -26,9 +26,19 @@
       ],
     },
     {
+      description: 'Group all Aurelia dependencies',
+      matchFileNames: ['frameworks/aurelia-slickgrid/**', 'demos/aurelia/**'],
+      groupName: 'Aurelia dependencies',
+    },
+    {
       description: 'Group all VueJS dependencies',
       matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
       groupName: 'VueJS dependencies',
+    },
+    {
+      description: 'Group all React dependencies',
+      matchFileNames: ['frameworks/slickgrid-react/**', 'demos/react/**'],
+      groupName: 'React dependencies',
     },
   ],
   ignoreDeps: ['node', 'pnpm'],

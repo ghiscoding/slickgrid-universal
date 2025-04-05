@@ -1,0 +1,62 @@
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.grey {
+  color: grey;
+}
+
+.orange {
+  color: orange;
+}
+
+.red {
+  color: red;
+}
+
+.yellow {
+  color: rgb(255, 235, 52);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.cell-menu-dropdown-outline {
+  border: 1px solid #a0a0a0;
+  border-radius: 4px;
+  width: max-content;
+  padding: 2px 14px;
+  cursor: pointer;
+  &:hover:not(.disabled) {
+    background-color: #a3a3a3;
+    color: #ffffff;
+  }
+
+  .mdi-caret-down {
+    margin-left: 5px;
+  }
+}
+
+.disabled {
+  color: #d4d4d4;
+  border: 1px solid #d8d8d8;
+}
+.slick-dark-mode {
+  .disabled {
+    border: 1px solid #616161;
+    color: #686868;
+  }
+}
+
+.row.locale {
+  margin-top: 5px;
+}
+
+span.cell-menu {
+  margin-left: 15px;
+}

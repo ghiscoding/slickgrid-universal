@@ -1,0 +1,94 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example32.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<h4 class="ml-3">Container Width (950px)</h4>
+
+<div class="row">
+  <div class="ml-2 mb-2 mr-2">
+    <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
+      <label
+        class="btn btn-sm btn-outline-secondary btn-icon"
+        class.bind="isUsingDefaultResize ? 'active' : ''"
+        data-test="autosize-columns-btn"
+      >
+        <input
+          type="radio"
+          class="btn-check"
+          name="options"
+          checked.bind="isUsingDefaultResize"
+          click.trigger="handleDefaultResizeColumns()"
+        />
+        <i class="mdi mdi-arrow-expand"></i> (default resize) by "autosizeColumns"
+      </label>
+      <label
+        class="btn btn-sm btn-outline-secondary btn-icon"
+        class.bind="isUsingDefaultResize ? '' : 'active'"
+        data-test="resize-by-content-btn"
+      >
+        <input
+          type="radio"
+          class="btn-check"
+          name="options"
+          checked.bind="!isUsingDefaultResize"
+          click.trigger="handleNewResizeColumns()"
+        />
+        <i class="mdi mdi-arrow-expand"></i> Resize by Cell Content
+      </label>
+    </div>
+  </div>
+
+  <div class="mb-2">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Basic Editing Commands">
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-icon"
+        click.trigger="setSelectedRowIds()"
+        data-test="set-dynamic-rows-btn"
+        title="Change Row Selection across multiple pages"
+      >
+        <span>Change Row Selection</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-icon"
+        data-test="toggle-readonly-btn"
+        click.trigger="toggleGridEditReadonly()"
+      >
+        <i class="mdi mdi-table-edit"></i> Toggle Readonly
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-icon" data-test="undo-last-edit-btn" click.trigger="undoLastEdit()">
+        <i class="mdi mdi-undo"></i> Undo Last Edit
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-icon" data-test="save-all-btn" click.trigger="saveAll()">
+        <span>Save All</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="smaller-container" style="width: 950px">
+  <aurelia-slickgrid
+    grid-id="grid32"
+    column-definitions.bind="columnDefinitions"
+    grid-options.bind="gridOptions"
+    dataset.bind="dataset"
+    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+    on-selected-row-ids-changed.trigger="handleOnSelectedRowIdsChanged($event.detail.args)"
+  >
+  </aurelia-slickgrid>
+</div>

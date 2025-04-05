@@ -1,0 +1,7 @@
+<div>
+  <span if.bind="model.collection">
+    <select class="form-control form-select" value.bind="selectedItem" matcher.bind="itemMatcher">
+      <option repeat.for="item of model.collection" model.bind="item">${item.name}</option>
+    </select>
+  </span>
+</div>
