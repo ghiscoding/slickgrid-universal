@@ -38,6 +38,18 @@
       "problemMatcher": []
     },
     {
+      "label": "Start Aurelia Development",
+      "type": "shell",
+      "command": "pnpm dev:aurelia",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start React Development",
+      "type": "shell",
+      "command": "pnpm dev:react",
+      "problemMatcher": []
+    },
+    {
       "label": "Start Vue Development",
       "type": "shell",
       "command": "pnpm dev:vue",

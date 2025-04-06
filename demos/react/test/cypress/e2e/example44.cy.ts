@@ -1,4 +1,4 @@
-describe('Example 33 - Column & Row Span', { retries: 1 }, () => {
+describe('Example 44 - Column & Row Span', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 30;
   const fullTitles = [
     'Title',
