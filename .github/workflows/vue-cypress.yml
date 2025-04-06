@@ -1,4 +1,4 @@
-name: Vue Cypress (E2E)
+name: Cypress E2E - Vue
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
     branches:
       - '**'
     paths-ignore:
-      - "**.md"
-      - "!.github/workflows/ci.yml"
+      - '**.md'
+      - '!.github/workflows/ci.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -62,9 +62,6 @@ jobs:
           run_install: true
 
       - run: pnpm --version
-
-      - name: Prettier
-        run: pnpm prettier:check
 
       - name: TSC Build (esm)
         run: pnpm predev

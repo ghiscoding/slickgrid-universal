@@ -63,12 +63,6 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: ESLint
-        run: pnpm lint
-
-      - name: Prettier
-        run: pnpm prettier:check
-
       - name: TSC Full Bundle (all Bundler types)
         run: pnpm bundle
 

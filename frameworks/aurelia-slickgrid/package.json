@@ -1,0 +1,73 @@
+{
+  "name": "aurelia-slickgrid",
+  "description": "Slickgrid components made available in Aurelia",
+  "version": "8.13.3",
+  "keywords": [
+    "aurelia",
+    "datagrid",
+    "datatable",
+    "plugin",
+    "slickgrid"
+  ],
+  "homepage": "https://github.com/ghiscoding/aurelia-slickgrid",
+  "bugs": {
+    "url": "https://github.com/ghiscoding/aurelia-slickgrid/issues"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/aurelia-slickgrid.git",
+    "directory": "packages/aurelia-slickgrid"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "aurelia:dev": "tsc --watch",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
+    "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
+    "copy-i18n:dist": "copyfiles src/assets/i18n/**/*.* dist/i18n --up 3 --stat",
+    "pack": "npm pack"
+  },
+  "peerDependencies": {
+    "aurelia": "^2.0.0-beta.23"
+  },
+  "dependencies": {
+    "@aurelia/i18n": "^2.0.0-beta.23",
+    "@aurelia/runtime": "^2.0.0-beta.23",
+    "@aurelia/runtime-html": "^2.0.0-beta.23",
+    "@formkit/tempo": "catalog:",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/custom-footer-component": "workspace:*",
+    "@slickgrid-universal/empty-warning-component": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/pagination-component": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
+    "dequal": "catalog:",
+    "sortablejs": "catalog:"
+  },
+  "devDependencies": {
+    "dompurify": "catalog:",
+    "native-copyfiles": "catalog:",
+    "rimraf": "catalog:",
+    "tslib": "catalog:",
+    "typescript": "catalog:"
+  }
+}
