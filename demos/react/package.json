@@ -1,0 +1,108 @@
+{
+  "name": "slickgrid-react-demo",
+  "version": "5.13.3",
+  "description": "Slickgrid components made available in React",
+  "keywords": [
+    "react",
+    "datagrid",
+    "datatable",
+    "plugin",
+    "slickgrid"
+  ],
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "homepage": "https://github.com/ghiscoding/slickgrid-react",
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-react/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-react.git"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "scripts": {
+    "react:dev": "vite",
+    "react:preview": "vite preview",
+    "react:cypress": "cypress open --config-file test/cypress.config.ts",
+    "build": "vite build"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "files": [
+    "/dist",
+    "/src/slickgrid-react"
+  ],
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/composite-editor-component": "workspace:*",
+    "@slickgrid-universal/custom-footer-component": "workspace:*",
+    "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",
+    "@slickgrid-universal/empty-warning-component": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/excel-export": "workspace:*",
+    "@slickgrid-universal/graphql": "workspace:*",
+    "@slickgrid-universal/odata": "workspace:*",
+    "@slickgrid-universal/pagination-component": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/rxjs-observable": "workspace:*",
+    "@slickgrid-universal/text-export": "workspace:*",
+    "dequal": "^2.0.3",
+    "i18next": "^24.2.3",
+    "slickgrid-react": "workspace:*",
+    "sortablejs": "^1.15.6"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@4tw/cypress-drag-drop": "catalog:",
+    "@faker-js/faker": "catalog:",
+    "@fnando/sparkline": "catalog:",
+    "@formkit/tempo": "catalog:",
+    "@popperjs/core": "catalog:",
+    "@types/fnando__sparkline": "catalog:",
+    "@types/i18next-xhr-backend": "^1.4.2",
+    "@types/node": "catalog:",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.1",
+    "@types/sortablejs": "catalog:",
+    "@types/text-encoding-utf-8": "^1.0.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "bootstrap": "catalog:",
+    "concurrently": "^9.1.2",
+    "custom-event-polyfill": "^1.0.7",
+    "cypress": "catalog:",
+    "cypress-real-events": "catalog:",
+    "dompurify": "catalog:",
+    "globals": "^16.0.0",
+    "i18next-http-backend": "^3.0.2",
+    "native-copyfiles": "^0.3.2",
+    "npm-run-all2": "^7.0.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-i18next": "^15.4.1",
+    "react-router-dom": "^7.4.1",
+    "regenerator-runtime": "^0.14.1",
+    "rimraf": "catalog:",
+    "rxjs": "catalog:",
+    "sass": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

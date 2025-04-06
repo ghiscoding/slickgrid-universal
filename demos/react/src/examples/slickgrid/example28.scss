@@ -1,0 +1,54 @@
+// @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+
+#grid28 {
+  .slick-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .avg-total {
+    color: #a365ff;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .total-suffix {
+    margin-left: 10px;
+  }
+  .hidden {
+    display: none;
+  }
+
+  .mdi-file-pdf-outline {
+    color: #f14668;
+    opacity: 0.9;
+  }
+
+  .mdi-folder, .mdi-folder-open {
+    color: #ffa500;
+    opacity: 0.9;
+  }
+  .mdi-file-music-outline {
+    color: #3298dc;
+    opacity: 0.9;
+  }
+  .mdi-file-excel-outline {
+    color: #1E9F75;
+    opacity: 0.9;
+  }
+  .mdi-file-document-outline,
+  .mdi-file-question-outline {
+    color: #686868;
+    opacity: 0.9;
+  }
+
+  .display-inline-block {
+    display: inline-block;
+  }
+}
+
+// create a few 15px indentation multiplied by level number
+@for $i from 1 through 6 {
+  .width-#{$i*15}px { width: #{$i * 15}px; }
+}

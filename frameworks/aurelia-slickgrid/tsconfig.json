@@ -6,10 +6,7 @@
     "customConditions": ["module"],
     "target": "es2022",
     "lib": ["esnext", "dom"],
-    "typeRoots": [
-      "../typings",
-      "../../node_modules/@types"
-    ],
+    "typeRoots": ["../typings", "../../node_modules/@types"],
     "declaration": true,
     "declarationDir": "dist",
     "esModuleInterop": true,
@@ -29,13 +26,5 @@
     "outDir": "dist"
   },
   "include": ["src"],
-  "exclude": [
-    ".vscode",
-    "dist",
-    "doc",
-    "node_modules",
-    "test",
-    "karma.conf.ts",
-    "**/*.spec.ts"
-  ]
+  "exclude": [".vscode", "dist", "doc", "node_modules", "test", "**/*.spec.ts"]
 }

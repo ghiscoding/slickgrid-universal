@@ -31,14 +31,14 @@
       groupName: 'Aurelia dependencies',
     },
     {
-      description: 'Group all VueJS dependencies',
-      matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
-      groupName: 'VueJS dependencies',
-    },
-    {
       description: 'Group all React dependencies',
       matchFileNames: ['frameworks/slickgrid-react/**', 'demos/react/**'],
       groupName: 'React dependencies',
+    },
+    {
+      description: 'Group all VueJS dependencies',
+      matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
+      groupName: 'VueJS dependencies',
     },
   ],
   ignoreDeps: ['node', 'pnpm'],
