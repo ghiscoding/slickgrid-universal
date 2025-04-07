@@ -45,6 +45,16 @@
       }
     },
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "React - Chrome Debugger",
+      "url": "http://localhost:8000",
+      "webRoot": "${workspaceFolder}/demos/aurelia",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
       "type": "msedge",
       "request": "launch",
       "name": "Vue - Edge Debugger",

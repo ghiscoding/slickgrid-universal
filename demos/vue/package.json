@@ -30,7 +30,6 @@
     "bootstrap": "^5.3.3",
     "dompurify": "catalog:",
     "i18next": "catalog:",
-    "i18next-http-backend": "^3.0.2",
     "i18next-vue": "^5.2.0",
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",

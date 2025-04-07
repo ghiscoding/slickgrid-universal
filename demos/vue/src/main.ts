@@ -3,7 +3,6 @@ import 'bootstrap';
 import './styles.scss';
 
 import i18next from 'i18next';
-import Backend from 'i18next-http-backend';
 import I18NextVue from 'i18next-vue';
 import { createApp } from 'vue';
 
@@ -13,7 +12,7 @@ import localeFr from './assets/locales/fr/translation.json';
 import { router } from './router/index.js';
 
 // optionally lazy load translation JSON files
-i18next.use(Backend).init({
+i18next.init({
   // the translations
   // (tip move them in a JSON file and import them,
   // backend: {
