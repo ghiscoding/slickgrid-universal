@@ -1,5 +1,5 @@
 # CI Build & Vitest Unit Tests (ship smaller name for CI badge)
-name: Universal - Unit Tests
+name: Universal Build & Unit Tests
 on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch on Push and any branches on PR
