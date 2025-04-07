@@ -1,4 +1,4 @@
-name: Cypress E2E - Angular
+name: Framework Tests - React
 
 on:
   push:
@@ -66,26 +66,22 @@ jobs:
       - name: TSC Build (esm)
         run: pnpm predev
 
-      - name: Run Vitest unit tests
-        if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
-        run: pnpm test:angular:coverage
-
-      - name: Angular-Slickgrid Framework Build
-        run: pnpm angular:build:framework
+      - name: Slickgrid-React Framework Build
+        run: pnpm react:build:framework
 
       - name: Website Dev Build (served for Cypress)
-        run: pnpm angular:build:demo
+        run: pnpm react:build:demo
 
       - name: Start HTTP Server
-        run: pnpm angular:serve &
+        run: pnpm react:serve &
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           install: false
-          working-directory: frameworks/angular-slickgrid
-          # start: pnpm angular:serve
-          wait-on: 'http://localhost:4300'
+          working-directory: demos/react
+          # start: pnpm react:serve
+          wait-on: 'http://localhost:8000'
           config-file: test/cypress.config.ts
           browser: chrome
           record: false

@@ -1,4 +1,4 @@
-name: Cypress E2E - Vue
+name: Framework Tests - Aurelia
 
 on:
   push:
@@ -66,23 +66,23 @@ jobs:
       - name: TSC Build (esm)
         run: pnpm predev
 
-      - name: Slickgrid-Vue Framework Build
-        run: pnpm vue:build:framework
+      - name: Aurelia-Slickgrid Framework Build
+        run: pnpm aurelia:build:framework
 
       - name: Website Dev Build (served for Cypress)
-        run: pnpm vue:build:demo
+        run: pnpm aurelia:build:demo
 
       - name: Start HTTP Server
-        run: pnpm vue:serve &
+        run: pnpm aurelia:serve &
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           install: false
-          working-directory: demos/vue
-          # start: pnpm vue:serve
-          wait-on: 'http://localhost:7000'
-          config-file: test/cypress.config.mjs
+          working-directory: demos/aurelia
+          # start: pnpm aurelia:serve
+          wait-on: 'http://localhost:9000'
+          config-file: test/cypress.config.ts
           browser: chrome
           record: false
         env:

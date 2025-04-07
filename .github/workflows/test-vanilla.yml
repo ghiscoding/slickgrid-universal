@@ -1,4 +1,4 @@
-name: Cypress E2E - Aurelia
+name: Native Tests - Vanilla
 
 on:
   push:
@@ -66,25 +66,23 @@ jobs:
       - name: TSC Build (esm)
         run: pnpm predev
 
-      - name: Aurelia-Slickgrid Framework Build
-        run: pnpm aurelia:build:framework
-
       - name: Website Dev Build (served for Cypress)
-        run: pnpm aurelia:build:demo
+        run: pnpm build:dev
 
       - name: Start HTTP Server
-        run: pnpm aurelia:serve &
+        run: pnpm vanilla:serve:demo &
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           install: false
-          working-directory: demos/aurelia
-          # start: pnpm aurelia:serve
-          wait-on: 'http://localhost:9000'
+          # working-directory: packages/dnd
+          # start: pnpm vanilla:serve:demo
+          # start: pnpm serve:vite
+          wait-on: 'http://localhost:8888'
           config-file: test/cypress.config.ts
           browser: chrome
-          record: false
+          record: true
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -97,3 +95,20 @@ jobs:
         with:
           name: cypress-screenshots
           path: test/cypress/screenshots
+
+      # deploy (re-publish) GitHub demo page with a Prod build but only when merging to "master" branch
+      # and the commit message contains the text "chore(release)"
+      - name: Website Prod Build (GitHub demo site)
+        run: pnpm vanilla:build:demo
+        if: |
+          github.ref == 'refs/heads/master' &&
+          (contains(github.event.head_commit.message, 'chore(release)') || contains(github.event.head_commit.message, '[refresh gh-pages]'))
+
+      - name: Deploy to gh-pages
+        if: |
+          github.ref == 'refs/heads/master' &&
+          (contains(github.event.head_commit.message, 'chore(release)') || contains(github.event.head_commit.message, '[refresh gh-pages]'))
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./website
