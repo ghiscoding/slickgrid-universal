@@ -1,6 +1,5 @@
 import 'bootstrap';
 import i18n from 'i18next';
-import Backend from 'i18next-http-backend';
 import { createRoot } from 'react-dom/client';
 import { initReactI18next } from 'react-i18next';
 import { HashRouter } from 'react-router-dom';
@@ -11,7 +10,6 @@ import localeFr from './assets/locales/fr/translation.json';
 import './styles.scss';
 
 i18n
-  .use(Backend)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     // the translations

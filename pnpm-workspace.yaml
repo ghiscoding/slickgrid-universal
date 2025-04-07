@@ -13,6 +13,7 @@ catalog:
   '@types/node': ^22.13.14
   '@types/sortablejs': ^1.15.8
   bootstrap: ^5.3.3
+  copyfiles: ^2.4.1
   cross-env: ^7.0.3
   cypress: ^14.2.1
   cypress-real-events: ^1.14.0

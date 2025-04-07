@@ -52,7 +52,7 @@
     "build": "tsc",
     "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
-    "copy-i18n:dist": "copyfiles src/assets/i18n/**/*.* dist/i18n --up 3 --stat",
+    "copy-i18n:dist": "copyfiles src/assets/locales/**/*.* dist/i18n --up 3 --stat",
     "pack": "npm pack"
   },
   "browserslist": [
@@ -92,7 +92,6 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@types/fnando__sparkline": "catalog:",
-    "@types/i18next-xhr-backend": "^1.4.2",
     "@types/node": "catalog:",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",
@@ -104,7 +103,6 @@
     "custom-event-polyfill": "^1.0.7",
     "dompurify": "catalog:",
     "globals": "^16.0.0",
-    "i18next-http-backend": "^3.0.2",
     "native-copyfiles": "^0.3.2",
     "npm-run-all2": "^7.0.2",
     "react": "^19.1.0",
