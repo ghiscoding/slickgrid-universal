@@ -20,8 +20,8 @@ In cases, where depending on your data you might want to update the options (e.g
 ```html
 <angular-slickgrid
      gridId="grid1"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

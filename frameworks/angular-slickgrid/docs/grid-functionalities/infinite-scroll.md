@@ -24,8 +24,8 @@ When used with a local JSON dataset, the Infinite Scroll is a feature that must 
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onScroll)="handleOnScroll($event.$detail.args)"
@@ -83,8 +83,8 @@ We'll use the OData Backend Service to demo Infinite Scroll with a Backend Servi
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

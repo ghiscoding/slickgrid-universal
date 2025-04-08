@@ -28,8 +28,8 @@ Since version `1.x`, we can now access the Slick `Grid` & `DataView` objects dir
 </span>
 
 <angular-slickgrid gridId="grid2"
-          [columnDefinitions]="columnDefinitions"
-          [gridOptions]="gridOptions"
+          [columns]="columnDefinitions"
+          [options]="gridOptions"
           [dataset]="dataset"
           (onAngularGridCreated)="angularGridReady($event.detail">
 </angular-slickgrid>

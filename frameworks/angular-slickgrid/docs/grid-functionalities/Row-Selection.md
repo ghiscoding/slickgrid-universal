@@ -25,8 +25,8 @@ For a single row selection, you need to have `enableCellNavigation: true`, `enab
 #### View
 ```html
 <angular-slickgrid gridId="grid4"
-      [columnDefinitions]="columnDefinitions"
-      [gridOptions]="gridOptions"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
       [dataset]="dataset"
       (onSelectedRowsChanged)="onSelectedRowsChanged($event.detail.eventData, $event.detail.args)">
 </angular-slickgrid>
@@ -58,8 +58,8 @@ As for multiple row selections, you need to provide an extra grid option of `row
 #### View
 ```html
 <angular-slickgrid gridId="grid4"
-      [columnDefinitions]="columnDefinitions"
-      [gridOptions]="gridOptions"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
       [dataset]="dataset"
       (onSelectedRowsChanged)="onSelectedRowsChanged($event.detail.eventData, $event.detail.args)">
 </angular-slickgrid>
@@ -97,8 +97,8 @@ SlickGrid is so powerful and customizable, you could if you wish mix the multipl
 #### View
 ```html
 <angular-slickgrid gridId="grid4"
-      [columnDefinitions]="columnDefinitions"
-      [gridOptions]="gridOptions"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
       [dataset]="dataset"
       (onSelectedRowsChanged)="onSelectedRowsChanged($event.detail.eventData, $event.detail.args)"
       (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)">
@@ -154,8 +154,8 @@ When having an external button that you want to work only when there's row selec
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <angular-slickgrid gridId="grid2"
-          [columnDefinitions]="columnDefinitions"
-          [gridOptions]="gridOptions"
+          [columns]="columnDefinitions"
+          [options]="gridOptions"
           [dataset]="dataset"
           (onSelectedRowsChanged)="handleOnSelectedRowsChanged($event.detail.args)">
 </angular-slickgrid>
@@ -171,8 +171,8 @@ handleOnSelectedRowsChanged(args) {
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <angular-slickgrid gridId="grid2"
-          [columnDefinitions]="columnDefinitions"
-          [gridOptions]="gridOptions"
+          [columns]="columnDefinitions"
+          [options]="gridOptions"
           [dataset]="dataset"
           (onGridStateChanged)="handleOngridStateChanged($event.detail.args)">
 </angular-slickgrid>
@@ -192,8 +192,8 @@ You can change which row(s) are selected by using the built-in SlickGrid method 
 
 ```html
 <angular-slickgrid gridId="grid2"
-          [columnDefinitions]="columnDefinitions"
-          [gridOptions]="gridOptions"
+          [columns]="columnDefinitions"
+          [options]="gridOptions"
           [dataset]="dataset"
           (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>
@@ -223,8 +223,8 @@ The reason is because the Row Selection (checkbox) plugin is a special column an
 
 ```html
 <angular-slickgrid gridId="grid17"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

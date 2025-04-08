@@ -192,8 +192,8 @@ define Angular-Slickgrid in your View
 ```html
 <div class="container">
   <angular-slickgrid gridId="grid1"
-            [columnDefinitions]="columnDefinitions"
-            [gridOptions]="gridOptions"
+            [columns]="columnDefinitions"
+            [options]="gridOptions"
             [dataset]="dataset">
   </angular-slickgrid>
 </div>

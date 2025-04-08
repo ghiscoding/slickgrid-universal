@@ -10,7 +10,7 @@ You can add Header and/or Footer to your grid by using `ng-template` within your
 ##### Component
 
 ```html
-<angular-slickgrid gridId="grid1" [columnDefinitions]="columnDefinitions" [gridOptions]="gridOptions" [dataset]="dataset">
+<angular-slickgrid gridId="grid1" [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset">
   <ng-template #slickgridHeader>
     <h3>Grid with header and footer slot</h3>
   </ng-template>

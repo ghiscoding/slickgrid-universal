@@ -25,7 +25,7 @@ Please note that you need to provide the `id` by yourself and remember that it h
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onCellChange)="onCellChanged($event.detail.eventData, $event.detail.args)"
      (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)"
-     [columnDefinitions]="columnDefinitions" [gridOptions]="gridOptions" [dataset]="dataset">
+     [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset">
 </angular-slickgrid>
 ```
 
@@ -60,14 +60,14 @@ export class GridBasicComponent implements OnInit {
 ```
 
 #### Add Item Position (top/bottom)
-When adding an item, you can add it on top (default) of the grid or at the bottom of the grid. In order to change that, you can use the `position` property. 
+When adding an item, you can add it on top (default) of the grid or at the bottom of the grid. In order to change that, you can use the `position` property.
 ```ts
 // add the item to the end of grid
 this.angularGrid.gridService.addItem(newItem, { position: 'bottom' });
 ```
 
 #### Change default flags
-When adding an item, you have access to change any of the default flags through the second argument of `addItem` method. 
+When adding an item, you have access to change any of the default flags through the second argument of `addItem` method.
 ```ts
 // add the item to the end of grid
 this.angularGrid.gridService.addItem(newItem, {
@@ -81,15 +81,15 @@ this.angularGrid.gridService.addItem(newItem, {
 ```
 
 ### Delete an Item (row)
-To delete a row, you can use `deleteItem(s)` and the pass the entire object(s) or use `deleteItemById(s) in which you need to provide the object `id` to delete and the method will find it in the grid and remove it from the grid. Also please note that it's only deleting from the grid (by removing it from the DataView), meaning that it won't remove it from your database. 
+To delete a row, you can use `deleteItem(s)` and the pass the entire object(s) or use `deleteItemById(s) in which you need to provide the object `id` to delete and the method will find it in the grid and remove it from the grid. Also please note that it's only deleting from the grid (by removing it from the DataView), meaning that it won't remove it from your database.
 
 ##### View
 ```html
 <angular-slickgrid gridId="grid2"
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)"
-     [columnDefinitions]="columnDefinitions" 
-     [gridOptions]="gridOptions" 
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset">
 </angular-slickgrid>
 ```
@@ -124,7 +124,7 @@ export class GridBasicComponent implements OnInit {
 ```
 
 #### Change default flags
-When adding an item, you have access to change any of the default flags through the second argument of `addItem` method. 
+When adding an item, you have access to change any of the default flags through the second argument of `addItem` method.
 ```ts
 // add the item to the end of grid
 this.angularGrid.gridService.deleteItemById(123, {
@@ -162,7 +162,7 @@ export class GridBasicComponent implements OnInit {
 ```
 
 #### Change default flags
-When adding an item, you have access to change any of the default flags through the second argument of `addItem` method. 
+When adding an item, you have access to change any of the default flags through the second argument of `addItem` method.
 ```ts
 // add the item to the end of grid
 this.angularGrid.gridService.updateItem(newItem, {
@@ -175,7 +175,7 @@ this.angularGrid.gridService.updateItem(newItem, {
 ```
 
 ### Upsert an Item (row)
-Upsert will do an Insert when not found or update if it found the item already exist in the grid. 
+Upsert will do an Insert when not found or update if it found the item already exist in the grid.
 
 ##### Component
 ```typescript
@@ -205,11 +205,11 @@ export class GridBasicComponent implements OnInit {
 ### CRUD Default Option Flags
 All the CRUD methods have default option flags that can be changed which will do certain actions. The default option flags are the following for each of the CRUD method (`upsert` will use the flags of the insert or the update depending on which method it calls).
 ```ts
-const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { 
+const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = {
   triggerEvent: true  // do we want to trigger an event after the insert
 };
 
-const GridServiceInsertOptionDefaults: GridServiceInsertOption = { 
+const GridServiceInsertOptionDefaults: GridServiceInsertOption = {
   highlightRow: true, // do we want to highlight the row after the insert
   position: 'top',    // which position of the grid to add the item
   resortGrid: false,  // do we want to resort the grid after the insert
@@ -217,7 +217,7 @@ const GridServiceInsertOptionDefaults: GridServiceInsertOption = {
   triggerEvent: true  // do we want to trigger an event after the insert
 };
 
-const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { 
+const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = {
   highlightRow: true,       // do we want to highlight the row after the update
   selectRow: false,         // do we want to select the row after the update
   scrollRowIntoView: false, // do we want to scroll the row into the viewport after the update

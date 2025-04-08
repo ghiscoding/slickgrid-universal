@@ -325,8 +325,8 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     </div>
   <angular-slickgrid
     gridId="grid1"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset">
   </angular-slickgrid>`;
 

@@ -61,8 +61,8 @@
 
   <angular-slickgrid
     gridId="grid40"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"
     (onSort)="handleOnSort()"

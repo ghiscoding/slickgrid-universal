@@ -34,8 +34,8 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
     gridId="common-grid"
     #angularSlickGrid
     (onAngularGridCreated)="gridReady($event.detail)"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
   >
   </angular-slickgrid>`,

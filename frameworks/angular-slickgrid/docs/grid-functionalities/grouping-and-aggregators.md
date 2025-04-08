@@ -37,8 +37,8 @@ One of the very first thing that you need to do is to provide the `SlickGrid Dat
 ```html
 <angular-slickgrid
     gridId="grid2"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

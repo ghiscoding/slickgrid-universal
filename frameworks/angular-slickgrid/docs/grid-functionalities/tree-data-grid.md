@@ -39,8 +39,8 @@ For example, we can see below is that we have a regular flat dataset with items 
 ###### View
 ```html
   <angular-slickgrid gridId="grid1"
-                     [columnDefinitions]="columnDefinitions"
-                     [gridOptions]="gridOptions"
+                     [columns]="columnDefinitions"
+                     [options]="gridOptions"
                      [dataset]="dataset"
                      (onAngularGridCreated)="angularGridReady($event.detail)">
   </angular-slickgrid>
@@ -104,8 +104,8 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### View
 ```html
 <angular-slickgrid gridId="grid1"
-                    [columnDefinitions]="columnDefinitions"
-                    [gridOptions]="gridOptions"
+                    [columns]="columnDefinitions"
+                    [options]="gridOptions"
                     [datasetHierarchical]="datasetHierarchical"
                     (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

@@ -56,8 +56,8 @@ export class GridComponent implements OnInit {
 
 ```html
 <angular-slickgrid gridId="grid2"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset">
 </angular-slickgrid>
 ```

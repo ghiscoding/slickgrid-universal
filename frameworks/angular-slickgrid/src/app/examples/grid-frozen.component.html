@@ -54,8 +54,8 @@
   <angular-slickgrid
     gridId="grid20"
     gridWidth="875"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onValidationError)="onValidationError($event.detail.eventData, $event.detail.args)"
     (onAngularGridCreated)="angularGridReady($event.detail)"

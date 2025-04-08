@@ -93,8 +93,8 @@
 
   <angular-slickgrid
     gridId="grid30"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"
     (onBeforeEditCell)="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"

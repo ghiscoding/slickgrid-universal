@@ -17,15 +17,14 @@
     <tabset>
       <tab heading="Javascript" id="javascript" data-test="javascript-tab">
         <h4>Grid 1 - Load Local Data</h4>
-        <angular-slickgrid gridId="grid1" [columnDefinitions]="columnDefinitions1" [gridOptions]="gridOptions1" [dataset]="dataset1">
-        </angular-slickgrid>
+        <angular-slickgrid gridId="grid1" [columns]="columnDefinitions1" [options]="gridOptions1" [dataset]="dataset1"> </angular-slickgrid>
       </tab>
       <tab heading="Http-Client" data-test="http-tab" (selectTab)="resizeGrid2()">
         <h4>Grid 2 - Load a JSON dataset through Http-Client</h4>
         <angular-slickgrid
           gridId="grid2"
-          [columnDefinitions]="columnDefinitions2"
-          [gridOptions]="gridOptions2"
+          [columns]="columnDefinitions2"
+          [options]="gridOptions2"
           [dataset]="dataset2"
           (onAngularGridCreated)="angularGrid2Ready($event.detail)"
         >

@@ -243,8 +243,8 @@ If you have lots of data, you might want to show a spinner telling the user that
 
 <angular-slickgrid gridId="grid2"
                      [dataset]="dataset"
-                     [columnDefinitions]="columnDefinitions"
-                     [gridOptions]="gridOptions"
+                     [columns]="columnDefinitions"
+                     [options]="gridOptions"
                      (onBeforeExportToExcel)="processing = true"
                      (onAfterExportToExcel)="processing = false"
                      (onAngularGridCreated)="angularGridReady($event.detail)">

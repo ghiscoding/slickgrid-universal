@@ -114,8 +114,8 @@ You can update/change the Filters dynamically (on the fly) via the `updateFilter
 </button>
 
 <angular-slickgrid gridId="grid1"
-  [columnDefinitions]="columnDefinitions"
-  [gridOptions]="gridOptions"
+  [columns]="columnDefinitions"
+  [options]="gridOptions"
   [dataset]="dataset"
   (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

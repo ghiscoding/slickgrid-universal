@@ -28,8 +28,8 @@
   <div class="col-sm-12">
     <angular-slickgrid
       gridId="grid9"
-      [columnDefinitions]="columnDefinitions"
-      [gridOptions]="gridOptions"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
       [dataset]="dataset"
       (onAngularGridCreated)="angularGridReady($event.detail)"
     >

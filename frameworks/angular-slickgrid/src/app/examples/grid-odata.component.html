@@ -109,8 +109,8 @@
 
   <angular-slickgrid
     gridId="grid5"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [paginationOptions]="paginationOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"

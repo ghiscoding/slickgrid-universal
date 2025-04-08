@@ -23,8 +23,8 @@ All you need to do is enable the Grid Option `enableAutoResize: true` and provid
 ```html
 <div id="demo-container">
    <angular-slickgrid gridId="grid1"
-              [columnDefinitions]="columnDefinitions"
-              [gridOptions]="gridOptions"
+              [columns]="columnDefinitions"
+              [options]="gridOptions"
               [dataset]="dataset">
     </angular-slickgrid>
 </div>
@@ -80,8 +80,8 @@ User can pause the resizer at any time and later resume the auto-resize. This mi
   </button>
 
   <angular-slickgrid gridId="grid2"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
   </angular-slickgrid>
@@ -165,8 +165,8 @@ For example you could add a resize handle to the grid container (shown on the bo
 ```html
 <div id="demo-container" style="resize:both; overflow:auto;">
    <angular-slickgrid gridId="grid1"
-              [columnDefinitions]="columnDefinitions"
-              [gridOptions]="gridOptions"
+              [columns]="columnDefinitions"
+              [options]="gridOptions"
               [dataset]="dataset">
     </angular-slickgrid>
 </div>
