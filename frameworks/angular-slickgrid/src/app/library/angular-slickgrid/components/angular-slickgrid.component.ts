@@ -394,7 +394,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   ngAfterViewInit() {
     if (!this.columns) {
       throw new Error(
-        'Using `<angular-slickgrid>` requires [columnDefinitions], it seems that you might have forgot to provide the missing bindable input.'
+        'Using `<angular-slickgrid>` requires [columns], it seems that you might have forgot to provide the missing bindable input.'
       );
     }
     this.initialization(this._eventHandler);
