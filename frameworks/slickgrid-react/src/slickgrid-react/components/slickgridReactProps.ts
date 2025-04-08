@@ -52,7 +52,6 @@ import type {
   SlickDataView,
   SlickGrid,
   SlickPluginList,
-  TranslaterService,
   SlickRange,
   GridMenuCommandItemCallbackArgs,
   GridMenuEventWithElementCallbackArgs,
@@ -62,13 +61,15 @@ import type {
   MenuFromCellCallbackArgs,
   MenuOptionItemCallbackArgs,
 } from '@slickgrid-universal/common';
+
 import type { SlickgridReactInstance } from '../models/index.js';
+import type { TranslaterI18NextService } from '../services/translaterI18Next.service.js';
 
 export interface SlickgridReactProps {
   header?: React.ReactElement;
   footer?: React.ReactElement;
   containerService: ContainerService;
-  translaterService: TranslaterService;
+  translaterService?: TranslaterI18NextService;
   customDataView?: SlickDataView;
   dataset: any[];
   datasetHierarchical?: any[] | null;
