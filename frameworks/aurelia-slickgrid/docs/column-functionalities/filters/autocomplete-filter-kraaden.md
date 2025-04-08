@@ -20,8 +20,8 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
 ```
@@ -85,8 +85,8 @@ You could also use external 3rd party Web API (can be JSONP query or regular JSO
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
 ```

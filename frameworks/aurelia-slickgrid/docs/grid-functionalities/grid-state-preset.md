@@ -28,8 +28,8 @@ You can get the `Grid State` at any point in time. However if you wish to save t
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefs"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefs"
+    options.bind="gridOptions"
     dataset.bind="myDataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>
@@ -158,8 +158,8 @@ Examples
 ```html
 <aurelia-slickgrid grid-id="grid1" dataview.bind="dataview" grid.bind="gridObj"
     dataset.bind="dataset"
-    grid-options.bind="gridOptions"
-    column-definitions.bind="columnDefinitions"
+    options.bind="gridOptions"
+    columns.bind="columnDefinitions"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
     on-grid-state-service-changed.trigger="gridStateChanged($event.detail)">
   </aurelia-slickgrid>

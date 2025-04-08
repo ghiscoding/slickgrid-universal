@@ -21,8 +21,8 @@ handleOnCellChange(e, args) {
 <!-- 2. with CustomEvent in the View -->
 <aurelia-slickgrid
   grid-id="gridId"
-  column-definitions.bind="columnDefs"
-  grid-options.bind="gridOptions"
+  columns.bind="columnDefs"
+  options.bind="gridOptions"
   dataset.bind="myDataset"
   on-cell-change.trigger="handleOnCellChange($event.detail)">
 </aurelia-slickgrid>
@@ -44,8 +44,8 @@ handleOnHeaderMenuCommand(e) {
 <!-- 2. with CustomEvent in the View -->
 <aurelia-slickgrid
   grid-id="gridId"
-  column-definitions.bind="columnDefs"
-  grid-options.bind="gridOptions"
+  columns.bind="columnDefs"
+  options.bind="gridOptions"
   dataset.bind="myDataset"
   on-header-menu-command.trigger="handleOnHeaderMenuCommand($event.detail.eventData, $event.detail.args)">
 </aurelia-slickgrid>

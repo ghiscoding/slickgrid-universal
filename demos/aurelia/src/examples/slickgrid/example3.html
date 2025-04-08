@@ -96,8 +96,8 @@
 <div id="grid-container" class="col-sm-12">
   <aurelia-slickgrid
     grid-id="grid3"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset"
     instances.bind="aureliaGrid"
     on-cell-change.trigger="onCellChanged($event.detail.eventData, $event.detail.args)"

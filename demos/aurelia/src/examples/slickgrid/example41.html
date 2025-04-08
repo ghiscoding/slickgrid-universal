@@ -32,8 +32,8 @@
     <div class="col">
       <aurelia-slickgrid
         grid-id="grid41"
-        column-definitions.bind="columnDefinitions"
-        grid-options.bind="gridOptions"
+        columns.bind="columnDefinitions"
+        options.bind="gridOptions"
         dataset.bind="dataset"
         on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
         on-drag-init.trigger="handleOnDragInit($event.detail.eventData)"

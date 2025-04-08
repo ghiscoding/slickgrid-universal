@@ -24,8 +24,8 @@ All you need to do is enable the Grid Option `enableAutoResize: true` and provid
 <div class="demo-container">
     <aurelia-slickgrid
         grid-id="gridId"
-        column-definitions.bind="columnDefinitions"
-        grid-options.bind="gridOptions"
+        columns.bind="columnDefinitions"
+        options.bind="gridOptions"
         dataset.bind="dataset">
     </aurelia-slickgrid>
 </div>
@@ -82,8 +82,8 @@ User can pause the resizer at any time and later resume the auto-resize. This mi
 
   <aurelia-slickgrid
       grid-id="gridId"
-      column-definitions.bind="columnDefinitions"
-      grid-options.bind="gridOptions"
+      columns.bind="columnDefinitions"
+      options.bind="gridOptions"
       dataset.bind="dataset"
       on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
   </aurelia-slickgrid>
@@ -168,8 +168,8 @@ For example you could add a resize handle to the grid container (shown on the bo
 <div id="demo-container" style="resize:both; overflow:auto;">
    <aurelia-slickgrid
         grid-id="gridId"
-        column-definitions.bind="columnDefinitions"
-        grid-options.bind="gridOptions"
+        columns.bind="columnDefinitions"
+        options.bind="gridOptions"
         dataset.bind="dataset">
     </aurelia-slickgrid>
 </div>

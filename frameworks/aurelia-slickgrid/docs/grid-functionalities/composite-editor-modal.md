@@ -370,8 +370,8 @@ There are multiple options that you can change to change the UI design a bit, he
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid30"
-                   column-definitions.bind="columnDefinitions"
-                   grid-options.bind="gridOptions"
+                   columns.bind="columnDefinitions"
+                   options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)">
 </aurelia-slickgrid>
@@ -417,8 +417,8 @@ The example below shows code sample for all 3 supported editors AutoComplete, Da
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid30"
-                   column-definitions.bind="columnDefinitions"
-                   grid-options.bind="gridOptions"
+                   columns.bind="columnDefinitions"
+                   options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)">
 </aurelia-slickgrid>
@@ -457,8 +457,8 @@ There are 2 ways to do it
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid30"
-                   column-definitions.bind="columnDefinitions"
-                   grid-options.bind="gridOptions"
+                   columns.bind="columnDefinitions"
+                   options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)">
 </aurelia-slickgrid>

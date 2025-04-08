@@ -52,8 +52,8 @@
 
 <aurelia-slickgrid
   grid-id="grid12"
-  column-definitions.bind="columnDefinitions"
-  grid-options.bind="gridOptions"
+  columns.bind="columnDefinitions"
+  options.bind="gridOptions"
   dataset.bind="dataset"
   on-grid-state-changed.trigger="gridStateChanged($event.detail)"
   on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"

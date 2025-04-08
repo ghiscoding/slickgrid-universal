@@ -36,8 +36,8 @@ One of the very first thing that you need to do is to provide the `SlickGrid Dat
 ```html
 <aurelia-slickgrid
    grid-id="grid1"
-   column-definitions.bind="columnDefinitions"
-   grid-options.bind="gridOptions" dataset.bind="dataset"
+   columns.bind="columnDefinitions"
+   options.bind="gridOptions" dataset.bind="dataset"
    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>
 ```

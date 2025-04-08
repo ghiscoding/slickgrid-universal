@@ -40,8 +40,8 @@ For example, we can see below is that we have a regular flat dataset with items 
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
 ```
@@ -105,8 +105,8 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset-hierarchical.bind="datasetHierarchical">
 </aurelia-slickgrid>
 ```

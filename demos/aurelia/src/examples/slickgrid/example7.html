@@ -24,8 +24,8 @@
 <h5>Grid 1</h5>
 <aurelia-slickgrid
   grid-id="grid7-1"
-  column-definitions.bind="columnDefinitions1"
-  grid-options.bind="gridOptions1"
+  columns.bind="columnDefinitions1"
+  options.bind="gridOptions1"
   dataset.bind="dataset1"
   on-aurelia-grid-created.trigger="aureliaGrid1Ready($event.detail)"
 >
@@ -34,8 +34,8 @@
 <h5>Grid 2 - <span class="subtitle">with both Header Buttons & Menus</span></h5>
 <aurelia-slickgrid
   grid-id="grid7-2"
-  column-definitions.bind="columnDefinitions2"
-  grid-options.bind="gridOptions2"
+  columns.bind="columnDefinitions2"
+  options.bind="gridOptions2"
   dataset.bind="dataset2"
   on-aurelia-grid-created.trigger="aureliaGrid2Ready($event.detail)"
 >

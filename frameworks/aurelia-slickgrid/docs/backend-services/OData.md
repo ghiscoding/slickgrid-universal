@@ -64,8 +64,8 @@ As you can see, you mainly need to define which service to use (GridODataService
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid5"
-                     column-definitions.bind="columnDefinitions"
-                     grid-options.bind="gridOptions"
+                     columns.bind="columnDefinitions"
+                     options.bind="gridOptions"
                      dataset.bind="dataset"
                      pagination-options.bind="paginationOptions"
                      on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
