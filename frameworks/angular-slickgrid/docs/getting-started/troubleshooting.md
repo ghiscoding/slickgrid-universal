@@ -62,8 +62,8 @@ The reason is because Angular-Slickgrid uses Custom Event for all its events and
 3. cast the event in the component ViewModel to `CustomEvent`
 ```html
 <angular-slickgrid gridId="grid28"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

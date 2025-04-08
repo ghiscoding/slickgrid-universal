@@ -78,8 +78,8 @@
   <angular-slickgrid
     gridId="grid14"
     [dataset]="dataset"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     (onBeforeExportToTextFile)="processing = true"
     (onAfterExportToTextFile)="processing = false"
     (onBeforeExportToExcel)="processing = true"

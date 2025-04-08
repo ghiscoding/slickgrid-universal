@@ -21,8 +21,8 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 
 ```html
 <angular-slickgrid gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset">
 </angular-slickgrid>
 ```
@@ -89,8 +89,8 @@ I don't have time to invest in finding how to use JSONP + CORS in Angular, if so
 
 ```html
 <angular-slickgrid gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset">
 </angular-slickgrid>
 ```

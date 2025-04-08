@@ -8,9 +8,9 @@ SlickGrid is very flexible and it allows you to change or add CSS Class(es) dyna
 ```html
 <button class="btn btn-sm btn-default" (click)="changeDurationBackgroundColor()">Highlight Rows with Duration over 50</button>
 
-<angular-slickgrid gridId="grid2" 
-  [columnDefinitions]="columnDefinitions" 
-  [gridOptions]="gridOptions" 
+<angular-slickgrid gridId="grid2"
+  [columns]="columnDefinitions"
+  [options]="gridOptions"
   [dataset]="dataset"
   (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>
@@ -33,8 +33,8 @@ export class Example {
     this.grid = angularGrid.slickGrid;
   }
 
-  /** 
-   * Change the Duration Rows Background Color 
+  /**
+   * Change the Duration Rows Background Color
    * You need to get previous SlickGrid DataView Item Metadata and override it
    */
   changeDurationBackgroundColor() {

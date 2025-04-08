@@ -10,13 +10,13 @@
     {
       "label": "Run Angular Unit Tests (watch)",
       "type": "shell",
-      "command": "pnpm test:angular:watch",
+      "command": "pnpm angular:test:watch",
       "problemMatcher": []
     },
     {
       "label": "Run Angular Test Coverage",
       "type": "shell",
-      "command": "pnpm test:angular:coverage",
+      "command": "pnpm angular:test:coverage",
       "problemMatcher": []
     },
     {

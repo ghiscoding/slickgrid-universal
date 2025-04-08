@@ -68,7 +68,7 @@ jobs:
 
       - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
-        run: pnpm test:angular:coverage
+        run: pnpm angular:test:coverage
 
       - name: Angular-Slickgrid Framework Build
         run: pnpm angular:build:framework

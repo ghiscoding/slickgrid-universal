@@ -395,7 +395,7 @@ You can also use the Slick Grid events as shown below
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onCellChange)="onCellChanged($event.detail.eventData, $event.detail.args)"
      (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)"
-     [columnDefinitions]="columnDefinitions" [gridOptions]="gridOptions" [dataset]="dataset">
+     [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset">
 </angular-slickgrid>
 ```
 
@@ -531,8 +531,8 @@ With that in mind and the code from the SO answer, we end up with the following 
 #### View
 ```html
 <angular-slickgrid gridId="grid1"
-  [columnDefinitions]="columnDefinitions"
-  [gridOptions]="gridOptions"
+  [columns]="columnDefinitions"
+  [options]="gridOptions"
   (onBeforeEditCell)="verifyCellIsEditableBeforeEditing($event.detail.eventData, $event.detail.args)"
   >
 </angular-slickgrid>
@@ -553,8 +553,8 @@ If your grid uses the `autoResize` and you use Editors in your grid on a mobile 
 ```html
 <div id="grid1">
    <angular-slickgrid gridId="grid1"
-         [columnDefinitions]="columnDefinitions"
-         [gridOptions]="gridOptions"
+         [columns]="columnDefinitions"
+         [options]="gridOptions"
          [dataset]="dataset"
          (onBeforeEditCell)="onBeforeEditCell($event)"
          (onBeforeCellEditorDestroy)="onAfterEditCell($event)"
@@ -585,7 +585,7 @@ Using the [Row Based Editing Plugin](../grid-functionalities/Row-based-edit.md) 
 
 ## Dynamically change Column Editor
 
-You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below. 
+You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below.
 
 With the code sample shown below, we are using an input checkbox to toggle the Editor between `Editors.longText` to `Editors.text` and vice/versa
 

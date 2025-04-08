@@ -90,8 +90,8 @@ You can update/change the Sorting dynamically (on the fly) via the `updateSortin
 </button>
 
 <angular-slickgrid gridId="grid1"
-   [columnDefinitions]="columnDefinitions"
-   [gridOptions]="gridOptions"
+   [columns]="columnDefinitions"
+   [options]="gridOptions"
    [dataset]="dataset"
    (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

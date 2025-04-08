@@ -45,12 +45,6 @@
 
   <hr />
 
-  <angular-slickgrid
-    *ngIf="gridCreated"
-    gridId="grid18"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
-    [dataset]="dataset"
-  >
+  <angular-slickgrid *ngIf="gridCreated" gridId="grid18" [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset">
   </angular-slickgrid>
 </div>

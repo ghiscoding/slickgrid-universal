@@ -16,8 +16,8 @@
   <h5>Grid 1</h5>
   <angular-slickgrid
     gridId="grid7-1"
-    [columnDefinitions]="columnDefinitions1"
-    [gridOptions]="gridOptions1"
+    [columns]="columnDefinitions1"
+    [options]="gridOptions1"
     [dataset]="dataset1"
     (onAngularGridCreated)="angularGrid1Ready($event.detail)"
   >
@@ -27,8 +27,8 @@
   <h5>Grid 2 - <span class="subtitle">with both Header Buttons & Menus</span></h5>
   <angular-slickgrid
     gridId="grid7-2"
-    [columnDefinitions]="columnDefinitions2"
-    [gridOptions]="gridOptions2"
+    [columns]="columnDefinitions2"
+    [options]="gridOptions2"
     [dataset]="dataset2"
     (onAngularGridCreated)="angularGrid2Ready($event.detail)"
   >

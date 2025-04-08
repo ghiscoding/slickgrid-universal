@@ -8,7 +8,7 @@ Some users might want to have 1 main single search for filtering the grid data i
 ### Code Sample
 #### View
 ```html
-<angular-slickgrid gridId="grid23" [columnDefinitions]="columnDefinitions" [gridOptions]="gridOptions"
+<angular-slickgrid gridId="grid23" [columns]="columnDefinitions" [options]="gridOptions"
    [dataset]="dataset" (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>
 

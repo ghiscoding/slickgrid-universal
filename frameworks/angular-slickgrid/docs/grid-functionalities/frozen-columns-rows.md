@@ -15,8 +15,8 @@ To set a pinning for the entire duration of the grid, simply use the Grid Option
 
 ```html
 <angular-slickgrid gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset">
 </angular-slickgrid>
 ```
@@ -96,8 +96,8 @@ You can change the number of pinned columns/rows and even the pinning of columns
 </div>
 
 <angular-slickgrid gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>

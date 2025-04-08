@@ -62,8 +62,8 @@
   <div id="smaller-container" style="width: 950px">
     <angular-slickgrid
       gridId="grid31"
-      [columnDefinitions]="columnDefinitions"
-      [gridOptions]="gridOptions"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
       [dataset]="dataset"
       (onAngularGridCreated)="angularGridReady($event.detail)"
       (onSelectedRowIdsChanged)="handleOnSelectedRowIdsChanged($event.detail.args)"

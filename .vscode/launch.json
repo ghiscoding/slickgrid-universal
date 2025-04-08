@@ -74,6 +74,17 @@
       "args": ["run", "${relativeFile}", "--no-watch", "--config", "./test/vitest.config.mts"],
       "smartStep": true,
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Angular Vitest - Debug Current Test File",
+      "type": "node",
+      "request": "launch",
+      "autoAttachChildProcesses": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${relativeFile}", "--no-watch", "--config", "./frameworks/angular-slickgrid/vite.config.mts"],
+      "smartStep": true,
+      "console": "integratedTerminal"
     }
   ]
 }

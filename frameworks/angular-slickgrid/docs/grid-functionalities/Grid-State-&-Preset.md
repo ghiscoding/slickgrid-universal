@@ -28,8 +28,8 @@ You can get the `Grid State` at any point in time. However if you wish to save t
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onBeforeGridDestroy)="saveCurrentGridState($event)">
@@ -153,8 +153,8 @@ Examples
 ##### View
 ```html
 <angular-slickgrid gridId="grid1"
-         [columnDefinitions]="columnDefinitions"
-         [gridOptions]="gridOptions"
+         [columns]="columnDefinitions"
+         [options]="gridOptions"
          [dataset]="dataset"
          (onGridStateChanged)="gridStateChanged($event)">
 </angular-slickgrid>
@@ -175,8 +175,8 @@ export class ExampleComponent implements OnInit {
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onBeforeGridDestroy)="saveCurrentGridState($event)">

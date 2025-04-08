@@ -30,8 +30,8 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 ```html
 <angular-slickgrid
     gridId="grid2"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>
@@ -363,8 +363,8 @@ The reason is because the Row Selection (checkbox) plugin is a special column an
 
 ```html
 <angular-slickgrid gridId="grid17"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>
@@ -455,8 +455,8 @@ Now, let's define our Inner Grid Component
   <div class="container-fluid">
     <angular-slickgrid
       [gridId]="innerGridId"
-      [columnDefinitions]="innerColDefs"
-      [gridOptions]="innerGridOptions"
+      [columns]="innerColDefs"
+      [options]="innerGridOptions"
       [dataset]="innerDataset"
       (onAngularGridCreated)="angularGridReady($event.detail)"
     >

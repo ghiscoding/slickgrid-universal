@@ -21,8 +21,8 @@ handleOnCellChange(e) {
 <!-- 2. with CustomEvent in the View -->
 <angular-slickgrid
      gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onCellChange)="handleOnCellChange($event.detail)">
 </angular-slickgrid>
@@ -44,8 +44,8 @@ handleOnHeaderMenuCommand(e) {
 <!-- 2. with CustomEvent in the View -->
 <angular-slickgrid
      gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onHeaderMenuCommand)="handleOnHeaderMenuCommand($event.detail)">
 </angular-slickgrid>

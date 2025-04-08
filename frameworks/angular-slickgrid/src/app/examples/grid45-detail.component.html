@@ -4,8 +4,8 @@
     <angular-slickgrid
       class="innergrid"
       [gridId]="innerGridId"
-      [columnDefinitions]="innerColDefs"
-      [gridOptions]="innerGridOptions"
+      [columns]="innerColDefs"
+      [options]="innerGridOptions"
       [dataset]="innerDataset"
       (onAngularGridCreated)="angularGridReady($event.detail)"
       (onBeforeGridDestroy)="handleBeforeGridDestroy()"

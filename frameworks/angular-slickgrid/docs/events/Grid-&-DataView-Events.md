@@ -4,8 +4,8 @@ See the full list of [Available Events](Available-Events.md) which you can use b
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columnDefinitions]="columnDefinitions"
-     [gridOptions]="gridOptions"
+     [columns]="columnDefinitions"
+     [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onCellChange)="onCellChanged($event.detail.eventData, $event.detail.args)"
@@ -58,8 +58,8 @@ Bind `(onDataviewCreated)` and `(onGridCreated)` if you want to call any `SlickG
   gridId="grid2"
   (onDataviewCreated)="dataviewReady($event)"
   (onGridCreated)="gridReady($event)"
-  [columnDefinitions]="columnDefinitions"
-  [gridOptions]="gridOptions"
+  [columns]="columnDefinitions"
+  [options]="gridOptions"
   [dataset]="dataset">
 </angular-slickgrid>
 ```
@@ -135,8 +135,8 @@ Angular-Slickgrid now also expose the Slick Grid and DataView objects through th
 </span>
 
 <angular-slickgrid gridId="grid2"
-          [columnDefinitions]="columnDefinitions"
-          [gridOptions]="gridOptions"
+          [columns]="columnDefinitions"
+          [options]="gridOptions"
           [dataset]="dataset"
           (onAngularGridCreated)="angularGridReady($event.detail)">
 </angular-slickgrid>
@@ -200,8 +200,8 @@ angularGridReady(event: Event) {
 3. use `$any()` in the View
 ```html
 <angular-slickgrid gridId="grid1"
-    [columnDefinitions]="columnDefinitions"
-    [gridOptions]="gridOptions"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($any($event).detail)">
 </angular-slickgrid>
