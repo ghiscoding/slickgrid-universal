@@ -114,7 +114,7 @@ const Example: React.FC = () => {
   }
 };
 
-export default Example;
+export default withTranslation()(Example);
 ```
 
 #### Custom Formatter (cell values)
