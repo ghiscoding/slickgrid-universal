@@ -112,8 +112,8 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
         {showGrid && (
           <SlickgridReact
             gridId={`innergrid-${props.model.id}`}
-            columnDefinitions={innerColDefs}
-            gridOptions={innerGridOptions}
+            columns={innerColDefs}
+            options={innerGridOptions}
             dataset={innerDataset}
             onReactGridCreated={($event) => reactGridReady($event.detail)}
             onBeforeGridDestroy={handleBeforeGridDestroy}

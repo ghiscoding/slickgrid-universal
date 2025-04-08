@@ -380,8 +380,8 @@ const Example10: React.FC = () => {
       <div className="overflow-hidden">
         <SlickgridReact
           gridId="grid1"
-          columnDefinitions={columnDefinitions1}
-          gridOptions={gridOptions1!}
+          columns={columnDefinitions1}
+          options={gridOptions1!}
           dataset={dataset1}
           onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
           onGridStateChanged={($event) => grid1StateChanged($event.detail)}
@@ -427,8 +427,8 @@ const Example10: React.FC = () => {
       <div className="overflow-hidden">
         <SlickgridReact
           gridId="grid2"
-          columnDefinitions={columnDefinitions2}
-          gridOptions={gridOptions2!}
+          columns={columnDefinitions2}
+          options={gridOptions2!}
           dataset={dataset2}
           onReactGridCreated={($event) => reactGrid2Ready($event.detail)}
           onGridStateChanged={($event) => grid2StateChanged($event.detail)}

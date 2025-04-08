@@ -69,9 +69,9 @@ import type { SlickgridReactProps } from './slickgridReactProps';
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 
 interface State {
-  showPagination: boolean;
-  _gridOptions: GridOption;
+  _options: GridOption;
   paginationService: PaginationService;
+  showPagination: boolean;
 }
 
 export class SlickgridReact<TData = any> extends React.Component<SlickgridReactProps, State> {
@@ -97,9 +97,10 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }, callback);
   }
 
-  protected _columnDefinitions: Column<TData>[] = [];
+  protected _columns: Column<TData>[] = [];
   protected _currentDatasetLength = 0;
   protected _dataset: any[] | null = null;
+  protected _options: GridOption = {};
   protected _elm?: HTMLDivElement | null;
   protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
   protected _eventHandler!: SlickEventHandler;
@@ -115,12 +116,11 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected _paginationOptions: Pagination | undefined;
   protected _registeredResources: ExternalResource[] = [];
   protected _scrollEndCalled = false;
-  protected _gridOptions: GridOption = {};
 
-  protected get gridOptions(): GridOption {
-    return this._gridOptions || ({} as GridOption);
+  protected get options(): GridOption {
+    return this._options || ({} as GridOption);
   }
-  protected set gridOptions(options: GridOption) {
+  protected set options(options: GridOption) {
     let mergedOptions: GridOption;
 
     // if we already have grid options, when grid was already initialized, we'll merge with those options
@@ -135,7 +135,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.grid.setOptions(mergedOptions, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
       this.grid.reRenderColumns(true); // then call a re-render since we did supressColumnCheck on previous setOptions
     }
-    this._gridOptions = mergedOptions;
+    this._options = mergedOptions;
   }
 
   groupItemMetadataProvider?: SlickGroupItemMetadataProvider;
@@ -178,9 +178,10 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   static defaultProps = {
     containerService: GlobalContainerService,
     translaterService: new TranslaterI18NextService(),
-    dataset: [],
     gridId: '',
-    columnDefinitions: [],
+    dataset: [],
+    columns: [],
+    options: {},
   };
 
   get dataset(): any[] {
@@ -189,13 +190,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
-    const isDeepCopyDataOnPageLoadEnabled = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad;
+    const isDeepCopyDataOnPageLoadEnabled = !!this._options?.enableDeepCopyDatasetOnPageLoad;
     let data = isDeepCopyDataOnPageLoadEnabled ? extend(true, [], newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (
       this.grid &&
-      this.gridOptions?.enableTreeData &&
+      this.options?.enableTreeData &&
       Array.isArray(newDataset) &&
       (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
     ) {
@@ -208,7 +209,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
-    if (this.grid && this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !this._isAutosizeColsCalled) {
+    if (this.grid && this.options.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !this._isAutosizeColsCalled) {
       this.grid.autosizeColumns();
       this._isAutosizeColsCalled = true;
     }
@@ -225,13 +226,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.sharedService.hierarchicalDataset = newHierarchicalDataset;
     }
 
-    if (newHierarchicalDataset && this.props.columnDefinitions && this.filterService?.clearFilters) {
+    if (newHierarchicalDataset && this.props.columns && this.filterService?.clearFilters) {
       this.filterService.clearFilters();
     }
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
     if (this.dataView && newHierarchicalDataset && this.grid && this.sortService?.processTreeDataInitialSort) {
-      this.dataView.setItems([], this._gridOptions?.datasetIdPropertyName ?? 'id');
+      this.dataView.setItems([], this._options?.datasetIdPropertyName ?? 'id');
       this.sortService.processTreeDataInitialSort();
 
       // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
@@ -263,9 +264,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // check if the user wants to hide the header row from the start
     // we only want to do this check once in the constructor
-    this._hideHeaderRowAfterPageLoad = props.gridOptions?.showHeaderRow === false;
+    this._hideHeaderRowAfterPageLoad = props.options?.showHeaderRow === false;
 
-    this._gridOptions = this.mergeGridOptions(props.gridOptions || {});
+    this._options = this.mergeGridOptions(props.options || {});
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = new EventPubSubService();
@@ -355,7 +356,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   get backendService(): BackendService | undefined {
-    return this.gridOptions.backendServiceApi?.service;
+    return this.options.backendServiceApi?.service;
   }
 
   get eventHandler(): SlickEventHandler {
@@ -402,25 +403,25 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // save resource refs to register before the grid options are merged and possibly deep copied
     // since a deep copy of grid options would lose original resource refs but we want to keep them as singleton
-    this._registeredResources = this.gridOptions?.externalResources || [];
+    this._registeredResources = this.options?.externalResources || [];
 
     this.initialization(this._eventHandler);
     this._isGridInitialized = true;
 
     // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
     if (!this.hasBackendInfiniteScroll()) {
-      this.gridOptions.enablePagination = !!(this.gridOptions.backendServiceApi && this.gridOptions.enablePagination === undefined
+      this.options.enablePagination = !!(this.options.backendServiceApi && this.options.enablePagination === undefined
         ? true
-        : this.gridOptions.enablePagination);
+        : this.options.enablePagination);
     }
 
-    if (!this._isPaginationInitialized && !this.props.datasetHierarchical && this._gridOptions?.enablePagination && this._isLocalGrid) {
+    if (!this._isPaginationInitialized && !this.props.datasetHierarchical && this._options?.enablePagination && this._isLocalGrid) {
       this.showPagination = true;
       this.loadLocalGridPagination(this.dataset);
     }
 
     // recheck the empty warning message after grid is shown so that it works in every use case
-    if (this._gridOptions?.enableEmptyDataWarningMessage) {
+    if (this._options?.enableEmptyDataWarningMessage) {
       const dataset = this.props.dataset || [];
       if (Array.isArray(dataset)) {
         const finalTotalCount = dataset.length;
@@ -429,7 +430,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     // add dark mode CSS class when enabled
-    if (this.gridOptions.darkMode) {
+    if (this.options.darkMode) {
       this.setDarkMode(true);
     }
 
@@ -437,39 +438,39 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   initialization(eventHandler: SlickEventHandler) {
-    if (!this._columnDefinitions) {
+    if (!this._columns) {
       throw new Error(
-        'Using `<SlickgridReact>` requires columnDefinitions, it seems that you might have forgot to provide the missing bindable model.'
+        'Using `<SlickgridReact>` requires `columns` and it seems that you might have forgot to provide this missing bindable model.'
       );
     }
 
-    this._gridOptions.translater = this.props.translaterService;
+    this._options.translater = this.props.translaterService;
     this._eventHandler = eventHandler;
     this._isAutosizeColsCalled = false;
 
     // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
     if (
-      this._gridOptions &&
-      ((this._gridOptions.frozenRow !== undefined && this._gridOptions.frozenRow >= 0) ||
-        (this._gridOptions.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0)) &&
-      this._gridOptions.enableMouseWheelScrollHandler === undefined
+      this._options &&
+      ((this._options.frozenRow !== undefined && this._options.frozenRow >= 0) ||
+        (this._options.frozenColumn !== undefined && this._options.frozenColumn >= 0)) &&
+      this._options.enableMouseWheelScrollHandler === undefined
     ) {
-      this._gridOptions.enableMouseWheelScrollHandler = true;
+      this._options.enableMouseWheelScrollHandler = true;
     }
 
-    this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this._options?.eventNamingStyle ?? EventNamingStyle.camelCase;
     this._eventPubSubService.publish(`onBeforeGridCreate`, true);
 
     // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)
     this._dataset ||= this.props.dataset || [];
     this._currentDatasetLength = this._dataset.length;
-    this._gridOptions = this.mergeGridOptions(this._gridOptions);
-    this._paginationOptions = this._gridOptions?.pagination;
-    this.backendServiceApi = this._gridOptions?.backendServiceApi;
+    this._options = this.mergeGridOptions(this._options);
+    this._paginationOptions = this._options?.pagination;
+    this.backendServiceApi = this._options?.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
 
     // inject the I18Next instance when translation is enabled
-    if (this._gridOptions?.enableTranslate || this._gridOptions?.i18n) {
+    if (this._options?.enableTranslate || this._options?.i18n) {
       const importErrorMsg =
         '[Slickgrid-React] Enabling translation requires you to install I18Next in your App and use `I18nextProvider` to provide it. ' +
         'Please make sure to first install it via "npm install i18next react-i18next" and then ' +
@@ -485,15 +486,15 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     // unless specified, we'll create an internal postProcess callback (currently only available for GraphQL)
-    if (this.gridOptions.backendServiceApi && !this.gridOptions.backendServiceApi?.disableInternalPostProcess) {
-      this.createBackendApiInternalPostProcessCallback(this._gridOptions);
+    if (this.options.backendServiceApi && !this.options.backendServiceApi?.disableInternalPostProcess) {
+      this.createBackendApiInternalPostProcessCallback(this._options);
     }
 
     if (!this.props.customDataView) {
-      const dataviewInlineFilters = (this._gridOptions.dataView && this._gridOptions.dataView.inlineFilters) || false;
-      let dataViewOptions: Partial<DataViewOption> = { ...this._gridOptions.dataView, inlineFilters: dataviewInlineFilters };
+      const dataviewInlineFilters = (this._options.dataView && this._options.dataView.inlineFilters) || false;
+      let dataViewOptions: Partial<DataViewOption> = { ...this._options.dataView, inlineFilters: dataviewInlineFilters };
 
-      if (this._gridOptions.draggableGrouping || this._gridOptions.enableGrouping) {
+      if (this._options.draggableGrouping || this._options.enableGrouping) {
         this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
@@ -507,32 +508,32 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this.preRegisterResources();
 
     // prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it.
-    this._columnDefinitions = this.loadSlickGridEditors(this.props.columnDefinitions);
+    this._columns = this.loadSlickGridEditors(this.props.columns);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-    if (this._gridOptions.autoAddCustomEditorFormatter) {
-      autoAddEditorFormatterToColumnsWithEditor(this._columnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+    if (this._options.autoAddCustomEditorFormatter) {
+      autoAddEditorFormatterToColumnsWithEditor(this._columns, this._options.autoAddCustomEditorFormatter);
     }
 
     // save reference for all columns before they optionally become hidden/visible
-    this.sharedService.allColumns = this._columnDefinitions;
-    this.sharedService.visibleColumns = this._columnDefinitions;
+    this.sharedService.allColumns = this._columns;
+    this.sharedService.visibleColumns = this._columns;
 
     // after subscribing to potential columns changed, we are ready to create these optional extensions
     // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
-    this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
+    this.extensionService.createExtensionsBeforeGridCreation(this._columns, this._options);
 
     // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
-    if (this.gridOptions.presets?.pinning) {
-      this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
+    if (this.options.presets?.pinning) {
+      this.options = { ...this.options, ...this.options.presets.pinning };
     }
 
     // build SlickGrid Grid, also user might optionally pass a custom dataview (e.g. remote model)
     this.grid = new SlickGrid(
       `#${this.props.gridId}`,
       this.props.customDataView || this.dataView,
-      this._columnDefinitions,
-      this._gridOptions,
+      this._columns,
+      this._options,
       this._eventPubSubService
     );
     this.sharedService.dataView = this.dataView;
@@ -543,12 +544,12 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     this.extensionService.bindDifferentExtensions();
-    this.bindDifferentHooks(this.grid, this._gridOptions, this.dataView);
+    this.bindDifferentHooks(this.grid, this._options, this.dataView);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    const frozenColumnIndex = this._gridOptions?.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length && this._columnDefinitions.length > 0) {
-      this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
+    const frozenColumnIndex = this._options?.frozenColumn ?? -1;
+    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columns.length && this._columns.length > 0) {
+      this.sharedService.frozenVisibleColumnId = this._columns[frozenColumnIndex]?.id ?? '';
     }
 
     // get any possible Services that user want to register
@@ -565,15 +566,10 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
-    if (
-      !this._gridOptions.enablePagination &&
-      this._gridOptions.showCustomFooter &&
-      this._gridOptions.customFooterOptions &&
-      gridContainerElm
-    ) {
+    if (!this._options.enablePagination && this._options.showCustomFooter && this._options.customFooterOptions && gridContainerElm) {
       this.slickFooter = new SlickFooterComponent(
         this.grid,
-        this._gridOptions.customFooterOptions,
+        this._options.customFooterOptions,
         this._eventPubSubService,
         this.props.translaterService
       );
@@ -581,22 +577,22 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     if (!this.props.customDataView && this.dataView) {
-      const initialDataset = this._gridOptions?.enableTreeData ? this.sortTreeDataset(this.props.dataset) : this.props.dataset;
+      const initialDataset = this._options?.enableTreeData ? this.sortTreeDataset(this.props.dataset) : this.props.dataset;
       if (Array.isArray(initialDataset)) {
-        this.dataView.setItems(initialDataset, this._gridOptions.datasetIdPropertyName ?? 'id');
+        this.dataView.setItems(initialDataset, this._options.datasetIdPropertyName ?? 'id');
       }
 
       // if you don't want the items that are not visible (due to being filtered out or being on a different page)
       // to stay selected, pass 'false' to the second arg
-      if (this.grid?.getSelectionModel() && this._gridOptions?.dataView && this._gridOptions.dataView.hasOwnProperty('syncGridSelection')) {
+      if (this.grid?.getSelectionModel() && this._options?.dataView && this._options.dataView.hasOwnProperty('syncGridSelection')) {
         // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
         // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
         let preservedRowSelectionWithBackend = false;
-        if (this._gridOptions.backendServiceApi && this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')) {
-          preservedRowSelectionWithBackend = this._gridOptions.dataView.syncGridSelectionWithBackendService as boolean;
+        if (this._options.backendServiceApi && this._options.dataView.hasOwnProperty('syncGridSelectionWithBackendService')) {
+          preservedRowSelectionWithBackend = this._options.dataView.syncGridSelectionWithBackendService as boolean;
         }
 
-        const syncGridSelection = this._gridOptions.dataView.syncGridSelection;
+        const syncGridSelection = this._options.dataView.syncGridSelection;
         if (typeof syncGridSelection === 'boolean') {
           let preservedRowSelection = syncGridSelection;
           if (!this._isLocalGrid) {
@@ -610,7 +606,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       }
 
       if (this._dataset.length > 0) {
-        if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+        if (!this._isDatasetInitialized && (this._options.enableCheckboxSelector || this._options.enableRowSelection)) {
           this.loadRowSelectionPresetWhenExists();
         }
         this.loadFilterPresetsWhenDatasetInitialized();
@@ -630,16 +626,16 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // after the DataView is created & updated execute some processes & dispatch some events
     if (!this.props.customDataView) {
-      this.executeAfterDataviewCreated(this.grid, this._gridOptions);
+      this.executeAfterDataviewCreated(this.grid, this._options);
     }
 
     // bind resize ONLY after the dataView is ready
-    this.bindResizeHook(this.grid, this._gridOptions);
+    this.bindResizeHook(this.grid, this._options);
 
     // bind the Backend Service API callback functions only after the grid is initialized
     // because the preProcess() and onInit() might get triggered
-    if (this._gridOptions?.backendServiceApi) {
-      this.bindBackendCallbackFunctions(this._gridOptions);
+    if (this._options?.backendServiceApi) {
+      this.bindBackendCallbackFunctions(this._options);
     }
 
     // create the React Grid Instance with reference to all Services
@@ -678,7 +674,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this._eventPubSubService.publish('onReactGridCreated', reactElementInstance);
 
     // subscribe to column definitions assignment changes
-    this.observeColumnDefinitions();
+    this.observeColumns();
   }
 
   componentWillUnmount(shouldEmptyDomElementContainer = false) {
@@ -736,18 +732,18 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       }
       this.backendServiceApi = undefined;
     }
-    for (const prop of Object.keys(this.props.columnDefinitions)) {
-      (this.props.columnDefinitions as any)[prop] = null;
+    for (const prop of Object.keys(this.props.columns)) {
+      (this.props.columns as any)[prop] = null;
     }
     for (const prop of Object.keys(this.sharedService)) {
       (this.sharedService as any)[prop] = null;
     }
     this._dataset = null;
-    this._columnDefinitions = [];
+    this._columns = [];
   }
 
   emptyGridContainerElm() {
-    const gridContainerId = this._gridOptions?.gridContainerId || 'grid1';
+    const gridContainerId = this._options?.gridContainerId || 'grid1';
     const gridContainerElm = document.querySelector(`#${gridContainerId}`) as HTMLDivElement;
     emptyElement(gridContainerElm);
   }
@@ -770,13 +766,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
   componentDidUpdate(prevProps: SlickgridReactProps) {
     // get the grid options (order of precedence is Global Options first, then user option which could overwrite the Global options)
-    if (this.props.gridOptions !== prevProps.gridOptions) {
-      this._gridOptions = { ...GlobalGridOptions, ...this._gridOptions };
+    if (this.props.options !== prevProps.options) {
+      this._options = { ...GlobalGridOptions, ...this._options };
     }
 
-    if (this.props.columnDefinitions !== prevProps.columnDefinitions) {
-      this._columnDefinitions = this.props.columnDefinitions;
-      this.columnDefinitionsChanged(this.props.columnDefinitions);
+    if (this.props.columns !== prevProps.columns) {
+      this._columns = this.props.columns;
+      this.columnsChanged(this.props.columns);
     }
 
     if (this.props.dataset !== prevProps.dataset) {
@@ -789,15 +785,15 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this.suggestDateParsingWhenHelpful();
   }
 
-  columnDefinitionsChanged(columnDefinitions?: Column[]) {
-    if (columnDefinitions) {
-      this._columnDefinitions = columnDefinitions;
+  columnsChanged(columns?: Column[]) {
+    if (columns) {
+      this._columns = columns;
     }
     if (this._isGridInitialized) {
-      this.updateColumnDefinitionsList(this._columnDefinitions);
+      this.updateColumnsList(this._columns);
     }
-    if (this._columnDefinitions.length > 0) {
-      this.copyColumnWidthsReference(this._columnDefinitions);
+    if (this._columns.length > 0) {
+      this.copyColumnWidthsReference(this._columns);
     }
   }
 
@@ -928,9 +924,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
           // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
           if (
             args.itemCount > 0 &&
-            (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)
+            (this.options.autosizeColumnsByCellContentOnFirstLoad || this.options.enableAutoResizeColumnsByCellContent)
           ) {
-            this.resizerService.resizeColumnsByCellContent(!this._gridOptions?.resizeByContentOnlyOnFirstLoad);
+            this.resizerService.resizeColumnsByCellContent(!this._options?.resizeByContentOnlyOnFirstLoad);
           }
         });
 
@@ -983,7 +979,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         // Sorters "presets"
         if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
           // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-          const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+          const sortColumns = this._options?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
           backendApiService.updateSorters(undefined, sortColumns);
         }
         // Pagination "presets"
@@ -1016,7 +1012,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
           }
 
           // the processes can be a Promise (like Http)
-          const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
+          const totalItems = this._options?.pagination?.totalItems ?? 0;
           if (process instanceof Promise) {
             process
               .then((processResult: any) =>
@@ -1043,12 +1039,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   protected addBackendInfiniteScrollCallback(): void {
-    if (
-      this.grid &&
-      this.gridOptions.backendServiceApi &&
-      this.hasBackendInfiniteScroll() &&
-      !this.gridOptions.backendServiceApi?.onScrollEnd
-    ) {
+    if (this.grid && this.options.backendServiceApi && this.hasBackendInfiniteScroll() && !this.options.backendServiceApi?.onScrollEnd) {
       const onScrollEnd = () => {
         this.backendUtilityService.setInfiniteScrollBottomHit(true);
 
@@ -1061,7 +1052,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
           }
         });
       };
-      this.gridOptions.backendServiceApi.onScrollEnd = onScrollEnd;
+      this.options.backendServiceApi.onScrollEnd = onScrollEnd;
 
       // subscribe to SlickGrid onScroll to determine when reaching the end of the scroll bottom position
       // run onScrollEnd() method when that happens
@@ -1082,8 +1073,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
       // use postProcess to identify when scrollEnd process is finished to avoid calling the scrollEnd multiple times
       // we also need to keep a ref of the user's postProcess and call it after our own postProcess
-      const orgPostProcess = this.gridOptions.backendServiceApi.postProcess;
-      this.gridOptions.backendServiceApi.postProcess = (processResult: any) => {
+      const orgPostProcess = this.options.backendServiceApi.postProcess;
+      this.options.backendServiceApi.postProcess = (processResult: any) => {
         this._scrollEndCalled = false;
         if (orgPostProcess) {
           orgPostProcess(processResult);
@@ -1127,7 +1118,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (gridOptions.enableSorting) {
       if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
         // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-        const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+        const sortColumns = this._options?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
         this.sortService.loadGridSorters(sortColumns);
       }
     }
@@ -1142,8 +1133,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (
       this.grid &&
       !isSyncGridSelectionEnabled &&
-      this.gridOptions?.backendServiceApi &&
-      (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)
+      this.options?.backendServiceApi &&
+      (this.options.enableRowSelection || this.options.enableCheckboxSelector)
     ) {
       this.grid.setSelectedRows([]);
     }
@@ -1165,8 +1156,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     } else {
       this._paginationOptions = newPaginationOptions;
     }
-    if (this._gridOptions) {
-      this._gridOptions.pagination = this._paginationOptions;
+    if (this._options) {
+      this._options.pagination = this._paginationOptions;
       this.paginationService.updateTotalItems(newPaginationOptions?.totalItems ?? 0, true);
     }
   }
@@ -1179,20 +1170,20 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
-    if (this.grid && this._gridOptions) {
-      if (this._gridOptions?.enablePagination && this._isLocalGrid) {
+    if (this.grid && this._options) {
+      if (this._options?.enablePagination && this._isLocalGrid) {
         this.showPagination = true;
         this.loadLocalGridPagination(dataset);
       }
 
-      if (this._gridOptions?.enableEmptyDataWarningMessage && Array.isArray(dataset)) {
+      if (this._options?.enableEmptyDataWarningMessage && Array.isArray(dataset)) {
         const finalTotalCount = totalCount || dataset.length;
         this.displayEmptyDataWarning(finalTotalCount < 1);
       }
 
       if (Array.isArray(dataset) && this.grid && this.dataView?.setItems) {
-        this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName ?? 'id');
-        if (!this._gridOptions.backendServiceApi && !this._gridOptions.enableTreeData) {
+        this.dataView.setItems(dataset, this._options.datasetIdPropertyName ?? 'id');
+        if (!this._options.backendServiceApi && !this._options.enableTreeData) {
           this.dataView.reSort();
         }
 
@@ -1200,7 +1191,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
           if (!this._isDatasetInitialized) {
             this.loadFilterPresetsWhenDatasetInitialized();
 
-            if (this._gridOptions.enableCheckboxSelector) {
+            if (this._options.enableCheckboxSelector) {
               this.loadRowSelectionPresetWhenExists();
             }
           }
@@ -1209,15 +1200,15 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
         // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
         this.showPagination = !!(
-          this._gridOptions &&
-          (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))
+          this._options &&
+          (this._options.enablePagination || (this._options.backendServiceApi && this._options.enablePagination === undefined))
         );
-        if (this._paginationOptions && this._gridOptions?.pagination && this._gridOptions?.backendServiceApi) {
-          const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
+        if (this._paginationOptions && this._options?.pagination && this._options?.backendServiceApi) {
+          const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._options, this._paginationOptions);
 
           // when we have a totalCount use it, else we'll take it from the pagination object
           // only update the total items if it's different to avoid refreshing the UI
-          const totalRecords = totalCount !== undefined ? totalCount : this._gridOptions?.pagination?.totalItems;
+          const totalRecords = totalCount !== undefined ? totalCount : this._options?.pagination?.totalItems;
           if (totalRecords !== undefined && totalRecords !== this.totalItems) {
             this.totalItems = +totalRecords;
           }
@@ -1231,8 +1222,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         }
 
         // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
-        if (this.grid && this._gridOptions.enableAutoResize) {
-          const delay = this._gridOptions.autoResize && this._gridOptions.autoResize.delay;
+        if (this.grid && this._options.enableAutoResize) {
+          const delay = this._options.autoResize && this._options.autoResize.delay;
           this.resizerService.resizeGrid(delay || 10);
         }
       }
@@ -1246,7 +1237,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   showHeaderRow(showing = true) {
     this.grid.setHeaderRowVisibility(showing);
     if (showing === true && this._isGridInitialized) {
-      this.grid.setColumns(this.props.columnDefinitions);
+      this.grid.setColumns(this.props.columns);
     }
     return showing;
   }
@@ -1280,25 +1271,25 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
    * We will re-render the grid so that the new header and data shows up correctly.
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
-  updateColumnDefinitionsList(newColumnDefinitions: Column<TData>[]) {
-    if (this.grid && this._gridOptions && Array.isArray(newColumnDefinitions)) {
+  updateColumnsList(newColumns: Column<TData>[]) {
+    if (this.grid && this._options && Array.isArray(newColumns)) {
       // map the Editor model to editorClass and load editor collectionAsync
-      newColumnDefinitions = this.loadSlickGridEditors(newColumnDefinitions);
+      newColumns = this.loadSlickGridEditors(newColumns);
 
       // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-      if (this._gridOptions.autoAddCustomEditorFormatter) {
-        autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+      if (this._options.autoAddCustomEditorFormatter) {
+        autoAddEditorFormatterToColumnsWithEditor(newColumns, this._options.autoAddCustomEditorFormatter);
       }
 
-      if (this._gridOptions.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, newColumnDefinitions);
+      if (this._options.enableTranslate) {
+        this.extensionService.translateColumnHeaders(undefined, newColumns);
       } else {
-        this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
+        this.extensionService.renderColumnHeaders(newColumns, true);
       }
 
-      if (this._gridOptions?.enableAutoSizeColumns) {
+      if (this._options?.enableAutoSizeColumns) {
         this.grid.autosizeColumns();
-      } else if (this._gridOptions?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+      } else if (this._options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
         this.resizerService.resizeColumnsByCellContent();
       }
     }
@@ -1312,16 +1303,16 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
    * assignment changes are not triggering on the column definitions, for that
    * we can use our internal array observer for any changes done via (push, pop, shift, ...)
    */
-  protected observeColumnDefinitions(): void {
-    this._collectionObservers.push(collectionObserver(this._columnDefinitions, this.columnDefinitionsChanged.bind(this)));
+  protected observeColumns(): void {
+    this._collectionObservers.push(collectionObserver(this._columns, this.columnsChanged.bind(this)));
   }
 
   /**
    * Loop through all column definitions and copy the original optional `width` properties optionally provided by the user.
    * We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
    */
-  protected copyColumnWidthsReference(columnDefinitions: Column<TData>[]) {
-    columnDefinitions.forEach((col) => (col.originalWidth = col.width));
+  protected copyColumnWidthsReference(columns: Column<TData>[]) {
+    columns.forEach((col) => (col.originalWidth = col.width));
   }
 
   protected displayEmptyDataWarning(showWarning = true) {
@@ -1343,19 +1334,19 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
-    if (this._isLocalGrid && this._gridOptions?.enableEmptyDataWarningMessage) {
+    if (this._isLocalGrid && this._options?.enableEmptyDataWarningMessage) {
       this.displayEmptyDataWarning(currentPageRowItemCount === 0);
     }
 
     // when autoResize.autoHeight is enabled, we'll want to call a resize
-    if (this._gridOptions.enableAutoResize && this.resizerService.isAutoHeightEnabled && currentPageRowItemCount > 0) {
+    if (this._options.enableAutoResize && this.resizerService.isAutoHeightEnabled && currentPageRowItemCount > 0) {
       this.resizerService.resizeGrid();
     }
   }
 
   /** Initialize the Pagination Service once */
   protected initializePaginationService(paginationOptions: Pagination) {
-    if (this.grid && this.gridOptions) {
+    if (this.grid && this.options) {
       this.paginationService.totalItems = this.totalItems;
       this.paginationService.init(this.grid, paginationOptions, this.backendServiceApi);
       this.subscriptions.push(
@@ -1367,8 +1358,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         ),
         this._eventPubSubService.subscribe<{ visible: boolean }>('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
           this.showPagination = visibility?.visible ?? false;
-          if (this.gridOptions?.backendServiceApi) {
-            this.backendUtilityService?.refreshBackendDataset(this.gridOptions);
+          if (this.options?.backendServiceApi) {
+            this.backendUtilityService?.refreshBackendDataset(this.options);
           }
           this.renderPagination(this.showPagination);
         })
@@ -1387,12 +1378,12 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
    * @param {Boolean} shouldDisposePaginationService - when disposing the Pagination, do we also want to dispose of the Pagination Service? (defaults to True)
    */
   protected async renderPagination(showPagination = true) {
-    if (this.grid && this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
-      if (this.gridOptions.customPaginationComponent) {
+    if (this.grid && this._options?.enablePagination && !this._isPaginationInitialized && showPagination) {
+      if (this.options.customPaginationComponent) {
         const paginationContainer = document.createElement('section');
         this._elm!.appendChild(paginationContainer);
         const { component } = await loadReactComponentDynamically<BasePaginationComponent>(
-          this.gridOptions.customPaginationComponent,
+          this.options.customPaginationComponent,
           paginationContainer
         );
         this.slickPagination = component;
@@ -1449,10 +1440,10 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<TData>[]) {
-    if (this._columnDefinitions) {
-      const columnPosition = this._columnDefinitions.findIndex((c) => c.id === columnId);
+    if (this._columns) {
+      const columnPosition = this._columns.findIndex((c) => c.id === columnId);
       if (columnPosition >= 0) {
-        const dynColumn = this._columnDefinitions[columnPosition];
+        const dynColumn = this._columns[columnPosition];
         if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
           columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
         }
@@ -1463,28 +1454,20 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   /** Load any possible Columns Grid Presets */
   protected loadColumnPresetsWhenDatasetInitialized() {
     // if user entered some Columns "presets", we need to reflect them all in the grid
-    if (
-      this.grid &&
-      this.gridOptions.presets &&
-      Array.isArray(this.gridOptions.presets.columns) &&
-      this.gridOptions.presets.columns.length > 0
-    ) {
-      const gridPresetColumns: Column<TData>[] = this.gridStateService.getAssociatedGridColumns(
-        this.grid,
-        this.gridOptions.presets.columns
-      );
-      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columnDefinitions)) {
+    if (this.grid && this.options.presets && Array.isArray(this.options.presets.columns) && this.options.presets.columns.length > 0) {
+      const gridPresetColumns: Column<TData>[] = this.gridStateService.getAssociatedGridColumns(this.grid, this.options.presets.columns);
+      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columns)) {
         // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-        if (this.gridOptions.enableRowMoveManager) {
-          const rmmColId = this.gridOptions?.rowMoveManager?.columnId ?? '_move';
+        if (this.options.enableRowMoveManager) {
+          const rmmColId = this.options?.rowMoveManager?.columnId ?? '_move';
           this.insertDynamicPresetColumns(rmmColId, gridPresetColumns);
         }
-        if (this.gridOptions.enableCheckboxSelector) {
-          const chkColId = this.gridOptions?.checkboxSelector?.columnId ?? '_checkbox_selector';
+        if (this.options.enableCheckboxSelector) {
+          const chkColId = this.options?.checkboxSelector?.columnId ?? '_checkbox_selector';
           this.insertDynamicPresetColumns(chkColId, gridPresetColumns);
         }
-        if (this.gridOptions.enableRowDetailView) {
-          const rdvColId = this.gridOptions?.rowDetailView?.columnId ?? '_detail_selector';
+        if (this.options.enableRowDetailView) {
+          const rdvColId = this.options?.rowDetailView?.columnId ?? '_detail_selector';
           this.insertDynamicPresetColumns(rdvColId, gridPresetColumns);
         }
 
@@ -1501,13 +1484,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
   /** Load any possible Filters Grid Presets */
   protected loadFilterPresetsWhenDatasetInitialized() {
-    if (this._gridOptions && !this.props.customDataView) {
+    if (this._options && !this.props.customDataView) {
       // if user entered some Filter "presets", we need to reflect them all in the DOM
       if (
-        this._gridOptions.presets &&
-        (Array.isArray(this._gridOptions.presets.filters) || Array.isArray(this._gridOptions.presets?.treeData?.toggledItems))
+        this._options.presets &&
+        (Array.isArray(this._options.presets.filters) || Array.isArray(this._options.presets?.treeData?.toggledItems))
       ) {
-        this.filterService.populateColumnFilterSearchTermPresets(this._gridOptions.presets?.filters || []);
+        this.filterService.populateColumnFilterSearchTermPresets(this._options.presets?.filters || []);
       }
     }
   }
@@ -1518,7 +1501,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
    * a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
    */
   protected loadLocalGridPagination(dataset?: any[]) {
-    if (this._gridOptions && this._paginationOptions) {
+    if (this._options && this._paginationOptions) {
       this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
       if (this._paginationOptions && this.dataView?.getPagingInfo) {
         const slickPagingInfo = this.dataView.getPagingInfo();
@@ -1527,7 +1510,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         }
       }
       this._paginationOptions.totalItems = this.totalItems;
-      const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
+      const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._options, this._paginationOptions);
       this.initializePaginationService(paginationOptions);
     }
   }
@@ -1535,8 +1518,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   /** Load any Row Selections into the DataView that were presets by the user */
   protected loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
-    const presets = this._gridOptions?.presets;
-    const enableRowSelection = this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection);
+    const presets = this._options?.presets;
+    const enableRowSelection = this._options && (this._options.enableCheckboxSelector || this._options.enableRowSelection);
     if (
       enableRowSelection &&
       this.grid?.getSelectionModel() &&
@@ -1566,7 +1549,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   hasBackendInfiniteScroll(gridOptions?: GridOption): boolean {
-    return !!(gridOptions || this.gridOptions).backendServiceApi?.service.options?.infiniteScroll;
+    return !!(gridOptions || this.options).backendServiceApi?.service.options?.infiniteScroll;
   }
 
   protected mergeGridOptions(gridOptions: GridOption): GridOption {
@@ -1620,7 +1603,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
   /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource & RowDetail) */
   protected preRegisterResources() {
-    this._registeredResources = this.gridOptions.externalResources || [];
+    this._registeredResources = this.options.externalResources || [];
 
     // bind & initialize all Components/Services that were tagged as enabled
     // register all services by executing their init method and providing them with the Grid object
@@ -1654,19 +1637,19 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (
-      (this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) ||
-      (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)
+      (this.options.createPreHeaderPanel && this.options.createTopHeaderPanel) ||
+      (this.options.createPreHeaderPanel && !this.options.enableDraggableGrouping)
     ) {
       this._registeredResources.push(this.headerGroupingService);
     }
 
     // when using Tree Data View, register its Service
-    if (this.gridOptions.enableTreeData) {
+    if (this.options.enableTreeData) {
       this._registeredResources.push(this.treeDataService);
     }
 
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
-    if (this.gridOptions.enableTranslate) {
+    if (this.options.enableTranslate) {
       this.extensionService.translateColumnHeaders();
     }
 
@@ -1705,14 +1688,10 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (this._isDatasetHierarchicalInitialized && this.datasetHierarchical) {
       sortedDatasetResult = this.treeDataService.sortHierarchicalDataset(this.datasetHierarchical);
       flatDatasetOutput = sortedDatasetResult.flat;
-    } else if (this._gridOptions && Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
+    } else if (this._options && Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
       // we need to first convert the flat dataset to a hierarchical dataset and then sort it
       // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
-        flatDatasetInput,
-        this._columnDefinitions,
-        this._gridOptions
-      );
+      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columns, this._options);
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       flatDatasetOutput = sortedDatasetResult.flat;
     }
@@ -1726,14 +1705,14 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-  protected loadSlickGridEditors(columnDefinitions: Column<TData>[]): Column<TData>[] {
-    if (columnDefinitions.some((col) => `${col?.id}`.includes('.'))) {
+  protected loadSlickGridEditors(columns: Column<TData>[]): Column<TData>[] {
+    if (columns.some((col) => `${col?.id}`.includes('.'))) {
       console.error(
         '[Slickgrid-React] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
       );
     }
 
-    return columnDefinitions.map((column: Column | any) => {
+    return columns.map((column: Column | any) => {
       if (column) {
         // on every Editor which have a "collection" or a "collectionAsync"
         if (column.editor?.collectionAsync) {
@@ -1747,8 +1726,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected suggestDateParsingWhenHelpful() {
     if (
       this.dataView?.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
-      !this.gridOptions.silenceWarnings &&
-      !this.gridOptions.preParseDateColumns &&
+      !this.options.silenceWarnings &&
+      !this.options.preParseDateColumns &&
       this.grid.getColumns().some((c) => isColumnDateType(c.type))
     ) {
       console.warn(

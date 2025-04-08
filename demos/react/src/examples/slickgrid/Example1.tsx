@@ -129,8 +129,8 @@ const Example1: React.FC = () => {
       <div className="grid-container1">
         <SlickgridReact
           gridId="grid1"
-          columnDefinitions={columnDefinitions1}
-          gridOptions={gridOptions1!}
+          columns={columnDefinitions1}
+          options={gridOptions1!}
           dataset={dataset1}
           onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
         />
@@ -141,7 +141,7 @@ const Example1: React.FC = () => {
       <h3>
         Grid 2 <small>(with local Pagination)</small>
       </h3>
-      <SlickgridReact gridId="grid2" columnDefinitions={columnDefinitions2} gridOptions={gridOptions2!} dataset={dataset2} />
+      <SlickgridReact gridId="grid2" columns={columnDefinitions2} options={gridOptions2!} dataset={dataset2} />
     </div>
   );
 };

@@ -20,9 +20,9 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 > - Tree Data
 > - RowSpan
 
-> **NOTE 2** Also please note that because SlickGrid is using its built-in Virtual Scroll feature by default (for perf reasons), this will call render and re-render multiple times and that happens whenever the Row Detail gets out of the grid viewport. 
-> For this reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render these elements as if nothing happened. 
-> So you should consider using Row Detail mainly for showing static data (hence where its name comes from "Row Detail" to show more detailed info) and even though it works with dynamic elements, you have to know its limitation. 
+> **NOTE 2** Also please note that because SlickGrid is using its built-in Virtual Scroll feature by default (for perf reasons), this will call render and re-render multiple times and that happens whenever the Row Detail gets out of the grid viewport.
+> For this reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render these elements as if nothing happened.
+> So you should consider using Row Detail mainly for showing static data (hence where its name comes from "Row Detail" to show more detailed info) and even though it works with dynamic elements, you have to know its limitation.
 
 ##### NOTE
 There is currently a known problem with Row Detail when loading the Row Detail Components, it currently shows console warnings (see below), however these are just warnings and they don't show up in Production code. If anyone knows how to fix it please provide a Pull Request as a contribution (please note that the suggestion to use `root.render()` does NOT work as intended hence why we call `createRoot()` every time a row detail is rendered).
@@ -47,7 +47,7 @@ const Example: React.FC = () => {
   }
 
   function defineGrid() {
-    setColumns([ /*...*/ ]); 
+    setColumns([ /*...*/ ]);
     setOptions({
       enableRowDetailView: true,
       rowSelectionOptions: {
@@ -97,8 +97,8 @@ const Example: React.FC = () => {
 
   return !options ? null : (
     <SlickgridReact gridId="grid40"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
         onReactGridCreated={$event => reactGridReady($event.detail)} />
   );
@@ -202,7 +202,7 @@ const ExampleDetail: React.FC = (props: Props) => {
   }
 
   // ...
-  // 
+  //
 
   return !options ? null : (
     <div className="container-fluid" style={{ marginTop: '10px' }}>
@@ -277,7 +277,7 @@ const Example: React.FC = () => {
         process: (item) => http.get(`api/item/${item.id}`),
 
         // ...
-        
+
         // Preload Component
         preloadComponent: Example19Preload,
 
@@ -292,8 +292,8 @@ const Example: React.FC = () => {
 
   return !options ? null : (
     <SlickgridReact gridId="grid40"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
         onReactGridCreated={$event => reactGridReady($event.detail)} />
   );
@@ -371,9 +371,9 @@ import type { SlickDataView, SlickGrid, SlickRowDetailView } from 'slickgrid-rea
 
 import './example19-detail-view.scss';
 
-interface Props { 
+interface Props {
   model: {
-    assignee: string; 
+    assignee: string;
   }
 }
 
@@ -509,8 +509,8 @@ const Example: React.FC = () => {
   return !options ? '' : (
     <div id="demo-container" className="container-fluid">
       <SlickgridReact gridId="grid45"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
         onReactGridCreated={$event => reactGridReady($event.detail)}
       />
@@ -550,7 +550,7 @@ const Example: React.FC = () => {
       { id: 'freight', field: 'freight', name: 'Freight', filterable: true, sortable: true, type: 'number' },
       { id: 'shipName', field: 'shipName', name: 'Ship Name', filterable: true, sortable: true },
     ]);
-  
+
     // OPTIONALLY reapply Grid State as Presets before unmounting the compoment
     const gridStateStr = sessionStorage.getItem(`gridstate_${innerGridClass.value}`);
     let gridState: GridState | undefined;
@@ -583,8 +583,8 @@ const Example: React.FC = () => {
       <h4>Order Details (id: {props.model.id})</h4>
       <div className="container-fluid">
         {!showGrid ? '' : <SlickgridReact gridId={`innergrid-${props.model.id}`}
-          columnDefinitions={innerColDefs}
-          gridOptions={innerGridOptions}
+          columns={innerColDefs}
+          options={innerGridOptions}
           dataset={innerDataset}
           onReactGridCreated={$event => reactGridReady($event.detail)}
           onBeforeGridDestroy={() => handleBeforeGridDestroy()}

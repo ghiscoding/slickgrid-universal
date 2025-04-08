@@ -75,8 +75,8 @@ export interface SlickgridReactProps {
   datasetHierarchical?: any[] | null;
   extensions?: ExtensionList<SlickControlList | SlickPluginList>;
   gridId: string;
-  gridOptions?: GridOption;
-  columnDefinitions: Column[];
+  options?: GridOption;
+  columns: Column[];
   instances?: SlickgridReactInstance;
   paginationOptions?: Pagination;
 

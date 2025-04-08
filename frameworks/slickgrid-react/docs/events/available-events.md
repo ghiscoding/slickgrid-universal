@@ -20,8 +20,8 @@ handleOnCellChange(e, args) {
 render() {
   <SlickgridReact
       gridId='grid3'
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       onReactGridCreated={e => { reactGridReady(e.detail); }}
       onCellChange={e => { handleOnCellChange(e.detail.eventData, e.detail.args); }}
@@ -44,8 +44,8 @@ handleOnHeaderMenuCommand(e) {
 render() {
   <SlickgridReact
       gridId='grid3'
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       onReactGridCreated={e => { reactGridReady(e.detail); }}
       onHeaderMenuCommand={e => { handleOnHeaderMenuCommand(e.detail); }}

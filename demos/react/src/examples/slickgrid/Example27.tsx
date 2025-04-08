@@ -477,8 +477,8 @@ const Example27: React.FC = () => {
       <div id="grid-container" className="col-sm-12">
         <SlickgridReact
           gridId="grid27"
-          columnDefinitions={columnDefinitions}
-          gridOptions={gridOptions}
+          columns={columnDefinitions}
+          options={gridOptions}
           dataset={dataset}
           onBeforeFilterChange={() => showSpinner()}
           onFilterChanged={() => hideSpinner()}

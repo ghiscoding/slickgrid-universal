@@ -123,8 +123,8 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
     />
   );

@@ -60,8 +60,8 @@ export default function Example() {
 
   return !options ? null : (
     <SlickgridReact gridId="grid1"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
      />
   );

@@ -15,7 +15,7 @@
 ## Description
 Tree Data allows you to display a hierarchical (tree) dataset into the grid, it is visually very similar to Grouping but also very different in its implementation. A hierarchical dataset is commonly used for a parent/child relation and a great example is a Bill of Material (BOM), which you can't do with Grouping because parent/child relationship could be infinite tree level while Grouping is a defined and known level of Grouping.
 
-## Important Notes 
+## Important Notes
 
 #### data mutation
 
@@ -151,8 +151,8 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid28"
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       datasetHierarchical={datasetHierarchical}
     />
   );

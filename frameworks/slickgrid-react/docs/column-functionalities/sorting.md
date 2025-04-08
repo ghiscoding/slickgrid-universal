@@ -22,7 +22,7 @@ const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
   const [options, setOptions] = useState<GridOption | undefined>(undefined);
-  
+
   function defineGrid() {
     setColumns([
       { id: 'title', name: 'Title', field: 'title', sortable: true },
@@ -110,8 +110,8 @@ const Example: React.FC = () => {
     </button>
 
     <SlickgridReact gridId="grid4"
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       onGridStateChanged={$event => gridStateChanged($event.detail)}
       onReactGridCreated={$event => reactGridReady($event.detail)}

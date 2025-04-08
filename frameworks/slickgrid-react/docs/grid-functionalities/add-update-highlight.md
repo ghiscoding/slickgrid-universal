@@ -48,12 +48,12 @@ const Example: React.FC = () => {
 
     // add the item to the grid
     reactGridRef.current?.gridService.addItem(newItem);
-  }    
+  }
 
   return !options ? null : (
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       onReactGridCreated={$event => reactGridReady($event.detail)}
       onGridStateChanged={$event => gridStateChanged($event.detail)}

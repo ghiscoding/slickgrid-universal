@@ -25,7 +25,7 @@ const Example: React.FC = () => {
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;
   }
-  
+
   /** Change dynamically `autoEdit` grid options */
   function setAutoEdit(isAutoEdit) {
     setIsAutoEdit(isAutoEdit);
@@ -71,8 +71,8 @@ const Example: React.FC = () => {
       <div className='col-sm-12'>
         <SlickgridReact
           gridId='grid3'
-          columnDefinitions={columns}
-          gridOptions={options}
+          columns={columns}
+          options={options}
           dataset={dataset}
           onReactGridCreated={e => { reactGridReady(e.detail); }}
           onCellChange={e => { onCellChanged(e.detail.eventData, e.detail.args); }}
@@ -115,8 +115,8 @@ const Example: React.FC = () => {
   render() {
     return (
       <SlickgridReact gridId="grid1"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
         onReactGridCreated={$event => reactGridReady($event.detail)}
       />

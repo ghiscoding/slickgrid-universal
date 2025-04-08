@@ -50,8 +50,8 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columnDefinitions1}
-      gridOptions={gridOptions1!}
+      columns={columnDefinitions1}
+      options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
       onSelectedRowsChanged={$event => onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)}
@@ -116,8 +116,8 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columnDefinitions1}
-      gridOptions={gridOptions1!}
+      columns={columnDefinitions1}
+      options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
       onSelectedRowsChanged={$event => onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)}
@@ -182,8 +182,8 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columnDefinitions1}
-      gridOptions={gridOptions1!}
+      columns={columnDefinitions1}
+      options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
       onClick={$event => { onCellClicked($event.detail.eventData, $event.detail.args); }}
@@ -221,7 +221,7 @@ const Example: React.FC = () => {
 ```
 
 ### Disable External Button when having Empty Selection
-When having an external button that you want to work only when there's row selection, there are 2 ways of doing 
+When having an external button that you want to work only when there's row selection, there are 2 ways of doing
 1. use the `onSelectedRowsChanged` event (via your View in HTML or via ViewModel)
 ```tsx
 const [isMyButtonDisabled, setIsMyButtonDisabled] = useState(false);
@@ -232,8 +232,8 @@ function handleOnSelectedRowsChanged(args) {
 
 return !options ? '' : (
   <SlickgridReact gridId="grid1"
-    columnDefinitions={columnDefinitions1}
-    gridOptions={gridOptions1!}
+    columns={columnDefinitions1}
+    options={gridOptions1!}
     dataset={dataset1}
     onReactGridCreated={$event => reactGrid1Ready($event.detail)}
     onClick={$event => { onCellClicked($event.detail.eventData, $event.detail.args); }}
@@ -255,8 +255,8 @@ function handleOngridStateChanged(gridState) {
 
 return !options ? '' : (
   <SlickgridReact gridId="grid1"
-    columnDefinitions={columnDefinitions1}
-    gridOptions={gridOptions1!}
+    columns={columnDefinitions1}
+    options={gridOptions1!}
     dataset={dataset1}
     onReactGridCreated={$event => reactGrid1Ready($event.detail)}
     onClick={$event => { onCellClicked($event.detail.eventData, $event.detail.args); }}
@@ -289,8 +289,8 @@ const Example: React.FC = () => {
 
   return !options ? null : (
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columnDefinitions1}
-      gridOptions={gridOptions1!}
+      columns={columnDefinitions1}
+      options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
       onClick={$event => { onCellClicked($event.detail.eventData, $event.detail.args); }}

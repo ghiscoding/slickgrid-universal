@@ -228,7 +228,7 @@ const Example8: React.FC = () => {
       <span style={{ fontStyle: 'italic' }} data-test="selected-locale">
         {selectedLanguage + '.json'}
       </span>
-      <SlickgridReact gridId="grid8" columnDefinitions={columnDefinitions} gridOptions={gridOptions} dataset={dataset} />
+      <SlickgridReact gridId="grid8" columns={columnDefinitions} options={gridOptions} dataset={dataset} />
     </div>
   );
 };

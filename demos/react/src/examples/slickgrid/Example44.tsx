@@ -474,8 +474,8 @@ export default function Example44() {
 
       <SlickgridReact
         gridId="grid44"
-        columnDefinitions={columnDefinitions}
-        gridOptions={gridOptions}
+        columns={columnDefinitions}
+        options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}
       />

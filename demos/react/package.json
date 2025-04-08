@@ -32,7 +32,8 @@
     "react:dev": "vite",
     "react:preview": "vite preview",
     "react:cypress": "cypress open --config-file test/cypress.config.ts",
-    "build": "vite build"
+    "build": "vite build && pnpm type-check",
+    "type-check": "tsc --noEmit"
   },
   "browserslist": [
     "last 2 version",

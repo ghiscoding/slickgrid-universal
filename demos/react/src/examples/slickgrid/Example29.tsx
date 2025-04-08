@@ -97,8 +97,8 @@ const Example29: React.FC = () => {
 
       <SlickgridReact
         gridId="grid"
-        columnDefinitions={columnDefinitions}
-        gridOptions={gridOptions}
+        columns={columnDefinitions}
+        options={gridOptions}
         dataset={dataset}
         header={<Header />}
         footer={<Footer />}

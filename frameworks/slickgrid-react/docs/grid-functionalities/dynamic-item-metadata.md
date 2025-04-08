@@ -59,8 +59,8 @@ const Example: React.FC = () => {
   return !options ? null : (
     <button class="btn btn-default" onClick={() => changeDurationBackgroundColor()}>Highlight Rows with Duration over 50</button>
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       onReactGridCreated={$event => reactGridReady($event.detail)}
     />
@@ -81,7 +81,7 @@ const Example: React.FC = () => {
 
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;
-  
+
     // if you want to change background color of Duration over 50 right after page load,
     // you would put the code here, also make sure to re-render the grid for the styling to be applied right away
     reactGrid.dataView.getItemMetadata = updateItemMetadataForDurationOver50(reactGrid.dataView.getItemMetadata);

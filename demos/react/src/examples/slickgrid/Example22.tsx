@@ -195,14 +195,14 @@ const Example22: React.FC = () => {
         <div className="tab-content" id="myTabContent">
           <div className="tab-pane fade show active" id="javascript" role="tabpanel" aria-labelledby="javascript-tab">
             <h4>Grid 1 - Load Local Data</h4>
-            <SlickgridReact gridId="grid1" columnDefinitions={columnDefinitions1} gridOptions={gridOptions1} dataset={dataset1} />
+            <SlickgridReact gridId="grid1" columns={columnDefinitions1} options={gridOptions1} dataset={dataset1} />
           </div>
           <div className="tab-pane fade" id="fetch" role="tabpanel" aria-labelledby="fetch-tab">
             <h4>Grid 2 - Load a JSON dataset through Fetch</h4>
             <SlickgridReact
               gridId="grid2"
-              columnDefinitions={columnDefinitions2}
-              gridOptions={gridOptions2}
+              columns={columnDefinitions2}
+              options={gridOptions2}
               dataset={dataset2}
               onReactGridCreated={($event) => reactGrid2Ready($event.detail)}
             />
