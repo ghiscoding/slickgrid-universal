@@ -370,7 +370,7 @@ const Example25: React.FC = () => {
         </div>
       </div>
 
-      <SlickgridReact gridId="grid25" columnDefinitions={columnDefinitions} gridOptions={gridOptions} dataset={dataset} />
+      <SlickgridReact gridId="grid25" columns={columnDefinitions} options={gridOptions} dataset={dataset} />
     </div>
   );
 };

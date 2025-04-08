@@ -490,8 +490,8 @@ const Example13: React.FC = () => {
 
       <SlickgridReact
         gridId="grid13"
-        columnDefinitions={columnDefinitions}
-        gridOptions={gridOptions!}
+        columns={columnDefinitions}
+        options={gridOptions!}
         dataset={dataset}
         onBeforeExportToExcel={() => changeProcessing(true)}
         onAfterExportToExcel={() => changeProcessing(false)}

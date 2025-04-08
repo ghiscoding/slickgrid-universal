@@ -251,7 +251,7 @@ const Example: React.FC = () => {
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;
   }
-  
+
   function defineGrid() {
     setColumns([]);
     setOptions({
@@ -280,8 +280,8 @@ return !options ? null : (
   </span>}
 
   <SlickgridReact gridId="grid5"
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       paginationOptions={paginationOptions}
       onReactGridCreated={$event => reactGridReady($event.detail)}

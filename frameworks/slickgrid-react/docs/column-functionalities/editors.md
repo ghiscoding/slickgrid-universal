@@ -380,7 +380,7 @@ Some of the Editors could receive extra options, which is mostly the case for Ed
 ```ts
 const columnDefinitions = [{
   id: 'start', name: 'Start Date', field: 'start',
-  editor: { 
+  editor: {
     model: Editors.date,
     editorOptions: { range: { date: 'today' } } as VanillaCalendarOption
   }
@@ -392,10 +392,10 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 const gridOptions = {
-  defaultEditorOptions: { 
+  defaultEditorOptions: {
     autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
     date: { range: { date: 'today' } }, // typed as VanillaCalendarOption,
-    longText: { cols: 50, rows: 5 } 
+    longText: { cols: 50, rows: 5 }
   }
 }
 ```
@@ -499,8 +499,8 @@ const Example: React.FC = () => {
   render() {
     return (
       <SlickgridReact gridId="grid1"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
         onReactGridCreated={$event => reactGridReady($event.detail)}
       />
@@ -533,8 +533,8 @@ const Example: React.FC = () => {
     return !options ? null : (
       <SlickgridReact
           gridId='grid3'
-          columnDefinitions={columns}
-          gridOptions={options}
+          columns={columns}
+          options={options}
           dataset={dataset}
           onReactGridCreated={e => { reactGridRef.current?Ready(e.detail); }}
           onBeforeEditCell={e => {onBeforeEditCell($event.detail.eventData, $event.detail.args)}}
@@ -552,7 +552,7 @@ Using the [Row Based Editing Plugin](../grid-functionalities/Row-based-edit.md) 
 
 ## Dynamically change Column Editor
 
-You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below. 
+You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below.
 
 With the code sample shown below, we are using an input checkbox to toggle the Editor between `Editors.longText` to `Editors.text` and vice/versa
 

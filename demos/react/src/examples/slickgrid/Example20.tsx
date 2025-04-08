@@ -434,8 +434,8 @@ const Example20: React.FC = () => {
 
       <SlickgridReact
         gridId="grid20"
-        columnDefinitions={columnDefinitions}
-        gridOptions={gridOptions}
+        columns={columnDefinitions}
+        options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}
         onValidationError={($event) => onCellValidationError($event.detail.eventData, $event.detail.args)}

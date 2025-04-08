@@ -109,8 +109,8 @@ const Example: React.FC = () => {
       <hr />
 
       <SlickgridReact gridId="grid21"
-        columnDefinitions={columns}
-        gridOptions={options}
+        columns={columns}
+        options={options}
         dataset={dataset}
         onReactGridCreated={$event => reactGridReady($event.detail)}
       />

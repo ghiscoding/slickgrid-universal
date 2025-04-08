@@ -501,8 +501,8 @@ const Example39: React.FC = () => {
 
         <SlickgridReact
           gridId="grid39"
-          columnDefinitions={columnDefinitions}
-          gridOptions={gridOptionsRef.current}
+          columns={columnDefinitions}
+          options={gridOptionsRef.current}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}
           onRowCountChanged={($event) => refreshMetrics($event.detail.args)}

@@ -260,8 +260,8 @@ const Example41: React.FC = () => {
           <div className="col">
             <SlickgridReact
               gridId="grid41"
-              columnDefinitions={columnDefinitions}
-              gridOptions={gridOptions}
+              columns={columnDefinitions}
+              options={gridOptions}
               dataset={dataset}
               onReactGridCreated={($event) => reactGridReady($event.detail)}
               onDragInit={($event) => handleOnDragInit($event.detail.eventData)}

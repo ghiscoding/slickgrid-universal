@@ -1200,8 +1200,8 @@ const Example30: React.FC = () => {
 
       <SlickgridReact
         gridId="grid30"
-        columnDefinitions={columnDefinitions}
-        gridOptions={gridOptions}
+        columns={columnDefinitions}
+        options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}
         onBeforeEditCell={($event) => handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)}

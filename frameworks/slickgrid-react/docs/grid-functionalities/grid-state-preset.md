@@ -63,8 +63,8 @@ const Example: React.FC = () => {
 
   return !options ? null : (
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       onReactGridCreated={$event => reactGridReady($event.detail)}
       onGridStateChanged={$event => gridStateChanged($event.detail)}
@@ -186,8 +186,8 @@ const Example: React.FC = () => {
 
   return !options ? null : (
     <SlickgridReact gridId="grid1"
-      columnDefinitions={columns}
-      gridOptions={options}
+      columns={columns}
+      options={options}
       dataset={dataset}
       onReactGridCreated={$event => reactGridReady($event.detail)}
       onGridStateChanged={$event => gridStateChanged($event.detail)}

@@ -197,7 +197,7 @@ const Example14: React.FC = () => {
       <h3>
         Grid 1 <small>(with Header Grouping &amp; Colspan)</small>
       </h3>
-      <SlickgridReact gridId="grid1" columnDefinitions={columnDefinitions1} gridOptions={gridOptions1} dataset={dataset1} />
+      <SlickgridReact gridId="grid1" columns={columnDefinitions1} options={gridOptions1} dataset={dataset1} />
 
       <hr />
 
@@ -224,8 +224,8 @@ const Example14: React.FC = () => {
 
       <SlickgridReact
         gridId="grid2"
-        columnDefinitions={columnDefinitions2}
-        gridOptions={gridOptions2}
+        columns={columnDefinitions2}
+        options={gridOptions2}
         dataset={dataset2}
         onReactGridCreated={($event) => reactGrid2Ready($event.detail)}
       />

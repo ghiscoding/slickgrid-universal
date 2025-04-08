@@ -578,8 +578,8 @@ const Example28: React.FC = () => {
       <div id="grid-container" className="col-sm-12">
         <SlickgridReact
           gridId="grid28"
-          columnDefinitions={columnDefinitions}
-          gridOptions={gridOptions}
+          columns={columnDefinitions}
+          options={gridOptions}
           datasetHierarchical={datasetHierarchical}
           onReactGridCreated={($event) => reactGridReady($event.detail)}
         />

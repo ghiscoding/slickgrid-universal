@@ -155,9 +155,7 @@ const Example17: React.FC = () => {
       <hr />
 
       <div className="grid-container-zone">
-        {gridCreated && (
-          <SlickgridReact gridId="grid17" columnDefinitions={columnDefinitions} gridOptions={gridOptions} dataset={dataset} />
-        )}
+        {gridCreated && <SlickgridReact gridId="grid17" columns={columnDefinitions} options={gridOptions} dataset={dataset} />}
       </div>
     </div>
   );
