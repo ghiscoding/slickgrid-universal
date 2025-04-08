@@ -40,14 +40,12 @@ i18n
     }
   });
 
-  // also since i18next is optional, Slickgrid-React requires you provide the i18n instance to the library (via its provider),
-  // for that you simply need to use the I18nextProvider from Slickgrid-React to provide the optional i18next
+  // also since i18next is optional, Slickgrid-React requires you to provide `i18next` to the library (via its provider),
+  // for that you simply need to use the `I18nextProvider` from Slickgrid-React to provide the optional `i18next`
   const root = createRoot(document.getElementById('main')!);
   root.render(
     <I18nextProvider value={i18n}>
-      <HashRouter>
-        <App />
-      </HashRouter>
+      <App />
     </I18nextProvider>
   );
 ```

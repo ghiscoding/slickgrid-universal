@@ -75,6 +75,7 @@ interface State {
 }
 
 export class SlickgridReact<TData = any> extends React.Component<SlickgridReactProps, State> {
+  // i18next has to be provided by the external user through our `I18nextProvider`
   static contextType = I18nextContext;
   declare context: React.ContextType<typeof I18nextContext>;
   protected _mounted = false;
@@ -470,9 +471,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     // inject the I18Next instance when translation is enabled
     if (this._gridOptions?.enableTranslate || this._gridOptions?.i18n) {
       const importErrorMsg =
-        '[Slickgrid-React] Enabling translation requires you to install I18Next in your App and use I18nextProvider. ' +
+        '[Slickgrid-React] Enabling translation requires you to install I18Next in your App and use `I18nextProvider` to provide it. ' +
         'Please make sure to first install it via "npm install i18next react-i18next" and then ' +
-        'have `<I18nextProvider value={i18n}><App /></I18nextProvider>` in your main index.tsx file. ' +
+        'use `<I18nextProvider value={i18n}><App/></I18nextProvider>` in your main index.tsx file. ' +
         'Visit https://ghiscoding.gitbook.io/slickgrid-react/localization/localization for more info.';
 
       this._i18next = this.context; // Access the context directly
