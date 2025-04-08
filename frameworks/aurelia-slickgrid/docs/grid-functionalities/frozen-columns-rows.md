@@ -16,8 +16,8 @@ To set a pinning for the entire duration of the grid, simply use the Grid Option
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
 ```
@@ -94,8 +94,8 @@ You can change the number of pinned columns/rows and even the pinning of columns
 
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>

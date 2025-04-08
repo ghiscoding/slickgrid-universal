@@ -13,8 +13,8 @@ All the Slick Grid events (and DataView) are exposed through Event Dispatch and 
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefs"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefs"
+    options.bind="gridOptions"
     dataset.bind="myDataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
     on-click.trigger="onCellClicked($event.detail.eventData, $event.detail.args)"
@@ -86,8 +86,8 @@ Bind `dataview.bind` and `grid.bind`
   gridId="grid2"
   dataview.bind="dataviewObj"
   grid.bind="gridObj"
-  column-definitions.bind="columnDefinitions"
-  grid-options.bind="gridOptions"
+  columns.bind="columnDefinitions"
+  options.bind="gridOptions"
   dataset.bind="dataset">
 </aurelia-slickgrid>
 ```

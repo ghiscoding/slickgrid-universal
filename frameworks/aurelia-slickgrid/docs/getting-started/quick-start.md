@@ -65,8 +65,8 @@ To provide locales other than English (default locale), you have 2 options that 
 ```html
 <aurelia-slickgrid
     grid-id="grid1"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
 ```

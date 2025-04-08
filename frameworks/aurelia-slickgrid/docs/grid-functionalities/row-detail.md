@@ -30,8 +30,8 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefs"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefs"
+    options.bind="gridOptions"
     dataset.bind="myDataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>
@@ -347,8 +347,8 @@ The reason is because the Row Selection (checkbox) plugin is a special column an
 
 ```html
 <aurelia-slickgrid grid-id="grid16"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>
@@ -437,8 +437,8 @@ Now, let's define our Inner Grid Component
   <div class="container-fluid">
     <aurelia-slickgrid
       grid-id.bind="gridId"
-      column-definitions.bind="innerColDefs"
-      grid-options.bind="innerGridOptions"
+      columns.bind="innerColDefs"
+      options.bind="innerGridOptions"
       dataset.bind="innerDataset"
       instances.bind="aureliaGrid"
       on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"

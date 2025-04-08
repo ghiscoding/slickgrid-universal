@@ -84,8 +84,8 @@
 <div id="smaller-container" style="width: 950px">
   <aurelia-slickgrid
     grid-id="grid32"
-    column-definitions.bind="columnDefinitions"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
     on-selected-row-ids-changed.trigger="handleOnSelectedRowIdsChanged($event.detail.args)"

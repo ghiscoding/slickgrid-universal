@@ -247,8 +247,8 @@ If you have lots of data, you might want to show a spinner telling the user that
 
 <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefs"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefs"
+    options.bind="gridOptions"
     dataset.bind="myDataset"
     on-before-export-to-excel.trigger="processing = true"
     on-after-export-to-excel.trigger="processing = false">

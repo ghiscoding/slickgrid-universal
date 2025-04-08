@@ -44,8 +44,8 @@
 <div class="overflow-hidden">
   <aurelia-slickgrid
     grid-id="grid1"
-    column-definitions.bind="columnDefinitions1"
-    grid-options.bind="gridOptions1"
+    columns.bind="columnDefinitions1"
+    options.bind="gridOptions1"
     dataset.bind="dataset1"
     on-aurelia-grid-created.trigger="aureliaGrid1Ready($event.detail)"
     on-grid-state-changed.trigger="grid1StateChanged($event.detail)"
@@ -84,8 +84,8 @@
 <div class="overflow-hidden">
   <aurelia-slickgrid
     grid-id="grid2"
-    column-definitions.bind="columnDefinitions2"
-    grid-options.bind="gridOptions2"
+    columns.bind="columnDefinitions2"
+    options.bind="gridOptions2"
     dataset.bind="dataset2"
     on-aurelia-grid-created.trigger="aureliaGrid2Ready($event.detail)"
     on-grid-state-changed.trigger="grid2StateChanged($event.detail)"

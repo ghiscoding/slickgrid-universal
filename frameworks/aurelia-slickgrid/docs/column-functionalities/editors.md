@@ -478,8 +478,8 @@ With that in mind and the code from the SO answer, we end up with the following 
 ```html
 <aurelia-slickgrid
     grid-id="grid1"
-    column-definitions.bind="columnDefs"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefs"
+    options.bind="gridOptions"
     dataset.bind="myDataset"
     on-before-edit-cell.trigger="verifyCellIsEditableBeforeEditing($event.detail.eventData, $event.detail.args)"
     >
@@ -502,8 +502,8 @@ If your grid uses the `autoResize` and you use Editors in your grid on a mobile 
 <div id="grid1">
   <aurelia-slickgrid
     grid-id="gridId"
-    column-definitions.bind="columnDefs"
-    grid-options.bind="gridOptions"
+    columns.bind="columnDefs"
+    options.bind="gridOptions"
     dataset.bind="myDataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
     on-before-edit-cell.trigger="onBeforeEditCell($event.detail.eventData, $event.detail.args)"
@@ -534,7 +534,7 @@ Using the [Row Based Editing Plugin](../grid-functionalities/Row-based-edit.md) 
 
 ## Dynamically change Column Editor
 
-You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below. 
+You can dynamically change a column editor by taking advantage of the `onBeforeEditCell` event and change the editor just before the cell editor opens. However please note that the library keeps 2 references and you need to update both references as shown below.
 
 With the code sample shown below, we are using an input checkbox to toggle the Editor between `Editors.longText` to `Editors.text` and vice/versa
 

@@ -38,8 +38,8 @@ Some users might want to have 1 main single search for filtering the grid data i
   </form>
 
 <aurelia-slickgrid grid-id="grid21"
-                   column-definitions.bind="columnDefinitions"
-                   grid-options.bind="gridOptions"
+                   columns.bind="columnDefinitions"
+                   options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>

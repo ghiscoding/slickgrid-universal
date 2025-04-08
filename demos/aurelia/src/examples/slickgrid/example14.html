@@ -22,7 +22,7 @@
 <div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
 
 <h3>Grid 1 <small>(with Header Grouping &amp; Colspan)</small></h3>
-<aurelia-slickgrid grid-id="grid1" column-definitions.bind="columnDefinitions1" grid-options.bind="gridOptions1" dataset.bind="dataset1">
+<aurelia-slickgrid grid-id="grid1" columns.bind="columnDefinitions1" options.bind="gridOptions1" dataset.bind="dataset1">
 </aurelia-slickgrid>
 
 <hr />
@@ -40,8 +40,8 @@
 
 <aurelia-slickgrid
   grid-id="grid2"
-  column-definitions.bind="columnDefinitions2"
-  grid-options.bind="gridOptions2"
+  columns.bind="columnDefinitions2"
+  options.bind="gridOptions2"
   dataset.bind="dataset2"
   on-aurelia-grid-created.trigger="aureliaGridReady2($event.detail)"
 >

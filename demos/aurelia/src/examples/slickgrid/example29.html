@@ -22,7 +22,7 @@
 
 <div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
 
-<aurelia-slickgrid grid-id="grid" column-definitions.bind="columnDefinitions" grid-options.bind="gridOptions" dataset.bind="dataset">
+<aurelia-slickgrid grid-id="grid" columns.bind="columnDefinitions" options.bind="gridOptions" dataset.bind="dataset">
   <div au-slot="slickgrid-header" class="custom-header-slot">
     <h3>Grid with header and footer slot</h3>
   </div>
