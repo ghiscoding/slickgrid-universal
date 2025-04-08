@@ -73,7 +73,6 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "catalog:",
-    "i18next": "catalog:",
     "sortablejs": "catalog:"
   },
   "peerDependencies": {
@@ -99,7 +98,6 @@
     "native-copyfiles": "^0.3.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-i18next": "^15.4.1",
     "react-router-dom": "^7.5.0",
     "regenerator-runtime": "^0.14.1",
     "rimraf": "catalog:",

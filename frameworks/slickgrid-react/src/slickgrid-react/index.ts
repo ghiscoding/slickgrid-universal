@@ -7,8 +7,9 @@ import type { SlickgridConfig } from './slickgrid-config.js';
 
 import type { SlickgridReactInstance, SlickgridReactComponentOutput, RowDetailView, GridOption } from './models/index.js';
 
-// expose all public classes
-export { TranslaterService, disposeAllSubscriptions } from './services/index.js';
+// expose all public classes & contexts
+export { TranslaterI18NextService, disposeAllSubscriptions } from './services/index.js';
+export { I18nextContext, I18nextProvider } from './contexts/i18nextContext.js';
 
 export {
   type SlickgridReactInstance,

@@ -16,6 +16,7 @@ npm install react-i18n i18next-xhr-backend
 ```tsx
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
+import { I18nextProvider } from 'slickgrid-react';
 
 i18n
   .use(Backend)
@@ -38,6 +39,17 @@ i18n
       escapeValue: false // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
     }
   });
+
+  // also since i18next is optional, Slickgrid-React requires you provide the i18n instance to the library (via its provider),
+  // for that you simply need to use the I18nextProvider from Slickgrid-React to provide the optional i18next
+  const root = createRoot(document.getElementById('main')!);
+  root.render(
+    <I18nextProvider value={i18n}>
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </I18nextProvider>
+  );
 ```
 
 #### Class sample

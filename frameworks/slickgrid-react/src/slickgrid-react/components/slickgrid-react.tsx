@@ -54,16 +54,16 @@ import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-c
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import i18next from 'i18next';
 import React from 'react';
 import type { Subscription } from 'rxjs';
 
+import { I18nextContext } from '../contexts/i18nextContext';
 import { GlobalGridOptions } from '../global-grid-options';
-import type { SlickgridReactInstance, GridOption } from '../models/index';
+import type { GridOption, I18Next, SlickgridReactInstance } from '../models/index';
 import { disposeAllSubscriptions } from '../services/utilities';
 import { GlobalContainerService } from '../services/singletons';
 import { loadReactComponentDynamically } from '../services/reactUtils';
-import { TranslaterService } from '../services/translater.service';
+import { TranslaterI18NextService } from '../services/translaterI18Next.service';
 import type { SlickgridReactProps } from './slickgridReactProps';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
@@ -75,6 +75,8 @@ interface State {
 }
 
 export class SlickgridReact<TData = any> extends React.Component<SlickgridReactProps, State> {
+  static contextType = I18nextContext;
+  declare context: React.ContextType<typeof I18nextContext>;
   protected _mounted = false;
   protected setStateValue(key: string, value: any, callback?: () => void): void {
     if ((this.state as any)?.[key] === value) {
@@ -102,6 +104,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected _eventHandler!: SlickEventHandler;
   protected _eventPubSubService!: EventPubSubService;
   protected _hideHeaderRowAfterPageLoad = false;
+  protected _i18next: I18Next | null;
   protected _isAutosizeColsCalled = false;
   protected _isGridInitialized = false;
   protected _isDatasetInitialized = false;
@@ -173,7 +176,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
   static defaultProps = {
     containerService: GlobalContainerService,
-    translaterService: new TranslaterService(),
+    translaterService: new TranslaterI18NextService(),
     dataset: [],
     gridId: '',
     columnDefinitions: [],
@@ -464,6 +467,22 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this.backendServiceApi = this._gridOptions?.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
 
+    // inject the I18Next instance when translation is enabled
+    if (this._gridOptions?.enableTranslate || this._gridOptions?.i18n) {
+      const importErrorMsg =
+        '[Slickgrid-React] Enabling translation requires you to install I18Next in your App and use I18nextProvider. ' +
+        'Please make sure to first install it via "npm install i18next react-i18next" and then ' +
+        'have `<I18nextProvider value={i18n}><App /></I18nextProvider>` in your main index.tsx file. ' +
+        'Visit https://ghiscoding.gitbook.io/slickgrid-react/localization/localization for more info.';
+
+      this._i18next = this.context; // Access the context directly
+      if (this.props.translaterService && this._i18next) {
+        this.props.translaterService.i18nInstance = this._i18next;
+      } else {
+        throw new Error(importErrorMsg);
+      }
+    }
+
     // unless specified, we'll create an internal postProcess callback (currently only available for GraphQL)
     if (this.gridOptions.backendServiceApi && !this.gridOptions.backendServiceApi?.disableInternalPostProcess) {
       this.createBackendApiInternalPostProcessCallback(this._gridOptions);
@@ -664,7 +683,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   componentWillUnmount(shouldEmptyDomElementContainer = false) {
     this._eventPubSubService.publish('onBeforeGridDestroy', this.grid);
     this._eventHandler?.unsubscribeAll();
-    i18next.off('languageChanged');
+    if (typeof this._i18next?.off === 'function') {
+      this._i18next.off('languageChanged');
+    }
 
     // we could optionally also empty the content of the grid container DOM element
     if (shouldEmptyDomElementContainer) {
@@ -817,20 +838,22 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     // on locale change, we have to manually translate the Headers, GridMenu
-    i18next.on('languageChanged', (lang) => {
-      // publish event of the same name that Slickgrid-Universal uses on a language change event
-      this._eventPubSubService.publish('onLanguageChange');
+    if (typeof this._i18next?.on === 'function') {
+      this._i18next.on('languageChanged', (lang) => {
+        // publish event of the same name that Slickgrid-Universal uses on a language change event
+        this._eventPubSubService.publish('onLanguageChange');
 
-      if (gridOptions.enableTranslate) {
-        this.extensionService.translateAllExtensions(lang);
-        if (
-          (gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) ||
-          (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)
-        ) {
-          this.headerGroupingService.translateHeaderGrouping();
+        if (gridOptions.enableTranslate) {
+          this.extensionService.translateAllExtensions(lang);
+          if (
+            (gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) ||
+            (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)
+          ) {
+            this.headerGroupingService.translateHeaderGrouping();
+          }
         }
-      }
-    });
+      });
+    }
 
     // if user set an onInit Backend, we'll run it right away (and if so, we also need to run preProcess, internalPostProcess & postProcess)
     if (gridOptions.backendServiceApi) {

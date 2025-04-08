@@ -945,9 +945,6 @@ importers:
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
-      i18next:
-        specifier: 'catalog:'
-        version: 23.16.8
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.6
@@ -1009,9 +1006,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      react-i18next:
-        specifier: ^15.4.1
-        version: 15.4.1(i18next@23.16.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-router-dom:
         specifier: ^7.5.0
         version: 7.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
