@@ -4,7 +4,7 @@
 - [Custom Filter with Aurelia Custom Elements](#custom-filter-with-aurelia-custom-element)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example4) / [Demo Client Component](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example4.ts) / [Custom InputFilter.ts](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/custom-inputFilter.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example4) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example4.ts) / [Custom InputFilter.ts](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/custom-inputFilter.ts)
 
 ### Description
 You can also create your own Custom Filter with any html/css you want and/or jQuery library you wish to use. Aurelia template (View) are not supported at this point, if you wish to contribute on that end then I certainly accept PR (Pull Request).
@@ -173,7 +173,7 @@ this.columnDef.filter.collection.forEach((option: SelectOption) => {
 ```
 
 ## Custom Filter with Aurelia Custom Element
-I added a new [Example 26](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example26) which have both Custom Editors & Filters which uses Aurelia Custom Elements. The 2nd column "Assignee" is the column that uses both (it's a simple select dropdown created as an Aurelia Custom Elements [here](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/filter-select.ts)) and you need to create a Custom Filter like [here](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/custom-aureliaViewModelFilter.ts) and use that Custom Filter in your column definition like [here](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example26.ts#L110).
+I added a new [Example 26](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example26) which have both Custom Editors & Filters which uses Aurelia Custom Elements. The 2nd column "Assignee" is the column that uses both (it's a simple select dropdown created as an Aurelia Custom Elements [here](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/filter-select.ts)) and you need to create a Custom Filter like [here](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/custom-aureliaViewModelFilter.ts) and use that Custom Filter in your column definition like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example26.ts#L110).
 
 Personally I don't find this very straightforward and I don't recommend using Aurelia Custom Elements for Editors/Filters as it adds a lot of boilerplate (compare to 1 step with a jQuery Custom Filter) but if you really wish to go that route, it's now possible following the steps shown below.
 

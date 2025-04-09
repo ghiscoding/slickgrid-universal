@@ -9,7 +9,7 @@
 OData Backend Service (for Pagination purposes) to get data from a backend server with the help of OData.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example5) / [Demo ViewModel](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example5.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example5) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example5.ts)
 
 ### Note
 Use it when you need to support **Pagination** (that is when your dataset is rather large, more than 5k rows) with a OData endpoint. If your dataset is small (less than 5k rows), then go with a [regular grid](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example1) with the `[dataset]` binding property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example1).

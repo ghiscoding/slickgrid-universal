@@ -10,9 +10,9 @@ You can use Colspan and/or Rowspan by using the DataView Item Metadata Provider,
 ### Demo
 
 #### Colspan / Rowspan
-[Employee Timesheets](https://ghiscoding.github.io/aurelia-slickgrid/#/example43) / [Demo Component](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example43.ts)
+[Employee Timesheets](https://ghiscoding.github.io/aurelia-slickgrid/#/example43) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example43.ts)
 
-[Large Dataset](https://ghiscoding.github.io/aurelia-slickgrid/#/example44) / [Demo Component](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example44.ts)
+[Large Dataset](https://ghiscoding.github.io/aurelia-slickgrid/#/example44) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example44.ts)
 
 ### Basic Usage
 

@@ -4,7 +4,7 @@
 - [Resize by Content - Column Options](#resize-by-content---column-options)
 
 ### Demo
-[Demo](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example32) / [Demo Component](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example32.ts)
+[Demo](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example32) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example32.ts)
 
 ### Description
 The default of Slickgrid-Universal is to fit all columns in the container viewport and for the most part that is a good resize to use and it's fast. However if your grid has a lot of columns then doing a fit to viewport is not exactly great, you have lot of columns a few of these columns will become too small (we strongly suggest adding `minWidth` to every column) and you'll start seeing ellipsis to a few of these columns.

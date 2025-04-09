@@ -5,11 +5,11 @@ In its simplest form, the more the user scrolls down, the more rows will get loa
 
 ### Demo
 
-[JSON Data - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example38) / [Demo ViewModel](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example38.ts)
+[JSON Data - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example38) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example38.ts)
 
-[OData Backend Service - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example39) / [Demo ViewModel](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example39.ts)
+[OData Backend Service - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example39) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example39.ts)
 
-[GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example40) / [Demo ViewModel](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example40.ts)
+[GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example40) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example40.ts)
 
 > ![WARNING]
 > Pagination Grid Preset (`presets.pagination`) is **not** supported with Infinite Scroll

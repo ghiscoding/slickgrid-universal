@@ -21,7 +21,7 @@
 - [Disabling Form Inputs (readonly)](#disabling-form-inputs-readonly)
 
 ### Demo
-[Demo](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example30) / [Demo Component](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example30.ts)
+[Demo](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example30) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example30.ts)
 
 ### Description
 The Composite Editor Modal allows you to (create, clone, edit, mass update & mass selection changes). I believe the SlickGrid author names it as Composite Editor because it loops through each editor of all the column definitions and displays them in one composed form, hence the name Composite Editors. Also note that each editor are pulled directly from the column definition itself (their column title as well), so for example if you use `Editors.longText` then you will have a text area input associated to that field with the appropriate input label.

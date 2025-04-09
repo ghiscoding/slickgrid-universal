@@ -17,10 +17,10 @@ You can Export to Excel, it will create an Excel file with the `.xlsx` default e
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example12) / [Demo Component](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example12.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example12.ts)
 
 ##### with Excel Custom Styling
-[Demo page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example13) / [Demo Component](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/packages/demo/src/examples/slickgrid/example13.ts)
+[Demo page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example13.ts)
 
 ### CSP (Content Security Policy)
 Since we use the library `Excel-Builder-Vanilla`, which itself uses `fflate` as a dependency, that library uses Web Worker when it can which might throw a CSP error.
