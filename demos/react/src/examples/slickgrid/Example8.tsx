@@ -177,7 +177,10 @@ const Example8: React.FC = () => {
         Example 8: Header Menu Plugin
         <span className="float-end font18">
           see&nbsp;
-          <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example8.tsx">
+          <a
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example8.tsx"
+          >
             <span className="mdi mdi-link-variant"></span> code
           </a>
         </span>

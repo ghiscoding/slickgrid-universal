@@ -3,7 +3,7 @@ You can add Header and/or Footer to your grid by using the `#header` and `#foote
 
 ### Demo
 
-[Demo](https://ghiscoding.github.io/slickgrid-react/#/example29) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example29.tsx)
+[Demo](https://ghiscoding.github.io/slickgrid-react/#/example29) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example29.tsx)
 
 ### Basic Usage
 

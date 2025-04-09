@@ -27,9 +27,9 @@ For Tree Data to work with SlickGrid we need to **mutate** the original dataset,
 Tree Data requires and uses Filters to work, you **cannot disable Filtering**. The way it works is that when you collapse a parent group, the grid is actually using Filters to filter out child rows and so expanding/collapsing groups which is why Filtering must be enabled. If you don't want to show Filters to the user, then use `showHeaderRow: false` grid option and/or toggle it from the Grid Menu. Also, if you don't want to see the Grid Menu toggle filter command, you should also hide it from the menu via `gridMenu: { hideToggleFilterCommand: true }`
 
 ### Demo
-[Demo Parent/Child Relationship](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example27) / [ViewModel](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example27.tsx)
+[Demo Parent/Child Relationship](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example27) / [ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example27.tsx)
 
-[Hierarchial Dataset](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example28) / [ViewModel](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example28.tsx)
+[Hierarchial Dataset](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example28) / [ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example28.tsx)
 
 ## Parent/Child Relation Dataset
 This is the most common Tree Data to use, we only use that one in our projects, and requires you to provide a key representing the relation between the parent and children (typically a `parentId`, which the default key when nothing is provided).

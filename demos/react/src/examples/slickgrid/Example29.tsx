@@ -78,7 +78,10 @@ const Example29: React.FC = () => {
         Example 29: Grid with Header and Footer slot
         <span className="float-end font18">
           see&nbsp;
-          <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example29.tsx">
+          <a
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example29.tsx"
+          >
             <span className="mdi mdi-link-variant"></span> code
           </a>
         </span>

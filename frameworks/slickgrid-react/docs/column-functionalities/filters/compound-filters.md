@@ -15,7 +15,7 @@
 Compound filters are a combination of 2 elements (Operator Select + Input Filter) used as a filter on a column. This is very useful to make it obvious to the user that there are Operator available and even more useful with a date picker (`Vanilla-Calendar`).
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example4.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example4.tsx)
 
 ### Available Types
 There are multiple types of compound filters available

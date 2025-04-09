@@ -1,11 +1,11 @@
-The `Grid Menu` (also known as the `Hamburger Menu`) is now part of the project and is enabled by default. 
+The `Grid Menu` (also known as the `Hamburger Menu`) is now part of the project and is enabled by default.
 
-## How to use it? 
+## How to use it?
 #### It's Enabled by default
 Technically, it's enable by default and so you don't have anything to do to enjoy it. However if you want to customize the content of the Grid Menu, then continue reading.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example9.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example9.tsx)
 
 ## Customization
 ### Column Picker
