@@ -49,8 +49,7 @@
   "scripts": {
     "react:dev": "tsc --watch",
     "prebuild": "rimraf dist",
-    "build": "tsc && pnpm type-check",
-    "type-check": "tsc --noEmit",
+    "build": "tsc",
     "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
     "copy-i18n:dist": "copyfiles src/assets/locales/**/*.* dist/i18n --up 3 --stat",
