@@ -354,10 +354,10 @@ export class ExtensionService {
   /**
    * Bind/Create certain plugins before the Grid creation to avoid having odd behaviors.
    * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
-   * @param columnDefinitions
+   * @param columns
    * @param gridOptions
    */
-  createExtensionsBeforeGridCreation(columnDefinitions: Column[], gridOptions: GridOption): void {
+  createExtensionsBeforeGridCreation(columns: Column[], gridOptions: GridOption): void {
     const featureWithColumnIndexPositions: Array<ExtensionModel<any>> = [];
 
     // the following 3 features might have `columnIndexPosition` that we need to respect their column order, we will execute them by their sort order further down
@@ -406,7 +406,7 @@ export class ExtensionService {
     }
 
     // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
-    this.createExtensionByTheirColumnIndex(featureWithColumnIndexPositions, columnDefinitions, gridOptions);
+    this.createExtensionByTheirColumnIndex(featureWithColumnIndexPositions, columns, gridOptions);
 
     if (gridOptions.enableDraggableGrouping) {
       if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
@@ -504,7 +504,7 @@ export class ExtensionService {
    * @param locale to use
    * @param new column definitions (optional)
    */
-  translateColumnHeaders(locale?: string, newColumnDefinitions?: Column[]): void {
+  translateColumnHeaders(locale?: string, newColumns?: Column[]): void {
     if (
       this.sharedService &&
       this.gridOptions &&
@@ -520,7 +520,7 @@ export class ExtensionService {
       this.translaterService.use(locale as string);
     }
 
-    let columnDefinitions = newColumnDefinitions;
+    let columnDefinitions = newColumns;
     if (!columnDefinitions) {
       columnDefinitions = this.sharedService.columnDefinitions;
     }
@@ -531,15 +531,15 @@ export class ExtensionService {
     this.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
 
     // re-render the column headers which will indirectly re-translate ColumnPicker/GridMenu
-    this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumnDefinitions));
+    this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumns));
   }
 
   /**
    * Render (or re-render) the column headers from column definitions.
    * calling setColumns() will trigger a grid re-render
    */
-  renderColumnHeaders(newColumnDefinitions?: Column[], forceColumnDefinitionsOverwrite = false): void {
-    let collection = newColumnDefinitions;
+  renderColumnHeaders(newColumns?: Column[], forceColumnDefinitionsOverwrite = false): void {
+    let collection = newColumns;
     if (!collection) {
       collection = this.sharedService.columnDefinitions;
     }
@@ -573,12 +573,12 @@ export class ExtensionService {
    * The following 3 features could have that optional `columnIndexPosition` and we need to respect their column order, we will first sort by their optional order and only after we will create them by their specific order.
    * We'll process them by their position (if provided, else use same order that they were inserted)
    * @param featureWithIndexPositions
-   * @param columnDefinitions
+   * @param columns
    * @param gridOptions
    */
   protected createExtensionByTheirColumnIndex(
     featureWithIndexPositions: Array<ExtensionModel<any>>,
-    columnDefinitions: Column[],
+    columns: Column[],
     gridOptions: GridOption
   ): void {
     // 1- first step is to sort them by their index position
@@ -586,7 +586,7 @@ export class ExtensionService {
 
     // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
     featureWithIndexPositions.forEach((feature) => {
-      const instance = feature.instance.create(columnDefinitions, gridOptions);
+      const instance = feature.instance.create(columns, gridOptions);
       if (instance) {
         this._extensionCreatedList[feature.name] = { name: feature.name, instance };
       }

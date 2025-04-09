@@ -233,10 +233,10 @@ export class TreeDataService {
     return this._lastToggleStateChange;
   }
 
-  getInitialSort(columnDefinitions: Column[], gridOptions: GridOption): ColumnSort {
+  getInitialSort(columns: Column[], gridOptions: GridOption): ColumnSort {
     const treeDataOptions = gridOptions?.treeDataOptions;
     const initialColumnSorting = treeDataOptions?.initialSort ?? { columnId: treeDataOptions?.columnId ?? '', direction: 'ASC' };
-    const initialSortColumn = columnDefinitions.find((col) => col.id === initialColumnSorting.columnId);
+    const initialSortColumn = columns.find((col) => col.id === initialColumnSorting.columnId);
 
     return {
       columnId: initialColumnSorting.columnId,
@@ -277,14 +277,14 @@ export class TreeDataService {
    * Takes a flat dataset, converts it into a hierarchical dataset, sort it by recursion and finally return back the final and sorted flat array.
    * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
    * @param {Array<Object>} flatDataset - parent/child flat dataset
-   * @param {Column[]} columnDefinitions - column definitions
+   * @param {Column[]} columns - column definitions
    * @param {Object} gridOptions - grid options
    * @param {Array<ColumnSort>} [columnSorts] - optional sort columns
    * @returns {Array<Object>} - tree dataset
    */
   convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[] }>(
     flatDataset: P[],
-    columnDefinitions: Column[],
+    columns: Column[],
     gridOptions: GridOption,
     columnSorts?: ColumnSort[]
   ): { hierarchical: Array<P & { [childrenPropName: string]: P[] }>; flat: P[] } {
@@ -293,8 +293,7 @@ export class TreeDataService {
 
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
     // also note that multi-column is not currently supported with Tree Data and so we'll take only the first Sort column
-    const columnSort =
-      Array.isArray(columnSorts) && columnSorts.length ? columnSorts[0] : this.getInitialSort(columnDefinitions, gridOptions);
+    const columnSort = Array.isArray(columnSorts) && columnSorts.length ? columnSorts[0] : this.getInitialSort(columns, gridOptions);
     const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort], true);
 
     // and finally add the sorting icon (this has to be done manually in SlickGrid) to the column we used for the sorting

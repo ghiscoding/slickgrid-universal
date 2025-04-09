@@ -25,9 +25,9 @@ export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
  * It will loop through all column definitions and add an Custom Editor Formatter when necessary,
  * also note that if there's already a Formatter on the column definition it will automatically use the Formatters.multiple and add the custom formatter into the `params: formatters: {}}`
  */
-export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Column[], customEditableFormatter: Formatter): void {
-  if (Array.isArray(columnDefinitions)) {
-    for (const columnDef of columnDefinitions) {
+export function autoAddEditorFormatterToColumnsWithEditor(columns: Column[], customEditableFormatter: Formatter): void {
+  if (Array.isArray(columns)) {
+    for (const columnDef of columns) {
       if (columnDef.editor) {
         if (columnDef.formatter && columnDef.formatter !== multipleFormatter && columnDef.formatter !== customEditableFormatter) {
           const prevFormatter = columnDef.formatter;

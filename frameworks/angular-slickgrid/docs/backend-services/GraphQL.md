@@ -61,9 +61,6 @@ export interface GraphqlServiceOption extends BackendServiceOption {
   /** What is the dataset, this is required for the GraphQL query to be built */
   datasetName?: string;
 
-  /** Column definitions, you can pass this instead of "columnIds" */
-  columnDefinitions?: Column[];
-
   /** Used for defining the operation name when building the GraphQL query */
   operationName?: string;
 
@@ -135,7 +132,6 @@ export class MyComponent implements OnInit {
         // add some options to the backend service to work
         // shown below is the minimum setup for the service to work correctly
         options: {
-          columnDefinitions: this.columnDefinitions,
           datasetName: 'users',
           paginationOptions: {
             first: 25,
@@ -167,7 +163,6 @@ this.gridOptions = {
 
     // add some options to the backend service to work
     options: {
-      columnDefinitions: this.columnDefinitions,
       executeProcessCommandOnInit: false, // true by default, which load the data on page load
       datasetName: 'users',
       paginationOptions: {

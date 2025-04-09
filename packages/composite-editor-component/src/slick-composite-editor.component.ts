@@ -48,7 +48,7 @@ type DataSelection = {
 
 export class SlickCompositeEditorComponent implements ExternalResource {
   protected _bindEventService: BindingEventService;
-  protected _columnDefinitions: Column[] = [];
+  protected _columns: Column[] = [];
   protected _compositeOptions!: CompositeEditorOption;
   protected _eventHandler: SlickEventHandler;
   protected _itemDataContext: any;
@@ -342,7 +342,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         const isWithMassChange = modalType === 'mass-update' || modalType === 'mass-selection';
         const dataContext = !isWithMassChange ? this.grid.getDataItem(activeRow) : {};
         this._originalDataContext = extend(true, {}, dataContext);
-        this._columnDefinitions = this.grid.getColumns();
+        this._columns = this.grid.getColumns();
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
         const fullDatasetLength = this.dataView?.getItemCount() ?? 0;
         this._lastActiveRowNumber = activeRow;
@@ -352,7 +352,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // also when it's a "Create" modal, we'll scroll to the end of the grid
         const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
         const hasFoundEditor = this.focusOnFirstColumnCellWithEditor(
-          this._columnDefinitions,
+          this._columns,
           dataContext,
           activeColIndex,
           rowIndex,
@@ -379,9 +379,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         let modalColumns: Column[] = [];
         if (isWithMassChange) {
           // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
-          modalColumns = this._columnDefinitions.filter((col) => col.editorClass && col.editor?.massUpdate === true);
+          modalColumns = this._columns.filter((col) => col.editorClass && col.editor?.massUpdate === true);
         } else {
-          modalColumns = this._columnDefinitions.filter((col) => col.editorClass);
+          modalColumns = this._columns.filter((col) => col.editorClass);
         }
 
         // user could optionally show the form inputs in a specific order instead of using default column definitions order
@@ -887,7 +887,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     if (typeof columnIdOrDef === 'object') {
       column = columnIdOrDef;
     } else if (typeof columnIdOrDef === 'string') {
-      column = this._columnDefinitions.find((col) => col.id === (columnIdOrDef as string));
+      column = this._columns.find((col) => col.id === (columnIdOrDef as string));
     }
     return column;
   }

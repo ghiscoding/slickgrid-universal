@@ -177,13 +177,13 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   get columns(): Column[] {
     return this._columnDefinitions;
   }
-  set columns(columnDefinitions: Column[]) {
-    this._columnDefinitions = columnDefinitions;
+  set columns(columns: Column[]) {
+    this._columnDefinitions = columns;
     if (this._isGridInitialized) {
-      this.updateColumnDefinitionsList(columnDefinitions);
+      this.updateColumnDefinitionsList(columns);
     }
-    if (columnDefinitions.length > 0) {
-      this.copyColumnWidthsReference(columnDefinitions);
+    if (columns.length > 0) {
+      this.copyColumnWidthsReference(columns);
     }
   }
 
@@ -889,14 +889,14 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
    * We will re-render the grid so that the new header and data shows up correctly.
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
-  updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
+  updateColumnDefinitionsList(newColumns: Column[]) {
     // map the Editor model to editorClass and load editor collectionAsync
-    newColumnDefinitions = this.loadSlickGridEditors(newColumnDefinitions);
+    newColumns = this.loadSlickGridEditors(newColumns);
 
     if (this.options.enableTranslate) {
-      this.extensionService.translateColumnHeaders(undefined, newColumnDefinitions);
+      this.extensionService.translateColumnHeaders(undefined, newColumns);
     } else {
-      this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
+      this.extensionService.renderColumnHeaders(newColumns, true);
     }
 
     if (this.options?.enableAutoSizeColumns) {
@@ -933,8 +933,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
    * Loop through all column definitions and copy the original optional `width` properties optionally provided by the user.
    * We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
    */
-  protected copyColumnWidthsReference(columnDefinitions: Column[]) {
-    columnDefinitions.forEach((col) => (col.originalWidth = col.width));
+  protected copyColumnWidthsReference(columns: Column[]) {
+    columns.forEach((col) => (col.originalWidth = col.width));
   }
 
   protected bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
@@ -1626,14 +1626,14 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   }
 
   /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-  protected loadSlickGridEditors(columnDefinitions: Column<TData>[]): Column<TData>[] {
-    if (columnDefinitions.some((col) => `${col.id}`.includes('.'))) {
+  protected loadSlickGridEditors(columns: Column<TData>[]): Column<TData>[] {
+    if (columns.some((col) => `${col.id}`.includes('.'))) {
       console.error(
         '[Angular-Slickgrid] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
       );
     }
 
-    return columnDefinitions.map((column: Column | any) => {
+    return columns.map((column: Column | any) => {
       // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
       if (column?.editor?.collectionAsync) {
         this.loadEditorCollectionAsync(column);
