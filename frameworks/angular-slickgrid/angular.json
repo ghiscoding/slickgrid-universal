@@ -63,8 +63,8 @@
               "extractLicenses": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
+                  "replace": "src/demos/environments/environment.ts",
+                  "with": "src/demos/environments/environment.dev.ts"
                 }
               ]
             },
@@ -83,8 +83,8 @@
               "extractLicenses": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/demos/environments/environment.ts",
+                  "with": "src/demos/environments/environment.prod.ts"
                 }
               ]
             }
