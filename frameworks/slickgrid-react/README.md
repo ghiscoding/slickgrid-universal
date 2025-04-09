@@ -78,7 +78,8 @@ This project **does not** work well with `React.StrictMode`, so please make sure
 
 | Slickgrid-React | React version | Migration Guide | Notes |
 |-------------------|-----------------|-----------------|------|
-| 5.x               | React 18+       | [Migration 5.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-5.x)     | modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) |
+| 9.x               | React 18+       | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-9.x)     | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) |
+| 5.x               | React 18+       | [Migration 5.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-5.x)     | Modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) |
 | 4.x               |        | [Migration 4.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)     | merge SlickGrid into Slickgrid-Universal, requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) |
 | 3.x               |        | [Migration 3.x](https://github.com/ghiscoding/slickgrid-react/wiki/Migration-to-3.x)     | removal of jQuery (now uses browser native code), requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) |
 | 2.x               | React 18+       | [Migration 2.x](https://github.com/ghiscoding/slickgrid-react/wiki/Migration-to-2.x)     | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) version |
