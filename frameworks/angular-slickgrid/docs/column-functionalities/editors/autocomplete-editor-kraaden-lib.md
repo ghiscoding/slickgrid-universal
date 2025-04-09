@@ -12,7 +12,7 @@
   - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) | [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-editor.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-editor.component.ts)
 
 ### Introduction
 AutoComplete is a functionality that let the user start typing characters and the autocomplete will try to give suggestions according to the characters entered. The collection can be a fixed JSON files (collection of strings or objects) or can also be an external remote resource to an external API. For a demo of what that could look like, take a look at the [animated gif demo](#animated-gif-demo) below.

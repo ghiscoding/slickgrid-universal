@@ -25,10 +25,10 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 
 ### Demo
 ##### with plain javascript/jQuery
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-editor.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-editor.component.ts)
 
 ##### with Angular Component
-[Demo](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components) / [Demo Client Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-angular.component.ts)
+[Demo](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-angular.component.ts)
 
 ### How to use Inline Editors
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
@@ -323,7 +323,7 @@ export class IntegerEditor implements Editor {
 ```
 
 ##### Use it in your Column Definition
-For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/Angular-Slickgrid/blob/master/src/app/examples/custom-inputEditor.ts)
+For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-inputEditor.ts)
 
 ```typescript
 this.columnDefinitions = [
@@ -338,13 +338,13 @@ this.columnDefinitions = [
 ```
 
 ## Custom Editor with Angular Components
-You can see them in [Example 22](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components) which have both Custom Editors & Filters which uses Angular Components. The 2nd column "Assignee" is the column that uses both (it uses `ng-select` 3rd party lib wrapped in an Angular Components [here](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/editor-ng-select.component.ts)) and you need to create a Custom Editor like [here](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/custom-angularComponentEditor.ts) and use that Custom Editor in your column definition like
+You can see them in [Example 22](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components) which have both Custom Editors & Filters which uses Angular Components. The 2nd column "Assignee" is the column that uses both (it uses `ng-select` 3rd party lib wrapped in an Angular Components [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/editor-ng-select.component.ts)) and you need to create a Custom Editor like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-angularComponentEditor.ts) and use that Custom Editor in your column definition like
 
 Personally I don't find this very straightforward and I don't recommend using Angular Components for Editors/Filters as it adds a lot of boilerplate (compare to 1 step with a jQuery Custom Editor) but if you really wish to go that route, it's now possible following the steps shown below.
 
 The steps to use an Angular Component as a Custom Editor are the following:
-1. Create a Custom Editor that will handle the creation or compilation of the Angular Component into a SlickGrid Editors. For that you can take a look at this [Custom Editor](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/custom-angularComponentEditor.ts)
-2. Define your Angular Component, for example take a look at this simple [ng-select Editor](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/editor-ng-select.component.ts)
+1. Create a Custom Editor that will handle the creation or compilation of the Angular Component into a SlickGrid Editors. For that you can take a look at this [Custom Editor](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-angularComponentEditor.ts)
+2. Define your Angular Component, for example take a look at this simple [ng-select Editor](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/editor-ng-select.component.ts)
 3. Use the Custom Editor inside your Column Definitions, for that you can see previous paragraph
 
 ## How to prevent Editor from going to the next bottom cell?

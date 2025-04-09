@@ -27,9 +27,9 @@ For Tree Data to work with SlickGrid we need to **mutate** the original dataset,
 Tree Data requires and uses Filters to work, you **cannot disable Filtering**. The way it works is that when you collapse a parent group, the grid is actually using Filters to filter out child rows and so expanding/collapsing groups which is why Filtering must be enabled. If you don't want to show Filters to the user, then use `showHeaderRow: false` grid option and/or toggle it from the Grid Menu. Also, if you don't want to see the Grid Menu toggle filter command, you should also hide it from the menu via `gridMenu: { hideToggleFilterCommand: true }`
 
 ### Demo
-[Demo Parent/Child Relationship](https://ghiscoding.github.io/Angular-Slickgrid/#/tree-data-parent-child) / [Component](https://github.com/ghiscoding/Angular-Slickgrid/blob/master/src/app/examples/grid-tree-data-parent-child.component.ts)
+[Demo Parent/Child Relationship](https://ghiscoding.github.io/Angular-Slickgrid/#/tree-data-parent-child) / [Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-tree-data-parent-child.component.ts)
 
-[Hierarchial Dataset](https://ghiscoding.github.io/Angular-Slickgrid/#/tree-data-hierarchical) / [Component](https://github.com/ghiscoding/Angular-Slickgrid/blob/master/src/app/examples/grid-tree-data-hierarchical.component.ts)
+[Hierarchial Dataset](https://ghiscoding.github.io/Angular-Slickgrid/#/tree-data-hierarchical) / [Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-tree-data-hierarchical.component.ts)
 
 ## Parent/Child Relation Dataset
 This is the most common Tree Data to use, we only use that one in our projects, and requires you to provide a key representing the relation between the parent and children (typically a `parentId`, which the default key when nothing is provided).

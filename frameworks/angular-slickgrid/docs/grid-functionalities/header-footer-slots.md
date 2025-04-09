@@ -3,7 +3,7 @@ You can add Header and/or Footer to your grid by using `ng-template` within your
 
 ### Demo
 
-[Demo](https://ghiscoding.github.io/Angular-Slickgrid/#/header-footer) / [Demo Component](https://github.com/ghiscoding/Angular-Slickgrid/blob/master/src/app/examples/grid-header-footer.component.ts)
+[Demo](https://ghiscoding.github.io/Angular-Slickgrid/#/header-footer) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-header-footer.component.ts)
 
 ### Basic Usage
 

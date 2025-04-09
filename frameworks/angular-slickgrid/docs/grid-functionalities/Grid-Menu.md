@@ -1,15 +1,15 @@
 The `Grid Menu` (also known as the `Hamburger Menu`) is now part of the project and is enabled by default.
 
-## How to use it? 
+## How to use it?
 #### It's Enabled by default
 Technically, it's enable by default and so you don't have anything to do to enjoy it. However if you want to customize the content of the Grid Menu, then continue reading.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/gridmenu) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-menu.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/gridmenu) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-menu.component.ts)
 
-## Customization 
+## Customization
 ### Column Picker
-The Grid Menu comes, by default, with a `Column Picker`. This brings an easy way to show/hide certain column(s) from the grid. This functionality was copied from the [Column Picker Plugin](https://github.com/ghiscoding/angular-slickgrid/wiki/SlickGrid-Controls-&-Plugins#column-picker) and brought over to the Grid Menu. 
+The Grid Menu comes, by default, with a `Column Picker`. This brings an easy way to show/hide certain column(s) from the grid. This functionality was copied from the [Column Picker Plugin](https://github.com/ghiscoding/angular-slickgrid/wiki/SlickGrid-Controls-&-Plugins#column-picker) and brought over to the Grid Menu.
 
 ### Custom Commands
 
@@ -21,7 +21,7 @@ The Grid Menu also comes, by default, with a list of built-in custom commands (a
 - _Export to Text Delimited (you can hide it with `hideExportTextDelimitedCommand: true`)
 - _Refresh Dataset_, only shown when using Backend Service API (you can hide it with `hideRefreshDatasetCommand: true`)
 
-This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Angular-Slickgrid` is configured by default with these settings (you can overwrite any one of them): 
+This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Angular-Slickgrid` is configured by default with these settings (you can overwrite any one of them):
 ```javascript
 this.gridOptions = {
    enableAutoResize: true,

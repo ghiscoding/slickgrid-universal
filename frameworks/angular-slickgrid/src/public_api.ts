@@ -1,1 +1,1 @@
-export * from './app/library/angular-slickgrid/index';
+export * from './library/index';

@@ -43,7 +43,7 @@
     "access": "public",
     "directory": "dist"
   },
-  "main": "src/app/angular-slickgrid/index",
+  "main": "src/public_api.ts",
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
