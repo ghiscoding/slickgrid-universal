@@ -48,7 +48,7 @@ const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
 ```
 
 #### Requirements
-- Vue >=3.4
+- Vue >=3.5
 
 ### Stackblitz
 
