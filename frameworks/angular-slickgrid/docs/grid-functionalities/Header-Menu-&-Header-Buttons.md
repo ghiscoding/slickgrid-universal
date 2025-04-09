@@ -1,10 +1,10 @@
 ### Demo
 
 #### Header Button Plugin
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/headerbutton) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-headerbutton.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/headerbutton) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-headerbutton.component.ts)
 
 #### Header Menu Plugin
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/headermenu) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-headermenu.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/headermenu) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-headermenu.component.ts)
 
 ## Header Menu
 The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default via the grid option "enableHeaderMenu" flag.

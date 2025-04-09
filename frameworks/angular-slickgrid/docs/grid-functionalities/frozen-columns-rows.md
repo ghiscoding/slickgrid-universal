@@ -5,7 +5,7 @@
 - [Animated Gif Demo](#animated-gif-demo)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-bs4-demo/#/frozen) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-frozen.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-bs4-demo/#/frozen) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-frozen.component.ts)
 
 ### Introduction
 One of the requested features, columns or rows pinning (aka frozen). You can pin 1 or more Columns and/or 1 or more Rows. Columns can only be pinned starting from the left side, while Rows can be pinned starting from the Top (default) or Bottom. You can also change the pinning dynamically with `setOptions()`.

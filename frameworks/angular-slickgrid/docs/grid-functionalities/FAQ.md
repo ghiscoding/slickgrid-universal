@@ -8,7 +8,7 @@ When working with the grid, you might want to Add / Update or Hightlight an item
 **Note:** This is strictly a client side event, you still have to implement any backend change yourself.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/additem) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-additem.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/additem) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-additem.component.ts)
 
 ## Frequently asked questions
 ### Merging grid options with applied defaults

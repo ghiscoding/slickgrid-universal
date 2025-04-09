@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
         include: ['**/library/**/*.ts'],
         exclude: [
           ...configDefaults.exclude,
-          '**/src/app/examples/**',
+          '**/src/demos/examples/**',
           '**/src/environments/**',
           '**/test/**',
           '**/__tests__/**',

@@ -7,7 +7,7 @@
 The Date Editor is provided through an external library named [Flatpickr](https://flatpickr.js.org/examples/) and all options from that library can be added to your `editorOptions` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Flatpickr Examples](https://flatpickr.js.org/examples/) and then add them into `editorOptions`. Also just so you know, `editorOptions` is use by all other editors as well to expose external library like Flatpickr, Multiple-Select.js, etc...
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) | [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-editor.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-editor.component.ts)
 
 ### Editor Options
 You can use any of the Flatpickr [options](https://flatpickr.js.org/options/) by adding them to `editorOptions` as shown below.
@@ -41,7 +41,7 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 this.gridOptions = {
-  defaultEditorOptions: { 
+  defaultEditorOptions: {
     date: { minDate: 'today' }, // typed as FlatpickrOption
   }
 }

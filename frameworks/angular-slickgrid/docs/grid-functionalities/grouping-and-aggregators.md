@@ -13,10 +13,10 @@
 
 ## Demo
 ##### Regular Grouping
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/grouping) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-grouping.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/grouping) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-grouping.component.ts)
 
 ##### Draggable Grouping
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/draggrouping) / [Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app/examples/grid-draggrouping.component.ts)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/draggrouping) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-draggrouping.component.ts)
 
 ### Description
 Fully dynamic and interactive multi-level grouping with filtering and aggregates that is achieved with the help of the `DataView` object in `SlickGrid`. Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows). An aggregate can be seen as sub-totals, totals, average, ... or any defined group(s).
