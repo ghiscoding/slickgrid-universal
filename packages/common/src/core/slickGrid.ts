@@ -3279,13 +3279,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Sets grid columns. Column headers will be recreated and all rendered rows will be removed. To rerender the grid (if necessary), call render().
-   * @param {Column[]} columnDefinitions An array of column definitions.
+   * @param {Column[]} columns An array of column definitions.
    */
-  setColumns(columnDefinitions: C[]): void {
-    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columnDefinitions, grid: this });
-    this.columns = columnDefinitions;
+  setColumns(columns: C[]): void {
+    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columns, grid: this });
+    this.columns = columns;
     this.updateColumnsInternal();
-    this.triggerEvent(this.onAfterSetColumns, { newColumns: columnDefinitions, grid: this });
+    this.triggerEvent(this.onAfterSetColumns, { newColumns: columns, grid: this });
   }
 
   /** Update columns for when a hidden property has changed but the column list itself has not changed. */

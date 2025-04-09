@@ -507,12 +507,12 @@ export class GridStateService {
    * we just ask the developer to enable the feature, via flags, and internally the lib will create the necessary column.
    * So specifically for these column(s) and feature(s), we need to re-add them internally when the user calls the `changeColumnsArrangement()` method.
    * @param {Array<Object>} dynamicAddonColumnByIndexPositionList - array of plugin columnId and columnIndexPosition that will be re-added (if it wasn't already found in the output array) dynamically
-   * @param {Array<Column>} fullColumnDefinitions - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
+   * @param {Array<Column>} fullColumns - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
    * @param {Array<Column>} newArrangedColumns - output array that will be use to show in the UI (it could have less columns than fullColumnDefinitions array since user might hide some columns)
    */
   protected addColumnDynamicWhenFeatureEnabled(
     dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number }>,
-    fullColumnDefinitions: Column[],
+    fullColumns: Column[],
     newArrangedColumns: Column[]
   ): void {
     // 1- first step is to sort them by their index position
@@ -520,11 +520,11 @@ export class GridStateService {
 
     // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
     dynamicAddonColumnByIndexPositionList.forEach((feature) => {
-      const pluginColumnIdx = fullColumnDefinitions.findIndex((col) => col.id === feature.columnId);
+      const pluginColumnIdx = fullColumns.findIndex((col) => col.id === feature.columnId);
       const associatedGridCheckboxColumnIdx = newArrangedColumns.findIndex((col) => col.id === feature.columnId);
 
       if (pluginColumnIdx >= 0 && associatedGridCheckboxColumnIdx === -1) {
-        const pluginColumn = fullColumnDefinitions[pluginColumnIdx];
+        const pluginColumn = fullColumns[pluginColumnIdx];
         pluginColumnIdx === 0 ? newArrangedColumns.unshift(pluginColumn) : newArrangedColumns.splice(pluginColumnIdx, 0, pluginColumn);
       }
     });

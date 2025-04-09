@@ -64,7 +64,6 @@ export class Example {
         process: (query) => this.userService.getAll<User[]>(query),
         options: {
           datasetName: 'users',
-          columnDefinitions: this.columnDefinitions,
           keepArgumentFieldDoubleQuotes: true // FALSE by default
         }
       }
@@ -105,7 +104,6 @@ this.gridOptions = {
     service: new GraphqlService(),
     process: (query) => this.userService.getAll<User[]>(query),
     options: {
-      columnDefinitions: this.columnDefinitions,
       datasetName: 'users',
       extraQueryArguments: [{
         field: 'userId',

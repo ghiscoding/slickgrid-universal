@@ -100,27 +100,26 @@ export class SlickRowMoveManager {
    * Create the plugin before the Grid creation to avoid having odd behaviors.
    * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
    */
-  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowMoveManager | null {
+  create(columns: Column[], gridOptions: GridOption): SlickRowMoveManager | null {
     this._addonOptions = { ...this._defaults, ...gridOptions.rowMoveManager } as RowMoveManagerOption;
-    if (Array.isArray(columnDefinitions) && gridOptions) {
+    if (Array.isArray(columns) && gridOptions) {
       const newRowMoveColumn: Column = this.getColumnDefinition();
 
       // add new row move column unless it was already added
-      if (!columnDefinitions.some((col) => col.id === newRowMoveColumn.id)) {
-        const rowMoveColDef =
-          Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
+      if (!columns.some((col) => col.id === newRowMoveColumn.id)) {
+        const rowMoveColDef = Array.isArray(columns) && columns.find((col: Column) => col?.behavior === 'selectAndMove');
         const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
 
         // column index position in the grid
         const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
         if (columnPosition > 0) {
-          columnDefinitions.splice(columnPosition, 0, finalRowMoveColumn);
+          columns.splice(columnPosition, 0, finalRowMoveColumn);
         } else {
-          columnDefinitions.unshift(finalRowMoveColumn);
+          columns.unshift(finalRowMoveColumn);
         }
 
         this.pubSubService.publish(`onPluginColumnsChanged`, {
-          columns: columnDefinitions,
+          columns,
           pluginName: this.pluginName,
         });
       }

@@ -359,7 +359,7 @@ export class GridService {
    * The column definitions could be passed as argument to reset (this can be used after a Grid State reset)
    * The reset will clear the Filters & Sort, then will reset the Columns to their original state
    */
-  resetGrid(columnDefinitions?: Column[]): void {
+  resetGrid(columns?: Column[]): void {
     // clear any Pinning/Frozen columns/rows
     // do it prior to setting the Columns back on the next few lines
     this.clearPinning(false);
@@ -374,7 +374,7 @@ export class GridService {
         if (this._gridOptions?.enableAutoSizeColumns) {
           this._grid.autosizeColumns();
         }
-        this.gridStateService.resetColumns(columnDefinitions);
+        this.gridStateService.resetColumns(columns);
       }
     }
 

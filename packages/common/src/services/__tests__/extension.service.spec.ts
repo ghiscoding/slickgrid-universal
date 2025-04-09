@@ -668,8 +668,8 @@ describe('ExtensionService', () => {
         const createMock = vi.fn();
         const initMock = vi.fn();
         class ExternalExtension {
-          create(columnDefinitions: Column[], gridOptions: GridOption) {
-            createMock(columnDefinitions, gridOptions);
+          create(columns: Column[], gridOptions: GridOption) {
+            createMock(columns, gridOptions);
           }
           init(grid: SlickGrid) {
             initMock(grid);

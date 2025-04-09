@@ -68,7 +68,6 @@ const Example: React.FC = () => {
         process: (query) => userService.getAll<User[]>(query),
         options: {
           datasetName: 'users',
-          columnDefinitions: columnDefinitions,
           keepArgumentFieldDoubleQuotes: true // FALSE by default
         }
       }
@@ -111,7 +110,6 @@ setOptions({
     service: new GraphqlService(),
     process: (query) => userService.getAll<User[]>(query),
     options: {
-      columnDefinitions: columnDefinitions,
       datasetName: 'users',
       extraQueryArguments: [{
         field: 'userId',
