@@ -153,9 +153,9 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // protected functions
   // ------------------
 
-  protected sortMenuItems(columnDefinitions: Column[]): void {
+  protected sortMenuItems(columns: Column[]): void {
     // sort both items list
-    columnDefinitions.forEach((columnDef: Column) => {
+    columns.forEach((columnDef: Column) => {
       if (columnDef?.cellMenu?.commandItems) {
         this.extensionUtility.sortItems(columnDef.cellMenu.commandItems || [], 'positionOrder');
       }

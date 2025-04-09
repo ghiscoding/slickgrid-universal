@@ -349,16 +349,16 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   /**
    * Create Header Menu with Custom Commands if user has enabled Header Menu
    * @param gridOptions
-   * @param columnDefinitions
+   * @param columns
    * @return header menu
    */
-  protected addHeaderMenuCustomCommands(columnDefinitions: Column[]): HeaderMenu {
+  protected addHeaderMenuCustomCommands(columns: Column[]): HeaderMenu {
     const gridOptions = this.sharedService.gridOptions;
     const headerMenuOptions = gridOptions.headerMenu || {};
     const translationPrefix = getTranslationPrefix(gridOptions);
 
-    if (Array.isArray(columnDefinitions) && gridOptions.enableHeaderMenu) {
-      columnDefinitions.forEach((columnDef: Column) => {
+    if (Array.isArray(columns) && gridOptions.enableHeaderMenu) {
+      columns.forEach((columnDef: Column) => {
         if (columnDef && !columnDef.excludeFromHeaderMenu) {
           if (!columnDef.header) {
             columnDef.header = {
@@ -718,8 +718,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
    * Reset all the internal Menu options which have text to translate
    * @param header menu object
    */
-  protected resetHeaderMenuTranslations(columnDefinitions: Column[]): void {
-    columnDefinitions.forEach((columnDef: Column) => {
+  protected resetHeaderMenuTranslations(columns: Column[]): void {
+    columns.forEach((columnDef: Column) => {
       if (columnDef?.header?.menu?.commandItems && !columnDef.excludeFromHeaderMenu) {
         const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.commandItems || [];
         this.extensionUtility.translateMenuItemsFromTitleKey(columnHeaderMenuItems);

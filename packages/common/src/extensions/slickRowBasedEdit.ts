@@ -152,26 +152,26 @@ export class SlickRowBasedEdit {
     this.pubSubService?.unsubscribeAll();
   }
 
-  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowBasedEdit | null {
+  create(columns: Column[], gridOptions: GridOption): SlickRowBasedEdit | null {
     this._addonOptions = {
       ...this._defaults,
       ...gridOptions.rowBasedEditOptions,
     } as RowBasedEditOptions;
-    if (Array.isArray(columnDefinitions) && gridOptions) {
+    if (Array.isArray(columns) && gridOptions) {
       const selectionColumn: Column = this.getColumnDefinition();
       // add new action column unless it was already added
-      if (!columnDefinitions.some((col) => col.id === selectionColumn.id)) {
+      if (!columns.some((col) => col.id === selectionColumn.id)) {
         // column index position in the grid
         const columnPosition = gridOptions?.rowBasedEditOptions?.columnIndexPosition ?? -1;
         if (columnPosition === -1) {
-          columnDefinitions.push(selectionColumn);
-        } else if (columnPosition > 0 && columnPosition < columnDefinitions.length) {
-          columnDefinitions.splice(columnPosition, 0, selectionColumn);
+          columns.push(selectionColumn);
+        } else if (columnPosition > 0 && columnPosition < columns.length) {
+          columns.splice(columnPosition, 0, selectionColumn);
         } else {
-          columnDefinitions.unshift(selectionColumn);
+          columns.unshift(selectionColumn);
         }
         this.pubSubService.publish(`onPluginColumnsChanged`, {
-          columns: columnDefinitions,
+          columns,
           pluginName: this.pluginName,
         });
       }

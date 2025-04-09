@@ -24,7 +24,7 @@ export interface SlickRowDetailView {
   dispose(): void;
 
   /** Create the plugin */
-  create(columnDefinitions: Column[], gridOptions?: GridOption): SlickRowDetailView | null;
+  create(columns: Column[], gridOptions?: GridOption): SlickRowDetailView | null;
 
   /** Collapse all of the open items */
   collapseAll(): void;

@@ -67,7 +67,6 @@ function defineGrid() {
       process: (query) => userService.getAll<User[]>(query),
       options: {
         datasetName: 'users',
-        columnDefinitions: columnDefinitions.value,
         keepArgumentFieldDoubleQuotes: true // FALSE by default
       }
     }
@@ -110,7 +109,6 @@ gridOptions.value = {
     service: new GraphqlService(),
     process: (query) => userService.getAll<User[]>(query),
     options: {
-      columnDefinitions: columnDefinitions,
       datasetName: 'users',
       extraQueryArguments: [{
         field: 'userId',

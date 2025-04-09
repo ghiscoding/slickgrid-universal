@@ -48,7 +48,6 @@ export class Sample {
         service: new GraphqlService(),
         process: (query) => this.userService.getAll<Customer[]>(query),
         options: {
-          columnDefinitions: this.columnDefinitions,
           datasetName: 'customers'
         }
       }

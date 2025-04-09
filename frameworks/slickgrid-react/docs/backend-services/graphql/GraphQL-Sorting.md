@@ -53,7 +53,6 @@ const Example: React.FC = () => {
         service: new GraphqlService(),
         process: (query) => userService.getAll<Customer[]>(query),
         options: {
-          columnDefinitions: columns,
           datasetName: 'customers'
         }
       }

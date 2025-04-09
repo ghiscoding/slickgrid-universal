@@ -218,7 +218,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     clearTimeout(this._backViewportTimer);
   }
 
-  create(columnDefinitions: Column[], gridOptions: GridOption): UniversalRowDetailView | null {
+  create(columns: Column[], gridOptions: GridOption): UniversalRowDetailView | null {
     if (!gridOptions.rowDetailView) {
       throw new Error(
         '[Slickgrid-Universal] The Row Detail View requires options to be passed via the "rowDetailView" property of the Grid Options'
@@ -232,24 +232,24 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this.expandableOverride(this._addonOptions.expandableOverride);
     }
 
-    if (Array.isArray(columnDefinitions) && gridOptions) {
+    if (Array.isArray(columns) && gridOptions) {
       const newRowDetailViewColumn: Column = this.getColumnDefinition();
 
       // add new row detail column unless it was already added
-      if (!columnDefinitions.some((col) => col.id === newRowDetailViewColumn.id)) {
-        const rowDetailColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col) => col?.behavior === 'selectAndMove');
+      if (!columns.some((col) => col.id === newRowDetailViewColumn.id)) {
+        const rowDetailColDef = Array.isArray(columns) && columns.find((col) => col?.behavior === 'selectAndMove');
         const finalRowDetailViewColumn = rowDetailColDef ? rowDetailColDef : newRowDetailViewColumn;
 
         // column index position in the grid
         const columnPosition = gridOptions?.rowDetailView?.columnIndexPosition ?? 0;
         if (columnPosition > 0) {
-          columnDefinitions.splice(columnPosition, 0, finalRowDetailViewColumn);
+          columns.splice(columnPosition, 0, finalRowDetailViewColumn);
         } else {
-          columnDefinitions.unshift(finalRowDetailViewColumn);
+          columns.unshift(finalRowDetailViewColumn);
         }
 
         this.pubSubService.publish(`onPluginColumnsChanged`, {
-          columns: columnDefinitions,
+          columns,
           pluginName: this.pluginName,
         });
       }

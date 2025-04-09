@@ -65,7 +65,6 @@ export class GridBasicComponent implements OnInit {
         service: new GraphqlService(),
         process: (query) => this.userService.getAll<Customer[]>(query),
         options: {
-          columnDefinitions: this.columnDefinitions,
           datasetName: 'customers'
         }
       }
@@ -106,7 +105,6 @@ this.gridOptions = {
     service: new GraphqlService(),
     process: (query) => this.userService.getAll<User[]>(query),
     options: {
-      columnDefinitions: this.columnDefinitions,
       datasetName: 'users',
       extraQueryArguments: [{
         field: 'userId',

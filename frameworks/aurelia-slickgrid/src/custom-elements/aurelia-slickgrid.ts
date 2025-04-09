@@ -79,9 +79,9 @@ const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-par
 `,
 })
 export class AureliaSlickgridCustomElement {
-  protected _columnDefinitions: Column[] = [];
-  protected _columnDefinitionObserver?: ICollectionObserver<'array'>;
-  protected _columnDefinitionsSubscriber: ICollectionSubscriber = {
+  protected _columns: Column[] = [];
+  protected _columnsObserver?: ICollectionObserver<'array'>;
+  protected _columnsSubscriber: ICollectionSubscriber = {
     handleCollectionChange: this.columnDefinitionsHandler.bind(this),
   };
   protected _currentDatasetLength = 0;
@@ -358,16 +358,16 @@ export class AureliaSlickgridCustomElement {
     // and allow slickgrid to pass its arguments to the editors constructor last
     // when slickgrid creates the editor
     // https://github.com/aurelia/dependency-injection/blob/master/src/resolvers.js
-    this._columnDefinitions = this.loadSlickGridEditors(this._columnDefinitions);
+    this._columns = this.loadSlickGridEditors(this._columns);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (this.options.autoAddCustomEditorFormatter) {
-      autoAddEditorFormatterToColumnsWithEditor(this._columnDefinitions, this.options.autoAddCustomEditorFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(this._columns, this.options.autoAddCustomEditorFormatter);
     }
 
     // save reference for all columns before they optionally become hidden/visible
-    this.sharedService.allColumns = this._columnDefinitions;
-    this.sharedService.visibleColumns = this._columnDefinitions;
+    this.sharedService.allColumns = this._columns;
+    this.sharedService.visibleColumns = this._columns;
 
     // TODO: revisit later, this conflicts with Grid State (Example 15)
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -381,7 +381,7 @@ export class AureliaSlickgridCustomElement {
 
     // after subscribing to potential columns changed, we are ready to create these optional extensions
     // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
-    this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this.options);
+    this.extensionService.createExtensionsBeforeGridCreation(this._columns, this.options);
 
     // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
@@ -392,7 +392,7 @@ export class AureliaSlickgridCustomElement {
     this.grid = new SlickGrid(
       this.gridContainer,
       this.customDataView || this.dataview,
-      this._columnDefinitions,
+      this._columns,
       this.options,
       this._eventPubSubService
     );
@@ -408,8 +408,8 @@ export class AureliaSlickgridCustomElement {
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     const frozenColumnIndex = this.options?.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length && this._columnDefinitions.length > 0) {
-      this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
+    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columns.length && this._columns.length > 0) {
+      this.sharedService.frozenVisibleColumnId = this._columns[frozenColumnIndex]?.id ?? '';
     }
 
     // get any possible Services that user want to register
@@ -578,7 +578,7 @@ export class AureliaSlickgridCustomElement {
 
     // also dispose of all Subscriptions
     this.subscriptions = disposeAllSubscriptions(this.subscriptions);
-    this._columnDefinitionObserver?.unsubscribe(this._columnDefinitionsSubscriber);
+    this._columnsObserver?.unsubscribe(this._columnsSubscriber);
 
     if (this.backendServiceApi) {
       for (const prop of Object.keys(this.backendServiceApi)) {
@@ -594,7 +594,7 @@ export class AureliaSlickgridCustomElement {
     }
     this._dataset = null;
     this.datasetHierarchical = null;
-    this._columnDefinitions = [];
+    this._columns = [];
   }
 
   emptyGridContainerElm() {
@@ -1172,20 +1172,20 @@ export class AureliaSlickgridCustomElement {
    * We will re-render the grid so that the new header and data shows up correctly.
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
-  updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
-    if (newColumnDefinitions) {
+  updateColumnDefinitionsList(newColumns: Column[]) {
+    if (newColumns) {
       // map the Editor model to editorClass and load editor collectionAsync
-      newColumnDefinitions = this.loadSlickGridEditors(newColumnDefinitions);
+      newColumns = this.loadSlickGridEditors(newColumns);
 
       // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
       if (this.options.autoAddCustomEditorFormatter) {
-        autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, this.options.autoAddCustomEditorFormatter);
+        autoAddEditorFormatterToColumnsWithEditor(newColumns, this.options.autoAddCustomEditorFormatter);
       }
 
       if (this.options.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, newColumnDefinitions);
+        this.extensionService.translateColumnHeaders(undefined, newColumns);
       } else {
-        this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
+        this.extensionService.renderColumnHeaders(newColumns, true);
       }
 
       if (this.options?.enableAutoSizeColumns) {
@@ -1202,12 +1202,12 @@ export class AureliaSlickgridCustomElement {
 
   /** handler for when column definitions changes */
   protected columnDefinitionsHandler() {
-    this._columnDefinitions = this.columns;
+    this._columns = this.columns;
     if (this._isGridInitialized) {
       this.updateColumnDefinitionsList(this.columns);
     }
-    if (this._columnDefinitions.length > 0) {
-      this.copyColumnWidthsReference(this._columnDefinitions);
+    if (this._columns.length > 0) {
+      this.copyColumnWidthsReference(this._columns);
     }
   }
 
@@ -1217,17 +1217,17 @@ export class AureliaSlickgridCustomElement {
    * see docs https://docs.aurelia.io/components/bindable-properties#calling-a-change-function-when-bindable-is-modified
    */
   protected observeColumnDefinitions() {
-    this._columnDefinitionObserver?.unsubscribe(this._columnDefinitionsSubscriber);
-    this._columnDefinitionObserver = this.observerLocator.getArrayObserver(this.columns);
-    this._columnDefinitionObserver.subscribe(this._columnDefinitionsSubscriber);
+    this._columnsObserver?.unsubscribe(this._columnsSubscriber);
+    this._columnsObserver = this.observerLocator.getArrayObserver(this.columns);
+    this._columnsObserver.subscribe(this._columnsSubscriber);
   }
 
   /**
    * Loop through all column definitions and copy the original optional `width` properties optionally provided by the user.
    * We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
    */
-  protected copyColumnWidthsReference(columnDefinitions: Column[]) {
-    columnDefinitions.forEach((col) => (col.originalWidth = col.width));
+  protected copyColumnWidthsReference(columns: Column[]) {
+    columns.forEach((col) => (col.originalWidth = col.width));
   }
 
   protected displayEmptyDataWarning(showWarning = true) {
@@ -1325,10 +1325,10 @@ export class AureliaSlickgridCustomElement {
   }
 
   protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column[]) {
-    if (this._columnDefinitions) {
-      const columnPosition = this._columnDefinitions.findIndex((c) => c.id === columnId);
+    if (this._columns) {
+      const columnPosition = this._columns.findIndex((c) => c.id === columnId);
       if (columnPosition >= 0) {
-        const dynColumn = this._columnDefinitions[columnPosition];
+        const dynColumn = this._columns[columnPosition];
         if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
           columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
         }
@@ -1341,7 +1341,7 @@ export class AureliaSlickgridCustomElement {
     // if user entered some Columns "presets", we need to reflect them all in the grid
     if (this.options.presets && Array.isArray(this.options.presets.columns) && this.options.presets.columns.length > 0) {
       const gridPresetColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.grid, this.options.presets.columns);
-      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columnDefinitions)) {
+      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columns)) {
         // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
         if (this.options.enableRowMoveManager) {
           const rmmColId = this.options?.rowMoveManager?.columnId ?? '_move';
@@ -1647,11 +1647,7 @@ export class AureliaSlickgridCustomElement {
     } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
       // we need to first convert the flat dataset to a hierarchical dataset and then sort it
       // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
-        flatDatasetInput,
-        this._columnDefinitions,
-        this.options
-      );
+      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columns, this.options);
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       flatDatasetOutput = sortedDatasetResult.flat;
     }
@@ -1665,14 +1661,14 @@ export class AureliaSlickgridCustomElement {
   }
 
   /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-  protected loadSlickGridEditors(columnDefinitions: Column[]): Column[] {
-    if (columnDefinitions.some((col) => `${col.id}`.includes('.'))) {
+  protected loadSlickGridEditors(columns: Column[]): Column[] {
+    if (columns.some((col) => `${col.id}`.includes('.'))) {
       console.error(
         '[Aurelia-Slickgrid] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
       );
     }
 
-    return columnDefinitions.map((column: Column | any) => {
+    return columns.map((column: Column | any) => {
       // on every Editor which have a "collection" or a "collectionAsync"
       if (column.editor?.collectionAsync) {
         this.loadEditorCollectionAsync(column);
