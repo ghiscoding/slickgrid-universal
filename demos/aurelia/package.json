@@ -28,7 +28,8 @@
     "aurelia:dev": "vite",
     "aurelia:preview": "vite preview",
     "aurelia:cypress": "cypress open --config-file test/cypress.config.ts",
-    "build": "vite build"
+    "build": "pnpm type-check && vite build",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@aurelia/fetch-client": "^2.0.0-beta.23",
