@@ -390,7 +390,7 @@ export default function Example44() {
           <a
             style={{ fontSize: '18px' }}
             target="_blank"
-            href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example44.tsx"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example44.tsx"
           >
             <span className="mdi mdi-link-variant"></span> code
           </a>

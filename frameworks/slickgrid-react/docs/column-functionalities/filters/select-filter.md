@@ -24,10 +24,10 @@
 - [Filter Shortcuts](input-filter.md#filter-shortcuts)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example4.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example4.tsx)
 
 ##### Demo with Localization
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
 
 ### Description
 Multiple Select (dropdown) filter is useful when we want to filter the grid 1 or more search term value.
@@ -63,7 +63,7 @@ Simply set the flag `filterable` to True and and enable the filters in the Grid 
 const columnDefinitions = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     type: FieldType.boolean,
     filterable: true,
@@ -105,7 +105,7 @@ If you also have `presets` in the grid options, then your `searchTerms` will be 
 const columnDefinitions = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     type: FieldType.boolean,
     filterable: true,
@@ -124,7 +124,7 @@ For the Select (dropdown) filter, you can fill in the "labelKey" property, if fo
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -142,7 +142,7 @@ You could also use the `enableTranslateLabel` which will translate regardless of
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -161,7 +161,7 @@ What if your select options (collection) have totally different value/label pair
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -188,7 +188,7 @@ What if you want to use `customStructure` and translate the labels? Simply pass 
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -220,7 +220,7 @@ Note: the defaults for single & multiple select filters are different
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -246,7 +246,7 @@ Full example:
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -285,7 +285,7 @@ for (let i = 0; i < 365; i++) {
 }
 
 const columnDefinitions = [
-  { 
+  {
     id: 'duration', name: 'Duration', field: 'duration',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -312,7 +312,7 @@ What if you wanted to merge the results instead? Then in this case, you can chan
 
 ```typescript
 const columnDefinitions = [
-  { 
+  {
     id: 'duration', name: 'Duration', field: 'duration',
     filter: {
       collection: [yourCollection],
@@ -337,7 +337,7 @@ What if you want to use `customStructure` and translate the labels? Simply pass 
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -364,7 +364,7 @@ You can also pre-sort or pre-filter the collection given to the multipleSelect/s
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 const columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: FieldType.boolean,
@@ -457,7 +457,7 @@ In some cases a blank entry at the beginning of the collection could be useful, 
 
 ```typescript
 const columnDefinitions = [
-  { 
+  {
     id: 'duration', name: 'Duration', field: 'duration',
     filter: {
       collection: [yourCollection],
@@ -475,7 +475,7 @@ We can optionally add a custom entry at the beginning of the collection, the mos
 
 ```typescript
 const columnDefinitions = [
-  { 
+  {
     id: 'duration', name: 'Duration', field: 'duration',
     filter: {
       collection: [yourCollection],
@@ -596,7 +596,7 @@ filter: {
 You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `filterOptions` (also note that each key is already typed with the correct filter option interface), for example
 ```ts
 const gridOptions = {
-  defaultFilterOptions: { 
+  defaultFilterOptions: {
     // Note: that `select` combines both multipleSelect & singleSelect
     select: { minHeight: 350 }, // typed as MultipleSelectOption
   }

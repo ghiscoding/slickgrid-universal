@@ -13,7 +13,7 @@
 * [PostRenderer Formatter](#postrender-formatter)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example2.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example2.tsx)
 
 #### Definition
 
@@ -294,7 +294,7 @@ Code example:
       }
     ]);
   }
- 
+
 ```
 
 A **Better Solution** is to use Custom Formatters **as much as possible** because using an React Components with `asyncPostRender` are **SLOW** (you are warned). They are slow because they require a full cycle, cannot be cached and are rendered **after** each rows are rendered (because of their asynchronous nature), while Custom Formatters are rendered at the same time as the row itself since they are synchronous in nature.

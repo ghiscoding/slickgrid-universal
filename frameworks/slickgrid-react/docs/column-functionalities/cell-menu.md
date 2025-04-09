@@ -7,7 +7,7 @@
 - [UI Sample](#ui-sample)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/Example24) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example24.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/Example24) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example24.tsx)
 
 ### Description
 A Cell Menu, most often used as an Action Menu and is more oriented on a row action (e.g. delete current row), it could be defined on 1 or more columns (defined in a column definition) and is triggered by a cell click or touch. The menu can show a list of Commands (to execute an action) and/or Options (to change the value of a field). Also note that the Commands list is following the same structure used in the [Context Menu](../grid-functionalities/Context-Menu.md), [Header Menu](../grid-functionalities/Header-Menu-&-Header-Buttons.md) & [Grid Menu](../grid-functionalities/Grid-Menu.md). The Cell Menu is very similar to the [Context Menu](../grid-functionalities/Context-Menu.md), both were create as SlickGrid plugins during the same period, their main difference is that they get triggered differently (cell click vs mouse right+click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).
@@ -94,7 +94,7 @@ So if you decide to use the `action` callback, then your code would look like th
 ##### with `action` callback
 ```ts
 const columnDefinitions = [
-  { 
+  {
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       commandItems: [
@@ -112,7 +112,7 @@ The `onCommand` (or `onOptionSelected`) **must** be defined in the Grid Options
 
 ```ts
 const columnDefinitions = [
-  { 
+  {
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       commandItems: [
@@ -152,7 +152,7 @@ What if you want to dynamically disable or hide a Command/Option or even disable
 For example, say we want the Cell Menu to only be available on the first 20 rows of the grid, we could use the override this way
 ```ts
 const columnDefinitions = [
-  { 
+  {
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       menuUsabilityOverride: (args) => {
@@ -167,7 +167,7 @@ const columnDefinitions = [
 To give another example, with Options this time, we could say that we enable the `n/a` option only when the row is Completed. So we could do it this way
 ```ts
 const columnDefinitions = [
-  { 
+  {
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       optionItems: [
@@ -191,7 +191,7 @@ const columnDefinitions = [
 It works exactly like the rest of the library when `enableTranslate` is set, all we have to do is to provide translations with the `Key` suffix, so for example without translations, we would use `title` and that would become `titleKey` with translations, that;'s easy enough. So for example, a list of Options could be defined as follow:
 ```ts
 const columnDefinitions = [
-  { 
+  {
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       optionTitleKey: 'COMMANDS', // optionally pass a title to show over the Options

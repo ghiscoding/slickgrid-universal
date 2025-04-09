@@ -3,10 +3,10 @@ Just like Excel you can select multiple cell and copy (`Ctrl+C`) and paste to Ex
 
 ### Demo
 #### with Inline Editor
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example3) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example3.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example3) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example3.tsx)
 
 #### with Localization
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
 
 ### Usage
 All you need to do is enable the Grid Option `enableExcelCopyBuffer: true` and give it a try. From your grid, start selecting multiple cells with the mouse then copy (with `Ctrl+C`) and paste to Excel (with `Ctrl+V`)
@@ -101,10 +101,10 @@ If you want to disable pasting values for specific columns you can deactivate it
 
 ```typescript
 const columnDefinitions = [
-  { 
-    id: 'colA', name: 'Col A', field: 'col_a', 
+  {
+    id: 'colA', name: 'Col A', field: 'col_a',
     formatter: Formatters.bold,
-    exportWithFormatter: true, 
+    exportWithFormatter: true,
     sanitizeDataExport: true,
     denyPaste: true // <------------
   }

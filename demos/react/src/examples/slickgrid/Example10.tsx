@@ -327,7 +327,10 @@ const Example10: React.FC = () => {
         Example 10: Multiple Grids with Row Selection
         <span className="float-end font18">
           see&nbsp;
-          <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example10.tsx">
+          <a
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example10.tsx"
+          >
             <span className="mdi mdi-link-variant"></span> code
           </a>
         </span>

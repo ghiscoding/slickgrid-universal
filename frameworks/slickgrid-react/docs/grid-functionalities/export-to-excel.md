@@ -17,7 +17,7 @@ You can Export to Excel, it will create an Excel file with the `.xlsx` default e
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
 
 ### CSP (Content Security Policy)
 Since we use the library `Excel-Builder-Vanilla`, which itself uses `fflate` as a dependency, that library uses Web Worker when it can which might throw a CSP error.
@@ -311,7 +311,7 @@ Please note the following
 Internally, the lib will detect the correct Excel cell format for each column, it will do this only once per column and keep a reference of the Excel format it found for each column field. For every other rows afterward, it will reapply the previously saved format reference.
 
 ##### Demo with Excel Custom Styling
-[Demo page](https://ghiscoding.github.io/slickgrid-react/#/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example13.tsx)
+[Demo page](https://ghiscoding.github.io/slickgrid-react/#/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example13.tsx)
 
 ##### ViewModel
 ```ts

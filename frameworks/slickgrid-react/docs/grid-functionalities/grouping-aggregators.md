@@ -12,10 +12,10 @@
 - [Styling - Change Icons](#styling-change-icons)
 
 ## Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example13.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example13.tsx)
 
 ##### Draggable Grouping
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/Example18) / [Demo Component](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example18.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/Example18) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example18.tsx)
 
 ### Description
 Fully dynamic and interactive multi-level grouping with filtering and aggregates that is achieved with the help of the `DataView` object in `SlickGrid`. Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows). An aggregate can be seen as sub-totals, totals, average, ... or any defined group(s).

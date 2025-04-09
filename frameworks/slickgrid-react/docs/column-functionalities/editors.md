@@ -30,10 +30,10 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 
 ### Demo
 ##### with plain javascript
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example3.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example3.tsx)
 
 ##### with React Custom Components
-[Demo](https://ghiscoding.github.io/slickgrid-react/#/slickgrid) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example26.tsx)
+[Demo](https://ghiscoding.github.io/slickgrid-react/#/slickgrid) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example26.tsx)
 
 
 ### How to use Inline Editors
@@ -132,7 +132,7 @@ export class IntegerEditor implements Editor {
 ```
 
 ##### Use it in your Column Definition
-For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/custom-inputEditor.ts)
+For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/custom-inputEditor.ts)
 
 ```tsx
 const columnDefinitions = [

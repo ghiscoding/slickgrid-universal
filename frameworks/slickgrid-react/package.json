@@ -62,7 +62,7 @@
   ],
   "files": [
     "/dist",
-    "/src/slickgrid-react"
+    "/src"
   ],
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",

@@ -305,7 +305,10 @@ const Example25: React.FC = () => {
         Example 25: GraphQL Basic API without Pagination
         <span className="float-end font18">
           see&nbsp;
-          <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example25.tsx">
+          <a
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example25.tsx"
+          >
             <span className="mdi mdi-link-variant"></span> code
           </a>
         </span>

@@ -473,7 +473,10 @@ const Example31: React.FC = () => {
         Example 31: Grid with OData Backend Service using RxJS Observables
         <span className="float-end font18">
           see&nbsp;
-          <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example31.tsx">
+          <a
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example31.tsx"
+          >
             <span className="mdi mdi-link-variant"></span> code
           </a>
         </span>

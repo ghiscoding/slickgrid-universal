@@ -291,7 +291,10 @@ const Example19: React.FC = () => {
           Example 19: Row Detail View
           <span className="float-end font18">
             see&nbsp;
-            <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example19.tsx">
+            <a
+              target="_blank"
+              href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example19.tsx"
+            >
               <span className="mdi mdi-link-variant"></span> code
             </a>
           </span>

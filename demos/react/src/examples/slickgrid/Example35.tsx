@@ -264,7 +264,10 @@ const Example35: React.FC = () => {
         Example 35: Row Based Editing
         <span className="float-end font18">
           see&nbsp;
-          <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example35.tsx">
+          <a
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example35.tsx"
+          >
             <span className="mdi mdi-link-variant"></span> code
           </a>
         </span>
@@ -287,7 +290,10 @@ const Example35: React.FC = () => {
           <li>
             Editedable rows, as well as modified cells are highlighted with a different color, which you can customize using css variables
             (see
-            <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/example35.scss">
+            <a
+              target="_blank"
+              href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/example35.scss"
+            >
               example35.scss{' '}
             </a>
             )
