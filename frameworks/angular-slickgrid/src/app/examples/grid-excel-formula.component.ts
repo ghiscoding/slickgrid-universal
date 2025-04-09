@@ -15,7 +15,7 @@ import {
   Grouping,
   SlickGrid,
   SlickGroupTotals,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 interface GroceryItem {

@@ -20,7 +20,7 @@ import {
   SortComparers,
   SlickGlobalEditorLock,
   type VanillaCalendarOption,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 import { Subject } from 'rxjs';
 
 import { CustomInputEditor } from './custom-inputEditor';

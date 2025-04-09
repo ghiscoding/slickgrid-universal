@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { AngularGridInstance, Column, GridOption } from './../library/angular-slickgrid';
+import { AngularGridInstance, Column, GridOption } from '../../library/angular-slickgrid';
 
 // create a custom Formatter to highlight negative values in red
 let columns1WithHighlightingById: any = {};

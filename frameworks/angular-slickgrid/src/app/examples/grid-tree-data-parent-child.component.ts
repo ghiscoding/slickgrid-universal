@@ -12,7 +12,7 @@ import {
   GridStateType,
   TreeToggledItem,
   TreeToggleStateChange,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 const NB_ITEMS = 500;
 

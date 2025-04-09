@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
-import { AngularGridInstance, Column, FieldType, Filters, Formatters, GridOption, GridStateChange } from './../library/angular-slickgrid';
+import { AngularGridInstance, Column, FieldType, Filters, Formatters, GridOption, GridStateChange } from '../../library/angular-slickgrid';
 
 @Component({
   templateUrl: './grid-rowselection.component.html',

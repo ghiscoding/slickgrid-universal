@@ -14,7 +14,7 @@ import {
   MultipleSelectOption,
   OnRowCountChangedEventArgs,
   unsubscribeAllObservables,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 const sampleDataRoot = 'assets/data';
 
 const GRAPHQL_QUERY_DATASET_NAME = 'users';

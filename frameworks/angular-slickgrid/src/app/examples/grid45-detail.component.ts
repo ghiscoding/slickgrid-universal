@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, GridOption, GridState } from './../library/angular-slickgrid';
+import { AngularGridInstance, Column, GridOption, GridState } from '../../library/angular-slickgrid';
 
 export interface Distributor {
   id: number;

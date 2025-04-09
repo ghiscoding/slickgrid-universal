@@ -8,7 +8,7 @@ import {
   OperatorString,
   SlickDataView,
   SlickGrid,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 @Component({
   encapsulation: ViewEncapsulation.None,

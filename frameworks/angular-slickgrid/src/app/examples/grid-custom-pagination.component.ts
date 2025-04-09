@@ -10,7 +10,7 @@ import {
   MultipleSelectOption,
   OperatorType,
   SliderRangeOption,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 import { CustomPagerComponent } from './grid-custom-pager.component';
 
 const NB_ITEMS = 5000;

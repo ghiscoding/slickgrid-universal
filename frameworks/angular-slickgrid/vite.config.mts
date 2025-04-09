@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [angular() as any],
     test: {
+      root: './',
       environment: 'jsdom',
       include: ['**/*.spec.ts'],
       reporters: ['default'],

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, GridOption, SlickRowDetailView } from './../library/angular-slickgrid';
+import { AngularGridInstance, Column, GridOption, SlickRowDetailView } from '../../library/angular-slickgrid';
 
 import { type Distributor, Grid45DetailComponent, type OrderData } from './grid45-detail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';

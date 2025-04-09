@@ -10,7 +10,7 @@ import {
   GridOption,
   SlickGrid,
   unsubscribeAllObservables,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 /*
  * An example of a 'detached' editor.

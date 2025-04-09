@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { type ModuleWithProviders, NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { AngularSlickgridComponent } from './../components/angular-slickgrid.component';
-import { GridOption } from './../models/gridOption.interface';
+import { AngularSlickgridComponent } from '../components/angular-slickgrid.component';
+import { GridOption } from '../models/gridOption.interface';
 import { AngularUtilService } from '../services/angularUtil.service';
 import { ContainerService } from '../services/container.service';
 

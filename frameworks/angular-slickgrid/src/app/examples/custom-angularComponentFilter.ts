@@ -13,7 +13,7 @@ import {
   SearchTerm,
   SlickGrid,
   unsubscribeAllObservables,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 export class CustomAngularComponentFilter implements Filter {
   private _shouldTriggerQuery = true;

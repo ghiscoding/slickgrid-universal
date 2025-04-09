@@ -8,7 +8,7 @@ import {
   Formatters,
   GridOption,
   SlickRowDetailView,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 import { RowDetailViewComponent } from './rowdetail-view.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
 

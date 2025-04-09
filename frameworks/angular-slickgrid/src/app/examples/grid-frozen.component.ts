@@ -10,7 +10,7 @@ import {
   Filters,
   GridOption,
   SlickEventHandler,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 @Component({
   templateUrl: './grid-frozen.component.html',

@@ -18,7 +18,7 @@ import {
   GroupTotalFormatters,
   SortDirectionNumber,
   SortComparers,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 @Component({
   templateUrl: './grid-draggrouping.component.html',

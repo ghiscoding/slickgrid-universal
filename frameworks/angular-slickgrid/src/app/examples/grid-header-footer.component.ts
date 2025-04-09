@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Column, GridOption, Formatters } from './../library/angular-slickgrid';
+import { Column, GridOption, Formatters } from '../../library/angular-slickgrid';
 
 const NB_ITEMS = 995;
 

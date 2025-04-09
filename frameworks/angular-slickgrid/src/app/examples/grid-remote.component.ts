@@ -1,7 +1,7 @@
 // import 'slickgrid/slick.remotemodel'; // SlickGrid Remote Plugin
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AngularGridInstance, Column, Formatter, GridOption, SlickEventHandler } from './../library/angular-slickgrid';
+import { AngularGridInstance, Column, Formatter, GridOption, SlickEventHandler } from '../../library/angular-slickgrid';
 
 const brandFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) => {
   return (dataContext && dataContext.brand && dataContext.brand.name) || '';

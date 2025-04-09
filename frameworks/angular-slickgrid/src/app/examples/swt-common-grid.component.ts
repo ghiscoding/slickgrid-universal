@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FieldType } from './../library/angular-slickgrid';
+import { FieldType } from '../../library/angular-slickgrid';
 import type {
   AngularGridInstance,
   AngularSlickgridComponent,
@@ -14,7 +14,7 @@ import type {
   PaginationChangedArgs,
   Pagination,
   SlickDataView,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from './swt-logger.service';
 import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';

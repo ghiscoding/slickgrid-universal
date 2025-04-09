@@ -12,7 +12,7 @@ import {
   type OnRowCountChangedEventArgs,
   SortComparers,
   SortDirectionNumber,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 const FETCH_SIZE = 50;
 

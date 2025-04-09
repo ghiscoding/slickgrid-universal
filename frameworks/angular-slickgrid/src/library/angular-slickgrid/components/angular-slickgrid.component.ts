@@ -75,8 +75,8 @@ import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
 
 import { Constants } from '../constants';
-import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from './../models/index';
-import { GlobalGridOptions } from './../global-grid-options';
+import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from '../models/index';
+import { GlobalGridOptions } from '../global-grid-options';
 import { TranslaterService } from '../services/translater.service';
 
 // Services

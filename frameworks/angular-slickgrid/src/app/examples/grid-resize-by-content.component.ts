@@ -20,7 +20,7 @@ import {
   SlickGlobalEditorLock,
   type VanillaCalendarOption,
   type SearchTerm,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';
 

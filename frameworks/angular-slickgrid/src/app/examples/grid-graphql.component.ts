@@ -17,7 +17,7 @@ import {
   OperatorType,
   SortDirection,
   unsubscribeAllObservables,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';

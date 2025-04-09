@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularGridInstance, Column, FieldType, Formatter, Formatters, GridOption } from './../library/angular-slickgrid';
+import { AngularGridInstance, Column, FieldType, Formatter, Formatters, GridOption } from '../../library/angular-slickgrid';
 
 interface DataItem {
   id: number;

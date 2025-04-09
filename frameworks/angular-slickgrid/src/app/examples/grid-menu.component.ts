@@ -8,7 +8,7 @@ import {
   Formatters,
   GridOption,
   unsubscribeAllObservables,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 

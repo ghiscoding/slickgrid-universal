@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, type GridOption, toCamelCase } from './../library/angular-slickgrid';
+import { type Column, type GridOption, toCamelCase } from '../../library/angular-slickgrid';
 
 const sampleDataRoot = 'assets/data';
 

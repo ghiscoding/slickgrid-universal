@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Column, GridOption, Formatters, AngularGridInstance } from './../library/angular-slickgrid';
+import { Column, GridOption, Formatters, AngularGridInstance } from '../../library/angular-slickgrid';
 
 import { zeroPadding } from './utilities';
 

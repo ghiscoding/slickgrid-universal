@@ -24,7 +24,7 @@ import {
   SlickGrid,
   SortComparers,
   type VanillaCalendarOption,
-} from '../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 const NB_ITEMS = 500;
 const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';

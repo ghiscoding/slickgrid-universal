@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, Editors, GridOption, type ItemMetadata } from './../library/angular-slickgrid';
+import { AngularGridInstance, Column, Editors, GridOption, type ItemMetadata } from '../../library/angular-slickgrid';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 @Component({

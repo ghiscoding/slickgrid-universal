@@ -14,7 +14,7 @@ import {
   Formatters,
   GridOption,
   unsubscribeAllObservables,
-} from './../library/angular-slickgrid';
+} from '../../library/angular-slickgrid';
 
 const actionFormatter: Formatter = (row, cell, value, columnDef, dataContext) => {
   if (dataContext.priority === 3) {
