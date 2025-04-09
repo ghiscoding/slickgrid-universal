@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Column, GridOption, unsubscribeAllObservables } from '../../library/angular-slickgrid';
+import { Column, GridOption, unsubscribeAllObservables } from '../../library';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 

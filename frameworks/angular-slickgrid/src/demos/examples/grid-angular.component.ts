@@ -12,7 +12,7 @@ import {
   GridOption,
   OnEventArgs,
   SlickGlobalEditorLock,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 import { EditorNgSelectComponent } from './editor-ng-select.component';
 import { CustomAngularComponentEditor } from './custom-angularComponentEditor';
 import { CustomAngularComponentFilter } from './custom-angularComponentFilter';

@@ -9,7 +9,7 @@ import {
   OperatorString,
   SearchTerm,
   SlickGrid,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 export class CustomInputFilter implements Filter {
   private _clearFilterTriggered = false;

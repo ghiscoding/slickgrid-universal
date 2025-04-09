@@ -1,4 +1,4 @@
-import { Column, ColumnEditor, Editor, EditorValidator, EditorValidationResult } from '../../library/angular-slickgrid';
+import { Column, ColumnEditor, Editor, EditorValidator, EditorValidationResult } from '../../library';
 
 /*
  * An example of a 'detached' editor.

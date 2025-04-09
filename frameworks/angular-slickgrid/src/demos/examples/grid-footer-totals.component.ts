@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AngularGridInstance, Column, Editors, FieldType, GridOption, OnCellChangeEventArgs } from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, Editors, FieldType, GridOption, OnCellChangeEventArgs } from '../../library';
 
 const NB_ITEMS = 100;
 

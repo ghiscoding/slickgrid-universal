@@ -71,7 +71,7 @@ import { SwtCommonGridComponent } from './examples/swt-common-grid.component';
 
 // import our custom module, library created using this article
 // https://medium.com/@ngl817/building-an-angular-4-component-library-with-the-angular-cli-and-ng-packagr-53b2ade0701e
-import { AngularSlickgridModule } from '../library/angular-slickgrid/modules/angular-slickgrid.module';
+import { AngularSlickgridModule } from '../library/modules/angular-slickgrid.module';
 
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {

@@ -15,7 +15,7 @@ import {
   GridOption,
   isNumber,
   SlickDataView,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 @Component({
   templateUrl: './grid-tree-data-hierarchical.component.html',

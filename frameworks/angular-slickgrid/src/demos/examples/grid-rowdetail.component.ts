@@ -1,14 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  AngularGridInstance,
-  Column,
-  Editors,
-  FieldType,
-  Filters,
-  Formatters,
-  GridOption,
-  SlickRowDetailView,
-} from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, Editors, FieldType, Filters, Formatters, GridOption, SlickRowDetailView } from '../../library';
 import { RowDetailViewComponent } from './rowdetail-view.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
 

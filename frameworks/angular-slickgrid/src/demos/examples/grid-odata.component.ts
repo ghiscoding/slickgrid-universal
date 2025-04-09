@@ -11,7 +11,7 @@ import {
   Metrics,
   OperatorType,
   Pagination,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 const defaultPageSize = 20;
 const sampleDataRoot = 'assets/data';

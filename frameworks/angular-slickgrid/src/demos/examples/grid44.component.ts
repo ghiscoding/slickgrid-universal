@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { AngularGridInstance, Column, Formatter, GridOption, type ItemMetadata } from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, Formatter, GridOption, type ItemMetadata } from '../../library';
 
 const rowCellValueFormatter: Formatter = (row, cell, value) =>
   `<div class="cellValue">${value.toFixed(2)}</div><div class="valueComment">${row}.${cell}</div>`;

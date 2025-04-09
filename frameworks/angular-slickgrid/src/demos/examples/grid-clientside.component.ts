@@ -14,7 +14,7 @@ import {
   type MultipleSelectOption,
   OperatorType,
   type VanillaCalendarOption,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 import { CustomInputFilter } from './custom-inputFilter';
 
 function randomBetween(min: number, max: number) {

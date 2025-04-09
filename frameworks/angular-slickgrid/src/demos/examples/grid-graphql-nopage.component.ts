@@ -11,7 +11,7 @@ import {
   Metrics,
   type MultipleSelectOption,
   OperatorType,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 import { Observable } from 'rxjs';
 
 const COUNTRIES_API = 'https://countries.trevorblades.com/';

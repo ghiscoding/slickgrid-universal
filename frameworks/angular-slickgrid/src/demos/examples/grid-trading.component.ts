@@ -13,7 +13,7 @@ import {
   Formatters,
   GridOption,
   GroupTotalFormatters,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 const NB_ROWS = 200;
 

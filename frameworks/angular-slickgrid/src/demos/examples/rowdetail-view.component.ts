@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SlickDataView, SlickGrid } from '../../library/angular-slickgrid';
+import { SlickDataView, SlickGrid } from '../../library';
 import { GridRowDetailComponent } from './grid-rowdetail.component';
 
 @Component({

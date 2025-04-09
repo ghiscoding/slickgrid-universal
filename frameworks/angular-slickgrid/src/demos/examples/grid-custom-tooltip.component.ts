@@ -14,7 +14,7 @@ import {
   MenuCommandItemCallbackArgs,
   OperatorType,
   SlickGrid,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 const NB_ITEMS = 500;
 

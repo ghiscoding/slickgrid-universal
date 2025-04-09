@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Subscription } from 'rxjs';
 
-import { AngularGridInstance, Column, Editors, FieldType, Formatters, GridOption } from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, Editors, FieldType, Formatters, GridOption } from '../../library';
 
 const NB_ITEMS = 20;
 

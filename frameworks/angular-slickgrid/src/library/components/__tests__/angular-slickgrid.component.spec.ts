@@ -53,11 +53,11 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 
 import { AngularSlickgridComponent } from '../angular-slickgrid.component.js';
 import { SlickRowDetailView } from '../../extensions/slickRowDetailView.js';
-import { TranslaterServiceStub } from '../../../../../test/translaterServiceStub.js';
+import { TranslaterServiceStub } from '../../../../test/translaterServiceStub.js';
 import { AngularUtilService, ContainerService, TranslaterService } from '../../services/index.js';
 import { GridOption } from '../../models/index.js';
-import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent.js';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
+import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 
 const addVanillaEventPropagation = function (event: Event) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });

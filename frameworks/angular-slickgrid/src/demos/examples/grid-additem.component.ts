@@ -10,7 +10,7 @@ import {
   OnEventArgs,
   SlickDataView,
   SlickGrid,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 @Component({
   styles: ['.duration-bg { background-color: #e9d4f1 !important }'],

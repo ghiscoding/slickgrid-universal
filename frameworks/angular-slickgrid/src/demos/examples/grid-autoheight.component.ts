@@ -1,14 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import {
-  AngularGridInstance,
-  Column,
-  FieldType,
-  Formatters,
-  GridOption,
-  OperatorString,
-  SlickDataView,
-  SlickGrid,
-} from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, FieldType, Formatters, GridOption, OperatorString, SlickDataView, SlickGrid } from '../../library';
 
 @Component({
   encapsulation: ViewEncapsulation.None,

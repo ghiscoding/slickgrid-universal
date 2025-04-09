@@ -12,7 +12,7 @@ import {
   Metrics,
   OnRowCountChangedEventArgs,
   SortComparers,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 const sampleDataRoot = 'assets/data';
 const CARET_HTML_ESCAPED = '%5E';

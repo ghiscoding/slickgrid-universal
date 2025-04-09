@@ -15,7 +15,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GridOption } from '../../models/gridOption.interface.js';
 import { AngularUtilService } from '../../services/index.js';
 import { RowDetailView } from '../../models/rowDetailView.interface.js';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 import { SlickRowDetailView } from '../slickRowDetailView.js';
 
 vi.mock('@slickgrid-universal/common', async () => ({

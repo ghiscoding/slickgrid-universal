@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { AngularGridInstance, Column, GridOption, Filters } from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, GridOption, Filters } from '../../library';
 
 const URL_CUSTOMERS = 'assets/data/customers_100.json';
 

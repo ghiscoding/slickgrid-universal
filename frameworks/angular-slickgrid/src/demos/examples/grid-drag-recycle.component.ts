@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, Editors, Formatters, GridOption, SlickGlobalEditorLock } from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, Editors, Formatters, GridOption, SlickGlobalEditorLock } from '../../library';
 
 @Component({
   templateUrl: './grid-drag-recycle.component.html',

@@ -17,7 +17,7 @@ import {
   OperatorType,
   SliderRangeOption,
   unsubscribeAllObservables,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 import { addDay, format } from '@formkit/tempo';
 import { Subscription } from 'rxjs';
 

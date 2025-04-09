@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
-import { AngularGridInstance, Column, FieldType, GridOption, ItemMetadata } from '../../library/angular-slickgrid';
+import { AngularGridInstance, Column, FieldType, GridOption, ItemMetadata } from '../../library';
 
 @Component({
   templateUrl: './grid-colspan.component.html',

@@ -16,7 +16,7 @@ import {
   GridOption,
   GridStateChange,
   unsubscribeAllObservables,
-} from '../../library/angular-slickgrid';
+} from '../../library';
 
 const NB_ITEMS = 1500;
 
