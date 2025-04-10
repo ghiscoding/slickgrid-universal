@@ -32,6 +32,7 @@
     "/src"
   ],
   "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "prebuild": "pnpm run clean",
     "build": "tsc",
     "postbuild": "run-s sass:build sass:copy",

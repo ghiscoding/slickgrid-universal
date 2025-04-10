@@ -20,6 +20,7 @@
     "/src"
   ],
   "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "prebuild": "pnpm run clean",
     "build": "tsc",
     "build:incremental": "tsc --incremental --declaration",
