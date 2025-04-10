@@ -93,8 +93,5 @@
     "vite": "catalog:",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4"
-  },
-  "engines": {
-    "node": ">=20.0.0"
   }
 }

@@ -3,7 +3,6 @@
     "pretty": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "customConditions": ["module"],
     "target": "es2022",
     "lib": ["esnext", "dom"],
     "typeRoots": ["../typings", "../../node_modules/@types"],

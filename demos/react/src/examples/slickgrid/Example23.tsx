@@ -3,7 +3,7 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import i18next from 'i18next';
 
-import { CustomInputFilter } from './custom-inputFilter';
+import { CustomInputFilter } from './custom-inputFilter.js';
 import {
   type Column,
   type CurrentFilter,
