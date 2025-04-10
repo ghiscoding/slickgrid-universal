@@ -12,7 +12,7 @@ import {
   type SliderRangeOption,
 } from 'slickgrid-react';
 
-import CustomPagerComponent from './Example42-Custom-Pager';
+import CustomPagerComponent from './Example42-Custom-Pager.js';
 
 const NB_ITEMS = 5000;
 

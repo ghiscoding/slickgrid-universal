@@ -8,7 +8,7 @@ import {
   type SlickgridReactInstance,
 } from 'slickgrid-react';
 
-import type Example45 from './Example45';
+import type Example45 from './Example45.js';
 import './example45-detail-view.scss';
 
 export interface Distributor {

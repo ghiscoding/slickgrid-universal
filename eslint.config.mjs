@@ -16,7 +16,7 @@ export default tseslint.config(
       vitest,
       n,
     },
-    files: ['**/*.ts'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.es2021,

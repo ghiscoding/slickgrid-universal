@@ -57,14 +57,14 @@ import { dequal } from 'dequal/lite';
 import React from 'react';
 import type { Subscription } from 'rxjs';
 
-import { I18nextContext } from '../contexts/i18nextContext';
-import { GlobalGridOptions } from '../global-grid-options';
-import type { GridOption, I18Next, SlickgridReactInstance } from '../models/index';
-import { disposeAllSubscriptions } from '../services/utilities';
-import { GlobalContainerService } from '../services/singletons';
-import { loadReactComponentDynamically } from '../services/reactUtils';
-import { TranslaterI18NextService } from '../services/translaterI18Next.service';
-import type { SlickgridReactProps } from './slickgridReactProps';
+import { I18nextContext } from '../contexts/i18nextContext.js';
+import { GlobalGridOptions } from '../global-grid-options.js';
+import type { GridOption, I18Next, SlickgridReactInstance } from '../models/index.js';
+import { disposeAllSubscriptions } from '../services/utilities.js';
+import { GlobalContainerService } from '../services/singletons.js';
+import { loadReactComponentDynamically } from '../services/reactUtils.js';
+import { TranslaterI18NextService } from '../services/translaterI18Next.service.js';
+import type { SlickgridReactProps } from './slickgridReactProps.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 

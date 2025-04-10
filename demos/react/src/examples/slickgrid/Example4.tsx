@@ -16,7 +16,7 @@ import {
   type VanillaCalendarOption,
 } from 'slickgrid-react';
 
-import { CustomInputFilter } from './custom-inputFilter';
+import { CustomInputFilter } from './custom-inputFilter.js';
 
 import SAMPLE_COLLECTION_DATA from './data/collection_500_numbers.json';
 

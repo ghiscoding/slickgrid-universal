@@ -5,7 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import { HashRouter } from 'react-router-dom';
 import { I18nextProvider } from 'slickgrid-react';
 
-import App from './examples/slickgrid/App';
+import App from './examples/slickgrid/App.js';
 import localeEn from './assets/locales/en/translation.json';
 import localeFr from './assets/locales/fr/translation.json';
 import './styles.scss';

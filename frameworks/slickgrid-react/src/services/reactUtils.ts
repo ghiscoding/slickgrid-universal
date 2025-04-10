@@ -1,5 +1,4 @@
-import React from 'react';
-import { createRef } from 'react';
+import React, { createRef } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
 // these 2 functions are the same except that 1 is synch and the promise is delayed by a CPU cycle before resolving

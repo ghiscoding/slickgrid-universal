@@ -3,15 +3,13 @@ import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import './Example42-Custom-Pager.scss';
 
-interface Props {}
-
 export interface CustomPagerComponentRef {
   init: (grid: SlickGrid, paginationService: PaginationService, pubSubService: PubSubService) => void;
   dispose: () => void;
   renderPagination: () => void;
 }
 
-const CustomPagerComponent = React.forwardRef<CustomPagerComponentRef, Props>((props, ref) => {
+const CustomPagerComponent = React.forwardRef<CustomPagerComponentRef, any>((_props, ref) => {
   const [currentPagination, setCurrentPagination] = useState<PaginationMetadata>({} as PaginationMetadata);
   const [isLeftPaginationDisabled, setIsLeftPaginationDisabled] = useState(false);
   const [isRightPaginationDisabled, setIsRightPaginationDisabled] = useState(false);

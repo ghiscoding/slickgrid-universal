@@ -13,8 +13,8 @@ import {
   SlickRowDetailView,
 } from 'slickgrid-react';
 
-import { Example19Preload } from './Example19-preload';
-import Example19DetailView from './Example19-detail-view';
+import { Example19Preload } from './Example19-preload.js';
+import Example19DetailView from './Example19-detail-view.js';
 
 const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 1000;

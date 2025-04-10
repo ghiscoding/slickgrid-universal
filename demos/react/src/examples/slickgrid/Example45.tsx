@@ -10,8 +10,8 @@ import {
   SlickRowDetailView,
 } from 'slickgrid-react';
 
-import { Example45Preload } from './Example45-preload';
-import Example45DetailView, { type Distributor, type OrderData } from './Example45-detail-view';
+import { Example45Preload } from './Example45-preload.js';
+import Example45DetailView, { type Distributor, type OrderData } from './Example45-detail-view.js';
 
 const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 995;

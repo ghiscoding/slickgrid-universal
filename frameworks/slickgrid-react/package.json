@@ -10,15 +10,15 @@
     "slickgrid"
   ],
   "type": "module",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
+  "types": "./dist/index.d.ts",
   "homepage": "https://github.com/ghiscoding/slickgrid-react",
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-react/issues"
@@ -47,6 +47,7 @@
     }
   ],
   "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "react:dev": "tsc --watch",
     "prebuild": "rimraf dist",
     "build": "tsc",
@@ -109,6 +110,6 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": "^20.0.0 || >=22.0.0"
   }
 }
