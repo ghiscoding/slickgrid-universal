@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.13.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.3...v5.13.4) (2025-04-09)
+
+**Note:** Version bump only for package @slickgrid-universal/empty-warning-component
+
 ## [5.13.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.2...v5.13.3) (2025-04-02)
 
 **Note:** Version bump only for package @slickgrid-universal/empty-warning-component

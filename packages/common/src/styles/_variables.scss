@@ -641,7 +641,7 @@ $slick-editor-modal-validation-summary-font-style:          italic !default;
 /* Compound Filters */
 $slick-compound-filter-bgcolor:                             #ffffff !default;
 $slick-compound-filter-operator-select-font-family:         "Cascadia Mono", Consolas, "Lucida Console" !default; // use a monospace font so the operator descriptions are all aligned
-$slick-compound-filter-operator-select-font-size:           14px !important !default;
+$slick-compound-filter-operator-select-font-size:           14px !default;
 $slick-compound-filter-operator-select-border:              1px solid #{color.adjust($slick-primary-color, $lightness: 15%)} !default;
 $slick-compound-filter-operator-select-width:               25px !default;
 $slick-compound-filter-operator-border-radius:              4px 0 0 4px !default;
