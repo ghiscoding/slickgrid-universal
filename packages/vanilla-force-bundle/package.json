@@ -26,8 +26,8 @@
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "bundle:vite": "vite build",
     "prebundle:zip": "pnpm run delete:zip",
-    "bundle:zip": "pnpm run zip:dist",
-    "delete:zip": "rimraf dist-grid-bundle-zip",
+    "bundle:zip": "pnpm bundle:vite && pnpm run zip:dist",
+    "delete:zip": "rimraf --glob \"dist-grid-bundle-zip/*.zip\"",
     "zip:dist": "node compress.mjs --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
     "test": "echo testing slickgrid-universal vanilla-force-bundle code"
   },
