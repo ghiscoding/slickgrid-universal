@@ -3,24 +3,12 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": "src",
-    "declarationDir": "dist/types",
-    "outDir": "dist/esm",
-    "types": [
-      "node"
-    ],
+    "outDir": "dist",
+    "types": ["node"]
   },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.spec.ts"
-  ],
-  "filesGlob": [
-    "./src/**/*.ts"
-  ],
-  "include": [
-    "src/**/*.ts",
-    "typings/**/*.ts"
-  ],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts"],
+  "filesGlob": ["./src/**/*.ts"],
+  "include": ["src/**/*.ts", "typings/**/*.ts"],
   "references": [
     {
       "path": "../event-pub-sub"

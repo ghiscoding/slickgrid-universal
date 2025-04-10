@@ -63,8 +63,8 @@ jobs:
 
       - run: pnpm --version
 
-      - name: TSC Build (esm)
-        run: pnpm predev
+      - name: Build Slickgrid-Universal packages
+        run: pnpm build:universal
 
       - name: Slickgrid-Vue Framework Build
         run: pnpm vue:build:framework
