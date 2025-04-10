@@ -63,8 +63,8 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: TSC Full Bundle (all Bundler types)
-        run: pnpm bundle
+      - name: Build Slickgrid-Universal packages (excludes frameworks)
+        run: pnpm build:universal
 
       - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}

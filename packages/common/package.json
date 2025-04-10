@@ -2,19 +2,17 @@
   "name": "@slickgrid-universal/common",
   "version": "5.13.4",
   "description": "SlickGrid-Universal Common Code",
-  "main": "./dist/cjs/index.js",
-  "types": "./dist/types/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./dist/styles/*": "./dist/styles/*",
     "./package.json": "./package.json"
   },
-  "module": "./dist/esm/index.js",
+  "types": "./dist/index.d.ts",
   "license": "MIT",
   "author": "Ghislain B.",
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
@@ -35,16 +33,12 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:esm && tsc --declaration",
+    "build": "tsc --project tsconfig.bundle.json --outDir dist --declaration",
     "postbuild": "run-s sass:build sass:copy",
+    "sass:bundle": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "node build-watch.mjs",
-    "bundle": "pnpm bundle:cjs",
-    "postbundle": "run-s sass:build sass:copy",
-    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
-    "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
     "sass-build-task:scss-compile:default": "sass src/styles/slickgrid-theme-default.scss dist/styles/css/slickgrid-theme-default.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:default-lite": "sass src/styles/slickgrid-theme-default.lite.scss dist/styles/css/slickgrid-theme-default.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:bootstrap": "sass src/styles/slickgrid-theme-bootstrap.scss dist/styles/css/slickgrid-theme-bootstrap.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",

@@ -126,8 +126,6 @@ pnpm react:install
 pnpm vue:install
 ```
 
-> **Note** for frameworks development you will not only require the targeted install but it also requires you to run a `pnpm bundle`
-
 2. Run Dev (Vanilla Implementation)
 
 There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework
@@ -146,12 +144,16 @@ pnpm run dev:vue
 ```
 
 
-3. Build (bundle)
+3. Build
 
 You also need to run a full build in order to run the Vitest unit tests
 
 ```bash
-pnpm run bundle
+# full build (all universal & all frameworks)
+pnpm run build
+
+# or only Slickgrid-Universal packages (excludes all frameworks)
+pnpm run build:universal
 ```
 
 ### Tests

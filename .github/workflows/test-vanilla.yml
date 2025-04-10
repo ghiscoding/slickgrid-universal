@@ -63,8 +63,8 @@ jobs:
 
       - run: pnpm --version
 
-      - name: TSC Build (esm)
-        run: pnpm predev
+      - name: Build Slickgrid-Universal packages
+        run: pnpm build:universal
 
       - name: Website Dev Build (served for Cypress)
         run: pnpm build:dev

@@ -64,8 +64,8 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: Build Library
-        run: pnpm bundle
+      - name: Build Everything
+        run: pnpm build
 
       - name: Lerna Version (build query)
         shell: bash

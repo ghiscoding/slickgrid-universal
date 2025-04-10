@@ -2,15 +2,8 @@
   "extends": "../tsconfig.bundle.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "dist/cjs",
-    "typeRoots": [
-      "../typings",
-      "./node_modules/@types",
-      "../../node_modules/@types"
-    ]
+    "outDir": "dist",
+    "typeRoots": ["../typings", "./node_modules/@types", "../../node_modules/@types"]
   },
-  "include": [
-    "../typings",
-    "**/*"
-  ]
+  "include": ["../typings", "**/*"]
 }

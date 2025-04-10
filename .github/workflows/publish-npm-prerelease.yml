@@ -78,8 +78,8 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: Build Library
-        run: pnpm bundle
+      - name: Build Everything
+        run: pnpm build
 
       - name: Archive common build artifacts
         if: ${{ inputs.dryrun != true }}
