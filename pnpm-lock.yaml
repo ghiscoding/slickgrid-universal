@@ -82,7 +82,7 @@ catalogs:
       specifier: ^5.8.2
       version: 5.8.3
     vite:
-      specifier: ^6.2.3
+      specifier: ^6.2.5
       version: 6.2.5
 
 importers:
@@ -21840,9 +21840,9 @@ snapshots:
 
   vite@6.2.4(@types/node@22.14.0)(jiti@2.4.2)(less@4.1.3)(sass-embedded@1.86.3)(sass@1.85.0)(stylus@0.64.0)(terser@5.39.0)(yaml@2.7.1):
     dependencies:
-      esbuild: 0.25.1
+      esbuild: 0.25.2
       postcss: 8.5.3
-      rollup: 4.34.8
+      rollup: 4.39.0
     optionalDependencies:
       '@types/node': 22.14.0
       fsevents: 2.3.3
@@ -21856,9 +21856,9 @@ snapshots:
 
   vite@6.2.4(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(sass-embedded@1.86.3)(sass@1.85.0)(stylus@0.64.0)(terser@5.39.0)(yaml@2.7.1):
     dependencies:
-      esbuild: 0.25.1
+      esbuild: 0.25.2
       postcss: 8.5.3
-      rollup: 4.34.8
+      rollup: 4.39.0
     optionalDependencies:
       '@types/node': 22.14.0
       fsevents: 2.3.3
