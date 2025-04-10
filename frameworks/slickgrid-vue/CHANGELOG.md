@@ -4,6 +4,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.1.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.4...v1.1.4) (2025-04-09)
 
+### Bug Fixes
+
+* error in CSS ([#1890](https://github.com/ghiscoding/slickgrid-universal/issues/1890)) ([6b23d5a](https://github.com/ghiscoding/slickgrid-universal/commit/6b23d5a079b367be9be57d778c543f9f0e86c324)) - by @wboevink
+
 ## [1.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.2...v1.1.2) (2025-03-29)
 
 ### Bug Fixes
