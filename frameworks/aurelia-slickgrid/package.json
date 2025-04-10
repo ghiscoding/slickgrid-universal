@@ -19,15 +19,16 @@
     "/dist",
     "/src"
   ],
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/aurelia-slickgrid.git",
@@ -37,6 +38,7 @@
     "access": "public"
   },
   "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "aurelia:dev": "tsc --watch",
     "prebuild": "rimraf dist",
     "build": "tsc",
