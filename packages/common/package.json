@@ -33,7 +33,7 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "tsc --project tsconfig.bundle.json --outDir dist --declaration",
+    "build": "tsc",
     "postbuild": "run-s sass:build sass:copy",
     "sass:bundle": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental --declaration",

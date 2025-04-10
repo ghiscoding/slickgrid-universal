@@ -1,9 +1,0 @@
-{
-  "extends": "../tsconfig.bundle.json",
-  "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "dist",
-    "typeRoots": ["../typings", "./node_modules/@types", "../../node_modules/@types"]
-  },
-  "include": ["../typings", "**/*"]
-}

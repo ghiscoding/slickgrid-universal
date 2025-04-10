@@ -1,8 +1,0 @@
-{
-  "extends": "../tsconfig.bundle.json",
-  "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
-    "outDir": "dist"
-  },
-  "include": ["**/*"]
-}

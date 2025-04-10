@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "tsc --project tsconfig.bundle.json --outDir dist --declaration",
+    "build": "tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental",
