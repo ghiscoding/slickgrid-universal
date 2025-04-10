@@ -12,8 +12,7 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "scripts": {
-    "build": "pnpm lint && lerna run build --stream",
-    "build:common": "pnpm -r --stream --filter=./packages/common run build",
+    "build": "pnpm lint && pnpm build:universal && lerna run build --stream --ignore=\"@slickgrid-universal/*\"",
     "bundle:zip": "pnpm build:universal && pnpm -r --stream --filter=./packages/** run bundle:zip",
     "clean": "rimraf --glob {demos,frameworks,packages}/*/dist packages/*/tsconfig.tsbuildinfo",
     "cypress": "cypress open --config-file test/cypress.config.ts",

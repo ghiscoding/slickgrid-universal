@@ -12,13 +12,8 @@ export default defineConfig({
     },
   },
   esbuild: {
-    target: "es2020"
+    target: 'es2020',
   },
-  // resolve: {
-  //   alias: {
-  //     '@': resolve(__dirname, 'src') // Adjust if your source folder is different
-  //   }
-  // },
   plugins: [
     aurelia({
       // useDev: true,
@@ -36,8 +31,17 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'website',
     emptyOutDir: true,
-    sourcemap: true
-  }
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+
+          return 'index';
+        },
+      },
+    },
+  },
 });
