@@ -11,7 +11,6 @@ import {
   type ExtensionList,
   type ExternalResource,
   GridStateType,
-  type ItemMetadata,
   type Metrics,
   type Pagination,
   type PaginationMetadata,
