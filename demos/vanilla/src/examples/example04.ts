@@ -571,7 +571,7 @@ export default class Example04 {
 
   handleOnValidationError(event) {
     console.log('handleOnValidationError', event.detail);
-    const args = event.detail && event.detail.args;
+    const args = event?.detail?.args;
     if (args.validationResults) {
       alert(args.validationResults.msg);
       return false;
@@ -579,7 +579,7 @@ export default class Example04 {
   }
 
   handleOnItemsDeleted(event) {
-    const itemId = event && event.detail;
+    const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }
 
