@@ -590,6 +590,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           'SlickGrid relies on the `rowHeight` grid option to do row positioning & calculation and when zoom is not 100% then calculation becomes all offset.'
       );
     }
+    if (this._options.rowTopOffsetRenderType === 'transform' && (this._options.enableCellRowSpan || this._options.enableRowDetailView)) {
+      console.warn(
+        '[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan since "transform" is known to have UI issues.'
+      );
+    }
     this.finishInitialization();
   }
 

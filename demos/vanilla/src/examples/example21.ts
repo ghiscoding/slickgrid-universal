@@ -143,6 +143,7 @@ export default class Example21 {
         this.rowDetail = new SlickRowDetailView(pubSubService);
         return [{ name: ExtensionName.rowDetailView, instance: this.rowDetail }];
       },
+      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       rowHeight: 33,
       rowDetailView: {
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events

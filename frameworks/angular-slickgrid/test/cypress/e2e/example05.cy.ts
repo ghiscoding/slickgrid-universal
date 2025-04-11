@@ -272,9 +272,9 @@ describe('Example 5 - OData Grid', () => {
         expect($span.text()).to.eq(`$count=true&$top=10&$filter=(startswith(Name, 'C') and endswith(Name, 'n'))`);
       });
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Carroll Buchanan');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Consuelo Dickson');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Christine Compton');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Carroll Buchanan');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Consuelo Dickson');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Christine Compton');
     });
 
     it('should perform filterQueryOverride when operator "%%" is selected', () => {
@@ -602,7 +602,7 @@ describe('Example 5 - OData Grid', () => {
 
       cy.get('#grid5').find('.slick-row').should('have.length', 1);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Alisha Myers');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Alisha Myers');
 
       // query should still contain previous sort by + new gender filter
       cy.get('[data-test=odata-query-result]').should(($span) => {

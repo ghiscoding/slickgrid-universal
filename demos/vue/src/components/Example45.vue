@@ -95,6 +95,7 @@ function defineGrid() {
     },
     enableFiltering: true,
     enableRowDetailView: true,
+    rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     rowHeight: 33,
     rowDetailView: {
       process: (item: any) => simulateServerAsyncCall(item),

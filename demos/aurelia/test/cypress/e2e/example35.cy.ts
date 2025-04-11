@@ -21,7 +21,7 @@ describe('Example 35 - Row Based Editing', () => {
   });
 
   it('should only allow to toggle a single row into editmode on single mode', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click();
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click();
     cy.get('.action-btns--edit:nth(0)').click({ force: true });
 
     cy.get('.slick-row.slick-rbe-editmode').should('have.length', 1);
@@ -30,7 +30,7 @@ describe('Example 35 - Row Based Editing', () => {
   it('should allow to toggle a multiple rows into editmode on multiple mode', () => {
     cy.reload();
     cy.get('[data-test="single-multi-toggle"]').click();
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
     cy.get('.action-btns--edit').eq(1).click({ force: true });
     cy.get('.action-btns--edit').eq(2).click({ force: true });
 
@@ -39,13 +39,13 @@ describe('Example 35 - Row Based Editing', () => {
 
   it('should not display editor in rows not being in editmode', () => {
     cy.reload();
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l2.r2`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l2.r2`).click({ force: true });
 
     cy.get('input').should('have.length', 0);
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l2.r2`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l2.r2`).click({ force: true });
 
     cy.get('input').should('have.length', 1);
   });
@@ -53,9 +53,9 @@ describe('Example 35 - Row Based Editing', () => {
   it('should highlight modified cells and maintain proper index on sorting', () => {
     cy.reload();
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l0.r0`)
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l0.r0`)
       .click()
       .type('abc{enter}');
     cy.get('.slick-cell').first().should('have.class', 'slick-rbe-unsaved-cell');
@@ -68,12 +68,12 @@ describe('Example 35 - Row Based Editing', () => {
   it('should stay in editmode if saving failed', () => {
     cy.reload();
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l1.r1`)
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l1.r1`)
       .click()
       .type('50{enter}');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l2.r2`)
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l2.r2`)
       .click()
       .type('50');
 
@@ -89,12 +89,12 @@ describe('Example 35 - Row Based Editing', () => {
   it('should save changes on update button click', () => {
     cy.reload();
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l1.r1`)
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l1.r1`)
       .click()
       .type('30{enter}');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l2.r2`).type('30');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l2.r2`).type('30');
 
     cy.get('.action-btns--update').first().click({ force: true });
 
@@ -105,7 +105,7 @@ describe('Example 35 - Row Based Editing', () => {
   });
 
   it('should cleanup status when starting a new edit mode', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
     cy.get('[data-test="fetch-result"]').should('be.empty');
 
@@ -113,12 +113,12 @@ describe('Example 35 - Row Based Editing', () => {
   });
 
   it('should revert changes on cancel click', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l1.r1`)
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l1.r1`)
       .click()
       .type('50{enter}');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l2.r2`).type('50{enter}');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l2.r2`).type('50{enter}');
 
     cy.get('.action-btns--cancel').first().click({ force: true });
 
@@ -135,7 +135,7 @@ describe('Example 35 - Row Based Editing', () => {
   });
 
   it('should support translation keys on buttons', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .action-btns--edit`).click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
     cy.get('.action-btns--update')
       .first()

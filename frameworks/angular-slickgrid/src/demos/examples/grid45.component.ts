@@ -108,6 +108,7 @@ export class Grid45Component implements OnDestroy, OnInit {
       autoHeight: false,
       enableFiltering: true,
       enableRowDetailView: true,
+      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
       rowHeight: 33,
       rowDetailView: {
