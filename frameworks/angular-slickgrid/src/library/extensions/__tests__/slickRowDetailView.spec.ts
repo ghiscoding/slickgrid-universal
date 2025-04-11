@@ -252,9 +252,9 @@ describe('SlickRowDetailView', () => {
         plugin.onAsyncResponse = new SlickEvent();
         plugin.register();
 
-        plugin.onAsyncResponse.notify({ item: columnsMock[0], itemDetail: columnsMock[0], detailView: {} }, new SlickEventData(), gridStub);
+        plugin.onAsyncResponse.notify({ item: columnsMock[0], detailView: {} }, new SlickEventData(), gridStub);
 
-        expect(onAsyncRespSpy).toHaveBeenCalledWith(expect.anything(), { item: columnsMock[0], itemDetail: columnsMock[0], detailView: {} });
+        expect(onAsyncRespSpy).toHaveBeenCalledWith(expect.anything(), { item: columnsMock[0], detailView: {} });
         expect(onAsyncEndSpy).not.toHaveBeenCalled();
         expect(onAfterRowSpy).not.toHaveBeenCalled();
         expect(onBeforeRowSpy).not.toHaveBeenCalled();
@@ -276,7 +276,7 @@ describe('SlickRowDetailView', () => {
         plugin.init(gridStub);
         plugin.onAsyncEndUpdate = new SlickEvent();
         plugin.register();
-        plugin.onAsyncEndUpdate.notify({ item: columnsMock[0], itemDetail: columnsMock[0], grid: gridStub }, new SlickEventData(), gridStub);
+        plugin.onAsyncEndUpdate.notify({ item: columnsMock[0], grid: gridStub }, new SlickEventData(), gridStub);
 
         // expect(handlerSpy).toHaveBeenCalledTimes(8); // there are an extra 2x on the grid itself
         // expect(handlerSpy).toHaveBeenCalledWith(
@@ -284,7 +284,7 @@ describe('SlickRowDetailView', () => {
         //   expect.anything()
         // );
         expect(onAsyncRespSpy).not.toHaveBeenCalled();
-        expect(onAsyncEndSpy).toHaveBeenCalledWith(expect.anything(), { item: columnsMock[0], itemDetail: columnsMock[0], grid: gridStub });
+        expect(onAsyncEndSpy).toHaveBeenCalledWith(expect.anything(), { item: columnsMock[0], grid: gridStub });
         expect(renderSpy).toHaveBeenCalledWith({ cssClass: 'red', field: 'field1', id: 'field1', width: 100 });
         expect(onAfterRowSpy).not.toHaveBeenCalled();
         expect(onBeforeRowSpy).not.toHaveBeenCalled();

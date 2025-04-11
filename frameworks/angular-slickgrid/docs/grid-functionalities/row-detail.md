@@ -270,7 +270,7 @@ this.gridOptions = {
 
     // Optionally pass your Parent Component reference to your Child Component (row detail component)
     parent: this  // <-- THIS REFERENCE
-  }
+  },
 
   // a Parent Method that we want to access
   showFlashMessage(message: string, alertType = 'info') {

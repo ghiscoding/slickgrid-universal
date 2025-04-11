@@ -335,7 +335,6 @@ export default class Example21 {
     this.rowDetail.onAsyncResponse.notify(
       {
         item: itemDetail,
-        itemDetail,
         params: { isUsingInnerGridStatePresets: this.isUsingInnerGridStatePresets },
       },
       undefined,

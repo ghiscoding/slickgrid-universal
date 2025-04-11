@@ -333,7 +333,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     } else {
       this.onAsyncResponse.notify({
         item,
-        itemDetail: item,
         detailView: item[`${this._keyPrefix}detailContent`],
         grid: this._grid,
       });
@@ -370,16 +369,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /**
    * subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
-   * the response has to be as "args.item" (or "args.itemDetail") with it's data back
+   * the response has to be as "args.item" with it's data back
    */
-  handleOnAsyncResponse(e: SlickEventData, args: { item: any; itemDetail: any; detailView?: any }): void {
-    if (!args || (!args.item && !args.itemDetail)) {
+  handleOnAsyncResponse(e: SlickEventData, args: { item: any; detailView?: any }): void {
+    if (!args || !args.item) {
       console.error('SlickRowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
       return;
     }
 
-    // @deprecated `args.itemDetail` we accept item/itemDetail, just get the one which has data
-    const itemDetail = args.item || args.itemDetail;
+    // get item detail argument
+    const itemDetail = args.item;
 
     // if we just want to load in a view directly we can use detailView property to do so
     itemDetail[`${this._keyPrefix}detailContent`] = args.detailView ?? this._addonOptions?.postTemplate?.(itemDetail);
@@ -392,7 +391,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       {
         grid: this._grid,
         item: itemDetail,
-        itemDetail,
       },
       e,
       this

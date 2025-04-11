@@ -371,14 +371,7 @@ export default class Example20 {
   // notify the onAsyncResponse with the "args.item" (required property)
   // the plugin will then use itemDetail to populate the detail panel with "postTemplate"
   notifyTemplate(itemDetail: ItemDetail) {
-    this.rowDetail.onAsyncResponse.notify(
-      {
-        item: itemDetail,
-        itemDetail,
-      },
-      undefined,
-      this
-    );
+    this.rowDetail.onAsyncResponse.notify({ item: itemDetail }, undefined, this);
   }
 
   addDeleteRowOnClickListener(itemId: string) {

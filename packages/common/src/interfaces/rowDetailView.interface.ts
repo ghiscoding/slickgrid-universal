@@ -35,9 +35,6 @@ export interface OnRowDetailAsyncResponseArgs {
   /** Item data context object */
   item: any;
 
-  /** @alias `item` */
-  itemDetail: any;
-
   /** An explicit view to use instead of template (Optional) */
   detailView?: any;
 
@@ -52,9 +49,6 @@ export interface OnRowDetailAsyncResponseArgs {
 export interface OnRowDetailAsyncEndUpdateArgs {
   /** Item data context object */
   item: any;
-
-  /** @deprecated @alias `item` */
-  itemDetail: any;
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;
