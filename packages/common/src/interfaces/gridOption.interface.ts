@@ -179,12 +179,6 @@ export interface GridOption<C extends Column = Column> {
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
   checkboxSelector?: CheckboxSelectorOption;
 
-  /**
-   * @deprecated @use `gridOptions = { dataView: { globalItemMetadataProvider: { getRowMetadata: (item, row) => any }}}` instead
-   * A callback function that will be used to define row spanning accross multiple columns
-   */
-  colspanCallback?: (item: any) => ItemMetadata;
-
   /** Defaults to " - ", separator between the column group label and the column label. */
   columnGroupSeparator?: string;
 

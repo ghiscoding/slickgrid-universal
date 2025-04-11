@@ -11,7 +11,6 @@ import {
   type ExtensionList,
   type ExternalResource,
   GridStateType,
-  type ItemMetadata,
   type Metrics,
   type Pagination,
   type PaginationMetadata,
@@ -943,18 +942,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
           });
         }
       }
-    }
-
-    // @deprecated @user `dataview.globalItemMetadataProvider.getRowMetadata`
-    // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
-    if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
-      dataView.getItemMetadata = (rowNumber: number) => {
-        let callbackResult: ItemMetadata | null = null;
-        if (gridOptions.colspanCallback) {
-          callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
-        }
-        return callbackResult;
-      };
     }
   }
 

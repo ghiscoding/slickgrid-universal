@@ -1944,29 +1944,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(populateSpy).toHaveBeenCalledWith(mockPresetFilters);
       });
 
-      it('should return null when "getItemMetadata" is called without a colspan callback defined', () => {
-        const itemSpy = vi.spyOn(mockDataView, 'getItem');
-
-        component.options = { colspanCallback: undefined } as unknown as GridOption;
-        component.initialization(slickEventHandler);
-        mockDataView.getItemMetadata(2);
-
-        expect(itemSpy).not.toHaveBeenCalled();
-      });
-
-      it('should execute colspan callback when defined in the grid options and "getItemMetadata" is called', () => {
-        const mockCallback = vi.fn();
-        const mockItem = { firstName: 'John', lastName: 'Doe' };
-        const itemSpy = vi.spyOn(mockDataView, 'getItem').mockReturnValue(mockItem);
-
-        component.options = { colspanCallback: mockCallback } as unknown as GridOption;
-        component.initialization(slickEventHandler);
-        mockDataView.getItemMetadata(2);
-
-        expect(itemSpy).toHaveBeenCalledWith(2);
-        expect(mockCallback).toHaveBeenCalledWith(mockItem);
-      });
-
       it('should update each row and re-render the grid when filtering and DataView "onRowsChanged" event is triggered', () => {
         const renderSpy = vi.spyOn(mockGrid, 'render');
         const updateRowSpy = vi.spyOn(mockGrid, 'updateRow');
