@@ -917,7 +917,7 @@ export class GridService {
     // do we want to trigger an event after updating the item
     if (options.triggerEvent) {
       this.pubSubService.publish<T[]>('onItemsUpserted', [item]);
-      isItemAdded ? this.pubSubService.publish<T[]>('onItemsAdded', [item]) : this.pubSubService.publish<any[]>('onItemsUpdated', [item]);
+      this.pubSubService.publish<T[]>(isItemAdded ? 'onItemsAdded' : 'onItemsUpdated', [item]);
     }
     return { added: rowNumberAdded, updated: rowNumberUpdated };
   }

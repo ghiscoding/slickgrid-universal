@@ -816,7 +816,7 @@ describe('PaginationService', () => {
     });
 
     it('should call "processOnItemsAddedOrRemoved" and expect the (To) to be incremented by 1 when "onItemsAdded" is triggered with a single item', () => {
-      const mockItems = { name: 'John' };
+      const mockItems = [{ name: 'John' }];
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
@@ -871,7 +871,7 @@ describe('PaginationService', () => {
     });
 
     it('should call "processOnItemsAddedOrRemoved" and expect the (To) to be decremented by 2 when "onItemsDeleted" is triggered with a single item', () => {
-      const mockItems = { name: 'John' };
+      const mockItems = [{ name: 'John' }];
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
@@ -929,7 +929,7 @@ describe('PaginationService', () => {
     it('should call "processOnItemsAddedOrRemoved" and expect the (To) to equal the total items when it is lower than the total pageSize count', () => {
       mockGridOption.pagination!.pageNumber = 4;
       mockGridOption.pagination!.totalItems = 100;
-      const mockItems = { name: 'John' };
+      const mockItems = [{ name: 'John' }];
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemsAdded'](mockItems);
@@ -942,7 +942,7 @@ describe('PaginationService', () => {
     it('should call "processOnItemsAddedOrRemoved" and expect the (To) to equal the total items when it is higher than the total pageSize count', () => {
       mockGridOption.pagination!.pageNumber = 4;
       mockGridOption.pagination!.totalItems = 99;
-      const mockItems = { name: 'John' };
+      const mockItems = [{ name: 'John' }];
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemsAdded'](mockItems);

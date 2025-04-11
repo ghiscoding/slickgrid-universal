@@ -614,7 +614,7 @@ export class PaginationService {
    * until user does an action which will refresh the data hence the pagination which will then become normal again
    */
   protected processOnItemsAddedOrRemoved(items: any[], isItemAdded = true): void {
-    if (Array.isArray(items)) {
+    if (Array.isArray(items) && items.length > 0) {
       const previousDataTo = this._dataTo;
       const itemCount = items.length;
       const itemCountWithDirection = isItemAdded ? +itemCount : -itemCount;
