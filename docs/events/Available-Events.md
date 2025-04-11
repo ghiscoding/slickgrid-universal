@@ -90,10 +90,10 @@ handleOnHeaderMenuCommand(e) {
 
 #### Grid Service
   - `onHeaderMenuHideColumns`
-  - `onItemAdded`
-  - `onItemDeleted`
-  - `onItemUpdated`
-  - `onItemUpserted`
+  - `onItemsAdded`
+  - `onItemsDeleted`
+  - `onItemsUpdated`
+  - `onItemsUpserted`
 
 #### GridState Service
   - `onFullResizeByContentRequested`

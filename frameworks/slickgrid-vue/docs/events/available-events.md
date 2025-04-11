@@ -124,10 +124,10 @@ function handleOnHeaderMenuCommand(e) {
 
 #### Grid Service
 
-- `onItemAdded`
-- `onItemDeleted`
-- `onItemUpdated`
-- `onItemUpserted`
+- `onItemsAdded`
+- `onItemsDeleted`
+- `onItemsUpdated`
+- `onItemsUpserted`
 
 #### GridState Service
 

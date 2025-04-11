@@ -462,7 +462,7 @@ export class GridService {
 
     // do we want to trigger an event after adding the item
     if (insertOptions.triggerEvent) {
-      this.pubSubService.publish('onItemAdded', item);
+      this.pubSubService.publish<T[]>('onItemsAdded', [item]);
     }
 
     // when using Pagination in a local grid, we need to either go to first page or last page depending on which position user want to insert the new row
@@ -543,7 +543,7 @@ export class GridService {
 
     // do we want to trigger an event after adding the item
     if (insertOptions.triggerEvent) {
-      this.pubSubService.publish('onItemAdded', items);
+      this.pubSubService.publish<T[]>('onItemsAdded', items);
     }
 
     return rowNumbers;
@@ -599,7 +599,7 @@ export class GridService {
 
     // do we want to trigger an event after deleting the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemDeleted', items);
+      this.pubSubService.publish<T[]>('onItemsDeleted', items);
     }
     return itemIds;
   }
@@ -633,7 +633,7 @@ export class GridService {
 
     // do we want to trigger an event after deleting the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemDeleted', itemId);
+      this.pubSubService.publish<Array<string | number>>('onItemsDeleted', [itemId]);
     }
     return itemId;
   }
@@ -662,7 +662,7 @@ export class GridService {
 
       // do we want to trigger an event after deleting the item
       if (options.triggerEvent) {
-        this.pubSubService.publish('onItemDeleted', itemIds);
+        this.pubSubService.publish<Array<number | string>>('onItemsDeleted', itemIds);
       }
       return itemIds;
     }
@@ -746,7 +746,7 @@ export class GridService {
 
     // do we want to trigger an event after updating the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemUpdated', items);
+      this.pubSubService.publish<T[]>('onItemsUpdated', items);
     }
 
     return rowNumbers;
@@ -805,7 +805,7 @@ export class GridService {
 
       // do we want to trigger an event after updating the item
       if (options.triggerEvent) {
-        this.pubSubService.publish('onItemUpdated', item);
+        this.pubSubService.publish<T[]>('onItemsUpdated', [item]);
       }
     }
     return rowNumber;
@@ -869,14 +869,14 @@ export class GridService {
 
     // do we want to trigger an event after updating the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemUpserted', items);
+      this.pubSubService.publish<T[]>('onItemsUpserted', items);
       const addedItems = upsertedRows.filter((upsertRow) => upsertRow.added !== undefined);
       if (Array.isArray(addedItems) && addedItems.length > 0) {
-        this.pubSubService.publish('onItemAdded', addedItems);
+        this.pubSubService.publish<Array<{ added: number | undefined; updated: number | undefined }>>('onItemsAdded', addedItems);
       }
       const updatedItems = upsertedRows.filter((upsertRow) => upsertRow.updated !== undefined);
       if (Array.isArray(updatedItems) && updatedItems.length > 0) {
-        this.pubSubService.publish('onItemUpdated', updatedItems);
+        this.pubSubService.publish<Array<{ added: number | undefined; updated: number | undefined }>>('onItemsUpdated', updatedItems);
       }
     }
     return upsertedRows;
@@ -916,8 +916,8 @@ export class GridService {
 
     // do we want to trigger an event after updating the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemUpserted', item);
-      isItemAdded ? this.pubSubService.publish('onItemAdded', item) : this.pubSubService.publish('onItemUpdated', item);
+      this.pubSubService.publish<T[]>('onItemsUpserted', [item]);
+      isItemAdded ? this.pubSubService.publish<T[]>('onItemsAdded', [item]) : this.pubSubService.publish<any[]>('onItemsUpdated', [item]);
     }
     return { added: rowNumberAdded, updated: rowNumberUpdated };
   }

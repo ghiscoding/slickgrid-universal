@@ -20,6 +20,6 @@ export interface GridServiceInsertOption {
   /** Defaults to true, after insert should we scroll to the inserted row position */
   scrollRowIntoView?: boolean;
 
-  /** Defaults to true, trigger an onItemAdded event after the insert */
+  /** Defaults to true, trigger an onItemsAdded event after the insert */
   triggerEvent?: boolean;
 }

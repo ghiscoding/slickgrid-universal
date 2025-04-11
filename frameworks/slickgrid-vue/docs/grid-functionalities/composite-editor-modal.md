@@ -474,7 +474,7 @@ function handleOnCompositeEditorChange(event) {
     @onBeforeEditCell="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"
     @onCellChange="handleOnCellChange($event.detail.eventData, $event.detail.args)"
     @onCompositeEditorChange="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
-    @onItemDeleted="handleItemDeleted($event.detail)"
+    @onItemsDeleted="handleItemsDeleted($event.detail)"
     @onGridStateChanged="handleOnGridStateChanged($event.detail)"
     @onFilterChanged="handleReRenderUnsavedStyling()"
     @onPaginationChanged="handleReRenderUnsavedStyling()"

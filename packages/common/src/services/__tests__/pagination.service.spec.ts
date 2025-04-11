@@ -591,7 +591,7 @@ describe('PaginationService', () => {
       service.processOnPageChanged(1);
 
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 25, pageNum: 0 });
-      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
         dataFrom: 26,
         dataTo: 50,
         pageSize: 25,
@@ -664,7 +664,7 @@ describe('PaginationService', () => {
           service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
           service.refreshPagination();
         } catch (e) {
-          expect(e.toString()).toContain(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);
+          expect(e.toString()).toContain('BackendServiceApi requires the following 2 properties "process" and "service" to be defined.');
           done();
         }
       }));
@@ -806,8 +806,8 @@ describe('PaginationService', () => {
     });
   });
 
-  // processOnItemAddedOrRemoved is private but we can spy on recalculateFromToIndexes
-  describe('processOnItemAddedOrRemoved private method', () => {
+  // processOnItemsAddedOrRemoved is private but we can spy on recalculateFromToIndexes
+  describe('processOnItemsAddedOrRemoved private method', () => {
     afterEach(() => {
       mockGridOption.pagination!.pageSize = 25;
       mockGridOption.pagination!.pageNumber = 2;
@@ -815,16 +815,16 @@ describe('PaginationService', () => {
       vi.clearAllMocks();
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect the (To) to be incremented by 1 when "onItemAdded" is triggered with a single item', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect the (To) to be incremented by 1 when "onItemsAdded" is triggered with a single item', () => {
       const mockItems = { name: 'John' };
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemAdded'](mockItems);
+      fnCallbacks['onItemsAdded'](mockItems);
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
         dataFrom: 26,
         dataTo: 50 + 1,
         pageSize: 25,
@@ -837,16 +837,16 @@ describe('PaginationService', () => {
       expect(service.dataTo).toBe(50 + 1);
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect the (To) to be incremented by 2 when "onItemAdded" is triggered with an array of 2 new items', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect the (To) to be incremented by 2 when "onItemsAdded" is triggered with an array of 2 new items', () => {
       const mockItems = [{ name: 'John' }, { name: 'Jane' }];
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemAdded'](mockItems);
+      fnCallbacks['onItemsAdded'](mockItems);
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
         dataFrom: 26,
         dataTo: 50 + mockItems.length,
         pageSize: 25,
@@ -859,28 +859,28 @@ describe('PaginationService', () => {
       expect(service.dataTo).toBe(50 + mockItems.length);
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect not onPaginationChanged to be triggered and the (To) to remain the same when "onItemAdded" is triggered without any items', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect not onPaginationChanged to be triggered and the (To) to remain the same when "onItemsAdded" is triggered without any items', () => {
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemAdded'](null);
+      fnCallbacks['onItemsAdded'](null);
 
       expect(recalculateSpy).toHaveBeenCalledTimes(1);
       expect(service.dataFrom).toBe(26);
       expect(service.dataTo).toBe(50);
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect the (To) to be decremented by 2 when "onItemDeleted" is triggered with a single item', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect the (To) to be decremented by 2 when "onItemsDeleted" is triggered with a single item', () => {
       const mockItems = { name: 'John' };
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemDeleted'](mockItems);
+      fnCallbacks['onItemsDeleted'](mockItems);
 
-      // called 2x times by init() then by processOnItemAddedOrRemoved()
+      // called 2x times by init() then by processOnItemsAddedOrRemoved()
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
         dataFrom: 26,
         dataTo: 50 - 1,
         pageSize: 25,
@@ -893,16 +893,16 @@ describe('PaginationService', () => {
       expect(service.dataTo).toBe(50 - 1);
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect the (To) to be decremented by 2 when "onItemDeleted" is triggered with an array of 2 new items', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect the (To) to be decremented by 2 when "onItemsDeleted" is triggered with an array of 2 new items', () => {
       const mockItems = [{ name: 'John' }, { name: 'Jane' }];
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemDeleted'](mockItems);
+      fnCallbacks['onItemsDeleted'](mockItems);
 
-      expect(recalculateSpy).toHaveBeenCalledTimes(2); // called 2x times by init() then by processOnItemAddedOrRemoved()
-      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationChanged`, {
+      expect(recalculateSpy).toHaveBeenCalledTimes(2); // called 2x times by init() then by processOnItemsAddedOrRemoved()
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
         dataFrom: 26,
         dataTo: 50 - mockItems.length,
         pageSize: 25,
@@ -913,12 +913,12 @@ describe('PaginationService', () => {
       });
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect the (To) to remain the same when "onItemDeleted" is triggered without any items', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect the (To) to remain the same when "onItemsDeleted" is triggered without any items', () => {
       const recalculateSpy = vi.spyOn(service, 'recalculateFromToIndexes');
 
       // service.totalItems = 85;
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemDeleted'](null);
+      fnCallbacks['onItemsDeleted'](null);
 
       // called 1x time by init() only
       expect(recalculateSpy).toHaveBeenCalledTimes(1);
@@ -926,26 +926,26 @@ describe('PaginationService', () => {
       expect(service.dataTo).toBe(50);
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect the (To) to equal the total items when it is lower than the total pageSize count', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect the (To) to equal the total items when it is lower than the total pageSize count', () => {
       mockGridOption.pagination!.pageNumber = 4;
       mockGridOption.pagination!.totalItems = 100;
       const mockItems = { name: 'John' };
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemAdded'](mockItems);
+      fnCallbacks['onItemsAdded'](mockItems);
       service.changeItemPerPage(200);
 
       expect(service.dataFrom).toBe(1);
       expect(service.dataTo).toBe(101);
     });
 
-    it('should call "processOnItemAddedOrRemoved" and expect the (To) to equal the total items when it is higher than the total pageSize count', () => {
+    it('should call "processOnItemsAddedOrRemoved" and expect the (To) to equal the total items when it is higher than the total pageSize count', () => {
       mockGridOption.pagination!.pageNumber = 4;
       mockGridOption.pagination!.totalItems = 99;
       const mockItems = { name: 'John' };
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      fnCallbacks['onItemAdded'](mockItems);
+      fnCallbacks['onItemsAdded'](mockItems);
       service.changeItemPerPage(100);
 
       expect(service.dataFrom).toBe(1);
@@ -1025,9 +1025,9 @@ describe('PaginationService', () => {
       service.togglePaginationVisibility(false);
 
       expect(sharedService.gridOptions.enablePagination).toBe(false);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onPaginationRefreshed`, expectedPagination);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onPaginationPresetsInitialized`, expectedPagination);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onPaginationVisibilityChanged`, { visible: false });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onPaginationRefreshed', expectedPagination);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onPaginationPresetsInitialized', expectedPagination);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(3, 'onPaginationVisibilityChanged', { visible: false });
       expect(setPagingSpy).not.toHaveBeenCalled();
     });
 
@@ -1040,7 +1040,7 @@ describe('PaginationService', () => {
       service.togglePaginationVisibility(false);
 
       expect(sharedService.gridOptions.enablePagination).toBe(false);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onPaginationVisibilityChanged`, { visible: false });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(3, 'onPaginationVisibilityChanged', { visible: false });
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 0, pageNum: 0 });
     });
 
@@ -1055,7 +1055,7 @@ describe('PaginationService', () => {
 
       expect(sharedService.gridOptions.enablePagination).toBe(true);
       expect(gotoSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationVisibilityChanged`, { visible: true });
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationVisibilityChanged', { visible: true });
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: mockGridOption.pagination!.pageSize, pageNum: 0 });
     });
   });

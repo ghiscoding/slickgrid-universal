@@ -163,10 +163,10 @@ export class PaginationService {
     // that would trigger a refresh of the pagination numbers
     if (this.dataView) {
       this._subscriptions.push(
-        this.pubSubService.subscribe<any | any[]>('onItemAdded', (items) => this.processOnItemAddedOrRemoved(items, true))
+        this.pubSubService.subscribe<any[]>('onItemsAdded', (items) => this.processOnItemsAddedOrRemoved(items, true))
       );
       this._subscriptions.push(
-        this.pubSubService.subscribe<any | any[]>('onItemDeleted', (items) => this.processOnItemAddedOrRemoved(items, false))
+        this.pubSubService.subscribe<any[]>('onItemsDeleted', (items) => this.processOnItemsAddedOrRemoved(items, false))
       );
     }
 
@@ -613,7 +613,7 @@ export class PaginationService {
    * basically we assume that this offset is fine for the time being,
    * until user does an action which will refresh the data hence the pagination which will then become normal again
    */
-  protected processOnItemAddedOrRemoved(items: any | any[], isItemAdded = true): void {
+  protected processOnItemsAddedOrRemoved(items: any[], isItemAdded = true): void {
     if (items !== null) {
       const previousDataTo = this._dataTo;
       const itemCount = Array.isArray(items) ? items.length : 1;

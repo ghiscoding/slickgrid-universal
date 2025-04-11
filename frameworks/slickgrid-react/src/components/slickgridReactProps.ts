@@ -220,10 +220,10 @@ export interface SlickgridReactProps {
   onHeaderMenuColumnResizeByContent?: (e: CustomEvent<{ eventData: any; args: { columnId: string } }>) => void;
   onHeaderMenuBeforeMenuShow?: (e: CustomEvent<{ eventData: any; args: HeaderMenuCommandItemCallbackArgs }>) => void;
   onHeaderMenuAfterMenuShow?: (e: CustomEvent<{ eventData: any; args: HeaderMenuCommandItemCallbackArgs }>) => void;
-  onItemAdded?: (e: CustomEvent<any>) => void;
-  onItemDeleted?: (e: CustomEvent<any>) => void;
-  onItemUpdated?: (e: CustomEvent<any>) => void;
-  onItemUpserted?: (e: CustomEvent<any>) => void;
+  onItemsAdded?: (e: CustomEvent<any>) => void;
+  onItemsDeleted?: (e: CustomEvent<any>) => void;
+  onItemsUpdated?: (e: CustomEvent<any>) => void;
+  onItemsUpserted?: (e: CustomEvent<any>) => void;
   onFullResizeByContentRequested?: (e: CustomEvent<any>) => void;
   onGridStateChanged?: (e: CustomEvent<any>) => void;
   onBeforePaginationChange?: (e: CustomEvent<any>) => void;

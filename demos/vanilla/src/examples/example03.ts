@@ -61,7 +61,7 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'onclick', this.handleOnClick.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleItemDeleted.bind(this));
     this._bindingEventService.bind(
       gridContainerElm,
       'onbeforeexporttoexcel',
