@@ -930,18 +930,6 @@ export class SlickVanillaGridBundle<TData = any> {
       this.loadColumnPresetsWhenDatasetInitialized();
       this.loadFilterPresetsWhenDatasetInitialized();
     }
-
-    // @deprecated @use `dataview.globalItemMetadataProvider.getRowMetadata`
-    // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
-    if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
-      dataView.getItemMetadata = (rowNumber: number) => {
-        let callbackResult = null;
-        if (gridOptions.colspanCallback) {
-          callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
-        }
-        return callbackResult;
-      };
-    }
   }
 
   bindBackendCallbackFunctions(gridOptions: GridOption): void {

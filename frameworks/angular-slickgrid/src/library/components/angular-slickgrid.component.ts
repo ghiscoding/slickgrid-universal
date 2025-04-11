@@ -24,7 +24,6 @@ import {
   EventSubscription,
   ExternalResource,
   isColumnDateType,
-  ItemMetadata,
   Locale,
   Metrics,
   Pagination,
@@ -1051,18 +1050,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
           }
         });
       }
-    }
-
-    // @deprecated @user `dataview.globalItemMetadataProvider.getRowMetadata`
-    // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
-    if (gridOptions?.colspanCallback && dataView && dataView.getItem && dataView.getItemMetadata) {
-      dataView.getItemMetadata = (rowNumber: number) => {
-        let callbackResult: ItemMetadata | null = null;
-        if (gridOptions.colspanCallback) {
-          callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
-        }
-        return callbackResult;
-      };
     }
   }
 
