@@ -558,7 +558,7 @@ function handleValidationError(e: Event, args: any) {
   return false;
 }
 
-function handleItemDeleted(itemId: string) {
+function handleItemsDeleted(itemId: string) {
   console.log('item deleted with id:', itemId);
 }
 
@@ -1154,7 +1154,7 @@ function renderItemCallbackWith4Corners(item: any): string {
     @onCellChange="handleOnCellChange($event.detail.eventData, $event.detail.args)"
     @onClick="handleOnCellClicked($event.detail.eventData, $event.detail.args)"
     @onCompositeEditorChange="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
-    @onItemDeleted="handleItemDeleted($event.detail)"
+    @onItemsDeleted="handleItemsDeleted($event.detail)"
     @onGridStateChanged="handleOnGridStateChanged($event.detail)"
     @onRowsOrCountChanged="handleReRenderUnsavedStyling()"
     @onValidationError="handleValidationError($event.detail.eventData, $event.detail.args)"

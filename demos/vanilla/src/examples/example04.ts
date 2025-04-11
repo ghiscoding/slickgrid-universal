@@ -71,7 +71,7 @@ export default class Example04 {
 
     // this._bindingEventService.bind(gridContainerElm, 'onclick', handleOnClick);
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleOnItemDeleted.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleOnItemsDeleted.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
@@ -571,15 +571,15 @@ export default class Example04 {
 
   handleOnValidationError(event) {
     console.log('handleOnValidationError', event.detail);
-    const args = event.detail && event.detail.args;
+    const args = event?.detail?.args;
     if (args.validationResults) {
       alert(args.validationResults.msg);
       return false;
     }
   }
 
-  handleOnItemDeleted(event) {
-    const itemId = event && event.detail;
+  handleOnItemsDeleted(event) {
+    const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }
 

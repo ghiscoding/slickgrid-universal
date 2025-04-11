@@ -609,7 +609,7 @@ const Example30: React.FC = () => {
     return false;
   }
 
-  function handleItemDeleted(itemId: string) {
+  function handleItemsDeleted(itemId: string) {
     console.log('item deleted with id:', itemId);
   }
 
@@ -1211,7 +1211,7 @@ const Example30: React.FC = () => {
         onCellChange={($event) => handleOnCellChange($event.detail.eventData, $event.detail.args)}
         onClick={($event) => handleOnCellClicked($event.detail.eventData, $event.detail.args)}
         onCompositeEditorChange={($event) => handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)}
-        onItemDeleted={($event) => handleItemDeleted($event.detail)}
+        onItemsDeleted={($event) => handleItemsDeleted($event.detail)}
         onGridStateChanged={($event) => handleOnGridStateChanged($event.detail)}
         onRowsOrCountChanged={() => handleReRenderUnsavedStyling()}
         onValidationError={($event) => handleValidationError($event.detail.eventData, $event.detail.args)}

@@ -101,7 +101,7 @@ export class SortService {
     // we'll automatically run Date parsing for these items to keep sort in sync
     if (this._gridOptions.preParseDateColumns) {
       this._eventHandler.subscribe(grid.onCellChange, (_e, args) => this.preParseSingleDateItem(args.item));
-      this.pubSubService.subscribe(['onItemAdded', 'onItemUpdated'], (item) => this.preParseSingleDateItem(item));
+      this.pubSubService.subscribe(['onItemsAdded', 'onItemsUpdated'], (item) => this.preParseSingleDateItem(item));
     }
   }
 

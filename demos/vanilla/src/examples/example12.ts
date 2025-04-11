@@ -138,7 +138,7 @@ export default class Example12 {
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
@@ -655,7 +655,7 @@ export default class Example12 {
     return false;
   }
 
-  handleItemDeleted(event) {
+  handleItemsDeleted(event) {
     const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }

@@ -462,7 +462,7 @@ const Example: React.FC = () => {
       onBeforeEditCell={$event => handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)}
       onCellChange={$event => handleOnCellChange($event.detail.eventData, $event.detail.args)}
       onCompositeEditorChange={$event => handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)}
-      onItemDeleted={$event => handleItemDeleted($event.detail)}
+      onItemsDeleted={$event => handleItemsDeleted($event.detail)}
       onGridStateChanged={$event => handleOnGridStateChanged($event.detail)}
       onFilterChanged={() => handleReRenderUnsavedStyling()}
       onPaginationChanged={() => handleReRenderUnsavedStyling()}

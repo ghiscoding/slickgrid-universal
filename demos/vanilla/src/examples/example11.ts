@@ -134,7 +134,7 @@ export default class Example11 {
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
     this.recreatePredefinedViews();
   }
 
@@ -514,15 +514,15 @@ export default class Example11 {
 
   handleValidationError(event) {
     console.log('handleValidationError', event.detail);
-    const args = event.detail && event.detail.args;
+    const args = event?.detail?.args;
     if (args.validationResults) {
       alert(args.validationResults.msg);
     }
     return false;
   }
 
-  handleItemDeleted(event) {
-    const itemId = event && event.detail;
+  handleItemsDeleted(event) {
+    const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }
 
