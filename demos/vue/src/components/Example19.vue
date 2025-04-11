@@ -129,6 +129,7 @@ function defineGrid() {
     },
     enableFiltering: true,
     enableRowDetailView: true,
+    rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     darkMode: isDarkMode.value,
     datasetIdPropertyName: 'rowId', // optionally use a different "id"
     rowDetailView: {

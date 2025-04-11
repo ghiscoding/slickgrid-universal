@@ -65,16 +65,19 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should expect the "pdf" folder to be closed by the collapsed items grid preset with aggregators of Sum(8.8MB) / Avg(2.2MB)', () => {
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pdf'
+      );
       cy.get(`.slick-group-toggle.collapsed`).should('have.length', 1);
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 8.8 MB / avg: 2.2 MB'
       );
 
       defaultGridPresetWithoutPdfDocs.forEach((_colName, rowIdx) => {
         if (rowIdx < defaultGridPresetWithoutPdfDocs.length - 1) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             defaultGridPresetWithoutPdfDocs[rowIdx]
           );
@@ -83,13 +86,19 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should have documents folder with aggregation of Sum(14.46MB) / Avg(1.45MB)', () => {
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'documents'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 14.46 MB / avg: 1.45 MB'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'misc');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'misc'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 0.4 MB / avg: 0.4 MB'
       );
@@ -97,7 +106,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
     it('should expand "pdf" folder and expect all folders to be expanded', () => {
       cy.get(
-        `#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`
+        `#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`
       ).click();
 
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
@@ -108,7 +117,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
         if (rowIdx > defaultSortAscList.length - 1) {
           return;
         }
-        cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+        cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
           'contain',
           defaultSortAscList[rowIdx]
         );
@@ -118,18 +127,24 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should have pop songs folder with aggregations of Sum(53.3MB) / Avg(26.65MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 151.3 MB / avg: 50.43 MB'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 17}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 17}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 151.3 MB / avg: 50.43 MB'
       );
       // next folder is "other" and is empty without aggregations
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pop'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 53.3 MB / avg: 26.65 MB'
       );
@@ -142,25 +157,37 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       cy.get('.slick-group-toggle[level=3]').get('.slick-cell').contains('pop-80.mp3');
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 20}px;"] > .slick-cell:nth(3)`).should('contain', '82 MB');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 21}px;"] > .slick-cell:nth(3)`).should('contain', '83 MB');
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 20}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '82 MB'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 21}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '83 MB'
+      );
     });
 
     it('should have pop songs folder with updated aggregations including new pop songs of Sum(218.3MB) / Avg(54.58MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { force: true } as any);
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 316.3 MB / avg: 63.26 MB'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 17}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 17}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 316.3 MB / avg: 63.26 MB'
       );
       // next folder is "other" and is empty without aggregations
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pop'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 218.3 MB / avg: 54.58 MB'
       );
@@ -227,7 +254,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       defaultSortAscList.forEach((_colName, rowIdx) => {
         if (rowIdx < defaultSortAscList.length - 1) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             defaultSortAscList[rowIdx]
           );
@@ -240,7 +267,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       defaultSortDescListWithExtraSongs.forEach((_colName, rowIdx) => {
         if (rowIdx < defaultSortDescListWithExtraSongs.length - 1) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             defaultSortDescListWithExtraSongs[rowIdx]
           );
@@ -269,7 +296,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       defaultSortDescListWithExtraSongs.forEach((_colName, rowIdx) => {
         if (rowIdx < defaultSortDescListWithExtraSongs.length - 1) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             defaultSortDescListWithExtraSongs[rowIdx]
           );
@@ -288,18 +315,24 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should have pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { force: true } as any);
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 400.3 MB / avg: 66.72 MB'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 17}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 17}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 400.3 MB / avg: 66.72 MB'
       );
       // next folder is "other" and is empty without aggregations
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pop'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 302.3 MB / avg: 60.46 MB'
       );
@@ -312,7 +345,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       popMusicWith3ExtraSongsWithoutEmpty.forEach((_colName, rowIdx) => {
         if (rowIdx < popMusicWith3ExtraSongsWithoutEmpty.length - 1) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             popMusicWith3ExtraSongsWithoutEmpty[rowIdx]
           );
@@ -327,7 +360,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       popMusicWith3ExtraSongsWithoutEmpty.forEach((_colName, rowIdx) => {
         if (rowIdx < popMusicWith3ExtraSongsWithoutEmpty.length - 3) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             popMusicWith3ExtraSongsWithoutEmpty[rowIdx]
           );
@@ -344,7 +377,10 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       cy.get('.right-footer .item-count').contains('1');
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
     });
 
     it('should use same filter "music" and now expect to see 10 rows (entire music folder content) to show up when "Exclude Children when Filtering Tree" becomes uncheck', () => {
@@ -356,7 +392,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       allMusic.forEach((_colName, rowIdx) => {
         if (rowIdx < allMusic.length - 3) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             allMusic[rowIdx]
           );
@@ -379,7 +415,7 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       expectedFiles.forEach((_colName, rowIdx) => {
         if (rowIdx < expectedFiles.length - 3) {
-          cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * rowIdx}px;"] > .slick-cell:nth(0)`).should(
+          cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"] > .slick-cell:nth(0)`).should(
             'contain',
             expectedFiles[rowIdx]
           );
@@ -400,18 +436,24 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should have pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 400.3 MB / avg: 66.72 MB'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 17}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 17}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 400.3 MB / avg: 66.72 MB'
       );
       // next folder is "other" and is empty without aggregations
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pop'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 302.3 MB / avg: 60.46 MB'
       );
@@ -420,18 +462,24 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should remove last inserted pop song 81 and expect aggregations to be updated with Sum(316.3MB) / Avg(63.26MB)', () => {
       cy.get('[data-test="remove-item-btn"]').click();
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 316.3 MB / avg: 63.26 MB'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 17}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 17}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 316.3 MB / avg: 63.26 MB'
       );
       // next folder is "other" and is empty without aggregations
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pop'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 218.3 MB / avg: 54.58 MB'
       );
@@ -446,18 +494,24 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should have pop songs folder with aggregation reflecting what is displayed, Sum(316.3MB) / Avg(63.26MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 16}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 316.3 MB / avg: 63.26 MB'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 17}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 17}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 316.3 MB / avg: 63.26 MB'
       );
       // next folder is "other" and is empty without aggregations
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 19}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pop'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 19}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 218.3 MB / avg: 54.58 MB'
       );
@@ -466,13 +520,19 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should have documents with same Sum as the beginning since auto-recalc is disabled, aggregation should be Sum(14.46MB) / Avg(1.45MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'documents'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 14.46 MB / avg: 1.45 MB (total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'misc');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'misc'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 0.4 MB / avg: 0.4 MB (sub-total)'
       );
@@ -481,13 +541,19 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should retype filter "map" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file').type('map');
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'documents'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 6 MB / avg: 3 MB (total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pdf'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 6 MB / avg: 3 MB (sub-total)'
       );
@@ -503,32 +569,50 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should type filter "b" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file').type('b');
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should(
         'contain',
         'bucket-list.txt'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'documents'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 4.02 MB / avg: 1.34 MB (total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pdf'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should(
         'contain',
         'internet-bill.pdf'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '1.3 MB'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0)`).should(
         'contain',
         'phone-bill.pdf'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(3)`).should('contain', '1.5 MB');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(0)`).should('contain', 'zebra.dll');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(3)`).should('contain', '1.22 MB');
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '1.5 MB'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 5}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'zebra.dll'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 5}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '1.22 MB'
+      );
 
       cy.get('.right-footer .item-count').contains('6');
       cy.get('.right-footer .total-count').contains('31');
@@ -537,26 +621,38 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should type filter "b" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file').type('i'); // will become "bi"
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'documents'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 2.8 MB / avg: 1.4 MB (total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pdf'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should(
         'contain',
         'internet-bill.pdf'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '1.3 MB'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should(
         'contain',
         'phone-bill.pdf'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(3)`).should('contain', '1.5 MB');
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '1.5 MB'
+      );
 
       cy.get('.right-footer .item-count').contains('4');
       cy.get('.right-footer .total-count').contains('31');
@@ -568,27 +664,39 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
     it('should collapse "pdf" folder and filter with "b" again and expect same updated tree totals as earlier collapsed or expanded should still be Sum(2.8MB) / Avg(1.4MB)', () => {
       cy.get(
-        `#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`
+        `#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`
       ).click();
 
       cy.get('.search-filter.filter-file').type('b');
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should(
         'contain',
         'bucket-list.txt'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'documents'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 4.02 MB / avg: 1.34 MB (total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'pdf'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 2.8 MB / avg: 1.4 MB (sub-total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'zebra.dll');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(3)`).should('contain', '1.22 MB');
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'zebra.dll'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '1.22 MB'
+      );
 
       cy.get('.right-footer .item-count').contains('4');
       cy.get('.right-footer .total-count').contains('31');
@@ -600,18 +708,30 @@ describe('Example 29 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
       cy.get('.search-filter.filter-file').type('so');
 
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'documents'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 0.79 MB / avg: 0.79 MB (total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).should(
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'music'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should(
         'contain',
         'sum: 104.3 MB / avg: 52.15 MB (total)'
       );
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'something.txt');
-      cy.get(`#slickGridContainer-grid29 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(3)`).should('contain', '90 MB');
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should(
+        'contain',
+        'something.txt'
+      );
+      cy.get(`#slickGridContainer-grid29 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should(
+        'contain',
+        '90 MB'
+      );
 
       cy.get('.right-footer .item-count').contains('3');
       cy.get('.right-footer .total-count').contains('31');

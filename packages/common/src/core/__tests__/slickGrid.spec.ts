@@ -141,6 +141,46 @@ describe('SlickGrid core file', () => {
     expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid] Zoom level other than 100% is not supported');
   });
 
+  it('should display a console warning when Row Detail is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
+    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+
+    document.body.style.zoom = '90%';
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>(
+      '#myGrid',
+      [],
+      columns,
+      { ...defaultOptions, rowTopOffsetRenderType: 'transform', enableRowDetailView: true },
+      pubSubServiceStub
+    );
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan')
+    );
+  });
+
+  it('should display a console warning when RowSpan is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
+    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+
+    document.body.style.zoom = '90%';
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>(
+      '#myGrid',
+      [],
+      columns,
+      { ...defaultOptions, rowTopOffsetRenderType: 'transform', enableCellRowSpan: true },
+      pubSubServiceStub
+    );
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan')
+    );
+  });
+
   it('should be able to instantiate SlickGrid and get columns', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } },

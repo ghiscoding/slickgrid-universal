@@ -78,6 +78,7 @@ export class Example45DetailView {
       enableCellNavigation: true,
       datasetIdPropertyName: 'orderId',
       presets: gridState,
+      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     };
   }
 

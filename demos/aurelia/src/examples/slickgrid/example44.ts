@@ -281,7 +281,7 @@ export class Example44 {
       },
       enableExcelExport: true,
       externalResources: [new ExcelExportService()],
-      rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
+      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     };
   }
 

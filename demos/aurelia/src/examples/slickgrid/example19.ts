@@ -151,6 +151,7 @@ export class Example19 {
       },
       enableFiltering: true,
       enableRowDetailView: true,
+      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
       rowDetailView: {

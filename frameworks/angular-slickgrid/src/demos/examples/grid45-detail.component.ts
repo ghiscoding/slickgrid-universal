@@ -84,6 +84,7 @@ export class Grid45DetailComponent implements OnDestroy, OnInit {
       enableCellNavigation: true,
       datasetIdPropertyName: 'orderId',
       presets: gridState,
+      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     };
   }
 

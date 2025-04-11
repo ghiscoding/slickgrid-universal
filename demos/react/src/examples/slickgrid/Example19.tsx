@@ -172,6 +172,7 @@ const Example19: React.FC = () => {
       },
       enableFiltering: true,
       enableRowDetailView: true,
+      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode,
       datasetIdPropertyName: 'rowId',
       preRegisterExternalExtensions: (pubSubService) => {

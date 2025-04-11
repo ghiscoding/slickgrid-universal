@@ -506,7 +506,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     it('should reopen Context Menu hover "Priority" column then open options sub-menu & select "High" option and expect Task to be set to High in the UI', () => {
       const subOptions = ['Low', 'Medium', 'High'];
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .slick-cell:nth(5)`).rightclick({ force: true });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(5)`).rightclick({ force: true });
 
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
         .find('.slick-menu-item .slick-menu-content')
@@ -522,7 +522,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
 
       cy.get('@subMenuList').find('.slick-menu-item .slick-menu-content').contains('High').click();
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .slick-cell:nth(5)`).find('.mdi-star.red');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(5)`).find('.mdi-star.red');
     });
 
     it('should be able to open Context Menu from any other cell and click on Export->Text and expect alert triggered with Text Export', () => {
@@ -530,8 +530,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .slick-cell:nth(1)`).should('contain', 'Task 2');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .slick-cell:nth(1)`).rightclick({ force: true });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).should('contain', 'Task 2');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).rightclick({ force: true });
 
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item .slick-menu-content')
@@ -556,8 +556,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .slick-cell:nth(1)`).should('contain', 'Task 2');
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .slick-cell:nth(1)`).rightclick({ force: true });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).should('contain', 'Task 2');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).rightclick({ force: true });
 
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item .slick-menu-content')
@@ -611,8 +611,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
       const subOptions = ['Low', 'Medium', 'High'];
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`);
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).rightclick({ force: true });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`);
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).rightclick({ force: true });
 
       cy.get('.slick-context-menu').should('be.visible');
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
@@ -662,7 +662,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).rightclick({ force: true });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).rightclick({ force: true });
 
       cy.get('.slick-context-menu').should('be.visible');
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
