@@ -464,16 +464,13 @@ export class GridStateService {
 
     // subscribe to HeaderMenu & GridService show/hide column(s)
     this._subscriptions.push(
-      this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column }>(
-        ['onHeaderMenuHideColumns', 'onHideColumns', 'onShowColumns'],
-        (data) => {
-          const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
-          this.pubSubService.publish('onGridStateChanged', {
-            change: { newValues: currentColumns, type: GridStateType.columns },
-            gridState: this.getCurrentGridState(),
-          });
-        }
-      )
+      this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column }>(['onHideColumns', 'onShowColumns'], (data) => {
+        const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: currentColumns, type: GridStateType.columns },
+          gridState: this.getCurrentGridState(),
+        });
+      })
     );
 
     // subscribe to Tree Data toggle items changes

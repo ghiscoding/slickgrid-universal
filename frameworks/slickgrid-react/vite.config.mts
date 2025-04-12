@@ -10,7 +10,7 @@ export default defineConfig(() => {
     base: './',
     build: {
       chunkSizeWarningLimit: 3000,
-      emptyOutDir: true,
+      emptyOutDir: false,
     },
     css: {
       preprocessorOptions: {

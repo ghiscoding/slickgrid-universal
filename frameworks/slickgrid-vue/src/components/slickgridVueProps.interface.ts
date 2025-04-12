@@ -203,7 +203,7 @@ export interface SlickgridVueProps {
   onOnBeforePasteCell?: (
     e: CustomEvent<{ eventData: any; args: { cell: number; row: number; item: any; columnDef: Column; value: any } }>
   ) => void;
-  onOnHeaderMenuHideColumns?: (e: CustomEvent<{ eventData: any; args: { columns: Column[]; hiddenColumn: Column[] } }>) => void;
+  onOnHideColumns?: (e: CustomEvent<{ eventData: any; args: { columns: Column[]; hiddenColumn: Column[] } }>) => void;
   onOnHeaderMenuCommand?: (e: CustomEvent<{ eventData: any; args: MenuCommandItemCallbackArgs }>) => void;
   onOnHeaderMenuColumnResizeByContent?: (e: CustomEvent<{ eventData: any; args: { columnId: string } }>) => void;
   onOnHeaderMenuBeforeMenuShow?: (e: CustomEvent<{ eventData: any; args: HeaderMenuCommandItemCallbackArgs }>) => void;

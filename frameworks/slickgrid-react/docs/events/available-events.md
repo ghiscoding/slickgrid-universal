@@ -98,7 +98,6 @@ render() {
   - `onHeaderButtonCommand`
 
 #### Header Menu (extension)
-  - `onHeaderMenuHideColumns`
   - `onHeaderMenuCommand`
   - `onHeaderMenuColumnResizeByContent`
   - `onHeaderMenuBeforeMenuShow`
@@ -110,7 +109,7 @@ render() {
    - `onFilterCleared`
 
 #### Grid Service
-  - `onHeaderMenuHideColumns`
+  - `onHideColumns`
   - `onItemsAdded`
   - `onItemsDeleted`
   - `onItemsUpdated`

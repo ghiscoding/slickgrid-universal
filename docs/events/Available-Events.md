@@ -77,7 +77,6 @@ handleOnHeaderMenuCommand(e) {
   - `onHeaderButtonCommand`
 
 #### Header Menu (extension)
-  - `onHeaderMenuHideColumns`
   - `onHeaderMenuCommand`
   - `onHeaderMenuColumnResizeByContent`
   - `onHeaderMenuBeforeMenuShow`
@@ -89,7 +88,7 @@ handleOnHeaderMenuCommand(e) {
    - `onFilterCleared`
 
 #### Grid Service
-  - `onHeaderMenuHideColumns`
+  - `onHideColumns`
   - `onItemsAdded`
   - `onItemsDeleted`
   - `onItemsUpdated`

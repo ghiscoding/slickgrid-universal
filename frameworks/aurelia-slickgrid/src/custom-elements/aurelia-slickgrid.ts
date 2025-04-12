@@ -515,7 +515,6 @@ export class AureliaSlickgridCustomElement {
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
       gridService: this.gridService,
-      groupingService: this.headerGroupingService,
       headerGroupingService: this.headerGroupingService,
       extensionService: this.extensionService,
       paginationComponent: this.slickPagination,
