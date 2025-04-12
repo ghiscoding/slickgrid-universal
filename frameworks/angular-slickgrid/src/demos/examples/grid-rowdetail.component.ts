@@ -180,7 +180,7 @@ export class GridRowDetailComponent implements OnDestroy, OnInit {
         viewComponent: RowDetailViewComponent,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this,
+        parentRef: this,
 
         onBeforeRowDetailToggle: (e, args) => {
           // you coud cancel opening certain rows

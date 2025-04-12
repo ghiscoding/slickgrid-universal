@@ -2,7 +2,7 @@ import type { ApplicationRef, ComponentRef, Type, ViewContainerRef } from '@angu
 import type {
   EventSubscription,
   OnBeforeRowDetailToggleArgs,
-  OnRowBackToViewportRangeArgs,
+  OnRowBackOrOutOfViewportRangeArgs,
   RxJsFacade,
   SlickGrid,
 } from '@slickgrid-universal/common';
@@ -276,7 +276,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
           addon: this,
           grid: this._grid,
           dataView: this.dataView,
-          parent: this.rowDetailViewOptions?.parent,
+          parentRef: this.rowDetailViewOptions?.parentRef,
         },
         {
           sanitizer: this._grid.sanitizeHtmlString,
@@ -383,7 +383,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** When Row comes back to Viewport Range, we need to redraw the View */
-  protected handleOnRowBackToViewportRange(_e: SlickEventData<OnRowBackToViewportRangeArgs>, args: OnRowBackToViewportRangeArgs) {
+  protected handleOnRowBackToViewportRange(_e: SlickEventData<OnRowBackOrOutOfViewportRangeArgs>, args: OnRowBackOrOutOfViewportRangeArgs) {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
       this.redrawViewComponent(viewModel);

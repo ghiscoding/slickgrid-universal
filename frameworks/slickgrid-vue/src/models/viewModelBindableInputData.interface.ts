@@ -5,5 +5,5 @@ export interface ViewModelBindableInputData {
   addon: any;
   grid: SlickGrid;
   dataView: SlickDataView;
-  parent?: any;
+  parentRef?: any;
 }

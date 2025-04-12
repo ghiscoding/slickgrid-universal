@@ -103,7 +103,7 @@ export default class Example21 {
         expandableOverride: (_row, dataContext) => dataContext.id % 2 === 1,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this
+        parentRef: this
       }
     };
   }
@@ -250,7 +250,7 @@ export class Example {
         postTemplate: this.loadView.bind(this),
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this
+        parentRef: this
       }
     };
   }

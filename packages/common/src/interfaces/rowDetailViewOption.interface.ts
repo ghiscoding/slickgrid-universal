@@ -7,7 +7,7 @@ export interface RowDetailViewProps<T = any, C = any> {
   expandedRows?: (string | number)[];
   grid: SlickGrid;
   dataView: SlickDataView;
-  parent: C;
+  parentRef: C;
   rowId?: string | number;
   rowIndex?: number;
   rowIdsOutOfViewport?: (string | number)[];
@@ -56,7 +56,7 @@ export interface RowDetailViewOption {
   panelRows: number;
 
   /** Optionally pass your Parent Component reference or exposed functions to your Child Component (row detail component). */
-  parent?: any;
+  parentRef?: any;
 
   /** Defaults to false, makes the column reorderable to another position in the grid. */
   reorderable?: boolean;

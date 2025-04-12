@@ -3,7 +3,7 @@ import {
   createDomElement,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
-  type OnRowBackToViewportRangeArgs,
+  type OnRowBackOrOutOfViewportRangeArgs,
   SlickEventData,
   type SlickGrid,
   SlickRowSelectionModel,
@@ -256,7 +256,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        parent: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
       const detailContainer = document.createElement('section');
       containerElement.appendChild(detailContainer);
@@ -277,7 +277,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        parent: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
 
       // load our Row Detail React Component dynamically, typically we would want to use `root.render()` after the preload component (last argument below)
@@ -355,7 +355,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** When Row comes back to Viewport Range, we need to redraw the View */
   protected async handleOnRowBackToViewportRange(
-    _e: SlickEventData<OnRowBackToViewportRangeArgs>,
+    _e: SlickEventData<OnRowBackOrOutOfViewportRangeArgs>,
     args: {
       item: any;
       rowId: string | number;

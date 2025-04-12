@@ -440,7 +440,7 @@ describe('SlickRowDetailView', () => {
                 addon: expect.anything(),
                 grid: gridStub,
                 dataView: dataViewStub,
-                parent: undefined,
+                parentRef: undefined,
               },
               { sanitizer: expect.any(Function) }
             );
@@ -477,7 +477,7 @@ describe('SlickRowDetailView', () => {
               addon: expect.anything(),
               grid: gridStub,
               dataView: dataViewStub,
-              parent: undefined,
+              parentRef: undefined,
             },
             { sanitizer: expect.any(Function) }
           );
@@ -512,7 +512,7 @@ describe('SlickRowDetailView', () => {
                 addon: expect.anything(),
                 grid: gridStub,
                 dataView: dataViewStub,
-                parent: undefined,
+                parentRef: undefined,
               },
               { sanitizer: expect.any(Function) }
             );

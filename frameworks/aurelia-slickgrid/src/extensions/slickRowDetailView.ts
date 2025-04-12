@@ -3,7 +3,7 @@ import {
   createDomElement,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
-  type OnRowBackToViewportRangeArgs,
+  type OnRowBackOrOutOfViewportRangeArgs,
   SlickEventData,
   type SlickGrid,
   SlickRowSelectionModel,
@@ -268,7 +268,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        parent: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
       const aureliaComp = await this.aureliaUtilService.createAureliaViewModelAddToSlot(this._viewModel, bindableData, containerElement);
       const slotObj = this._slots.find((obj) => obj.id === item[this.datasetIdPropName]);
@@ -326,7 +326,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** When Row comes back to Viewport Range, we need to redraw the View */
   protected async handleOnRowBackToViewportRange(
-    _e: SlickEventData<OnRowBackToViewportRangeArgs>,
+    _e: SlickEventData<OnRowBackOrOutOfViewportRangeArgs>,
     args: {
       item: any;
       rowId: string | number;

@@ -2,7 +2,7 @@ import {
   createDomElement,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
-  type OnRowBackToViewportRangeArgs,
+  type OnRowBackOrOutOfViewportRangeArgs,
   SlickEventData,
   type SlickGrid,
   SlickRowSelectionModel,
@@ -266,15 +266,13 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        // @deprecated @use `parentRef`
-        parent: this.rowDetailViewOptions?.parent,
-        parentRef: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
       const tmpDiv = document.createElement('div');
       this._preloadApp = createApp(this._preloadComponent, bindableData);
       const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
-      bindableData.parent = instance;
+      bindableData.parentRef = instance;
       containerElement.appendChild(instance.$el);
 
       if (viewObj) {
@@ -293,9 +291,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        // @deprecated @use `parentRef`
-        parent: this.rowDetailViewOptions?.parent,
-        parentRef: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
       this.unmountViewWhenExists(item[this.datasetIdPropName]);
@@ -304,7 +300,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       const tmpDiv = document.createElement('div');
       const app = createApp(this._component, bindableData);
       const instance = app.mount(tmpDiv) as ComponentPublicInstance;
-      bindableData.parent = app.component;
+      bindableData.parentRef = app.component;
       containerElement.appendChild(instance.$el);
       this.upsertViewRefs(item, { app, instance, rendered: true });
     }
@@ -371,7 +367,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** When Row comes back to Viewport Range, we need to redraw the View */
   protected handleOnRowBackToViewportRange(
-    _e: SlickEventData<OnRowBackToViewportRangeArgs>,
+    _e: SlickEventData<OnRowBackOrOutOfViewportRangeArgs>,
     args: {
       item: any;
       rowId: string | number;
