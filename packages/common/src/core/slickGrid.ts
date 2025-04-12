@@ -96,6 +96,7 @@ import type {
   ElementPosition,
 } from '../interfaces/index.js';
 import type { SlickDataView } from './slickDataview.js';
+import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 
 /**
  * @license
@@ -5543,7 +5544,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let handled: boolean | undefined | void = retval.isImmediatePropagationStopped();
 
     if (!handled) {
-      if (!e.shiftKey && !e.altKey) {
+      if (this._options.enableCellNavigation && e.ctrlKey && e.key.toLowerCase() === 'c' && !this._options.enableExcelCopyBuffer) {
+        // Ctrl+C (copy cell to clipboard, unless Excel Copy Buffer is enabled)
+        copyCellToClipboard({
+          grid: this as unknown as SlickGrid,
+          cell: this.activeCell,
+          row: this.activeRow,
+          column: this.columns[this.activeCell],
+          dataContext: this.getDataItem(this.activeRow),
+        });
+      } else if (!e.shiftKey && !e.altKey) {
         // editor may specify an array of keys to bubble
         if (this._options.editable && this.currentEditor?.keyCaptureList) {
           if (this.currentEditor.keyCaptureList.indexOf(e.which) > -1) {
@@ -5565,6 +5575,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
     }
+
     if (!handled) {
       if (!e.shiftKey && !e.altKey && !e.ctrlKey) {
         if (e.key === 'Escape') {

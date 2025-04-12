@@ -9,7 +9,10 @@ import { SlickEventData, SlickGlobalEditorLock } from '../slickCore.js';
 import { SlickDataView } from '../slickDataview.js';
 import { SlickGrid } from '../slickGrid.js';
 
+vi.mock('../../formatters/formatterUtilities.js');
 vi.useFakeTimers();
+
+import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -6715,6 +6718,27 @@ describe('SlickGrid core file', () => {
     });
 
     describe('Keydown Events', () => {
+      it('should copy cell value to clipboard when triggering Ctrl+C key', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          enableExcelCopyBuffer: false,
+          editable: true,
+        });
+        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'C' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(copyCellToClipboard).toHaveBeenCalled();
+      });
+
       it('should call navigateRowStart() when triggering Home key', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },

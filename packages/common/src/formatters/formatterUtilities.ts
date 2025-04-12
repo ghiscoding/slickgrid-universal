@@ -15,6 +15,7 @@ import { multipleFormatter } from './multipleFormatter.js';
 import { Constants } from '../constants.js';
 import { type SlickGrid } from '../core/index.js';
 import { mapTempoDateFormatWithFieldType, toUtcDate, tryParseDate } from '../services/dateUtils.js';
+import { getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 
 export type FormatterType = 'group' | 'cell';
 export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
@@ -44,6 +45,49 @@ export function autoAddEditorFormatterToColumnsWithEditor(columns: Column[], cus
       }
     }
   }
+}
+
+/**
+ * Copy active cell content to clipboard. The command will first check if the cell has a Formatter (and exportWithFormatter)
+ * @param args
+ */
+export async function copyCellToClipboard(args: {
+  grid: SlickGrid;
+  cell?: number;
+  row?: number;
+  column: Column;
+  dataContext?: any;
+}): Promise<string | number> {
+  let finalTextToCopy = '';
+  try {
+    // get the value, if "exportWithFormatter" is set then we'll use the formatter output
+    const grid = args?.grid || ({} as SlickGrid);
+    const gridOptions = grid.getOptions() as GridOption;
+    const cell = args?.cell ?? 0;
+    const row = args?.row ?? 0;
+    const columnDef = args?.column;
+    const dataContext = args?.dataContext;
+    const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.textExportOptions);
+    let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
+    if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+      textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
+    }
+
+    // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
+    finalTextToCopy = textToCopy;
+    if (typeof textToCopy === 'string') {
+      finalTextToCopy = textToCopy
+        .replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '')
+        // eslint-disable-next-line
+        .replace(/[\u00b7|\u034f]/gi, '')
+        .trim();
+    }
+
+    await navigator.clipboard.writeText(finalTextToCopy);
+  } catch (err) {
+    console.error(`Unable to read/write to clipboard. Please check your browser settings or permissions. Error: ${err}`);
+  }
+  return finalTextToCopy;
 }
 
 export function retrieveFormatterOptions(

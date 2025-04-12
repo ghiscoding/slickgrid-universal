@@ -126,12 +126,10 @@ describe('CellExternalCopyManager', () => {
   describe('registered addon', () => {
     beforeEach(() => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      const clipboard = {
+      (navigator as any).clipboard = {
         readText: vi.fn(() => Promise.resolve('')),
         writeText: vi.fn(() => Promise.resolve()),
       };
-
-      (navigator as any).clipboard = clipboard;
     });
 
     afterEach(() => {
