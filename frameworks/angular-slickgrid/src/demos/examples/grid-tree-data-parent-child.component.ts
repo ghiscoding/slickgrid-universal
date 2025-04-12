@@ -315,7 +315,7 @@ export class GridTreeDataParentChildComponent implements OnInit {
         parents.pop();
       }
       if (parents.length > 0) {
-        parentId = parents[parents.length - 1];
+        parentId = parents.at(-1);
       } else {
         parentId = null;
       }

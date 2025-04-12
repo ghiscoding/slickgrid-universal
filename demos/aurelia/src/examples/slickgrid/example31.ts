@@ -306,7 +306,7 @@ export class Example31 {
                   const filterType = (columnFilters as any)[columnId].type;
                   const searchTerm = (columnFilters as any)[columnId].term;
                   let colId = columnId;
-                  if (columnId && columnId.indexOf(' ') !== -1) {
+                  if (columnId?.indexOf(' ') !== -1) {
                     const splitIds = columnId.split(' ');
                     colId = splitIds[splitIds.length - 1];
                   }

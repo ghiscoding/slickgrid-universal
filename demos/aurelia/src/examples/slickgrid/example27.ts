@@ -319,7 +319,7 @@ export class Example27 {
       }
 
       if (parents.length > 0) {
-        parentId = parents[parents.length - 1];
+        parentId = parents.at(-1);
       } else {
         parentId = null;
       }

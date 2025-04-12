@@ -2,26 +2,12 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
-    "target": "es2021",
+    "target": "es2022",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "module": "commonjs",
-    "lib": [
-      "es2021"
-    ],
-    "types": [
-      "@4tw/cypress-drag-drop",
-      "cypress",
-      "cypress-real-events",
-      "node"
-    ],
-    "typeRoots": [
-      "../node_modules/@types"
-    ]
+    "lib": ["es2022"],
+    "types": ["@4tw/cypress-drag-drop", "cypress", "cypress-real-events", "node"],
+    "typeRoots": ["../node_modules/@types"]
   },
-  "include": [
-    "**/*.spec.ts",
-    "src/typings/**/*.ts",
-    "**/*.d.ts"
-  ]
+  "include": ["**/*.spec.ts", "src/typings/**/*.ts", "**/*.d.ts"]
 }

@@ -343,7 +343,7 @@ export class Example5 {
                   let colId = columnId;
                   if (columnId?.indexOf(' ') !== -1) {
                     const splitIds = columnId.split(' ');
-                    colId = splitIds[splitIds.length - 1];
+                    colId = splitIds.at(-1);
                   }
 
                   let filterTerm;

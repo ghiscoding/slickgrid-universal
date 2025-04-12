@@ -298,7 +298,7 @@ export class DateFilter implements Filter {
           if (self.context.selectedDates[1]) {
             self.context.selectedDates.sort((a, b) => +new Date(a) - +new Date(b));
             firstDate = self.context.selectedDates[0];
-            lastDate = self.context.selectedDates[self.context.selectedDates.length - 1];
+            lastDate = self.context.selectedDates.at(-1) as string;
             const firstDisplayDate = format(self.context.selectedDates[0], outputFormat, 'en-US');
             const lastDisplayDate = format(lastDate, outputFormat, 'en-US');
             self.context.inputElement.value = `${firstDisplayDate} — ${lastDisplayDate}`;
