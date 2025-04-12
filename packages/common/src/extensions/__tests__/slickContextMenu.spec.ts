@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
 
@@ -937,6 +937,46 @@ describe('ContextMenu Plugin', () => {
 
         expect(writeSpy).toHaveBeenCalledWith(50);
       });
+
+      it('should call "copyToClipboard", with a number when the command triggered is "copy" and expect it to be copied without transformation', () =>
+        new Promise((done: any) => {
+          const consoleSpy = vi.spyOn(console, 'error').mockReturnValue();
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            enableExcelExport: false,
+            enableTextExport: false,
+            excelExportOptions: { exportWithFormatter: true },
+          } as GridOption;
+          const columnMock = { id: 'age', name: 'Age', field: 'age' } as Column;
+          const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          (navigator.clipboard.writeText as Mock).mockRejectedValueOnce('clipboard error');
+          plugin.dispose();
+          plugin.init({ commandItems: [] });
+          plugin.init({ commandItems: [] });
+
+          const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find(
+            (item: MenuCommandItem) => item.command === 'copy'
+          ) as MenuCommandItem;
+          menuItemCommand.action!(new CustomEvent('change'), {
+            command: 'copy',
+            cell: 2,
+            row: 5,
+            grid: gridStub,
+            column: columnMock,
+            dataContext: dataContextMock,
+            item: menuItemCommand,
+            value: 50,
+          });
+
+          setTimeout(() => {
+            expect(consoleSpy).toHaveBeenCalledWith(
+              'Unable to read/write to clipboard. Please check your browser settings or permissions. Error: clipboard error'
+            );
+            done();
+          });
+        }));
 
       it('should call "copyToClipboard" and get the value even when there is a "queryFieldNameGetterFn" callback defined when the command triggered is "copy"', () => {
         const firstNameColIdx = 0;
