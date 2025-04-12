@@ -55,8 +55,8 @@ catalogs:
       specifier: ^26.0.0
       version: 26.0.0
     multiple-select-vanilla:
-      specifier: ^3.5.0
-      version: 3.5.0
+      specifier: ^4.0.0
+      version: 4.0.0
     native-copyfiles:
       specifier: ^0.3.2
       version: 0.3.2
@@ -504,7 +504,7 @@ importers:
         version: 3.2.5
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 3.5.0
+        version: 4.0.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -1149,8 +1149,8 @@ importers:
   packages/common:
     dependencies:
       '@excel-builder-vanilla/types':
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^4.0.0
+        version: 4.0.0
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 0.1.2
@@ -1177,7 +1177,7 @@ importers:
         version: 2.0.3
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 3.5.0
+        version: 4.0.0
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.6
@@ -1268,8 +1268,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^4.0.0
+        version: 4.0.0
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
@@ -3113,8 +3113,8 @@ packages:
     resolution: {integrity: sha512-ZAoA40rNMPwSm+AeHpCq8STiNAwzWLJuP8Xv4CHIc9wv/PSuExjMrmjfYNj682vW0OOiZ1HKxzvjQr9XZIisQA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@excel-builder-vanilla/types@3.1.0':
-    resolution: {integrity: sha512-BcCMAFI3XtuJ0AUnkCIP3SSyz7tn3kNp32Ew3JTxCpkluVDgty1AIIr7hUngHhNdwNx6WkFOyniJz/KIYJtcTQ==}
+  '@excel-builder-vanilla/types@4.0.0':
+    resolution: {integrity: sha512-1xuKcpYEL8s6EEUKm1eNpKJlbDZrUNjZ7nX+KNamEV7ojiN+C2mO3V1sCUPKsacWUtTtRt3mmeRl6L2gTk7JNQ==}
 
   '@faker-js/faker@9.6.0':
     resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
@@ -6702,8 +6702,8 @@ packages:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
 
-  excel-builder-vanilla@3.1.0:
-    resolution: {integrity: sha512-98HxjD4iAJ+Noqfrwhk8Enol3cbZi9YyfkBozJJpwFJPmibEgH6TWURENSX5ugWs+ihruRDAWCsmFXc05eJcDA==}
+  excel-builder-vanilla@4.0.0:
+    resolution: {integrity: sha512-YhgtzpcHFifpPLCGHUvPDjMmIrY+c7dFqbiKYNMKFgLLQLe7Ad9frQTW9SmTGw3+HUMD52Rx7dYx33lRUnjFQg==}
 
   execa@4.1.0:
     resolution: {integrity: sha512-j5W0//W7f8UxAn8hXVnwG8tLwdiUy4FJLcSupCg6maBYZDpyBvTApK7KyuI4bKj8KOh1r2YH+6ucuYtJv1bTZA==}
@@ -8230,8 +8230,8 @@ packages:
     resolution: {integrity: sha512-SYU3HBAdF4psHEL/+jXDKHO95/m5P2RvboHT2Y0WtTttvJLP4H/2WS9WlQPFvF6C8d6SpLw8vjCnQOnVIVOSJQ==}
     engines: {node: '>=18'}
 
-  multiple-select-vanilla@3.5.0:
-    resolution: {integrity: sha512-ifIrnWqsRtbE5O8uBUV9/+LeX0CT0yVwYcEzdX8Bwa88nVkACrHEUE1m5JfURPa6+7YRN47b94Hp37N59eow7g==}
+  multiple-select-vanilla@4.0.0:
+    resolution: {integrity: sha512-J0LNBCXb6zYsXfi/+aGB6Tpf9i0ZJXVNz+gWRXX9/gJGJKS2QEfNrMCp8d7zb3FbJjmaUHJCYSOG8FuaJ0n9Wg==}
 
   mute-stream@1.0.0:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
@@ -13065,7 +13065,7 @@ snapshots:
       '@eslint/core': 0.13.0
       levn: 0.4.1
 
-  '@excel-builder-vanilla/types@3.1.0':
+  '@excel-builder-vanilla/types@4.0.0':
     dependencies:
       fflate: 0.8.2
 
@@ -17469,7 +17469,7 @@ snapshots:
 
   events@3.3.0: {}
 
-  excel-builder-vanilla@3.1.0:
+  excel-builder-vanilla@4.0.0:
     dependencies:
       fflate: 0.8.2
 
@@ -19152,7 +19152,7 @@ snapshots:
       array-union: 3.0.1
       minimatch: 9.0.5
 
-  multiple-select-vanilla@3.5.0:
+  multiple-select-vanilla@4.0.0:
     dependencies:
       '@types/trusted-types': 2.0.7
 
