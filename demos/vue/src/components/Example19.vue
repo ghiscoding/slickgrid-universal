@@ -161,7 +161,7 @@ function defineGrid() {
       // expandableOverride: (row: number, dataContext: any) => (dataContext.rowId % 2 === 1),
 
       // optionally expose the functions that you want to use from within the row detail Child Component
-      parent: { showFlashMessage },
+      parentRef: { showFlashMessage },
 
       // Preload View Template
       preloadComponent: Example19Preload,

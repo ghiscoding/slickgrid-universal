@@ -90,7 +90,7 @@ const Example: React.FC = () => {
         viewComponent: Example19DetailView,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this
+        parentRef: this
       }
     });
   }
@@ -184,7 +184,7 @@ interface Props {
   addon: SlickRowDetailView;
   grid: SlickGrid;
   dataView: SlickDataView;
-  parent: any;
+  parentRef: any;
 }
 interface State { assignee: string; }
 
@@ -285,7 +285,7 @@ const Example: React.FC = () => {
         viewComponent: Example19DetailView,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this
+        parentRef: this
       }
     });
   }
@@ -333,7 +333,7 @@ const Example: React.FC = () => {
         viewComponent: CustomDetailView,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this  // <-- THIS REFERENCE
+        parentRef: this  // <-- THIS REFERENCE
       }
     });
   }
@@ -410,12 +410,12 @@ const Example: React.FC = (props: Props) => {
       // then you can delete the item from the dataView
       props.dataView.deleteItem(model.rowId);
 
-      props.parent!.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
+      props.parentRef!.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
     }
   }
 
   function callParentMethod(model: any) {
-    props.parent!.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
+    props.parentRef!.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
   }
 
   render() {

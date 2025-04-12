@@ -118,7 +118,7 @@ export class Grid45Component implements OnDestroy, OnInit {
         // how many grid rows do we want to use for the row detail panel
         panelRows: this.detailViewRowCount,
         // optionally expose the functions that you want to use from within the row detail Child Component
-        parent: this,
+        parentRef: this,
         // Preload View Template
         preloadComponent: RowDetailPreloadComponent,
         // ViewModel Template to load when row detail data is ready

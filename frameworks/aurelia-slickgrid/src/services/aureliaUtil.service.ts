@@ -16,7 +16,7 @@ export class AureliaUtilService {
       const addonBindable = bindableData?.addon ? 'addon.bind="bindableData.addon"' : '';
       const gridBindable = bindableData?.grid ? 'grid.bind="bindableData.grid"' : '';
       const dataViewBindable = bindableData?.dataView ? 'data-view.bind="bindableData.dataView"' : '';
-      const parentBindable = bindableData?.parent ? 'parent.bind="bindableData.parent"' : '';
+      const parentBindable = bindableData?.parentRef ? 'parent-ref.bind="bindableData.parentRef"' : '';
 
       targetElement.innerHTML =
         `<${def.name} model.bind="bindableData.model" ${addonBindable} ${gridBindable} ${dataViewBindable} ${parentBindable}></${def.name}>`.trim();

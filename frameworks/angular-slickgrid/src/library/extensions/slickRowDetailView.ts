@@ -276,7 +276,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
           addon: this,
           grid: this._grid,
           dataView: this.dataView,
-          parent: this.rowDetailViewOptions?.parent,
+          parentRef: this.rowDetailViewOptions?.parentRef,
         },
         {
           sanitizer: this._grid.sanitizeHtmlString,

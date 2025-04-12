@@ -38,12 +38,12 @@ const Example19DetailView: React.FC<RowDetailViewProps<Item, any>> = forwardRef(
       // then you can delete the item from the dataView
       props.dataView.deleteItem(model.rowId);
 
-      props.parent.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
+      props.parentRef.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
     }
   }
 
   function callParentMethod(model: any) {
-    props.parent.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
+    props.parentRef.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
   }
 
   return (

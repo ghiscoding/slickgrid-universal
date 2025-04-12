@@ -93,7 +93,7 @@ export class GridRowDetailComponent implements OnInit, OnDestroy {
         viewComponent: RowDetailViewComponent,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this
+        parentRef: this
       }
     };
   }
@@ -269,7 +269,7 @@ this.gridOptions = {
     viewComponent: RowDetailViewComponent,
 
     // Optionally pass your Parent Component reference to your Child Component (row detail component)
-    parent: this  // <-- THIS REFERENCE
+    parentRef: this  // <-- THIS REFERENCE
   },
 
   // a Parent Method that we want to access
@@ -325,8 +325,8 @@ export class RowDetailViewComponent {
   dataView: any;
 
   // you can also optionally use the Parent Component reference
-  // NOTE that you MUST provide it through the "parent" property in your "rowDetail" grid options
-  parent: GridRowDetailComponent;
+  // NOTE that you MUST provide it through the "parentRef" property in your "rowDetail" grid options
+  parentRef: GridRowDetailComponent;
 
   constructor() { }
 
@@ -347,12 +347,12 @@ export class RowDetailViewComponent {
       this.dataView.deleteItem(model.id);
 
       // and perhaps display a flash message by calling a method on the Parent Component
-      this.parent.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
+      this.parentRef.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
     }
   }
 
   callParentMethod(model) {
-    this.parent.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
+    this.parentRef.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
   }
 }
 ```

@@ -268,7 +268,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        parent: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
       const aureliaComp = await this.aureliaUtilService.createAureliaViewModelAddToSlot(this._viewModel, bindableData, containerElement);
       const slotObj = this._slots.find((obj) => obj.id === item[this.datasetIdPropName]);

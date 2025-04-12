@@ -189,7 +189,7 @@ export class Example19 {
         viewModel: Example19DetailView,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this,
+        parentRef: this,
 
         onBeforeRowDetailToggle: (e, args) => {
           // you coud cancel opening certain rows

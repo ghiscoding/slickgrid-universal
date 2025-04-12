@@ -104,7 +104,7 @@ function defineGrid() {
       // how many grid rows do we want to use for the row detail panel
       panelRows: detailViewRowCount.value,
       // optionally expose the functions that you want to use from within the row detail Child Component
-      parent: {},
+      parentRef: {},
       // Preload View Template
       preloadComponent: Example45Preload,
       // ViewModel Template to load when row detail data is ready

@@ -187,7 +187,7 @@ const Example19: React.FC = () => {
         panelRows: detailViewRowCount,
         preloadComponent: Example19Preload,
         viewComponent: Example19DetailView,
-        parent: {
+        parentRef: {
           showFlashMessage,
         },
         onBeforeRowDetailToggle: (e, args) => {

@@ -256,7 +256,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        parent: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
       const detailContainer = document.createElement('section');
       containerElement.appendChild(detailContainer);
@@ -277,7 +277,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         addon: this,
         grid: this._grid,
         dataView: this.dataView,
-        parent: this.rowDetailViewOptions?.parent,
+        parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
 
       // load our Row Detail React Component dynamically, typically we would want to use `root.render()` after the preload component (last argument below)

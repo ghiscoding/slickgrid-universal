@@ -109,7 +109,7 @@ export class Example45 {
         // how many grid rows do we want to use for the row detail panel
         panelRows: this.detailViewRowCount,
         // optionally expose the functions that you want to use from within the row detail Child Component
-        parent: this,
+        parentRef: this,
         // Preload View Template
         preloadViewModel: Example45Preload,
 

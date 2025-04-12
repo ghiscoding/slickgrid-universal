@@ -25,8 +25,8 @@ export class RowDetailViewComponent {
   dataView!: SlickDataView;
 
   // you can also optionally use the Parent Component reference
-  // NOTE that you MUST provide it through the "parent" property in your "rowDetail" grid options
-  parent!: GridRowDetailComponent;
+  // NOTE that you MUST provide it through the "parentRef" property in your "rowDetail" grid options
+  parentRef!: GridRowDetailComponent;
 
   alertAssignee(name: string) {
     if (typeof name === 'string') {
@@ -44,11 +44,11 @@ export class RowDetailViewComponent {
       // then you can delete the item from the dataView
       this.dataView.deleteItem(model.rowId);
 
-      this.parent.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
+      this.parentRef.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
     }
   }
 
   callParentMethod(model: any) {
-    this.parent.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
+    this.parentRef.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
   }
 }
