@@ -64,7 +64,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@excel-builder-vanilla/types": "^3.1.0",
+    "@excel-builder-vanilla/types": "^4.0.0",
     "@formkit/tempo": "catalog:",
     "@slickgrid-universal/binding": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
