@@ -21,13 +21,13 @@ export interface RowDetailView extends RowDetailViewOption {
   onBeforeRowDetailToggle?: (e: SlickEventData, args: OnBeforeRowDetailToggleArgs) => void;
 
   /** Fired just before a row becomes out of viewport range (you can use this event to save inner Grid State before it gets destroyed) */
-  onBeforeRowOutOfViewportRange?: (e: SlickEventData, args: OnRowOutOfViewportRangeArgs) => void;
+  onBeforeRowOutOfViewportRange?: (e: SlickEventData, args: OnRowBackOrOutOfViewportRangeArgs) => void;
 
   /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange?: (e: SlickEventData, args: OnRowBackToViewportRangeArgs) => void;
+  onRowBackToViewportRange?: (e: SlickEventData, args: OnRowBackOrOutOfViewportRangeArgs) => void;
 
   /** Fired after a row becomes out of viewport range (user can't see the row anymore) */
-  onRowOutOfViewportRange?: (e: SlickEventData, args: OnRowOutOfViewportRangeArgs) => void;
+  onRowOutOfViewportRange?: (e: SlickEventData, args: OnRowBackOrOutOfViewportRangeArgs) => void;
 }
 
 /** This event must be used with the "notify" by the end user once the Asynchronous Server call returns the item detail */
@@ -85,34 +85,7 @@ export interface OnBeforeRowDetailToggleArgs {
 }
 
 /** Fired after the row detail gets toggled */
-export interface OnRowBackToViewportRangeArgs {
-  /** Item data context object */
-  item: any;
-
-  /** Id of the Row object (datacontext) in the Grid */
-  rowId: string | number;
-
-  /** Index of the Row in the Grid */
-  rowIndex: number;
-
-  /** Array of the Expanded Row Ids */
-  expandedRows: Array<number | string>;
-
-  /** Array of the Out of viewport Range Rows */
-  rowIdsOutOfViewport: Array<number | string>;
-
-  /** Reference to the Slick grid object */
-  grid: SlickGrid;
-
-  /** provide any generic params */
-  params?: any;
-}
-
-/**
- * @deprecated We should eventually merge out/back to viewport into a single interface.
- * Fired after a row becomes out of viewport range (user can't see the row anymore)
- */
-export interface OnRowOutOfViewportRangeArgs {
+export interface OnRowBackOrOutOfViewportRangeArgs {
   /** Item data context object */
   item: any;
 

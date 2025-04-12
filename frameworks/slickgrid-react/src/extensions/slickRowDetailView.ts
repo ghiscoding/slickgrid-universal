@@ -3,7 +3,7 @@ import {
   createDomElement,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
-  type OnRowBackToViewportRangeArgs,
+  type OnRowBackOrOutOfViewportRangeArgs,
   SlickEventData,
   type SlickGrid,
   SlickRowSelectionModel,
@@ -355,7 +355,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** When Row comes back to Viewport Range, we need to redraw the View */
   protected async handleOnRowBackToViewportRange(
-    _e: SlickEventData<OnRowBackToViewportRangeArgs>,
+    _e: SlickEventData<OnRowBackOrOutOfViewportRangeArgs>,
     args: {
       item: any;
       rowId: string | number;

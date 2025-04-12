@@ -6,10 +6,9 @@ import type {
   GridOption,
   OnAfterRowDetailToggleArgs,
   OnBeforeRowDetailToggleArgs,
-  OnRowBackToViewportRangeArgs,
+  OnRowBackOrOutOfViewportRangeArgs,
   OnRowDetailAsyncEndUpdateArgs,
   OnRowDetailAsyncResponseArgs,
-  OnRowOutOfViewportRangeArgs,
   PubSubService,
   RowDetailView,
   RowDetailViewOption,
@@ -45,13 +44,13 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   onBeforeRowDetailToggle: SlickEvent<OnBeforeRowDetailToggleArgs>;
 
   /** Fired just before a row becomes out of viewport range (you can use this event to save inner Grid State before it gets destroyed) */
-  onBeforeRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
+  onBeforeRowOutOfViewportRange: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange: SlickEvent<OnRowBackToViewportRangeArgs>;
+  onRowBackToViewportRange: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   /** Fired after a row becomes out of viewport range (when user can't see the row anymore) */
-  onRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
+  onRowOutOfViewportRange: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   // --
   // protected props
@@ -95,9 +94,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this.onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>('onAsyncResponse');
     this.onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>('onAfterRowDetailToggle');
     this.onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>('onBeforeRowDetailToggle');
-    this.onBeforeRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onBeforeRowOutOfViewportRange');
-    this.onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>('onRowBackToViewportRange');
-    this.onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onRowOutOfViewportRange');
+    this.onBeforeRowOutOfViewportRange = new SlickEvent<OnRowBackOrOutOfViewportRangeArgs>('onBeforeRowOutOfViewportRange');
+    this.onRowBackToViewportRange = new SlickEvent<OnRowBackOrOutOfViewportRangeArgs>('onRowBackToViewportRange');
+    this.onRowOutOfViewportRange = new SlickEvent<OnRowBackOrOutOfViewportRangeArgs>('onRowOutOfViewportRange');
   }
 
   get addonOptions(): RowDetailView {
