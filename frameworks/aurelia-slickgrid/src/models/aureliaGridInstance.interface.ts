@@ -52,9 +52,6 @@ export interface AureliaGridInstance {
   /** Grid State Service */
   gridStateService: GridStateService;
 
-  /** @deprecated @use `headerGroupingService` */
-  groupingService: HeaderGroupingService;
-
   /** Grouping (and colspan) Service */
   headerGroupingService: HeaderGroupingService;
 

@@ -215,11 +215,11 @@ export interface SlickgridReactProps {
   onBeforePasteCell?: (
     e: CustomEvent<{ eventData: any; args: { cell: number; row: number; item: any; columnDef: Column; value: any } }>
   ) => void;
-  onHeaderMenuHideColumns?: (e: CustomEvent<{ eventData: any; args: { columns: Column[]; hiddenColumn: Column[] } }>) => void;
   onHeaderMenuCommand?: (e: CustomEvent<{ eventData: any; args: MenuCommandItemCallbackArgs }>) => void;
   onHeaderMenuColumnResizeByContent?: (e: CustomEvent<{ eventData: any; args: { columnId: string } }>) => void;
   onHeaderMenuBeforeMenuShow?: (e: CustomEvent<{ eventData: any; args: HeaderMenuCommandItemCallbackArgs }>) => void;
   onHeaderMenuAfterMenuShow?: (e: CustomEvent<{ eventData: any; args: HeaderMenuCommandItemCallbackArgs }>) => void;
+  onHideColumns?: (e: CustomEvent<{ eventData: any; args: { columns: Column[]; hiddenColumn: Column[] } }>) => void;
   onItemsAdded?: (e: CustomEvent<any>) => void;
   onItemsDeleted?: (e: CustomEvent<any>) => void;
   onItemsUpdated?: (e: CustomEvent<any>) => void;

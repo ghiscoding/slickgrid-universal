@@ -656,7 +656,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
       gridService: this.gridService,
-      groupingService: this.headerGroupingService,
       headerGroupingService: this.headerGroupingService,
       paginationService: this.paginationService,
       resizerService: this.resizerService,

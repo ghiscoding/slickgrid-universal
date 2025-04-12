@@ -1800,7 +1800,7 @@ describe('Grid Service', () => {
       expect(autoSizeSpy).toHaveBeenCalled();
       expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
-      expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: mockWithoutColumns });
+      expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: mockWithoutColumns });
       expect(setColSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -1940,7 +1940,6 @@ describe('Grid Service', () => {
         triggerEvent: false,
       });
       expect(autoSizeSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: expect.any(Array) });
       expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: expect.any(Array) });
       expect(setColSpy).toHaveBeenCalledTimes(1);
     });

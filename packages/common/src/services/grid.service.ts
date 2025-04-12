@@ -220,7 +220,7 @@ export class GridService {
   /**
    * Hide a Column from the Grid by its id, the column will just become hidden and will still show up in columnPicker/gridMenu
    * @param {string | number} columnId - column definition id
-   * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
+   * @param {boolean} triggerEvent - do we want to trigger an event (`onHideColumns`) when column becomes hidden? Defaults to true.
    * @return {number} columnIndex - column index position when found or -1
    */
   hideColumnById(columnId: string | number, options?: HideColumnOption): number {
@@ -249,7 +249,7 @@ export class GridService {
         }
 
         // execute common grid commands when enabled
-        this.executeVisibilityCommands(options, ['onHeaderMenuHideColumns'], visibleColumns);
+        this.executeVisibilityCommands(options, ['onHideColumns'], visibleColumns);
         return colIndexFound;
       }
     }
@@ -275,8 +275,7 @@ export class GridService {
       this._grid.setColumns(finalVisibileColumns);
 
       // execute common grid commands when enabled
-      // @deprecate `onHeaderMenuHideColumns` event, we should keep only `onHideColumns`
-      this.executeVisibilityCommands(options, ['onHeaderMenuHideColumns', 'onHideColumns'], finalVisibileColumns);
+      this.executeVisibilityCommands(options, ['onHideColumns'], finalVisibileColumns);
     }
   }
 

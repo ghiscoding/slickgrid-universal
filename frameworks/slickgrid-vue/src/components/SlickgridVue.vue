@@ -590,7 +590,6 @@ function initialization() {
     gridEventService: gridEventService,
     gridStateService: gridStateService,
     gridService: gridService,
-    groupingService: headerGroupingService,
     headerGroupingService: headerGroupingService,
     extensionService: extensionService,
     paginationComponent: slickPagination,

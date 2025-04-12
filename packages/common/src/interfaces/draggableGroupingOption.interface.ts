@@ -44,11 +44,6 @@ export interface DraggableGroupingOption {
   //
   // Methods
   // ---------
-  /**
-   * Option to provide default grouping on initial grid load.
-   * @deprecated @use `initialGroupBy` instead.
-   */
-  setDroppedGroups?: (groupingInfo: Array<string | GroupingGetterFunction> | string) => void;
 
   /** provide option to clear grouping */
   clearDroppedGroups?: () => void;

@@ -110,7 +110,6 @@ function handleOnHeaderMenuCommand(e) {
 
 #### Header Menu (extension)
 
-- `onHeaderMenuHideColumns`
 - `onHeaderMenuCommand`
 - `onHeaderMenuColumnResizeByContent`
 - `onHeaderMenuBeforeMenuShow`
@@ -124,6 +123,7 @@ function handleOnHeaderMenuCommand(e) {
 
 #### Grid Service
 
+- `onHideColumns`
 - `onItemsAdded`
 - `onItemsDeleted`
 - `onItemsUpdated`
