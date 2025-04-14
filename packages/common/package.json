@@ -87,9 +87,6 @@
     "postcss-cli": "^11.0.1",
     "sass": "catalog:"
   },
-  "engines": {
-    "node": "^20.0.0 || >=22.0.0"
-  },
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"

@@ -71,8 +71,5 @@
     "rimraf": "catalog:",
     "tslib": "catalog:",
     "typescript": "catalog:"
-  },
-  "engines": {
-    "node": "^20.0.0 || >=22.0.0"
   }
 }
