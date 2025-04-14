@@ -1,5 +1,6 @@
 {
   "name": "slickgrid-react-demo",
+  "private": true,
   "version": "5.13.3",
   "description": "Slickgrid components made available in React",
   "keywords": [
