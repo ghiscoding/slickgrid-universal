@@ -1,6 +1,6 @@
 describe('Example 38 - Infinite Scroll with OData', () => {
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/infinite-odata`);
+    cy.visit(`${Cypress.config('baseUrl')}/example38`);
     cy.get('h2').should('contain', 'Example 38: OData (v4) Backend Service with Infinite Scroll');
   });
 

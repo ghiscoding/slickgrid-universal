@@ -1,0 +1,42 @@
+<div class="container-fluid">
+  <h2>
+    Example 33: Regular & Custom Tooltips
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-custom-tooltip.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">
+    This demo shows how to create Regular & Custom Tooltips (<a
+      href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/custom-tooltip-plugin"
+      target="_blank"
+      >Wiki docs</a
+    >)
+    <br />
+    <ul class="small">
+      <li>optionally parse regular [title] attributes and transform them into tooltips</li>
+      <li>create your own Custom Tooltip via a Custom Formatter</li>
+      <li>create an Async Custom Tooltip (Promise/Observable) to allowing fetching data from an API</li>
+      <li>optionally add Custom Tooltip on Column Header & Column Header-Row (filters)</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 20px">
+    <label for="pinned-rows">Simulated Server Delay (ms): </label>
+    <input type="number" id="server-delay" data-test="server-delay" style="width: 60px" [(ngModel)]="serverApiDelay" />
+  </div>
+
+  <angular-slickgrid
+    gridId="grid33"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+</div>

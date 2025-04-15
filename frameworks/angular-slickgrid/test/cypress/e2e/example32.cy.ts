@@ -1,267 +1,272 @@
-describe('Example 32 - Regular & Custom Tooltips', () => {
-  const titles = [
-    '',
-    'Title',
-    'Duration',
-    'Description',
-    'Description 2',
-    'Cost',
-    '% Complete',
-    'Start',
-    'Finish',
-    'Effort Driven',
-    'Prerequisites',
-    'Action',
-  ];
+describe('Example 32 - Columns Resize by Content', () => {
   const GRID_ROW_HEIGHT = 33;
 
-  it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/custom-tooltip`);
-    cy.get('h2').should('contain', 'Example 32: Regular & Custom Tooltips');
+  beforeEach(() => {
+    // create a console.log spy for later use
+    cy.window().then((win) => {
+      cy.spy(win.console, 'log');
+    });
   });
 
-  it('should have exact column titles on 1st grid', () => {
-    cy.get('#grid32')
-      .find('.slick-header-columns')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(titles[index]));
+  describe('Main Tests', () => {
+    it('should display Example title', () => {
+      cy.visit(`${Cypress.config('baseUrl')}/example32`);
+      cy.get('h2').should('contain', 'Example 32: Columns Resize by Content');
+    });
+
+    it('should have cell that fit the text content', () => {
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 75);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 67);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 59);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 102);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 89);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 72);
+      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 67);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
+      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('equal', 58);
+    });
+
+    it('should make the grid readonly and expect to fit the text by content and expect column width to be the same as earlier', () => {
+      cy.get('[data-test="toggle-readonly-btn"]').click();
+
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 75);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 67);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 59);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 102);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 89);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 72);
+      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 67);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
+      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('equal', 58);
+    });
+
+    it('should click on (default resize "autosizeColumns") and expect column to be much thinner and fit all its column within the grid container', () => {
+      cy.get('[data-test="autosize-columns-btn"]').click();
+
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.lt', 75);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.lt', 95);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.lt', 70);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.lt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.lt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.lt', 85);
+      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.lt', 70);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.lt', 85);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.lt', 120);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.lt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('equal', 58);
+    });
+
+    it('should double-click on the "Complexity" column resize handle and expect the column to become wider and show all text', () => {
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.lt', 80);
+
+      cy.get('.slick-header-column:nth-child(6) .slick-resizable-handle').dblclick();
+
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 95);
+    });
+
+    it('should open the "Product" header menu and click on "Resize by Content" and expect the column to become wider and show all text', () => {
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.lt', 120);
+
+      cy.get('#grid32')
+        .find('.slick-header-column:nth-child(10)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu .slick-menu-command-list')
+        .should('be.visible')
+        .children('.slick-menu-item:nth-of-type(1)')
+        .children('.slick-menu-content')
+        .should('contain', 'Resize by Content')
+        .click();
+
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 120);
+    });
+
+    it('should change row selection across multiple pages, first page should have 2 selected', () => {
+      cy.get('[data-test="set-dynamic-rows-btn"]').click();
+
+      // Row index 3, 4 and 11 (last one will be on 2nd page)
+      cy.get('input[type="checkbox"]:checked').should('have.length', 2); // 2x in current page and 1x in next page
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) input[type="checkbox"]`).should('be.checked');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0) input[type="checkbox"]`).should('be.checked');
+    });
+
+    it('should go to next page and expect 1 row selected in that second page', () => {
+      cy.get('.icon-seek-next').click();
+
+      cy.get('input[type="checkbox"]:checked').should('have.length', 1); // only 1x row in page 2
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) input[type="checkbox"]`).should('be.checked');
+    });
+
+    it('should click on "Select All" checkbox and expect all rows selected in current page', () => {
+      const expectedRowIds = [11, 3, 4];
+
+      // go back to 1st page
+      cy.get('.icon-seek-prev').click();
+
+      cy.get('#filter-checkbox-selectall-container input[type=checkbox]').click({ force: true });
+
+      cy.window().then((win) => {
+        expect(win.console.log).to.have.callCount(3);
+        expect(win.console.log).to.be.calledWith('Selected Ids:', expectedRowIds);
+      });
+    });
+
+    it('should go to the next 2 pages and expect all rows selected in each page', () => {
+      cy.get('.icon-seek-next').click();
+
+      cy.get('.slick-cell-checkboxsel input:checked').should('have.length', 10);
+
+      cy.get('.icon-seek-next').click();
+
+      cy.get('.slick-cell-checkboxsel input:checked').should('have.length', 10);
+    });
+
+    it('should uncheck 1 row and expect current and next page to have "Select All" uncheck', () => {
+      cy.get('.slick-row:nth(0) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
+
+      cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('not.be.checked', true);
+
+      cy.get('.icon-seek-next').click();
+
+      cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('not.be.checked', true);
+    });
+
+    it('should go back to previous page, select the row that was unchecked and expect "Select All" to be selected again', () => {
+      cy.get('.icon-seek-prev').click();
+
+      cy.get('.slick-row:nth(0) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
+
+      cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('be.checked', true);
+
+      cy.get('.icon-seek-next').click();
+
+      cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('be.checked', true);
+    });
+
+    it('should Unselect All and expect all pages to no longer have any row selected', () => {
+      cy.get('#filter-checkbox-selectall-container input[type=checkbox]').click({ force: true });
+
+      cy.get('.slick-cell-checkboxsel input:checked').should('have.length', 0);
+
+      cy.get('.icon-seek-prev').click();
+
+      cy.get('.slick-cell-checkboxsel input:checked').should('have.length', 0);
+
+      cy.get('.icon-seek-prev').click();
+
+      cy.get('.slick-cell-checkboxsel input:checked').should('have.length', 0);
+    });
   });
 
-  it('should change server delay to 10ms for faster testing', () => {
-    cy.get('[data-test="server-delay"]').type('{backspace}{backspace}{backspace}10');
-  });
-
-  it('should mouse over 1st row checkbox column and NOT expect any tooltip to show since it is disabled on that column', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).as('checkbox0-cell');
-    cy.get('@checkbox0-cell').trigger('mouseover');
+  describe('Filter Predicate on "Title" column that act similarly to an SQL LIKE matcher', () => {
+    it('should return 4 rows using "%10" (ends with 10)', () => {
+      cy.get('.search-filter.filter-title').clear().type('%10');
 
-    cy.get('.slick-custom-tooltip').should('not.exist');
-    cy.get('@checkbox0-cell').trigger('mouseout');
-  });
-
-  it('should mouse over Task 2 cell and expect async tooltip to show', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).as('task1-cell');
-    cy.get('@task1-cell').should('contain', 'Task 2');
-    cy.get('@task1-cell').trigger('mouseover');
-    cy.get('.slick-custom-tooltip').contains('loading...');
-
-    cy.wait(10);
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Task 2 - (async tooltip)');
+      cy.get('[data-test="total-items"]').should('have.text', 4);
 
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Completion:');
-    cy.get('.tooltip-2cols-row:nth(0)').find('div').should('have.class', 'percent-complete-bar-with-text');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 10');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 110');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 210');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 310');
+    });
 
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Lifespan:');
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains(/\d+$/); // use regexp to make sure it's a number
+    it('should return 4 rows using "%ask%20" (contains "ask" + ends with 20)', () => {
+      cy.get('.search-filter.filter-title').clear().type('%ask%20');
 
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Ratio:');
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').contains(/\d+$/); // use regexp to make sure it's a number
+      cy.get('[data-test="total-items"]').should('have.text', 4);
 
-    cy.get('@task1-cell').trigger('mouseout');
-  });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 20');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 120');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 220');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 320');
+    });
 
-  it('should mouse over Task 6 cell and expect async tooltip to show', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).as('task6-cell');
-    cy.get('@task6-cell').should('contain', 'Task 6');
-    cy.get('@task6-cell').trigger('mouseover');
-    cy.get('.slick-custom-tooltip').contains('loading...');
+    it('should return all 400 rows using "%ask%" (contains "ask")', () => {
+      cy.get('.search-filter.filter-title').clear().type('%ask%');
 
-    cy.wait(10);
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Task 6 - (async tooltip)');
+      cy.get('[data-test="total-items"]').should('have.text', 400);
 
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Lifespan:');
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains(/\d+$/); // use regexp to make sure it's a number
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 1');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 2');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 3');
+    });
 
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Ratio:');
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').contains(/\d+$/); // use regexp to make sure it's a number
+    it('should return 4 rows using "Ta%30" (starts with "Ta" + ends with 30)', () => {
+      cy.get('.search-filter.filter-title').clear().type('Ta%30');
 
-    cy.get('@task6-cell').trigger('mouseout');
-  });
+      cy.get('[data-test="total-items"]').should('have.text', 4);
 
-  it('should mouse over Task 6 cell on "Start" column and expect a delayed tooltip opening via async process', () => {
-    cy.get('.slick-custom-tooltip').should('not.exist');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(7)`).as('start6-cell');
-    cy.get('@start6-cell').contains(/\d{4}-\d{1,2}-\d{1,2}$/); // use regexp to make sure it's a number
-    cy.get('@start6-cell').trigger('mouseover');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 30');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 130');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 230');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 330');
+    });
 
-    cy.wait(10);
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Custom Tooltip');
+    it('should return 14 rows using "Ta%30%" (starts with "Ta" + ends with 30)', () => {
+      cy.get('.search-filter.filter-title').clear().type('Ta%30%');
 
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Id:');
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('6');
+      cy.get('[data-test="total-items"]').should('have.text', 14);
 
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Title:');
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains('Task 6');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 30');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 130');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 230');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 300');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 301');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 5}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 302');
+    });
 
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Effort Driven:');
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
+    it('should return all 400 rows using "Ta%" (starts with "Ta")', () => {
+      cy.get('.search-filter.filter-title').clear().type('Ta%');
 
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
+      cy.get('[data-test="total-items"]').should('have.text', 400);
 
-    cy.get('@start6-cell').trigger('mouseout');
-  });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 0');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 1');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 2');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 3');
+    });
 
-  it('should mouse over 6th row Description and expect full cell content to show in a tooltip because cell has ellipsis and is too long for the cell itself', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).as('desc6-cell');
-    cy.get('@desc6-cell').should('contain', 'This is a sample task description.');
-    cy.get('@desc6-cell').trigger('mouseover');
+    it('should return 14 rows using "25" (contains 25)', () => {
+      cy.get('.search-filter.filter-title').clear().type('25');
 
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').should(
-      'not.contain',
-      `regular tooltip (from title attribute)\nTask 6 cell value:\n\nThis is a sample task description.\nIt can be multiline\n\nAnother line...`
-    );
-    cy.get('.slick-custom-tooltip').should('contain', `This is a sample task description.\nIt can be multiline\n\nAnother line...`);
+      cy.get('[data-test="total-items"]').should('have.text', 14);
 
-    cy.get('@desc6-cell').trigger('mouseout');
-  });
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 25');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 125');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 225');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 250');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 251');
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 5}px);"] > .slick-cell:nth(1)`).should('have.text', 'Task 252');
+    });
 
-  it('should mouse over 6th row Description 2 and expect regular tooltip title + concatenated full cell content when using "useRegularTooltipFromFormatterOnly: true"', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`).as('desc2-5-cell');
-    cy.get('@desc2-5-cell').should('contain', 'This is a sample task description.');
-    cy.get('@desc2-5-cell').trigger('mouseover');
+    it('should not return any row when filtering Title with "%%"', () => {
+      cy.get('.search-filter.filter-title').clear().type('%%');
 
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').should(
-      'contain',
-      `regular tooltip (from title attribute)\nTask 6 cell value:\n\nThis is a sample task description.\nIt can be multiline\n\nAnother line...`
-    );
+      cy.get('[data-test="total-items"]').should('have.text', 0);
+    });
 
-    cy.get('@desc2-5-cell').trigger('mouseout');
-  });
+    it('return all 400 rows when filtering Title as "%ask%"', () => {
+      cy.get('.search-filter.filter-duration').clear();
+      cy.get('.search-filter.filter-title').clear().type('%ask%');
 
-  it('should mouse over 2nd row Duration and expect a custom tooltip shown with 4 label/value pairs displayed', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(2)`).as('duration2-cell');
-    cy.get('@duration2-cell').contains(/\d+\sday[s]?$/);
-    cy.get('@duration2-cell').trigger('mouseover');
+      cy.get('[data-test="total-items"]').should('have.text', 400);
+    });
 
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Custom Tooltip');
+    it('return some rows (not all 400) when filtering Title as "%ask%" AND a Duration ">50" to test few filters still working', () => {
+      cy.get('.search-filter.filter-title').clear();
+      cy.get('.search-filter.filter-duration').clear().type('>50');
 
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Id:');
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('6');
+      cy.get('[data-test="total-items"]').should('not.have.text', 0);
 
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Title:');
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains('Task 6');
-
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Effort Driven:');
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
-
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
-
-    cy.get('@duration2-cell').trigger('mouseout');
-  });
-
-  it('should mouse over % Complete cell of Task 6 and expect regular tooltip to show with content "x %" where x is a number', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`).as('percentage-cell');
-    cy.get('@percentage-cell').find('.percent-complete-bar').should('exist');
-    cy.get('@percentage-cell').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains(/\d+%$/);
-
-    cy.get('@percentage-cell').trigger('mouseout');
-  });
-
-  it('should mouse over Prerequisite cell of Task 6 and expect regular tooltip to show with content "Task 6, Task 5"', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(10)`).as('prereq-cell');
-    cy.get('@prereq-cell').should('contain', 'Task 6, Task 5');
-    cy.get('@prereq-cell').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').should('contain', 'Task 6, Task 5');
-
-    cy.get('@prereq-cell').trigger('mouseout');
-  });
-
-  it('should mouse over header-row (filter) 1st column checkbox and NOT expect any tooltip to show since it is disabled on that column', () => {
-    cy.get(`.slick-headerrow-columns .slick-headerrow-column:nth(0)`).as('checkbox0-filter');
-    cy.get('@checkbox0-filter').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('not.exist');
-    cy.get('@checkbox0-filter').trigger('mouseout');
-  });
-
-  it('should mouse over header-row (filter) 2nd column Title and expect a tooltip to show rendered from an headerRowFormatter', () => {
-    cy.get(`.slick-headerrow-columns .slick-headerrow-column:nth(1)`).as('checkbox0-filter');
-    cy.get('@checkbox0-filter').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Custom Tooltip - Header Row (filter)');
-
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Column:');
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('title');
-
-    cy.get('@checkbox0-filter').trigger('mouseout');
-  });
-
-  it('should mouse over header-row (filter) Finish column and NOT expect any tooltip to show since it is disabled on that column', () => {
-    cy.get(`.slick-headerrow-columns .slick-headerrow-column:nth(8)`).as('finish-filter');
-    cy.get('@finish-filter').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('not.exist');
-    cy.get('@finish-filter').trigger('mouseout');
-  });
-
-  it('should mouse over header-row (filter) Prerequisite column and expect to see tooltip of selected filter options', () => {
-    cy.get(`.slick-headerrow-columns .slick-headerrow-column:nth(10)`).as('checkbox10-header');
-    cy.get('@checkbox10-header').trigger('mouseover');
-
-    cy.get('.filter-prerequisites .ms-choice span').contains('15 of 500 selected');
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains(
-      'Task 1, Task 3, Task 5, Task 7, Task 9, Task 12, Task 15, Task 18, Task 21, Task 25, Task 28, Task 29, Task 30, Task 32, Task 34'
-    );
-
-    cy.get('@checkbox10-header').trigger('mouseout');
-  });
-
-  it('should mouse over header title on 1st column with checkbox and NOT expect any tooltip to show since it is disabled on that column', () => {
-    cy.get(`.slick-header-columns .slick-header-column:nth(0)`).as('checkbox-header');
-    cy.get('@checkbox-header').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('not.exist');
-    cy.get('@checkbox-header').trigger('mouseout');
-  });
-
-  it('should mouse over header title on 2nd column with Title name and expect a tooltip to show rendered from an headerFormatter', () => {
-    cy.get(`.slick-header-columns .slick-header-column:nth(1)`).as('checkbox0-header');
-    cy.get('@checkbox0-header').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Custom Tooltip - Header');
-
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Column:');
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('Title');
-
-    cy.get('@checkbox0-header').trigger('mouseout');
-  });
-
-  it('should mouse over header title on 2nd column with Finish name and NOT expect any tooltip to show since it is disabled on that column', () => {
-    cy.get(`.slick-header-columns .slick-header-column:nth(8)`).as('finish-header');
-    cy.get('@finish-header').trigger('mouseover');
-
-    cy.get('.slick-custom-tooltip').should('not.exist');
-    cy.get('@finish-header').trigger('mouseout');
-  });
-
-  it('should click Prerequisite editor of 1st row (Task 2) and expect Task1 & 2 to be selected in the multiple-select drop', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).as('prereq-cell');
-    cy.get('@prereq-cell').should('contain', 'Task 2, Task 1').click();
-
-    cy.get('div.ms-drop[data-name=editor-prerequisites]').find('li.selected').should('have.length', 2);
-
-    cy.get('div.ms-drop[data-name=editor-prerequisites]').find('li.selected:nth(0) span').should('contain', 'Task 1');
-
-    cy.get('div.ms-drop[data-name=editor-prerequisites]').find('li.selected:nth(1) span').should('contain', 'Task 2');
-
-    cy.get('div.ms-drop[data-name=editor-prerequisites]').find('.ms-ok-button').click();
-
-    cy.get('div.ms-drop[data-name=editor-prerequisites]').should('not.exist');
+      cy.get('[data-test="total-items"]').should('not.have.text', 400);
+    });
   });
 });

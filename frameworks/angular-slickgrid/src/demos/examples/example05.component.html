@@ -1,0 +1,151 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 5: Grid connected to Backend Server with OData
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-odata.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="row">
+    <div class="col-sm-9">
+      <div class="subtitle">
+        Sorting/Paging connected to a Backend OData Service (<a
+          href="https://ghiscoding.gitbook.io/angular-slickgrid/backend-services/odata"
+          target="_blank"
+          >Docs</a
+        >).
+        <br />
+        <ul class="small">
+          <li>Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported</li>
+          <li>This example also demos the Grid State feature, open the console log to see the changes</li>
+          <li>String column also support operator (>, >=, <, <=, <>, !=, =, ==, *)</li>
+          <ul>
+            <li>The (*) can be used as startsWith (ex.: "abc*" => startsWith "abc") / endsWith (ex.: "*xyz" => endsWith "xyz")</li>
+            <li>The other operators can be used on column type number for example: ">=100" (bigger or equal than 100)</li>
+          </ul>
+          <li>OData Service could be replaced by other Service type in the future (GraphQL or whichever you provide)</li>
+          <li>
+            You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
+            <a href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/grid-state-and-preset" target="_blank"
+              >Docs - Grid Preset</a
+            >
+          </li>
+          <li>
+            <span class="text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its
+            only purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state
+            before you did the action). Also changing Page Size to 50,000 will also throw which again is for demo purposes.
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="alert alert-danger" *ngIf="errorStatus" data-test="error-status">
+        <em><strong>Backend Error:</strong> <span [innerHTML]="errorStatus"></span></em>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-2">
+      <div [class]="status.class" role="alert" data-test="status">
+        <strong>Status: </strong> {{ status.text }}
+        <span [hidden]="!processing">
+          <i class="mdi mdi-sync mdi-spin-1s"></i>
+        </span>
+      </div>
+    </div>
+    <div class="col-sm-10">
+      <div class="alert alert-info" data-test="alert-odata-query">
+        <strong>OData Query:</strong> <span data-test="odata-query-result">{{ odataQuery }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
+        Set Filters Dynamically
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
+        Set Sorting Dynamically
+      </button>
+      <br />
+      <span *ngIf="metrics">
+        <b>Metrics:</b> {{ metrics.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.executionTime }}ms |
+        {{ metrics.totalItemCount }} items
+      </span>
+    </div>
+
+    <div class="col-sm-8">
+      <label>OData Version: </label>
+      <span data-test="radioVersion">
+        <label class="radio-inline control-label" for="radio2">
+          <input
+            type="radio"
+            name="inlineRadioOptions"
+            data-test="version2"
+            id="radio2"
+            checked
+            [value]="2"
+            (change)="setOdataVersion(2)"
+          />
+          2
+        </label>
+        <label class="radio-inline control-label" for="radio4">
+          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" [value]="4" (change)="setOdataVersion(4)" /> 4
+        </label>
+      </span>
+      <label class="checkbox-inline control-label" for="enableCount" style="margin-left: 20px">
+        <input type="checkbox" id="enableCount" data-test="enable-count" [checked]="isCountEnabled" (click)="changeCountEnableFlag()" />
+        <span style="font-weight: bold">Enable Count</span> (add to OData query)
+      </label>
+      <label class="checkbox-inline control-label" for="enableSelect" style="margin-left: 20px">
+        <input type="checkbox" id="enableSelect" data-test="enable-select" [checked]="isSelectEnabled" (click)="changeEnableSelectFlag()" />
+        <span style="font-weight: bold">Enable Select</span> (add to OData query)
+      </label>
+      <label class="checkbox-inline control-label" for="enableExpand" style="margin-left: 20px">
+        <input type="checkbox" id="enableExpand" data-test="enable-expand" [checked]="isExpandEnabled" (click)="changeEnableExpandFlag()" />
+        <span style="font-weight: bold">Enable Expand</span> (add to OData query)
+      </label>
+    </div>
+  </div>
+  <div class="row mt-2 mb-1">
+    <div class="col-md-12">
+      <button class="btn btn-outline-danger btn-sm btn-icon" data-test="throw-page-error-btn" (click)="throwPageChangeError()">
+        <span>Throw Error Going to Last Page... </span>
+        <i class="mdi mdi-page-last"></i>
+      </button>
+
+      <span class="ms-2">
+        <label>Programmatically go to first/last page:</label>
+        <div class="btn-group" role="group">
+          <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page" (click)="goToFirstPage()">
+            <i class="mdi mdi-page-first"></i>
+          </button>
+          <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page" (click)="goToLastPage()">
+            <i class="mdi mdi-page-last"></i>
+          </button>
+        </div>
+      </span>
+    </div>
+  </div>
+
+  <angular-slickgrid
+    gridId="grid5"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [paginationOptions]="paginationOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+    (onGridStateChanged)="gridStateChanged($event.detail)"
+    (onBeforeSort)="handleOnBeforeSort($event)"
+    (onBeforeSearchChange)="handleOnBeforeSearchChange($event)"
+    (onBeforePaginationChange)="handleOnBeforePaginationChange($event)"
+  >
+  </angular-slickgrid>
+</div>

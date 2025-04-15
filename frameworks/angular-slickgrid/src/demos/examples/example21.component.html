@@ -1,0 +1,86 @@
+<div class="container-fluid">
+  <h2>
+    Example 21: Grid AutoHeight
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-autoheight.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">
+    The SlickGrid option "autoHeight" can be used if you wish to keep the full height of the grid without any scrolling
+    <ul>
+      <li>You define a fixed grid width via "gridWidth" in the View</li>
+      <li>You can still use the "autoResize" for the width to be resized automatically (the height will never change in this case)</li>
+      <li>
+        This dataset has 25 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling (though you
+        might have browser scrolling)
+      </li>
+    </ul>
+  </div>
+
+  <div class="row row-cols-lg-auto g-1 align-items-center">
+    <div class="col">
+      <label for="columnSelect">Single Search:</label>
+    </div>
+    <div class="col">
+      <select
+        class="form-select"
+        data-test="search-column-list"
+        name="selectedColumn"
+        [(ngModel)]="selectedColumn"
+        (ngModelChange)="updateFilter()"
+      >
+        <option [ngValue]="field" *ngFor="let field of columnDefinitions">{{ field.name }}</option>
+      </select>
+    </div>
+    <div class="col">
+      <select
+        class="form-select"
+        data-test="search-operator-list"
+        name="selectedOperator"
+        [(ngModel)]="selectedOperator"
+        (ngModelChange)="updateFilter()"
+      >
+        <option [ngValue]="operator" *ngFor="let operator of operatorList">{{ operator }}</option>
+      </select>
+    </div>
+
+    <div class="col">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          data-test="search-value-input"
+          name="searchValue"
+          placeholder="search value"
+          autocomplete="off"
+          (input)="updateFilter()"
+          [(ngModel)]="searchValue"
+        />
+        <button
+          class="btn btn-outline-secondary d-flex align-items-center pl-2 pr-2"
+          data-test="clear-search-value"
+          (click)="clearGridSearchInput()"
+        >
+          <span class="mdi mdi-close"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <angular-slickgrid
+    gridId="grid21"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+</div>

@@ -3,7 +3,7 @@ describe('Example 42 - Custom Pagination', () => {
   const titles = ['Title', 'Description', '% Complete', 'Start', 'Finish', 'Duration', 'Completed'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/custom-pagination`);
+    cy.visit(`${Cypress.config('baseUrl')}/example42`);
     cy.get('h2').should('contain', 'Example 42: Custom Pagination');
   });
 

@@ -3,7 +3,7 @@ describe('Example 36 - Excel Export Formula', () => {
   const fullTitles = ['#', 'Name', 'Price', 'Quantity', 'Sub-Total', 'Taxable', 'Taxes', 'Total'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/excel-formula`);
+    cy.visit(`${Cypress.config('baseUrl')}/example36`);
     cy.get('h2').should('contain', 'Example 36: Excel Export Formula');
   });
 

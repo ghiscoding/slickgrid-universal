@@ -16,7 +16,7 @@ describe('Example 20 - Frozen Grid', () => {
   ];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/frozen`);
+    cy.visit(`${Cypress.config('baseUrl')}/example20`);
     cy.get('h2').should('contain', 'Example 20: Pinned (frozen) Columns/Rows');
   });
 

@@ -1,0 +1,138 @@
+<div class="container-fluid">
+  <h2>
+    Example 27: Tree Data
+    <small>
+      <span class="mdi mdi-file-tree mdi-27px"></span> (from a flat dataset with <code>parentId</code> references -
+      <a href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
+    >
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-tree-data-parent-child.component.ts"
+      >
+        <span class="mdi mdi-link mdi-v-align-sub"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">
+    <ul>
+      <li>It is assumed that your dataset will have Parent/Child references AND also Tree Level (indent) property.</li>
+      <ul>
+        <li>
+          If you do not have the Tree Level (indent), you could call "convertParentChildArrayToHierarchicalView()" then call
+          "convertHierarchicalViewToParentChildArray()"
+        </li>
+        <li>
+          You could also pass the result of "convertParentChildArrayToHierarchicalView()" to "dataset-hierarchical.bind" as defined in the
+          next Hierarchical Example
+        </li>
+      </ul>
+    </ul>
+  </div>
+
+  <div class="row" style="margin-bottom: 4px">
+    <div class="col-md-12">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" (click)="loadData(500)">500 rows</button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-50k-rows-btn" (click)="loadData(25000)">25k rows</button>
+      <button (click)="dynamicallyChangeFilter()" class="btn btn-outline-secondary btn-xs btn-icon" data-test="change-filter-dynamically">
+        <span class="mdi mdi-filter-outline"></span>
+        <span>Dynamically Change Filter (% complete &lt; 40)</span>
+      </button>
+      <button (click)="collapseAllWithoutEvent()" data-test="collapse-all-noevent-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+        <span class="icon mdi mdi-arrow-collapse"></span>
+        <span>Collapse All (without triggering event)</span>
+      </button>
+      <button
+        (click)="reapplyToggledItems()"
+        data-test="reapply-toggled-items-btn"
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        [disabled]="hasNoExpandCollapseChanged"
+      >
+        <span class="icon mdi mdi-history"></span>
+        <span>Reapply Previous Toggled Items</span>
+      </button>
+      <button (click)="collapseAllWithoutEvent()" class="btn btn-outline-secondary btn-xs btn-icon" data-test="collapse-all-noevent-btn">
+        <span class="mdi mdi-arrow-collapse"></span>
+        <span>Collapse All (without triggering event)</span>
+      </button>
+      <button
+        (click)="dynamicallyToggledFirstParent()"
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        data-test="dynamically-toggle-first-parent-btn"
+      >
+        <span>Dynamically Toggle First Parent</span>
+      </button>
+      <button
+        (click)="reapplyToggledItems()"
+        data-test="reapply-toggled-items-btn"
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        [disabled]="hasNoExpandCollapseChanged"
+      >
+        <span class="mdi mdi-history"></span>
+        <span>Reapply Previous Toggled Items</span>
+      </button>
+      <div [class]="loadingClass"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <button (click)="addNewRow()" data-test="add-item-btn" class="btn btn-primary btn-xs btn-icon">
+        <span class="icon mdi mdi-plus color-white"></span>
+        <span>Add New Item to "Task 1" group</span>
+      </button>
+      <button (click)="updateFirstRow()" data-test="update-item-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+        <span class="icon mdi mdi-pencil"></span>
+        <span>Update 1st Row Item</span>
+      </button>
+      <button (click)="collapseAll()" data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+        <span class="icon mdi mdi-arrow-collapse"></span>
+        <span>Collapse All</span>
+      </button>
+      <button (click)="expandAll()" data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+        <span class="icon mdi mdi-arrow-expand"></span>
+        <span>Expand All</span>
+      </button>
+      <button (click)="logTreeDataToggledItems()" class="btn btn-outline-secondary btn-xs btn-icon">
+        <span>Log Tree Toggled Items</span>
+      </button>
+      <button (click)="logFlatStructure()" class="btn btn-outline-secondary btn-xs btn-icon" title="console.log of the Flat dataset">
+        <span>Log Flat Structure</span>
+      </button>
+      <button
+        (click)="logHierarchicalStructure()"
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        title="console.log of the Hierarchical Tree dataset"
+      >
+        <span>Log Hierarchical Structure</span>
+      </button>
+      <button (click)="dynamicallyChangeFilter()" class="btn btn-outline-secondary btn-xs btn-icon">
+        <span>Dynamically Change Filter (% complete &lt; 40)</span>
+      </button>
+    </div>
+  </div>
+
+  <br />
+
+  <angular-slickgrid
+    gridId="grid27"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onGridStateChanged)="handleOnGridStateChanged($event.detail)"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+    (onBeforeFilterChange)="showSpinner()"
+    (onFilterChanged)="hideSpinner()"
+    (onBeforeFilterClear)="showSpinner()"
+    (onFilterCleared)="hideSpinner()"
+    (onBeforeSortChange)="showSpinner()"
+    (onSortChanged)="hideSpinner()"
+    (onBeforeToggleTreeCollapse)="showSpinner()"
+    (onToggle-tree-collapsed)="hideSpinner()"
+    (onTree-full-toggle-start)="showSpinner()"
+    (onTree-full-toggle-end)="handleOnTreeFullToggleEnd($event.detail)"
+    (onTree-item-toggled)="handleOnTreeItemToggled($event.detail)"
+  >
+  </angular-slickgrid>
+</div>

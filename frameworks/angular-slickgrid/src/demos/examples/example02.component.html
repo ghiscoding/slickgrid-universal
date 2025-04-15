@@ -1,0 +1,45 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 2: Grid with Formatters
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-formatter.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">
+    Grid with Custom and/or included Slickgrid Formatters (<a
+      href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/formatters"
+      target="_blank"
+      >Wiki docs</a
+    >).
+    <ul>
+      <li>The 2 last columns are using Custom Formatters</li>
+      <ul>
+        <li>The "Completed" column uses a the "onCellClick" event and a formatter to simulate a toggle action</li>
+      </ul>
+      <li>
+        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag. Note that
+        it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExportOptions" or the column definition)
+      </li>
+      <li>This example also has auto-resize enabled, and we also demo how you can pause the resizer if you wish to</li>
+    </ul>
+  </div>
+
+  <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="togglePauseResizer()">
+    Pause auto-resize: <b>{{ resizerPaused }}</b>
+  </button>
+
+  <angular-slickgrid
+    gridId="grid2"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+</div>
