@@ -76,6 +76,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
+          flags: angular
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: frameworks/angular-slickgrid/coverage
           verbose: true
