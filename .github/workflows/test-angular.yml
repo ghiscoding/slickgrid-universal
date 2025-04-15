@@ -70,6 +70,16 @@ jobs:
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
         run: pnpm angular:test:coverage
 
+      - name: Upload Angular Vitest coverage to Codecov
+        if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: frameworks/angular-slickgrid/coverage
+          verbose: true
+
       - name: Angular-Slickgrid Framework Build
         run: pnpm angular:build:framework
 
