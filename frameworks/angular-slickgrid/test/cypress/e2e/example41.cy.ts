@@ -3,7 +3,7 @@ describe('Example 41 - Drag & Drop', () => {
   const titles = ['', 'Name', 'Complete'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/drag-recycle`);
+    cy.visit(`${Cypress.config('baseUrl')}/example41`);
     cy.get('h2').should('contain', 'Example 41: Drag & Drop');
   });
 

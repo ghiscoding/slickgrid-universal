@@ -26,7 +26,7 @@ describe('Example 44 - Column & Row Span', { retries: 0 }, () => {
   ];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/rowspan-large`);
+    cy.visit(`${Cypress.config('baseUrl')}/example44`);
     cy.get('h2').should('contain', 'Example 44: colspan/rowspan with large dataset');
   });
 

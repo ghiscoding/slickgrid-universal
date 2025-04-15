@@ -1,0 +1,82 @@
+<div class="container-fluid">
+  <h2>
+    Example 34: Real-Time Trading Platform
+    <button class="btn btn-outline-secondary btn-sm btn-icon ms-3" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
+    </button>
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-trading.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">
+    Simulate a stock trading platform with lot of price changes, it is strongly suggested to disable the
+    <code>autoResize.autoHeight</code> grid option for this type of grid.
+    <ul>
+      <li>
+        you can start/stop the simulation, you can see SlickGrid huge perf by setting: (1) lower Changes Rate, (2) increase both Changes per
+        Cycle, and (3) lower Highlight Duration
+      </li>
+      <li>optionally change random numbers, between 0 and 10 symbols, per cycle (higher numbers means more changes)</li>
+      <li>optionally change the simulation changes refresh rate in ms (lower number means more changes).</li>
+      <li>you can Group by 1 of these columns: Currency, Market or Type</li>
+    </ul>
+  </div>
+
+  <div class="trading-platform">
+    <div class="row mb-4 simulation-form">
+      <div class="col-sm-12 d-flex align-items-center">
+        <div class="range">
+          <label for="refreshRateRange" class="form-label me-1">Changes Rate(ms)</label>
+          <input type="range" class="form-range" id="refreshRateRange" min="0" max="250" [(ngModel)]="refreshRate" />
+          <span class="refresh-rate">
+            <input type="number" [(ngModel)]="refreshRate" />
+          </span>
+        </div>
+        <span class="ms-3 me-1">
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="start-btn" (click)="startSimulation()">
+            <li class="mdi mdi-play-circle-outline"></li>
+            Start Simulation
+          </button>
+        </span>
+        <span class="me-3">
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="stop-btn" (click)="stopSimulation()">
+            <li class="mdi mdi-stop-circle-outline"></li>
+            Stop Simulation
+          </button>
+        </span>
+        <span class="mx-1">
+          <label for="change-per-cycle-input">Changes p/Cycle</label>
+          <input type="number" id="change-per-cycle-input" [(ngModel)]="minChangePerCycle" [max]="maxChangePerCycle" />
+          to
+          <input type="number" [(ngModel)]="maxChangePerCycle" [min]="minChangePerCycle" />
+        </span>
+        <span class="ms-2">
+          <label for="highlight-input">Highlight Duration(ms)</label>
+          <input type="number" id="highlight-input" data-test="highlight-input" [(ngModel)]="highlightDuration" />
+        </span>
+        <div class="ms-auto">
+          <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="toggleFullScreen()">
+            <li [class]="isFullScreen ? 'mdi mdi-arrow-collapse' : 'mdi mdi-arrow-expand'"></li>
+            Toggle Full-Screen
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <angular-slickgrid
+      gridId="grid34"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
+      [dataset]="dataset"
+      (onAngularGridCreated)="angularGridReady($event.detail)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>

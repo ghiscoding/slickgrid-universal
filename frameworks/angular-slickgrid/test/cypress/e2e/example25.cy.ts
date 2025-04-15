@@ -1,256 +1,193 @@
-import { addDay, format, isAfter, isBefore, isEqual } from '@formkit/tempo';
+describe('Example 25 - GraphQL Basic API without Pagination', () => {
+  const GRID_ROW_HEIGHT = 35;
+  const fullPreTitles = ['Country', 'Language', 'Continent'];
+  const fullTitles = ['Code', 'Name', 'Native', 'Phone Area Code', 'Currency', 'Emoji', 'Names', 'Native', 'Codes', 'Name', 'Code'];
 
-const presetMinComplete = 5;
-const presetMaxComplete = 80;
-const presetMinDuration = 4;
-const presetMaxDuration = 88;
-const today = new Date();
-const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
-const presetHighestDay = format(addDay(new Date(), today.getDate() < 14 ? 28 : 25), 'YYYY-MM-DD');
-
-function isBetween(inputDate: Date | string, minDate: Date | string, maxDate: Date | string, isInclusive = false) {
-  let valid = false;
-  if (isInclusive) {
-    valid = isEqual(inputDate, minDate) || isEqual(inputDate, maxDate);
-  }
-  if (!valid) {
-    valid = isAfter(inputDate, minDate) && isBefore(inputDate, maxDate);
-  }
-  return valid;
-}
-
-describe('Example 25 - Range Filters', () => {
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/range`);
-    cy.get('h2').should('contain', 'Example 25: Filtering from Range of Search Values');
+    cy.visit(`${Cypress.config('baseUrl')}/example25`);
+    cy.get('h2').should('contain', 'Example 25: GraphQL Basic API without Pagination');
   });
 
-  it('should expect the grid to be sorted by "% Complete" descending and then by "Duration" ascending', () => {
-    cy.get('#grid25')
-      .get('.slick-header-column:nth(2)')
-      .find('.slick-sort-indicator-desc')
-      .should('have.length', 1)
-      .siblings('.slick-sort-indicator-numbered')
-      .contains('1');
-
-    cy.get('#grid25')
-      .get('.slick-header-column:nth(5)')
-      .find('.slick-sort-indicator-asc')
-      .should('have.length', 1)
-      .siblings('.slick-sort-indicator-numbered')
-      .contains('2');
+  it('should display a processing alert which will change to done', () => {
+    // cy.get('[data-test=status]').should('contain', 'processing');
+    cy.get('[data-test=status]').should('contain', 'finished');
   });
 
-  it('should have "% Complete" fields within the range (inclusive) of the filters presets', () => {
+  it('should have exact Column Pre-Header & Column Header Titles in the grid', () => {
     cy.get('#grid25')
-      .find('.slick-row')
-      .each(($row) => {
-        cy.wrap($row)
-          .children('.slick-cell:nth(2)')
-          .each(($cell) => {
-            const value = parseInt($cell.text().trim(), 10);
-            if (!isNaN(value)) {
-              expect(value >= presetMinComplete).to.eq(true);
-              expect(value <= presetMaxComplete).to.eq(true);
-            }
-          });
-      });
-  });
-
-  it('should have Finish Dates within the range (inclusive) of the filters presets', () => {
-    cy.get('#grid25')
-      .find('.slick-row')
-      .each(($row) => {
-        cy.wrap($row)
-          .children('.slick-cell:nth(4)')
-          .each(($cell) => {
-            const isDateBetween = isBetween($cell.text(), presetLowestDay, presetHighestDay, true);
-            expect(isDateBetween).to.eq(true);
-          });
-      });
-  });
-
-  it('should have "Duration" fields within the range (exclusive by default) of the filters presets', () => {
-    cy.get('#grid25')
-      .find('.slick-row')
-      .each(($row) => {
-        cy.wrap($row)
-          .children('.slick-cell:nth(5)')
-          .each(($cell) => {
-            const value = parseInt($cell.text().trim(), 10);
-            if (!isNaN(value)) {
-              expect(value >= presetMinDuration).to.eq(true);
-              expect(value <= presetMaxDuration).to.eq(true);
-            }
-          });
-      });
-  });
-
-  it('should change "% Complete" filter range by using the slider left handle (min value) to make it a higher min value and expect all rows to be within new range', () => {
-    let newLowest = presetMinComplete;
-    let newHighest = presetMaxComplete;
-    const allowedBuffer = 0.5;
-
-    // first input is the lowest range
-    cy.get('.slider-filter-input:nth(0)').as('range').invoke('val', 10).trigger('change', { force: true });
-
-    cy.get('.lowest-range-percentComplete').then(($lowest) => {
-      newLowest = parseInt($lowest.text(), 10);
-    });
-
-    cy.get('.highest-range-percentComplete').then(($highest) => {
-      newHighest = parseInt($highest.text(), 10);
-    });
-
-    cy.wait(5);
+      .find('.slick-header-columns:nth(0)')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid25')
-      .find('.slick-row')
-      .each(($row) => {
-        cy.wrap($row)
-          .children('.slick-cell:nth(2)')
-          .each(($cell) => {
-            const value = parseInt($cell.text().trim(), 10);
-            if (!isNaN(value) && $cell.text() !== '') {
-              expect(value >= newLowest - allowedBuffer).to.eq(true);
-              expect(value <= newHighest + allowedBuffer).to.eq(true);
-            }
-          });
-      });
+      .find('.slick-header-columns:nth(1)')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should change the "Finish" date in the picker and expect all rows to be within new dates range', () => {
-    cy.get('.date-picker.search-filter.filter-finish').click();
+  it('should expect first 3 rows to be an exact match of data provided by the external GraphQL API', () => {
+    cy.get('.right-footer.metrics').contains('250 of 250 items');
 
-    cy.get('[data-vc-date-selected="first"]').should('exist');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'AD');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Andorra');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Andorra');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '376');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', 'EUR');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Catalan');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).should('contain', 'Català');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'ca');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).should('contain', 'EU');
 
-    cy.get('[data-vc-date-selected="middle"]').should('have.length.gte', 2);
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'AE');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'United Arab Emirates');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should(
+      'contain',
+      'دولة الإمارات العربية المتحدة'
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should('contain', '971');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).should('contain', 'AED');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`).should('contain', 'Arabic');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`).should('contain', 'العربية');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`).should('contain', 'ar');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(9)`).should('contain', 'Asia');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(10)`).should('contain', 'AS');
 
-    cy.get('[data-vc-date-selected="last"]').should('exist');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'AF');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Afghanistan');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(2)`).should('contain', 'افغانستان');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should('contain', '93');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`).should('contain', 'AFN');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`).should('contain', 'Pashto, Uzbek, Turkmen');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(7)`).should(
+      'contain',
+      'پښتو, Ўзбек, Туркмен / تركمن'
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(8)`).should('contain', 'ps, uz, tk');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(9)`).should('contain', 'Asia');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(10)`).should('contain', 'AS');
   });
 
-  it('should change the "Duration" input filter and expect all rows to be within new range', () => {
-    const newMin = 10;
-    const newMax = 40;
+  it('should sort by country name and expect first 2 rows as Afghanistan and Albania', () => {
+    cy.get(`.slick-header-columns:nth(1) .slick-header-column:nth-child(2)`).contains('Name').click();
 
-    cy.contains('Clear Filters').click({ force: true });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'AF');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Afghanistan');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'افغانستان');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '93');
 
-    cy.get('.search-filter.filter-duration').focus().type(`${newMin}..${newMax}`);
-
-    cy.get('#grid25')
-      .find('.slick-row')
-      .each(($row, idx) => {
-        cy.wrap($row)
-          .children('.slick-cell:nth(5)')
-          .each(($cell) => {
-            if (idx > 8) {
-              return;
-            }
-            const value = parseInt($cell.text().trim(), 10);
-            if (!isNaN(value)) {
-              expect(value >= newMin).to.eq(true);
-              expect(value <= newMax).to.eq(true);
-            }
-          });
-      });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'AL');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Albania');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Shqipëria');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should('contain', '355');
   });
 
-  describe('Set Dymamic Filters', () => {
-    const dynamicMinComplete = 15;
-    const dynamicMaxComplete = 85;
-    const dynamicMinDuration = 14;
-    const dynamicMaxDuration = 78;
-    const currentYear = new Date().getFullYear();
-    const dynamicLowestDay = format(addDay(new Date(), -5), 'YYYY-MM-DD');
-    const dynamicHighestDay = format(addDay(new Date(), 25), 'YYYY-MM-DD');
+  it('should filter by Language Codes "fr, de" and expect 2 rows of data in the grid', () => {
+    cy.get('.search-filter.filter-languageCode').type('fr, de');
 
-    it('should click on Set Dynamic Filters', () => {
-      cy.get('[data-test=set-dynamic-filter]').click();
-    });
+    cy.get('.right-footer.metrics').contains('2 of 250 items');
 
-    it('should have "% Complete" fields within the exclusive range of the filters presets', () => {
-      cy.get('#grid25')
-        .find('.slick-row')
-        .each(($row) => {
-          cy.wrap($row)
-            .children('.slick-cell:nth(2)')
-            .each(($cell) => {
-              const value = parseInt($cell.text().trim(), 10);
-              if (!isNaN(value)) {
-                expect(value >= dynamicMinComplete).to.eq(true);
-                expect(value <= dynamicMaxComplete).to.eq(true);
-              }
-            });
-        });
-    });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'BE');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'België');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '32');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', 'EUR');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Dutch, French, German');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).should(
+      'contain',
+      'Nederlands, Français, Deutsch'
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'nl, fr, de');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).should('contain', 'EU');
 
-    it('should have "Duration" fields within the inclusive range of the dynamic filters', () => {
-      cy.get('#grid25')
-        .find('.slick-row')
-        .each(($row) => {
-          cy.wrap($row)
-            .children('.slick-cell:nth(5)')
-            .each(($cell) => {
-              const value = parseInt($cell.text().trim(), 10);
-              if (!isNaN(value)) {
-                expect(value >= dynamicMinDuration).to.eq(true);
-                expect(value <= dynamicMaxDuration).to.eq(true);
-              }
-            });
-        });
-    });
-
-    it('should have Finish Dates within the range (inclusive) of the dynamic filters', () => {
-      cy.get('.search-filter.filter-finish')
-        .find('input')
-        .invoke('val')
-        .then((text) => expect(text).to.eq(`${dynamicLowestDay} — ${dynamicHighestDay}`));
-
-      cy.get('#grid25')
-        .find('.slick-row')
-        .each(($row) => {
-          cy.wrap($row)
-            .children('.slick-cell:nth(4)')
-            .each(($cell) => {
-              const isDateBetween = isBetween($cell.text(), dynamicLowestDay, dynamicHighestDay, true);
-              expect(isDateBetween).to.eq(true);
-            });
-        });
-    });
-
-    it('should change dynamic filters from the select and choose "Current Year Completed Tasks" and expect 2 filters set', () => {
-      cy.get('[data-test=select-dynamic-filter]').select('1: currentYearTasks');
-
-      cy.get('.search-filter.filter-finish')
-        .find('input')
-        .invoke('val')
-        .then((text) => expect(text).to.eq(`${currentYear}-01-01 — ${currentYear}-12-31`));
-
-      cy.get('.ms-parent.search-filter.filter-completed > button > span').should('contain', 'True');
-    });
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'LU');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Luxembourg');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Luxembourg');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should('contain', '352');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).should('contain', 'EUR');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`).should(
+      'contain',
+      'French, German, Luxembourgish'
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`).should(
+      'contain',
+      'Français, Deutsch, Lëtzebuergesch'
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`).should('contain', 'fr, de, lb');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(10)`).should('contain', 'EU');
   });
 
-  describe('Set Dynamic Sorting', () => {
-    it('should click on "Clear Filters" then "Set Dynamic Sorting" buttons', () => {
-      cy.get('[data-test=clear-filters]').click();
+  it('should Clear all Filters and expect all rows to be back', () => {
+    cy.get('#grid25').find('button.slick-grid-menu-button').click();
 
-      cy.get('[data-test=set-dynamic-sorting]').click();
-    });
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
 
-    it('should expect the grid to be sorted by "Duration" ascending and "Start" descending', () => {
-      cy.get('#grid25')
-        .get('.slick-header-column:nth(2)')
-        .find('.slick-sort-indicator-asc')
-        .should('have.length', 1)
-        .siblings('.slick-sort-indicator-numbered')
-        .contains('2');
+    cy.get('.right-footer.metrics').contains('250 of 250 items');
+  });
 
-      cy.get('#grid25')
-        .get('.slick-header-column:nth(4)')
-        .find('.slick-sort-indicator-desc')
-        .should('have.length', 1)
-        .siblings('.slick-sort-indicator-numbered')
-        .contains('1');
-    });
+  it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
+    cy.get('input.search-filter.filter-countryName').type('b..e');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Bosnia and Herzegovina');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Barbados');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Bangladesh');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
+  });
+
+  it('should filter Language Native with "Aymar" and expect only 1 row in the grid', () => {
+    cy.get('div.ms-filter.filter-languageNative').trigger('click');
+
+    cy.get('.ms-search:visible').type('Aymar');
+
+    cy.get('.ms-drop:visible').contains('Aymar').click();
+
+    cy.get('.ms-ok-button:visible').click();
+
+    cy.get('.right-footer.metrics').contains('1 of 250 items');
+
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'BO');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Bolivia');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Bolivia');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '591');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', 'BOB,BOV');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Spanish, Aymara, Quechua');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).should(
+      'contain',
+      'Español, Aymar, Runa Simi'
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'es, ay, qu');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'South America');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).should('contain', 'SA');
+  });
+
+  it('should Clear all Filters and expect all rows to be back', () => {
+    cy.get('#grid25').find('button.slick-grid-menu-button').trigger('click').click();
+
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
+
+    cy.get('.right-footer.metrics').contains('250 of 250 items');
+  });
+
+  it('should filter Language Native with "French" language and expect only 40 rows in the grid', () => {
+    cy.get('div.ms-filter.filter-languageName').trigger('click');
+
+    cy.get('.ms-search:visible').type('French');
+
+    cy.get('.ms-drop:visible').contains('French').click();
+
+    cy.get('.ms-ok-button:visible').click();
+
+    cy.get('.right-footer.metrics').contains('44 of 250 items');
+
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Dutch, French, German');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'nl, fr, de');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
+
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Benin');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(6)`).should('contain', 'French');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(8)`).should('contain', 'fr');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(9)`).should('contain', 'Africa');
   });
 });

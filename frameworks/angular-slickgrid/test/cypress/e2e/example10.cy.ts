@@ -9,7 +9,7 @@ describe('Example 10 - Multiple Grids with Row Selection', () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/selection`);
+    cy.visit(`${Cypress.config('baseUrl')}/example10`);
     cy.get('h2').should('contain', 'Example 10: Multiple Grids with Row Selection');
   });
 

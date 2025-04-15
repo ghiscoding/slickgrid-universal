@@ -1,431 +1,246 @@
-describe('Example 19 - Draggable Grouping & Aggregators', () => {
-  const preHeaders = ['Common Factor', 'Period', 'Analysis', ''];
-  const fullTitles = ['Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven'];
-  const GRID_ROW_HEIGHT = 35;
+describe('Example 19 - Row Detail View', () => {
+  const titles = ['', 'Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/draggrouping`);
-    cy.get('h2').should('contain', 'Example 19: Draggable Grouping & Aggregators');
+    cy.visit(`${Cypress.config('baseUrl')}/example19`);
+    cy.get('h2').should('contain', 'Example 19: Row Detail View');
   });
 
-  it('should have exact column (pre-header) grouping titles in grid', () => {
+  it('should have exact column titles on 1st grid', () => {
     cy.get('#grid19')
-      .find('.slick-preheader-panel .slick-header-columns')
+      .find('.slick-header-columns')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(preHeaders[index]));
+      .each(($child, index) => expect($child.text()).to.eq(titles[index]));
   });
 
-  it('should have exact column titles in grid', () => {
+  it('should change server delay to 40ms for faster testing', () => {
+    cy.get('[data-test="set-count-btn"]').click();
+    cy.get('[data-test="server-delay"]').type('{backspace}');
+  });
+
+  it('should display first few rows of Task 0 to 5', () => {
+    const expectedTasks = ['Task 0', 'Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5'];
+
     cy.get('#grid19')
-      .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-row')
+      .each(($row, index) => {
+        if (index > expectedTasks.length - 1) {
+          return;
+        }
+        cy.wrap($row).children('.slick-cell:nth(1)').first().should('contain', expectedTasks[index]);
+      });
   });
 
-  it('should have a draggable dropzone on top of the grid in the top-header section', () => {
-    cy.get('#grid19').find('.slick-topheader-panel .slick-dropzone:visible').contains('Drop a column header here to group by the column');
+  it('should click anywhere on 3rd row to open its Row Detail and expect its title to be Task 2 in an H2 tag', () => {
+    cy.get('#grid19').find('.slick-row:nth(2)').click();
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
+
+    cy.get('@detailContainer').find('h3').contains('Task 2');
   });
 
-  describe('Grouping Tests', () => {
-    it('should "Group by Duration & sort groups by value" then Collapse All and expect only group titles', () => {
-      cy.get('[data-test="add-50k-rows-btn"]').click();
-      cy.get('[data-test="group-duration-sort-value-btn"]').click();
-      cy.get('[data-test="collapse-all-btn"]').click();
+  it('should click on the "Click Me" button and expect the assignee name to showing in uppercase in an Alert', () => {
+    let assignee = '';
+    const alertStub = cy.stub();
+    cy.on('window:alert', alertStub);
 
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '2: duration');
-      cy.get('.grouping-selects select:nth(1)').should('not.have.value');
-      cy.get('.grouping-selects select:nth(2)').should('not.have.value');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 0'
-      );
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 1'
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 2'
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 3'
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 4'
-      );
-    });
+    cy.get('@detailContainer')
+      .find('input')
+      .invoke('val')
+      .then((text) => (assignee = `${text || ''}`));
 
-    it('should click on Expand All columns and expect 1st row as grouping title and 2nd row as a regular row', () => {
-      cy.get('[data-test="add-50k-rows-btn"]').click();
-      cy.get('[data-test="group-duration-sort-value-btn"]').click();
-      cy.get('[data-test="expand-all-btn"]').click();
+    cy.wait(10);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 0'
-      );
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', '0');
-    });
-
-    it('should show 1 column title (Duration) shown in the pre-header section', () => {
-      cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration');
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '2: duration');
-      cy.get('.grouping-selects select:nth(1)').should('not.have.value');
-      cy.get('.grouping-selects select:nth(2)').should('not.have.value');
-    });
-
-    it('should "Group by Duration then Effort-Driven" and expect 1st row to be expanded, 2nd row to be expanded and 3rd row to be a regular row', () => {
-      cy.get('[data-test="group-duration-effort-btn"]').click();
-
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`
-      ).should('have.length', 1);
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`
-      ).should('contain', 'Duration: 0');
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: False'
-      );
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', '0');
-    });
-
-    it('should show 2 column titles (Duration, Effort-Driven) shown in the pre-header section & same select dropdown', () => {
-      cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration');
-      cy.get('.slick-dropped-grouping:nth(1) div').contains('Effort-Driven');
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '2: duration');
-      cy.get('.grouping-selects select:nth(1)').should('have.value', '7: effortDriven');
-      cy.get('.grouping-selects select:nth(2)').should('not.have.value');
-    });
-
-    it('should be able to drag and swap grouped column titles inside the pre-header', () => {
-      cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration').drag('.slick-dropped-grouping:nth(1) div');
-
-      cy.get('.slick-dropped-grouping:nth(0) div').contains('Effort-Driven');
-      cy.get('.slick-dropped-grouping:nth(1) div').contains('Duration');
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '7: effortDriven');
-      cy.get('.grouping-selects select:nth(1)').should('have.value', '2: duration');
-      cy.get('.grouping-selects select:nth(2)').should('not.have.value');
-    });
-
-    it('should expect the grouping to be swapped as well in the grid', () => {
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`
-      ).should('have.length', 1);
-      cy.get(
-        `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`
-      ).should('contain', 'Effort-Driven: False');
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"].slick-group-level-1 .slick-group-title`).should(
-        'contain',
-        'Duration: 0'
-      );
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', '0');
-    });
-
-    it('should expand all rows with "Expand All" from context menu and expect all the Groups to be expanded and the Toogle All icon to be collapsed', () => {
-      cy.get('#grid19').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .find('.slick-menu-content')
-        .contains('Expand all Groups')
-        .click();
-
-      cy.get('#grid19').find('.slick-group-toggle.collapsed').should('have.length', 0);
-
-      cy.get('#grid19')
-        .find('.slick-group-toggle.expanded')
-        .should(($rows) => expect($rows).to.have.length.greaterThan(0));
-
-      cy.get('.slick-group-toggle-all-icon.expanded').should('exist');
-    });
-
-    it('should collapse all rows with "Collapse All" from context menu and expect all the Groups to be collapsed and the Toogle All icon to be collapsed', () => {
-      cy.get('#grid19').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .find('.slick-menu-content')
-        .contains('Collapse all Groups')
-        .click();
-
-      cy.get('#grid19').find('.slick-group-toggle.expanded').should('have.length', 0);
-
-      cy.get('#grid19')
-        .find('.slick-group-toggle.collapsed')
-        .should(($rows) => expect($rows).to.have.length.greaterThan(0));
-
-      cy.get('.slick-group-toggle-all-icon.collapsed').should('exist');
-    });
-
-    it('should use the topheader Toggle All button and expect all groups to now be expanded', () => {
-      cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: False'
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Duration: 0'
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
-        .should('have.css', 'marginLeft')
-        .and('eq', `0px`);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
-        .should('have.css', 'marginLeft')
-        .and('eq', `15px`);
-    });
-
-    it('should use the topheader Toggle All button again and expect all groups to now be collapsed', () => {
-      cy.get('.slick-topheader-panel .slick-group-toggle-all').click();
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
-        'have.length',
-        1
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: False'
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-        'contain',
-        'Effort-Driven: True'
-      );
-    });
-
-    it('should clear all groups with "Clear all Grouping" from context menu and expect all the Groups to be collapsed and the Toogle All icon to be collapsed', () => {
-      cy.get('#grid19').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .find('.slick-menu-content')
-        .contains('Clear all Grouping')
-        .click();
-
-      cy.get('#grid19').find('.slick-group-toggle-all').should('be.hidden');
-
-      cy.get('#grid19')
-        .find('.slick-draggable-dropzone-placeholder')
-        .should('be.visible')
-        .should('have.text', 'Drop a column header here to group by the column');
-    });
-
-    it('should add 500 items and expect 500 of 500 items displayed', () => {
-      cy.get('[data-test="add-500-rows-btn"]').click();
-
-      cy.get('.right-footer').contains('500 of 500 items');
-    });
-
-    it('should clear all grouping and expect all select dropdown to be cleared too', () => {
-      cy.get('[data-test="clear-grouping-btn"]').click();
-      cy.get('.grouping-selects select:nth(0)').should('not.have.value');
-      cy.get('.grouping-selects select:nth(1)').should('not.have.value');
-      cy.get('.grouping-selects select:nth(2)').should('not.have.value');
-    });
+    cy.get('@detailContainer')
+      .find('[data-test=assignee-btn]')
+      .click()
+      .then(() => {
+        if (assignee === '') {
+          expect(alertStub.getCall(0)).to.be.calledWith('No one is assigned to this task.');
+        } else {
+          expect(alertStub.getCall(0)).to.be.calledWith(`Assignee on this task is: ${assignee.toUpperCase()}`);
+        }
+      });
   });
 
-  describe('Column Picker tests', () => {
-    it('should open Column Picker from 2nd header column and hide Title & Duration which will hide Common Factor Group as well', () => {
-      const fullTitlesWithGroupNames = [
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-      ];
+  it('should click on the "Call Parent Method" button and expect a Bootstrap Alert to show up with some text containing the Task 2', () => {
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
 
-      cy.get('#grid19').find('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('@detailContainer').find('[data-test=parent-btn]').click();
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+    cy.get('.alert-info[data-test=flash-msg]').contains('We just called Parent Method from the Row Detail Child Component on Task 2');
+  });
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children('li:nth-child(1)')
-        .children('label')
-        .should('contain', 'Title')
-        .click();
+  it('should click on the "Delete Row" button and expect the Task 2 to be deleted from the grid', () => {
+    const expectedTasks = ['Task 0', 'Task 1', 'Task 3', 'Task 4', 'Task 5'];
 
-      cy.get('.slick-column-picker .close').click();
-    });
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
 
-    it('should open Column Picker from 2nd header column name and hide Duration which will hide Common Factor Group as well', () => {
-      const fullTitlesWithGroupNames = [
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-      ];
+    cy.get('@detailContainer').find('[data-test=delete-btn]').click();
 
-      cy.get('#grid19').find('.slick-header-column:nth(1) .slick-column-name').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+    cy.get('#grid19')
+      .find('.slick-row')
+      .each(($row, index) => {
+        if (index > expectedTasks.length - 1) {
+          return;
+        }
+        cy.wrap($row).children('.slick-cell:nth(1)').first().should('contain', expectedTasks[index]);
+      });
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children('li:nth-child(2)')
-        .children('label')
-        .should('contain', 'Duration')
-        .click();
+    cy.get('.alert-danger[data-test=flash-msg]').contains('Deleted row with Task 2');
+  });
 
-      cy.get('.slick-column-picker .close').click();
-    });
+  it('should open a few Row Details and expect them to be closed after clicking on the "Close All Row Details" button', () => {
+    const expectedTasks = ['Task 0', 'Task 1', 'Task 3', 'Task 4', 'Task 5'];
 
-    it('should expect headers to be without Title/Duration and pre-headers without Common Factor Group header titles', () => {
-      const preHeadersWithoutFactor = ['Period', 'Analysis'];
-      const titlesWithoutTitleDuration = ['Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven'];
+    cy.get('#grid19').find('.slick-row:nth(2)').click();
 
-      // Column Pre-Headers without Common Factor group
-      cy.get('#grid19')
-        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
-        .children()
-        .each(($child, index) => expect($child.text()).to.eq(titlesWithoutTitleDuration[index]));
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_3 .container_3').as('detailContainer3');
 
-      // Column Headers without Title & Duration
-      cy.get('#grid19')
-        .find('.slick-preheader-panel .slick-header-columns')
-        .children()
-        .each(($child, index) => expect($child.text()).to.eq(preHeadersWithoutFactor[index]));
-    });
+    cy.get('@detailContainer3').find('h3').contains('Task 3');
 
-    it('should open Column Picker from Pre-Header column and show again Title column', () => {
-      const fullTitlesWithGroupNames = [
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-      ];
+    cy.get('#grid19').find('.slick-row:nth(0)').click();
 
-      cy.get('#grid19')
-        .find('.slick-preheader-panel .slick-header-column:nth(1)')
-        .trigger('mouseover')
-        .trigger('contextmenu')
-        .invoke('show');
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_0 .container_0').as('detailContainer0');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+    cy.get('@detailContainer0').find('h3').contains('Task 0');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children('li:nth-child(1)')
-        .children('label')
-        .should('contain', 'Title')
-        .click();
+    cy.get('[data-test=collapse-all-btn]').click();
 
-      // close picker & reopen from a pre-header column name instead
-      cy.get('.slick-column-picker .close').click();
-    });
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-    it('should open Column Picker from Pre-Header column name and show again Duration column', () => {
-      const fullTitlesWithGroupNames = [
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-      ];
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_0 .container_0').should('not.exist');
 
-      cy.get('#grid19')
-        .find('.slick-preheader-panel .slick-header-column:nth(1)')
-        .trigger('mouseover')
-        .trigger('contextmenu')
-        .invoke('show');
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_1 .container_1').should('not.exist');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+    cy.get('#grid19')
+      .find('.slick-row')
+      .each(($row, index) => {
+        if (index > expectedTasks.length - 1) {
+          return;
+        }
+        cy.wrap($row).children('.slick-cell:nth(1)').first().should('contain', expectedTasks[index]);
+      });
+  });
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children('li:nth-child(2)')
-        .children('label')
-        .should('contain', 'Duration')
-        .click();
+  it('should open a few Row Details, then sort by Title and expect all Row Details to be closed afterward', () => {
+    const expectedTasks = ['Task 0', 'Task 1', 'Task 10', 'Task 100', 'Task 101', 'Task 102', 'Task 103', 'Task 104'];
 
-      cy.get('.slick-column-picker .close').click();
-    });
+    cy.get('#grid19').find('.slick-row:nth(0)').click();
 
-    it('should expect header titles to show again Title/Duration and pre-headers with Common Factor Group header titles', () => {
-      const preHeadersWithFactor = ['Common Factor', 'Period', 'Analysis', ''];
-      const titlesWithTitleDuration = ['Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven'];
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_0 .container_0').as('detailContainer0');
 
-      // Column Pre-Headers without Common Factor group
-      cy.get('#grid19')
-        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
-        .children()
-        .each(($child, index) => expect($child.text()).to.eq(titlesWithTitleDuration[index]));
+    cy.get('@detailContainer0').find('h3').contains('Task 0');
 
-      // Column Headers without Title & Duration
-      cy.get('#grid19')
-        .find('.slick-preheader-panel .slick-header-columns')
-        .children()
-        .each(($child, index) => expect($child.text()).to.eq(preHeadersWithFactor[index]));
-    });
+    cy.get('#grid19').find('.slick-row:nth(9)').click();
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_3 .container_3').as('detailContainer3');
+
+    cy.get('@detailContainer3').find('h3').contains('Task 3');
+
+    cy.get('#slickGridContainer-grid19')
+      .find('.slick-header-column:nth(1)')
+      .trigger('mouseover')
+      .children('.slick-header-menu-button')
+      .should('be.hidden')
+      .invoke('show')
+      .click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list')
+      .should('be.visible')
+      .children('.slick-menu-item:nth-of-type(4)')
+      .children('.slick-menu-content')
+      .should('contain', 'Sort Descending')
+      .click();
+
+    cy.get('#slickGridContainer-grid19')
+      .find('.slick-header-column:nth(1)')
+      .trigger('mouseover')
+      .children('.slick-header-menu-button')
+      .invoke('show')
+      .click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list')
+      .should('be.visible')
+      .children('.slick-menu-item:nth-of-type(3)')
+      .children('.slick-menu-content')
+      .should('contain', 'Sort Ascending')
+      .click();
+
+    cy.get('#grid19').find('.slick-header-column:nth(1)').find('.slick-sort-indicator-asc').should('have.length', 1);
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_0 .container_0').should('not.exist');
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_3 .container_3').should('not.exist');
+
+    cy.get('#grid19')
+      .find('.slick-row')
+      .each(($row, index) => {
+        if (index > expectedTasks.length - 1) {
+          return;
+        }
+        cy.wrap($row).children('.slick-cell:nth(1)').first().should('contain', expectedTasks[index]);
+      });
+  });
+
+  it('should click open Row Detail of Task 1 and Task 101 then type a title filter of "Task 101" and expect Row Detail to be opened and still be rendered', () => {
+    cy.get('#grid19').find('.slick-row:nth(4)').click();
+
+    cy.get('#grid19').find('.slick-row:nth(1)').click();
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_101').as('detailContainer');
+
+    cy.get('@detailContainer').find('h3').contains('Task 101');
+
+    cy.get('.search-filter.filter-title').type('Task 101');
+  });
+
+  it('should call "Clear all Filters" from Grid Menu and expect "Task 101" to still be rendered correctly', () => {
+    cy.get('#grid19').find('button.slick-grid-menu-button').trigger('click').click();
+
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_101').as('detailContainer');
+
+    cy.get('@detailContainer').find('h3').contains('Task 101');
+  });
+
+  it('should call "Clear all Sorting" from Grid Menu and expect all row details to be collapsed', () => {
+    cy.get('#grid19').find('button.slick-grid-menu-button').trigger('click').click();
+
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').find('span').contains('Clear all Sorting').click();
+
+    cy.get('#grid19').find('.slick-sort-indicator-asc').should('have.length', 0);
+
+    cy.get('.dynamic-cell-detail').should('have.length', 0);
+  });
+
+  it('should close all row details & make grid editable', () => {
+    cy.get('[data-test="collapse-all-btn"]').click();
+    cy.get('[data-test="editable-grid-btn"]').click();
+  });
+
+  it('should click on 5th row detail open icon and expect it to open', () => {
+    cy.get('#grid19').find('.slick-row:nth(4) .slick-cell:nth(0)').click();
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_101').as('detailContainer');
+
+    cy.get('@detailContainer').find('h3').contains('Task 101');
+  });
+
+  it('should click on 2nd row "Title" cell to edit it and expect Task 5 row detail to get closed', () => {
+    cy.get('#grid19').find('.slick-row:nth(1) .slick-cell:nth(1)').click();
+
+    cy.get('.editor-title')
+      .invoke('val')
+      .then((text) => expect(text).to.eq('Task 1'));
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_101').should('not.exist');
   });
 });

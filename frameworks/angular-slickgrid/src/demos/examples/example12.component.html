@@ -1,0 +1,98 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 12: Localization (i18n)
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">
+    Support multiple locales with the ngx-translate plugin, following these steps (<a
+      href="https://ghiscoding.gitbook.io/angular-slickgrid/localization/localization-with-ngx-translate"
+      target="_blank"
+      >Wiki docs</a
+    >)
+    <ol class="small">
+      <li>You first need to "enableTranslate" in the Grid Options</li>
+      <li>In the Column Definitions, you have following options</li>
+      <ul>
+        <li>To translate a header title, use "nameKey" with a translate key (nameKey: 'TITLE')</li>
+        <li>For the cell values, you need to use a Formatter, there's 2 ways of doing it</li>
+        <ul>
+          <li>formatter: myCustomTranslateFormatter <b>&lt;= "Title" column uses it</b></li>
+          <li>formatter: Formatters.translate, i18n: this.translateService <b>&lt;= "Completed" column uses it</b></li>
+        </ul>
+      </ul>
+      <li>For date localization, you need to create your own custom formatter.</li>
+      <ul>
+        <li>You can easily implement logic to switch between Formatters "dateIso" or "dateUs", depending on current locale.</li>
+      </ul>
+      <li>For the Select (dropdown) filter, you can fill in the "labelKey" property, if found it will use it, else it will use "label"</li>
+      <ul>
+        <li>
+          What if your select options have totally different value/label pair? In this case, you can use the
+          <b>customStructure: &#123; label: 'customLabel', value: 'customValue'&#125;</b> to change the property name(s) to use.'
+        </li>
+        <li>What if you want to use "customStructure" and translation? Simply pass this flag <b>enableTranslateLabel: true</b></li>
+        <li>
+          More info on the Select Filter
+          <a href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/filters/select-filter" target="_blank"
+            >Wiki page</a
+          >
+        </li>
+      </ul>
+      <li>
+        For more info about "Download to File", read the
+        <a href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/export-to-text-file" target="_blank">Wiki page</a>
+      </li>
+    </ol>
+  </div>
+
+  <hr />
+
+  <div class="row">
+    <div class="col-sm-12">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="language-button" (click)="switchLanguage()">
+        <i class="mdi mdi-translate"></i>
+        Switch Language
+      </button>
+      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage + '.json' }}</span>
+
+      <span style="margin-left: 20px">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="exportToFile('csv')">
+          <i class="mdi mdi-download"></i>
+          Download to CSV
+        </button>
+        <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="exportToFile('txt')">
+          <i class="mdi mdi-download"></i>
+          Download to Text
+        </button>
+        <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="exportToExcel()">
+          <i class="mdi mdi-file-excel-outline text-success"></i>
+          Download to Excel
+        </button>
+        <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="dynamicallyAddTitleHeader()">
+          <i class="mdi mdi-shape-square-plus"></i>
+          Dynamically Duplicate Title Column
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <div class="col-sm-12">
+    <angular-slickgrid
+      gridId="grid12"
+      [dataset]="dataset"
+      [options]="gridOptions"
+      [columns]="columnDefinitions"
+      (onAngularGridCreated)="angularGridReady($event.detail)"
+      (onGridStateChanged)="gridStateChanged($event.detail)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>

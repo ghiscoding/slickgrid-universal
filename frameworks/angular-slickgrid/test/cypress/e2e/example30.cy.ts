@@ -29,7 +29,7 @@ describe('Example 30  Composite Editor Modal', () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/composite-editor`);
+    cy.visit(`${Cypress.config('baseUrl')}/example30`);
     cy.get('h2').should('contain', 'Example 30: Composite Editor Modal');
   });
 

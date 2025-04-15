@@ -17,8 +17,6 @@ import { Logger } from './swt-logger.service';
   standalone: false,
 })
 export class SwtCommonGridTestComponent implements OnInit, AfterViewInit {
-  title = 'Example 13: Custom Backend Server Pagination';
-  subTitle = `A simple component to show that it is possible to create a custom Backend Service for any other backend querying, the example below is for Oracle.`;
   testurl = 'http://127.0.0.1:8080/grid!display.do?';
   currentUrl = this.testurl;
 

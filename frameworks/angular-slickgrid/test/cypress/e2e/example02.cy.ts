@@ -4,7 +4,7 @@ describe('Example 2 - Grid with Formatters', () => {
   const GRID_ROW_HEIGHT = 35;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/formatter`);
+    cy.visit(`${Cypress.config('baseUrl')}/example02`);
     cy.get('h2').should('contain', 'Example 2: Grid with Formatters');
   });
 

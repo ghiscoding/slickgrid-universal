@@ -1,193 +1,261 @@
-describe('Example 27 - GraphQL Basic API without Pagination', () => {
-  const GRID_ROW_HEIGHT = 35;
-  const fullPreTitles = ['Country', 'Language', 'Continent'];
-  const fullTitles = ['Code', 'Name', 'Native', 'Phone Area Code', 'Currency', 'Emoji', 'Names', 'Native', 'Codes', 'Name', 'Code'];
+import { changeTimezone, zeroPadding } from '../plugins/utilities';
+import { removeExtraSpaces } from '../plugins/utilities';
+
+describe('Example 27 - Tree Data (from a flat dataset with parentId references)', () => {
+  const GRID_ROW_HEIGHT = 40;
+  const titles = ['Title', 'Duration', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/graphql-nopage`);
-    cy.get('h2').should('contain', 'Example 27: GraphQL Basic API without Pagination');
+    cy.visit(`${Cypress.config('baseUrl')}/example27`);
+    cy.get('h2').should('contain', 'Example 27: Tree Data');
+    cy.get('h2').should('contain', 'from a flat dataset with parentId references');
   });
 
-  it('should display a processing alert which will change to done', () => {
-    // cy.get('[data-test=status]').should('contain', 'processing');
-    cy.get('[data-test=status]').should('contain', 'finished');
-  });
-
-  it('should have exact Column Pre-Header & Column Header Titles in the grid', () => {
+  it('should have exact column titles in grid', () => {
     cy.get('#grid27')
-      .find('.slick-header-columns:nth(0)')
+      .find('.slick-header-columns')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(titles[index]));
+  });
+
+  it('should expect all rows to be collapsed on first page load', () => {
+    cy.get('#grid27').find('.slick-group-toggle.expanded').should('have.length', 0);
 
     cy.get('#grid27')
-      .find('.slick-header-columns:nth(1)')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-group-toggle.collapsed')
+      .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
-  it('should expect first 3 rows to be an exact match of data provided by the external GraphQL API', () => {
-    cy.get('.right-footer.metrics').contains('250 of 250 items');
+  it('should have a Grid Preset Filter on 3rd column "% Complete" and expect all rows to be filtered as well', () => {
+    cy.get('.input-group-text.highest-range-percentComplete').contains('25');
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'AD');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Andorra');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Andorra');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '376');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', 'EUR');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Catalan');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).should('contain', 'Català');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'ca');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).should('contain', 'EU');
-
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'AE');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'United Arab Emirates');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should(
-      'contain',
-      'دولة الإمارات العربية المتحدة'
-    );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should('contain', '971');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).should('contain', 'AED');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`).should('contain', 'Arabic');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`).should('contain', 'العربية');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`).should('contain', 'ar');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(9)`).should('contain', 'Asia');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(10)`).should('contain', 'AS');
-
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'AF');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Afghanistan');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(2)`).should('contain', 'افغانستان');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(3)`).should('contain', '93');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`).should('contain', 'AFN');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`).should('contain', 'Pashto, Uzbek, Turkmen');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(7)`).should(
-      'contain',
-      'پښتو, Ўзбек, Туркмен / تركمن'
-    );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(8)`).should('contain', 'ps, uz, tk');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(9)`).should('contain', 'Asia');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(10)`).should('contain', 'AS');
+    cy.get('.search-filter.filter-percentComplete').find('.input-group-addon.operator select').contains('>=');
   });
 
-  it('should sort by country name and expect first 2 rows as Afghanistan and Albania', () => {
-    cy.get(`.slick-header-columns:nth(1) .slick-header-column:nth-child(2)`).contains('Name').click();
+  it('should expand all rows from "Expand All" button', () => {
+    cy.get('[data-test=expand-all-btn]').contains('Expand All').click();
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'AF');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Afghanistan');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'افغانستان');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '93');
+    cy.get('#grid27').find('.slick-group-toggle.collapsed').should('have.length', 0);
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'AL');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Albania');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Shqipëria');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should('contain', '355');
+    cy.get('#grid27')
+      .find('.slick-group-toggle.expanded')
+      .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
-  it('should filter by Language Codes "fr, de" and expect 2 rows of data in the grid', () => {
-    cy.get('.search-filter.filter-languageCode').type('fr, de');
+  it('should collapsed all rows from "Collapse All" button', () => {
+    cy.get('[data-test=collapse-all-btn]').contains('Collapse All').click();
 
-    cy.get('.right-footer.metrics').contains('2 of 250 items');
+    cy.get('#grid27').find('.slick-group-toggle.expanded').should('have.length', 0);
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'BE');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'België');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '32');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', 'EUR');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Dutch, French, German');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).should(
-      'contain',
-      'Nederlands, Français, Deutsch'
-    );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'nl, fr, de');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).should('contain', 'EU');
-
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'LU');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Luxembourg');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Luxembourg');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should('contain', '352');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).should('contain', 'EUR');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`).should(
-      'contain',
-      'French, German, Luxembourgish'
-    );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`).should(
-      'contain',
-      'Français, Deutsch, Lëtzebuergesch'
-    );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`).should('contain', 'fr, de, lb');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(10)`).should('contain', 'EU');
+    cy.get('#grid27')
+      .find('.slick-group-toggle.collapsed')
+      .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
-  it('should Clear all Filters and expect all rows to be back', () => {
-    cy.get('#grid27').find('button.slick-grid-menu-button').click();
+  it('should collapsed all rows from "Collapse All" context menu', () => {
+    cy.get('#grid27').contains('5 days');
+
+    cy.get('#grid27').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
+
+    cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      .find('.slick-menu-item')
+      .find('.slick-menu-content')
+      .contains('Collapse all Groups')
+      .click();
+
+    cy.get('#grid27').find('.slick-group-toggle.expanded').should('have.length', 0);
+
+    cy.get('#grid27')
+      .find('.slick-group-toggle.collapsed')
+      .should(($rows) => expect($rows).to.have.length.greaterThan(0));
+  });
+
+  it('should collapsed all rows from "Expand All" context menu', () => {
+    cy.get('#grid27').contains('5 days');
+
+    cy.get('#grid27').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
+
+    cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      .find('.slick-menu-item')
+      .find('.slick-menu-content')
+      .contains('Expand all Groups')
+      .click();
+
+    cy.get('#grid27').find('.slick-group-toggle.collapsed').should('have.length', 0);
+
+    cy.get('#grid27')
+      .find('.slick-group-toggle.expanded')
+      .should(($rows) => expect($rows).to.have.length.greaterThan(0));
+  });
+
+  it('should have data filtered, with "% Complete" >=25, and not show the full item count in the footer', () => {
+    cy.get('.search-filter.filter-percentComplete .operator .form-control').should('have.value', '>=');
+
+    cy.get('input.slider-filter-input')
+      .invoke('val')
+      .then((text) => expect(text).to.eq('25'));
+
+    cy.get('.search-filter .input-group-text').should(($span) => expect($span.text()).to.eq('25'));
+
+    cy.get('.right-footer').should(($span) => {
+      const text = removeExtraSpaces($span.text()); // remove all white spaces
+      expect(text).not.to.eq('500 of 500 items');
+    });
+  });
+
+  it('should open the Grid Menu "Clear all Filters" command', () => {
+    cy.get('#grid27').find('button.slick-grid-menu-button').trigger('click').click();
 
     cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
-
-    cy.get('.right-footer.metrics').contains('250 of 250 items');
   });
 
-  it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
-    cy.get('input.search-filter.filter-countryName').type('b..e');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Bosnia and Herzegovina');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', 'Barbados');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Bangladesh');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
+  it('should no longer have filters and it should show the full item count in the footer', () => {
+    cy.get('.search-filter.filter-percentComplete .operator .form-control').should('have.value', '');
+
+    cy.get('input.slider-filter-input')
+      .invoke('val')
+      .then((text) => expect(text).to.eq('0'));
+
+    cy.get('.search-filter .input-group-text').should(($span) => expect($span.text()).to.eq('0'));
+
+    cy.get('.right-footer').should(($span) => {
+      const text = removeExtraSpaces($span.text()); // remove all white spaces
+      expect(text).to.eq('500 of 500 items');
+    });
   });
 
-  it('should filter Language Native with "Aymar" and expect only 1 row in the grid', () => {
-    cy.get('div.ms-filter.filter-languageNative').trigger('click');
+  it('should click on the "Dynamically Change Filter" button and expect all child items to have a "% Complete" lower than 40', () => {
+    cy.get('[data-test="change-filter-dynamically"]').click();
+    cy.get('[data-test=expand-all-btn]').contains('Expand All').click();
 
-    cy.get('.ms-search:visible').type('Aymar');
+    const readLineCount = 10;
+    for (let row = 0; row < readLineCount; row++) {
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * row}px);"]`).should(($elm) => {
+        // only read the percent complete value if it's not a parent
+        const $slickGroupToggleNotExpanded = $elm.children('.slick-cell:nth(0)').children('.slick-group-toggle:not(.expanded)');
+        if ($slickGroupToggleNotExpanded.length > 1) {
+          const percentComplete = $elm.children('.slick-cell:nth(2)').first().text();
+          expect(+percentComplete).to.be.lt(40);
+        }
+      });
+    }
+  });
 
-    cy.get('.ms-drop:visible').contains('Aymar').click();
+  it('should open the Grid Menu "Clear all Filters" command', () => {
+    cy.get('#grid27').find('button.slick-grid-menu-button').trigger('click').click();
 
-    cy.get('.ms-ok-button:visible').click();
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
+  });
 
-    cy.get('.right-footer.metrics').contains('1 of 250 items');
+  it('should add an item (Task 500) in the first parent it finds and so we should expect it to be inserted at tree level 1', () => {
+    cy.get('[data-test=add-item-btn]').contains('Add New Item').click();
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'BO');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Bolivia');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Bolivia');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', '591');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', 'BOB,BOV');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Spanish, Aymara, Quechua');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).should(
+    cy.get('.slick-tree-title[level=1]').get('.slick-cell').contains('Task 500');
+  });
+
+  it('should be able to update the 1st row item (Task 0)', () => {
+    cy.get('[data-test=update-item-btn]').contains('Update 1st Row Item').click();
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+
+    const now = new Date();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const today = changeTimezone(now, tz);
+
+    const currentDate = today.getDate();
+    let currentMonth: number | string = today.getMonth() + 1; // month is zero based, let's add 1 to it
+    if (currentMonth < 10) {
+      currentMonth = `0${currentMonth}`; // add zero padding
+    }
+    const currentYear = today.getFullYear();
+
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', '11 days');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', '77%');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should(
       'contain',
-      'Español, Aymar, Runa Simi'
+      `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`
     );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'es, ay, qu');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'South America');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).should('contain', 'SA');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should(
+      'contain',
+      `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`
+    );
   });
 
-  it('should Clear all Filters and expect all rows to be back', () => {
+  it('should collapse the Tree and not expect to see the newly inserted item (Task 500) because all child will be collapsed', () => {
+    cy.get('[data-test=collapse-all-btn]').contains('Collapse All').click();
+
+    cy.get('.slick-tree-title[level=1]').should('have.length', 0);
+
+    cy.get('.slick-tree-title')
+      .get('.slick-cell')
+      .contains(/^((?!Task 500).)*$/);
+  });
+
+  it('should open the Grid Menu "Clear all Filters" command', () => {
     cy.get('#grid27').find('button.slick-grid-menu-button').trigger('click').click();
 
     cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
 
-    cy.get('.right-footer.metrics').contains('250 of 250 items');
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
   });
 
-  it('should filter Language Native with "French" language and expect only 40 rows in the grid', () => {
-    cy.get('div.ms-filter.filter-languageName').trigger('click');
+  it('should be able to open "Task 1" and "Task 3" parents', () => {
+    /*
+      we should find this structure
+      Task 0
+        Task 1
+          Task 2
+          Task 3
+            Task 4
+        ...
+    */
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
+      'have.length',
+      1
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click({
+      force: true,
+    });
 
-    cy.get('.ms-search:visible').type('French');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 2');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 3');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
+      'have.length',
+      1
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click({
+      force: true,
+    });
+  });
 
-    cy.get('.ms-drop:visible').contains('French').click();
+  it('should be able to click on the "Collapse All (wihout event)" button', () => {
+    cy.get('[data-test=collapse-all-noevent-btn]').contains('Collapse All (without triggering event)').click();
+  });
 
-    cy.get('.ms-ok-button:visible').click();
+  it('should be able to click on the "Reapply Previous Toggled Items" button and expect "Task 1" and "Task 3" parents to become open (via Grid State change) while every other parents remains collapsed', () => {
+    cy.get('[data-test=reapply-toggled-items-btn]').contains('Reapply Previous Toggled Items').click({ force: true });
 
-    cy.get('.right-footer.metrics').contains('44 of 250 items');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+      'have.length',
+      1
+    );
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Belgium');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('contain', 'Dutch, French, German');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`).should('contain', 'nl, fr, de');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Europe');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 2');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 3');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+      'have.length',
+      1
+    );
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Benin');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(6)`).should('contain', 'French');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(8)`).should('contain', 'fr');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(9)`).should('contain', 'Africa');
+    cy.get(`#grid27 .slick-group-toggle.expanded`).should('have.length', 2);
+  });
+
+  it('should be able to click on "Dynamically Toggle First Parent" expect only the first parent item to get collapsed', () => {
+    cy.get('[data-test=dynamically-toggle-first-parent-btn]').contains('Dynamically Toggle First Parent').click();
+
+    cy.get(`#grid27 .slick-group-toggle.expanded`).should('have.length', 0);
   });
 });

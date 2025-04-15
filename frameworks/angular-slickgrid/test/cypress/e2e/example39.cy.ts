@@ -2,7 +2,7 @@ import { removeWhitespaces } from '../plugins/utilities';
 
 describe('Example 39 - Infinite Scroll with GraphQL', () => {
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/infinite-graphql`);
+    cy.visit(`${Cypress.config('baseUrl')}/example39`);
     cy.get('h2').should('contain', 'Example 39: GraphQL Backend Service with Infinite Scroll');
   });
 

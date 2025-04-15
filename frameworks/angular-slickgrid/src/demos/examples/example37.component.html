@@ -1,0 +1,30 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 37: Footer Totals Row
+    <button class="btn btn-outline-secondary btn-sm ms-3" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
+    </button>
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-footer-totals.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">Display a totals row at the end of the grid.</div>
+
+  <angular-slickgrid
+    gridId="grid37"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+    (onCellChange)="handleOnCellChange($event.detail.eventData, $event.detail.args)"
+    (onColumnsReordered)="handleOnColumnsReordered()"
+  >
+  </angular-slickgrid>
+</div>

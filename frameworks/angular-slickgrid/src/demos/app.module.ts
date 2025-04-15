@@ -13,57 +13,57 @@ import { AppComponent } from './app.component';
 import { AppRoutingRoutingModule } from './app-routing.module';
 import { CustomTitleFormatterComponent } from './examples/custom-titleFormatter.component';
 import { CustomButtonFormatterComponent } from './examples/custom-buttonFormatter.component';
-import { CustomFooterComponent, GridHeaderFooterComponent } from './examples/grid-header-footer.component';
+import { Example1Component } from './examples/example01.component';
+import { Example2Component } from './examples/example02.component';
+import { Example3Component } from './examples/example03.component';
+import { Example4Component } from './examples/example04.component';
+import { Example5Component } from './examples/example05.component';
+import { Example6Component } from './examples/example06.component';
+import { Example7Component } from './examples/example07.component';
+import { Example8Component } from './examples/example08.component';
+import { Example9Component } from './examples/example09.component';
+import { Example10Component } from './examples/example10.component';
+import { Example11Component } from './examples/example11.component';
+import { Example12Component } from './examples/example12.component';
+import { Example13Component } from './examples/example13.component';
+import { Example14Component } from './examples/example14.component';
+import { Example15Component } from './examples/example15.component';
+import { Example16Component } from './examples/example16.component';
+import { Example17Component } from './examples/example17.component';
+import { Example18Component } from './examples/example18.component';
+import { Example19Component } from './examples/example19.component';
+import { Example20Component } from './examples/example20.component';
+import { Example21Component } from './examples/example21.component';
+import { Example22Component } from './examples/example22.component';
+import { Example23Component } from './examples/example23.component';
+import { Example24Component } from './examples/example24.component';
+import { Example25Component } from './examples/example25.component';
+import { Example26Component } from './examples/example26.component';
+import { Example27Component } from './examples/example27.component';
+import { Example28Component } from './examples/example28.component';
+import { CustomFooterComponent, Example29Component } from './examples/example29.component';
+import { Example30Component } from './examples/example30.component';
+import { Example32Component } from './examples/example32.component';
+import { Example33Component } from './examples/example33.component';
+import { Example34Component } from './examples/example34.component';
+import { Example35Component } from './examples/example35.component';
+import { Example36Component } from './examples/example36.component';
+import { Example37Component } from './examples/example37.component';
+import { Example38Component } from './examples/example38.component';
+import { Example39Component } from './examples/example39.component';
+import { Example40Component } from './examples/example40.component';
+import { Example41Component } from './examples/example41.component';
+import { Example42Component } from './examples/example42.component';
+import { Example43Component } from './examples/example43.component';
+import { Example44Component } from './examples/example44.component';
+import { Example45Component } from './examples/example45.component';
+import { Example45DetailComponent } from './examples/example45-detail.component';
 import { EditorNgSelectComponent } from './examples/editor-ng-select.component';
 import { FilterNgSelectComponent } from './examples/filter-ng-select.component';
-import { GridAddItemComponent } from './examples/grid-additem.component';
-import { GridAngularComponent } from './examples/grid-angular.component';
-import { GridAutoHeightComponent } from './examples/grid-autoheight.component';
-import { GridBaseRowEditingComponent } from './examples/grid-base-row-editing.component';
-import { GridBasicComponent } from './examples/grid-basic.component';
-import { GridClientSideComponent } from './examples/grid-clientside.component';
-import { GridColspanComponent } from './examples/grid-colspan.component';
-import { GridContextMenuComponent } from './examples/grid-contextmenu.component';
-import { GridCompositeEditorComponent } from './examples/grid-composite-editor.component';
-import { GridCustomPaginationComponent } from './examples/grid-custom-pagination.component';
-import { GridCustomTooltipComponent } from './examples/grid-custom-tooltip.component';
-import { GridDraggableGroupingComponent } from './examples/grid-draggrouping.component';
-import { GridDragRecycleComponent } from './examples/grid-drag-recycle.component';
-import { GridEditorComponent } from './examples/grid-editor.component';
-import { GridExcelFormulaComponent } from './examples/grid-excel-formula.component';
-import { GridFooterTotalsComponent } from './examples/grid-footer-totals.component';
-import { GridFormatterComponent } from './examples/grid-formatter.component';
-import { GridFrozenComponent } from './examples/grid-frozen.component';
-import { GridGraphqlComponent } from './examples/grid-graphql.component';
-import { GridGraphqlWithoutPaginationComponent } from './examples/grid-graphql-nopage.component';
-import { GridGroupingComponent } from './examples/grid-grouping.component';
-import { GridHeaderButtonComponent } from './examples/grid-headerbutton.component';
-import { GridHeaderMenuComponent } from './examples/grid-headermenu.component';
-import { GridInfiniteGraphqlComponent } from './examples/grid-infinite-graphql.component';
-import { GridInfiniteJsonComponent } from './examples/grid-infinite-json.component';
-import { GridInfiniteOdataComponent } from './examples/grid-infinite-odata.component';
-import { GridLocalizationComponent } from './examples/grid-localization.component';
-import { GridMenuComponent } from './examples/grid-menu.component';
-import { GridOdataComponent } from './examples/grid-odata.component';
-import { GridRangeComponent } from './examples/grid-range.component';
-import { GridResizeByContentComponent } from './examples/grid-resize-by-content.component';
-import { GridRowDetailComponent } from './examples/grid-rowdetail.component';
-import { GridRowMoveComponent } from './examples/grid-rowmove.component';
-import { GridRowSelectionComponent } from './examples/grid-rowselection.component';
-import { GridStateComponent } from './examples/grid-state.component';
-import { GridTabsComponent } from './examples/grid-tabs.component';
-import { GridTradingComponent } from './examples/grid-trading.component';
-import { GridTreeDataHierarchicalComponent } from './examples/grid-tree-data-hierarchical.component';
-import { GridTreeDataParentChildComponent } from './examples/grid-tree-data-parent-child.component';
-import { Grid18Component } from './examples/grid18.component';
-import { Grid43Component } from './examples/grid43.component';
-import { Grid44Component } from './examples/grid44.component';
-import { Grid45Component } from './examples/grid45.component';
 import { HomeComponent } from './examples/home.component';
 import { CustomPagerComponent } from './examples/grid-custom-pager.component';
+import { Example19RowDetailComponent } from './examples/example19-rowdetail.component';
 import { RowDetailPreloadComponent } from './examples/rowdetail-preload.component';
-import { RowDetailViewComponent } from './examples/rowdetail-view.component';
-import { Grid45DetailComponent } from './examples/grid45-detail.component';
 
 import { SwtCommonGridTestComponent } from './examples/swt-common-grid-test.component';
 import { SwtCommonGridPaginationComponent } from './examples/swt-common-grid-pagination.component';
@@ -106,54 +106,54 @@ export function appInitializerFactory(translate: TranslateService, injector: Inj
     CustomPagerComponent,
     CustomTitleFormatterComponent,
     EditorNgSelectComponent,
+    Example1Component,
+    Example2Component,
+    Example3Component,
+    Example4Component,
+    Example5Component,
+    Example6Component,
+    Example7Component,
+    Example8Component,
+    Example9Component,
+    Example10Component,
+    Example11Component,
+    Example12Component,
+    Example13Component,
+    Example14Component,
+    Example15Component,
+    Example16Component,
+    Example17Component,
+    Example18Component,
+    Example19Component,
+    Example19RowDetailComponent,
+    Example20Component,
+    Example21Component,
+    Example22Component,
+    Example23Component,
+    Example24Component,
+    Example25Component,
+    Example26Component,
+    Example27Component,
+    Example28Component,
+    Example29Component,
+    Example30Component,
+    Example32Component,
+    Example33Component,
+    Example34Component,
+    Example35Component,
+    Example36Component,
+    Example37Component,
+    Example38Component,
+    Example39Component,
+    Example40Component,
+    Example41Component,
+    Example42Component,
+    Example43Component,
+    Example44Component,
+    Example45Component,
+    Example45DetailComponent,
     FilterNgSelectComponent,
-    GridAddItemComponent,
-    GridAngularComponent,
-    GridAutoHeightComponent,
-    GridBaseRowEditingComponent,
-    GridBasicComponent,
-    GridClientSideComponent,
-    GridColspanComponent,
-    GridCompositeEditorComponent,
-    GridContextMenuComponent,
-    GridCustomPaginationComponent,
-    GridCustomTooltipComponent,
-    GridDraggableGroupingComponent,
-    GridDragRecycleComponent,
-    GridEditorComponent,
-    GridExcelFormulaComponent,
-    GridFooterTotalsComponent,
-    GridFormatterComponent,
-    GridFrozenComponent,
-    GridGraphqlComponent,
-    GridGraphqlWithoutPaginationComponent,
-    GridGroupingComponent,
-    GridHeaderButtonComponent,
-    GridHeaderFooterComponent,
-    GridHeaderMenuComponent,
-    GridInfiniteGraphqlComponent,
-    GridInfiniteJsonComponent,
-    GridInfiniteOdataComponent,
-    GridLocalizationComponent,
-    GridMenuComponent,
-    GridOdataComponent,
-    GridRangeComponent,
-    GridResizeByContentComponent,
-    GridRowDetailComponent,
-    GridRowMoveComponent,
-    GridRowSelectionComponent,
-    GridStateComponent,
-    GridTabsComponent,
-    GridTradingComponent,
-    GridTreeDataParentChildComponent,
-    GridTreeDataHierarchicalComponent,
-    Grid18Component,
-    Grid43Component,
-    Grid44Component,
-    Grid45Component,
-    Grid45DetailComponent,
     RowDetailPreloadComponent,
-    RowDetailViewComponent,
     SwtCommonGridTestComponent,
     SwtCommonGridPaginationComponent,
     SwtCommonGridComponent,

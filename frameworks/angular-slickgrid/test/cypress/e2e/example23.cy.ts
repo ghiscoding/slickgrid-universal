@@ -1,77 +1,259 @@
-describe('Example 23 - Grid AutoHeight', () => {
-  const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
-  const GRID_ROW_HEIGHT = 35;
+import { addDay, format, isAfter, isBefore, isEqual } from '@formkit/tempo';
 
+const presetMinComplete = 5;
+const presetMaxComplete = 80;
+const presetMinDuration = 4;
+const presetMaxDuration = 88;
+const today = new Date();
+const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
+const presetHighestDay = format(addDay(new Date(), today.getDate() < 14 ? 28 : 25), 'YYYY-MM-DD');
+
+function isBetween(inputDate: Date | string, minDate: Date | string, maxDate: Date | string, isInclusive = false) {
+  let valid = false;
+  if (isInclusive) {
+    valid = isEqual(inputDate, minDate) || isEqual(inputDate, maxDate);
+  }
+  if (!valid) {
+    valid = isAfter(inputDate, minDate) && isBefore(inputDate, maxDate);
+  }
+  return valid;
+}
+
+describe('Example 23 - Range Filters', () => {
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/autoheight`);
-    cy.get('h2').should('contain', 'Example 23: Grid AutoHeight');
+    cy.visit(`${Cypress.config('baseUrl')}/example23`);
+    cy.get('h2').should('contain', 'Example 23: Filtering from Range of Search Values');
   });
 
-  it('should have exact column titles in grid', () => {
-    cy.get('#slickGridContainer-grid23')
-      .find('.slick-header-columns')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
-  });
-
-  it('should search for Duration over 50 and expect rows to be that', () => {
-    cy.get('[data-test="search-column-list"]').select('Duration (days)', { force: true });
-
-    cy.get('[data-test="search-operator-list"]').select('>', { force: true });
-
-    cy.get('[data-test="search-value-input"]').type('50', { force: true });
+  it('should expect the grid to be sorted by "% Complete" descending and then by "Duration" ascending', () => {
+    cy.get('#grid23')
+      .get('.slick-header-column:nth(2)')
+      .find('.slick-sort-indicator-desc')
+      .should('have.length', 1)
+      .siblings('.slick-sort-indicator-numbered')
+      .contains('1');
 
     cy.get('#grid23')
-      .find('.slick-row .slick-cell:nth(1)')
-      .each(($child, index) => {
-        if (index > 10) {
-          return;
-        }
-        expect(+$child.text()).to.be.gt(50);
+      .get('.slick-header-column:nth(5)')
+      .find('.slick-sort-indicator-asc')
+      .should('have.length', 1)
+      .siblings('.slick-sort-indicator-numbered')
+      .contains('2');
+  });
+
+  it('should have "% Complete" fields within the range (inclusive) of the filters presets', () => {
+    cy.get('#grid23')
+      .find('.slick-row')
+      .each(($row) => {
+        cy.wrap($row)
+          .children('.slick-cell:nth(2)')
+          .each(($cell) => {
+            const value = parseInt($cell.text().trim(), 10);
+            if (!isNaN(value)) {
+              expect(value >= presetMinComplete).to.eq(true);
+              expect(value <= presetMaxComplete).to.eq(true);
+            }
+          });
       });
   });
 
-  it('should search for Duration below 50 and expect rows to be that', () => {
-    cy.get('[data-test="search-operator-list"]').select('<', { force: true });
-
-    cy.wait(200);
-
+  it('should have Finish Dates within the range (inclusive) of the filters presets', () => {
     cy.get('#grid23')
-      .find('.slick-row .slick-cell:nth(1)')
-      .each(($child, index) => {
-        if (index > 10) {
-          return;
-        }
-        expect(+$child.text()).to.be.lt(50);
+      .find('.slick-row')
+      .each(($row) => {
+        cy.wrap($row)
+          .children('.slick-cell:nth(4)')
+          .each(($cell) => {
+            const isDateBetween = isBetween($cell.text(), presetLowestDay, presetHighestDay, true);
+            expect(isDateBetween).to.eq(true);
+          });
       });
   });
 
-  it('should search for Title ending with text "5" expect rows to be (Task 5, 15, 25, ...)', () => {
-    cy.get('[data-test="clear-search-value"]').click();
-
-    cy.get('[data-test="search-column-list"]').select('Title', { force: true });
-
-    cy.get('[data-test="search-operator-list"]').select('EndsWith', { force: true });
-
-    cy.get('[data-test="search-value-input"]').type('5', { force: true });
-
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 5');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 15');
+  it('should have "Duration" fields within the range (exclusive by default) of the filters presets', () => {
+    cy.get('#grid23')
+      .find('.slick-row')
+      .each(($row) => {
+        cy.wrap($row)
+          .children('.slick-cell:nth(5)')
+          .each(($cell) => {
+            const value = parseInt($cell.text().trim(), 10);
+            if (!isNaN(value)) {
+              expect(value >= presetMinDuration).to.eq(true);
+              expect(value <= presetMaxDuration).to.eq(true);
+            }
+          });
+      });
   });
 
-  it('should type a filter which returns an empty dataset', () => {
-    cy.get('[data-test="search-value-input"]').clear().type('zzz');
+  it('should change "% Complete" filter range by using the slider left handle (min value) to make it a higher min value and expect all rows to be within new range', () => {
+    let newLowest = presetMinComplete;
+    let newHighest = presetMaxComplete;
+    const allowedBuffer = 0.8;
 
-    cy.get('.slick-empty-data-warning:visible').contains('No data to display.');
+    // first input is the lowest range
+    cy.get('.slider-filter-input:nth(0)').as('range').invoke('val', 10).trigger('change', { force: true });
+
+    cy.get('.lowest-range-percentComplete').then(($lowest) => {
+      newLowest = parseInt($lowest.text(), 10);
+    });
+
+    cy.get('.highest-range-percentComplete').then(($highest) => {
+      newHighest = parseInt($highest.text(), 10);
+    });
+
+    cy.wait(5);
+
+    cy.get('#grid23')
+      .find('.slick-row')
+      .each(($row, idx) => {
+        if (idx > 6) {
+          return;
+        }
+        cy.wrap($row)
+          .children('.slick-cell:nth(2)')
+          .each(($cell) => {
+            const value = parseInt($cell.text().trim(), 10);
+            if (!isNaN(value) && $cell.text() !== '') {
+              expect(value >= newLowest - allowedBuffer).to.eq(true);
+              expect(value <= newHighest + allowedBuffer).to.eq(true);
+            }
+          });
+      });
   });
 
-  it('should clear search input and expect empty dataset warning to go away and also expect data back (Task 0, 1, 2, ...)', () => {
-    cy.get('[data-test="clear-search-value"]').click();
+  it('should change the "Finish" date in the picker and expect all rows to be within new dates range', () => {
+    cy.get('.date-picker.search-filter.filter-finish').click();
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 2');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 3');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 4');
+    cy.get('[data-vc-date-selected="first"]').should('exist');
+
+    cy.get('[data-vc-date-selected="middle"]').should('have.length.gte', 2);
+
+    cy.get('[data-vc-date-selected="last"]').should('exist');
+  });
+
+  it('should change the "Duration" input filter and expect all rows to be within new range', () => {
+    const newMin = 10;
+    const newMax = 40;
+
+    cy.get('[data-test=clear-filters]').click({ force: true });
+
+    cy.get('.search-filter.filter-duration').focus().type(`${newMin}..${newMax}`);
+
+    cy.get('#grid23')
+      .find('.slick-row')
+      .each(($row, idx) => {
+        cy.wrap($row)
+          .children('.slick-cell:nth(5)')
+          .each(($cell) => {
+            if (idx > 8) {
+              return;
+            }
+            const value = parseInt($cell.text().trim(), 10);
+            if (!isNaN(value)) {
+              expect(value >= newMin).to.eq(true);
+              expect(value <= newMax).to.eq(true);
+            }
+          });
+      });
+  });
+
+  describe('Set Dymamic Filters', () => {
+    const dynamicMinComplete = 15;
+    const dynamicMaxComplete = 85;
+    const dynamicMinDuration = 14;
+    const dynamicMaxDuration = 78;
+    const currentYear = new Date().getFullYear();
+    const dynamicLowestDay = format(addDay(new Date(), -5), 'YYYY-MM-DD');
+    const dynamicHighestDay = format(addDay(new Date(), 25), 'YYYY-MM-DD');
+
+    it('should click on Set Dynamic Filters', () => {
+      cy.get('[data-test=set-dynamic-filter]').click();
+    });
+
+    it('should have "% Complete" fields within the exclusive range of the filters presets', () => {
+      cy.get('#grid23')
+        .find('.slick-row')
+        .each(($row) => {
+          cy.wrap($row)
+            .children('.slick-cell:nth(2)')
+            .each(($cell) => {
+              const value = parseInt($cell.text().trim(), 10);
+              if (!isNaN(value)) {
+                expect(value >= dynamicMinComplete).to.eq(true);
+                expect(value <= dynamicMaxComplete).to.eq(true);
+              }
+            });
+        });
+    });
+
+    it('should have "Duration" fields within the inclusive range of the dynamic filters', () => {
+      cy.get('#grid23')
+        .find('.slick-row')
+        .each(($row) => {
+          cy.wrap($row)
+            .children('.slick-cell:nth(5)')
+            .each(($cell) => {
+              const value = parseInt($cell.text().trim(), 10);
+              if (!isNaN(value)) {
+                expect(value >= dynamicMinDuration).to.eq(true);
+                expect(value <= dynamicMaxDuration).to.eq(true);
+              }
+            });
+        });
+    });
+
+    it('should have Finish Dates within the range (inclusive) of the dynamic filters', () => {
+      cy.get('.search-filter.filter-finish')
+        .find('input')
+        .invoke('val')
+        .then((text) => expect(text).to.eq(`${dynamicLowestDay} — ${dynamicHighestDay}`));
+
+      cy.get('#grid23')
+        .find('.slick-row')
+        .each(($row) => {
+          cy.wrap($row)
+            .children('.slick-cell:nth(4)')
+            .each(($cell) => {
+              const isDateBetween = isBetween($cell.text(), dynamicLowestDay, dynamicHighestDay, true);
+              expect(isDateBetween).to.eq(true);
+            });
+        });
+    });
+
+    it('should change dynamic filters from the select and choose "Current Year Completed Tasks" and expect 2 filters set', () => {
+      cy.get('[data-test=select-dynamic-filter]').select('Current Year Completed Tasks');
+
+      cy.get('.search-filter.filter-finish')
+        .find('input')
+        .invoke('val')
+        .then((text) => expect(text).to.eq(`${currentYear}-01-01 — ${currentYear}-12-31`));
+
+      cy.get('.ms-parent.search-filter.filter-completed > button > span').should('contain', 'True');
+    });
+  });
+
+  describe('Set Dynamic Sorting', () => {
+    it('should click on "Clear Filters" then "Set Dynamic Sorting" buttons', () => {
+      cy.get('[data-test=clear-filters]').click();
+
+      cy.get('[data-test=set-dynamic-sorting]').click();
+    });
+
+    it('should expect the grid to be sorted by "Duration" ascending and "Start" descending', () => {
+      cy.get('#grid23')
+        .get('.slick-header-column:nth(2)')
+        .find('.slick-sort-indicator-asc')
+        .should('have.length', 1)
+        .siblings('.slick-sort-indicator-numbered')
+        .contains('2');
+
+      cy.get('#grid23')
+        .get('.slick-header-column:nth(4)')
+        .find('.slick-sort-indicator-desc')
+        .should('have.length', 1)
+        .siblings('.slick-sort-indicator-numbered')
+        .contains('1');
+    });
   });
 });

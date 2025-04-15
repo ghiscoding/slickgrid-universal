@@ -5,7 +5,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
   let ROW_DETAIL_PANEL_COUNT = 8;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/rowdetail-innergrid`);
+    cy.visit(`${Cypress.config('baseUrl')}/example45`);
     cy.get('h2').should('contain', 'Example 45: Row Detail with inner Grid');
   });
 

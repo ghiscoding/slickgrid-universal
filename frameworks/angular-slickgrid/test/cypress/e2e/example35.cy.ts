@@ -3,7 +3,7 @@ describe('Example 35 - Row Based Editing', () => {
   const GRID_ROW_HEIGHT = 35;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/base-row-editing`);
+    cy.visit(`${Cypress.config('baseUrl')}/example35`);
     cy.get('h2').should('contain', 'Example 35: Row Based Editing');
   });
 

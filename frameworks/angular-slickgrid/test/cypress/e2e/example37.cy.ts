@@ -3,7 +3,7 @@ describe('Example 37 - Footer Totals Row', () => {
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/footer-totals`);
+    cy.visit(`${Cypress.config('baseUrl')}/example37`);
     cy.get('h2').should('contain', 'Example 37: Footer Totals Row');
   });
 
