@@ -1,9 +1,10 @@
 import { createDomElement, htmlEncodeWithPadding } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
+import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade.js';
-import { castObservableToPromise, getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
+import { fetchAsPromise, getTranslationPrefix } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 
@@ -35,15 +36,10 @@ export function renderDomElementFromCollectionAsync(
   renderDomElementCallback: (collection: any) => void
 ): void {
   const columnFilter = columnDef?.filter ?? {};
-  const collectionOptions = columnFilter?.collectionOptions ?? {};
-
-  if (collectionOptions && collectionOptions.collectionInsideObjectProperty) {
-    const collectionInsideObjectProperty = collectionOptions.collectionInsideObjectProperty;
-    collection = getDescendantProperty(collection, collectionInsideObjectProperty as string);
-  }
+  collection = getCollectionFromObjectWhenEnabled(collection, columnFilter);
   if (!Array.isArray(collection)) {
     throw new Error(
-      `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
+      'Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.'
     );
   }
 
@@ -63,32 +59,13 @@ export async function renderCollectionOptionsAsync(
   subscriptions?: Subscription[]
 ): Promise<any[]> {
   const columnFilter = columnDef?.filter ?? {};
-  const collectionOptions = columnFilter?.collectionOptions ?? {};
 
   let awaitedCollection: any = null;
 
   if (collectionAsync) {
     const isObservable = rxjs?.isObservable(collectionAsync) ?? false;
-    if (isObservable && rxjs) {
-      awaitedCollection = (await castObservableToPromise(rxjs, collectionAsync)) as Promise<any>;
-    }
-
-    // wait for the "collectionAsync", once resolved we will save it into the "collection"
-    const response: any | any[] = await collectionAsync;
-
-    if (Array.isArray(response)) {
-      awaitedCollection = response; // from Promise
-    } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
-      awaitedCollection = await response['json'](); // from Fetch
-    } else if (response && response['content']) {
-      awaitedCollection = response['content']; // from http-client
-    }
-
-    if (!Array.isArray(awaitedCollection) && collectionOptions?.collectionInsideObjectProperty) {
-      const collection = awaitedCollection || response;
-      const collectionInsideObjectProperty = collectionOptions.collectionInsideObjectProperty;
-      awaitedCollection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
-    }
+    awaitedCollection = await fetchAsPromise(collectionAsync, rxjs);
+    awaitedCollection = getCollectionFromObjectWhenEnabled(awaitedCollection, columnFilter);
 
     if (!Array.isArray(awaitedCollection)) {
       throw new Error(

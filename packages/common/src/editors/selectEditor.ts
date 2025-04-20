@@ -19,6 +19,7 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index.js';
+import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
@@ -687,10 +688,7 @@ export class SelectEditor implements Editor {
   }
 
   renderDomElement(inputCollection?: any[]): void {
-    if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
-      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-      inputCollection = getDescendantProperty(inputCollection, collectionInsideObjectProperty);
-    }
+    inputCollection = getCollectionFromObjectWhenEnabled(inputCollection, this.columnEditor);
     if (!Array.isArray(inputCollection)) {
       throw new Error('The "collection" passed to the Select Editor is not a valid array.');
     }

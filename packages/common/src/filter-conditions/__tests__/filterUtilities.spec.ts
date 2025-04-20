@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { compareObjects, testFilterCondition } from '../filterUtilities.js';
+import { Filters } from '../../filters/filters.index.js';
+import { renderDomElementFromCollectionAsync } from '../../filters/filterUtilities.js';
 
 describe('filterUtilities', () => {
   describe('compareObjects method', () => {
@@ -37,6 +39,58 @@ describe('filterUtilities', () => {
     it('should return False when both objects have different properties count', () => {
       const output = compareObjects(obj1, obj4);
       expect(output).toBeFalsy();
+    });
+  });
+
+  describe('renderDomElementFromCollectionAsync method', () => {
+    it('should get collection found in inner object property when "collectionInsideObjectProperty" is enabled and replace collection prop', () => {
+      const collection = [
+        { value: 'other', description: 'other' },
+        { value: 'male', description: 'male' },
+        { value: 'female', description: 'female' },
+      ];
+      const mockColumn = {
+        id: 'gender',
+        field: 'gender',
+        filterable: true,
+        filter: {
+          collection: {
+            deep: {
+              myCollection: collection,
+            },
+          } as any,
+          collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
+          customStructure: { value: 'value', label: 'description' },
+          model: Filters.multipleSelect,
+        },
+      };
+      const mockCallback = vi.fn();
+      renderDomElementFromCollectionAsync(mockColumn.filter.collection, mockColumn, mockCallback);
+
+      expect(mockColumn.filter.collection).toEqual(collection);
+      expect(mockCallback).toHaveBeenCalledWith(collection);
+    });
+
+    it('should throw when collection is not a valid array', () => {
+      const mockColumn = {
+        id: 'gender',
+        field: 'gender',
+        filterable: true,
+        filter: {
+          collection: {
+            deep: {
+              myCollection: null,
+            },
+          } as any,
+          collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
+          customStructure: { value: 'value', label: 'description' },
+          model: Filters.multipleSelect,
+        },
+      };
+
+      expect(() => renderDomElementFromCollectionAsync(mockColumn.filter.collection, mockColumn, vi.fn())).toThrow(
+        'Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.'
+      );
     });
   });
 

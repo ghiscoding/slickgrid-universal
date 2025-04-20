@@ -670,6 +670,44 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
 }
 
 /**
+ * From an input that could be a Promise, an Observable, a Subject or a Fetch
+ * @param {Promise<T> | Observable<T> | Subject<T>} input
+ * @param {RxJsFacade} rxjs
+ * @returns {Promise}
+ */
+export function fetchAsPromise<T = any>(input?: T[] | Promise<T> | Observable<T> | Subject<T>, rxjs?: RxJsFacade): Promise<T | null> {
+  return new Promise((resolve) => {
+    if (Array.isArray(input)) {
+      resolve(input as T);
+    } else if (input instanceof Promise) {
+      input.then((response: any | any[]) => {
+        if (Array.isArray(response)) {
+          resolve(response as T); // from Promise
+        } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
+          if (response.bodyUsed) {
+            const errorMsg =
+              '[SlickGrid-Universal] The response body passed to Fetch was already read. ' +
+              'Either pass the dataset from the Response or clone the response first using response.clone()';
+            console.warn(errorMsg);
+            resolve(null);
+          } else {
+            resolve((response as Response).json()); // from Fetch
+          }
+        } else if (response?.content) {
+          resolve(response['content'] as T); // from http-client
+        } else {
+          resolve(response); // anything we'll just return "as-is"
+        }
+      });
+    } else if (input && rxjs?.isObservable(input)) {
+      resolve(castObservableToPromise(rxjs, input)); // Observable
+    } else {
+      resolve(null);
+    }
+  });
+}
+
+/**
  * Unsubscribe all Subscriptions
  * It will return an empty array if it all went well
  * @param subscriptions

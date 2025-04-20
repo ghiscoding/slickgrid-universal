@@ -907,7 +907,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
       });
 
-      it('should be able to load async editors with an Observable', () => {
+      it('should be able to load async editors with an Observable', async () => {
         const mockCollection = ['male', 'female'];
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: of(mockCollection) } }] as Column[];
 
@@ -918,6 +918,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         vi.advanceTimersByTime(5);
+        await new Promise(process.nextTick);
+
         expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
         expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
         expect(component.columnDefinitions[0].editorClass).toEqual(Editors.text);
@@ -940,7 +942,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         vi.advanceTimersByTime(5);
         await new Promise(process.nextTick);
 
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to collectionAsync was already read.'));
+        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to Fetch was already read.'));
       });
     });
 
