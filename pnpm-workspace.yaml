@@ -12,7 +12,6 @@ catalog:
   '@types/fnando__sparkline': ^0.3.7
   '@types/node': ^22.13.14
   '@types/sortablejs': ^1.15.8
-  cross-env: ^7.0.3
   cypress: ^14.2.1
   cypress-real-events: ^1.14.0
   dequal: ^2.0.3
@@ -25,3 +24,5 @@ catalog:
   typescript: ^5.8.2
   vite: ^6.2.5
   whatwg-fetch: ^3.6.20
+
+shellEmulator: true
