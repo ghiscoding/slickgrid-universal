@@ -30,7 +30,7 @@ export class GridBasicComponent {
   dataset: any[];
 
   attached(): void {
-      // your columns definition
+    // your columns definition
     this.columnDefinitions = [
       {
         id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
@@ -46,11 +46,13 @@ export class GridBasicComponent {
           model: Editors.autocompleter,
           customStructure: { label: 'name', value: 'code' },
           collectionAsync: this.http.get('assets/data/countries.json'), // this demo will load the JSON file asynchronously
+          onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
         },
         filter: {
           model: Editors.autocompleter,
           customStructure: { label: 'name', value: 'code' },
           collectionAsync: this.http.get('assets/data/countries.json'),
+          onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
         }
       }
     ];
@@ -131,7 +133,7 @@ export class GridBasicComponent {
   dataset: any[];
 
   initializeGrid() {
-      // your columns definition
+    // your columns definition
     this.columnDefinitions = [
       {
         id: 'product', name: 'Product', field: 'product',
@@ -146,12 +148,12 @@ export class GridBasicComponent {
             fetch: (searchText, updateCallback) => {
               // assuming your API call returns a label/value pair
               yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
-                 .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]); })
-                 .catch(error => console.log('Error:', error);
+                 .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]))
+                 .catch(error => console.log('Error:', error));
             },
           } as AutocompleterOption,
         },
-      }
+      },
     ];
 
     this.gridOptions = {
@@ -175,17 +177,18 @@ this.columnDefinitions = [
       type: 'object',
       sortComparer: SortComparers.objectString,
       editorOptions: {
-        showOnFocus: true,
-        minLength: 1,
-        fetch: (searchText, updateCallback) => {
-          // assuming your API call returns a label/value pair
-          yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
-            .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]); })
-            .catch(error => console.log('Error:', error);
-          },
-        } as AutocompleterOption,
-      }
-    ];
+      showOnFocus: true,
+      minLength: 1,
+      fetch: (searchText, updateCallback) => {
+        // assuming your API call returns a label/value pair
+        yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
+          .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]))
+          .catch(error => console.log('Error:', error));
+        },
+      } as AutocompleterOption,
+    }
+  },
+];
 ```
 
 ### Remote API with `renderItem` + custom layout (`twoRows` or `fourCorners`)
@@ -218,8 +221,8 @@ export class GridBasicComponent {
             minLength: 1,
             fetch: (searchText, updateCallback) => {
               yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
-                 .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]); })
-                 .catch(error => console.log('Error:', error);
+                .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]))
+                .catch(error => console.log('Error:', error));
             },
             renderItem: {
               layout: 'twoRows',
@@ -280,8 +283,8 @@ export class GridBasicComponent {
             minLength: 1,
             fetch: (searchText, updateCallback) => {
               yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
-                 .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]); })
-                 .catch(error => console.log('Error:', error);
+                .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]))
+                .catch(error => console.log('Error:', error));
             },
             renderItem: {
               layout: 'twoRows',
@@ -302,27 +305,28 @@ export class GridBasicComponent {
             },
           } as AutocompleterOption,
           callbacks: {
-             // callback on the AutoComplete on the instance
-             renderItem: {
-                templateCallback: (item: any) => {
-                  return `<div class="autocomplete-container-list">
-                    <div class="autocomplete-left">
-                      <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-                      <span class="mdi ${item.icon} mdi-26px"></span>
-                    </div>
-                    <div>
-                      <span class="autocomplete-top-left">
-                        <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
-                        ${item.itemName}
-                      </span>
-                      <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
-                    <div>
+            // callback on the AutoComplete on the instance
+            renderItem: {
+              templateCallback: (item: any) => {
+                return `<div class="autocomplete-container-list">
+                  <div class="autocomplete-left">
+                    <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
+                    <span class="mdi ${item.icon} mdi-26px"></span>
                   </div>
                   <div>
-                    <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
-                    <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
-                  </div>`;
+                    <span class="autocomplete-top-left">
+                      <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+                      ${item.itemName}
+                    </span>
+                    <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
+                  <div>
+                </div>
+                <div>
+                  <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
+                  <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
+                </div>`;
               }
+            },
           },
         },
       }
@@ -408,22 +412,23 @@ export class GridBasicComponent {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-this.columnDefinitions = [{
-  id: 'area',
-  name: 'Area',
-  field: 'area',
-  type: FieldType.string,
-  editor: {
-    model: Editors.autocompleter,
-    editorOptions: {
-      minLength: 0,
-      forceUserInput: true,
-      fetch: (searchText, updateCallback) => {
-        updateCallback(this.areas); // add here the array
-      },
+this.columnDefinitions = [
+  {
+    id: 'area',
+    name: 'Area',
+    field: 'area',
+    type: FieldType.string,
+    editor: {
+      model: Editors.autocompleter,
+      editorOptions: {
+        minLength: 0,
+        forceUserInput: true,
+        fetch: (searchText, updateCallback) => {
+          updateCallback(this.areas); // add here the array
+        },
+      }
     }
-  }
-},
+  },
 ];
 ```
 You can also use the `minLength` to limit the autocomplete text to `0` characters or more, the default number is `3`.

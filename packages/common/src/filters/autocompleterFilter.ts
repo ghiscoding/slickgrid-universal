@@ -507,6 +507,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // append the new DOM element to the header row & an empty span
     this.filterContainerElm.appendChild(filterDivContainerElm);
     this.filterContainerElm.appendChild(document.createElement('span'));
+    this.columnFilter.onInstantiated?.(this._instance);
 
     return this._filterElm;
   }

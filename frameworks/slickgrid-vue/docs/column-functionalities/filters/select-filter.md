@@ -68,17 +68,18 @@ columnDefinitions.value = [
     type: FieldType.boolean,
     filterable: true,
     filter: {
-       collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
-       model: Filters.multipleSelect,
+      collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
+      model: Filters.multipleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
 
-       // you can add "multiple-select" plugin options like styling the first row
-       filterOptions: {
-          offsetLeft: 14,
-          width: 100
-       } as MultipleSelectOption,
+      // you can add "multiple-select" plugin options like styling the first row
+      filterOptions: {
+        offsetLeft: 14,
+        width: 100
+      } as MultipleSelectOption,
 
-       // you can also add an optional placeholder
-       placeholder: 'choose an option'
+      // you can also add an optional placeholder
+      placeholder: 'choose an option'
    }
   }
 ];
@@ -113,6 +114,7 @@ columnDefinitions.value = [
        model: Filters.multipleSelect,
        searchTerms: [true],
     }
+  },
 ];
 ```
 
@@ -129,7 +131,8 @@ columnDefinitions.value = [
     filter: {
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
        model: Filters.singleSelect,
-   }
+    }
+  },
 ];
 ```
 
@@ -562,6 +565,7 @@ columnDefinitions.value = [
     filter: {
       collectionLazy: (col: Column) => this.http.fetch('api/data/pre-requisites'),
       model: Filters.multipleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
     }
   }
 ];

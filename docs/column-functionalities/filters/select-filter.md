@@ -493,7 +493,7 @@ this.columnDefinitions = [
     filterable: true,
     filter: {
       model: Filters.multipleSelect,
-
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
       // this async call will return the collection inside the response object in this format
       // { data: { myCollection: [ /*...*/ ] } }
       collectionAsync: this.http.fetch('api/data/pre-requisites'),
@@ -550,6 +550,7 @@ this.columnDefinitions = [
     filter: {
       collectionLazy: (col: Column) => this.http.fetch('api/data/pre-requisites'),
       model: Filters.multipleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
     }
   }
 ];

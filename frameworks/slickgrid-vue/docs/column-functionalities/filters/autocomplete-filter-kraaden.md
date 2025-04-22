@@ -47,11 +47,13 @@ function defineGrid() {
         model: Editors.autoComplete,
         customStructure: { label: 'name', value: 'code' },
         collectionAsync: fetch('assets/data/countries.json'), // this demo will load the JSON file asynchronously
+        onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
       },
       filter: {
         model: Filters.autoComplete,
         customStructure: { label: 'name', value: 'code' },
         collectionAsync: fetch('assets/data/countries.json'),
+        onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
       }
     }
   ];
@@ -159,6 +161,7 @@ columnDefinitions.value = [{
   type: FieldType.string,
   editor: {
     model: Editors.autocompleter,
+    onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
     editorOptions: {
       minLength: 0,
       forceUserInput: true,

@@ -52,11 +52,13 @@ function defineGrid() {
         model: Editors.autocompleter,
         customStructure: { label: 'name', value: 'code' },
         collectionAsync: fetch('assets/data/countries.json'), // this demo will load the JSON file asynchronously
+        onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
       },
       filter: {
         model: Filters.autocompleter,
         customStructure: { label: 'name', value: 'code' },
         collectionAsync: fetch('assets/data/countries.json'),
+        onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
       }
     }
   ];
@@ -191,11 +193,12 @@ columnDefinitions.value = [
         fetch: (searchText, updateCallback) => {
           // assuming your API call returns a label/value pair
           yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
-            .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]); })
-            .catch(error => console.log('Error:', error);
-      },
-    } as AutocompleterOption,
-  }
+            .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]))
+            .catch(error => console.log('Error:', error));
+        },
+      } as AutocompleterOption,
+    }
+  },
 ];
 ```
 
@@ -237,7 +240,7 @@ function defineGrid() {
           fetch: (searchText, updateCallback) => {
             yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
                 .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]))
-                .catch(error => console.log('Error:', error);
+                .catch(error => console.log('Error:', error));
           },
           renderItem: {
             layout: 'twoRows',
@@ -308,8 +311,8 @@ function defineGrid() {
           },
           fetch: (searchText, updateCallback) => {
             yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
-                .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]); })
-                .catch(error => console.log('Error:', error);
+                .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]))
+                .catch(error => console.log('Error:', error));
           },
           renderItem: {
             layout: 'twoRows',
@@ -428,6 +431,7 @@ columnDefinitions.value = [{
   type: FieldType.string,
   editor: {
     model: Editors.autocompleter,
+    onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
     editorOptions: {
       minLength: 0,
       forceUserInput: true,

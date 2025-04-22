@@ -120,6 +120,9 @@ export interface ColumnFilter {
     }
   >;
 
+  /** When the Filter is an external library, it could be useful to get its instance so that we could call any of the external library functions. */
+  onInstantiated?: <T = any>(instance: T) => void;
+
   /**
    * Use "params" to pass any type of arguments to your Custom Filter
    * for example, to pass a second collection to a select Filter we can type this:
@@ -149,9 +152,6 @@ export interface ColumnFilter {
    * In any case, the user can overrides it this flag.
    */
   emptySearchTermReturnAllValues?: boolean;
-
-  /** When the Filter is an external library, it could be useful to get its instance so that we could call any of the external library functions. */
-  onInstantiated?: <T = any>(instance: T) => void;
 
   /**
    * Should we skip filtering when the Operator is changed before the Compound Filter input.

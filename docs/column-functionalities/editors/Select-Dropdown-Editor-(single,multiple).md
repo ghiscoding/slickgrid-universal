@@ -193,7 +193,8 @@ this.columnDefinitions = [
       // watch for any changes in the collection and re-render when that happens
       enableCollectionWatch: true,
       collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-      model: Editors.singleSelect
+      model: Editors.singleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
     }
   }
 ];
