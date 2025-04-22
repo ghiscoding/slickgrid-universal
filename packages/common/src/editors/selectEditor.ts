@@ -189,8 +189,8 @@ export class SelectEditor implements Editor {
   }
 
   /** Get Column Editor object */
-  get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef?.editor ?? ({} as ColumnEditor);
+  get columnEditor(): ColumnEditor {
+    return (this.columnDef?.editor ?? {}) as ColumnEditor;
   }
 
   /** Getter for item data context object */
@@ -803,6 +803,8 @@ export class SelectEditor implements Editor {
     this.editorElmOptions = { ...this.defaultOptions, ...this.editorOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();
+    this.columnEditor.onInstantiated?.(this._msInstance);
+
     if (!this.isCompositeEditor) {
       this.show(this.delayOpening);
     }

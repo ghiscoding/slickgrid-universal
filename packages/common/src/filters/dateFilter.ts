@@ -414,6 +414,7 @@ export class DateFilter implements Filter {
         updatePickerUI: false,
       });
     }
+    this.columnFilter.onInstantiated?.(this.calendarInstance);
   }
 
   /** Get the available operator option values to populate the operator select dropdown list */

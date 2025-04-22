@@ -107,6 +107,9 @@ export interface ColumnEditor {
   /** SlickGrid Editor class or EditorConstructor function that implements Editor for the cell inline editing */
   model?: EditorConstructor;
 
+  /** When the Filter is an external library, it could be useful to get its instance so that we could call any of the external library functions. */
+  onInstantiated?: <T = any>(instance: T) => void;
+
   /**
    * Placeholder text that can be used by some Editors.
    * Note that this will override the default placeholder configured in the global config
