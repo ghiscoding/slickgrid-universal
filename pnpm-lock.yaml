@@ -27,9 +27,6 @@ catalogs:
     '@types/sortablejs':
       specifier: ^1.15.8
       version: 1.15.8
-    cross-env:
-      specifier: ^7.0.3
-      version: 7.0.3
     cypress:
       specifier: ^14.2.1
       version: 14.2.1
@@ -110,9 +107,6 @@ importers:
       conventional-changelog-conventionalcommits:
         specifier: ^8.0.0
         version: 8.0.0
-      cross-env:
-        specifier: 'catalog:'
-        version: 7.0.3
       cypress:
         specifier: 'catalog:'
         version: 14.2.1
@@ -392,9 +386,6 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^5.2.3
         version: 5.2.3(vite@6.2.5(@types/node@22.13.14)(jiti@2.4.2)(sass@1.86.0)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2))
-      cross-env:
-        specifier: 'catalog:'
-        version: 7.0.3
       i18next:
         specifier: ^24.2.3
         version: 24.2.3(typescript@5.8.2)
@@ -2378,11 +2369,6 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
-
-  cross-env@7.0.3:
-    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
-    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
-    hasBin: true
 
   cross-fetch@4.0.0:
     resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
@@ -6877,10 +6863,6 @@ snapshots:
       parse-json: 5.2.0
     optionalDependencies:
       typescript: 5.8.2
-
-  cross-env@7.0.3:
-    dependencies:
-      cross-spawn: 7.0.6
 
   cross-fetch@4.0.0(encoding@0.1.13):
     dependencies:
