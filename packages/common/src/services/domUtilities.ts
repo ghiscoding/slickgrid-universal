@@ -43,12 +43,11 @@ export function buildMsSelectCollectionList(
   const selectElement = createDomElement('select', { className: 'ms-filter search-filter' });
   const extraCssClasses = type === 'filter' ? ['search-filter', `filter-${columnId}`] : ['select-editor', `editor-${columnId}`];
   selectElement.classList.add(...extraCssClasses);
-
   selectElement.multiple = isMultiSelect;
-  const dataCollection: OptionRowData[] = [];
-  let hasFoundSearchTerm = false;
 
   // collection could be an Array of Strings OR Objects
+  const dataCollection: OptionRowData[] = [];
+  let hasFoundSearchTerm = false;
   if (Array.isArray(collection)) {
     if (collection.every((x: any) => typeof x === 'number' || typeof x === 'string')) {
       collection.forEach((option) => {

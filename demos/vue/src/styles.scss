@@ -42,6 +42,9 @@ $primary-color: #0e6cfa;
 .hidden {
   display: none;
 }
+.invisible {
+  opacity: 0;
+}
 
 .btn-icon {
   display: inline-flex;

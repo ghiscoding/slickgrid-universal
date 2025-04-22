@@ -11,6 +11,7 @@ import {
   cancellablePromise,
   CancelledException,
   castObservableToPromise,
+  fetchAsPromise,
   flattenToParentChildArray,
   unflattenParentChildArrayToTree,
   decimalFormatted,
@@ -30,6 +31,7 @@ import {
 } from '../utilities.js';
 import { SumAggregator } from '../../aggregators/sumAggregator.js';
 import { Constants } from '../../constants.js';
+import { HttpStub } from '../../../../../test/httpClientStub.js';
 
 describe('Service/Utilies', () => {
   describe('unflattenParentChildArrayToTree method', () => {
@@ -1264,6 +1266,109 @@ describe('Service/Utilies', () => {
     it('should return default OperatoryType associated to contains', () => {
       const output = mapOperatorByFieldType('' as any);
       expect(output).toBe(OperatorType.equal);
+    });
+  });
+
+  describe('fetchAsPromise method', () => {
+    it('should return a Promise with an array when the input is an array', async () => {
+      const mockCollection = [
+        { value: 'other', description: 'other' },
+        { value: 'male', description: 'male' },
+        { value: 'female', description: 'female' },
+      ];
+
+      const output = fetchAsPromise(mockCollection);
+
+      expect(output instanceof Promise).toBeTruthy();
+      expect(await output).toEqual(mockCollection);
+    });
+
+    it('should return a Promise with an array when the input is also a Promise with an array', async () => {
+      const mockCollection = [
+        { value: 'other', description: 'other' },
+        { value: 'male', description: 'male' },
+        { value: 'female', description: 'female' },
+      ];
+      const promise = Promise.resolve(mockCollection);
+
+      const output = fetchAsPromise(promise);
+
+      expect(output instanceof Promise).toBeTruthy();
+      expect(await output).toEqual(mockCollection);
+    });
+
+    it('should be able to load async collection from /a Promise with content to simulate http-client', async () => {
+      const mockCollection = ['male', 'female'];
+      const promise = Promise.resolve({ content: mockCollection });
+
+      const output = fetchAsPromise(promise);
+
+      expect(output instanceof Promise).toBeTruthy();
+      expect(await output).toEqual(mockCollection);
+    });
+
+    it('should be able to load async collection from a Fetch Promise', async () => {
+      const http = new HttpStub();
+      const mockCollection = ['male', 'female'];
+      http.status = 200;
+      http.object = mockCollection;
+      http.returnKey = 'date';
+      http.returnValue = '6/24/1984';
+      http.responseHeaders = { accept: 'json' };
+      const collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
+
+      const output = fetchAsPromise(collectionAsync);
+
+      expect(output instanceof Promise).toBeTruthy();
+      expect(await output).toEqual(mockCollection);
+    });
+
+    it('should be able to load collection from an Observable', async () => {
+      const mockCollection = ['male', 'female'];
+      const rxjsMock = new RxJsResourceStub();
+
+      const output = fetchAsPromise(of(mockCollection), rxjsMock);
+
+      expect(output instanceof Promise).toBeTruthy();
+      expect(await output).toEqual(mockCollection);
+    });
+
+    it('should throw an error when Fetch Promise response bodyUsed is true', async () => {
+      const http = new HttpStub();
+      const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+      const mockCollection = ['male', 'female'];
+      http.status = 200;
+      http.object = mockCollection;
+      http.returnKey = 'date';
+      http.returnValue = '6/24/1984';
+      http.responseHeaders = { accept: 'json' };
+      const collectionAsync = http.fetch('http://invalid-url', { method: 'GET' });
+
+      await fetchAsPromise(collectionAsync);
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to Fetch was already read.'));
+    });
+
+    it('should return a Promise with null when the collection input is not an array', async () => {
+      const input = {};
+      const output = await fetchAsPromise(input as any);
+
+      expect(output).toBeNull();
+    });
+
+    it('should return a Promise with null when the collection input is a Promise that is not an array', async () => {
+      const collectionObj = {
+        deep: {
+          myCollection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
+        },
+      };
+      const promise = Promise.resolve(collectionObj);
+      const output = await fetchAsPromise(promise as any);
+
+      expect(output).toEqual(collectionObj);
     });
   });
 
