@@ -55,13 +55,13 @@
     "sass-build-task:scss-compile:salesforce-lite": "sass src/styles/slickgrid-theme-salesforce.lite.scss dist/styles/css/slickgrid-theme-salesforce.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass:build": "run-p sass-build-task:scss-compile:*",
     "postsass:build": "postcss --no-map --use cssnano --use autoprefixer --dir dist/styles/css dist/styles/css --style=compressed --quiet-deps --no-source-map",
-    "sass:copy": "copyfiles './src/styles/*.scss' dist/styles/sass --flat --stat",
+    "sass:copy": "copyfiles \"./src/styles/*.scss\" dist/styles/sass --flat --stat",
     "sass:watch:default": "npm run sass-build-task:scss-compile:default -- --watch",
     "sass:watch:bootstrap": "npm run sass-build-task:scss-compile:bootstrap -- --watch",
     "sass:watch:material": "npm run sass-build-task:scss-compile:material -- --watch",
     "sass:watch:salesforce": "npm run sass-build-task:scss-compile:salesforce -- --watch",
     "sass:watch": "run-p sass:watch:*",
-    "sass:watch-all": "run-p 'sass-build-task:scss-compile:* --watch' --"
+    "sass:watch-all": "run-p \"sass-build-task:scss-compile:* --watch\" --"
   },
   "browserslist": [
     "last 2 version",
