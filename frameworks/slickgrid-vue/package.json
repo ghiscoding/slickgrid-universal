@@ -50,7 +50,7 @@
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "clean": "rimraf dist",
-    "vue:dev": "NODE_ENV=development vite build --watch",
+    "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
     "vue:build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",
     "preview:release": "release --dry-run --skip-checks --npm-client pnpm --build-script vue:build",
@@ -75,6 +75,7 @@
   "devDependencies": {
     "@gc-utils/release": "^0.1.5",
     "@vitejs/plugin-vue": "^5.2.3",
+    "cross-env": "catalog:",
     "i18next": "^24.2.3",
     "i18next-vue": "^5.2.0",
     "sass": "catalog:",
