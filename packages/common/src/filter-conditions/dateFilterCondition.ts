@@ -17,7 +17,7 @@ export function executeDateFilterCondition(
   let paramDateFormat = '';
   if (isColumnDateType(filterSearchType)) {
     const params = column?.params || {};
-    paramDateFormat = params?.inputFormat ?? params.format;
+    paramDateFormat = params.inputFormat ?? params.format;
   }
   const outputFormat = paramDateFormat || mapTempoDateFormatWithFieldType(filterSearchType);
   const [searchDate1, searchDate2] = parsedSearchDates;

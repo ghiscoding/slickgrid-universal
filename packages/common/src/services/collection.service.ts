@@ -235,7 +235,7 @@ export class CollectionService<T = any> {
     const params = col.params ?? {};
     const paramDateFormat = params.inputFormat ?? params.format;
     const fieldType = col.type || FieldType.string;
-    const dateFormat = paramDateFormat ?? mapTempoDateFormatWithFieldType(fieldType);
+    const dateFormat = paramDateFormat || mapTempoDateFormatWithFieldType(fieldType);
 
     if (isColumnDateType(fieldType) && preParseDateColumns) {
       // preparsing could be a boolean (reassign and overwrite same property)

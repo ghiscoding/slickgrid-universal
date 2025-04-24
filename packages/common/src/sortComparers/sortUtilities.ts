@@ -20,7 +20,7 @@ export function sortByFieldType(
     let paramDateFormat = '';
     if (sortColumn && isColumnDateType(fieldType)) {
       const params = sortColumn?.params || {};
-      paramDateFormat = params?.inputFormat ?? params.format;
+      paramDateFormat = params.inputFormat ?? params.format;
     }
     const dateSortComparer: SortComparer = !!(sortColumn && paramDateFormat)
       ? getSortComparerByDateFormat(paramDateFormat)

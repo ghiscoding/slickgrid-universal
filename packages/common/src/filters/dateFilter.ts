@@ -431,7 +431,7 @@ export class DateFilter implements Filter {
   ): string {
     let dateStr = '';
     const params = column.params || {};
-    const paramOutputFormat = params?.outputFormat ?? params.format;
+    const paramOutputFormat = params.outputFormat ?? params.format;
     const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
     const date = inputDate instanceof Date ? inputDate : tryParseDate(inputDate, inputFormat as string);
     if (inputFormat && date && paramOutputFormat && inputDate !== undefined) {
