@@ -1,4 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Aggregators,
   type Column,
@@ -41,7 +42,7 @@ export default class Example28 {
     this.metricsTotalItemCount = FETCH_SIZE;
 
     // bind any of the grid events
-    this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
+    this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.onNextBatch.bind(this) as EventListener);
     this._bindingEventService.bind(gridContainerElm, 'onsort', this.handleOnSort.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onscroll', this.handleOnScroll.bind(this));
   }
@@ -78,19 +79,29 @@ export default class Example28 {
         id: 'start',
         name: 'Start',
         field: 'start',
-        formatter: Formatters.dateIso,
+        formatter: Formatters.date,
         exportWithFormatter: true,
+        type: 'date',
+        params: { inputFormat: 'M/D/YYYY', outputFormat: 'MMM DD, YYYY' },
+        sortable: true,
         filterable: true,
-        filter: { model: Filters.compoundDate },
+        filter: {
+          model: Filters.compoundDate,
+        },
       },
       {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
-        formatter: Formatters.dateIso,
+        formatter: Formatters.date,
         exportWithFormatter: true,
+        type: 'date',
+        params: { inputFormat: 'M/D/YYYY', outputFormat: 'MMM DD, YYYY' },
+        sortable: true,
         filterable: true,
-        filter: { model: Filters.compoundDate },
+        filter: {
+          model: Filters.compoundDate,
+        },
       },
       {
         id: 'effort-driven',
@@ -112,6 +123,8 @@ export default class Example28 {
       enableGrouping: true,
       editable: false,
       rowHeight: 33,
+      enableExcelExport: true,
+      externalResources: [new ExcelExportService()],
     };
   }
 
@@ -168,9 +181,9 @@ export default class Example28 {
   }
 
   newItem(idx: number) {
-    const randomYear = 2000 + Math.floor(Math.random() * 10);
-    const randomMonth = Math.floor(Math.random() * 11);
-    const randomDay = Math.floor(Math.random() * 29);
+    // const randomYear = 2000 + Math.floor(Math.random() * 10);
+    const randomMonth = Math.floor(Math.random() * 11) + 1;
+    const randomDay = Math.floor(Math.random() * 27) + 1;
     const randomPercent = Math.round(Math.random() * 100);
 
     return {
@@ -178,8 +191,10 @@ export default class Example28 {
       title: 'Task ' + idx,
       duration: Math.round(Math.random() * 100) + '',
       percentComplete: randomPercent,
-      start: new Date(randomYear, randomMonth + 1, randomDay),
-      finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+      start: `${randomMonth}/${randomDay}/2008`,
+      finish: `${randomMonth}/${randomDay}/2009`,
+      // start: new Date(randomYear, randomMonth + 1, randomDay),
+      // finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
       effortDriven: idx % 5 === 0,
     };
   }
@@ -199,7 +214,11 @@ export default class Example28 {
     this.sgb?.filterService.updateFilters([{ columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' }]);
   }
 
-  refreshMetrics(event: CustomEvent<{ args: OnRowCountChangedEventArgs }>) {
+  onNextBatch(event: CustomEvent<{ args: OnRowCountChangedEventArgs }>) {
+    // we probably want to re-sort the data when we get new items
+    this.sgb.dataView?.reSort();
+
+    // update metrics
     const args = event?.detail?.args;
     if (args?.current >= 0) {
       this.metricsItemCount = this.sgb.dataView?.getFilteredItemCount() || 0;

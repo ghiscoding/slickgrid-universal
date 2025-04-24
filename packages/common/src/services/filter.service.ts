@@ -371,7 +371,8 @@ export class FilterService {
     } else if (typeof columnFilters === 'object') {
       for (const columnId of Object.keys(columnFilters)) {
         const searchColFilter = columnFilters[columnId] as SearchColumnFilter;
-        const columnFilterDef = searchColFilter.columnDef?.filter;
+        const columnDef = searchColFilter.columnDef;
+        const columnFilterDef = columnDef?.filter;
 
         // user could provide a custom filter predicate on the column definition
         if (typeof columnFilterDef?.filterPredicate === 'function') {
@@ -391,17 +392,15 @@ export class FilterService {
           // in the rare case of an empty search term (it can happen when creating an external grid global search)
           // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
           if (parsedSearchTerms === undefined) {
-            parsedSearchTerms = getParsedSearchTermsByFieldType(
-              searchColFilter.searchTerms,
-              searchColFilter.columnDef.type || FieldType.string
-            ); // parsed term could be a single value or an array of values
+            // parsed term could be a single value or an array of values
+            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, columnDef.type || FieldType.string);
             if (parsedSearchTerms !== undefined) {
               searchColFilter.parsedSearchTerms = parsedSearchTerms;
             }
           }
 
           // execute the filtering conditions check, comparing all cell values vs search term(s)
-          if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
+          if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms, columnDef)) {
             return false;
           }
         }
@@ -637,7 +636,7 @@ export class FilterService {
           if (conditionOptionResult) {
             const parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
             // prettier-ignore
-            const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeFilterConditionTest(conditionOptionResult as FilterConditionOption, parsedSearchTerms);
+            const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeFilterConditionTest(conditionOptionResult as FilterConditionOption, parsedSearchTerms, columnFilter.columnDef);
 
             // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
             // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)
@@ -1372,7 +1371,7 @@ export class FilterService {
     });
   }
 
-  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString): void {
+  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: Column, operator?: OperatorType | OperatorString): void {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
     const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 

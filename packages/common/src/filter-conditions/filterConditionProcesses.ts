@@ -1,5 +1,5 @@
 import { FieldType, type SearchTerm } from '../enums/index.js';
-import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
+import type { Column, FilterCondition, FilterConditionOption } from '../interfaces/index.js';
 import { executeBooleanFilterCondition, getFilterParsedBoolean } from './booleanFilterCondition.js';
 import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition.js';
 import { getFilterParsedNumbers, executeNumberFilterCondition } from './numberFilterCondition.js';
@@ -18,7 +18,8 @@ export type GeneralVariableDataType = 'boolean' | 'date' | 'number' | 'object' |
 /** Execute mapped condition (per field type) for each cell in the grid */
 export const executeFilterConditionTest: FilterCondition = ((
   options: FilterConditionOption,
-  parsedSearchTerms: SearchTerm | SearchTerm[]
+  parsedSearchTerms: SearchTerm | SearchTerm[],
+  column: Column
 ) => {
   // when using a multi-select ('IN' operator) we will not use the field type but instead go directly with a collection search
   if (isCollectionOperator(options.operator)) {
@@ -34,7 +35,7 @@ export const executeFilterConditionTest: FilterCondition = ((
       // the parsedSearchTerms should be single value (result came from getFilterParsedBoolean() method)
       return executeBooleanFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'date':
-      return executeDateFilterCondition(options, (parsedSearchTerms || []) as any[]);
+      return executeDateFilterCondition(options, (parsedSearchTerms || []) as Array<Date | string>, column);
     case 'number':
       return executeNumberFilterCondition(options, (parsedSearchTerms || []) as number[]);
     case 'object':

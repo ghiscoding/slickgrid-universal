@@ -1,5 +1,5 @@
 import { FieldType } from '../enums/index.js';
-import { getAssociatedDateFormatter } from './formatterUtilities.js';
+import { getAssociatedDateFormatter, getBaseDateFormatter } from './formatterUtilities.js';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter.js';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter.js';
 import { checkmarkMaterialFormatter } from './checkmarkMaterialFormatter.js';
@@ -88,6 +88,9 @@ export const Formatters: Record<string, Formatter> = {
    * with value of 33.45 would result into: "Price €33.45 EUR"
    */
   currency: currencyFormatter,
+
+  /** Base Date formatter which requires the user to provide Date format via column `params.format` or `params.inputFormat` or `params.outputFormat` */
+  date: getBaseDateFormatter(),
 
   /** Takes a Date object and displays it as an ISO Date format (YYYY-MM-DD) */
   dateIso: getAssociatedDateFormatter(FieldType.dateIso, '-'),

@@ -34,6 +34,9 @@ A good example of a `Formatter` could be a timestamp or a `Date` object that we 
 * `Formatters.currency`: will help with currency other than dollar (ie `€`), there are multiple `params` available for this formatter
   * `currencyPrefix`, `currencySuffix`, `minDecimal`, `maxDecimal`, `numberPrefix`, `numberSuffix`, `decimalSeparator`, `thousandSeparator` and `displayNegativeNumberWithParentheses`
   * the distinction between `numberPrefix` and `currencyPrefix` can be seen when using `displayNegativeNumberWithParentheses`, for example if we have a value of `-12.432` with the `Formatters.currency` and `params: { currencyPrefix: '€', numberPrefix: 'Price ', numberSuffix: 'EUR' }` the output will be `"Price (€12.432) EUR"`
+* `Formatters.date`: Base Date Formatter, this formatter is a bit different compare to other date formatter since this one requires the user to provide a custom format in `params.outputFormat` (also note that you must provide `type: 'date'`, see Tempo lib for available [tokens](https://tempo.formkit.com/#format-tokens))
+  - for example: `{ id: 'start', type: 'date', params: { outputFormat: 'MMM DD, YYYY' }}`
+  - also note that this custom format will also work with date Filtering & Sorting
 * `Formatters.dateEuro`: Takes a Date object and displays it as an Euro Date format (DD/MM/YYYY)
 * `Formatters.dateTimeEuro`: Takes a Date object and displays it as an Euro Date+Time format (DD/MM/YYYY HH:mm:ss)
 * `Formatters.dateTimeShortEuro`: Takes a Date object and displays it as an Euro Date+Time (without seconds) format (DD/MM/YYYY HH:mm)

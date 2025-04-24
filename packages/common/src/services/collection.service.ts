@@ -59,9 +59,8 @@ export class CollectionService<T = any> {
   preParseByMutationDateItems(items: any[], grid: SlickGrid, preParseDateColumns: boolean | string): void {
     const parsingProps: ParsingDateDetails[] = [];
     grid.getColumns().forEach((col) => {
-      const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
-
       // loop through all date columns only once and keep parsing info
+      const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
       if (parseInfo) {
         parsingProps.push(parseInfo);
       }
@@ -77,9 +76,8 @@ export class CollectionService<T = any> {
   parseSingleDateItem(item: any, grid: SlickGrid, preParseDateColumns: boolean | string): void {
     if (preParseDateColumns) {
       grid.getColumns().forEach((col) => {
-        const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
-
         // loop through all date columns only once and keep parsing info
+        const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
         if (parseInfo) {
           this.reassignDateWhenValid(item, col.id, parseInfo.dateFormat, parseInfo.queryFieldName);
         }
@@ -234,8 +232,10 @@ export class CollectionService<T = any> {
   // -------------------
 
   protected getParseDateInfo(col: Column, preParseDateColumns: boolean | string): ParsingDateDetails | void {
+    const params = col.params ?? {};
+    const paramDateFormat = params.inputFormat ?? params.format;
     const fieldType = col.type || FieldType.string;
-    const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
+    const dateFormat = paramDateFormat ?? mapTempoDateFormatWithFieldType(fieldType);
 
     if (isColumnDateType(fieldType) && preParseDateColumns) {
       // preparsing could be a boolean (reassign and overwrite same property)

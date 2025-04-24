@@ -7,8 +7,8 @@ import type { IOptions } from 'vanilla-calendar-pro/types';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities.js';
-import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
-import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
+import { isColumnDateType, mapOperatorToShorthandDesignation } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
@@ -235,11 +235,17 @@ export class DateFilter implements Filter {
   //
   // protected functions
   // ------------------
+
   protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): void {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
-    const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
+    let paramOutputFormat = '';
+    if (isColumnDateType(columnFieldType)) {
+      const params = this.columnDef.params || {};
+      paramOutputFormat = params?.outputFormat ?? params.format;
+    }
+    const outputFormat = paramOutputFormat || mapTempoDateFormatWithFieldType(outputFieldType);
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
     // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
@@ -273,7 +279,7 @@ export class DateFilter implements Filter {
       // if we are preloading searchTerms, we'll keep them for reference
       if (Array.isArray(pickerValues)) {
         this._currentDateOrDates = pickerValues as Date[];
-        this._currentDateStrings = pickerValues.map((date) => formatDateByFieldType(date, undefined, inputFieldType));
+        this._currentDateStrings = pickerValues.map((date) => this.formatDate(date, this.columnDef, undefined, inputFieldType));
       }
     }
 
@@ -303,7 +309,7 @@ export class DateFilter implements Filter {
               outDates = [firstDate, lastDate];
             } else if (self.selectedDates[0]) {
               firstDate = self.selectedDates[0];
-              self.HTMLInputElement.value = formatDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
+              self.HTMLInputElement.value = this.formatDate(firstDate, this.columnDef, FieldType.dateIso, outputFieldType);
               outDates = self.selectedDates;
             } else {
               self.HTMLInputElement.value = '';
@@ -313,15 +319,15 @@ export class DateFilter implements Filter {
               const tempoDate = parse(firstDate, pickerFormat);
               tempoDate.setHours(+(self.selectedHours || 0));
               tempoDate.setMinutes(+(self.selectedMinutes || 0));
-              self.HTMLInputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
+              self.HTMLInputElement.value = this.formatDate(tempoDate, this.columnDef, undefined, outputFieldType);
               outDates = [tempoDate];
             }
 
             if (this.inputFilterType === 'compound') {
-              this._currentValue = formatDateByFieldType(outDates[0], undefined, columnFieldType);
+              this._currentValue = this.formatDate(outDates[0], this.columnDef, undefined, columnFieldType);
             } else {
               if (Array.isArray(outDates)) {
-                this._currentDateStrings = outDates.map((date) => formatDateByFieldType(date, undefined, columnFieldType));
+                this._currentDateStrings = outDates.map((date) => this.formatDate(date, this.columnDef, undefined, columnFieldType));
                 this._currentValue = this._currentDateStrings.join('..');
               }
             }
@@ -415,6 +421,23 @@ export class DateFilter implements Filter {
       });
     }
     this.columnFilter.onInstantiated?.(this.calendarInstance);
+  }
+
+  protected formatDate(
+    inputDate: Date | string,
+    column: Column,
+    inputFieldType: (typeof FieldType)[keyof typeof FieldType] | undefined,
+    outputFieldType: (typeof FieldType)[keyof typeof FieldType]
+  ): string {
+    let dateStr = '';
+    const params = column.params || {};
+    const paramOutputFormat = params?.outputFormat ?? params.format;
+    const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
+    const date = inputDate instanceof Date ? inputDate : tryParseDate(inputDate, inputFormat as string);
+    if (inputFormat && date && paramOutputFormat && inputDate !== undefined) {
+      dateStr = format(date, paramOutputFormat, 'en-US');
+    }
+    return dateStr || formatDateByFieldType(inputDate, inputFieldType, outputFieldType);
   }
 
   /** Get the available operator option values to populate the operator select dropdown list */

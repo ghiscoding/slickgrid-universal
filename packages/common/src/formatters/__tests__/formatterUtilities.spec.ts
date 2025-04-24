@@ -4,6 +4,7 @@ import {
   autoAddEditorFormatterToColumnsWithEditor,
   exportWithFormatterWhenDefined,
   getAssociatedDateFormatter,
+  getBaseDateFormatter,
   getValueFromParamsOrFormatterOptions,
 } from '../formatterUtilities.js';
 import { FieldType } from '../../enums/index.js';
@@ -144,6 +145,31 @@ describe('formatterUtilities', () => {
 
       expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('2002.01.01');
+    });
+  });
+
+  describe('getBaseDateFormatter method', () => {
+    it('should return a Formatter function', () => {
+      const formatterFn = getBaseDateFormatter();
+      const isFunction = typeof formatterFn === 'function';
+      expect(isFunction).toBe(true);
+    });
+
+    it('should throw when missing "params.outputFormat" when calling the Formatter function', () => {
+      const formatterFn = getBaseDateFormatter();
+
+      expect(() => formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub)).toThrow(
+        '[Slickgrid-Universal] Using the base "Formatter.date" requires certain props that were not found in your column'
+      );
+    });
+
+    it('should return a formatted Date when calling the Formatter function with a defined "params.outputFormat"', () => {
+      const formatterFn = getBaseDateFormatter();
+      const mockColumn = { type: FieldType.date, params: { outputFormat: 'MMM DD, YYYY' } } as Column;
+
+      const output = formatterFn(1, 1, '2002-01-01T00:01:01', mockColumn, {}, gridStub);
+
+      expect(output).toBe('Jan 01, 2002');
     });
   });
 

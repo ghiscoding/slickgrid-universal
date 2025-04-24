@@ -1,7 +1,7 @@
 import { FieldType, type SortDirectionNumber } from '../enums/index.js';
-import type { Column, GridOption } from '../interfaces/index.js';
+import type { Column, GridOption, SortComparer } from '../interfaces/index.js';
 import { SortComparers } from './index.js';
-import { getAssociatedDateSortComparer } from './dateUtilities.js';
+import { getAssociatedDateSortComparer, getSortComparerByDateFormat } from './dateUtilities.js';
 import { isColumnDateType } from '../services/utilities.js';
 
 export function sortByFieldType(
@@ -15,8 +15,17 @@ export function sortByFieldType(
   let sortResult = 0;
 
   if (isColumnDateType(fieldType)) {
-    // @ts-ignore
-    sortResult = getAssociatedDateSortComparer(fieldType).call(this, value1, value2, sortDirection, sortColumn, gridOptions);
+    // if the column is a date type, the user can optionally pass date format inside column params
+    // when that happen, we can call the date sort function directly without having to first find associated date format by column type
+    let paramDateFormat = '';
+    if (sortColumn && isColumnDateType(fieldType)) {
+      const params = sortColumn?.params || {};
+      paramDateFormat = params?.inputFormat ?? params.format;
+    }
+    const dateSortComparer: SortComparer = !!(sortColumn && paramDateFormat)
+      ? getSortComparerByDateFormat(paramDateFormat)
+      : getAssociatedDateSortComparer(fieldType);
+    sortResult = dateSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
   } else {
     switch (fieldType) {
       case FieldType.boolean:

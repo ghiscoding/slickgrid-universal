@@ -584,6 +584,39 @@ describe('CompoundDateFilter', () => {
     });
   });
 
+  it('should have a value with date displayed with a custom format when column has "params.outputFormat" provided and we trigger a change', () => {
+    mockColumn.outputType = undefined;
+    mockColumn.filter!.operator = '>';
+    mockColumn.params = { outputFormat: 'MMM DD, YYYY' };
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    filterInputElm.value = '2001-01-02T16:02:00.000Z';
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
+      HTMLInputElement: filterInputElm,
+      selectedDates: ['2001-01-02'],
+      hide: vi.fn(),
+    } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
+      HTMLInputElement: filterInputElm,
+      selectedDates: ['2001-01-02'],
+      selectedHours: 16,
+      selectedMinutes: 2,
+      hide: vi.fn(),
+    } as unknown as VanillaCalendar);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(1);
+    expect(filterInputElm.value).toBe('Jan 02, 2001');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, {
+      columnDef: mockColumn,
+      operator: '>',
+      searchTerms: ['2001-01-02'],
+      shouldTriggerQuery: true,
+    });
+  });
+
   it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {
     mockColumn.type = FieldType.dateUtc;
     mockColumn.outputType = null as any;
