@@ -425,8 +425,8 @@ importers:
   packages/common:
     dependencies:
       '@excel-builder-vanilla/types':
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^4.0.1
+        version: 4.0.1
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 0.1.2
@@ -1086,8 +1086,8 @@ packages:
     resolution: {integrity: sha512-JubJ5B2pJ4k4yGxaNLdbjrnk9d/iDz6/q8wOilpIowd6PJPgaxCuHBnBszq7Ce2TyMrywm5r4PnKm6V3iiZF+g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@excel-builder-vanilla/types@3.1.0':
-    resolution: {integrity: sha512-BcCMAFI3XtuJ0AUnkCIP3SSyz7tn3kNp32Ew3JTxCpkluVDgty1AIIr7hUngHhNdwNx6WkFOyniJz/KIYJtcTQ==}
+  '@excel-builder-vanilla/types@4.0.1':
+    resolution: {integrity: sha512-jUeMSeKDavKPArdfNroST4P6oJ9rBqp9SwgQxjdlahLcLU9dsM9teHuKpdop7q6apykou1Tf8pGd0b5rt5MYbw==}
 
   '@faker-js/faker@9.6.0':
     resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
@@ -5328,7 +5328,7 @@ snapshots:
       '@eslint/core': 0.12.0
       levn: 0.4.1
 
-  '@excel-builder-vanilla/types@3.1.0':
+  '@excel-builder-vanilla/types@4.0.1':
     dependencies:
       fflate: 0.8.2
 
