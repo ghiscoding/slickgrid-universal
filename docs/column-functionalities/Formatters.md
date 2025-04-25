@@ -35,7 +35,7 @@ A good example of a `Formatter` could be a timestamp or a `Date` object that we 
   * `currencyPrefix`, `currencySuffix`, `minDecimal`, `maxDecimal`, `numberPrefix`, `numberSuffix`, `decimalSeparator`, `thousandSeparator` and `displayNegativeNumberWithParentheses`
   * the distinction between `numberPrefix` and `currencyPrefix` can be seen when using `displayNegativeNumberWithParentheses`, for example if we have a value of `-12.432` with the `Formatters.currency` and `params: { currencyPrefix: '€', numberPrefix: 'Price ', numberSuffix: 'EUR' }` the output will be `"Price (€12.432) EUR"`
 * `Formatters.date`: Base Date Formatter, this formatter is a bit different compare to other date formatter since this one requires the user to provide a custom format in `params.dateFormat`
-  - for example: `{ id: 'start', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' }}`
+  - for example: `{ type: 'date', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' }}`
 * `Formatters.dateEuro`: Takes a Date object and displays it as an Euro Date format (DD/MM/YYYY)
 * `Formatters.dateTimeEuro`: Takes a Date object and displays it as an Euro Date+Time format (DD/MM/YYYY HH:mm:ss)
 * `Formatters.dateTimeShortEuro`: Takes a Date object and displays it as an Euro Date+Time (without seconds) format (DD/MM/YYYY HH:mm)

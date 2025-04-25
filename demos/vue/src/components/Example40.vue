@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { format as dateFormatter } from '@formkit/tempo';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   GridOption,
   Grouping,
@@ -16,6 +17,8 @@ import {
   SortDirectionNumber,
 } from 'slickgrid-vue';
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
+
+import { randomNumber } from './utilities.js';
 
 const FETCH_SIZE = 50;
 const gridOptions = ref<GridOption>();
@@ -63,19 +66,31 @@ function defineGrid() {
       id: 'start',
       name: 'Start',
       field: 'start',
-      formatter: Formatters.dateIso,
+      type: FieldType.date,
+      outputType: FieldType.dateIso, // for date picker format
+      formatter: Formatters.date,
       exportWithFormatter: true,
+      params: { dateFormat: 'MMM DD, YYYY' },
+      sortable: true,
       filterable: true,
-      filter: { model: Filters.compoundDate },
+      filter: {
+        model: Filters.compoundDate,
+      },
     },
     {
       id: 'finish',
       name: 'Finish',
       field: 'finish',
-      formatter: Formatters.dateIso,
+      type: FieldType.date,
+      outputType: FieldType.dateIso, // for date picker format
+      formatter: Formatters.date,
       exportWithFormatter: true,
+      params: { dateFormat: 'MMM DD, YYYY' },
+      sortable: true,
       filterable: true,
-      filter: { model: Filters.compoundDate },
+      filter: {
+        model: Filters.compoundDate,
+      },
     },
     {
       id: 'effort-driven',
@@ -98,6 +113,8 @@ function defineGrid() {
     enableGrouping: true,
     editable: false,
     rowHeight: 33,
+    enableExcelExport: true,
+    externalResources: [new ExcelExportService()],
   };
 }
 
@@ -153,18 +170,13 @@ function loadData(startIdx: number, count: number) {
 }
 
 function newItem(idx: number) {
-  const randomYear = 2000 + Math.floor(Math.random() * 10);
-  const randomMonth = Math.floor(Math.random() * 11);
-  const randomDay = Math.floor(Math.random() * 29);
-  const randomPercent = Math.round(Math.random() * 100);
-
   return {
     id: idx,
     title: 'Task ' + idx,
     duration: Math.round(Math.random() * 100) + '',
-    percentComplete: randomPercent,
-    start: new Date(randomYear, randomMonth + 1, randomDay),
-    finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+    percentComplete: randomNumber(1, 12),
+    start: new Date(2020, randomNumber(1, 11), randomNumber(1, 28)),
+    finish: new Date(2022, randomNumber(1, 11), randomNumber(1, 28)),
     effortDriven: idx % 5 === 0,
   };
 }
@@ -181,11 +193,15 @@ function clearAllFiltersAndSorts() {
 
 function setFiltersDynamically() {
   // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-  vueGrid?.filterService.updateFilters([{ columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' }]);
+  vueGrid?.filterService.updateFilters([{ columnId: 'start', searchTerms: ['2020-08-25'], operator: '<=' }]);
 }
 
-function refreshMetrics(args: OnRowCountChangedEventArgs) {
+function handleOnRowCountChanged(args: OnRowCountChangedEventArgs) {
   if (vueGrid && args?.current >= 0) {
+    // we probably want to re-sort the data when we get new items
+    vueGrid.dataView?.reSort();
+
+    // update metrics
     metrics.value.itemCount = vueGrid.dataView?.getFilteredItemCount() || 0;
     metrics.value.totalItemCount = args.itemCount || 0;
   }
@@ -278,7 +294,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     v-model:columns="columnDefinitions"
     v-model:data="dataset"
     grid-id="grid40"
-    @onRowCountChanged="refreshMetrics($event.detail.args)"
+    @onRowCountChanged="handleOnRowCountChanged($event.detail.args)"
     @onSort="handleOnSort()"
     @onScroll="handleOnScroll($event.detail.args)"
     @onVueGridCreated="vueGridReady($event.detail)"
