@@ -34,8 +34,6 @@ A good example of a `Formatter` could be a timestamp or a `Date` object that we 
 * `Formatters.currency`: will help with currency other than dollar (ie `€`), there are multiple `params` available for this formatter
   * `currencyPrefix`, `currencySuffix`, `minDecimal`, `maxDecimal`, `numberPrefix`, `numberSuffix`, `decimalSeparator`, `thousandSeparator` and `displayNegativeNumberWithParentheses`
   * the distinction between `numberPrefix` and `currencyPrefix` can be seen when using `displayNegativeNumberWithParentheses`, for example if we have a value of `-12.432` with the `Formatters.currency` and `params: { currencyPrefix: '€', numberPrefix: 'Price ', numberSuffix: 'EUR' }` the output will be `"Price (€12.432) EUR"`
-* `Formatters.date`: Base Date Formatter, this formatter is a bit different compare to other date formatter since this one requires the user to provide a custom format in `params.dateFormat`
-  - for example: `{ type: 'date', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' }}`
 * `Formatters.dateEuro`: Takes a Date object and displays it as an Euro Date format (DD/MM/YYYY)
 * `Formatters.dateTimeEuro`: Takes a Date object and displays it as an Euro Date+Time format (DD/MM/YYYY HH:mm:ss)
 * `Formatters.dateTimeShortEuro`: Takes a Date object and displays it as an Euro Date+Time (without seconds) format (DD/MM/YYYY HH:mm)
@@ -49,6 +47,8 @@ A good example of a `Formatter` could be a timestamp or a `Date` object that we 
 * `Formatters.dateTimeShortUs`: Takes a Date object and displays it as an US Date+Time (without seconds) format (MM/DD/YYYY HH:mm:ss)
 * `Formatters.dateTimeUsAmPm` : Takes a Date object and displays it as an US Date+Time+(am/pm) format (MM/DD/YYYY hh:mm:ss a)
 * `Formatters.dateUtc` : Takes a Date object and displays it as a TZ format (YYYY-MM-DDThh:mm:ssZ)
+* `Formatters.date`: Base Date Formatter, this formatter is a bit different compare to other date formatter since this one requires the user to provide a custom format in `params.dateFormat`
+  - for example: `{ type: 'date', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' }}`
 * `Formatters.decimal`: Display the value as x decimals formatted, defaults to 2 decimals. You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
 * `Formatters.dollar`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value.
 * `Formatters.dollarColored`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value
