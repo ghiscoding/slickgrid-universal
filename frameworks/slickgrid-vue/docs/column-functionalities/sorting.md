@@ -166,28 +166,6 @@ Date sorting should work out of the box as long as you provide the correct colum
 - `outputType`: when a `type` is provided for parsing (i.e. from your dataset), you could use a different `outputType` to format your date differently
 - `saveOutputType`: if you already have a `type` and an `outputType` but you wish to save your date (i.e. save to DB) in yet another format
 
-#### Custom Formats
-
-There are multiple field types available with a set of built-in Date formats available (i.e.: `date`, `dateIso`, `dateEuro`, `dateUs`, ...). But, what if you want to use a custom date format that is now available in the list of built-in types? You could provide a custom input and/or output format(s) via the column definition `params` that will work correctly with Sorting, Filtering and even Formatter (for that latter one, you must provide the base formatter `Formatters.date`)
-
-For example, the code below will accept a US date as input (DB) and display the date as more human readable format to the screen and even though both formats are custom, this will work properly while Sorting & Filtering.
-
-```ts
-this.columns = [
-  {
-    id: 'start', name: 'Start', field: 'start',
-    type: 'date', // you must still provide any date type, otherwise the custom format won't be read
-    formatter: Formatters.date, // base date formatter requires at the minimum "params.outputFormat"
-    params: {
-      inputFormat: 'M/D/YYYY',     // ie: 12/30/2000
-      outputFormat: 'MMM DD, YYYY' // ie: Dec 30, 2000
-    },
-  }
-];
-```
-
-> see Tempo lib for available [tokens](https://tempo.formkit.com/#format-tokens)
-
 ### Pre-Parse Date Columns for better perf
 ##### requires v5.8.0 and higher
 

@@ -400,7 +400,7 @@ export class FilterService {
           }
 
           // execute the filtering conditions check, comparing all cell values vs search term(s)
-          if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms, columnDef)) {
+          if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
             return false;
           }
         }
@@ -636,7 +636,7 @@ export class FilterService {
           if (conditionOptionResult) {
             const parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
             // prettier-ignore
-            const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeFilterConditionTest(conditionOptionResult as FilterConditionOption, parsedSearchTerms, columnFilter.columnDef);
+            const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeFilterConditionTest(conditionOptionResult as FilterConditionOption, parsedSearchTerms);
 
             // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
             // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)

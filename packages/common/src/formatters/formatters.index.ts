@@ -89,7 +89,7 @@ export const Formatters: Record<string, Formatter> = {
    */
   currency: currencyFormatter,
 
-  /** Base Date formatter which requires the user to provide Date format via column `params.format` or `params.inputFormat` or `params.outputFormat` */
+  /** Base Date formatter which requires the user to provide a Date Format via column `params.dateFormat` */
   date: getBaseDateFormatter(),
 
   /** Takes a Date object and displays it as an ISO Date format (YYYY-MM-DD) */

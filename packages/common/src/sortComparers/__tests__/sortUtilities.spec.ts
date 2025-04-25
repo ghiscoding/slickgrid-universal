@@ -46,22 +46,6 @@ describe('sortUtilities', () => {
     expect(result2).toBeGreaterThan(0);
   });
 
-  it('should call the SortComparers.date by column when date type and "params.inputFormat" are provided', () => {
-    const result1 = sortByFieldType(FieldType.dateIso, 'Jan 01, 2020', 'Feb 01, 2020', SortDirectionNumber.asc, {
-      id: 'field1',
-      field: 'field1',
-      params: { inputFormat: 'MMM DD, YYYY' },
-    });
-    expect(result1).toBeLessThan(0);
-
-    const result2 = sortByFieldType(FieldType.dateIso, 'Feb 01, 2020', 'Jan 01, 2020', SortDirectionNumber.asc, {
-      id: 'field1',
-      field: 'field1',
-      params: { inputFormat: 'MMM DD, YYYY' },
-    });
-    expect(result2).toBeGreaterThan(0);
-  });
-
   it('should call the SortComparers.objectString when FieldType is objectString', () => {
     const object1 = { firstName: 'John', lastName: 'Z' };
     const object2 = { firstName: 'Jane', lastName: 'Doe' };

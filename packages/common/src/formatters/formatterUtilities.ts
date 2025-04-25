@@ -175,16 +175,15 @@ export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof t
  */
 export function getBaseDateFormatter(): Formatter {
   return (_row, _cell, value, columnDef) => {
-    const params = columnDef.params ?? {};
-    const inputDateFormat: string = params.inputFormat ?? params.format;
-    const outputDateFormat: string = params.outputFormat ?? params.format;
-    if (!outputDateFormat) {
+    const inputType = columnDef?.type ?? FieldType.date;
+    const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
+    const outpuDateFormat: string = columnDef.params?.dateFormat;
+    if (!outpuDateFormat) {
       throw new Error(
-        `[Slickgrid-Universal] Using the base "Formatter.date" requires certain props that were not found in your column "${columnDef.id}", ` +
-          `make sure to provide a "type: date" and "params.outputFormat" (or "params.format") in your column definition.`
+        `[Slickgrid-Universal] Using the base "Formatter.date" requires "params.outputFormat" defined and was not found in your column "${columnDef.id}".`
       );
     }
-    return parseDateByIOFormats(columnDef, value, inputDateFormat, outputDateFormat);
+    return parseDateByIOFormats(columnDef, value, inputDateFormat, outpuDateFormat);
   };
 }
 

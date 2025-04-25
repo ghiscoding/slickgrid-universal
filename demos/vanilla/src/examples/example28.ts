@@ -15,6 +15,7 @@ import {
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
+import { randomNumber } from './utilities.js';
 
 const FETCH_SIZE = 50;
 
@@ -81,8 +82,7 @@ export default class Example28 {
         field: 'start',
         formatter: Formatters.date,
         exportWithFormatter: true,
-        type: 'date',
-        params: { inputFormat: 'M/D/YYYY', outputFormat: 'MMM DD, YYYY' },
+        params: { dateFormat: 'MMM DD, YYYY' },
         sortable: true,
         filterable: true,
         filter: {
@@ -95,8 +95,7 @@ export default class Example28 {
         field: 'finish',
         formatter: Formatters.date,
         exportWithFormatter: true,
-        type: 'date',
-        params: { inputFormat: 'M/D/YYYY', outputFormat: 'MMM DD, YYYY' },
+        params: { dateFormat: 'MMM DD, YYYY' },
         sortable: true,
         filterable: true,
         filter: {
@@ -181,20 +180,13 @@ export default class Example28 {
   }
 
   newItem(idx: number) {
-    // const randomYear = 2000 + Math.floor(Math.random() * 10);
-    const randomMonth = Math.floor(Math.random() * 11) + 1;
-    const randomDay = Math.floor(Math.random() * 27) + 1;
-    const randomPercent = Math.round(Math.random() * 100);
-
     return {
       id: idx,
       title: 'Task ' + idx,
       duration: Math.round(Math.random() * 100) + '',
-      percentComplete: randomPercent,
-      start: `${randomMonth}/${randomDay}/2008`,
-      finish: `${randomMonth}/${randomDay}/2009`,
-      // start: new Date(randomYear, randomMonth + 1, randomDay),
-      // finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+      percentComplete: randomNumber(1, 12),
+      start: new Date(2008, randomNumber(1, 12), randomNumber(1, 28)),
+      finish: new Date(2009, randomNumber(1, 12), randomNumber(1, 28)),
       effortDriven: idx % 5 === 0,
     };
   }

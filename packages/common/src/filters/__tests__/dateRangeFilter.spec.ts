@@ -469,41 +469,6 @@ describe('DateRangeFilter', () => {
     });
   });
 
-  it('should have a value with date displayed with a custom format when column has "params.outputFormat" provided and we trigger a change', () => {
-    mockColumn.outputType = undefined;
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z'];
-    mockColumn.params = { outputFormat: 'MMM DD, YYYY' };
-    mockColumn.filter!.operator = '<=';
-    const spyCallback = vi.spyOn(filterArguments, 'callback');
-    const selectedDates = ['2001-01-02', '2001-01-13'];
-
-    filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('div.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-
-    filterInputElm.focus();
-    filterInputElm.value = '2001-01-02 — 2001-01-13';
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-      HTMLInputElement: filterInputElm,
-      selectedDates,
-      hide: vi.fn(),
-    } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-      HTMLInputElement: filterInputElm,
-      selectedDates,
-      hide: vi.fn(),
-    } as unknown as VanillaCalendar);
-    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
-
-    expect(filterFilledElms.length).toBe(1);
-    expect(filterInputElm.value).toBe('Jan 02, 2001 — Jan 13, 2001');
-    expect(spyCallback).toHaveBeenCalledWith(undefined, {
-      columnDef: mockColumn,
-      operator: '<=',
-      searchTerms: ['2001-01-02', '2001-01-13'],
-      shouldTriggerQuery: true,
-    });
-  });
-
   it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z'];

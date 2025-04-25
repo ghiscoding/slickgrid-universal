@@ -1,29 +1,20 @@
 import { dayStart } from '@formkit/tempo';
 
 import { FieldType, OperatorType, type SearchTerm } from '../enums/index.js';
-import type { Column, FilterConditionOption } from '../interfaces/index.js';
+import type { FilterConditionOption } from '../interfaces/index.js';
 import { testFilterCondition } from './filterUtilities.js';
-import { isColumnDateType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/index.js';
+import { mapTempoDateFormatWithFieldType, tryParseDate } from '../services/index.js';
 
 /**
  * Execute Date filter condition check on each cell and use correct date format depending on it's field type (or filterSearchType when that is provided)
  */
-export function executeDateFilterCondition(
-  options: FilterConditionOption,
-  parsedSearchDates: Array<string | Date>,
-  column: Column
-): boolean {
+export function executeDateFilterCondition(options: FilterConditionOption, parsedSearchDates: Array<string | Date>): boolean {
   const filterSearchType = (options && (options.filterSearchType || options.fieldType)) || FieldType.dateIso;
-  let paramDateFormat = '';
-  if (isColumnDateType(filterSearchType)) {
-    const params = column?.params || {};
-    paramDateFormat = params.inputFormat ?? params.format;
-  }
-  const outputFormat = paramDateFormat || mapTempoDateFormatWithFieldType(filterSearchType);
+  const FORMAT = mapTempoDateFormatWithFieldType(filterSearchType);
   const [searchDate1, searchDate2] = parsedSearchDates;
 
   // cell value in Date format
-  const dateCell = tryParseDate(options.cellValue, outputFormat, true);
+  const dateCell = tryParseDate(options.cellValue, FORMAT, true);
 
   // return when cell value is not a valid date
   if ((!searchDate1 && !searchDate2) || !dateCell) {
@@ -33,7 +24,7 @@ export function executeDateFilterCondition(
   // when comparing with Dates only (without time), we need to disregard the time portion, we can do so by setting our time to start at midnight
   // ref, see https://stackoverflow.com/a/19699447/1212166
   const dateCellTimestamp =
-    outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h') ? dateCell.valueOf() : dayStart(new Date(dateCell)).valueOf();
+    FORMAT === 'ISO8601' || FORMAT.toLowerCase().includes('h') ? dateCell.valueOf() : dayStart(new Date(dateCell)).valueOf();
 
   // having 2 search dates, we assume that it's a date range filtering and we'll compare against both dates
   if (searchDate1 && searchDate2) {
@@ -49,9 +40,7 @@ export function executeDateFilterCondition(
 
   // comparing against a single search date
   const dateSearchTimestamp1 =
-    outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h')
-      ? searchDate1.valueOf()
-      : dayStart(new Date(searchDate1)).valueOf();
+    FORMAT === 'ISO8601' || FORMAT.toLowerCase().includes('h') ? searchDate1.valueOf() : dayStart(new Date(searchDate1)).valueOf();
   return testFilterCondition(options.operator || '==', dateCellTimestamp, dateSearchTimestamp1);
 }
 

@@ -22,23 +22,12 @@ export function compareDates(value1: any, value2: any, sortDirection: number, fo
 
 /** From a FieldType, find the associated Date SortComparer */
 export function getAssociatedDateSortComparer(fieldType: (typeof FieldType)[keyof typeof FieldType]): SortComparer {
-  const dateFormat = fieldType === FieldType.date ? undefined : mapTempoDateFormatWithFieldType(fieldType);
-  return getSortComparer(dateFormat);
-}
+  const FORMAT = fieldType === FieldType.date ? undefined : mapTempoDateFormatWithFieldType(fieldType);
 
-/** From a date format, find the associated Date SortComparer */
-export function getSortComparerByDateFormat(dateFormat: string): SortComparer {
-  return getSortComparer(dateFormat);
-}
-
-// --
-// private functions
-
-function getSortComparer(format: string | undefined): SortComparer {
   return ((value1: any, value2: any, sortDirection: number) => {
-    if (format === undefined) {
-      return compareDates(value1, value2, sortDirection, format, false) as number;
+    if (FORMAT === undefined) {
+      return compareDates(value1, value2, sortDirection, FORMAT, false) as number;
     }
-    return compareDates(value1, value2, sortDirection, format, true) as number;
+    return compareDates(value1, value2, sortDirection, FORMAT, true) as number;
   }) as SortComparer;
 }

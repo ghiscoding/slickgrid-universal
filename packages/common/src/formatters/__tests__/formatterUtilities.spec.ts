@@ -159,13 +159,13 @@ describe('formatterUtilities', () => {
       const formatterFn = getBaseDateFormatter();
 
       expect(() => formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub)).toThrow(
-        '[Slickgrid-Universal] Using the base "Formatter.date" requires certain props that were not found in your column'
+        '[Slickgrid-Universal] Using the base "Formatter.date" requires "params.outputFormat" defined'
       );
     });
 
     it('should return a formatted Date when calling the Formatter function with a defined "params.outputFormat"', () => {
       const formatterFn = getBaseDateFormatter();
-      const mockColumn = { type: FieldType.date, params: { outputFormat: 'MMM DD, YYYY' } } as Column;
+      const mockColumn = { type: FieldType.date, params: { dateFormat: 'MMM DD, YYYY' } } as Column;
 
       const output = formatterFn(1, 1, '2002-01-01T00:01:01', mockColumn, {}, gridStub);
 
