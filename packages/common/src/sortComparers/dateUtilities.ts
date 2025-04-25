@@ -9,16 +9,9 @@ export function compareDates(value1: any, value2: any, sortDirection: number, fo
     diff = 0;
   } else {
     // try to parse the Date and validate it
-    let date1: Date | boolean = tryParseDate(value1, format, strict);
-    let date2: Date | boolean = tryParseDate(value2, format, strict);
-
     // when date is invalid (false), we'll create a temporary old Date
-    if (!date1) {
-      date1 = new Date(1001, 1, 1);
-    }
-    if (!date2) {
-      date2 = new Date(1001, 1, 1);
-    }
+    const date1: Date = tryParseDate(value1, format, strict) || new Date(1001, 1, 1);
+    const date2: Date = tryParseDate(value2, format, strict) || new Date(1001, 1, 1);
 
     // we can use Date valueOf to sort
     diff = date1.valueOf() - date2.valueOf();
@@ -27,7 +20,7 @@ export function compareDates(value1: any, value2: any, sortDirection: number, fo
   return sortDirection * diff;
 }
 
-/** From a FieldType, return the associated Date SortComparer */
+/** From a FieldType, find the associated Date SortComparer */
 export function getAssociatedDateSortComparer(fieldType: (typeof FieldType)[keyof typeof FieldType]): SortComparer {
   const FORMAT = fieldType === FieldType.date ? undefined : mapTempoDateFormatWithFieldType(fieldType);
 

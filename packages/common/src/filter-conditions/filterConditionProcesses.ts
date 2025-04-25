@@ -34,7 +34,7 @@ export const executeFilterConditionTest: FilterCondition = ((
       // the parsedSearchTerms should be single value (result came from getFilterParsedBoolean() method)
       return executeBooleanFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'date':
-      return executeDateFilterCondition(options, (parsedSearchTerms || []) as any[]);
+      return executeDateFilterCondition(options, (parsedSearchTerms || []) as Array<Date | string>);
     case 'number':
       return executeNumberFilterCondition(options, (parsedSearchTerms || []) as number[]);
     case 'object':

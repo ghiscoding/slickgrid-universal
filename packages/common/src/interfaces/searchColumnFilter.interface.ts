@@ -4,7 +4,7 @@ import type { SearchTerm } from '../enums/searchTerm.type.js';
 
 export interface SearchColumnFilter {
   /** Column definition Id */
-  columnId: string;
+  columnId: string | number;
 
   /** Column definition */
   columnDef: Column;
