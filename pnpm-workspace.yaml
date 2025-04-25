@@ -17,7 +17,7 @@ catalog:
   cypress-real-events: ^1.14.0
   dequal: ^2.0.3
   dompurify: ^3.2.4
-  multiple-select-vanilla: ^3.5.0
+  multiple-select-vanilla: ^4.0.0
   npm-run-all2: ^7.0.2
   rxjs: ^7.8.2
   sass: ^1.86.0
