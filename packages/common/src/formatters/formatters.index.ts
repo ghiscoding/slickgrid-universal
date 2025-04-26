@@ -67,10 +67,11 @@ const allFormatters: Record<string, Formatter> = {
   treeExport: treeExportFormatter,
 };
 
-// add date Formatters dynamically but exclude "dateTime" because that is a native JS Date object
+// add date Formatters dynamically but exclude "FieldType.date" since that one was created above
+// and it has a different implementation
 getAllDateFieldTypes().forEach((dateType) => {
   const fieldType = FieldType[dateType as keyof typeof FieldType];
-  if (fieldType && fieldType !== FieldType.dateTime) {
+  if (fieldType && fieldType !== FieldType.date) {
     allFormatters[dateType] = getAssociatedDateFormatter(fieldType, dateType);
   }
 });
