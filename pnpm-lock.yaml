@@ -150,8 +150,8 @@ importers:
         specifier: 'catalog:'
         version: 7.0.2
       pnpm:
-        specifier: ^9.15.0
-        version: 9.15.9
+        specifier: ^10.0.0
+        version: 10.0.0
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
@@ -3914,8 +3914,8 @@ packages:
   pkg-types@2.1.0:
     resolution: {integrity: sha512-wmJwA+8ihJixSoHKxZJRBQG1oY8Yr9pGLzRmSsNms0iNWyHHAlZCa7mmKiFR10YPZuz/2k169JiS/inOjBCZ2A==}
 
-  pnpm@9.15.9:
-    resolution: {integrity: sha512-aARhQYk8ZvrQHAeSMRKOmvuJ74fiaR1p5NQO7iKJiClf1GghgbrlW1hBjDolO95lpQXsfF+UA+zlzDzTfc8lMQ==}
+  pnpm@10.0.0:
+    resolution: {integrity: sha512-uP71SUvT/ky9Ttq9B0XfLuW+PksLiwj6ZDqj5MZwLMwPANaPqKjJhYpzWgAySFpEmQ7SgQUmyHXkFvABsX3xKw==}
     engines: {node: '>=18.12'}
     hasBin: true
 
@@ -8510,7 +8510,7 @@ snapshots:
       exsolve: 1.0.4
       pathe: 2.0.3
 
-  pnpm@9.15.9: {}
+  pnpm@10.0.0: {}
 
   postcss-calc@10.1.1(postcss@8.5.3):
     dependencies:
