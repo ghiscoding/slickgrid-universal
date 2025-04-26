@@ -714,6 +714,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
 
     this.args.container.appendChild(this._editorInputGroupElm);
+    this.columnEditor.onInstantiated?.(this._instance);
 
     if (!this.args.compositeEditorOptions) {
       window.setTimeout(() => this.focus(), 50);

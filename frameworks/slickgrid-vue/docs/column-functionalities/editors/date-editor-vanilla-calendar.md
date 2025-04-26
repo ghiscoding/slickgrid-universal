@@ -36,6 +36,7 @@ function defineGrid() {
       type: 'dateIso', // if your type has hours/minutes, then the date picker will include date+time
       editor: {
         model: Editors.date,
+        onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
         editorOptions: {
           displayDateMax: 'today',
           disableDates: ['2022-08-15', '2022-08-20'],
@@ -66,6 +67,7 @@ function initializeGrid() {
       id: 'title', name: 'Title', field: 'title',
       editor: {
         model: Editors.date,
+        onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
         required: true,
         validator: (value, args) => {
           const dataContext = args && args.item;

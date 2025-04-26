@@ -23,6 +23,7 @@ columnDefinitions.value = [
     type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
       collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
       collectionSortBy: {
         property: 'label',
@@ -86,6 +87,7 @@ columnDefinitions.value = [{
   formatter: Formatters.complexObject, // the complex formatter is necessary, unless you provide a custom formatter
   editor: {
     model: Editors.SingleSelect,
+    onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
     complexObjectPath: 'user.middleName',
     serializeComplexValueFormat: 'flat' // (flat) will return 'Bob', (object) will return { label: 'Bob', value: 'Bob' }
   }
@@ -104,6 +106,7 @@ columnDefinitions.value = [
     type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
       collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
       collectionOverride: (updatedCollection, args) => {
         console.log(args);
@@ -143,11 +146,12 @@ editor: {
     label: 'currency',
     labelPrefix: 'symbol',
     labelSuffix: 'country',
-  collectionOptions: {
-    separatorBetweenTextLabels: ' ', // add white space between each text
-    includePrefixSuffixToSelectedValues: true // should the selected value include the prefix/suffix in the output format
-  },
-  model: Editors.multipleSelect
+    collectionOptions: {
+      separatorBetweenTextLabels: ' ', // add white space between each text
+      includePrefixSuffixToSelectedValues: true // should the selected value include the prefix/suffix in the output format
+    },
+    model: Editors.multipleSelect
+  }
 }
 ```
 

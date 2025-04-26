@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-force-bundle",
-  "version": "5.13.4",
+  "version": "5.14.0",
   "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
   "type": "module",
   "main": "./dist/index.js",
@@ -64,7 +64,7 @@
   "devDependencies": {
     "fflate": "^0.8.2",
     "normalize-path": "^3.0.0",
-    "tinyglobby": "^0.2.12",
+    "tinyglobby": "^0.2.13",
     "vite": "catalog:",
     "yargs": "^17.7.2"
   }

@@ -47,6 +47,7 @@ import {
 
   // utilities
   emptyElement,
+  fetchAsPromise,
   isColumnDateType,
   SlickEventHandler,
   SlickDataView,
@@ -1377,37 +1378,11 @@ export class SlickVanillaGridBundle<TData = any> {
   /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
   protected loadEditorCollectionAsync(column: Column<TData>): void {
     if (column?.editor) {
-      const collectionAsync = column.editor.collectionAsync;
       column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
 
-      if (collectionAsync instanceof Promise) {
-        // wait for the "collectionAsync", once resolved we will save it into the "collection"
-        // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
-        collectionAsync.then((response: any | any[]) => {
-          if (Array.isArray(response)) {
-            this.updateEditorCollection(column, response); // from Promise
-          } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
-            if (response.bodyUsed) {
-              console.warn(
-                `[SlickGrid-Universal] The response body passed to collectionAsync was already read.` +
-                  `Either pass the dataset from the Response or clone the response first using response.clone()`
-              );
-            } else {
-              // from Fetch
-              (response as Response).json().then((data) => this.updateEditorCollection(column, data));
-            }
-          } else if (response?.content) {
-            this.updateEditorCollection(column, response['content']); // from http-client
-          }
-        });
-      } else if (this.rxjs?.isObservable(collectionAsync)) {
-        // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
-        queueMicrotask(() => {
-          this.subscriptions.push(
-            (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
-          );
-        });
-      }
+      fetchAsPromise(column.editor.collectionAsync, this.rxjs).then((resolvedCollection) => {
+        this.updateEditorCollection(column, resolvedCollection);
+      });
     }
   }
 

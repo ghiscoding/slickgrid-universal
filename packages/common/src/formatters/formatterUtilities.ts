@@ -127,7 +127,7 @@ export function retrieveFormatterOptions(
     default:
       break;
   }
-  const gridOptions = (grid && typeof grid.getOptions === 'function' ? grid.getOptions() : {}) as GridOption;
+  const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
   const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, gridOptions, defaultMinDecimal);
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, gridOptions, defaultMaxDecimal);
   const decimalSeparator = getValueFromParamsOrFormatterOptions(
@@ -181,9 +181,8 @@ export function getValueFromParamsOrFormatterOptions(
   gridOptions: GridOption,
   defaultValue?: any
 ): any {
-  const params = columnDef && columnDef.params;
-
-  if (params && params.hasOwnProperty(optionName)) {
+  const params = columnDef.params;
+  if (params?.hasOwnProperty(optionName)) {
     return params[optionName];
   } else if (gridOptions?.formatterOptions?.hasOwnProperty(optionName)) {
     return (gridOptions.formatterOptions as any)[optionName];
@@ -195,22 +194,12 @@ export function getValueFromParamsOrFormatterOptions(
 export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof typeof FieldType], defaultSeparator: string): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
-  return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
-    const gridOptions = (grid && typeof grid.getOptions === 'function' ? grid.getOptions() : {}) as GridOption;
+  return (_row, _cell, value, columnDef, _dataContext, grid) => {
+    const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? FieldType.date;
     const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
-    const isParsingAsUtc = columnDef?.params?.parseDateAsUtc ?? false;
-
-    const date = tryParseDate(value, inputDateFormat);
-    let outputDate = value;
-    if (date) {
-      let d = date;
-      if (isParsingAsUtc) {
-        d = toUtcDate(date);
-      }
-      outputDate = format(d, defaultDateFormat, 'en-US');
-    }
+    let outputDate = parseDateByIOFormats(columnDef, value, inputDateFormat, defaultDateFormat);
 
     // user can customize the separator through the "formatterOptions"
     // if that is the case we need to replace the default "/" to the new separator
@@ -220,6 +209,25 @@ export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof t
     }
 
     return outputDate;
+  };
+}
+
+/**
+ * Base Date Formatter that will use the input & output date format provided in the column definition params
+ * @param {Object} columnDef - column definition
+ * @returns {Function} formatter function
+ */
+export function getBaseDateFormatter(): Formatter {
+  return (_row, _cell, value, columnDef) => {
+    const inputType = columnDef?.type ?? FieldType.date;
+    const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
+    const outpuDateFormat: string = columnDef.params?.dateFormat;
+    if (!outpuDateFormat) {
+      throw new Error(
+        `[Slickgrid-Universal] Using the base "Formatter.date" requires "params.outputFormat" defined and was not found in your column "${columnDef.id}".`
+      );
+    }
+    return parseDateByIOFormats(columnDef, value, inputDateFormat, outpuDateFormat);
   };
 }
 
@@ -316,4 +324,19 @@ export function parseFormatterWhenExist<T = any>(
   }
 
   return output;
+}
+
+// --
+// private functions
+
+/** private function to parse a date */
+function parseDateByIOFormats(columnDef: Column, value: any, inputDateFormat: string, outputDateFormat: string): string {
+  const isParsingAsUtc = columnDef.params?.parseDateAsUtc ?? false;
+  const date = tryParseDate(value, inputDateFormat);
+  let outputDate = value;
+  if (date) {
+    const d = isParsingAsUtc ? toUtcDate(date) : date;
+    outputDate = format(d, outputDateFormat, 'en-US');
+  }
+  return outputDate;
 }

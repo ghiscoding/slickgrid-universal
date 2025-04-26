@@ -19,11 +19,16 @@
   </div>
 </h3>
 
-<div class="row mb-3">
-  <span>
-    <label for="server-delay">Simulated Server Delay (ms): </label>
-    <input type="number" id="server-delay" class="is-narrow input is-small" data-test="server-delay" value.bind="serverApiDelay" />
-  </span>
+<div class="columns row mb-3 no-margin">
+  <div class="column">
+    <span>
+      <label for="server-delay">Simulated Server Delay (ms): </label>
+      <input type="number" id="server-delay" class="is-narrow input is-small" data-test="server-delay" value.bind="serverApiDelay" />
+    </span>
+  </div>
+  <div class="column invisible is-4" class.bind="notificationContainerClass" data-test="alert-lazy">
+    <div class="notification is-info is-light is-narrow">Lazy loading collection...</div>
+  </div>
 </div>
 
 <div class="grid16"></div>

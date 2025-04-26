@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/pagination-component",
-  "version": "5.13.4",
+  "version": "5.14.0",
   "description": "Slick Pagination Component - Vanilla Implementation of a Pagination Component",
   "type": "module",
   "main": "./dist/index.js",

@@ -21,6 +21,8 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example16.scss';
 
+const NB_ITEMS = 1000;
+
 export default class Example16 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
@@ -28,7 +30,8 @@ export default class Example16 {
   gridOptions: GridOption;
   dataset: any[];
   editCommandQueue: EditCommand[] = [];
-  serverApiDelay = 500;
+  serverApiDelay = 1000;
+  notificationContainerClass = 'column invisible is-4';
   sgb: SlickVanillaGridBundle;
   loadingClass = '';
 
@@ -38,7 +41,7 @@ export default class Example16 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(500);
+    this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid16`) as HTMLDivElement;
 
     this._bindingEventService.bind(
@@ -327,11 +330,17 @@ export default class Example16 {
         },
         filter: {
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
-          collectionAsync: new Promise((resolve) => {
-            window.setTimeout(() => {
-              resolve(Array.from(Array((this.dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+          collectionLazy: () => {
+            this.notificationContainerClass = 'column is-4';
+
+            return new Promise((resolve) => {
+              window.setTimeout(() => {
+                this.notificationContainerClass = 'column invisible is-4';
+                resolve(Array.from(Array((this.dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+              }, this.serverApiDelay);
             });
-          }),
+          },
+          // onInstantiated: (msSelect) => console.log('ms-select instance', msSelect),
           customStructure: {
             label: 'label',
             value: 'value',
@@ -339,6 +348,9 @@ export default class Example16 {
           },
           collectionOptions: {
             separatorBetweenTextLabels: ' ',
+          },
+          filterOptions: {
+            minHeight: 70,
           },
           model: Filters.multipleSelect,
           operator: OperatorType.inContains,

@@ -1,5 +1,4 @@
 describe('Example 28 - Infinite Scroll from JSON data', () => {
-  const GRID_ROW_HEIGHT = 33;
   const titles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {
@@ -15,14 +14,12 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
   });
 
   it('should expect first row to include "Task 0" and other specific properties', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).contains(/[0-9]/);
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).contains(/[0-9]/);
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).contains(/20[0-9]{2}-[0-9]{2}-[0-9]{2}/);
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).contains(/20[0-9]{2}-[0-9]{2}-[0-9]{2}/);
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`)
-      .find('.mdi.mdi-check')
-      .should('have.length', 1);
+    cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'Task 0');
+    cy.get('[data-row="0"] > .slick-cell:nth(1)').contains(/[0-9]/);
+    cy.get('[data-row="0"] > .slick-cell:nth(2)').contains(/[0-9]/);
+    cy.get('[data-row="0"] > .slick-cell:nth(3)').contains('2020');
+    cy.get('[data-row="0"] > .slick-cell:nth(4)').contains('2022');
+    cy.get('[data-row="0"] > .slick-cell:nth(5)').find('.mdi.mdi-check').should('have.length', 1);
   });
 
   it('should scroll to bottom of the grid and expect next batch of 50 items appended to current dataset for a total of 100 items', () => {
@@ -50,10 +47,10 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 10');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 100');
+    cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'Task 0');
+    cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'Task 1');
+    cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'Task 10');
+    cy.get('[data-row="3"] > .slick-cell:nth(0)').should('contain', 'Task 100');
   });
 
   it('should enable onSort for data reset and expect dataset to be reset to 50 items after sorting by Title', () => {
@@ -65,10 +62,10 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 9');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 8');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 7');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 6');
+    cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'Task 9');
+    cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'Task 8');
+    cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'Task 7');
+    cy.get('[data-row="3"] > .slick-cell:nth(0)').should('contain', 'Task 6');
   });
 
   it('should "Group by Duration" and expect 50 items grouped', () => {
@@ -78,13 +75,8 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-      'have.length',
-      1
-    );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).contains(
-      /Duration: [0-9]/
-    );
+    cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-toggle.expanded').should('have.length', 1);
+    cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').contains(/Duration: [0-9]/);
   });
 
   it('should scroll to the bottom "Group by Duration" and expect 50 more items for a total of 100 items grouped', () => {
@@ -94,12 +86,41 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
-      'have.length',
-      1
-    );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).contains(
-      /Duration: [0-9]/
-    );
+    cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-toggle.expanded').should('have.length', 1);
+    cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').contains(/Duration: [0-9]/);
+  });
+
+  it('should clear all grouping', () => {
+    cy.get('.grid28').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
+
+    cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      .find('.slick-menu-item')
+      .find('.slick-menu-content')
+      .contains('Clear all Grouping')
+      .click();
+  });
+
+  it('should hover over the "Start" column header menu of 1st grid and click on "Sort Descending" command', () => {
+    cy.get('[data-test="clear-filters-sorting"]').click();
+    cy.get('.grid28').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').should('contain', 'Sort Descending').click();
+
+    cy.get('[data-row="0"] > .slick-cell:nth(3)').contains('2020');
+  });
+
+  it('should load 200 items and filter "Start" column with <=2020-08-25', () => {
+    cy.get('[data-test="set-dynamic-filter"]').click();
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.wait(10);
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('[data-test="totalItemCount"]').should('have.text', '200');
+
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+
+    cy.get(`[data-row=0] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
+    cy.get(`[data-row=1] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
+    cy.get(`[data-row=2] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
+    cy.get(`[data-row=3] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
   });
 });

@@ -12,8 +12,8 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "scripts": {
-    "build": "pnpm lint && pnpm build:universal && lerna run build --stream --ignore=\"@slickgrid-universal/*\"",
-    "bundle:zip": "pnpm build:universal && pnpm -r --stream --filter=./packages/** run bundle:zip",
+    "build": "pnpm clean && pnpm lint && pnpm build:universal && lerna run build --stream --ignore=\"@slickgrid-universal/*\"",
+    "bundle:zip": "pnpm clean && pnpm lint && pnpm build:universal && pnpm -r --stream --filter=./packages/** run bundle:zip",
     "clean": "rimraf --glob {demos,frameworks,packages}/*/dist packages/*/tsconfig.tsbuildinfo",
     "cypress": "cypress open --config-file test/cypress.config.ts",
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
@@ -101,16 +101,16 @@
     "@lerna-lite/run": "^4.0.0",
     "@lerna-lite/watch": "^4.0.0",
     "@types/node": "catalog:",
-    "@vitest/coverage-v8": "^3.0.9",
-    "@vitest/eslint-plugin": "^1.1.38",
-    "@vitest/ui": "^3.0.9",
+    "@vitest/coverage-v8": "catalog:",
+    "@vitest/eslint-plugin": "^1.1.43",
+    "@vitest/ui": "catalog:",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "cross-env": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
-    "dotenv": "^16.4.7",
-    "eslint": "^9.23.0",
-    "eslint-plugin-cypress": "^4.2.0",
+    "dotenv": "^16.5.0",
+    "eslint": "^9.25.1",
+    "eslint-plugin-cypress": "^4.3.0",
     "eslint-plugin-n": "^17.17.0",
     "globals": "^16.0.0",
     "happy-dom": "^17.4.4",
@@ -125,7 +125,7 @@
     "sortablejs": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "^8.28.0",
-    "vitest": "^3.0.9"
+    "vitest": "catalog:"
   },
   "funding": {
     "type": "ko_fi",
