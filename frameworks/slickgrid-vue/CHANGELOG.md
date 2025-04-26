@@ -2,15 +2,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v1.2.0) (2025-04-26)
+# [1.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.4...v1.2.0) (2025-04-26)
 
-## [1.1.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.4...v1.1.4) (2025-04-09)
+### Features
+
+* allow providing custom date format via base Date Formatter ([#1928](https://github.com/ghiscoding/slickgrid-universal/issues/1928)) ([d47a63d](https://github.com/ghiscoding/slickgrid-universal/commit/d47a63d50d296227aba0655e4035f7c3ce09beb5)) - by @ghiscoding
+* **filter:** add `collectionLazy` callback to Column Filter ([#1923](https://github.com/ghiscoding/slickgrid-universal/issues/1923)) ([23bbbeb](https://github.com/ghiscoding/slickgrid-universal/commit/23bbbeb1cc90fcf10bc892749be20af5c5bb39a9)) - by @ghiscoding
+
+
+## [1.1.4](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.2...v1.1.4) (2025-04-09)
 
 ### Bug Fixes
 
 * error in CSS ([#1890](https://github.com/ghiscoding/slickgrid-universal/issues/1890)) ([6b23d5a](https://github.com/ghiscoding/slickgrid-universal/commit/6b23d5a079b367be9be57d778c543f9f0e86c324)) - by @wboevink
 
-## [1.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.2...v1.1.2) (2025-03-29)
+## [1.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v1.0.2...v1.1.2) (2025-03-29)
 
 ### Bug Fixes
 
