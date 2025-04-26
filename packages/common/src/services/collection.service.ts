@@ -59,9 +59,8 @@ export class CollectionService<T = any> {
   preParseByMutationDateItems(items: any[], grid: SlickGrid, preParseDateColumns: boolean | string): void {
     const parsingProps: ParsingDateDetails[] = [];
     grid.getColumns().forEach((col) => {
-      const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
-
       // loop through all date columns only once and keep parsing info
+      const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
       if (parseInfo) {
         parsingProps.push(parseInfo);
       }
@@ -77,9 +76,8 @@ export class CollectionService<T = any> {
   parseSingleDateItem(item: any, grid: SlickGrid, preParseDateColumns: boolean | string): void {
     if (preParseDateColumns) {
       grid.getColumns().forEach((col) => {
-        const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
-
         // loop through all date columns only once and keep parsing info
+        const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
         if (parseInfo) {
           this.reassignDateWhenValid(item, col.id, parseInfo.dateFormat, parseInfo.queryFieldName);
         }

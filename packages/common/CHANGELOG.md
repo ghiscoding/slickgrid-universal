@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.14.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.4...v5.14.0) (2025-04-26)
+
+### Features
+
+* add `onInstantiated` on all Editor/Filter with 3rd party lib ([#1925](https://github.com/ghiscoding/slickgrid-universal/issues/1925)) ([5709587](https://github.com/ghiscoding/slickgrid-universal/commit/57095875e06535ababbc90bc423331ece5771889)) - by @ghiscoding
+* allow providing custom date format via base Date Formatter ([#1928](https://github.com/ghiscoding/slickgrid-universal/issues/1928)) ([d47a63d](https://github.com/ghiscoding/slickgrid-universal/commit/d47a63d50d296227aba0655e4035f7c3ce09beb5)) - by @ghiscoding
+* **filter:** add `collectionLazy` callback to Column Filter ([#1923](https://github.com/ghiscoding/slickgrid-universal/issues/1923)) ([23bbbeb](https://github.com/ghiscoding/slickgrid-universal/commit/23bbbeb1cc90fcf10bc892749be20af5c5bb39a9)) - by @ghiscoding
+
+### Performance Improvements
+
+* build date Formatters/Sorters dynamically to decrease build size ([#1935](https://github.com/ghiscoding/slickgrid-universal/issues/1935)) ([57fef2c](https://github.com/ghiscoding/slickgrid-universal/commit/57fef2cbb84580f989a57c5b6af84744b04fa965)) - by @ghiscoding
+
+### Reverts
+
+* Revert "chore: enable pnpm `shellEmulator` & remove `cross-env` (#1924)" (#1926) ([1352f2e](https://github.com/ghiscoding/slickgrid-universal/commit/1352f2ea8e66aeebbb94e11c415bf6314c34fc00)), closes [#1924](https://github.com/ghiscoding/slickgrid-universal/issues/1924) [#1926](https://github.com/ghiscoding/slickgrid-universal/issues/1926) - by @ghiscoding
+
 ## [5.13.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.3...v5.13.4) (2025-04-09)
 
 ### Bug Fixes

@@ -371,7 +371,8 @@ export class FilterService {
     } else if (typeof columnFilters === 'object') {
       for (const columnId of Object.keys(columnFilters)) {
         const searchColFilter = columnFilters[columnId] as SearchColumnFilter;
-        const columnFilterDef = searchColFilter.columnDef?.filter;
+        const columnDef = searchColFilter.columnDef;
+        const columnFilterDef = columnDef?.filter;
 
         // user could provide a custom filter predicate on the column definition
         if (typeof columnFilterDef?.filterPredicate === 'function') {
@@ -391,10 +392,8 @@ export class FilterService {
           // in the rare case of an empty search term (it can happen when creating an external grid global search)
           // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
           if (parsedSearchTerms === undefined) {
-            parsedSearchTerms = getParsedSearchTermsByFieldType(
-              searchColFilter.searchTerms,
-              searchColFilter.columnDef.type || FieldType.string
-            ); // parsed term could be a single value or an array of values
+            // parsed term could be a single value or an array of values
+            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, columnDef.type || FieldType.string);
             if (parsedSearchTerms !== undefined) {
               searchColFilter.parsedSearchTerms = parsedSearchTerms;
             }
@@ -1372,7 +1371,7 @@ export class FilterService {
     });
   }
 
-  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString): void {
+  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: Column, operator?: OperatorType | OperatorString): void {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
     const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 

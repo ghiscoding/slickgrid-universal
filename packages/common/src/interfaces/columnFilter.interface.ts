@@ -51,6 +51,12 @@ export interface ColumnFilter {
   collectionAsync?: Promise<any> | Observable<any> | Subject<any>;
 
   /**
+   * A lazy callback to will only load your collection whenever your filter is being rendered (i.e.: when opening the select dropdown)
+   * Note: for the ms-select library, we use the `onOpen` callback, so please make sure to NOT override the callback otherwise it would cancel the feature.
+   */
+  collectionLazy?: (col: Column) => Promise<any> | Observable<any> | Subject<any>;
+
+  /**
    * A collection of items/options (commonly used with a Select/Multi-Select Filter)
    * It can be a collection of string or label/value pair (the pair can be customized via the "customStructure" option)
    */
@@ -113,6 +119,9 @@ export interface ColumnFilter {
       operator?: OperatorType | OperatorString;
     }
   >;
+
+  /** When the Filter is an external library, it could be useful to get its instance so that we could call any of the external library functions. */
+  onInstantiated?: <T = any>(instance: T) => void;
 
   /**
    * Use "params" to pass any type of arguments to your Custom Filter

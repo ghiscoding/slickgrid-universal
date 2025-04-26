@@ -20,8 +20,8 @@ import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickG
 
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];
-  protected _eventHandler: SlickEventHandler;
   protected _dataView?: SlickDataView;
+  protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _isBackendGrid = false;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request

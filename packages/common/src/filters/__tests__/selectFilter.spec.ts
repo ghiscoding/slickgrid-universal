@@ -12,8 +12,6 @@ import { HttpStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
-vi.useFakeTimers();
-
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -729,92 +727,101 @@ describe('SelectFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
-  it('should work with English locale when locale is changed', () => {
-    translateService.use('en');
-    gridOptionMock.enableTranslate = true;
-    mockColumn.filter = {
-      enableTranslateLabel: true,
-      collection: [
-        { value: 'other', labelKey: 'OTHER' },
-        { value: 'male', labelKey: 'MALE' },
-        { value: 'female', labelKey: 'FEMALE' },
-      ],
-      filterOptions: { minimumCountSelected: 1 },
-    };
+  it('should work with English locale when locale is changed', () =>
+    new Promise(async (done: any) => {
+      translateService.use('en');
+      gridOptionMock.enableTranslate = true;
+      mockColumn.filter = {
+        enableTranslateLabel: true,
+        collection: [
+          { value: 'other', labelKey: 'OTHER' },
+          { value: 'male', labelKey: 'MALE' },
+          { value: 'female', labelKey: 'FEMALE' },
+        ],
+        filterOptions: { minimumCountSelected: 1 },
+      };
 
-    filterArguments.searchTerms = ['male', 'female'];
-    filter.init(filterArguments);
-    vi.runAllTimers(); // fast-forward timer
+      filterArguments.searchTerms = ['male', 'female'];
+      filter.init(filterArguments);
 
-    const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
-    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
-    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
-    const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
-    filterBtnElm.click();
+      setTimeout(() => {
+        const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
+        filterBtnElm.click();
 
-    expect(filterListElm.length).toBe(3);
-    expect(filterListElm[0].textContent).toBe('Other');
-    expect(filterListElm[1].textContent).toBe('Male');
-    expect(filterListElm[2].textContent).toBe('Female');
-    expect(filterOkElm.textContent).toBe('OK');
-    expect(filterSelectAllElm.textContent).toBe('Select All');
-    expect(filterParentElm.textContent).toBe('2 of 3 selected');
-  });
+        expect(filterListElm.length).toBe(3);
+        expect(filterListElm[0].textContent).toBe('Other');
+        expect(filterListElm[1].textContent).toBe('Male');
+        expect(filterListElm[2].textContent).toBe('Female');
+        expect(filterOkElm.textContent).toBe('OK');
+        expect(filterSelectAllElm.textContent).toBe('Select All');
+        expect(filterParentElm.textContent).toBe('2 of 3 selected');
+        done();
+      });
+    }));
 
-  it('should work with French locale when locale is changed', () => {
-    translateService.use('fr');
-    gridOptionMock.enableTranslate = true;
-    mockColumn.filter = {
-      enableTranslateLabel: true,
-      collection: [
-        { value: 'other', labelKey: 'OTHER' },
-        { value: 'male', labelKey: 'MALE' },
-        { value: 'female', labelKey: 'FEMALE' },
-      ],
-      filterOptions: { minimumCountSelected: 1 },
-    };
+  it('should work with French locale when locale is changed', () =>
+    new Promise(async (done: any) => {
+      translateService.use('fr');
+      gridOptionMock.enableTranslate = true;
+      mockColumn.filter = {
+        enableTranslateLabel: true,
+        collection: [
+          { value: 'other', labelKey: 'OTHER' },
+          { value: 'male', labelKey: 'MALE' },
+          { value: 'female', labelKey: 'FEMALE' },
+        ],
+        filterOptions: { minimumCountSelected: 1 },
+      };
 
-    filterArguments.searchTerms = ['male', 'female'];
-    filter.init(filterArguments);
-    vi.runAllTimers(); // fast-forward timer
+      filterArguments.searchTerms = ['male', 'female'];
+      filter.init(filterArguments);
 
-    const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
-    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
-    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
-    const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
-    filterBtnElm.click();
+      setTimeout(() => {
+        const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
+        filterBtnElm.click();
 
-    expect(filterListElm.length).toBe(3);
-    expect(filterListElm[0].textContent).toBe('Autre');
-    expect(filterListElm[1].textContent).toBe('Mâle');
-    expect(filterListElm[2].textContent).toBe('Femme');
-    expect(filterOkElm.textContent).toBe('Terminé');
-    expect(filterSelectAllElm.textContent).toBe('Sélectionner tout');
-    expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
-  });
+        expect(filterListElm.length).toBe(3);
+        expect(filterListElm[0].textContent).toBe('Autre');
+        expect(filterListElm[1].textContent).toBe('Mâle');
+        expect(filterListElm[2].textContent).toBe('Femme');
+        expect(filterOkElm.textContent).toBe('Terminé');
+        expect(filterSelectAllElm.textContent).toBe('Sélectionner tout');
+        expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
+        done();
+      });
+    }));
 
-  it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () => {
-    gridOptionMock.darkMode = true;
-    mockColumn.filter = {
-      enableTranslateLabel: true,
-      collection: [
-        { value: 'other', label: 'Other' },
-        { value: 'male', label: 'Male' },
-        { value: 'female', label: 'Female' },
-      ],
-      filterOptions: { minimumCountSelected: 1 },
-    };
+  it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () =>
+    new Promise(async (done: any) => {
+      gridOptionMock.darkMode = true;
+      mockColumn.filter = {
+        enableTranslateLabel: true,
+        collection: [
+          { value: 'other', label: 'Other' },
+          { value: 'male', label: 'Male' },
+          { value: 'female', label: 'Female' },
+        ],
+        filterOptions: { minimumCountSelected: 1 },
+      };
 
-    filterArguments.searchTerms = ['male', 'female'];
-    filter.init(filterArguments);
-    vi.runAllTimers(); // fast-forward timer
+      filterArguments.searchTerms = ['male', 'female'];
+      filter.init(filterArguments);
 
-    const filterElm = divContainer.querySelector('.ms-parent') as HTMLButtonElement;
+      setTimeout(() => {
+        const filterElm = divContainer.querySelector('.ms-parent') as HTMLButtonElement;
 
-    expect(filterElm.classList.contains('ms-dark-mode')).toBeTruthy();
-  });
+        expect(filterElm.classList.contains('ms-dark-mode')).toBeTruthy();
+        done();
+      });
+    }));
 
   it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', async () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
@@ -918,83 +925,205 @@ describe('SelectFilter', () => {
     expect(filterListElm[2].textContent).toBe('female');
   });
 
-  it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
-    const renderSpy = vi.spyOn(filter, 'renderDomElement');
-    const newCollection = [
-      { value: 'val1', label: 'label1' },
-      { value: 'val2', label: 'label2' },
-    ];
-    const mockDataResponse = [
-      { value: 'female', label: 'Female' },
-      { value: 'male', label: 'Male' },
-    ];
-
-    mockColumn.filter = {
-      collection: [],
-      collectionAsync: Promise.resolve(mockDataResponse),
-      enableCollectionWatch: true,
-    };
-
-    await filter.init(filterArguments);
-    mockColumn.filter!.collection = newCollection;
-    mockColumn.filter!.collection!.push({ value: 'val3', label: 'label3' });
-
-    vi.runAllTimers(); // fast-forward timer
-
-    expect(renderSpy).toHaveBeenCalledTimes(3);
-    expect(renderSpy).toHaveBeenCalledWith(newCollection);
-
-    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
-    filterBtnElm.click();
-
-    expect(filterListElm.length).toBe(3);
-    expect(filterListElm[0].textContent).toBe('label1');
-    expect(filterListElm[1].textContent).toBe('label2');
-    expect(filterListElm[2].textContent).toBe('label3');
-  });
-
-  it('should trigger a re-render of the DOM element when collection changes', async () => {
-    const renderSpy = vi.spyOn(filter, 'renderDomElement');
-
-    mockColumn.filter = {
-      collection: [
+  it('should trigger a re-render of the DOM element when collection is replaced by new collection', () =>
+    new Promise(async (done: any) => {
+      const renderSpy = vi.spyOn(filter, 'renderDomElement');
+      const newCollection = [
+        { value: 'val1', label: 'label1' },
+        { value: 'val2', label: 'label2' },
+      ];
+      const mockDataResponse = [
         { value: 'female', label: 'Female' },
         { value: 'male', label: 'Male' },
-      ],
-      enableCollectionWatch: true,
-    };
+      ];
 
-    await filter.init(filterArguments);
-    mockColumn.filter!.collection!.push({ value: 'other', label: 'Other' });
+      mockColumn.filter = {
+        collection: [],
+        collectionAsync: Promise.resolve(mockDataResponse),
+        enableCollectionWatch: true,
+      };
 
-    vi.runAllTimers(); // fast-forward timer
-
-    expect(renderSpy).toHaveBeenCalledTimes(2);
-    expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter!.collection);
-
-    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
-    filterBtnElm.click();
-
-    expect(filterListElm.length).toBe(3);
-    expect(filterListElm[0].textContent).toBe('Female');
-    expect(filterListElm[1].textContent).toBe('Male');
-    expect(filterListElm[2].textContent).toBe('Other');
-  });
-
-  it('should throw an error when "collectionAsync" Promise does not return a valid array', async () => {
-    const promise = Promise.resolve({ hello: 'world' });
-    mockColumn.filter!.collectionAsync = promise;
-
-    try {
       await filter.init(filterArguments);
-    } catch (e) {
-      expect(e.toString()).toContain(
-        `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
-      );
-    }
-  });
+      mockColumn.filter!.collection = newCollection;
+      mockColumn.filter!.collection!.push({ value: 'val3', label: 'label3' });
+
+      setTimeout(() => {
+        expect(renderSpy).toHaveBeenCalledTimes(3);
+        expect(renderSpy).toHaveBeenCalledWith(newCollection);
+
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+        filterBtnElm.click();
+
+        expect(filterListElm.length).toBe(3);
+        expect(filterListElm[0].textContent).toBe('label1');
+        expect(filterListElm[1].textContent).toBe('label2');
+        expect(filterListElm[2].textContent).toBe('label3');
+        done();
+      });
+    }));
+
+  it('should trigger a re-render of the DOM element when collection changes', () =>
+    new Promise(async (done: any) => {
+      const renderSpy = vi.spyOn(filter, 'renderDomElement');
+
+      mockColumn.filter = {
+        collection: [
+          { value: 'female', label: 'Female' },
+          { value: 'male', label: 'Male' },
+        ],
+        enableCollectionWatch: true,
+      };
+
+      await filter.init(filterArguments);
+      mockColumn.filter!.collection!.push({ value: 'other', label: 'Other' });
+
+      setTimeout(() => {
+        expect(renderSpy).toHaveBeenCalledTimes(2);
+        expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter!.collection);
+
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+        filterBtnElm.click();
+
+        expect(filterListElm.length).toBe(3);
+        expect(filterListElm[0].textContent).toBe('Female');
+        expect(filterListElm[1].textContent).toBe('Male');
+        expect(filterListElm[2].textContent).toBe('Other');
+        done();
+      });
+    }));
+
+  it('should create the multi-select filter with a default search term when using "collectionLazy" as a Promise', () =>
+    new Promise(async (done: any) => {
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
+      const mockCollection = ['male', 'female'];
+      mockColumn.filter!.collection = undefined;
+      mockColumn.filter!.collectionLazy = () => Promise.resolve(mockCollection);
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+      await filter.msInstance?.open(null);
+
+      setTimeout(() => {
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        filterBtnElm.click();
+        filterOkElm.click();
+        expect(filterListElm.length).toBe(2);
+        expect(filterListElm[1].checked).toBe(true);
+        expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+        filter.msInstance?.close();
+        done();
+      }, 0);
+    }));
+
+  it('should create the multi-select filter with a default search term when using "collectionLazy" as a Promise with content to simulate http-client', () =>
+    new Promise(async (done: any) => {
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
+      const mockCollection = ['male', 'female'];
+      mockColumn.filter!.collection = undefined;
+      mockColumn.filter!.collectionLazy = () => Promise.resolve({ content: mockCollection });
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+      await filter.msInstance?.open(null);
+
+      setTimeout(() => {
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        filterBtnElm.click();
+        filterOkElm.click();
+        filter.msInstance?.close();
+
+        expect(filterListElm.length).toBe(2);
+        expect(filterListElm[1].checked).toBe(true);
+        expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+        done();
+      });
+    }));
+
+  it('should create the multi-select filter with a default search term when using "collectionLazy" is a Fetch Promise', () =>
+    new Promise(async (done: any) => {
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
+      const mockCollection = ['male', 'female'];
+
+      http.status = 200;
+      http.object = mockCollection;
+      http.returnKey = 'date';
+      http.returnValue = '6/24/1984';
+      http.responseHeaders = { accept: 'json' };
+      mockColumn.filter!.collectionLazy = () => http.fetch('http://locahost/api', { method: 'GET' });
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+      await filter.msInstance?.open(null);
+
+      setTimeout(() => {
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+        // const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        filterBtnElm.click();
+        filterOkElm.click();
+        filter.msInstance?.close();
+
+        expect(filterListElm.length).toBe(2);
+        // expect(filterFilledElms.length).toBe(1);
+        expect(filterListElm[1].checked).toBe(true);
+        expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+        done();
+      });
+    }));
+
+  it('should create the multi-select filter with a value/label pair collectionLazy that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () =>
+    new Promise(async (done: any) => {
+      const mockDataResponse = {
+        deep: {
+          myCollection: [
+            { value: 'other', description: 'other' },
+            { value: 'male', description: 'male' },
+            { value: 'female', description: 'female' },
+          ],
+        },
+      };
+      mockColumn.filter = {
+        collectionLazy: () => Promise.resolve(mockDataResponse),
+        collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
+        customStructure: { value: 'value', label: 'description' },
+      };
+
+      await filter.init(filterArguments);
+      await filter.msInstance?.open(null);
+
+      setTimeout(() => {
+        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+        const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+        filterBtnElm.click();
+        filter.msInstance?.close();
+
+        expect(filterListElm.length).toBe(3);
+        expect(filterListElm[0].textContent).toBe('other');
+        expect(filterListElm[1].textContent).toBe('male');
+        expect(filterListElm[2].textContent).toBe('female');
+        done();
+      });
+    }));
+
+  it('should throw an error when "collectionAsync" Promise does not return a valid array', () =>
+    new Promise((done: any) => {
+      const promise = Promise.resolve({ hello: 'world' });
+      mockColumn.filter!.collectionAsync = promise;
+
+      filter.init(filterArguments).catch((e) => {
+        expect(e.toString()).toContain(
+          `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
+        );
+        done();
+      });
+    }));
 
   it('should throw an error when "collectionAsync" Promise does not return a valid array', () =>
     new Promise((done: any) => {

@@ -15,8 +15,8 @@ export function sortByFieldType(
   let sortResult = 0;
 
   if (isColumnDateType(fieldType)) {
-    // @ts-ignore
-    sortResult = getAssociatedDateSortComparer(fieldType).call(this, value1, value2, sortDirection, sortColumn, gridOptions);
+    const dateSortComparer = getAssociatedDateSortComparer(fieldType);
+    sortResult = dateSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
   } else {
     switch (fieldType) {
       case FieldType.boolean:

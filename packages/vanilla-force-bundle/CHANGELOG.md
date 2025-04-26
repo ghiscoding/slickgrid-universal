@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.14.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.4...v5.14.0) (2025-04-26)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1930](https://github.com/ghiscoding/slickgrid-universal/issues/1930)) ([a2ef902](https://github.com/ghiscoding/slickgrid-universal/commit/a2ef9024d9fa59f926bf5eaae3f7d12f44ff0ad2)) - by @renovate-bot
+
+### Reverts
+
+* Revert "chore: enable pnpm `shellEmulator` & remove `cross-env` (#1924)" (#1926) ([1352f2e](https://github.com/ghiscoding/slickgrid-universal/commit/1352f2ea8e66aeebbb94e11c415bf6314c34fc00)), closes [#1924](https://github.com/ghiscoding/slickgrid-universal/issues/1924) [#1926](https://github.com/ghiscoding/slickgrid-universal/issues/1926) - by @ghiscoding
+
 ## [5.13.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.3...v5.13.4) (2025-04-09)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-force-bundle

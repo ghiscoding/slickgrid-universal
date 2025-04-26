@@ -436,39 +436,44 @@ export function getColumnFieldType(columnDef: Column): (typeof FieldType)[keyof 
   return columnDef.outputType || columnDef.type || FieldType.string;
 }
 
+/** Return all Date field types that exists in the library */
+export function getAllDateFieldTypes(): (typeof FieldType)[keyof typeof FieldType][] {
+  return [
+    FieldType.date,
+    FieldType.dateTime,
+    FieldType.dateIso,
+    FieldType.dateTimeIso,
+    FieldType.dateTimeShortIso,
+    FieldType.dateTimeIsoAmPm,
+    FieldType.dateTimeIsoAM_PM,
+    FieldType.dateEuro,
+    FieldType.dateEuroShort,
+    FieldType.dateTimeEuro,
+    FieldType.dateTimeShortEuro,
+    FieldType.dateTimeEuroAmPm,
+    FieldType.dateTimeEuroAM_PM,
+    FieldType.dateTimeEuroShort,
+    FieldType.dateTimeEuroShortAmPm,
+    FieldType.dateTimeEuroShortAM_PM,
+    FieldType.dateUs,
+    FieldType.dateUsShort,
+    FieldType.dateTimeUs,
+    FieldType.dateTimeShortUs,
+    FieldType.dateTimeUsAmPm,
+    FieldType.dateTimeUsAM_PM,
+    FieldType.dateTimeUsShort,
+    FieldType.dateTimeUsShortAmPm,
+    FieldType.dateTimeUsShortAM_PM,
+    FieldType.dateUtc,
+  ];
+}
+
 /** Verify if the identified column is of type Date */
 export function isColumnDateType(fieldType?: (typeof FieldType)[keyof typeof FieldType]): boolean {
-  switch (fieldType) {
-    case FieldType.date:
-    case FieldType.dateTime:
-    case FieldType.dateIso:
-    case FieldType.dateTimeIso:
-    case FieldType.dateTimeShortIso:
-    case FieldType.dateTimeIsoAmPm:
-    case FieldType.dateTimeIsoAM_PM:
-    case FieldType.dateEuro:
-    case FieldType.dateEuroShort:
-    case FieldType.dateTimeEuro:
-    case FieldType.dateTimeShortEuro:
-    case FieldType.dateTimeEuroAmPm:
-    case FieldType.dateTimeEuroAM_PM:
-    case FieldType.dateTimeEuroShort:
-    case FieldType.dateTimeEuroShortAmPm:
-    case FieldType.dateTimeEuroShortAM_PM:
-    case FieldType.dateUs:
-    case FieldType.dateUsShort:
-    case FieldType.dateTimeUs:
-    case FieldType.dateTimeShortUs:
-    case FieldType.dateTimeUsAmPm:
-    case FieldType.dateTimeUsAM_PM:
-    case FieldType.dateTimeUsShort:
-    case FieldType.dateTimeUsShortAmPm:
-    case FieldType.dateTimeUsShortAM_PM:
-    case FieldType.dateUtc:
-      return true;
-    default:
-      return false;
+  if (getAllDateFieldTypes().includes(fieldType as (typeof FieldType)[keyof typeof FieldType])) {
+    return true;
   }
+  return false;
 }
 
 /**
@@ -667,6 +672,44 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
     return array.find(logic) || defaultVal;
   }
   return array;
+}
+
+/**
+ * From an input that could be a Promise, an Observable, a Subject or a Fetch
+ * @param {Promise<T> | Observable<T> | Subject<T>} input
+ * @param {RxJsFacade} rxjs
+ * @returns {Promise}
+ */
+export function fetchAsPromise<T = any>(input?: T[] | Promise<T> | Observable<T> | Subject<T>, rxjs?: RxJsFacade): Promise<T | null> {
+  return new Promise((resolve) => {
+    if (Array.isArray(input)) {
+      resolve(input as T);
+    } else if (input instanceof Promise) {
+      input.then((response: any | any[]) => {
+        if (Array.isArray(response)) {
+          resolve(response as T); // from Promise
+        } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
+          if (response.bodyUsed) {
+            const errorMsg =
+              '[SlickGrid-Universal] The response body passed to Fetch was already read. ' +
+              'Either pass the dataset from the Response or clone the response first using response.clone()';
+            console.warn(errorMsg);
+            resolve(null);
+          } else {
+            resolve((response as Response).json()); // from Fetch
+          }
+        } else if (response?.content) {
+          resolve(response['content'] as T); // from http-client
+        } else {
+          resolve(response); // anything we'll just return "as-is"
+        }
+      });
+    } else if (input && rxjs?.isObservable(input)) {
+      resolve(castObservableToPromise(rxjs, input)); // Observable
+    } else {
+      resolve(null);
+    }
+  });
 }
 
 /**

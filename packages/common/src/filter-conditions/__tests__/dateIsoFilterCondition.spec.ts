@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { FieldType, OperatorType } from '../../enums/index.js';
 import type { FilterConditionOption } from '../../interfaces/index.js';
 import { executeDateFilterCondition, getFilterParsedDates } from '../dateFilterCondition.js';
-import { executeFilterConditionTest, getParsedSearchTermsByFieldType } from '../filterConditionProcesses.js';
+import { getParsedSearchTermsByFieldType } from '../filterConditionProcesses.js';
+import { executeFilterConditionTest } from '../filterConditions.index.js';
 
 describe('dateIsoFilterCondition method', () => {
   describe('when using executeFilterConditionTest method', () => {

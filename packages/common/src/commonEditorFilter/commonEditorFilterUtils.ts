@@ -5,6 +5,8 @@ import { Calendar, type FormatDateString, type Options, type Range } from 'vanil
 import { FieldType } from '../enums/fieldType.enum.js';
 import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
+import { getDescendantProperty } from '../services/utilities.js';
+import { isObject } from '@slickgrid-universal/utils';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element
@@ -34,6 +36,21 @@ export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteIt
       previousFetch!(searchTerm, newUpdateCallback, trigger, cursorPos);
     };
   }
+}
+
+/**
+ * When enabled, get the collection from an object when `collectionInsideObjectProperty` is enabled
+ * @param {*} collection
+ * @param {ColumnFilter} columnFilterOrEditor
+ * @returns {Array}
+ */
+export function getCollectionFromObjectWhenEnabled<T = any>(collection: T, columnFilterOrEditor?: ColumnEditor | ColumnFilter): T {
+  const collectionOptions = columnFilterOrEditor?.collectionOptions ?? {};
+  if (!Array.isArray(collection) && collectionOptions?.collectionInsideObjectProperty && isObject(collection)) {
+    const collectionInsideObjectProperty = collectionOptions.collectionInsideObjectProperty;
+    collection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
+  }
+  return collection;
 }
 
 export function resetDatePicker(pickerInstance: Calendar): void {

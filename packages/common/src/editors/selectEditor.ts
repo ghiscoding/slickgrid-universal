@@ -19,6 +19,7 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index.js';
+import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
@@ -188,8 +189,8 @@ export class SelectEditor implements Editor {
   }
 
   /** Get Column Editor object */
-  get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef?.editor ?? ({} as ColumnEditor);
+  get columnEditor(): ColumnEditor {
+    return (this.columnDef?.editor ?? {}) as ColumnEditor;
   }
 
   /** Getter for item data context object */
@@ -687,10 +688,7 @@ export class SelectEditor implements Editor {
   }
 
   renderDomElement(inputCollection?: any[]): void {
-    if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
-      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-      inputCollection = getDescendantProperty(inputCollection, collectionInsideObjectProperty);
-    }
+    inputCollection = getCollectionFromObjectWhenEnabled(inputCollection, this.columnEditor);
     if (!Array.isArray(inputCollection)) {
       throw new Error('The "collection" passed to the Select Editor is not a valid array.');
     }
@@ -805,6 +803,8 @@ export class SelectEditor implements Editor {
     this.editorElmOptions = { ...this.defaultOptions, ...this.editorOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();
+    this.columnEditor.onInstantiated?.(this._msInstance);
+
     if (!this.isCompositeEditor) {
       this.show(this.delayOpening);
     }

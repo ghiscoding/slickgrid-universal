@@ -222,6 +222,7 @@ export class DateEditor implements Editor {
             updatePickerUI: true,
           });
         }
+        this.columnEditor.onInstantiated?.(this.calendarInstance);
       });
     }
   }

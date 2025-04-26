@@ -19,12 +19,13 @@ import {
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
-const NB_ITEMS = 500;
+const NB_ITEMS = 1000;
 const gridOptions = ref<GridOption>();
 const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const editCommandQueue = ref<EditCommand[]>([]);
 const serverApiDelay = ref(500);
+const showLazyLoading = ref(false);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
 
@@ -334,11 +335,22 @@ function defineGrid() {
       },
       filter: {
         // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
-        collectionAsync: new Promise((resolve) => {
-          window.setTimeout(() => {
-            resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+        // collectionAsync: new Promise((resolve) => {
+        //   window.setTimeout(() => {
+        //     resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+        //   });
+        // }),
+        collectionLazy: () => {
+          showLazyLoading.value = true;
+
+          return new Promise((resolve) => {
+            window.setTimeout(() => {
+              showLazyLoading.value = false;
+              resolve(Array.from(Array((dataset.value || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+            }, serverApiDelay.value);
           });
-        }),
+        },
+        // onInstantiated: (msSelect) => console.log('ms-select instance', msSelect),
         customStructure: {
           label: 'label',
           value: 'value',
@@ -346,6 +358,9 @@ function defineGrid() {
         },
         collectionOptions: {
           separatorBetweenTextLabels: ' ',
+        },
+        filterOptions: {
+          minHeight: 70,
         },
         model: Filters.multipleSelect,
         operator: OperatorType.inContains,
@@ -587,9 +602,14 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </ul>
   </div>
 
-  <div style="margin-bottom: 20px">
-    <label for="pinned-rows">Simulated Server Delay (ms): </label>
-    <input id="server-delay" class="ms-1" type="number" data-test="server-delay" style="width: 60px" v-model="serverApiDelay" />
+  <div class="row">
+    <div class="col" style="margin-bottom: 20px">
+      <label for="pinned-rows">Simulated Server Delay (ms): </label>
+      <input id="server-delay" class="ms-1" type="number" data-test="server-delay" style="width: 60px" v-model="serverApiDelay" />
+    </div>
+    <div class="alert alert-info is-narrow col" :class="{ invisible: !showLazyLoading }" data-test="alert-lazy">
+      Lazy loading collection...
+    </div>
   </div>
 
   <slickgrid-vue

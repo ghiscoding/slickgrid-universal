@@ -6,15 +6,16 @@
 - [How to add Translation](#how-to-add-translation)
 - [How to filter empty values](#how-to-filter-empty-values)
 - Collection Options
-   - [Add Blank Entry](#collection-add-blank-entry)
-   - [Add Custom Entry at Beginning/End of Collection](#collection-add-custom-entry-at-the-beginningend-of-the-collection)
-   - [Custom Structure](#custom-structure-keylabel-pair)
-   - [Custom Structure with Translation](#custom-structure-with-translation)
-   - [Collection filterBy/sortBy](#collection-filterbysortby)
-   - [Collection Label Prefix/Suffix](#collection-label-prefixsuffix)
-   - [Collection Label Render HTML](#collection-label-render-html)
-   - [Collection Async Load](#collection-async-load)
-   - [Collection Watch](#collection-watch)
+  - [Add Blank Entry](#collection-add-blank-entry)
+  - [Add Custom Entry at Beginning/End of Collection](#collection-add-custom-entry-at-the-beginningend-of-the-collection)
+  - [Custom Structure](#custom-structure-keylabel-pair)
+  - [Custom Structure with Translation](#custom-structure-with-translation)
+  - [Collection filterBy/sortBy](#collection-filterbysortby)
+  - [Collection Label Prefix/Suffix](#collection-label-prefixsuffix)
+  - [Collection Label Render HTML](#collection-label-render-html)
+  - [Collection Async Load](#collection-async-load)
+  - [Collection Lazy Load](#collection-lazy-load)
+  - [Collection Watch](#collection-watch)
 - [`multiple-select.js` Options](#multiple-selectjs-options)
   - [Filter Options (`MultipleSelectOption` interface)](#filter-options-multipleselectoption-interface)
   - [Display shorter selected label text](#display-shorter-selected-label-text)
@@ -67,17 +68,18 @@ columnDefinitions.value = [
     type: FieldType.boolean,
     filterable: true,
     filter: {
-       collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
-       model: Filters.multipleSelect,
+      collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
+      model: Filters.multipleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
 
-       // you can add "multiple-select" plugin options like styling the first row
-       filterOptions: {
-          offsetLeft: 14,
-          width: 100
-       } as MultipleSelectOption,
+      // you can add "multiple-select" plugin options like styling the first row
+      filterOptions: {
+        offsetLeft: 14,
+        width: 100
+      } as MultipleSelectOption,
 
-       // you can also add an optional placeholder
-       placeholder: 'choose an option'
+      // you can also add an optional placeholder
+      placeholder: 'choose an option'
    }
   }
 ];
@@ -112,6 +114,7 @@ columnDefinitions.value = [
        model: Filters.multipleSelect,
        searchTerms: [true],
     }
+  },
 ];
 ```
 
@@ -128,7 +131,8 @@ columnDefinitions.value = [
     filter: {
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
        model: Filters.singleSelect,
-   }
+    }
+  },
 ];
 ```
 
@@ -546,6 +550,25 @@ function addItem() {
     }
   }, 250);
 }
+```
+
+### Collection Lazy Load
+In some cases, you might have a grid with a lot of columns and loading the collection only after opening the select dropdown (or never in some cases) might help speeding up the initial grid loading. So for that use case, defining a `collectionLazy` callback can help.
+
+#### Load the collection through an Http callback
+
+```ts
+columnDefinitions.value = [
+    {
+    id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
+    filterable: true,
+    filter: {
+      collectionLazy: (col: Column) => this.http.fetch('api/data/pre-requisites'),
+      model: Filters.multipleSelect,
+      onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
+    }
+  }
+];
 ```
 
 ### Collection Watch

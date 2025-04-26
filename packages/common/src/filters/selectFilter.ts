@@ -14,9 +14,10 @@ import type {
   GridOption,
   Locale,
 } from './../interfaces/index.js';
+import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
-import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities.js';
+import { getTranslationPrefix, fetchAsPromise, unsubscribeAll } from '../services/utilities.js';
 import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index.js';
 import { renderCollectionOptionsAsync } from './filterUtilities.js';
 import type { SlickGrid } from '../core/index.js';
@@ -28,6 +29,7 @@ export class SelectFilter implements Filter {
   protected _locales!: Locale;
   protected _msInstance?: MultipleSelectInstance;
   protected _shouldTriggerQuery = true;
+  protected _isLazyDataLoaded = false;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName!: string;
@@ -131,7 +133,12 @@ export class SelectFilter implements Filter {
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
     this.filterContainerElm = args.filterContainerElm;
 
-    if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.collectionAsync)) {
+    if (
+      !this.grid ||
+      !this.columnDef ||
+      !this.columnFilter ||
+      (!this.columnFilter.collection && !this.columnFilter.collectionAsync && !this.columnFilter.collectionLazy)
+    ) {
       throw new Error(
         `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.multipleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`
       );
@@ -180,7 +187,7 @@ export class SelectFilter implements Filter {
 
         if (this.columnFilter.collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
-          // we do this because Http Fetch will throw an error saying body was already read and its streaming is locked
+          // we do this because Http Fetch will throw an error saying body was already read and its streaming becomes locked
           collectionOutput = renderCollectionOptionsAsync(
             this.columnFilter.collectionAsync,
             this.columnDef,
@@ -332,11 +339,24 @@ export class SelectFilter implements Filter {
     this.renderDomElement(this.columnFilter.collection || updatedArray || []);
   }
 
+  protected parseCollectionList(collection: any[]): {
+    selectElement: HTMLSelectElement;
+    dataCollection: OptionRowData[];
+    hasFoundSearchTerm: boolean;
+  } {
+    return buildMsSelectCollectionList(
+      'filter',
+      collection,
+      this.columnDef,
+      this.grid,
+      this.isMultipleSelect,
+      this.translaterService,
+      this.searchTerms || []
+    );
+  }
+
   renderDomElement(inputCollection: any[]): void {
-    if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
-      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-      inputCollection = getDescendantProperty(inputCollection, collectionInsideObjectProperty || '');
-    }
+    inputCollection = getCollectionFromObjectWhenEnabled(inputCollection, this.columnFilter);
     if (!Array.isArray(inputCollection)) {
       throw new Error('The "collection" passed to the Select Filter is not a valid array.');
     }
@@ -384,20 +404,12 @@ export class SelectFilter implements Filter {
     newCollection = this.sortCollection(newCollection);
 
     // step 1, create HTML DOM element
-    const selectBuildResult = buildMsSelectCollectionList(
-      'filter',
-      newCollection,
-      this.columnDef,
-      this.grid,
-      this.isMultipleSelect,
-      this.translaterService,
-      this.searchTerms || []
-    );
+    const selectBuildResult = this.parseCollectionList(newCollection);
     this.isFilled = selectBuildResult.hasFoundSearchTerm;
 
     // step 2, create the DOM Element of the filter & pre-load search terms
     // we will later also subscribe to the onClose event to filter the data whenever that event is triggered
-    this.createFilterElement(selectBuildResult.selectElement, selectBuildResult.dataCollection);
+    this.createFilterElement(selectBuildResult.selectElement!, selectBuildResult.dataCollection);
     this._collectionLength = newCollection.length;
   }
 
@@ -442,6 +454,7 @@ export class SelectFilter implements Filter {
     // merge options & attach multiSelect
     this.filterElmOptions = { ...this.defaultOptions, ...this.filterOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.filterElmOptions) as MultipleSelectInstance;
+    this.columnFilter.onInstantiated?.(this._msInstance);
   }
 
   protected initMultipleSelectTemplate(): void {
@@ -468,6 +481,26 @@ export class SelectFilter implements Filter {
       onClose: () => this.onTriggerEvent(),
       onClear: () => this.clear(),
     } as MultipleSelectOption;
+
+    if (this.columnFilter.collectionLazy) {
+      options.onOpen = () => {
+        if (this.columnFilter.collectionLazy && !this._isLazyDataLoaded) {
+          const lazyProcess = this.columnFilter.collectionLazy(this.columnDef);
+          const collectionPromise = fetchAsPromise(lazyProcess, this.rxjs);
+
+          (collectionPromise as Promise<any[]>).then((collectionData) => {
+            collectionData = getCollectionFromObjectWhenEnabled(collectionData, this.columnFilter);
+            // user might want to filter and/or sort certain items of the collection
+            collectionData = this.filterCollection(collectionData);
+            collectionData = this.sortCollection(collectionData);
+
+            const colResult = this.parseCollectionList(collectionData);
+            this._msInstance?.refreshOptions({ data: colResult.dataCollection });
+            this._isLazyDataLoaded = true;
+          });
+        }
+      };
+    }
 
     if (this._isMultipleSelect) {
       options.single = false;

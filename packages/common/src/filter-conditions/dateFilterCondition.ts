@@ -55,8 +55,7 @@ export function getFilterParsedDates(
   const searchTerms = (Array.isArray(inputSearchTerms) && inputSearchTerms) || [];
   const filterSearchType = inputFilterSearchType || FieldType.dateIso;
   const FORMAT = mapTempoDateFormatWithFieldType(filterSearchType);
-
-  const parsedSearchValues: any[] = [];
+  const parsedSearchValues: Array<Date | string> = [];
 
   if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
     const searchValues = searchTerms.length === 2 ? searchTerms : (searchTerms[0] as string).split('..');

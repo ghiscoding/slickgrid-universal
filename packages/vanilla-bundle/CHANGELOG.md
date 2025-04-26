@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.14.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.4...v5.14.0) (2025-04-26)
+
+### Features
+
+* **filter:** add `collectionLazy` callback to Column Filter ([#1923](https://github.com/ghiscoding/slickgrid-universal/issues/1923)) ([23bbbeb](https://github.com/ghiscoding/slickgrid-universal/commit/23bbbeb1cc90fcf10bc892749be20af5c5bb39a9)) - by @ghiscoding
+
 ## [5.13.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.3...v5.13.4) (2025-04-09)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

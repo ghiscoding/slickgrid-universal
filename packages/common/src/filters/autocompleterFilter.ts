@@ -8,7 +8,6 @@ import type {
   AutocompleterOption,
   AutocompleteSearchItem,
   CollectionCustomStructure,
-  CollectionOption,
   Column,
   ColumnFilter,
   DOMEvent,
@@ -19,10 +18,13 @@ import type {
   GridOption,
   Locale,
 } from '../interfaces/index.js';
-import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import {
+  addAutocompleteLoadingByOverridingFetch,
+  getCollectionFromObjectWhenEnabled,
+} from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
-import { getDescendantProperty, unsubscribeAll } from '../services/utilities.js';
+import { unsubscribeAll } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { renderCollectionOptionsAsync } from './filterUtilities.js';
 import type { RxJsFacade, Subscription } from '../services/rxjsFacade.js';
@@ -83,11 +85,6 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   /** Getter for the Autocomplete Option */
   get autocompleterOptions(): any {
     return this._autocompleterOptions || {};
-  }
-
-  /** Getter for the Collection Options */
-  protected get collectionOptions(): CollectionOption {
-    return this.columnDef?.filter?.collectionOptions ?? {};
   }
 
   /** Getter for the Collection Used by the Filter */
@@ -354,13 +351,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   renderDomElement(collection?: any[]): void {
-    if (!Array.isArray(collection) && this.collectionOptions?.collectionInsideObjectProperty) {
-      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-      collection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
-    }
-    // if (!Array.isArray(collection)) {
-    //   throw new Error('The "collection" passed to the Autocomplete Filter is not a valid array.');
-    // }
+    collection = getCollectionFromObjectWhenEnabled(collection, this.columnFilter);
 
     // assign the collection to a temp variable before filtering/sorting the collection
     let newCollection = collection;
@@ -516,6 +507,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // append the new DOM element to the header row & an empty span
     this.filterContainerElm.appendChild(filterDivContainerElm);
     this.filterContainerElm.appendChild(document.createElement('span'));
+    this.columnFilter.onInstantiated?.(this._instance);
 
     return this._filterElm;
   }
