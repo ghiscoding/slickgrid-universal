@@ -72,7 +72,7 @@
   "devDependencies": {
     "fflate": "^0.8.2",
     "normalize-path": "^3.0.0",
-    "tinyglobby": "^0.2.12",
+    "tinyglobby": "^0.2.13",
     "vite": "catalog:",
     "yargs": "^17.7.2"
   }
