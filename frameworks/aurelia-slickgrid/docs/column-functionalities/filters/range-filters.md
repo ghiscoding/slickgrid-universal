@@ -126,7 +126,7 @@ You could also define certain options as a global level (for the entire grid or 
 this.gridOptions = {
   defaultFilterOptions: {
     // Note: that `date`, `select` and `slider` are combining both compound & range filters together
-    date: { range: { min: 'today' } },
+    date: { displayDateMin: 'today' },
     select: { minHeight: 350 }, // typed as MultipleSelectOption
     slider: { sliderStartValue: 10 }
   }
@@ -160,7 +160,7 @@ export class GridBasicComponent {
           model: Filters.dateRange,
 
           // override any of the Vanilla-Calendar options through "filterOptions"
-          filterOptions: { range: { min: 'today' } } as VanillaCalendarOption
+          filterOptions: { displayDateMin: 'today' } as VanillaCalendarOption
         }
       },
     ];
@@ -179,7 +179,7 @@ All the available options that can be provided as `filterOptions` to your column
 filter: {
   model: Filters.compoundDate,
   filterOptions: {
-    range: { min: 'today' }
+    displayDateMin: 'today'
   } as VanillaCalendarOption
 }
 ```

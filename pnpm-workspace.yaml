@@ -20,7 +20,7 @@ catalog:
   cypress-real-events: ^1.14.0
   dequal: ^2.0.3
   dompurify: ^3.2.5
-  i18next: ^23.16.8
+  i18next: ^25.0.1
   jsdom: ^26.1.0
   multiple-select-vanilla: ^4.0.0
   native-copyfiles: ^0.3.2

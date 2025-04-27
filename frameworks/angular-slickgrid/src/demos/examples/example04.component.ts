@@ -165,7 +165,7 @@ export class Example4Component implements OnInit {
         filter: {
           model: Filters.compoundDate,
           // override any of the date picker options through "filterOptions"
-          filterOptions: { range: { date: 'today' } } as VanillaCalendarOption,
+          filterOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
         },
       },
       {

@@ -1,3 +1,4 @@
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type AureliaGridInstance,
   Aggregators,
@@ -12,6 +13,8 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from 'aurelia-slickgrid';
+
+import { randomNumber } from './utilities.js';
 
 const FETCH_SIZE = 50;
 
@@ -62,19 +65,31 @@ export class Example40 {
         id: 'start',
         name: 'Start',
         field: 'start',
-        formatter: Formatters.dateIso,
+        type: FieldType.date,
+        outputType: FieldType.dateIso, // for date picker format
+        formatter: Formatters.date,
         exportWithFormatter: true,
+        params: { dateFormat: 'MMM DD, YYYY' },
+        sortable: true,
         filterable: true,
-        filter: { model: Filters.compoundDate },
+        filter: {
+          model: Filters.compoundDate,
+        },
       },
       {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
-        formatter: Formatters.dateIso,
+        type: FieldType.date,
+        outputType: FieldType.dateIso, // for date picker format
+        formatter: Formatters.date,
         exportWithFormatter: true,
+        params: { dateFormat: 'MMM DD, YYYY' },
+        sortable: true,
         filterable: true,
-        filter: { model: Filters.compoundDate },
+        filter: {
+          model: Filters.compoundDate,
+        },
       },
       {
         id: 'effort-driven',
@@ -97,6 +112,8 @@ export class Example40 {
       enableGrouping: true,
       editable: false,
       rowHeight: 33,
+      enableExcelExport: true,
+      externalResources: [new ExcelExportService()],
     };
   }
 
@@ -152,18 +169,13 @@ export class Example40 {
   }
 
   newItem(idx: number) {
-    const randomYear = 2000 + Math.floor(Math.random() * 10);
-    const randomMonth = Math.floor(Math.random() * 11);
-    const randomDay = Math.floor(Math.random() * 29);
-    const randomPercent = Math.round(Math.random() * 100);
-
     return {
       id: idx,
       title: 'Task ' + idx,
       duration: Math.round(Math.random() * 100) + '',
-      percentComplete: randomPercent,
-      start: new Date(randomYear, randomMonth + 1, randomDay),
-      finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+      percentComplete: randomNumber(1, 12),
+      start: new Date(2020, randomNumber(1, 11), randomNumber(1, 28)),
+      finish: new Date(2022, randomNumber(1, 11), randomNumber(1, 28)),
       effortDriven: idx % 5 === 0,
     };
   }
@@ -180,11 +192,15 @@ export class Example40 {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.aureliaGrid?.filterService.updateFilters([{ columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' }]);
+    this.aureliaGrid?.filterService.updateFilters([{ columnId: 'start', searchTerms: ['2020-08-25'], operator: '<=' }]);
   }
 
-  refreshMetrics(args: OnRowCountChangedEventArgs) {
+  handleOnRowCountChanged(args: OnRowCountChangedEventArgs) {
     if (this.aureliaGrid && args?.current >= 0) {
+      // we probably want to re-sort the data when we get new items
+      this.aureliaGrid.dataView?.reSort();
+
+      // update metrics
       this.metrics.itemCount = this.aureliaGrid.dataView?.getFilteredItemCount() || 0;
       this.metrics.totalItemCount = args.itemCount || 0;
     }

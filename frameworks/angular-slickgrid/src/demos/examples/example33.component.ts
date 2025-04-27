@@ -16,7 +16,7 @@ import {
   SlickGrid,
 } from '../../library';
 
-const NB_ITEMS = 500;
+const NB_ITEMS = 1000;
 
 @Component({
   templateUrl: './example33.component.html',
@@ -31,6 +31,8 @@ export class Example33Component implements OnInit {
   gridOptions!: GridOption;
   dataset!: any[];
   serverApiDelay = 500;
+  showLazyLoading = false;
+  hideSubTitle = false;
 
   ngOnInit(): void {
     this.initializeGrid();
@@ -71,7 +73,7 @@ export class Example33Component implements OnInit {
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
           asyncProcess: () =>
             new Promise((resolve) => {
-              setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
+              window.setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
             }),
           asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
 
@@ -207,7 +209,7 @@ export class Example33Component implements OnInit {
           // 2- delay the opening by a simple Promise and `setTimeout`
           asyncProcess: () =>
             new Promise((resolve) => {
-              setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
+              window.setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
             }),
           asyncPostFormatter: this.tooltipFormatter.bind(this) as Formatter,
         },
@@ -278,7 +280,7 @@ export class Example33Component implements OnInit {
 
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
-            setTimeout(() => {
+            window.setTimeout(() => {
               resolve(Array.from(Array(this.dataset.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
@@ -293,12 +295,23 @@ export class Example33Component implements OnInit {
           model: Editors.multipleSelect,
         },
         filter: {
-          // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
-          collectionAsync: new Promise((resolve) => {
-            setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+          // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
+          // collectionAsync: new Promise((resolve) => {
+          //   window.setTimeout(() => {
+          //     resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+          //   });
+          // }),
+          collectionLazy: () => {
+            this.showLazyLoading = true;
+
+            return new Promise((resolve) => {
+              window.setTimeout(() => {
+                this.showLazyLoading = false;
+                resolve(Array.from(Array((this.dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+              }, this.serverApiDelay);
             });
-          }),
+          },
+          // onInstantiated: (msSelect) => console.log('ms-select instance', msSelect),
           customStructure: {
             label: 'label',
             value: 'value',
@@ -306,6 +319,9 @@ export class Example33Component implements OnInit {
           },
           collectionOptions: {
             separatorBetweenTextLabels: ' ',
+          },
+          filterOptions: {
+            minHeight: 70,
           },
           model: Filters.multipleSelect,
           operator: OperatorType.inContains,
@@ -545,5 +561,12 @@ export class Example33Component implements OnInit {
       output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(2);
   }
 }
