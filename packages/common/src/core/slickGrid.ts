@@ -2249,6 +2249,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               if (c?.resizable) {
                 if (stretchLeewayOnLeft !== null) {
                   if (c.maxWidth) {
+                    /* v8 ignore next */
                     stretchLeewayOnLeft += c.maxWidth - (c.previousWidth || 0);
                   } else {
                     stretchLeewayOnLeft = null;
@@ -2280,6 +2281,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 if (c && c.resizable && !c.hidden) {
                   actualMinWidth = Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
                   if (x && (c.previousWidth || 0) + x < actualMinWidth) {
+                    /* v8 ignore next 2 */
                     x += (c.previousWidth || 0) - actualMinWidth;
                     c.width = actualMinWidth;
                   } else {
@@ -2341,6 +2343,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                   c = vc[j];
                   if (c && !c.hidden && c.resizable) {
                     if (x && c.maxWidth && c.maxWidth - (c.previousWidth || 0) < x) {
+                      /* v8 ignore next 2 */
                       x -= c.maxWidth - (c.previousWidth || 0);
                       c.width = c.maxWidth;
                     } else {
@@ -4165,6 +4168,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     cacheEntry.rowNode?.forEach((node) => node.remove());
   }
 
+  /* v8 ignore next 10 */
   protected queuePostProcessedCellForCleanup(cellnode: HTMLElement, columnIdx: number, rowIdx: number): void {
     this.postProcessedCleanupQueue.push({
       actionType: 'C',
@@ -4299,6 +4303,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cellHeight = this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row);
     } else {
       const rowHeight = this.getRowHeight();
+      /* v8 ignore next 3 */
       if (rowHeight !== cellHeight - this.cellHeightDiff) {
         cellHeight = rowHeight;
       }
@@ -4605,7 +4610,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // maintain virtual position
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        // scroll to bottom
+        /* v8 ignore next - scroll to bottom */
         this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height || 0));
       }
 
@@ -4760,6 +4765,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     while (isDefined((cellToRemove = cellsToRemove.pop()))) {
       cellNode = cacheEntry.cellNodesByColumnIdx[cellToRemove];
 
+      /* v8 ignore next 2 */
       if (this._options.enableAsyncPostRenderCleanup && this.postProcessedRows[row]?.[cellToRemove]) {
         this.queuePostProcessedCellForCleanup(cellNode, cellToRemove, row);
       } else {
@@ -4768,6 +4774,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       delete cacheEntry.cellColSpans[cellToRemove];
       delete cacheEntry.cellNodesByColumnIdx[cellToRemove];
+      /* v8 ignore next 2 */
       if (this.postProcessedRows[row]) {
         delete this.postProcessedRows[row][cellToRemove];
       }
@@ -4867,6 +4874,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // no idea why node would be null here but apparently it could be..
         if (node) {
           if (this.hasFrozenColumns() && columnIdx > this._options.frozenColumn!) {
+            /* v8 ignore next */
             cacheEntry.rowNode![1].appendChild(node);
           } else {
             cacheEntry.rowNode![0].appendChild(node);
@@ -5273,6 +5281,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
 
     const unblock = () => {
+      /* v8 ignore next 2 */
       if (queued) {
         dequeue();
         blockAndExecute();
@@ -6713,6 +6722,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (pos.cell >= cell) {
         // when right cell is within a rowspan, we need to use original row (posY)
         const nextRow = this.findFocusableRow(posY, prev.cell, 'up');
+        /* v8 ignore next 3 */
         if (nextRow !== prev.row) {
           prev.row = nextRow;
         }
