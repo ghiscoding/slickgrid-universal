@@ -2404,6 +2404,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                   if (c && !c.hidden && c.resizable) {
                     actualMinWidth = Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
                     if (x && (c.previousWidth || 0) + x < actualMinWidth) {
+                      /* v8 ignore next 2 */
                       x += (c.previousWidth || 0) - actualMinWidth;
                       c.width = actualMinWidth;
                     } else {
@@ -4610,7 +4611,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // maintain virtual position
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        /* v8 ignore next - scroll to bottom */
+        /* v8 ignore next 2 - scroll to bottom */
         this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height || 0));
       }
 
@@ -4774,7 +4775,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       delete cacheEntry.cellColSpans[cellToRemove];
       delete cacheEntry.cellNodesByColumnIdx[cellToRemove];
-      /* v8 ignore next 2 */
+      /* v8 ignore next 3 */
       if (this.postProcessedRows[row]) {
         delete this.postProcessedRows[row][cellToRemove];
       }
@@ -5281,7 +5282,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
 
     const unblock = () => {
-      /* v8 ignore next 2 */
+      /* v8 ignore next 3 */
       if (queued) {
         dequeue();
         blockAndExecute();
