@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Subscription } from 'rxjs';
 
-import { AngularGridInstance, Column, Editors, FieldType, Formatters, GridOption } from '../../library';
+import { AngularGridInstance, Column, Editors, Formatters, GridOption } from '../../library';
 
 const NB_ITEMS = 20;
 
@@ -60,7 +60,7 @@ export class Example35Component implements OnInit {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.text },
       },
       {
@@ -70,7 +70,7 @@ export class Example35Component implements OnInit {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.text },
       },
       {

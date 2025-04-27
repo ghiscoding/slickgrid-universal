@@ -25,7 +25,7 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -43,7 +43,7 @@ function defineGrid() {
       formatter: Formatters.complexObject,
       dataKey: 'code', // our list of objects has the structure { code: 'CA', name: 'Canada' }, since we want to use the code`, we will set the dataKey to "code"
       labelKey: 'name', // while the displayed value is "name"
-      type: FieldType.object,
+      type: 'object',
       sorter: Sorters.objectString, // since we have set dataKey to "code" our output type will be a string, and so we can use this objectString, this sorter always requires the dataKey
       filterable: true,
       sortable: true,
@@ -80,11 +80,10 @@ columnDefinitions.value = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       model: Editors.autocompleter,
       placeholder: '&#128269; search city',
-      type: FieldType.string,
 
       // example with a fixed Collection (or collectionAsync)
       editorOptions: {
@@ -134,7 +133,7 @@ The basic functionality will use built-in 3rd party lib styling that is to displ
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -175,7 +174,7 @@ function defineGrid() {
 ```
 
 ### Remote API (basic with object result)
-This is the preferred way of dealing with the AutoComplete, the main reason is because the AutoComplete uses an `<input/>` and that means we can only keep 1 value and if we do then we lose the text label and so using an Object Result makes more sense. Note however that you'll need a bit more code that is because we'll use the `FieldType.Object` and so we need to provide a custom `SortComparer` and also a custom `Formatters` and for them to work we also need to provide a `dataKey` (the value) and a `labelKey` (text label) as shown below.
+This is the preferred way of dealing with the AutoComplete, the main reason is because the AutoComplete uses an `<input/>` and that means we can only keep 1 value and if we do then we lose the text label and so using an Object Result makes more sense. Note however that you'll need a bit more code that is because we'll use the `'object'` and so we need to provide a custom `SortComparer` and also a custom `Formatters` and for them to work we also need to provide a `dataKey` (the value) and a `labelKey` (text label) as shown below.
 ```ts
 columnDefinitions.value = [
   {
@@ -209,7 +208,7 @@ The lib comes with 2 built-in custom layouts, these 2 layouts also have SASS var
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -277,7 +276,7 @@ The previous example can also be written using the `renderItem` callback and add
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -370,7 +369,7 @@ Example from an external remote API (geobytes) returning a JSONP response.
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -428,7 +427,6 @@ columnDefinitions.value = [{
   id: 'area',
   name: 'Area',
   field: 'area',
-  type: FieldType.string,
   editor: {
     model: Editors.autocompleter,
     onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib

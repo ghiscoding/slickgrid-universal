@@ -106,7 +106,7 @@ const Example: React.FC = () => {
     const columns: Column[] = [
       {
         id: 'file', name: 'Files', field: 'file',
-        type: FieldType.string, width: 150, formatter: treeFormatter,
+        width: 150, formatter: treeFormatter,
         filterable: true, sortable: true,
       },
       // ...

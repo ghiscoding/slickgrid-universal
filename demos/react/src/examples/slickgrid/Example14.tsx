@@ -1,5 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, FieldType, type GridOption, type ItemMetadata, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
+import { type Column, type GridOption, type ItemMetadata, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import './example14.scss'; // provide custom CSS/SASS styling
@@ -31,13 +31,13 @@ const Example14: React.FC = () => {
   }
 
   function defineGrid1() {
-    const columnDefinitions1 = [
+    const columnDefinitions1: Column[] = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },
       { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
       { id: '%', name: '% Complete', field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: 'boolean', columnGroup: 'Analysis' },
     ];
 
     const gridOptions1: GridOption = {
@@ -71,7 +71,7 @@ const Example14: React.FC = () => {
   }
 
   function defineGrid2() {
-    const columnDefinitions2 = [
+    const columnDefinitions2: Column[] = [
       {
         id: 'sel',
         name: '#',
@@ -87,7 +87,7 @@ const Example14: React.FC = () => {
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
       { id: '%', name: '% Complete', field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: 'boolean', columnGroup: 'Analysis' },
     ];
 
     const gridOptions2 = {

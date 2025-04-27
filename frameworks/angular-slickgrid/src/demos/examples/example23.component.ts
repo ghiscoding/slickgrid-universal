@@ -6,7 +6,6 @@ import { CustomInputFilter } from './custom-inputFilter';
 import {
   AngularGridInstance,
   Column,
-  FieldType,
   Filters,
   Formatter,
   Formatters,
@@ -86,7 +85,6 @@ export class Example23Component implements OnInit, OnDestroy {
         filterable: true,
         sortable: true,
         minWidth: 80,
-        type: FieldType.string,
         filter: {
           model: CustomInputFilter, // create a new instance to make each Filter independent from each other
           enableTrimWhiteSpace: true, // or use global "enableFilterTrimWhiteSpace" to trim on all Filters
@@ -101,7 +99,7 @@ export class Example23Component implements OnInit, OnDestroy {
         sortable: true,
         customTooltip: { position: 'center' },
         formatter: Formatters.progressBar,
-        type: FieldType.number,
+        type: 'number',
         filterable: true,
         filter: {
           model: Filters.sliderRange,
@@ -124,7 +122,7 @@ export class Example23Component implements OnInit, OnDestroy {
         minWidth: 75,
         width: 100,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: { model: Filters.compoundDate },
       },
@@ -138,7 +136,7 @@ export class Example23Component implements OnInit, OnDestroy {
         minWidth: 75,
         width: 120,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,
@@ -149,7 +147,7 @@ export class Example23Component implements OnInit, OnDestroy {
         field: 'duration',
         nameKey: 'DURATION',
         maxWidth: 90,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         filterable: true,
         filter: {

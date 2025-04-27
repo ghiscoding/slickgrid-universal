@@ -22,7 +22,7 @@ Please note that you need to provide the `id` by yourself and remember that it h
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -96,7 +96,7 @@ To delete a row, you can use `deleteItem(s)` and the pass the entire object(s) o
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -143,7 +143,7 @@ To update an item, you can use `updateItem(s)` and the pass the entire object(s)
 ```vue
 <script setup lang="ts">
 import { SlickgridVueInstance } from 'slickgrid-vue';
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -188,7 +188,7 @@ Upsert will do an Insert when not found or update if it found the item already e
 
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -242,7 +242,7 @@ Take a look at all the available [SASS variables](https://github.com/ghiscoding/
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SlickgridVueInstance, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

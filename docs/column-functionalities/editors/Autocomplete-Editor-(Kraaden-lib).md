@@ -37,7 +37,7 @@ export class GridBasicComponent {
         formatter: Formatters.complexObject,
         dataKey: 'code', // our list of objects has the structure { code: 'CA', name: 'Canada' }, since we want to use the code`, we will set the dataKey to "code"
         labelKey: 'name', // while the displayed value is "name"
-        type: FieldType.object,
+        type: 'object',
         sorter: Sorters.objectString, // since we have set dataKey to "code" our output type will be a string, and so we can use this objectString, this sorter always requires the dataKey
         filterable: true,
         sortable: true,
@@ -74,11 +74,10 @@ this.columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       model: Editors.autocompleter,
       placeholder: '&#128269; search city',
-      type: FieldType.string,
 
       // example with a fixed Collection (or collectionAsync)
       editorOptions: {
@@ -164,7 +163,7 @@ export class GridBasicComponent {
 ```
 
 ### Remote API (basic with object result)
-This is the preferred way of dealing with the AutoComplete, the main reason is because the AutoComplete uses an `<input/>` and that means we can only keep 1 value and if we do then we lose the text label and so using an Object Result makes more sense. Note however that you'll need a bit more code that is because we'll use the `FieldType.Object` and so we need to provide a custom `SortComparer` and also a custom `Formatters` and for them to work we also need to provide a `dataKey` (the value) and a `labelKey` (text label) as shown below.
+This is the preferred way of dealing with the AutoComplete, the main reason is because the AutoComplete uses an `<input/>` and that means we can only keep 1 value and if we do then we lose the text label and so using an Object Result makes more sense. Note however that you'll need a bit more code that is because we'll use the `'object'` and so we need to provide a custom `SortComparer` and also a custom `Formatters` and for them to work we also need to provide a `dataKey` (the value) and a `labelKey` (text label) as shown below.
 ```ts
 this.columnDefinitions = [
   {
@@ -417,7 +416,6 @@ this.columnDefinitions = [
     id: 'area',
     name: 'Area',
     field: 'area',
-    type: FieldType.string,
     editor: {
       model: Editors.autocompleter,
       editorOptions: {

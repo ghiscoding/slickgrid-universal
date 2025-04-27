@@ -3,7 +3,6 @@ import {
   type Column,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -72,7 +71,6 @@ export default class Example16 {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -116,7 +114,7 @@ export default class Example16 {
           alwaysSaveOnEnterKey: true,
         },
         formatter: (_row, _cell, value) => (value > 1 ? `${value} days` : `${value} day`),
-        type: FieldType.number,
+        type: 'number',
       },
       {
         // `name` can be a DOM element with a `title` to use as tooltip text
@@ -190,13 +188,13 @@ export default class Example16 {
           useRegularTooltip: true,
           useRegularTooltipFromFormatterOnly: true,
         },
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'percentComplete',
         name: '% Complete',
         field: 'percentComplete',
-        type: FieldType.number,
+        type: 'number',
         minWidth: 130,
         editor: {
           model: Editors.slider,
@@ -222,8 +220,8 @@ export default class Example16 {
         field: 'start',
         sortable: true,
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
@@ -248,8 +246,8 @@ export default class Example16 {
         sortable: true,
         editor: { model: Editors.date, editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption },
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         formatter: Formatters.dateIso,
         filterable: true,
         filter: { model: Filters.dateRange },
@@ -300,7 +298,6 @@ export default class Example16 {
         sanitizeDataExport: true,
         minWidth: 100,
         sortable: true,
-        type: FieldType.string,
         editor: {
           // OR 1- use "fetch client", they are both supported
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),

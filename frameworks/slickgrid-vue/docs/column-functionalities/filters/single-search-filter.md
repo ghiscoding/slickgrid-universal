@@ -12,7 +12,7 @@ Some users might want to have 1 main single search for filtering the grid data i
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

@@ -1,7 +1,6 @@
 import {
   type Column,
   Editors,
-  FieldType,
   type GridOption,
   type OnCellChangeEventArgs,
   SlickgridReact,
@@ -43,7 +42,7 @@ const Example37: React.FC = () => {
         id: i,
         name: String.fromCharCode('A'.charCodeAt(0) + i),
         field: String(i),
-        type: FieldType.number,
+        type: 'number',
         width: 58,
         editor: { model: Editors.integer },
       });

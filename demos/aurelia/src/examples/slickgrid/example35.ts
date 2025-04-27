@@ -1,4 +1,4 @@
-import { type AureliaGridInstance, type Column, Editors, FieldType, Formatters, type GridOption } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, Editors, Formatters, type GridOption } from 'aurelia-slickgrid';
 import { I18N } from '@aurelia/i18n';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 // import { TOptions as I18NOptions } from 'i18next';
@@ -54,7 +54,7 @@ export class Example35 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.text },
       },
       {
@@ -64,7 +64,7 @@ export class Example35 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.text },
       },
       {

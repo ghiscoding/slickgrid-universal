@@ -62,7 +62,7 @@ this.columnDefinitions = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
@@ -102,7 +102,7 @@ this.columnDefinitions = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
@@ -120,7 +120,7 @@ For the Select (dropdown) filter, you can fill in the "labelKey" property, if fo
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
@@ -136,7 +136,7 @@ You could also use the `enableTranslateLabel` which will translate regardless of
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
@@ -153,7 +153,7 @@ What if your select options (collection) have totally different value/label pair
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -178,7 +178,7 @@ What if you want to use `customStructure` and translate the labels? Simply pass 
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -208,7 +208,7 @@ Note: the defaults for single & multiple select filters are different
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
@@ -232,7 +232,7 @@ Full example:
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -247,9 +247,9 @@ this.columnDefinitions = [
           value: undefined
        },
        collectionSortBy: {
-          property: 'effortDriven',    // will sort by translated value since "enableTranslateLabel" is true
-          sortDesc: false,             // defaults to "false" when not provided
-          fieldType: FieldType.boolean // defaults to FieldType.string when not provided
+          property: 'effortDriven', // will sort by translated value since "enableTranslateLabel" is true
+          sortDesc: false,          // defaults to "false" when not provided
+          fieldType: 'boolean'      // defaults to 'string' when not provided
        },
        model: Filters.multipleSelect
    }
@@ -269,7 +269,7 @@ for (let i = 0; i < 365; i++) {
 this.columnDefinitions = [
   { id: 'duration', name: 'Duration', field: 'duration',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: multiSelectFilterArray,
@@ -319,7 +319,7 @@ What if you want to use `customStructure` and translate the labels? Simply pass 
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -344,7 +344,7 @@ You can also pre-sort or pre-filter the collection given to the multipleSelect/s
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -361,7 +361,7 @@ this.columnDefinitions = [
        collectionSortBy: {
           property: 'effortDriven',    // will sort by translated value since "enableTranslateLabel" is true
           sortDesc: false,             // defaults to "false" when not provided
-          fieldType: FieldType.boolean // defaults to FieldType.string when not provided
+          fieldType: 'boolean' // defaults to 'string' when not provided
        },
        model: Filters.multipleSelect
    }
@@ -416,7 +416,7 @@ this.columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmark,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
       // display checkmark icon when True

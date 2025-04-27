@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
-import { AngularGridInstance, Column, FieldType, Filters, Formatters, GridOption, GridStateChange } from '../../library';
+import { AngularGridInstance, Column, Filters, Formatters, GridOption, GridStateChange } from '../../library';
 
 @Component({
   templateUrl: './example10.component.html',
@@ -41,14 +41,14 @@ export class Example10Component implements OnInit {
 
   prepareGrid() {
     this.columnDefinitions1 = [
-      { id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, filterable: true },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: FieldType.number, filterable: true },
+      { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
+      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
       {
         id: 'complete',
         name: '% Complete',
         field: 'percentComplete',
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number,
+        type: 'number',
         filterable: true,
         sortable: true,
       },
@@ -58,7 +58,7 @@ export class Example10Component implements OnInit {
         field: 'start',
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -69,7 +69,7 @@ export class Example10Component implements OnInit {
         field: 'finish',
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -79,7 +79,7 @@ export class Example10Component implements OnInit {
         name: 'Effort Driven',
         field: 'effortDriven',
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.boolean,
+        type: 'boolean',
         sortable: true,
         filterable: true,
         filter: {
@@ -94,14 +94,14 @@ export class Example10Component implements OnInit {
     ];
 
     this.columnDefinitions2 = [
-      { id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, filterable: true },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: FieldType.number, filterable: true },
+      { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
+      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
       {
         id: 'complete',
         name: '% Complete',
         field: 'percentComplete',
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number,
+        type: 'number',
         filterable: true,
         sortable: true,
       },
@@ -111,7 +111,7 @@ export class Example10Component implements OnInit {
         field: 'start',
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -122,7 +122,7 @@ export class Example10Component implements OnInit {
         field: 'finish',
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -132,7 +132,7 @@ export class Example10Component implements OnInit {
         name: 'Effort Driven',
         field: 'effortDriven',
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.boolean,
+        type: 'boolean',
         sortable: true,
         filterable: true,
         filter: {

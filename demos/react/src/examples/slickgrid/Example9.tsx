@@ -5,7 +5,6 @@ import { withTranslation } from 'react-i18next';
 import {
   type Column,
   ExtensionName,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -37,7 +36,7 @@ const Example9: React.FC = () => {
 
   function getColumnDefinitions(): Column[] {
     return [
-      { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true, type: FieldType.string },
+      { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true },
       {
         id: 'duration',
         name: 'Duration',
@@ -45,7 +44,6 @@ const Example9: React.FC = () => {
         nameKey: 'DURATION',
         sortable: true,
         filterable: true,
-        type: FieldType.string,
       },
       {
         id: 'percentComplete',
@@ -54,7 +52,7 @@ const Example9: React.FC = () => {
         nameKey: 'PERCENT_COMPLETE',
         sortable: true,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         formatter: Formatters.percentCompleteBar,
         filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
       },
@@ -64,7 +62,7 @@ const Example9: React.FC = () => {
         field: 'start',
         nameKey: 'START',
         filterable: true,
-        type: FieldType.dateUs,
+        type: 'dateUs',
         filter: { model: Filters.compoundDate },
       },
       {
@@ -73,7 +71,7 @@ const Example9: React.FC = () => {
         field: 'finish',
         nameKey: 'FINISH',
         filterable: true,
-        type: FieldType.dateUs,
+        type: 'dateUs',
         filter: { model: Filters.compoundDate },
       },
       {
@@ -83,7 +81,7 @@ const Example9: React.FC = () => {
         nameKey: 'COMPLETED',
         maxWidth: 80,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.boolean,
+        type: 'boolean',
         minWidth: 100,
         sortable: true,
         filterable: true,

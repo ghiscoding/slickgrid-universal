@@ -8,7 +8,6 @@ import {
   type MultipleSelectOption,
   type SlickgridVueInstance,
   type Column,
-  FieldType,
   Filters,
   Formatters,
   SlickgridVue,
@@ -63,7 +62,6 @@ function defineGrid(gridStatePresets?: GridState) {
       nameKey: 'TITLE',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       minWidth: 45,
       width: 100,
       filter: {
@@ -78,7 +76,6 @@ function defineGrid(gridStatePresets?: GridState) {
       sortable: true,
       minWidth: 80,
       width: 100,
-      type: FieldType.string,
       filter: {
         model: Filters.input,
         filterShortcuts: [
@@ -92,7 +89,7 @@ function defineGrid(gridStatePresets?: GridState) {
       name: 'Duration (days)',
       field: 'duration',
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       exportCsvForceToKeepAsString: true,
       minWidth: 55,
       width: 100,
@@ -114,7 +111,7 @@ function defineGrid(gridStatePresets?: GridState) {
       field: 'percentComplete',
       nameKey: 'PERCENT_COMPLETE',
       minWidth: 70,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       width: 100,
       formatter: Formatters.percentCompleteBar,
@@ -131,7 +128,7 @@ function defineGrid(gridStatePresets?: GridState) {
       minWidth: 75,
       exportWithFormatter: true,
       width: 100,
-      type: FieldType.date,
+      type: 'date',
       filterable: true,
       filter: {
         model: Filters.compoundDate,
@@ -159,7 +156,7 @@ function defineGrid(gridStatePresets?: GridState) {
       maxWidth: 85,
       formatter: Formatters.checkmarkMaterial,
       width: 100,
-      type: FieldType.boolean,
+      type: 'boolean',
       sortable: true,
       filterable: true,
       filter: {

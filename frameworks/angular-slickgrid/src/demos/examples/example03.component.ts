@@ -8,7 +8,6 @@ import {
   Editors,
   EditorArguments,
   EditorValidator,
-  FieldType,
   Filters,
   Formatter,
   Formatters,
@@ -136,7 +135,6 @@ export class Example3Component implements OnInit {
         minWidth: 100,
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -168,7 +166,6 @@ export class Example3Component implements OnInit {
         minWidth: 70,
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: CustomInputEditor,
           // model: Editors.text,
@@ -188,7 +185,7 @@ export class Example3Component implements OnInit {
         filterable: true,
         sortable: true,
         formatter: Formatters.complexObject,
-        type: FieldType.number,
+        type: 'number',
         exportWithFormatter: true,
         filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
         editor: {
@@ -220,7 +217,7 @@ export class Example3Component implements OnInit {
         minWidth: 100,
         filterable: true,
         formatter: Formatters.multiple,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.singleSelect,
 
@@ -279,7 +276,7 @@ export class Example3Component implements OnInit {
         },
         exportWithFormatter: true,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         editor: {
           model: Editors.date,
         },
@@ -294,9 +291,9 @@ export class Example3Component implements OnInit {
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
-        type: FieldType.date, // dataset cell input format
-        // outputType: FieldType.dateUs,   // date picker format
-        saveOutputType: FieldType.dateUtc, // save output date formattype: FieldType.date,
+        type: 'date', // dataset cell input format
+        // outputType: 'dateUs',   // date picker format
+        saveOutputType: 'dateUtc', // save output date formattype: 'date',
         editor: {
           model: Editors.date,
           // override any of the calendar picker options through "editorOptions"
@@ -369,7 +366,7 @@ export class Example3Component implements OnInit {
         exportWithFormatter: true,
         dataKey: 'code',
         labelKey: 'name',
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString, // this sorter requires the dataKey and assume that obj1[dataKey] will be a string so it can sort it that way
         filterable: true,
         sortable: true,
@@ -407,7 +404,7 @@ export class Example3Component implements OnInit {
         field: 'effortDriven',
         minWidth: 70,
         filterable: true,
-        type: FieldType.boolean,
+        type: 'boolean',
         filter: {
           model: Filters.singleSelect,
           collection: [
@@ -431,7 +428,6 @@ export class Example3Component implements OnInit {
         exportWithFormatter: true,
         sanitizeDataExport: true,
         sortable: true,
-        type: FieldType.string,
         editor: {
           placeholder: 'choose option',
           collectionAsync: this.http.get<{ value: string; label: string }[]>(URL_SAMPLE_COLLECTION_DATA),

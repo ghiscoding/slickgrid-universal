@@ -3,7 +3,6 @@ import {
   type AureliaGridInstance,
   Aggregators,
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -50,7 +49,7 @@ export class Example40 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'percentComplete',
@@ -59,14 +58,14 @@ export class Example40 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'start',
         name: 'Start',
         field: 'start',
-        type: FieldType.date,
-        outputType: FieldType.dateIso, // for date picker format
+        type: 'date',
+        outputType: 'dateIso', // for date picker format
         formatter: Formatters.date,
         exportWithFormatter: true,
         params: { dateFormat: 'MMM DD, YYYY' },
@@ -80,8 +79,8 @@ export class Example40 {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
-        type: FieldType.date,
-        outputType: FieldType.dateIso, // for date picker format
+        type: 'date',
+        outputType: 'dateIso', // for date picker format
         formatter: Formatters.date,
         exportWithFormatter: true,
         params: { dateFormat: 'MMM DD, YYYY' },

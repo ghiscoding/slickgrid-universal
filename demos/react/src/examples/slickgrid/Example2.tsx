@@ -1,12 +1,4 @@
-import {
-  type Column,
-  FieldType,
-  type Formatter,
-  Formatters,
-  type GridOption,
-  SlickgridReact,
-  type SlickgridReactInstance,
-} from 'slickgrid-react';
+import { type Column, type Formatter, Formatters, type GridOption, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
 import DOMPurify from 'dompurify';
 import { useState } from 'react';
 
@@ -47,13 +39,13 @@ const Example2: React.FC = () => {
 
   // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
   const columnDefinitions: Column[] = [
-    { id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, width: 70 },
+    { id: 'title', name: 'Title', field: 'title', sortable: true, width: 70 },
     {
       id: 'phone',
       name: 'Phone Number using mask',
       field: 'phone',
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       minWidth: 100,
       formatter: Formatters.mask,
       params: { mask: '(000) 000-0000' },
@@ -65,7 +57,7 @@ const Example2: React.FC = () => {
       formatter: Formatters.decimal,
       params: { minDecimal: 1, maxDecimal: 2 },
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       minWidth: 90,
       exportWithFormatter: true,
     },
@@ -74,7 +66,7 @@ const Example2: React.FC = () => {
       name: '% Complete',
       field: 'percentComplete',
       formatter: Formatters.percentCompleteBar,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
     },
@@ -83,7 +75,7 @@ const Example2: React.FC = () => {
       name: '% Complete',
       field: 'percentComplete2',
       formatter: Formatters.progressBar,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
     },
@@ -93,7 +85,7 @@ const Example2: React.FC = () => {
       field: 'start',
       formatter: Formatters.dateIso,
       sortable: true,
-      type: FieldType.date,
+      type: 'date',
       minWidth: 90,
       exportWithFormatter: true,
     },
@@ -103,7 +95,7 @@ const Example2: React.FC = () => {
       field: 'finish',
       formatter: Formatters.dateIso,
       sortable: true,
-      type: FieldType.date,
+      type: 'date',
       minWidth: 90,
       exportWithFormatter: true,
     },
@@ -112,7 +104,7 @@ const Example2: React.FC = () => {
       name: 'Effort Driven',
       field: 'effortDriven',
       formatter: myCustomCheckmarkFormatter,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
     },
@@ -120,7 +112,7 @@ const Example2: React.FC = () => {
       id: 'completed',
       name: 'Completed',
       field: 'completed',
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
       formatter: customEnableButtonFormatter,

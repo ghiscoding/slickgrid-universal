@@ -20,7 +20,6 @@ Here's an example with a `collection`, `collectionFilterBy` and `collectionSortB
 this.columnDefinitions = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-    type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
       collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
@@ -101,7 +100,6 @@ Let take this example, let say that we want to allow collection values lower tha
 this.columnDefinitions = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-    type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
       collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
@@ -161,7 +159,7 @@ this.columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       // display checkmark icon when True
       enableRenderHtml: true,
@@ -180,7 +178,7 @@ this.columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       // watch for any changes in the collection and re-render when that happens
       enableCollectionWatch: true,

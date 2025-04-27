@@ -4,7 +4,6 @@ import { Observable, of, type Subject } from 'rxjs';
 import {
   type Column,
   Editors,
-  FieldType,
   Filters,
   type GridOption,
   type GridStateChange,
@@ -55,7 +54,6 @@ const Example31: React.FC = () => {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: {
           model: Filters.compoundInput,

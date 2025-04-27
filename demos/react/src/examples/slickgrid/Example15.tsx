@@ -5,7 +5,6 @@ import { withTranslation } from 'react-i18next';
 
 import {
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -114,7 +113,6 @@ const Example15: React.FC = () => {
         nameKey: 'TITLE',
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         minWidth: 45,
         width: 100,
         filter: {
@@ -129,7 +127,6 @@ const Example15: React.FC = () => {
         sortable: true,
         minWidth: 80,
         width: 100,
-        type: FieldType.string,
         filter: {
           model: Filters.input,
           filterShortcuts: [
@@ -143,7 +140,7 @@ const Example15: React.FC = () => {
         name: 'Duration (days)',
         field: 'duration',
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         exportCsvForceToKeepAsString: true,
         minWidth: 55,
         width: 100,
@@ -165,7 +162,7 @@ const Example15: React.FC = () => {
         field: 'percentComplete',
         nameKey: 'PERCENT_COMPLETE',
         minWidth: 70,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         width: 100,
         formatter: Formatters.percentCompleteBar,
@@ -182,7 +179,7 @@ const Example15: React.FC = () => {
         minWidth: 75,
         exportWithFormatter: true,
         width: 100,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.compoundDate,
@@ -205,7 +202,7 @@ const Example15: React.FC = () => {
         maxWidth: 85,
         formatter: Formatters.checkmarkMaterial,
         width: 100,
-        type: FieldType.boolean,
+        type: 'boolean',
         sortable: true,
         filterable: true,
         filter: {

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, FieldType, Formatters, GridOption, OperatorString, SlickDataView, SlickGrid } from '../../library';
+import { AngularGridInstance, Column, Formatters, GridOption, OperatorString, SlickDataView, SlickGrid } from '../../library';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -34,14 +34,13 @@ export class Example21Component implements OnInit {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
       },
       {
         id: 'duration',
         name: 'Duration (days)',
         field: 'duration',
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'complete',
@@ -49,7 +48,7 @@ export class Example21Component implements OnInit {
         field: 'percentComplete',
         formatter: Formatters.percentCompleteBar,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'start',
@@ -57,7 +56,7 @@ export class Example21Component implements OnInit {
         field: 'start',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'finish',
@@ -65,7 +64,7 @@ export class Example21Component implements OnInit {
         field: 'finish',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'effort-driven',
@@ -73,7 +72,7 @@ export class Example21Component implements OnInit {
         field: 'effortDriven',
         formatter: Formatters.checkmarkMaterial,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
       },
     ];
     this.selectedColumn = this.columnDefinitions[0];

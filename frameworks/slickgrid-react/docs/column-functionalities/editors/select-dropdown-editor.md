@@ -20,7 +20,6 @@ Here's an example with a `collection`, `collectionFilterBy` and `collectionSortB
 const columnDefinitions = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-    type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
       collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
@@ -54,7 +53,7 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 const gridOptions = {
-  defaultEditorOptions: { 
+  defaultEditorOptions: {
     // Note: that `select` combines both multipleSelect & singleSelect
     select: { minHeight: 350 }, // typed as MultipleSelectOption
   }
@@ -101,7 +100,6 @@ Let take this example, let say that we want to allow collection values lower tha
 const columnDefinitions = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-    type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
       collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
@@ -161,7 +159,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       // display checkmark icon when True
       enableRenderHtml: true,
@@ -180,7 +178,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       // watch for any changes in the collection and re-render when that happens
       enableCollectionWatch: true,

@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import {
-  type Column,
-  FieldType,
-  type Formatter,
-  Formatters,
-  type GridOption,
-  SlickgridVue,
-  type SlickgridVueInstance,
-} from 'slickgrid-vue';
+import { type Column, type Formatter, Formatters, type GridOption, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;
@@ -56,13 +48,13 @@ onBeforeMount(() => {
 /* Define grid Options and Columns */
 function defineGrid() {
   columnDefinitions.value = [
-    { id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, width: 70 },
+    { id: 'title', name: 'Title', field: 'title', sortable: true, width: 70 },
     {
       id: 'phone',
       name: 'Phone Number using mask',
       field: 'phone',
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       minWidth: 100,
       formatter: Formatters.mask,
       params: { mask: '(000) 000-0000' },
@@ -74,7 +66,7 @@ function defineGrid() {
       formatter: Formatters.decimal,
       params: { minDecimal: 1, maxDecimal: 2 },
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       minWidth: 90,
       exportWithFormatter: true,
     },
@@ -83,7 +75,7 @@ function defineGrid() {
       name: '% Complete',
       field: 'percentComplete',
       formatter: Formatters.percentCompleteBar,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
     },
@@ -92,7 +84,7 @@ function defineGrid() {
       name: '% Complete',
       field: 'percentComplete2',
       formatter: Formatters.progressBar,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
     },
@@ -102,7 +94,7 @@ function defineGrid() {
       field: 'start',
       formatter: Formatters.dateIso,
       sortable: true,
-      type: FieldType.date,
+      type: 'date',
       minWidth: 90,
       exportWithFormatter: true,
     },
@@ -112,7 +104,7 @@ function defineGrid() {
       field: 'finish',
       formatter: Formatters.dateIso,
       sortable: true,
-      type: FieldType.date,
+      type: 'date',
       minWidth: 90,
       exportWithFormatter: true,
     },
@@ -121,7 +113,7 @@ function defineGrid() {
       name: 'Effort Driven',
       field: 'effortDriven',
       formatter: myCustomCheckmarkFormatter,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
     },
@@ -129,7 +121,7 @@ function defineGrid() {
       id: 'completed',
       name: 'Completed',
       field: 'completed',
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       minWidth: 100,
       formatter: customEnableButtonFormatter,

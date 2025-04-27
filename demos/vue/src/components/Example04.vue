@@ -3,7 +3,6 @@ import { format as tempoFormat } from '@formkit/tempo';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -50,7 +49,6 @@ function defineGrid() {
       field: 'title',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       minWidth: 45,
       filter: {
         model: Filters.compoundInputText,
@@ -63,7 +61,6 @@ function defineGrid() {
       filterable: true,
       sortable: true,
       minWidth: 80,
-      type: FieldType.string,
       filter: {
         model: CustomInputFilter, // create a new instance to make each Filter independent from each other customFilter
         enableTrimWhiteSpace: true,
@@ -74,7 +71,7 @@ function defineGrid() {
       name: 'Duration (days)',
       field: 'duration',
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       exportCsvForceToKeepAsString: true,
       minWidth: 55,
       filterable: true,
@@ -108,7 +105,7 @@ function defineGrid() {
         collectionSortBy: {
           property: 'value',
           sortDesc: true,
-          fieldType: FieldType.number,
+          fieldType: 'number',
         },
         customStructure: {
           value: 'value',
@@ -137,7 +134,7 @@ function defineGrid() {
       field: 'percentComplete',
       formatter: Formatters.percentCompleteBar,
       minWidth: 70,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       filterable: true,
       filter: { model: Filters.compoundInputNumber },
@@ -149,7 +146,7 @@ function defineGrid() {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 75,
-      type: FieldType.date,
+      type: 'date',
       filterable: true,
       filter: { model: Filters.compoundDate },
     },
@@ -160,7 +157,7 @@ function defineGrid() {
       sortable: true,
       minWidth: 70,
       width: 70,
-      type: FieldType.dateUsShort,
+      type: 'dateUsShort',
       filterable: true,
       filter: { model: Filters.compoundDate },
     },
@@ -171,8 +168,8 @@ function defineGrid() {
       formatter: Formatters.dateTimeIsoAmPm,
       sortable: true,
       minWidth: 115,
-      type: FieldType.dateUtc,
-      outputType: FieldType.dateTimeIsoAmPm,
+      type: 'dateUtc',
+      outputType: 'dateTimeIsoAmPm',
       filterable: true,
       filter: {
         model: Filters.compoundDate,
@@ -186,7 +183,7 @@ function defineGrid() {
       field: 'effortDriven.isEffort',
       minWidth: 85,
       maxWidth: 95,
-      type: FieldType.boolean,
+      type: 'boolean',
       sortable: true,
 
       // to pass multiple formatters, use the params property

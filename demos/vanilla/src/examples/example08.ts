@@ -1,4 +1,4 @@
-import { type Column, type GridOption, FieldType, type ItemMetadata, type OperatorString } from '@slickgrid-universal/common';
+import { type Column, type GridOption, type ItemMetadata, type OperatorString } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -61,12 +61,12 @@ export default class Example08 {
       {
         id: '%',
         name: '% Complete',
-        type: FieldType.number,
+        type: 'number',
         field: 'percentComplete',
         selectable: false,
         columnGroup: 'Analysis',
       },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: 'boolean', columnGroup: 'Analysis' },
     ];
 
     this.gridOptions1 = {
@@ -116,7 +116,7 @@ export default class Example08 {
         id: 'duration',
         name: 'Duration',
         field: 'duration',
-        type: FieldType.number,
+        type: 'number',
         minWidth: 120,
         columnGroup: 'Common Factor',
       },
@@ -126,7 +126,7 @@ export default class Example08 {
         id: 'percentComplete',
         name: '% Complete',
         field: 'percentComplete',
-        type: FieldType.number,
+        type: 'number',
         minWidth: 145,
         selectable: false,
         columnGroup: 'Analysis',
@@ -136,7 +136,7 @@ export default class Example08 {
         name: 'Effort Driven',
         field: 'effortDriven',
         minWidth: 145,
-        type: FieldType.boolean,
+        type: 'boolean',
         columnGroup: 'Analysis',
       },
     ];

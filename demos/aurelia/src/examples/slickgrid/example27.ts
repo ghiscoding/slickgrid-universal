@@ -1,7 +1,7 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 import type { AureliaGridInstance, Column, GridOption, GridStateChange, TreeToggledItem, TreeToggleStateChange } from 'aurelia-slickgrid';
-import { FieldType, GridStateType, Filters, Formatters } from 'aurelia-slickgrid';
+import { GridStateType, Filters, Formatters } from 'aurelia-slickgrid';
 import './example27.scss'; // provide custom CSS/SASS styling
 
 const NB_ITEMS = 500;
@@ -50,7 +50,6 @@ export class Example27 {
         sortable: true,
         exportWithFormatter: false,
         queryFieldSorter: 'id',
-        type: FieldType.string,
         formatter: Formatters.tree,
         exportCustomFormatter: Formatters.treeExport,
       },
@@ -66,14 +65,14 @@ export class Example27 {
         filterable: true,
         filter: { model: Filters.compoundSlider, operator: '>=' },
         formatter: Formatters.percentCompleteBarWithText,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'start',
         name: 'Start',
         field: 'start',
         minWidth: 60,
-        type: FieldType.dateIso,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -84,7 +83,7 @@ export class Example27 {
         name: 'Finish',
         field: 'finish',
         minWidth: 60,
-        type: FieldType.dateIso,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },

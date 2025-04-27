@@ -5,7 +5,6 @@ import {
   type Column,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -79,7 +78,6 @@ export class Example26 {
         field: 'title',
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           minLength: 5,
@@ -168,7 +166,7 @@ export class Example26 {
         filterable: true,
         minWidth: 100,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
         editor: {
           model: Editors.slider,
@@ -195,7 +193,7 @@ export class Example26 {
         field: 'percentComplete',
         filterable: true,
         formatter: Formatters.multiple,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
@@ -234,7 +232,7 @@ export class Example26 {
         formatter: Formatters.dateIso,
         sortable: true,
         minWidth: 100,
-        type: FieldType.date,
+        type: 'date',
         editor: {
           model: Editors.date,
         },
@@ -248,7 +246,7 @@ export class Example26 {
         formatter: Formatters.dateIso,
         sortable: true,
         minWidth: 100,
-        type: FieldType.date,
+        type: 'date',
         editor: {
           model: Editors.date,
         },

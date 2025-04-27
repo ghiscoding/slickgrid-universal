@@ -1,4 +1,4 @@
-import { type AureliaGridInstance, type Column, FieldType, type GridOption, Editors, type OnCellChangeEventArgs } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption, Editors, type OnCellChangeEventArgs } from 'aurelia-slickgrid';
 
 const NB_ITEMS = 100;
 
@@ -39,7 +39,7 @@ export class Example37 {
         id: i,
         name: String.fromCharCode('A'.charCodeAt(0) + i),
         field: String(i),
-        type: FieldType.number,
+        type: 'number',
         width: 58,
         editor: { model: Editors.integer },
       });

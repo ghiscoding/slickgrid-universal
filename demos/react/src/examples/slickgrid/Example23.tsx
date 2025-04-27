@@ -7,7 +7,6 @@ import { CustomInputFilter } from './custom-inputFilter.js';
 import {
   type Column,
   type CurrentFilter,
-  FieldType,
   Filters,
   type Formatter,
   Formatters,
@@ -87,7 +86,6 @@ const Example23: React.FC = () => {
         filterable: true,
         sortable: true,
         minWidth: 80,
-        type: FieldType.string,
         filter: {
           model: CustomInputFilter, // create a new instance to make each Filter independent from each other
           enableTrimWhiteSpace: true, // or use global "enableFilterTrimWhiteSpace" to trim on all Filters
@@ -102,7 +100,7 @@ const Example23: React.FC = () => {
         sortable: true,
         customTooltip: { position: 'center' },
         formatter: Formatters.progressBar,
-        type: FieldType.number,
+        type: 'number',
         filterable: true,
         filter: {
           model: Filters.sliderRange,
@@ -125,7 +123,7 @@ const Example23: React.FC = () => {
         minWidth: 75,
         width: 100,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: { model: Filters.compoundDate },
       },
@@ -139,7 +137,7 @@ const Example23: React.FC = () => {
         minWidth: 75,
         width: 120,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,
@@ -150,7 +148,7 @@ const Example23: React.FC = () => {
         field: 'duration',
         nameKey: 'DURATION',
         maxWidth: 90,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         filterable: true,
         filter: {

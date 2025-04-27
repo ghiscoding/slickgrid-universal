@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { useTranslation } from 'i18next-vue';
-import { type GridOption, type SlickgridVueInstance, type Column, Editors, FieldType, Formatters, SlickgridVue } from 'slickgrid-vue';
+import { type GridOption, type SlickgridVueInstance, type Column, Editors, Formatters, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -47,7 +47,7 @@ function defineGrid() {
       sortable: true,
       minWidth: 100,
       filterable: true,
-      type: FieldType.number,
+      type: 'number',
       editor: { model: Editors.text },
     },
     {
@@ -57,7 +57,7 @@ function defineGrid() {
       sortable: true,
       minWidth: 100,
       filterable: true,
-      type: FieldType.number,
+      type: 'number',
       editor: { model: Editors.text },
     },
     {

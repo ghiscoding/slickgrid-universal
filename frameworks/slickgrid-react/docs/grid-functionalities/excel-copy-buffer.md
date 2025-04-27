@@ -16,7 +16,7 @@ All you need to do is enable the Grid Option `enableExcelCopyBuffer: true` and g
 const columnDefinitions = [
   { id: 'title', name: 'Title', field: 'id' },
   { id: 'description', name: 'Description', field: 'description' },
-  { id: 'duration', name: 'Duration (days)', field: 'duration', type: FieldType.number },
+  { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number' },
 ];
 const gridOptions = {
   enableExcelCopyBuffer: true,

@@ -65,7 +65,7 @@ const columnDefinitions = [
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
@@ -107,7 +107,7 @@ const columnDefinitions = [
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
@@ -127,7 +127,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
@@ -145,7 +145,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
@@ -164,7 +164,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -191,7 +191,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -223,7 +223,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
@@ -249,7 +249,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -264,9 +264,9 @@ const columnDefinitions = [
           value: undefined
        },
        collectionSortBy: {
-          property: 'effortDriven',    // will sort by translated value since "enableTranslateLabel" is true
-          sortDesc: false,             // defaults to "false" when not provided
-          fieldType: FieldType.boolean // defaults to FieldType.string when not provided
+          property: 'effortDriven',  // will sort by translated value since "enableTranslateLabel" is true
+          sortDesc: false,           // defaults to "false" when not provided
+          fieldType: 'boolean'       // defaults to 'string' when not provided
        },
        model: Filters.multipleSelect
     }
@@ -288,7 +288,7 @@ const columnDefinitions = [
   {
     id: 'duration', name: 'Duration', field: 'duration',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: multiSelectFilterArray,
@@ -340,7 +340,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
        collection: [
@@ -367,7 +367,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
       collection: [
@@ -384,7 +384,7 @@ const columnDefinitions = [
       collectionSortBy: {
         property: 'effortDriven',    // will sort by translated value since "enableTranslateLabel" is true
         sortDesc: false,             // defaults to "false" when not provided
-        fieldType: FieldType.boolean // defaults to FieldType.string when not provided
+        fieldType: 'boolean' // defaults to 'string' when not provided
       },
       model: Filters.multipleSelect
     }
@@ -440,7 +440,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     filterable: true,
     filter: {
       // display checkmark icon when True

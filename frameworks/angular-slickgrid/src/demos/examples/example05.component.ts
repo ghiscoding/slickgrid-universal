@@ -1,17 +1,7 @@
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  AngularGridInstance,
-  Column,
-  FieldType,
-  Filters,
-  GridOption,
-  GridStateChange,
-  Metrics,
-  OperatorType,
-  Pagination,
-} from '../../library';
+import { AngularGridInstance, Column, Filters, GridOption, GridStateChange, Metrics, OperatorType, Pagination } from '../../library';
 
 const defaultPageSize = 20;
 const sampleDataRoot = 'assets/data';
@@ -56,7 +46,6 @@ export class Example5Component implements OnInit {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: {
           model: Filters.compoundInput,

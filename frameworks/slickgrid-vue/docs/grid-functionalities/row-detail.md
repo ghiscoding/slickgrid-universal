@@ -29,7 +29,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -435,7 +435,7 @@ Main Grid Component
 
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

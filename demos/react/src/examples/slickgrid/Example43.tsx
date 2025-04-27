@@ -420,13 +420,13 @@ export default function Example43() {
     }
 
     // update column definitions
-    const cols = reactGrid?.slickGrid.getColumns() || [];
+    const cols: Column[] = reactGrid?.slickGrid.getColumns() || [];
     if (newShowEmployeeId) {
       cols.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
     } else {
       cols.splice(0, 1);
     }
-    reactGrid?.slickGrid.setColumns(cols) || [];
+    reactGrid?.slickGrid.setColumns(cols || []);
 
     // update & remap rowspans
     metadataRef.current = newMetadata;

@@ -1,6 +1,5 @@
 import {
   type Column,
-  FieldType,
   Formatters,
   type GridOption,
   type OperatorString,
@@ -43,7 +42,6 @@ const Example21: React.FC = () => {
         field: 'title',
         width: 100,
         sortable: true,
-        type: FieldType.string,
       },
       {
         id: 'duration',
@@ -51,7 +49,7 @@ const Example21: React.FC = () => {
         field: 'duration',
         width: 100,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'complete',
@@ -60,7 +58,7 @@ const Example21: React.FC = () => {
         width: 100,
         sortable: true,
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'start',
@@ -69,7 +67,7 @@ const Example21: React.FC = () => {
         width: 100,
         sortable: true,
         formatter: Formatters.dateIso,
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'finish',
@@ -78,7 +76,7 @@ const Example21: React.FC = () => {
         width: 100,
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'effort-driven',
@@ -87,7 +85,7 @@ const Example21: React.FC = () => {
         width: 100,
         sortable: true,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.number,
+        type: 'number',
       },
     ];
 

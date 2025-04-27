@@ -1,4 +1,4 @@
-import { type Column, ExtensionName, FieldType, Formatters, type GridOption } from '@slickgrid-universal/common';
+import { type Column, ExtensionName, Formatters, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -68,7 +68,7 @@ export default class Example01 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: '%',
@@ -77,7 +77,7 @@ export default class Example01 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
       {

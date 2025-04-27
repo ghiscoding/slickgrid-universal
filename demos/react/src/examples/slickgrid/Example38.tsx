@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type Grouping,
@@ -57,7 +56,6 @@ const Example38: React.FC = () => {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: { model: Filters.compoundInput },
       },

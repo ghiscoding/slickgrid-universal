@@ -45,7 +45,7 @@ Note: the new item will be added to the top of the grid by default, if you wish 
 ```vue
 <script setup lang="ts">
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import { Column, CompositeEditorModalType, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, CompositeEditorModalType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -121,7 +121,7 @@ Note however that there is a subtle difference compare to the Create Item action
 <script setup lang="ts">
 import { Column, CompositeEditorModalType } from 'slickgrid-vue';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -137,7 +137,7 @@ function defineGrid() {
   columnDefinitions.value = [
     {
       id: 'percentComplete', name: '% Complete', field: 'percentComplete',
-      type: FieldType.number, sortable: true, filterable: true,
+      type: 'number', sortable: true, filterable: true,
       filter: { model: Filters.compoundSlider, operator: '>=' },
       editor: {
         model: Editors.slider,
@@ -385,7 +385,7 @@ There are multiple options that you can change to change the UI design a bit, he
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -434,7 +434,7 @@ The example below shows code sample for all 3 supported editors AutoComplete, Da
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -494,7 +494,7 @@ There are 2 ways to do it
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -508,11 +508,11 @@ onBeforeMount(() => {
 function defineGrid() {
   columnDefinitions.value = [
     {
-      id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
+      id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
       editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
     },
     {
-      id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+      id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
       editor: {
         model: Editors.singleSelect,
         collection: [ /*...*/ ],
@@ -554,7 +554,7 @@ function handleOnCompositeEditorChange(event) {
 
 ```vue
 <script setup lang="ts">
-import { Column, FieldType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -568,11 +568,11 @@ onBeforeMount(() => {
 function defineGrid() {
   columnDefinitions.value = [
     {
-      id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
+      id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
       editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
     },
     {
-      id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+      id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
       editor: {
         model: Editors.singleSelect,
         collection: [ /*...*/ ],

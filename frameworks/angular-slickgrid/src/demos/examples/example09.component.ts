@@ -1,14 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import {
-  AngularGridInstance,
-  Column,
-  ExtensionName,
-  FieldType,
-  Filters,
-  Formatters,
-  GridOption,
-  unsubscribeAllObservables,
-} from '../../library';
+import { AngularGridInstance, Column, ExtensionName, Filters, Formatters, GridOption, unsubscribeAllObservables } from '../../library';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
@@ -40,7 +31,7 @@ export class Example9Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true, type: FieldType.string },
+      { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true },
       {
         id: 'duration',
         name: 'Duration',
@@ -48,7 +39,6 @@ export class Example9Component implements OnInit, OnDestroy {
         nameKey: 'DURATION',
         sortable: true,
         filterable: true,
-        type: FieldType.string,
       },
       {
         id: 'percentComplete',
@@ -57,12 +47,12 @@ export class Example9Component implements OnInit, OnDestroy {
         nameKey: 'PERCENT_COMPLETE',
         sortable: true,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         formatter: Formatters.percentCompleteBar,
         filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
       },
-      { id: 'start', name: 'Start', field: 'start', nameKey: 'START', filterable: true, type: FieldType.string },
-      { id: 'finish', name: 'Finish', field: 'finish', nameKey: 'FINISH', filterable: true, type: FieldType.string },
+      { id: 'start', name: 'Start', field: 'start', nameKey: 'START', filterable: true },
+      { id: 'finish', name: 'Finish', field: 'finish', nameKey: 'FINISH', filterable: true },
       {
         id: 'effort-driven',
         name: 'Completed',
@@ -70,7 +60,7 @@ export class Example9Component implements OnInit, OnDestroy {
         nameKey: 'COMPLETED',
         maxWidth: 80,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.boolean,
+        type: 'boolean',
         minWidth: 100,
         sortable: true,
         filterable: true,

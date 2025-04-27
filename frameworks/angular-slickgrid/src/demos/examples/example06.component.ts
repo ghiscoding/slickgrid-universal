@@ -7,7 +7,6 @@ import {
   AngularGridInstance,
   Column,
   CursorPageInfo,
-  FieldType,
   Filters,
   Formatters,
   GridOption,
@@ -66,7 +65,6 @@ export class Example6Component implements OnInit, OnDestroy {
         nameKey: 'NAME',
         width: 60,
         columnGroupKey: 'CUSTOMER_INFORMATION',
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
@@ -132,7 +130,7 @@ export class Example6Component implements OnInit, OnDestroy {
         field: 'billing.address.zip',
         nameKey: 'BILLING.ADDRESS.ZIP',
         width: 60,
-        type: FieldType.number,
+        type: 'number',
         columnGroupKey: 'BILLING.INFORMATION', // or use "columnGroup" without Translate
         filterable: true,
         sortable: true,
@@ -151,7 +149,7 @@ export class Example6Component implements OnInit, OnDestroy {
         minWidth: 90,
         width: 120,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         columnGroupKey: 'BILLING.INFORMATION', // or use "columnGroup" without Translate
         filterable: true,
         filter: {

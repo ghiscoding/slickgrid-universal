@@ -3,7 +3,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Aggregators,
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type Grouping,
@@ -79,7 +78,6 @@ export default class Example26 {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: { model: Filters.compoundInput },
       },

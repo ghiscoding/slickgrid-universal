@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type GridStateChange,
@@ -92,7 +91,6 @@ export default class Example09 {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: {
           model: Filters.compoundInput,

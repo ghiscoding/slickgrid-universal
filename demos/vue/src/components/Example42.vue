@@ -2,7 +2,6 @@
 import {
   BasePaginationModel,
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -50,7 +49,6 @@ function defineGrid() {
       filterable: true,
       sortable: true,
       minWidth: 80,
-      type: FieldType.string,
     },
     {
       id: 'percentComplete',
@@ -60,7 +58,7 @@ function defineGrid() {
       sortable: true,
       customTooltip: { position: 'center' },
       formatter: Formatters.progressBar,
-      type: FieldType.number,
+      type: 'number',
       filterable: true,
       filter: {
         model: Filters.sliderRange,
@@ -82,7 +80,7 @@ function defineGrid() {
       minWidth: 75,
       width: 100,
       exportWithFormatter: true,
-      type: FieldType.date,
+      type: 'date',
       filterable: true,
       filter: { model: Filters.compoundDate },
     },
@@ -95,7 +93,7 @@ function defineGrid() {
       minWidth: 75,
       width: 120,
       exportWithFormatter: true,
-      type: FieldType.date,
+      type: 'date',
       filterable: true,
       filter: {
         model: Filters.dateRange,
@@ -106,7 +104,7 @@ function defineGrid() {
       field: 'duration',
       name: 'Duration',
       maxWidth: 90,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       filterable: true,
       filter: {

@@ -8,7 +8,7 @@ If you want to manually re-create the translation in your own files, the list of
 For the `Select` Filter, you will use `labelKey` instead of `label`. Anytime a translation key will come in play, we will add the word `key` to the end (hence `nameKey`, `labelKey`, more to come...)
 ```typescript
 import { Component, OnInit, Injectable } from '@angular/core';
-import { Column, Editors, FieldType, Formatter, Formatters, GridExtraService, GridExtraUtils, GridOption, OnEventArgs, ResizerService } from 'angular-slickgrid';
+import { Column, Editors, Formatter, Formatters, GridExtraService, GridExtraUtils, GridOption, OnEventArgs, ResizerService } from 'angular-slickgrid';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

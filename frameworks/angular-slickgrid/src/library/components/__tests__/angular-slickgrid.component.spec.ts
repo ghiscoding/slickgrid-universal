@@ -19,7 +19,6 @@ import {
   ExtensionList,
   ExtensionService,
   ExtensionUtility,
-  FieldType,
   Filters,
   FilterService,
   Formatter,
@@ -594,7 +593,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(10001);
       const mockColumns: Column[] = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ];
       vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
 
@@ -611,7 +610,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(0);
       const mockColumns: Column[] = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ];
       vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
 

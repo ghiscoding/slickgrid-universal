@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   type Column,
   createDomElement,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -120,7 +119,7 @@ export default class Example20 {
         maxWidth: 200,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: '%',
@@ -132,7 +131,7 @@ export default class Example20 {
         filterable: true,
         sortable: true,
         editor: { model: Editors.slider },
-        type: FieldType.number,
+        type: 'number',
         formatter: Formatters.percentCompleteBar,
       },
       {
@@ -143,7 +142,7 @@ export default class Example20 {
         maxWidth: 130,
         filterable: true,
         filter: { model: Filters.compoundDate },
-        type: FieldType.dateIso,
+        type: 'dateIso',
         formatter: Formatters.dateIso,
       },
       {
@@ -154,7 +153,7 @@ export default class Example20 {
         maxWidth: 130,
         filterable: true,
         filter: { model: Filters.compoundDate },
-        type: FieldType.dateIso,
+        type: 'dateIso',
         formatter: Formatters.dateIso,
       },
       {

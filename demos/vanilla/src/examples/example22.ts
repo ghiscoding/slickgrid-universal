@@ -1,4 +1,4 @@
-import { type Column, FieldType, Formatters, type GridOption, Editors } from '@slickgrid-universal/common';
+import { type Column, Formatters, type GridOption, Editors } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { BindingEventService } from '@slickgrid-universal/binding';
@@ -72,7 +72,7 @@ export default class Example22 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.text },
       },
       {
@@ -82,7 +82,7 @@ export default class Example22 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.text,
           validator: (val) => (val > 100 ? { msg: 'Max 100% allowed', valid: false } : { msg: '', valid: true }),

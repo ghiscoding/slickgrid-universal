@@ -26,7 +26,7 @@ function defineGrid() {
   // define you columns, in this demo Effort Driven will use a Select Filter
   columnDefinitions.value = [
     { id: 'title', name: 'Title', field: 'title' },
-    { id: 'description', name: 'Description', field: 'description', type: FieldType.string,
+    { id: 'description', name: 'Description', field: 'description',
       filterable: true,
       filter: {
           model: CustomInputFilter // create a new instance to make each Filter independent from each other
@@ -97,7 +97,7 @@ function defineGrid() {
   // define you columns, in this demo Effort Driven will use a Select Filter
   columnDefinitions.value = [
     { id: 'title', name: 'Title', field: 'title' },
-    { id: 'description', name: 'Description', field: 'description', type: FieldType.string,
+    { id: 'description', name: 'Description', field: 'description',
       filterable: true,
       filter: {
         type: 'my-custom-filter'

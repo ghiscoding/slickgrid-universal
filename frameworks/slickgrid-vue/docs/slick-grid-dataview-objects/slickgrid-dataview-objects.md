@@ -12,7 +12,7 @@ Since version `2.x`, we can now access the Slick `Grid` & `DataView` objects dir
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

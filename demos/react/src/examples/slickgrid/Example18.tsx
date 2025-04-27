@@ -3,7 +3,6 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
   type Column,
-  FieldType,
   FileType,
   Filters,
   Formatters,
@@ -76,7 +75,7 @@ const Example18: React.FC = () => {
         sortable: true,
         filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
-        type: FieldType.number,
+        type: 'number',
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
@@ -99,8 +98,8 @@ const Example18: React.FC = () => {
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
-        type: FieldType.dateUtc,
-        outputType: FieldType.dateIso,
+        type: 'dateUtc',
+        outputType: 'dateIso',
         exportWithFormatter: true,
         grouping: {
           getter: 'start',
@@ -120,8 +119,8 @@ const Example18: React.FC = () => {
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
-        type: FieldType.dateUtc,
-        outputType: FieldType.dateIso,
+        type: 'dateUtc',
+        outputType: 'dateIso',
         exportWithFormatter: true,
         grouping: {
           getter: 'finish',
@@ -143,7 +142,7 @@ const Example18: React.FC = () => {
         formatter: Formatters.dollar,
         exportWithFormatter: true,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        type: FieldType.number,
+        type: 'number',
         grouping: {
           getter: 'cost',
           formatter: (g) => `Cost: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
@@ -160,7 +159,7 @@ const Example18: React.FC = () => {
         minWidth: 70,
         width: 90,
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number,
+        type: 'number',
         filterable: true,
         filter: { model: Filters.compoundSlider },
         sortable: true,

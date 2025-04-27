@@ -4,7 +4,6 @@ import {
   type ColumnEditorDualInput,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   type Formatter,
   Formatters,
@@ -88,7 +87,6 @@ export default class Example04 {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -104,7 +102,7 @@ export default class Example04 {
         field: 'percentComplete',
         sortable: true,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
@@ -143,7 +141,7 @@ export default class Example04 {
         name: 'Start',
         field: 'start',
         minWidth: 60,
-        type: FieldType.dateIso,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -154,7 +152,7 @@ export default class Example04 {
         name: 'Finish',
         field: 'finish',
         minWidth: 60,
-        type: FieldType.dateIso,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },

@@ -46,7 +46,7 @@ const gridOptions = {
 };
 ```
 #### Notes
-The column definition `type` will affect the list of Operators shown, for example if you have `type: FieldType.string`, it will display the operators (`=`, `a*`, `*z`) where `a*` means StartsWith and `*z` means EndsWith. The current logic implemented is that any types that are not String, will display the list of Operators (` `, `=`, `<`, `<=`, `>`, `>=`, `<>`)
+The column definition `type` will affect the list of Operators shown, for example if you have `type: 'string'`, it will display the operators (`=`, `a*`, `*z`) where `a*` means StartsWith and `*z` means EndsWith. The current logic implemented is that any types that are not String, will display the list of Operators (` `, `=`, `<`, `<=`, `>`, `>=`, `<>`)
 
 
 ### How to use CompoundDate Filter

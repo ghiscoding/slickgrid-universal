@@ -318,7 +318,7 @@ Internally, the lib will detect the correct Excel cell format for each column, i
 const columnDefinitions = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
-    type: FieldType.number,
+    type: 'number',
     formatter: Formatters.currency,
     groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
     params: { displayNegativeNumberWithParentheses: true, currencyPrefix: '€', groupFormatterCurrencyPrefix: '€', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' },
@@ -375,7 +375,7 @@ The system will auto-detect the Excel format to use for Date and Number field ty
 // via column
 const columnDefinitions = [
   {
-    id: 'cost', name: 'Cost', field: 'cost', type: FieldType.number
+    id: 'cost', name: 'Cost', field: 'cost', type: 'number'
     excelExportOptions: { autoDetectCellFormat: false }
   }
 ];
@@ -396,7 +396,7 @@ This is not recommended but if you have no other ways, you can also provide a `v
 const columnDefinitions = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
-    type: FieldType.number,
+    type: 'number',
     formatter: Formatters.currency,
     groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
     params: { displayNegativeNumberWithParentheses: true, currencyPrefix: '€', groupFormatterCurrencyPrefix: '€', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' },
@@ -436,7 +436,7 @@ By using `valueParserCallback`, there a lot of extra customizations that you can
 const columnDefinitions = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
-    type: FieldType.number,
+    type: 'number',
 
     // use Formatters in the UI
     formatter: Formatters.dollar,

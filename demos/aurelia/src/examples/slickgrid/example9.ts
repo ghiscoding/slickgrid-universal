@@ -3,7 +3,6 @@ import {
   type AureliaGridInstance,
   type Column,
   ExtensionName,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -60,7 +59,7 @@ export class Example9 {
 
   defineGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true, type: FieldType.string },
+      { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true },
       {
         id: 'duration',
         name: 'Duration',
@@ -68,7 +67,6 @@ export class Example9 {
         nameKey: 'DURATION',
         sortable: true,
         filterable: true,
-        type: FieldType.string,
       },
       {
         id: 'percentComplete',
@@ -77,7 +75,7 @@ export class Example9 {
         nameKey: 'PERCENT_COMPLETE',
         sortable: true,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         formatter: Formatters.percentCompleteBar,
         filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
       },
@@ -87,7 +85,7 @@ export class Example9 {
         field: 'start',
         nameKey: 'START',
         filterable: true,
-        type: FieldType.dateUs,
+        type: 'dateUs',
         filter: { model: Filters.compoundDate },
       },
       {
@@ -96,7 +94,7 @@ export class Example9 {
         field: 'finish',
         nameKey: 'FINISH',
         filterable: true,
-        type: FieldType.dateUs,
+        type: 'dateUs',
         filter: { model: Filters.compoundDate },
       },
       {
@@ -106,7 +104,7 @@ export class Example9 {
         nameKey: 'COMPLETED',
         maxWidth: 80,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.boolean,
+        type: 'boolean',
         minWidth: 100,
         sortable: true,
         filterable: true,

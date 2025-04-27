@@ -4,7 +4,6 @@ import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slick
 import {
   type AureliaGridInstance,
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type GridStateChange,
@@ -76,7 +75,6 @@ export class Example5 {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: {
           model: Filters.compoundInput,

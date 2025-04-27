@@ -96,7 +96,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -111,7 +111,7 @@ function defineGrid() {
   columnDefinitions.value = [
     {
       id: 'file', name: 'Files', field: 'file',
-      type: FieldType.string, width: 150, formatter: treeFormatter,
+      width: 150, formatter: treeFormatter,
       filterable: true, sortable: true,
     },
     // ...
@@ -298,7 +298,7 @@ There are a few methods available from the `TreeDataService` (only listing the i
 For example
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

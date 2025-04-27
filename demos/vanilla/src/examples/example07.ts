@@ -1,4 +1,4 @@
-import { type Column, Editors, FieldType, Filters, Formatters, type GridOption, OperatorType } from '@slickgrid-universal/common';
+import { type Column, Editors, Filters, Formatters, type GridOption, OperatorType } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -229,8 +229,8 @@ export default class Example07 {
         sortable: true,
         filter: { model: Filters.compoundDate },
         editor: { model: Editors.date },
-        type: FieldType.date,
-        /* outputType: FieldType.dateUs, */ saveOutputType: FieldType.dateUtc,
+        type: 'date',
+        /* outputType: 'dateUs', */ saveOutputType: 'dateUtc',
       },
       {
         id: 'finish',
@@ -241,8 +241,8 @@ export default class Example07 {
         sortable: true,
         filter: { model: Filters.compoundDate },
         editor: { model: Editors.date },
-        type: FieldType.dateIso,
-        saveOutputType: FieldType.dateUtc,
+        type: 'dateIso',
+        saveOutputType: 'dateUtc',
       },
       {
         id: 'completed',
@@ -294,7 +294,6 @@ export default class Example07 {
         sanitizeDataExport: true,
         minWidth: 100,
         sortable: true,
-        type: FieldType.string,
         editor: {
           // We can load the "collection" asynchronously (on first load only, after that we will simply use "collection")
           // 2 ways are supported (fetch client OR even Promise)
@@ -321,7 +320,7 @@ export default class Example07 {
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
-            fieldType: FieldType.number,
+            fieldType: 'number',
           },
           customStructure: {
             label: 'label',
@@ -346,7 +345,7 @@ export default class Example07 {
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
-            fieldType: FieldType.number,
+            fieldType: 'number',
           },
           customStructure: {
             label: 'label',

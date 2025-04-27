@@ -11,7 +11,6 @@ import {
   type SlickgridVueInstance,
   type Column,
   Editors,
-  FieldType,
   Filters,
   OperatorType,
   SlickgridVue,
@@ -53,7 +52,6 @@ function defineGrid() {
       name: 'Name',
       field: 'name',
       sortable: true,
-      type: FieldType.string,
       filterable: true,
       filter: {
         model: Filters.compoundInput,

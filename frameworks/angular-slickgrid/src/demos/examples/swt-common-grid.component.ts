@@ -2,7 +2,6 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FieldType } from '../../library';
 import type {
   AngularGridInstance,
   AngularSlickgridComponent,
@@ -202,7 +201,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
       this.columnData = this.metaData.columns.column;
 
       for (const colData of this.columnData) {
-        const type = FieldType.string;
+        const type = 'string';
         const editor = null;
         const formatter = null;
         const filter = null;

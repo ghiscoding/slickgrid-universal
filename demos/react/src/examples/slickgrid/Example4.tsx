@@ -3,7 +3,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useEffect, useState } from 'react';
 import {
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -39,7 +38,6 @@ const Example4: React.FC = () => {
       field: 'title',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       minWidth: 45,
       filter: {
         model: Filters.compoundInputText,
@@ -52,7 +50,6 @@ const Example4: React.FC = () => {
       filterable: true,
       sortable: true,
       minWidth: 80,
-      type: FieldType.string,
       filter: {
         model: CustomInputFilter, // create a new instance to make each Filter independent from each other customFilter
         enableTrimWhiteSpace: true,
@@ -63,7 +60,7 @@ const Example4: React.FC = () => {
       name: 'Duration (days)',
       field: 'duration',
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       exportCsvForceToKeepAsString: true,
       minWidth: 55,
       filterable: true,
@@ -97,7 +94,7 @@ const Example4: React.FC = () => {
         collectionSortBy: {
           property: 'value',
           sortDesc: true,
-          fieldType: FieldType.number,
+          fieldType: 'number',
         },
         customStructure: {
           value: 'value',
@@ -126,7 +123,7 @@ const Example4: React.FC = () => {
       field: 'percentComplete',
       formatter: Formatters.percentCompleteBar,
       minWidth: 70,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       filterable: true,
       filter: { model: Filters.compoundInputNumber },
@@ -138,7 +135,7 @@ const Example4: React.FC = () => {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 75,
-      type: FieldType.date,
+      type: 'date',
       filterable: true,
       filter: { model: Filters.compoundDate },
     },
@@ -149,7 +146,7 @@ const Example4: React.FC = () => {
       sortable: true,
       minWidth: 70,
       width: 70,
-      type: FieldType.dateUsShort,
+      type: 'dateUsShort',
       filterable: true,
       filter: { model: Filters.compoundDate },
     },
@@ -160,8 +157,8 @@ const Example4: React.FC = () => {
       formatter: Formatters.dateTimeIsoAmPm,
       sortable: true,
       minWidth: 115,
-      type: FieldType.dateUtc,
-      outputType: FieldType.dateTimeIsoAmPm,
+      type: 'dateUtc',
+      outputType: 'dateTimeIsoAmPm',
       filterable: true,
       filter: {
         model: Filters.compoundDate,
@@ -175,7 +172,7 @@ const Example4: React.FC = () => {
       field: 'effortDriven.isEffort',
       minWidth: 85,
       maxWidth: 95,
-      type: FieldType.boolean,
+      type: 'boolean',
       sortable: true,
 
       // to pass multiple formatters, use the params property
