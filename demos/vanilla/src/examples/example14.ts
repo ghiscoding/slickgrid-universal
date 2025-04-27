@@ -402,6 +402,7 @@ export default class Example14 {
         },
         filter: {
           model: Filters.inputText,
+          type: 'string',
           // placeholder: '🔎︎ search product',
           queryField: 'product.itemName',
         },
@@ -435,6 +436,7 @@ export default class Example14 {
         },
         filter: {
           model: Filters.inputText,
+          type: 'string',
           queryField: 'origin.name',
         },
       },

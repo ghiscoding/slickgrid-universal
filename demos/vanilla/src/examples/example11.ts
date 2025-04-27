@@ -346,6 +346,7 @@ export default class Example11 {
         },
         filter: {
           model: Filters.inputText,
+          type: 'string',
           queryField: 'countryOfOrigin.name',
           filterShortcuts: [
             { title: 'Blank Values', searchTerms: ['< A'], iconCssClass: 'mdi mdi-filter-minus-outline' },
