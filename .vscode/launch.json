@@ -82,7 +82,7 @@
       "autoAttachChildProcesses": true,
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
-      "args": ["run", "${relativeFile}", "--no-watch", "--config", "./vite.config.mts"],
+      "args": ["run", "${file}", "--no-watch", "--config", "./vite.config.mts"],
       "smartStep": true,
       "console": "integratedTerminal",
       "cwd": "${workspaceRoot}/frameworks/angular-slickgrid"
