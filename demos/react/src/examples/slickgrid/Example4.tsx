@@ -166,7 +166,7 @@ const Example4: React.FC = () => {
       filter: {
         model: Filters.compoundDate,
         // override any of the calendar options through "filterOptions"
-        filterOptions: { range: { min: 'today' } } as VanillaCalendarOption,
+        filterOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
       },
     },
     {

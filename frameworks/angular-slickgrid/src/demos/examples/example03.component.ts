@@ -307,11 +307,9 @@ export class Example3Component implements OnInit {
             // if we want to preload the date picker with a different date,
             // we could do it by assigning `selectedDates: []`
             // NOTE: vanilla-calendar doesn't automatically focus the picker to the year/month and you need to do it yourself
-            // selected: {
-            //   dates: ['2021-06-04'],
-            //   month: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
-            //   year: 2021
-            // }
+            // selectedDates: ['2021-06-04'],
+            // selectedMonth: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
+            // selectedYear: 2021
           } as VanillaCalendarOption,
         },
       },

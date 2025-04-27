@@ -55,8 +55,8 @@ catalogs:
       specifier: ^3.2.5
       version: 3.2.5
     i18next:
-      specifier: ^23.16.8
-      version: 23.16.8
+      specifier: ^25.0.1
+      version: 25.0.1
     jsdom:
       specifier: ^26.1.0
       version: 26.1.0
@@ -208,7 +208,7 @@ importers:
         version: 2.0.0-beta.23
       '@aurelia/i18n':
         specifier: ^2.0.0-beta.23
-        version: 2.0.0-beta.23
+        version: 2.0.0-beta.23(typescript@5.8.3)
       '@aurelia/kernel':
         specifier: ^2.0.0-beta.23
         version: 2.0.0-beta.23
@@ -277,7 +277,7 @@ importers:
         version: 5.3.5(@popperjs/core@2.11.8)
       i18next:
         specifier: 'catalog:'
-        version: 23.16.8
+        version: 25.0.1(typescript@5.8.3)
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -374,7 +374,7 @@ importers:
         version: 3.2.5
       i18next:
         specifier: 'catalog:'
-        version: 23.16.8
+        version: 25.0.1(typescript@5.8.3)
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -382,8 +382,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-i18next:
-        specifier: ^15.4.1
-        version: 15.5.1(i18next@23.16.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
+        specifier: ^15.5.1
+        version: 15.5.1(i18next@25.0.1(typescript@5.8.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
       slickgrid-react:
         specifier: workspace:*
         version: link:../../frameworks/slickgrid-react
@@ -586,10 +586,10 @@ importers:
         version: 3.2.5
       i18next:
         specifier: 'catalog:'
-        version: 23.16.8
+        version: 25.0.1(typescript@5.8.3)
       i18next-vue:
         specifier: ^5.2.0
-        version: 5.2.0(i18next@23.16.8)(vue@3.5.13(typescript@5.8.3))
+        version: 5.2.0(i18next@25.0.1(typescript@5.8.3))(vue@3.5.13(typescript@5.8.3))
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -867,11 +867,54 @@ importers:
         version: 0.15.0
     publishDirectory: dist
 
+  frameworks/angular-slickgrid/dist:
+    dependencies:
+      '@angular/core':
+        specifier: '>=19.0.0'
+        version: 19.2.8(rxjs@7.8.2)(zone.js@0.15.0)
+      '@ngx-translate/core':
+        specifier: ^16.0.4
+        version: 16.0.4(@angular/common@19.2.8(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0))
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../../../packages/common
+      '@slickgrid-universal/custom-footer-component':
+        specifier: workspace:*
+        version: link:../../../packages/custom-footer-component
+      '@slickgrid-universal/empty-warning-component':
+        specifier: workspace:*
+        version: link:../../../packages/empty-warning-component
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:../../../packages/event-pub-sub
+      '@slickgrid-universal/pagination-component':
+        specifier: workspace:*
+        version: link:../../../packages/pagination-component
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:*
+        version: link:../../../packages/row-detail-view-plugin
+      '@slickgrid-universal/rxjs-observable':
+        specifier: workspace:*
+        version: link:../../../packages/rxjs-observable
+      '@slickgrid-universal/utils':
+        specifier: workspace:*
+        version: link:../../../packages/utils
+      dequal:
+        specifier: 'catalog:'
+        version: 2.0.3
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    publishDirectory: dist
+
   frameworks/aurelia-slickgrid:
     dependencies:
       '@aurelia/i18n':
         specifier: ^2.0.0-beta.23
-        version: 2.0.0-beta.23
+        version: 2.0.0-beta.23(typescript@5.8.3)
       '@aurelia/runtime':
         specifier: ^2.0.0-beta.23
         version: 2.0.0-beta.23
@@ -1093,10 +1136,10 @@ importers:
         version: 7.0.3
       i18next:
         specifier: 'catalog:'
-        version: 23.16.8
+        version: 25.0.1(typescript@5.8.3)
       i18next-vue:
         specifier: ^5.2.0
-        version: 5.2.0(i18next@23.16.8)(vue@3.5.13(typescript@5.8.3))
+        version: 5.2.0(i18next@25.0.1(typescript@5.8.3))(vue@3.5.13(typescript@5.8.3))
       sass:
         specifier: 'catalog:'
         version: 1.87.0
@@ -7980,8 +8023,13 @@ packages:
       i18next: '>=23'
       vue: ^3.4.38
 
-  i18next@23.16.8:
-    resolution: {integrity: sha512-06r/TitrM88Mg5FdUXAKL96dJMzgqLE5dv3ryBAra4KCwD9mJ4ndOTS95ZuymIGoE+2hzfdaMak2X11/es7ZWg==}
+  i18next@25.0.1:
+    resolution: {integrity: sha512-8S8PyZbrymJZn3DaN70/34JYWNhsqrU6yA4MuzcygJBv+41dgNMocEA8h+kV1P7MCc1ll03lOTOIXE7mpNCicw==}
+    peerDependencies:
+      typescript: ^5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -12914,7 +12962,7 @@ snapshots:
       '@aurelia/kernel': 2.0.0-beta.23
       '@aurelia/metadata': 2.0.0-beta.23
 
-  '@aurelia/i18n@2.0.0-beta.23':
+  '@aurelia/i18n@2.0.0-beta.23(typescript@5.8.3)':
     dependencies:
       '@aurelia/expression-parser': 2.0.0-beta.23
       '@aurelia/kernel': 2.0.0-beta.23
@@ -12923,7 +12971,9 @@ snapshots:
       '@aurelia/runtime': 2.0.0-beta.23
       '@aurelia/runtime-html': 2.0.0-beta.23
       '@aurelia/template-compiler': 2.0.0-beta.23
-      i18next: 23.16.8
+      i18next: 25.0.1(typescript@5.8.3)
+    transitivePeerDependencies:
+      - typescript
 
   '@aurelia/kernel@2.0.0-beta.23':
     dependencies:
@@ -20396,14 +20446,16 @@ snapshots:
 
   hyperdyperid@1.2.0: {}
 
-  i18next-vue@5.2.0(i18next@23.16.8)(vue@3.5.13(typescript@5.8.3)):
+  i18next-vue@5.2.0(i18next@25.0.1(typescript@5.8.3))(vue@3.5.13(typescript@5.8.3)):
     dependencies:
-      i18next: 23.16.8
+      i18next: 25.0.1(typescript@5.8.3)
       vue: 3.5.13(typescript@5.8.3)
 
-  i18next@23.16.8:
+  i18next@25.0.1(typescript@5.8.3):
     dependencies:
       '@babel/runtime': 7.26.10
+    optionalDependencies:
+      typescript: 5.8.3
 
   iconv-lite@0.4.24:
     dependencies:
@@ -22968,11 +23020,11 @@ snapshots:
       react: 19.1.0
       scheduler: 0.26.0
 
-  react-i18next@15.5.1(i18next@23.16.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3):
+  react-i18next@15.5.1(i18next@25.0.1(typescript@5.8.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3):
     dependencies:
       '@babel/runtime': 7.26.10
       html-parse-stringify: 3.0.1
-      i18next: 23.16.8
+      i18next: 25.0.1(typescript@5.8.3)
       react: 19.1.0
     optionalDependencies:
       react-dom: 19.1.0(react@19.1.0)

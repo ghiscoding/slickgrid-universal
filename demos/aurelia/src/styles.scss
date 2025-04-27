@@ -43,6 +43,10 @@ $primary-color: #0e6cfa;
   display: none;
 }
 
+.invisible {
+  opacity: 0;
+}
+
 .btn-icon {
   display: inline-flex;
   align-items: center;

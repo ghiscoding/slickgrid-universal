@@ -10,9 +10,12 @@
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
   </h2>
 
-  <h6 class="title is-6 italic content">
+  <div class="subtitle">
     <ul>
       <li>
         Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest
@@ -23,7 +26,7 @@
         we keep appending data, we always have to start from index zero (no offset).
       </li>
     </ul>
-  </h6>
+  </div>
 
   <div class="row">
     <div class="col-sm-12">
@@ -67,7 +70,7 @@
     (onAngularGridCreated)="angularGridReady($event.detail)"
     (onSort)="handleOnSort()"
     (onScroll)="handleOnScroll($event.detail.args)"
-    (onRowCountChanged)="refreshMetrics($event.detail.args)"
+    (onRowCountChanged)="handleOnRowCountChanged($event.detail.args)"
   >
   </angular-slickgrid>
 </div>
