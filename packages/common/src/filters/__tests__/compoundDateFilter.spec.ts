@@ -385,7 +385,7 @@ describe('CompoundDateFilter', () => {
   it('should create the input filter with a default input dates when passed as a filter options', () => {
     mockColumn.filter!.operator = '<=';
     mockColumn.filter!.filterOptions = {
-      selected: { dates: ['2001-01-02'] },
+      selectedDates: ['2001-01-02'],
     };
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 

@@ -18,7 +18,7 @@ import {
 } from 'aurelia-slickgrid';
 import './example33.scss';
 
-const NB_ITEMS = 500;
+const NB_ITEMS = 1000;
 
 export class Example33 {
   title = 'Example 33: Regular & Custom Tooltips';
@@ -39,6 +39,7 @@ export class Example33 {
   dataset: any[] = [];
   hideSubTitle = false;
   serverApiDelay = 500;
+  showLazyLoading = false;
 
   constructor() {
     // define the grid options & columns and then create the grid itself
@@ -231,7 +232,7 @@ export class Example33 {
         sortable: true,
         editor: {
           model: Editors.date,
-          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
+          editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
         },
         // formatter: Formatters.dateIso,
         type: FieldType.date,
@@ -309,11 +310,22 @@ export class Example33 {
         },
         filter: {
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
-          collectionAsync: new Promise((resolve) => {
-            window.setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+          // collectionAsync: new Promise((resolve) => {
+          //   window.setTimeout(() => {
+          //     resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+          //   });
+          // }),
+          collectionLazy: () => {
+            this.showLazyLoading = true;
+
+            return new Promise((resolve) => {
+              window.setTimeout(() => {
+                this.showLazyLoading = false;
+                resolve(Array.from(Array((this.dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
+              }, this.serverApiDelay);
             });
-          }),
+          },
+          // onInstantiated: (msSelect) => console.log('ms-select instance', msSelect),
           customStructure: {
             label: 'label',
             value: 'value',
@@ -321,6 +333,9 @@ export class Example33 {
           },
           collectionOptions: {
             separatorBetweenTextLabels: ' ',
+          },
+          filterOptions: {
+            minHeight: 70,
           },
           model: Filters.multipleSelect,
           operator: OperatorType.inContains,

@@ -76,7 +76,7 @@
     dataset.bind="dataset"
     instances.bind="aureliaGrid"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
-    on-row-count-changed.trigger="refreshMetrics($event.detail.args)"
+    on-row-count-changed.trigger="handleOnRowCountChanged($event.detail.args)"
     on-sort.trigger="handleOnSort()"
     on-scroll.trigger="handleOnScroll($event.detail.args)"
   >

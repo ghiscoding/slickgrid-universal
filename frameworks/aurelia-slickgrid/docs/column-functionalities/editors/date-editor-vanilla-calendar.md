@@ -45,7 +45,7 @@ You could also define certain options as a global level (for the entire grid or 
 ```ts
 this.gridOptions = {
   defaultEditorOptions: {
-    date: { range: { min: 'today' } }, // typed as VanillaCalendarOption
+    date: { displayDateMin: 'today' }, // typed as VanillaCalendarOption
   }
 }
 ```

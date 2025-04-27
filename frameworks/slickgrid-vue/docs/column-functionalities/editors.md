@@ -425,7 +425,7 @@ columnDefinitions.value = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
-    editorOptions: { range: { date: 'today' } } as VanillaCalendarOption
+    editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption
   }
 }];
 ```
@@ -437,7 +437,7 @@ You could also define certain options as a global level (for the entire grid or 
 gridOptions.value = {
   defaultEditorOptions: {
     autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
-    date: { range: { date: 'today' } }, // typed as VanillaCalendarOption,
+    date: { displayDateMin: 'today' }, // typed as VanillaCalendarOption,
     longText: { cols: 50, rows: 5 }
   }
 }

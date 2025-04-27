@@ -243,7 +243,7 @@ const Example3: React.FC = () => {
       editor: {
         model: Editors.date,
         // override any of the calendar options through 'filterOptions'
-        editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
+        editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
       },
     },
     {

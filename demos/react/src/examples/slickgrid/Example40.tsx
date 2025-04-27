@@ -1,9 +1,11 @@
 import { format as dateFormatter } from '@formkit/tempo';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
   type Column,
   FieldType,
+  Filters,
   Formatters,
   type GridOption,
   type Grouping,
@@ -16,6 +18,7 @@ import {
 } from 'slickgrid-react';
 
 import './example39.scss';
+import { randomNumber } from './utilities.js';
 
 const FETCH_SIZE = 50;
 
@@ -61,8 +64,36 @@ const Example40: React.FC = () => {
         filterable: true,
         type: FieldType.number,
       },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        type: FieldType.date,
+        outputType: FieldType.dateIso, // for date picker format
+        formatter: Formatters.date,
+        exportWithFormatter: true,
+        params: { dateFormat: 'MMM DD, YYYY' },
+        sortable: true,
+        filterable: true,
+        filter: {
+          model: Filters.compoundDate,
+        },
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        type: FieldType.date,
+        outputType: FieldType.dateIso, // for date picker format
+        formatter: Formatters.date,
+        exportWithFormatter: true,
+        params: { dateFormat: 'MMM DD, YYYY' },
+        sortable: true,
+        filterable: true,
+        filter: {
+          model: Filters.compoundDate,
+        },
+      },
       {
         id: 'effort-driven',
         name: 'Effort Driven',
@@ -83,6 +114,8 @@ const Example40: React.FC = () => {
       enableGrouping: true,
       editable: false,
       rowHeight: 33,
+      enableExcelExport: true,
+      externalResources: [new ExcelExportService()],
     };
 
     setColumnDefinitions(columnDefinitions);
@@ -147,18 +180,13 @@ const Example40: React.FC = () => {
   }
 
   function newItem(idx: number) {
-    const randomYear = 2000 + Math.floor(Math.random() * 10);
-    const randomMonth = Math.floor(Math.random() * 11);
-    const randomDay = Math.floor(Math.random() * 29);
-    const randomPercent = Math.round(Math.random() * 100);
-
     return {
       id: idx,
       title: 'Task ' + idx,
       duration: Math.round(Math.random() * 100) + '',
-      percentComplete: randomPercent,
-      start: new Date(randomYear, randomMonth + 1, randomDay),
-      finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+      percentComplete: randomNumber(1, 12),
+      start: new Date(2020, randomNumber(1, 11), randomNumber(1, 28)),
+      finish: new Date(2022, randomNumber(1, 11), randomNumber(1, 28)),
       effortDriven: idx % 5 === 0,
     };
   }
@@ -167,8 +195,12 @@ const Example40: React.FC = () => {
     shouldResetOnSortRef.current = shouldReset;
   }
 
-  function refreshMetrics(args: OnRowCountChangedEventArgs) {
+  function handleOnRowCountChanged(args: OnRowCountChangedEventArgs) {
     if (reactGridRef.current && args?.current >= 0) {
+      // we probably want to re-sort the data when we get new items
+      reactGridRef.current?.dataView?.reSort();
+
+      // update metrics
       const itemCount = reactGridRef.current?.dataView?.getFilteredItemCount() || 0;
       setMetrics({ ...metrics, itemCount, totalItemCount: args.itemCount || 0 });
     }
@@ -176,7 +208,7 @@ const Example40: React.FC = () => {
 
   function setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    reactGridRef.current?.filterService.updateFilters([{ columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' }]);
+    reactGridRef.current?.filterService.updateFilters([{ columnId: 'start', searchTerms: ['2020-08-25'], operator: '<=' }]);
   }
 
   function setSortingDynamically() {
@@ -200,10 +232,7 @@ const Example40: React.FC = () => {
           Example 40: Infinite Scroll from JSON data
           <span className="float-end font18">
             see&nbsp;
-            <a
-              target="_blank"
-              href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example40.tsx"
-            >
+            <a target="_blank" href="https://github.com/ghiscoding/slickgrid-react/blob/master/src/examples/slickgrid/Example40.tsx">
               <span className="mdi mdi-link-variant"></span> code
             </a>
           </span>
@@ -287,7 +316,7 @@ const Example40: React.FC = () => {
           options={gridOptionsRef.current}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}
-          onRowCountChanged={($event) => refreshMetrics($event.detail.args)}
+          onRowCountChanged={($event) => handleOnRowCountChanged($event.detail.args)}
           onSort={(_) => handleOnSort()}
           onScroll={($event) => handleOnScroll($event.detail.args)}
         />
