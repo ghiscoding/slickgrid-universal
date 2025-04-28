@@ -1,7 +1,6 @@
 import {
   type Column,
   Editors,
-  FieldType,
   Formatters,
   type GridOption,
   type OnEventArgs,
@@ -38,7 +37,7 @@ const Example11: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions = [
+    const columnDefinitions: Column[] = [
       {
         id: 'delete',
         field: 'id',
@@ -60,7 +59,6 @@ const Example11: React.FC = () => {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
         },
@@ -70,7 +68,7 @@ const Example11: React.FC = () => {
         name: 'Duration (days)',
         field: 'duration',
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.text,
         },
@@ -84,7 +82,7 @@ const Example11: React.FC = () => {
         name: '% Complete',
         field: 'percentComplete',
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.integer,
         },
@@ -95,7 +93,7 @@ const Example11: React.FC = () => {
         field: 'start',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         /*
         editor: {
           model: Editors.date
@@ -108,14 +106,14 @@ const Example11: React.FC = () => {
         field: 'finish',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'effort-driven',
         name: 'Effort Driven',
         field: 'effortDriven',
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.checkbox,
         },

@@ -3,7 +3,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Aggregators,
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -65,7 +64,7 @@ export default class Example28 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'percentComplete',
@@ -74,14 +73,14 @@ export default class Example28 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'start',
         name: 'Start',
         field: 'start',
-        type: FieldType.date,
-        outputType: FieldType.dateIso, // for date picker format
+        type: 'date',
+        outputType: 'dateIso', // for date picker format
         formatter: Formatters.date,
         exportWithFormatter: true,
         params: { dateFormat: 'MMM DD, YYYY' },
@@ -95,8 +94,8 @@ export default class Example28 {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
-        type: FieldType.date,
-        outputType: FieldType.dateIso, // for date picker format
+        type: 'date',
+        outputType: 'dateIso', // for date picker format
         formatter: Formatters.date,
         exportWithFormatter: true,
         params: { dateFormat: 'MMM DD, YYYY' },

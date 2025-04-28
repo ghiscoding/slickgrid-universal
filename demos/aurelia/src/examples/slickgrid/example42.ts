@@ -2,7 +2,6 @@ import { bindable } from 'aurelia';
 import {
   type AureliaGridInstance,
   type Column,
-  FieldType,
   Formatters,
   type GridOption,
   type MultipleSelectOption,
@@ -62,7 +61,6 @@ export class Example42 {
         filterable: true,
         sortable: true,
         minWidth: 80,
-        type: FieldType.string,
       },
       {
         id: 'percentComplete',
@@ -72,7 +70,7 @@ export class Example42 {
         sortable: true,
         customTooltip: { position: 'center' },
         formatter: Formatters.progressBar,
-        type: FieldType.number,
+        type: 'number',
         filterable: true,
         filter: {
           model: Filters.sliderRange,
@@ -94,7 +92,7 @@ export class Example42 {
         minWidth: 75,
         width: 100,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: { model: Filters.compoundDate },
       },
@@ -107,7 +105,7 @@ export class Example42 {
         minWidth: 75,
         width: 120,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,
@@ -118,7 +116,7 @@ export class Example42 {
         field: 'duration',
         name: 'Duration',
         maxWidth: 90,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         filterable: true,
         filter: {

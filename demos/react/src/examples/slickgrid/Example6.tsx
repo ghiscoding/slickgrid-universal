@@ -9,7 +9,6 @@ import i18next from 'i18next';
 import {
   type Column,
   type CursorPageInfo,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -77,7 +76,6 @@ const Example6: React.FC = () => {
         nameKey: 'NAME',
         width: 60,
         columnGroupKey: 'CUSTOMER_INFORMATION',
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
@@ -143,7 +141,7 @@ const Example6: React.FC = () => {
         field: 'billing.address.zip',
         nameKey: 'BILLING.ADDRESS.ZIP',
         width: 60,
-        type: FieldType.number,
+        type: 'number',
         columnGroupKey: 'BILLING.INFORMATION',
         filterable: true,
         sortable: true,
@@ -163,7 +161,7 @@ const Example6: React.FC = () => {
         width: 120,
         exportWithFormatter: true,
         columnGroupKey: 'BILLING.INFORMATION',
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,

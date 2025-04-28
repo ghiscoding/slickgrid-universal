@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { type Column, Editors, FieldType, Formatters, type GridOption, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
+import { type Column, Editors, Formatters, type GridOption, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 
@@ -60,7 +60,7 @@ const Example35: React.FC = () => {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.text },
       },
       {
@@ -70,7 +70,7 @@ const Example35: React.FC = () => {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.text },
       },
       {
@@ -98,7 +98,7 @@ const Example35: React.FC = () => {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        type: FieldType.boolean,
+        type: 'boolean',
         editor: { model: Editors.checkbox },
       },
     ];

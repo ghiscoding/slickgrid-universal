@@ -136,7 +136,7 @@ const Example: React.FC = () => {
     const columnDefinitions = [
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete',
-        type: FieldType.number, sortable: true, filterable: true,
+        type: 'number', sortable: true, filterable: true,
         filter: { model: Filters.compoundSlider, operator: '>=' },
         editor: {
           model: Editors.slider,
@@ -498,11 +498,11 @@ const Example: React.FC = () => {
   function defineGrid() {
     const columnDefinitions = [
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
         editor: {
           model: Editors.singleSelect,
           collection: [ /*...*/ ],
@@ -559,11 +559,11 @@ const Example: React.FC = () => {
   function defineGrid() {
     const columnDefinitions = [
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
         editor: {
           model: Editors.singleSelect,
           collection: [ /*...*/ ],

@@ -2,7 +2,6 @@ import {
   type AureliaGridInstance,
   type Column,
   Editors,
-  FieldType,
   Formatters,
   type GridOption,
   type GridService,
@@ -86,7 +85,6 @@ export class Example11 {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
         },
@@ -96,7 +94,7 @@ export class Example11 {
         name: 'Duration (days)',
         field: 'duration',
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.text,
         },
@@ -110,7 +108,7 @@ export class Example11 {
         name: '% Complete',
         field: 'percentComplete',
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.integer,
         },
@@ -121,7 +119,7 @@ export class Example11 {
         field: 'start',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         /*
         editor: {
           model: Editors.date
@@ -134,14 +132,14 @@ export class Example11 {
         field: 'finish',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'effort-driven',
         name: 'Effort Driven',
         field: 'effortDriven',
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.checkbox,
         },

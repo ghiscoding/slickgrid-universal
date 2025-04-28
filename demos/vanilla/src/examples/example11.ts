@@ -8,7 +8,6 @@ import {
   type CurrentSorter,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   type Formatter,
   Formatters,
@@ -177,7 +176,7 @@ export default class Example11 {
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'cost',
@@ -187,7 +186,7 @@ export default class Example11 {
         width: 90,
         sortable: true,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
       },
@@ -195,7 +194,7 @@ export default class Example11 {
         id: 'percentComplete',
         name: '% Complete',
         field: 'percentComplete',
-        type: FieldType.number,
+        type: 'number',
         minWidth: 80,
         editor: {
           model: Editors.slider,
@@ -215,8 +214,8 @@ export default class Example11 {
         sortable: true,
         minWidth: 80,
         formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, editorOptions: { allowInput: true } },
@@ -229,8 +228,8 @@ export default class Example11 {
         minWidth: 80,
         editor: { model: Editors.date, massUpdate: true, editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption },
         formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: {
           model: Filters.compoundDate,
@@ -290,7 +289,7 @@ export default class Example11 {
         dataKey: 'id',
         labelKey: 'itemName',
         formatter: Formatters.complexObject,
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString,
         editor: {
           model: Editors.autocompleter,
@@ -316,7 +315,6 @@ export default class Example11 {
         filter: {
           model: Filters.inputText,
           // placeholder: '🔎︎ search city',
-          type: FieldType.string,
           queryField: 'product.itemName',
         },
       },
@@ -328,7 +326,7 @@ export default class Example11 {
         exportWithFormatter: true,
         dataKey: 'code',
         labelKey: 'name',
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString,
         filterable: true,
         sortable: true,

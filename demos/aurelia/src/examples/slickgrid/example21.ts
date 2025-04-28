@@ -1,5 +1,5 @@
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, FieldType, Formatters, type GridOption, type OperatorString } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, Formatters, type GridOption, type OperatorString } from 'aurelia-slickgrid';
 import './example21.scss';
 
 export class Example21 {
@@ -42,7 +42,6 @@ export class Example21 {
         field: 'title',
         width: 100,
         sortable: true,
-        type: FieldType.string,
       },
       {
         id: 'duration',
@@ -50,7 +49,7 @@ export class Example21 {
         field: 'duration',
         width: 100,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'complete',
@@ -59,7 +58,7 @@ export class Example21 {
         width: 100,
         sortable: true,
         formatter: Formatters.percentCompleteBar,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'start',
@@ -69,7 +68,7 @@ export class Example21 {
         sortable: true,
         formatter: Formatters.dateIso,
 
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'finish',
@@ -78,7 +77,7 @@ export class Example21 {
         width: 100,
         sortable: true,
         formatter: Formatters.dateIso,
-        type: FieldType.date,
+        type: 'date',
       },
       {
         id: 'effort-driven',
@@ -87,7 +86,7 @@ export class Example21 {
         width: 100,
         sortable: true,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.number,
+        type: 'number',
       },
     ];
 

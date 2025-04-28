@@ -10,7 +10,6 @@ import {
   OnRowCountChangedEventArgs,
   SlickgridVueInstance,
   type Column,
-  FieldType,
   Filters,
   SlickgridVue,
 } from 'slickgrid-vue';
@@ -54,7 +53,6 @@ function defineGrid() {
       field: 'name',
       nameKey: 'NAME',
       width: 60,
-      type: FieldType.string,
       sortable: true,
       filterable: true,
       filter: {

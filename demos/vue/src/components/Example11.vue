@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type GridOption, type SlickgridVueInstance, type Column, Editors, FieldType, Formatters, SlickgridVue } from 'slickgrid-vue';
+import { type GridOption, type SlickgridVueInstance, type Column, Editors, Formatters, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 1000;
@@ -39,7 +39,6 @@ function defineGrid() {
       name: 'Title',
       field: 'title',
       sortable: true,
-      type: FieldType.string,
       editor: {
         model: Editors.longText,
       },
@@ -49,7 +48,7 @@ function defineGrid() {
       name: 'Duration (days)',
       field: 'duration',
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       editor: {
         model: Editors.text,
       },
@@ -63,7 +62,7 @@ function defineGrid() {
       name: '% Complete',
       field: 'percentComplete',
       formatter: Formatters.percentCompleteBar,
-      type: FieldType.number,
+      type: 'number',
       editor: {
         model: Editors.integer,
       },
@@ -74,7 +73,7 @@ function defineGrid() {
       field: 'start',
       formatter: Formatters.dateIso,
       sortable: true,
-      type: FieldType.date,
+      type: 'date',
       /*
         editor: {
           model: Editors.date
@@ -87,14 +86,14 @@ function defineGrid() {
       field: 'finish',
       formatter: Formatters.dateIso,
       sortable: true,
-      type: FieldType.date,
+      type: 'date',
     },
     {
       id: 'effort-driven',
       name: 'Effort Driven',
       field: 'effortDriven',
       formatter: Formatters.checkmarkMaterial,
-      type: FieldType.number,
+      type: 'number',
       editor: {
         model: Editors.checkbox,
       },

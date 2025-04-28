@@ -133,7 +133,7 @@ initializeGrid() {
   this.columnDefinitions = [
     {
       id: 'file', name: 'Files', field: 'file',
-      type: FieldType.string, width: 150, formatter: this.treeFormatter,
+      width: 150, formatter: this.treeFormatter,
       filterable: true, sortable: true,
     },
     // ...

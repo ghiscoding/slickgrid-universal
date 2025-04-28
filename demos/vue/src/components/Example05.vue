@@ -4,7 +4,6 @@ import type { OdataOption, OdataServiceApi } from '@slickgrid-universal/odata';
 import { GridOdataService } from '@slickgrid-universal/odata';
 import {
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type GridStateChange,
@@ -51,7 +50,6 @@ function defineGrid() {
       name: 'Name',
       field: 'name',
       sortable: true,
-      type: FieldType.string,
       filterable: true,
       filter: {
         model: Filters.compoundInput,

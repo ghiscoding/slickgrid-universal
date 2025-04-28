@@ -40,12 +40,12 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
 ```tsx
 const columnDefinitions = [
-  { id: 'title', name: 'Title', field: 'title', type: FieldType.string, editor: { model: Editors.longText } },
-  { id: 'duration', name: 'Duration (days)', field: 'duration', type: FieldType.number, editor: { model: Editors.text } },
-  { id: 'complete', name: '% Complete', field: 'percentComplete', type: FieldType.number, editor: { model: Editors.integer } },
-  { id: 'start', name: 'Start', field: 'start', type: FieldType.date, editor: { model: Editors.date } },
+  { id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText } },
+  { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Editors.text } },
+  { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Editors.integer } },
+  { id: 'start', name: 'Start', field: 'start', type: 'date', editor: { model: Editors.date } },
   {
-    id: 'finish', name: 'Finish', field: 'finish', type: FieldType.date,
+    id: 'finish', name: 'Finish', field: 'finish', type: 'date',
     editor: {
       model: Editors.date,
 
@@ -55,7 +55,7 @@ const columnDefinitions = [
   },
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
-    type: FieldType.number, editor: { model: Editors.checkbox }
+    type: 'number', editor: { model: Editors.checkbox }
   }
 ];
 
@@ -71,7 +71,7 @@ This probably comes often, so here's all the setting you would need for displayi
 const columnDefinitions = [
   {
     id: 'cost', name: 'Cost', field: 'cost',
-    type: FieldType.float,
+    type: 'float',
     formatter: Formatters.dollar, // the Dollar Formatter will default to 2 decimals unless you provide a minDecimal/maxDecimal
     // params: { minDecimal: 2, maxDecimal: 4, }, // optionally provide different decimal places
 
@@ -83,21 +83,21 @@ const columnDefinitions = [
 ```
 
 #### Editor Output Type & Save Output Type
-You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: FieldType.dateIso` (by default it uses `dateUtc` as the output):
+You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: 'dateIso'` (by default it uses `dateUtc` as the output):
 ```tsx
 const columnDefinitions = [
  {
    id: 'start', name: 'Start', field: 'start',
-   type: FieldType.date,
+   type: 'date',
    editor: { model: Editors.date },
-   type: FieldType.date,              // dataset cell input format
-   // outputType: FieldType.dateUs,   // date picker format
-   saveOutputType: FieldType.dateUtc, // save output date format
+   type: 'date',              // dataset cell input format
+   // outputType: 'dateUs',   // date picker format
+   saveOutputType: 'dateUtc', // save output date format
   }
 ];
 ```
 
-So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `FieldType.dateIso` as the default.
+So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `'dateIso'` as the default.
 
 ## Perform an action After Inline Edit
 #### Recommended way
@@ -138,7 +138,6 @@ For Custom Editor class example, take a look at [custom-inputEditor.ts](https://
 const columnDefinitions = [
   {
     id: 'title2', name: 'Title, Custom Editor', field: 'title',
-    type: FieldType.string,
     editor: {
       model: CustomInputEditor // reference your custom editor class
     },
@@ -196,7 +195,6 @@ Here's an example with a `collection`, `collectionFilterBy` and `collectionSortB
 const columnDefinitions = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-    type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
       collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
@@ -325,7 +323,7 @@ const columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       // display checkmark icon when True
       enableRenderHtml: true,

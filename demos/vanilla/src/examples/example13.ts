@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, Editors, FieldType, type GridOption } from '@slickgrid-universal/common';
+import { type Column, Editors, type GridOption } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -139,7 +139,7 @@ export default class Example13 {
         width: i === 0 ? 70 : 100, // make the first 2 columns wider
         filterable: true,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         editor: { model: Editors.integer },
         formatter: (_row, _cell, value, columnDef) => {
           if (

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AngularGridInstance, Column, Editors, FieldType, Filters, Formatters, GridOption, SlickRowDetailView } from '../../library';
+import { AngularGridInstance, Column, Editors, Filters, Formatters, GridOption, SlickRowDetailView } from '../../library';
 import { Example19RowDetailComponent } from './example19-rowdetail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
 
@@ -53,7 +53,6 @@ export class Example19Component implements OnDestroy, OnInit {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         width: 70,
         filterable: true,
         editor: { model: Editors.text },
@@ -65,7 +64,7 @@ export class Example19Component implements OnDestroy, OnInit {
         formatter: Formatters.decimal,
         params: { minDecimal: 1, maxDecimal: 2 },
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         minWidth: 90,
         filterable: true,
       },
@@ -75,7 +74,7 @@ export class Example19Component implements OnDestroy, OnInit {
         field: 'percentComplete2',
         editor: { model: Editors.slider },
         formatter: Formatters.progressBar,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         minWidth: 100,
         filterable: true,
@@ -87,7 +86,7 @@ export class Example19Component implements OnDestroy, OnInit {
         field: 'start',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         minWidth: 90,
         exportWithFormatter: true,
         filterable: true,
@@ -99,7 +98,7 @@ export class Example19Component implements OnDestroy, OnInit {
         field: 'finish',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         minWidth: 90,
         exportWithFormatter: true,
         filterable: true,
@@ -111,7 +110,7 @@ export class Example19Component implements OnDestroy, OnInit {
         field: 'effortDriven',
         minWidth: 100,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.boolean,
+        type: 'boolean',
         filterable: true,
         sortable: true,
         filter: {

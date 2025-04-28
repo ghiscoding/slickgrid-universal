@@ -111,7 +111,7 @@ You can update/change the Filters dynamically (on the fly) via the `updateFilter
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -197,7 +197,7 @@ You can provide a custom predicate by using the `filterPredicate` when defining 
 columnDefinitions.value = [
   {
     id: 'title', name: 'Title', field: 'title', sortable: true,
-    filterable: true, type: FieldType.string,
+    filterable: true,
     filter: {
       model: Filters.inputText,
       // you can use your own custom filter predicate when built-in filters aren't working for you

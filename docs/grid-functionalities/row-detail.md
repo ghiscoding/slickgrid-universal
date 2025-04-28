@@ -31,7 +31,6 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 import {
   type Column,
   createDomElement,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,

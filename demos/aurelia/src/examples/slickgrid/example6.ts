@@ -10,7 +10,6 @@ import {
   type AureliaGridInstance,
   type Column,
   type CursorPageInfo,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -86,7 +85,6 @@ export class Example6 {
         nameKey: 'NAME',
         width: 60,
         columnGroupKey: 'CUSTOMER_INFORMATION',
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
@@ -152,7 +150,7 @@ export class Example6 {
         field: 'billing.address.zip',
         nameKey: 'BILLING.ADDRESS.ZIP',
         width: 60,
-        type: FieldType.number,
+        type: 'number',
         columnGroupKey: 'BILLING.INFORMATION',
         filterable: true,
         sortable: true,
@@ -172,7 +170,7 @@ export class Example6 {
         width: 120,
         exportWithFormatter: true,
         columnGroupKey: 'BILLING.INFORMATION',
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,

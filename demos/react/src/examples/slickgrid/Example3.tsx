@@ -6,7 +6,6 @@ import {
   type EditCommand,
   Editors,
   type EditorValidator,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -114,7 +113,6 @@ const Example3: React.FC = () => {
       field: 'title',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       editor: {
         model: Editors.longText,
         placeholder: 'something',
@@ -132,7 +130,6 @@ const Example3: React.FC = () => {
       field: 'title',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       editor: {
         model: CustomInputEditor,
         placeholder: 'custom',
@@ -151,7 +148,7 @@ const Example3: React.FC = () => {
       filterable: true,
       minWidth: 100,
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
       editor: {
         model: Editors.slider,
@@ -178,7 +175,7 @@ const Example3: React.FC = () => {
       field: 'percentComplete',
       filterable: true,
       formatter: Formatters.multiple,
-      type: FieldType.number,
+      type: 'number',
       editor: {
         // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
         enableRenderHtml: true,
@@ -223,7 +220,7 @@ const Example3: React.FC = () => {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      type: FieldType.date,
+      type: 'date',
       editor: {
         model: Editors.date,
       },
@@ -237,9 +234,9 @@ const Example3: React.FC = () => {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      type: FieldType.date, // dataset cell input format
-      // outputType: FieldType.dateUs,   // date picker format
-      saveOutputType: FieldType.dateUtc, // save output date format
+      type: 'date', // dataset cell input format
+      // outputType: 'dateUs',   // date picker format
+      saveOutputType: 'dateUtc', // save output date format
       editor: {
         model: Editors.date,
         // override any of the calendar options through 'filterOptions'
@@ -306,7 +303,7 @@ const Example3: React.FC = () => {
       formatter: Formatters.complexObject,
       dataKey: 'code',
       labelKey: 'name',
-      type: FieldType.object,
+      type: 'object',
       sortComparer: SortComparers.objectString,
       filterable: true,
       sortable: true,
@@ -343,7 +340,7 @@ const Example3: React.FC = () => {
       name: 'Effort Driven',
       field: 'effortDriven',
       filterable: true,
-      type: FieldType.boolean,
+      type: 'boolean',
       filter: {
         model: Filters.singleSelect,
         collection: [
@@ -368,7 +365,6 @@ const Example3: React.FC = () => {
       sanitizeDataExport: true,
       minWidth: 100,
       sortable: true,
-      type: FieldType.string,
       editor: {
         // We can load the 'collection' asynchronously (on first load only, after that we will simply use 'collection')
         // 3 ways are supported (fetch, Promise or RxJS when available)
@@ -384,7 +380,7 @@ const Example3: React.FC = () => {
         collectionSortBy: {
           property: 'value',
           sortDesc: true,
-          fieldType: FieldType.number,
+          fieldType: 'number',
         },
         customStructure: {
           label: 'label',
@@ -410,7 +406,7 @@ const Example3: React.FC = () => {
         collectionSortBy: {
           property: 'value',
           sortDesc: true,
-          fieldType: FieldType.number,
+          fieldType: 'number',
         },
         customStructure: {
           label: 'label',

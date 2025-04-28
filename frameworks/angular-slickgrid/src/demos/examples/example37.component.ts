@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AngularGridInstance, Column, Editors, FieldType, GridOption, OnCellChangeEventArgs } from '../../library';
+import { AngularGridInstance, Column, Editors, GridOption, OnCellChangeEventArgs } from '../../library';
 
 const NB_ITEMS = 100;
 
@@ -39,7 +39,7 @@ export class Example37Component implements OnDestroy, OnInit {
         id: i,
         name: String.fromCharCode('A'.charCodeAt(0) + i),
         field: String(i),
-        type: FieldType.number,
+        type: 'number',
         width: 58,
         editor: { model: Editors.integer },
       });

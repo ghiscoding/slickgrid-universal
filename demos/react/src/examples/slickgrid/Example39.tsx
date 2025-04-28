@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import {
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type Metrics,
@@ -62,7 +61,6 @@ const Example39: React.FC = () => {
         field: 'name',
         nameKey: 'NAME',
         width: 60,
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {

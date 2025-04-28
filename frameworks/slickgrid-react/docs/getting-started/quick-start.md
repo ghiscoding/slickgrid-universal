@@ -64,7 +64,6 @@ To provide locales other than English (default locale), you have 2 options that 
 import {
   SlickgridReactInstance,
   Column,
-  FieldType,
   Formatter,
   Formatters,
   GridOption,

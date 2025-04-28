@@ -6,7 +6,6 @@ import {
   AngularUtilService,
   Column,
   Editors,
-  FieldType,
   Filters,
   Formatters,
   GridOption,
@@ -70,7 +69,6 @@ export class Example26Component implements OnInit {
         minWidth: 100,
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           minLength: 5,
@@ -87,7 +85,6 @@ export class Example26Component implements OnInit {
         field: 'title',
         minWidth: 100,
         sortable: true,
-        type: FieldType.string,
         // loading formatter, text to display while Post Render gets processed
         formatter: () => '...',
 
@@ -169,7 +166,7 @@ export class Example26Component implements OnInit {
         minWidth: 100,
         filterable: true,
         formatter: Formatters.multiple,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.singleSelect,
 
@@ -208,7 +205,7 @@ export class Example26Component implements OnInit {
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         editor: {
           model: Editors.date,
         },
@@ -223,7 +220,7 @@ export class Example26Component implements OnInit {
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         editor: {
           model: Editors.date,
         },

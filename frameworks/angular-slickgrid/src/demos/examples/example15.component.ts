@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import {
   AngularGridInstance,
   Column,
-  FieldType,
   Filters,
   Formatters,
   GridOption,
@@ -83,7 +82,6 @@ export class Example15Component implements OnInit, OnDestroy {
         nameKey: 'TITLE',
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         minWidth: 45,
         width: 100,
         filter: {
@@ -98,7 +96,6 @@ export class Example15Component implements OnInit, OnDestroy {
         sortable: true,
         minWidth: 80,
         width: 100,
-        type: FieldType.string,
         filter: {
           model: Filters.input,
           filterShortcuts: [
@@ -112,7 +109,7 @@ export class Example15Component implements OnInit, OnDestroy {
         name: 'Duration (days)',
         field: 'duration',
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         exportCsvForceToKeepAsString: true,
         minWidth: 55,
         width: 100,
@@ -134,7 +131,7 @@ export class Example15Component implements OnInit, OnDestroy {
         field: 'percentComplete',
         nameKey: 'PERCENT_COMPLETE',
         minWidth: 70,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         width: 100,
         formatter: Formatters.percentCompleteBar,
@@ -151,7 +148,7 @@ export class Example15Component implements OnInit, OnDestroy {
         minWidth: 75,
         exportWithFormatter: true,
         width: 100,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.compoundDate,
@@ -174,7 +171,7 @@ export class Example15Component implements OnInit, OnDestroy {
         maxWidth: 85,
         formatter: Formatters.checkmarkMaterial,
         width: 100,
-        type: FieldType.boolean,
+        type: 'boolean',
         sortable: true,
         filterable: true,
         filter: {

@@ -152,7 +152,7 @@ const Example: React.FC = () => {
       { id: 'title', name: 'Title', field: 'title' },
       {
         id: 'duration', name: 'Duration', field: 'duration',
-        type: FieldType.number,
+        type: 'number',
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         params: { groupFormatterPrefix: 'Total: ' }
       },

@@ -27,7 +27,7 @@ You can also create your own Custom Filter with any html/css you want and/or jQu
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'title', name: 'Title', field: 'title' },
-  { id: 'description', name: 'Description', field: 'description', type: FieldType.string,
+  { id: 'description', name: 'Description', field: 'description',
     filterable: true,
     filter: {
        model: CustomInputFilter // create a new instance to make each Filter independent from each other

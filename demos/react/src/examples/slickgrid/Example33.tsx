@@ -2,7 +2,6 @@ import {
   type Column,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   type Formatter,
   Formatters,
@@ -50,7 +49,6 @@ const Example33: React.FC = () => {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -97,7 +95,7 @@ const Example33: React.FC = () => {
           alwaysSaveOnEnterKey: true,
         },
         formatter: (row, cell, value) => (value > 1 ? `${value} days` : `${value} day`),
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'desc',
@@ -166,13 +164,13 @@ const Example33: React.FC = () => {
           useRegularTooltip: true,
           useRegularTooltipFromFormatterOnly: true,
         },
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'percentComplete',
         name: '% Complete',
         field: 'percentComplete',
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.slider,
           minValue: 0,
@@ -196,8 +194,8 @@ const Example33: React.FC = () => {
         field: 'start',
         sortable: true,
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
@@ -222,8 +220,8 @@ const Example33: React.FC = () => {
         sortable: true,
         editor: { model: Editors.date, editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption },
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         formatter: Formatters.dateIso,
         filterable: true,
         filter: { model: Filters.dateRange },
@@ -274,7 +272,6 @@ const Example33: React.FC = () => {
         sanitizeDataExport: true,
         minWidth: 100,
         sortable: true,
-        type: FieldType.string,
         editor: {
           // OR 1- use `fetch`, Promise or RxJS when available
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
@@ -452,7 +449,7 @@ const Example33: React.FC = () => {
   }
 
   function handleServerDelayInputChange(e: React.FormEvent<HTMLInputElement>) {
-    const newDelay = parseInt((e.target as HTMLInputElement)?.value, 10) ?? '';
+    const newDelay = parseInt((e.target as HTMLInputElement)?.value, 10) ?? 0;
     setServerWaitDelay(newDelay);
     serverWaitDelayRef.current = newDelay;
   }

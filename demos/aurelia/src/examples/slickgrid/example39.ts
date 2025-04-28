@@ -5,7 +5,6 @@ import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } f
 import {
   type AureliaGridInstance,
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type Metrics,
@@ -61,7 +60,6 @@ export class Example39 {
         field: 'name',
         nameKey: 'NAME',
         width: 60,
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {

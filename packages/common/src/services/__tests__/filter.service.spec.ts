@@ -2430,7 +2430,7 @@ describe('FilterService', () => {
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, {
           ...columnFilters,
-          file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'], type: 'string' },
+          file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'] },
         }); // it will use Contains by default
         expect(preFilterSpy).toHaveReturnedWith(new Set());
       });
@@ -2459,7 +2459,7 @@ describe('FilterService', () => {
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, {
           ...columnFilters,
-          file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'], type: 'string' },
+          file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'] },
         }); // it will use Contains by default
         expect(preFilterSpy).toHaveReturnedWith(new Set());
       });

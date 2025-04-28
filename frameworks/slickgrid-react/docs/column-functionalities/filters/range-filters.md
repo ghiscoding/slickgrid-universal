@@ -154,7 +154,7 @@ const Example: React.FC = () => {
         id: 'finish', name: 'Finish', field: 'finish', headerKey: 'FINISH',
         minWidth: 75, width: 120, exportWithFormatter: true,
         formatter: Formatters.dateIso, sortable: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,

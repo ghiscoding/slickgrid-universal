@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 
 import {
   type Column,
-  FieldType,
   Filters,
   type GridOption,
   type GridStateChange,
@@ -132,7 +131,6 @@ const Example5: React.FC = () => {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: {
           model: Filters.compoundInput,

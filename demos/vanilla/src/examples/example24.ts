@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, Editors, FieldType, type GridOption, SlickEventHandler } from '@slickgrid-universal/common';
+import { type Column, Editors, type GridOption, SlickEventHandler } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -63,7 +63,7 @@ export default class Example24 {
         id: i,
         name: String.fromCharCode('A'.charCodeAt(0) + i),
         field: String(i),
-        type: FieldType.number,
+        type: 'number',
         width: 58,
         editor: { model: Editors.integer },
       });

@@ -27,12 +27,12 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
 ```ts
 this.columnDefinitions = [
-  { id: 'title', name: 'Title', field: 'title', type: FieldType.string, editor: { model: Editors.longText } },
-  { id: 'duration', name: 'Duration (days)', field: 'duration', type: FieldType.number, editor: { model: Editors.text } },
-  { id: 'complete', name: '% Complete', field: 'percentComplete', type: FieldType.number, editor: { model: Editors.integer } },
-  { id: 'start', name: 'Start', field: 'start', type: FieldType.date, editor: { model: Editors.date } },
+  { id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText } },
+  { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Editors.text } },
+  { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Editors.integer } },
+  { id: 'start', name: 'Start', field: 'start', type: 'date', editor: { model: Editors.date } },
   {
-    id: 'finish', name: 'Finish', field: 'finish', type: FieldType.date,
+    id: 'finish', name: 'Finish', field: 'finish', type: 'date',
     editor: {
       model: Editors.date,
 
@@ -42,7 +42,7 @@ this.columnDefinitions = [
   },
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmark,
-    type: FieldType.number, editor: { model: Editors.checkbox }
+    type: 'number', editor: { model: Editors.checkbox }
   }
 ];
 
@@ -53,16 +53,16 @@ this.gridOptions {
 ```
 
 #### SalesForce (ES6)
-For SalesForce the code is nearly the same, the only difference is to add the `Slicker` prefix, so instead of `Editors.abc` we need to use `Slicker.Editors.abc`, `Slicker.FieldType.abc`, ...
+For SalesForce the code is nearly the same, the only difference is to add the `Slicker` prefix, so instead of `Editors.abc` we need to use `Slicker.Editors.abc`, ...
 
 ```ts
 this.columnDefinitions = [
-  { id: 'title', name: 'Title', field: 'title', type: Slicker.FieldType.string, editor: { model: Slicker.Editors.longText } },
-  { id: 'duration', name: 'Duration (days)', field: 'duration', type: Slicker.FieldType.number, editor: { model: Slicker.Editors.text } },
-  { id: 'complete', name: '% Complete', field: 'percentComplete', type: Slicker.FieldType.number, editor: { model: Slicker.Editors.integer } },
-  { id: 'start', name: 'Start', field: 'start', type: Slicker.FieldType.date, editor: { model: Slicker.Editors.date } },
+  { id: 'title', name: 'Title', field: 'title', editor: { model: Slicker.Editors.longText } },
+  { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Slicker.Editors.text } },
+  { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Slicker.Editors.integer } },
+  { id: 'start', name: 'Start', field: 'start', type: 'date', editor: { model: Slicker.Editors.date } },
   {
-    id: 'finish', name: 'Finish', field: 'finish', type: Slicker.FieldType.date,
+    id: 'finish', name: 'Finish', field: 'finish', type: 'date',
     editor: {
       model: Slicker.Editors.date,
 
@@ -72,7 +72,7 @@ this.columnDefinitions = [
   },
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Slicker.Formatters.checkmark,
-    type: Slicker.FieldType.number, editor: { model: Slicker.Editors.checkbox }
+    type: 'number', editor: { model: Slicker.Editors.checkbox }
   }
 ];
 ```
@@ -83,7 +83,7 @@ This probably comes often, so here's all the setting you would need for displayi
 this.columnDefinitions = [
   {
     id: 'cost', name: 'Cost', field: 'cost',
-    type: FieldType.float,
+    type: 'float',
     formatter: Formatters.dollar, // the Dollar Formatter will default to 2 decimals unless you provide a minDecimal/maxDecimal
     // params: { minDecimal: 2, maxDecimal: 4, }, // optionally provide different decimal places
 
@@ -95,21 +95,21 @@ this.columnDefinitions = [
 ```
 
 #### Editor Output Type & Save Output Type
-You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: FieldType.dateIso` (by default it uses `dateUtc` as the output):
+You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: 'dateIso'` (by default it uses `dateUtc` as the output):
 ```typescript
 this.columnDefinitions = [
  {
    id: 'start', name: 'Start', field: 'start',
-   type: FieldType.date,
+   type: 'date',
    editor: { model: Editors.date },
-   type: FieldType.date,              // dataset cell input format
-   // outputType: FieldType.dateUs,   // date picker format
-   saveOutputType: FieldType.dateUtc, // save output date format
+   type: 'date',              // dataset cell input format
+   // outputType: 'dateUs',   // date picker format
+   saveOutputType: 'dateUtc', // save output date format
   }
 ];
 ```
 
-So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `FieldType.dateIso` as the default.
+So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `'dateIso'` as the default.
 
 ## Perform an action After Inline Edit
 #### Recommended way
@@ -147,7 +147,6 @@ export class IntegerEditor implements Editor {
 this.columnDefinitions = [
   {
     id: 'title2', name: 'Title, Custom Editor', field: 'title',
-    type: FieldType.string,
     editor: {
       model: CustomInputEditor // reference your custom editor class
     },

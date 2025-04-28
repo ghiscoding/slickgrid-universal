@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -56,7 +55,6 @@ const Example42: React.FC = () => {
         filterable: true,
         sortable: true,
         minWidth: 80,
-        type: FieldType.string,
       },
       {
         id: 'percentComplete',
@@ -65,7 +63,7 @@ const Example42: React.FC = () => {
         minWidth: 120,
         customTooltip: { position: 'center' },
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         formatter: Formatters.progressBar,
         filterable: true,
         filter: {
@@ -88,7 +86,7 @@ const Example42: React.FC = () => {
         minWidth: 75,
         width: 100,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: { model: Filters.compoundDate },
       },
@@ -101,7 +99,7 @@ const Example42: React.FC = () => {
         minWidth: 75,
         width: 120,
         exportWithFormatter: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,
@@ -112,7 +110,7 @@ const Example42: React.FC = () => {
         field: 'duration',
         name: 'Duration',
         maxWidth: 90,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         filterable: true,
         filter: {

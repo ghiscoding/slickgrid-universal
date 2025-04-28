@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   AngularGridInstance,
   Column,
-  FieldType,
   Filters,
   Formatters,
   GridOption,
@@ -47,7 +46,6 @@ export class Example4Component implements OnInit {
         field: 'title',
         sortable: true,
         minWidth: 55,
-        type: FieldType.string,
         filterable: true,
         filter: { model: Filters.compoundInputText },
       },
@@ -58,7 +56,6 @@ export class Example4Component implements OnInit {
         filterable: true,
         sortable: true,
         minWidth: 80,
-        type: FieldType.string,
         filter: {
           model: CustomInputFilter, // create a new instance to make each Filter independent from each other
           enableTrimWhiteSpace: true, // or use global "enableFilterTrimWhiteSpace" to trim on all Filters
@@ -69,7 +66,7 @@ export class Example4Component implements OnInit {
         name: 'Duration (days)',
         field: 'duration',
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         exportCsvForceToKeepAsString: true,
         minWidth: 55,
         filterable: true,
@@ -92,7 +89,7 @@ export class Example4Component implements OnInit {
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
-            fieldType: FieldType.number,
+            fieldType: 'number',
           },
           customStructure: {
             value: 'value',
@@ -123,7 +120,7 @@ export class Example4Component implements OnInit {
         field: 'percentComplete',
         formatter: Formatters.percentCompleteBar,
         minWidth: 70,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         filterable: true,
         filter: { model: Filters.compoundInputNumber },
@@ -135,7 +132,7 @@ export class Example4Component implements OnInit {
         formatter: Formatters.dateIso,
         sortable: true,
         minWidth: 75,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: { model: Filters.compoundDate },
       },
@@ -146,7 +143,7 @@ export class Example4Component implements OnInit {
         sortable: true,
         minWidth: 70,
         width: 70,
-        type: FieldType.dateUsShort,
+        type: 'dateUsShort',
         exportWithFormatter: true,
         filterable: true,
         filter: { model: Filters.compoundDate },
@@ -158,9 +155,9 @@ export class Example4Component implements OnInit {
         formatter: Formatters.dateTimeIsoAmPm,
         sortable: true,
         minWidth: 115,
-        type: FieldType.dateUtc,
+        type: 'dateUtc',
         exportWithFormatter: true,
-        outputType: FieldType.dateTimeIsoAmPm,
+        outputType: 'dateTimeIsoAmPm',
         filterable: true,
         filter: {
           model: Filters.compoundDate,
@@ -174,7 +171,7 @@ export class Example4Component implements OnInit {
         field: 'effortDriven.isEffort',
         minWidth: 85,
         maxWidth: 85,
-        type: FieldType.boolean,
+        type: 'boolean',
         sortable: true,
         exportCustomFormatter: Formatters.complexObject,
 

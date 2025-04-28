@@ -1,14 +1,5 @@
 import { bindable } from 'aurelia';
-import {
-  type AureliaGridInstance,
-  type Column,
-  Editors,
-  ExtensionName,
-  FieldType,
-  Filters,
-  Formatters,
-  type GridOption,
-} from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, Editors, ExtensionName, Filters, Formatters, type GridOption } from 'aurelia-slickgrid';
 import { Example19Preload } from './example19-preload.js';
 import { Example19DetailView } from './example19-detail-view.js';
 
@@ -72,7 +63,6 @@ export class Example19 {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         width: 70,
         filterable: true,
         editor: { model: Editors.text },
@@ -84,7 +74,7 @@ export class Example19 {
         formatter: Formatters.decimal,
         params: { minDecimal: 1, maxDecimal: 2 },
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         minWidth: 90,
         filterable: true,
       },
@@ -94,7 +84,7 @@ export class Example19 {
         field: 'percentComplete2',
         editor: { model: Editors.slider },
         formatter: Formatters.progressBar,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         minWidth: 100,
         filterable: true,
@@ -106,7 +96,7 @@ export class Example19 {
         field: 'start',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         minWidth: 90,
         exportWithFormatter: true,
         filterable: true,
@@ -118,7 +108,7 @@ export class Example19 {
         field: 'finish',
         formatter: Formatters.dateIso,
         sortable: true,
-        type: FieldType.date,
+        type: 'date',
         minWidth: 90,
         exportWithFormatter: true,
         filterable: true,
@@ -130,7 +120,7 @@ export class Example19 {
         field: 'effortDriven',
         minWidth: 100,
         formatter: Formatters.checkmarkMaterial,
-        type: FieldType.boolean,
+        type: 'boolean',
         filterable: true,
         sortable: true,
         filter: {

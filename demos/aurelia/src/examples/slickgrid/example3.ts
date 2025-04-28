@@ -8,7 +8,6 @@ import {
   type EditCommand,
   Editors,
   type EditorValidator,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -139,7 +138,6 @@ export class Example3 {
         field: 'title',
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           placeholder: 'something',
@@ -158,7 +156,6 @@ export class Example3 {
         field: 'title',
         filterable: true,
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: CustomInputEditor,
           placeholder: 'custom',
@@ -177,7 +174,7 @@ export class Example3 {
         filterable: true,
         minWidth: 100,
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         filter: {
           model: Filters.slider,
           filterOptions: { hideSliderNumber: false },
@@ -207,7 +204,7 @@ export class Example3 {
         field: 'percentComplete',
         filterable: true,
         formatter: Formatters.multiple,
-        type: FieldType.number,
+        type: 'number',
         editor: {
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
@@ -252,7 +249,7 @@ export class Example3 {
         formatter: Formatters.dateIso,
         sortable: true,
         minWidth: 100,
-        type: FieldType.date,
+        type: 'date',
         editor: {
           model: Editors.date,
         },
@@ -266,9 +263,9 @@ export class Example3 {
         formatter: Formatters.dateIso,
         sortable: true,
         minWidth: 100,
-        type: FieldType.date, // dataset cell input format
-        // outputType: FieldType.dateUs,   // date picker format
-        saveOutputType: FieldType.dateUtc, // save output date format
+        type: 'date', // dataset cell input format
+        // outputType: 'dateUs',   // date picker format
+        saveOutputType: 'dateUtc', // save output date format
         editor: {
           model: Editors.date,
           // override any of the calendar options through "filterOptions"
@@ -331,7 +328,7 @@ export class Example3 {
         formatter: Formatters.complexObject,
         dataKey: 'code',
         labelKey: 'name',
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString,
         filterable: true,
         sortable: true,
@@ -368,7 +365,7 @@ export class Example3 {
         name: 'Effort Driven',
         field: 'effortDriven',
         filterable: true,
-        type: FieldType.boolean,
+        type: 'boolean',
         filter: {
           model: Filters.singleSelect,
           collection: [
@@ -393,7 +390,6 @@ export class Example3 {
         sanitizeDataExport: true,
         minWidth: 100,
         sortable: true,
-        type: FieldType.string,
         editor: {
           // We can load the "collection" asynchronously (on first load only, after that we will simply use "collection")
           // 3 ways are supported (aurelia-http-client, aurelia-fetch-client OR even Promise)
@@ -416,7 +412,7 @@ export class Example3 {
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
-            fieldType: FieldType.number,
+            fieldType: 'number',
           },
           customStructure: {
             label: 'label',
@@ -441,7 +437,7 @@ export class Example3 {
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
-            fieldType: FieldType.number,
+            fieldType: 'number',
           },
           customStructure: {
             label: 'label',

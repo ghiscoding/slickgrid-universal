@@ -16,7 +16,7 @@ All you need to do is enable the Grid Option `enableExcelCopyBuffer: true` and g
 columnDefinitions.value = [
   { id: 'title', name: 'Title', field: 'id' },
   { id: 'description', name: 'Description', field: 'description' },
-  { id: 'duration', name: 'Duration (days)', field: 'duration', type: FieldType.number },
+  { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number' },
 ];
 
 gridOptions.value = {

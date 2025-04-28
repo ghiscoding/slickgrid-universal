@@ -1,5 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type AureliaGridInstance, type Column, FieldType, type GridOption, type ItemMetadata } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption, type ItemMetadata } from 'aurelia-slickgrid';
 import './example14.scss'; // provide custom CSS/SASS styling
 
 export class Example14 {
@@ -44,7 +44,7 @@ export class Example14 {
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
       { id: '%', name: '% Complete', field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: 'boolean', columnGroup: 'Analysis' },
     ];
 
     this.gridOptions1 = {
@@ -91,7 +91,7 @@ export class Example14 {
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
       { id: '%', name: '% Complete', field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: 'boolean', columnGroup: 'Analysis' },
     ];
 
     this.gridOptions2 = {

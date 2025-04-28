@@ -7,7 +7,6 @@ import {
   type AureliaGridInstance,
   type Column,
   Editors,
-  FieldType,
   Filters,
   type GridOption,
   type GridStateChange,
@@ -62,7 +61,6 @@ export class Example31 {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         filter: {
           model: Filters.compoundInput,

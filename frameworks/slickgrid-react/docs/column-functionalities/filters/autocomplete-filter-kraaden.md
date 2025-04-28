@@ -34,7 +34,7 @@ const Example: React.FC = () => {
         formatter: Formatters.complexObject,
         dataKey: 'code', // our list of objects has the structure { code: 'CA', name: 'Canada' }, since we want to use the code`, we will set the dataKey to "code"
         labelKey: 'name', // while the displayed value is "name"
-        type: FieldType.object,
+        type: 'object',
         sorter: Sorters.objectString, // since we have set dataKey to "code" our output type will be a string, and so we can use this objectString, this sorter always requires the dataKey
         filterable: true,
         sortable: true,
@@ -146,7 +146,6 @@ const columnDefinitions = [
     id: 'area',
     name: 'Area',
     field: 'area',
-    type: FieldType.string,
     editor: {
       model: Editors.autocompleter,
       editorOptions: {

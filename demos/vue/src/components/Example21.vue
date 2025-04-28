@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import {
-  type GridOption,
-  type SlickgridVueInstance,
-  type Column,
-  FieldType,
-  Formatters,
-  type OperatorString,
-  SlickgridVue,
-} from 'slickgrid-vue';
+import { type GridOption, type SlickgridVueInstance, type Column, Formatters, type OperatorString, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 25;
@@ -36,7 +28,6 @@ function defineGrid() {
       field: 'title',
       width: 100,
       sortable: true,
-      type: FieldType.string,
     },
     {
       id: 'duration',
@@ -44,7 +35,7 @@ function defineGrid() {
       field: 'duration',
       width: 100,
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
     },
     {
       id: 'complete',
@@ -53,7 +44,7 @@ function defineGrid() {
       width: 100,
       sortable: true,
       formatter: Formatters.percentCompleteBar,
-      type: FieldType.number,
+      type: 'number',
     },
     {
       id: 'start',
@@ -63,7 +54,7 @@ function defineGrid() {
       sortable: true,
       formatter: Formatters.dateIso,
 
-      type: FieldType.date,
+      type: 'date',
     },
     {
       id: 'finish',
@@ -72,7 +63,7 @@ function defineGrid() {
       width: 100,
       sortable: true,
       formatter: Formatters.dateIso,
-      type: FieldType.date,
+      type: 'date',
     },
     {
       id: 'effort-driven',
@@ -81,7 +72,7 @@ function defineGrid() {
       width: 100,
       sortable: true,
       formatter: Formatters.checkmarkMaterial,
-      type: FieldType.number,
+      type: 'number',
     },
   ];
 

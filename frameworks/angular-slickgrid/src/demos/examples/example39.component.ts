@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
 import {
   AngularGridInstance,
   Column,
-  FieldType,
   Filters,
   GridOption,
   Metrics,
@@ -77,7 +76,6 @@ export class Example39Component implements OnInit, OnDestroy {
         field: 'name',
         nameKey: 'NAME',
         width: 60,
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
