@@ -51,7 +51,7 @@ export interface ColumnFilter {
   collectionAsync?: Promise<any> | Observable<any> | Subject<any>;
 
   /**
-   * A lazy callback to will only load your collection whenever your filter is being rendered (i.e.: when opening the select dropdown)
+   * A lazy callback to load your collection only after the select dropdown is clicked and is opening, the callback is async and you should consider adding a loading spinner.
    * Note: for the ms-select library, we use the `onOpen` callback, so please make sure to NOT override the callback otherwise it would cancel the feature.
    */
   collectionLazy?: (col: Column) => Promise<any> | Observable<any> | Subject<any>;
