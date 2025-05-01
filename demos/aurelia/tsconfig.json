@@ -6,7 +6,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "importHelpers": true,
     "noImplicitAny": false,
@@ -21,9 +20,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "useDefineForClassFields": true,
-    "typeRoots": [
-      "./node_modules/@types"
-    ]
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.html"]
 }

@@ -8,7 +8,6 @@
     "typeRoots": ["./node_modules/@types"],
     "pretty": true,
     "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "isolatedDeclarations": true,

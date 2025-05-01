@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
     "outDir": "./out-tsc/spec",
     "types": ["node", "vitest/globals"],
     "target": "es2016"

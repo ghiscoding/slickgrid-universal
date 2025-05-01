@@ -2,7 +2,6 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "target": "es2018",
     "module": "commonjs",
