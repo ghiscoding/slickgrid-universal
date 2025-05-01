@@ -19,7 +19,7 @@
     "baseUrl": "./",
     "paths": {
       "stream": ["./node_modules/stream-browserify"],
-      "sortablejs/modular/sortable.core.esm.js": ["./types/global.d.ts"]
+      "sortablejs/modular/sortable.core.esm.js": ["./types/sortablejs.d.ts"]
     },
     "strict": true
   },
