@@ -18,7 +18,8 @@
     "module": "es2022",
     "baseUrl": "./",
     "paths": {
-      "stream": ["./node_modules/stream-browserify"]
+      "stream": ["./node_modules/stream-browserify"],
+      "sortablejs/modular/sortable.core.esm.js": ["./types/global.d.ts"]
     },
     "strict": true
   },
