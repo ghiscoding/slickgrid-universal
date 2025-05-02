@@ -9,5 +9,5 @@
     "types": ["@4tw/cypress-drag-drop", "cypress", "cypress-real-events", "node"],
     "typeRoots": ["../node_modules/@types"]
   },
-  "include": ["**/*.spec.ts", "src/typings/**/*.ts", "**/*.d.ts"]
+  "include": ["**/*.spec.ts", "src/types/**/*.ts", "**/*.d.ts"]
 }

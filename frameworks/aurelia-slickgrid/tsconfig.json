@@ -5,7 +5,7 @@
     "moduleResolution": "bundler",
     "target": "es2022",
     "lib": ["esnext", "dom"],
-    "typeRoots": ["../typings", "../../node_modules/@types"],
+    "typeRoots": ["../types", "../../node_modules/@types"],
     "declaration": true,
     "declarationDir": "dist",
     "esModuleInterop": true,

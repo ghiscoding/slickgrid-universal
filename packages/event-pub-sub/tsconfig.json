@@ -8,7 +8,7 @@
   },
   "exclude": ["dist", "node_modules", "**/*.spec.ts"],
   "filesGlob": ["./src/**/*.ts"],
-  "include": ["src/**/*.ts", "typings/**/*.ts"],
+  "include": ["src/**/*.ts", "types/**/*.ts"],
   "references": [
     {
       "path": "../utils"
