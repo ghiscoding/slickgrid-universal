@@ -1,28 +1,18 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": [
-      "es5",
-      "dom"
-    ],
-    "types": [
-      "node"
-    ],
+    "lib": ["es5", "dom"],
+    "types": ["node"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": ".",
-    "typeRoots": [
-      "../node_modules/@types"
-    ]
+    "typeRoots": ["../node_modules/@types"]
   },
-  "include": [
-    "**/*.ts"
-  ]
+  "include": ["**/*.ts"]
 }

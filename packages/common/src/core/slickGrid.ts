@@ -12,7 +12,8 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
-import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
+import Sortable from 'sortablejs/modular/sortable.core.esm.js';
+import type { Options as SortableOptions, SortableEvent } from 'sortablejs';
 import type { TrustedHTML } from 'trusted-types/lib';
 
 import {
@@ -488,8 +489,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected slickDraggableInstance: InteractionBase | null = null;
   protected slickMouseWheelInstances: Array<InteractionBase> = [];
   protected slickResizableInstances: Array<InteractionBase> = [];
-  protected sortableSideLeftInstance?: Sortable;
-  protected sortableSideRightInstance?: Sortable;
+  protected sortableSideLeftInstance?: ReturnType<typeof Sortable.create>;
+  protected sortableSideRightInstance?: ReturnType<typeof Sortable.create>;
   protected _pubSubService?: BasePubSub;
 
   /**

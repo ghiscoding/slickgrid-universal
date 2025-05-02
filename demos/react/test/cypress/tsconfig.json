@@ -1,13 +1,9 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "lib": ["es2021", "dom"],
-    "types": [
-      "cypress-real-events",
-      "node"
-    ],
+    "types": ["cypress-real-events", "node"],
     "jsx": "preserve"
   },
   "include": ["**/*.ts"]

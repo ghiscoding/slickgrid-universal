@@ -36,7 +36,6 @@ pnpm-debug.log
 lerna-debug.log
 roller-debug.log
 testem.log
-/typings
 yarn-error.log
 tsconfig.tsbuildinfo
 
