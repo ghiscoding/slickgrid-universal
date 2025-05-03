@@ -14,7 +14,11 @@ import type {
   GridOption,
   Locale,
 } from './../interfaces/index.js';
-import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import {
+  filterCollectionWithOptions,
+  getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
+} from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
 import { getTranslationPrefix, fetchAsPromise, unsubscribeAll } from '../services/utilities.js';
@@ -279,33 +283,6 @@ export class SelectFilter implements Filter {
   // ------------------
 
   /**
-   * user might want to filter certain items of the collection
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected filterCollection(inputCollection: any[]): any[] {
-    if (this.columnFilter?.collectionFilterBy) {
-      const filterBy = this.columnFilter.collectionFilterBy;
-      const filterCollectionBy = this.columnFilter.collectionOptions?.filterResultAfterEachPass || null;
-      return this.collectionService?.filterCollection(inputCollection, filterBy, filterCollectionBy) || [];
-    }
-    return inputCollection;
-  }
-
-  /**
-   * user might want to sort the collection in a certain way
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected sortCollection(inputCollection: any[]): any[] {
-    if (this.columnFilter?.collectionSortBy) {
-      const sortBy = this.columnFilter.collectionSortBy;
-      return this.collectionService?.sortCollection(this.columnDef, inputCollection, sortBy, this.enableTranslateLabel) || [];
-    }
-    return inputCollection;
-  }
-
-  /**
    * Subscribe to both CollectionObserver & PropertyObserver with BindingEngine.
    * They each have their own purpose, the "propertyObserver" will trigger once the collection is replaced entirely
    * while the "collectionObverser" will trigger on collection changes (`push`, `unshift`, `splice`, ...)
@@ -436,8 +413,19 @@ export class SelectFilter implements Filter {
     hasFoundSearchTerm: boolean;
   } {
     // user might want to filter and/or sort certain items of the collection
-    inputCollection = this.filterCollection(inputCollection);
-    inputCollection = this.sortCollection(inputCollection);
+    inputCollection = filterCollectionWithOptions(
+      inputCollection,
+      this.collectionService,
+      this.columnFilter?.collectionFilterBy,
+      this.collectionOptions
+    );
+    inputCollection = sortCollectionWithOptions(
+      inputCollection,
+      this.columnDef,
+      this.collectionService,
+      this.columnFilter?.collectionSortBy,
+      this.enableTranslateLabel
+    );
 
     return buildMsSelectCollectionList(
       'filter',

@@ -19,7 +19,11 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index.js';
-import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import {
+  filterCollectionWithOptions,
+  getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
+} from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
@@ -643,33 +647,6 @@ export class SelectEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  /**
-   * user might want to filter certain items of the collection
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected filterCollection(inputCollection: any[]): any[] {
-    if (this.columnEditor?.collectionFilterBy) {
-      const filterBy = this.columnEditor.collectionFilterBy;
-      const filterCollectionBy = this.columnEditor.collectionOptions?.filterResultAfterEachPass ?? null;
-      return this._collectionService.filterCollection(inputCollection, filterBy, filterCollectionBy);
-    }
-    return inputCollection;
-  }
-
-  /**
-   * user might want to sort the collection in a certain way
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected sortCollection(inputCollection: any[]): any[] {
-    if (this.columnDef && this.columnEditor?.collectionSortBy) {
-      const sortBy = this.columnEditor.collectionSortBy;
-      return this._collectionService.sortCollection(this.columnDef, inputCollection, sortBy, this.enableTranslateLabel);
-    }
-    return inputCollection;
-  }
-
   protected translatePrefixSuffix(prefixSuffix: string | number): string | number {
     return this.enableTranslateLabel && this._translaterService && prefixSuffix && typeof prefixSuffix === 'string'
       ? this._translaterService.translate(prefixSuffix || ' ')
@@ -728,8 +705,19 @@ export class SelectEditor implements Editor {
     let finalCollection = collection;
 
     // user might want to filter and/or sort certain items of the collection
-    finalCollection = this.filterCollection(finalCollection);
-    finalCollection = this.sortCollection(finalCollection);
+    inputCollection = filterCollectionWithOptions(
+      inputCollection,
+      this._collectionService,
+      this.columnEditor?.collectionFilterBy,
+      this.collectionOptions
+    );
+    inputCollection = sortCollectionWithOptions(
+      inputCollection,
+      this.columnDef,
+      this._collectionService,
+      this.columnEditor?.collectionSortBy,
+      this.enableTranslateLabel
+    );
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {

@@ -20,7 +20,9 @@ import type {
 } from '../interfaces/index.js';
 import {
   addAutocompleteLoadingByOverridingFetch,
+  filterCollectionWithOptions,
   getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
@@ -284,42 +286,6 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   // ------------------
 
   /**
-   * user might want to filter certain items of the collection
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected filterCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to filter certain items of the collection
-    if (this.columnFilter && this.columnFilter.collectionFilterBy) {
-      const filterBy = this.columnFilter.collectionFilterBy;
-      const filterCollectionBy =
-        (this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass) || null;
-      outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
-    }
-
-    return outputCollection;
-  }
-
-  /**
-   * user might want to sort the collection in a certain way
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected sortCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to sort the collection
-    if (this.columnFilter && this.columnFilter.collectionSortBy) {
-      const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
-    }
-
-    return outputCollection;
-  }
-
-  /**
    * Subscribe to both CollectionObserver & PropertyObserver with BindingEngine.
    * They each have their own purpose, the "propertyObserver" will trigger once the collection is replaced entirely
    * while the "collectionObverser" will trigger on collection changes (`push`, `unshift`, `splice`, ...)
@@ -358,8 +324,19 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
     // user might want to filter and/or sort certain items of the collection
     if (newCollection) {
-      newCollection = this.filterCollection(newCollection);
-      newCollection = this.sortCollection(newCollection);
+      newCollection = filterCollectionWithOptions(
+        newCollection,
+        this.collectionService,
+        this.columnFilter?.collectionFilterBy,
+        this.columnFilter.collectionOptions
+      );
+      newCollection = sortCollectionWithOptions(
+        newCollection,
+        this.columnDef,
+        this.collectionService,
+        this.columnFilter?.collectionSortBy,
+        this.enableTranslateLabel
+      );
     }
 
     // filter input can only have 1 search term, so we will use the 1st array index if it exist

@@ -4,9 +4,18 @@ import type { AutocompleteItem } from 'autocompleter';
 import { Calendar, type FormatDateString, type Options, type Range } from 'vanilla-calendar-pro';
 
 import { FieldType } from '../enums/fieldType.enum.js';
-import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index.js';
+import type {
+  AutocompleterOption,
+  CollectionFilterBy,
+  CollectionOption,
+  CollectionSortBy,
+  Column,
+  ColumnEditor,
+  ColumnFilter,
+} from '../interfaces/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
 import { getDescendantProperty } from '../services/utilities.js';
+import type { CollectionService } from '../services/collection.service.js';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element
@@ -123,4 +132,42 @@ export function setPickerDates(
 
     return isChanged;
   }
+}
+
+/**
+ * user might want to filter certain items of the collection
+ * @param inputCollection
+ * @return outputCollection filtered and/or sorted collection
+ */
+export function filterCollectionWithOptions(
+  inputCollection: any[],
+  collectionService?: CollectionService,
+  collectionFilterBy?: CollectionFilterBy | CollectionFilterBy[],
+  collectionOptions?: CollectionOption
+): any[] {
+  if (collectionFilterBy) {
+    const filterBy = collectionFilterBy;
+    const filterCollectionBy = collectionOptions?.filterResultAfterEachPass || null;
+    return collectionService?.filterCollection(inputCollection, filterBy, filterCollectionBy) || [];
+  }
+  return inputCollection;
+}
+
+/**
+ * user might want to sort the collection in a certain way
+ * @param inputCollection
+ * @return outputCollection filtered and/or sorted collection
+ */
+export function sortCollectionWithOptions(
+  inputCollection: any[],
+  columnDef: Column,
+  collectionService?: CollectionService,
+  collectionSortBy?: CollectionSortBy | CollectionSortBy[],
+  enableTranslateLabel?: boolean
+): any[] {
+  if (collectionSortBy) {
+    const sortBy = collectionSortBy;
+    return collectionService?.sortCollection(columnDef, inputCollection, sortBy, enableTranslateLabel) || [];
+  }
+  return inputCollection;
 }
