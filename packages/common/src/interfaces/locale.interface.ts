@@ -137,6 +137,9 @@ export interface Locale {
   /** Text "Less than or equal to" shown in Compound Editors/Filters as an Operator */
   TEXT_LESS_THAN_OR_EQUAL_TO: string;
 
+  /** Text "Loading..." displayed in the Multiple Select Filter lazy loading */
+  TEXT_LOADING: string;
+
   /** Text "No elements found" that could show when nothing is returned in the Autocomplete */
   TEXT_NO_ELEMENTS_FOUND?: string;
 

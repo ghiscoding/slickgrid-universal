@@ -514,6 +514,7 @@ export class SelectFilter implements Filter {
       options.noMatchesFoundText = this.translateOrDefault(`${translationPrefix}NO_MATCHES_FOUND`, this._locales?.TEXT_NO_MATCHES_FOUND);
       options.okButtonText = this.translateOrDefault(`${translationPrefix}OK`, this._locales?.TEXT_OK);
       options.selectAllText = this.translateOrDefault(`${translationPrefix}SELECT_ALL`, this._locales?.TEXT_SELECT_ALL);
+      options.lazyLoadingText = this.translateOrDefault(`${translationPrefix}LOADING`, this._locales?.TEXT_LOADING);
     }
     this.defaultOptions = options;
   }

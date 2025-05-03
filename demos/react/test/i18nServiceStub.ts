@@ -134,6 +134,9 @@ export class I18NServiceStub {
       case 'ITEMS_PER_PAGE':
         output = this._locale === 'en' ? 'items per page' : 'éléments par page';
         break;
+      case 'LOADING':
+        output = this._locale === 'en' ? 'Loading...' : 'Chargement...';
+        break;
       case 'NOT_EQUAL_TO':
         output = this._locale === 'en' ? 'Not equal to' : 'Non égal à';
         break;

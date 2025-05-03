@@ -21,6 +21,7 @@ export const localeFrench = {
   TEXT_GROUP_BY: 'Grouper par',
   TEXT_HIDE_COLUMN: 'Cacher la colonne',
   TEXT_LAST_UPDATE: 'Dernière mise à jour',
+  TEXT_LOADING: 'Chargement...',
   TEXT_OK: 'Terminé',
   TEXT_REMOVE_FILTER: 'Supprimer le filtre',
   TEXT_REMOVE_SORT: 'Supprimer le tri',
