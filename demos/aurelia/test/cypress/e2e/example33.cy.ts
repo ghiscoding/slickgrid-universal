@@ -212,9 +212,11 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('.slick-headerrow-columns .slick-headerrow-column:nth(10)').as('checkbox10-header');
     cy.get('@checkbox10-header').click();
     cy.get('[data-test="alert-lazy"]').should('be.visible');
+    cy.get('[data-name="filter-prerequisites"] .ms-loading span').contains('Loading...');
     cy.wait(50);
     cy.get('@checkbox10-header').click();
     cy.get('[data-test="alert-lazy"]').should('not.be.visible');
+    cy.get('[data-name="filter-prerequisites"] .ms-loading').should('not.exist');
   });
 
   it('should mouse over header-row (filter) Prerequisite column and expect to see tooltip of selected filter options', () => {

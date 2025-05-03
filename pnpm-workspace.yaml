@@ -22,7 +22,7 @@ catalog:
   dompurify: ^3.2.5
   i18next: ^25.0.1
   jsdom: ^26.1.0
-  multiple-select-vanilla: ^4.0.0
+  multiple-select-vanilla: ^4.1.1
   native-copyfiles: ^0.3.2
   npm-run-all2: ^7.0.2
   rimraf: ^6.0.1
