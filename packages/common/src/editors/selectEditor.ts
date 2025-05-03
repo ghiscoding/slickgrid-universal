@@ -705,14 +705,14 @@ export class SelectEditor implements Editor {
     let finalCollection = collection;
 
     // user might want to filter and/or sort certain items of the collection
-    inputCollection = filterCollectionWithOptions(
-      inputCollection,
+    finalCollection = filterCollectionWithOptions(
+      finalCollection,
       this._collectionService,
       this.columnEditor?.collectionFilterBy,
       this.collectionOptions
     );
-    inputCollection = sortCollectionWithOptions(
-      inputCollection,
+    finalCollection = sortCollectionWithOptions(
+      finalCollection,
       this.columnDef,
       this._collectionService,
       this.columnEditor?.collectionSortBy,
