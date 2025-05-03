@@ -20,6 +20,7 @@ import type {
   SelectOption,
 } from './../interfaces/index.js';
 import {
+  createBlankSelectEntry,
   filterCollectionWithOptions,
   getCollectionFromObjectWhenEnabled,
   sortCollectionWithOptions,
@@ -678,8 +679,8 @@ export class SelectEditor implements Editor {
       collection.length > 0 &&
       collection[0][this.valueName] !== ''
     ) {
-      collection.unshift(this.createBlankEntry());
-      this.collection.unshift(this.createBlankEntry()); // also make the change on the original collection
+      collection.unshift(createBlankSelectEntry(this.labelName, this.valueName, this.labelPrefixName, this.labelSuffixName));
+      this.collection.unshift(createBlankSelectEntry(this.labelName, this.valueName, this.labelPrefixName, this.labelSuffixName)); // also make the change on the original collection
     }
 
     // user can optionally add his own custom entry at the beginning of the collection
@@ -750,21 +751,6 @@ export class SelectEditor implements Editor {
     // step 2, create the DOM Element of the editor
     // we will later also subscribe to the onClose event to save the Editor whenever that event is triggered
     this.createDomElement(selectBuildResult.selectElement, selectBuildResult.dataCollection);
-  }
-
-  /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
-  protected createBlankEntry(): any {
-    const blankEntry = {
-      [this.labelName]: '',
-      [this.valueName]: '',
-    };
-    if (this.labelPrefixName) {
-      blankEntry[this.labelPrefixName] = '';
-    }
-    if (this.labelSuffixName) {
-      blankEntry[this.labelSuffixName] = '';
-    }
-    return blankEntry;
   }
 
   /**

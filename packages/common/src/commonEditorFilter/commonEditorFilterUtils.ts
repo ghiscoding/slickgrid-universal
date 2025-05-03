@@ -74,6 +74,21 @@ export function resetDatePicker(pickerInstance: Calendar): void {
   pickerInstance.update();
 }
 
+/** Create a blank entry for Select Editor/Filter that can be added to the collection. It will also reuse the same collection structure provided by the user */
+export function createBlankSelectEntry(labelName: string, valueName: string, labelPrefixName?: string, labelSuffixName?: string): any {
+  const blankEntry = {
+    [labelName]: '',
+    [valueName]: '',
+  };
+  if (labelPrefixName) {
+    blankEntry[labelPrefixName] = '';
+  }
+  if (labelSuffixName) {
+    blankEntry[labelSuffixName] = '';
+  }
+  return blankEntry;
+}
+
 export function setPickerDates(
   colEditorOrFilter: ColumnEditor | ColumnFilter,
   dateInputElm: HTMLInputElement,
@@ -134,17 +149,13 @@ export function setPickerDates(
   }
 }
 
-/**
- * user might want to filter certain items of the collection
- * @param inputCollection
- * @return outputCollection filtered and/or sorted collection
- */
-export function filterCollectionWithOptions(
-  inputCollection: any[],
+/** When user defines pre-filter on his Editor/Filter collection */
+export function filterCollectionWithOptions<T = any>(
+  inputCollection: T[],
   collectionService?: CollectionService,
   collectionFilterBy?: CollectionFilterBy | CollectionFilterBy[],
   collectionOptions?: CollectionOption
-): any[] {
+): T[] {
   if (collectionFilterBy) {
     const filterBy = collectionFilterBy;
     const filterCollectionBy = collectionOptions?.filterResultAfterEachPass || null;
@@ -153,18 +164,14 @@ export function filterCollectionWithOptions(
   return inputCollection;
 }
 
-/**
- * user might want to sort the collection in a certain way
- * @param inputCollection
- * @return outputCollection filtered and/or sorted collection
- */
-export function sortCollectionWithOptions(
-  inputCollection: any[],
+/** When user defines pre-sort on his Editor/Filter collection */
+export function sortCollectionWithOptions<T = any>(
+  inputCollection: T[],
   columnDef: Column,
   collectionService?: CollectionService,
   collectionSortBy?: CollectionSortBy | CollectionSortBy[],
   enableTranslateLabel?: boolean
-): any[] {
+): T[] {
   if (collectionSortBy) {
     const sortBy = collectionSortBy;
     return collectionService?.sortCollection(columnDef, inputCollection, sortBy, enableTranslateLabel) || [];
