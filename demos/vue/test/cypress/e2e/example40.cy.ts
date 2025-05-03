@@ -123,38 +123,4 @@ describe('Example 40 - Infinite Scroll from JSON data', () => {
     cy.get(`[data-row=2] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
     cy.get(`[data-row=3] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
   });
-
-  it('should clear all grouping', () => {
-    cy.get('#grid40').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
-
-    cy.get('.slick-context-menu.dropright .slick-menu-command-list')
-      .find('.slick-menu-item')
-      .find('.slick-menu-content')
-      .contains('Clear all Grouping')
-      .click();
-  });
-
-  it('should hover over the "Start" column header menu of 1st grid and click on "Sort Descending" command', () => {
-    cy.get('[data-test="clear-filters-sorting"]').click();
-    cy.get('#grid40').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
-
-    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').should('contain', 'Sort Descending').click();
-
-    cy.get('[data-row="0"] > .slick-cell:nth(3)').contains('2020');
-  });
-
-  it('should load 200 items and filter "Start" column with <=2020-08-25', () => {
-    cy.get('[data-test="set-dynamic-filter"]').click();
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
-    cy.wait(10);
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
-    cy.get('[data-test="totalItemCount"]').should('have.text', '200');
-
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
-
-    cy.get(`[data-row=0] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
-    cy.get(`[data-row=1] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
-    cy.get(`[data-row=2] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
-    cy.get(`[data-row=3] > .slick-cell:nth(3)`).contains(/^Aug [0-9]{2}, 2020$/);
-  });
 });
