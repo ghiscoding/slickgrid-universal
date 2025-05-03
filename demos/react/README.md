@@ -1,4 +1,4 @@
-# Slickgrid-Vue - Bootstrap 5 Demo with i18n
+# Slickgrid-React - Bootstrap 5 Demo with i18n
 
 ## Important Note
 Please note that some of the npm packages installed in these demos are **optional** and are installed **only** for demo purposes. If you don't need the feature then don't install it (remove it from your `package.json`) and you'll end up with a smaller production build.
@@ -20,10 +20,10 @@ Again the following dependencies are totally **optional**
 
 ### Install and Start Demo
 
-You can get this working demo by cloning our [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos/) which is updated on every new release (see [live demo](https://ghiscoding.github.io/slickgrid-vue-demos/)).
+You can get this working demo by cloning our [Slickgrid-React-Demos](https://github.com/ghiscoding/slickgrid-react-demos/) which is updated on every new release (see [live demo](https://ghiscoding.github.io/slickgrid-react-demos/)).
 
 ```bash
-git clone https://github.com/ghiscoding/slickgrid-vue-demos
+git clone https://github.com/ghiscoding/slickgrid-react-demos
 cd bootstrap5-i18n-demo
 npm install # OR yarn install
 npm run dev     # OR yarn start
@@ -31,7 +31,7 @@ npm run dev     # OR yarn start
 
 Then open your browser to
 ```html
-http://localhost:7070
+http://localhost:8080
 ```
 
 ### Build Demo
