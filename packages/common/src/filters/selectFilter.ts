@@ -34,6 +34,7 @@ export class SelectFilter implements Filter {
   protected _locales!: Locale;
   protected _msInstance?: MultipleSelectInstance;
   protected _shouldTriggerQuery = true;
+  protected _isLazyDataLoaded = false;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName!: string;
@@ -310,6 +311,22 @@ export class SelectFilter implements Filter {
 
   protected watchCallback(updatedArray: any[]): void {
     this.renderDomElement(this.columnFilter.collection || updatedArray || []);
+  }
+
+  protected parseCollectionList(collection: any[]): {
+    selectElement: HTMLSelectElement;
+    dataCollection: OptionRowData[];
+    hasFoundSearchTerm: boolean;
+  } {
+    return buildMsSelectCollectionList(
+      'filter',
+      collection,
+      this.columnDef,
+      this.grid,
+      this.isMultipleSelect,
+      this.translaterService,
+      this.searchTerms || []
+    );
   }
 
   renderDomElement(inputCollection: any[]): void {
