@@ -497,8 +497,6 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
   handleSelect(item: AutocompleteSearchItem): void | boolean {
     if (item !== undefined) {
-      const event = undefined; // TODO do we need the event?
-
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
       // otherwise we know that the autocomplete lib always require a label/value pair, we can pull them directly
       const hasCustomRenderItemCallback = this.filterOptions?.renderItem ?? false;
@@ -513,7 +511,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       this.updateFilterStyle(itemValue !== '');
 
       this.setValues(itemLabel);
-      this.callback(event, {
+      this.callback(undefined, {
         columnDef: this.columnDef,
         operator: this.operator,
         searchTerms: [itemValue],
